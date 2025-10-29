@@ -51,9 +51,9 @@ model reservation_module {
 
 /// @summary Physical location accepting reservations.
 /// @namespace Reservations
-/// @namespace Locations
+/// @namespace Services
+/// @namespace Schedules
 /// @erd Addresses
-///
 /// Defines address, phone, working days and online visibility for booking.
 model location {
   location_id           String             @id @default(uuid()) @db.Uuid
@@ -69,6 +69,7 @@ model location {
   schedules             schedule[]
   bookings              booking[]
   address               addresses?         @relation(fields: [address_id], references: [address_id])
+  service_locations     service_location[]
 }
 
 /// @summary Category of services (supports hierarchy and translations).
@@ -89,6 +90,7 @@ model service_category {
 /// @summary Bookable service with pricing and duration.
 /// @namespace Reservations
 /// @namespace Services
+/// @namespace Courses
 model service {
   service_id            String   @id @default(uuid()) @db.Uuid
   reservation_module_id String   @db.Uuid
@@ -104,12 +106,28 @@ model service {
   skd_codes             String[]
   created_at            DateTime @default(now())
   tax_rate_id           String?  @db.Uuid
+  course                Boolean  @default(false)
+  people_allowed        Int?     @default(1)
 
   reservation_module reservation_module   @relation(fields: [reservation_module_id], references: [reservation_module_id])
   service_category   service_category?    @relation(fields: [service_category_id], references: [service_category_id])
   assigned_employees service_assignment[]
   bookings           booking[]
+  service_locations  service_location[]
   tax_rate           tax_rates?           @relation(fields: [tax_rate_id], references: [tax_rates_id])
+}
+
+/// @summary Service availability at a specific location.
+/// @namespace Reservations
+/// @namespace Services
+/// @hidden
+model service_location {
+  service_location_id String @id @default(uuid()) @db.Uuid
+  service_id          String @db.Uuid
+  location_id         String @db.Uuid
+
+  service  service  @relation(fields: [service_id], references: [service_id])
+  location location @relation(fields: [location_id], references: [location_id])
 }
 
 /// @summary Staff member performing services.
@@ -119,6 +137,7 @@ model service {
 /// @namespace Schedules
 /// @namespace Users
 /// @namespace BusinessUsers
+/// @namespace Courses
 model employee {
   employee_id           String               @id @default(uuid()) @db.Uuid
   reservation_module_id String               @db.Uuid
@@ -143,6 +162,7 @@ model employee {
 /// @namespace Reservations
 /// @namespace Bookings
 /// @namespace Users
+/// @namespace Courses
 model customers {
   customer_id           String   @id @default(uuid()) @db.Uuid
   reservation_module_id String   @db.Uuid
@@ -154,10 +174,11 @@ model customers {
   updated_at            DateTime @updatedAt
   code                  String   @default(dbgenerated("substr(md5(random()::text), 1, 16)")) @db.VarChar(16)
 
-  reservation_module reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
-  bookings           booking[]
-  user_id            String?            @db.Uuid // Optional link to user account
-  user               users?             @relation(fields: [user_id], references: [user_id])
+  reservation_module          reservation_module           @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  bookings                    booking[]
+  user_id                     String?                      @db.Uuid // Optional link to user account
+  user                        users?                       @relation(fields: [user_id], references: [user_id])
+  booking_course_participants booking_course_participant[]
 
   @@unique([reservation_module_id, email], name: "unique_customer_email")
   @@unique([reservation_module_id, telephone], name: "unique_customer_telephone")
@@ -181,7 +202,6 @@ model service_assignment {
 /// @summary Schedule template for a location (and indirectly employees).
 /// @namespace Reservations
 /// @namespace Schedules
-/// @namespace Locations
 model schedule {
   schedule_id        String              @id @default(uuid()) @db.Uuid
   location_id        String              @db.Uuid
@@ -273,9 +293,10 @@ model booking_slots {
 /// @summary Booking record connecting a customer, service and schedule.
 /// @namespace Reservations
 /// @namespace Bookings
+/// @namespace Courses
 model booking {
   booking_id            String                @id @default(uuid()) @db.Uuid
-  customer_id           String                @db.Uuid
+  customer_id           String?               @db.Uuid
   reservation_module_id String                @db.Uuid
   location_id           String?               @db.Uuid
   status                BOOKING_STATUS
@@ -297,10 +318,46 @@ model booking {
   location              location?             @relation(fields: [location_id], references: [location_id])
   employee              employee?             @relation(fields: [employee_id], references: [employee_id], onDelete: SetNull)
   service               service?              @relation(fields: [service_id], references: [service_id])
-  customer              customers             @relation(fields: [customer_id], references: [customer_id])
+  customer              customers?            @relation(fields: [customer_id], references: [customer_id])
   booking_history_log   booking_history_log[]
   reviewable_id         String?               @db.Uuid
   reviewable            reviewable?           @relation(fields: [reviewable_id], references: [reviewable_id])
+  course                Boolean               @default(false)
+  people_allowed        Int?                  @default(1)
+  people_booked         Int?                  @default(1)
+
+  booking_course_time        booking_course_time[]
+  booking_course_participant booking_course_participant[]
+}
+
+/// @summary Time segments for course-type bookings.
+/// @namespace Reservations
+/// @namespace Bookings
+/// @namespace Courses
+model booking_course_time {
+  booking_course_time_id String   @id @default(uuid()) @db.Uuid
+  booking_id             String   @db.Uuid
+  start_time             DateTime
+  end_time               DateTime
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
+
+  booking booking @relation(fields: [booking_id], references: [booking_id])
+}
+
+/// @summary Participants linked to course-type bookings.
+/// @namespace Reservations
+/// @namespace Bookings
+/// @namespace Courses
+model booking_course_participant {
+  booking_course_participant_id String    @id @default(uuid()) @db.Uuid
+  booking_id                    String    @db.Uuid
+  created_at                    DateTime  @default(now())
+  updated_at                    DateTime  @updatedAt
+  customer_id                   String    @unique @db.Uuid
+  customer                      customers @relation(fields: [customer_id], references: [customer_id])
+
+  booking booking @relation(fields: [booking_id], references: [booking_id])
 }
 
 /// @summary Audit trail of booking status changes and actions.

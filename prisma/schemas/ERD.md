@@ -36,10 +36,10 @@
 - [Transport](#transport)
 - [TaxiOrders](#taxiorders)
 - [Vehicles](#vehicles)
-- [Locations](#locations)
 - [Services](#services)
-- [Bookings](#bookings)
 - [Schedules](#schedules)
+- [Courses](#courses)
+- [Bookings](#bookings)
 - [Notifications](#notifications)
 - [Delivery](#delivery)
 
@@ -5417,6 +5417,8 @@ erDiagram
   String skd_codes
   DateTime created_at
   String tax_rate_id FK "nullable"
+  Boolean course
+  Int people_allowed "nullable"
 }
 "employee" {
   String employee_id PK
@@ -5477,7 +5479,7 @@ erDiagram
 }
 "booking" {
   String booking_id PK
-  String customer_id FK
+  String customer_id FK "nullable"
   String reservation_module_id FK
   String location_id FK "nullable"
   BOOKING_STATUS status
@@ -5494,6 +5496,24 @@ erDiagram
   String employee_id FK "nullable"
   String parent_booking_id FK "nullable"
   String reviewable_id FK "nullable"
+  Boolean course
+  Int people_allowed "nullable"
+  Int people_booked "nullable"
+}
+"booking_course_time" {
+  String booking_course_time_id PK
+  String booking_id FK
+  DateTime start_time
+  DateTime end_time
+  DateTime created_at
+  DateTime updated_at
+}
+"booking_course_participant" {
+  String booking_course_participant_id PK
+  String booking_id FK
+  DateTime created_at
+  DateTime updated_at
+  String customer_id FK,UK
 }
 "booking_history_log" {
   String booking_history_id PK
@@ -5642,7 +5662,10 @@ erDiagram
 "booking" }o--o| "location" : location
 "booking" }o--o| "employee" : employee
 "booking" }o--|| "service" : service
-"booking" }o--|| "customers" : customer
+"booking" }o--o| "customers" : customer
+"booking_course_time" }o--|| "booking" : booking
+"booking_course_participant" |o--|| "customers" : customer
+"booking_course_participant" }o--|| "booking" : booking
 "booking_history_log" }o--|| "booking" : booking
 "notification_template" }o--|| "reservation_module" : reservation_module
 "notification_template_version" }o--|| "notification_template" : template
@@ -5731,6 +5754,8 @@ Properties as follows:
 - `skd_codes`:
 - `created_at`:
 - `tax_rate_id`:
+- `course`:
+- `people_allowed`:
 
 ### `employee`
 
@@ -5843,6 +5868,34 @@ Properties as follows:
 - `employee_id`:
 - `parent_booking_id`:
 - `reviewable_id`:
+- `course`:
+- `people_allowed`:
+- `people_booked`:
+
+### `booking_course_time`
+
+Time segments for course-type bookings.
+
+Properties as follows:
+
+- `booking_course_time_id`:
+- `booking_id`:
+- `start_time`:
+- `end_time`:
+- `created_at`:
+- `updated_at`:
+
+### `booking_course_participant`
+
+Participants linked to course-type bookings.
+
+Properties as follows:
+
+- `booking_course_participant_id`:
+- `booking_id`:
+- `created_at`:
+- `updated_at`:
+- `customer_id`:
 
 ### `booking_history_log`
 
@@ -6727,7 +6780,7 @@ Properties as follows:
 - `per_minute`:
 - `vehicle_id`:
 
-## Locations
+## Services
 
 ```mermaid
 erDiagram
@@ -6742,52 +6795,6 @@ erDiagram
   Boolean closed_on_holidays
   Json working_days
 }
-"schedule" {
-  String schedule_id PK
-  String location_id FK
-  String name
-  String color "nullable"
-  DateTime start_date
-  DateTime end_date
-}
-"schedule" }o--|| "location" : location
-```
-
-### `location`
-
-Physical location accepting reservations.
-
-Defines address, phone, working days and online visibility for booking.
-
-Properties as follows:
-
-- `location_id`:
-- `reservation_module_id`:
-- `name`:
-- `address_id`:
-- `phone`:
-- `color`:
-- `accepts_online`:
-- `closed_on_holidays`:
-- `working_days`:
-
-### `schedule`
-
-Schedule template for a location (and indirectly employees).
-
-Properties as follows:
-
-- `schedule_id`:
-- `location_id`:
-- `name`:
-- `color`:
-- `start_date`:
-- `end_date`:
-
-## Services
-
-```mermaid
-erDiagram
 "service_category" {
   String service_category_id PK
   String reservation_module_id FK
@@ -6810,6 +6817,8 @@ erDiagram
   String skd_codes
   DateTime created_at
   String tax_rate_id FK "nullable"
+  Boolean course
+  Int people_allowed "nullable"
 }
 "employee" {
   String employee_id PK
@@ -6839,8 +6848,27 @@ erDiagram
 "service_category" }o--o| "service_category" : parent
 "service" }o--o| "service_category" : service_category
 "service" }o--o| "tax_rates" : tax_rate
+"service" }o--o{ "location" : "via service_location"
 "employee" }o--o{ "service" : "via service_assignment"
 ```
+
+### `location`
+
+Physical location accepting reservations.
+
+Defines address, phone, working days and online visibility for booking.
+
+Properties as follows:
+
+- `location_id`:
+- `reservation_module_id`:
+- `name`:
+- `address_id`:
+- `phone`:
+- `color`:
+- `accepts_online`:
+- `closed_on_holidays`:
+- `working_days`:
 
 ### `service_category`
 
@@ -6874,6 +6902,8 @@ Properties as follows:
 - `skd_codes`:
 - `created_at`:
 - `tax_rate_id`:
+- `course`:
+- `people_allowed`:
 
 ### `employee`
 
@@ -6892,6 +6922,369 @@ Properties as follows:
 - `business_users_id`:
 - `created_at`:
 - `deleted_at`:
+
+## Schedules
+
+```mermaid
+erDiagram
+"location" {
+  String location_id PK
+  String reservation_module_id FK
+  String name
+  String address_id FK "nullable"
+  String phone "nullable"
+  String color "nullable"
+  Boolean accepts_online
+  Boolean closed_on_holidays
+  Json working_days
+}
+"employee" {
+  String employee_id PK
+  String reservation_module_id FK
+  String first_name "nullable"
+  String last_name "nullable"
+  String email "nullable"
+  String telephone "nullable"
+  String telephone_code "nullable"
+  String telephone_number "nullable"
+  String business_users_id FK,UK "nullable"
+  DateTime created_at
+  DateTime deleted_at "nullable"
+}
+"schedule" {
+  String schedule_id PK
+  String location_id FK
+  String name
+  String color "nullable"
+  DateTime start_date
+  DateTime end_date
+}
+"schedule_slot" {
+  String schedule_slot_id PK
+  String schedule_id FK
+  String schedule_employee_id FK
+  String employee_id FK
+  DateTime date
+  DateTime start_time
+  DateTime end_time
+}
+"schedule_slot_exceptions" {
+  String schedule_slot_exception_id PK
+  String schedule_slot_id FK
+  DateTime date
+  DateTime start_time
+  DateTime end_time
+  String reason "nullable"
+  SCHEDULE_SLOT_EXCEPTION_TYPE type
+}
+"booking_slots" {
+  String booking_slot_id PK
+  String schedule_slot_id FK
+  DateTime start_time
+  DateTime end_time
+}
+"schedule" }o--|| "location" : location
+"schedule_slot" }o--|| "schedule" : schedule
+"schedule_slot" }o--|| "employee" : employee
+"schedule_slot_exceptions" }o--|| "schedule_slot" : schedule_slot
+"booking_slots" }o--|| "schedule_slot" : schedule_slot
+"schedule" }o--o{ "employee" : "via schedule_employee"
+"schedule" }o--o{ "schedule_slot" : "via schedule_employee"
+"employee" }o--o{ "schedule_slot" : "via schedule_employee"
+```
+
+### `location`
+
+Physical location accepting reservations.
+
+Defines address, phone, working days and online visibility for booking.
+
+Properties as follows:
+
+- `location_id`:
+- `reservation_module_id`:
+- `name`:
+- `address_id`:
+- `phone`:
+- `color`:
+- `accepts_online`:
+- `closed_on_holidays`:
+- `working_days`:
+
+### `employee`
+
+Staff member performing services.
+
+Properties as follows:
+
+- `employee_id`:
+- `reservation_module_id`:
+- `first_name`:
+- `last_name`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `business_users_id`:
+- `created_at`:
+- `deleted_at`:
+
+### `schedule`
+
+Schedule template for a location (and indirectly employees).
+
+Properties as follows:
+
+- `schedule_id`:
+- `location_id`:
+- `name`:
+- `color`:
+- `start_date`:
+- `end_date`:
+
+### `schedule_slot`
+
+Bookable time slot within a schedule and employee assignment.
+
+Properties as follows:
+
+- `schedule_slot_id`:
+- `schedule_id`:
+- `schedule_employee_id`:
+- `employee_id`:
+- `date`:
+- `start_time`:
+- `end_time`:
+
+### `schedule_slot_exceptions`
+
+Exceptions to availability (vacation, closed, health, etc.).
+
+Properties as follows:
+
+- `schedule_slot_exception_id`:
+- `schedule_slot_id`:
+- `date`:
+- `start_time`:
+- `end_time`:
+- `reason`:
+- `type`:
+
+### `booking_slots`
+
+Granular booking slots linked to schedule slots.
+
+Properties as follows:
+
+- `booking_slot_id`:
+- `schedule_slot_id`:
+- `start_time`:
+- `end_time`:
+
+## Courses
+
+```mermaid
+erDiagram
+"service" {
+  String service_id PK
+  String reservation_module_id FK
+  String service_category_id FK "nullable"
+  Json name
+  Json description "nullable"
+  String image_url "nullable"
+  Int price_cents
+  Int discount_percent "nullable"
+  Int discount_amount "nullable"
+  Int duration_minutes
+  Boolean available_online
+  String skd_codes
+  DateTime created_at
+  String tax_rate_id FK "nullable"
+  Boolean course
+  Int people_allowed "nullable"
+}
+"employee" {
+  String employee_id PK
+  String reservation_module_id FK
+  String first_name "nullable"
+  String last_name "nullable"
+  String email "nullable"
+  String telephone "nullable"
+  String telephone_code "nullable"
+  String telephone_number "nullable"
+  String business_users_id FK,UK "nullable"
+  DateTime created_at
+  DateTime deleted_at "nullable"
+}
+"customers" {
+  String customer_id PK
+  String reservation_module_id FK
+  String first_name
+  String last_name
+  String email "nullable"
+  String telephone "nullable"
+  DateTime created_at
+  DateTime updated_at
+  String(16) code UK
+  String user_id FK "nullable"
+}
+"booking" {
+  String booking_id PK
+  String customer_id FK "nullable"
+  String reservation_module_id FK
+  String location_id FK "nullable"
+  BOOKING_STATUS status
+  String service_id FK
+  String comment "nullable"
+  DateTime created_at
+  DateTime updated_at
+  Int price_cents "nullable"
+  Int discount_percent "nullable"
+  Int discount_amount "nullable"
+  DateTime start_time "nullable"
+  DateTime end_time "nullable"
+  DateTime deleted_at "nullable"
+  String employee_id FK "nullable"
+  String parent_booking_id FK "nullable"
+  String reviewable_id FK "nullable"
+  Boolean course
+  Int people_allowed "nullable"
+  Int people_booked "nullable"
+}
+"booking_course_time" {
+  String booking_course_time_id PK
+  String booking_id FK
+  DateTime start_time
+  DateTime end_time
+  DateTime created_at
+  DateTime updated_at
+}
+"booking_course_participant" {
+  String booking_course_participant_id PK
+  String booking_id FK
+  DateTime created_at
+  DateTime updated_at
+  String customer_id FK,UK
+}
+"booking" }o--o| "booking" : parent_booking
+"booking" }o--o| "employee" : employee
+"booking" }o--|| "service" : service
+"booking" }o--o| "customers" : customer
+"booking_course_time" }o--|| "booking" : booking
+"booking_course_participant" |o--|| "customers" : customer
+"booking_course_participant" }o--|| "booking" : booking
+```
+
+### `service`
+
+Bookable service with pricing and duration.
+
+Properties as follows:
+
+- `service_id`:
+- `reservation_module_id`:
+- `service_category_id`:
+- `name`:
+- `description`:
+- `image_url`:
+- `price_cents`:
+- `discount_percent`:
+- `discount_amount`:
+- `duration_minutes`:
+- `available_online`:
+- `skd_codes`:
+- `created_at`:
+- `tax_rate_id`:
+- `course`:
+- `people_allowed`:
+
+### `employee`
+
+Staff member performing services.
+
+Properties as follows:
+
+- `employee_id`:
+- `reservation_module_id`:
+- `first_name`:
+- `last_name`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `business_users_id`:
+- `created_at`:
+- `deleted_at`:
+
+### `customers`
+
+Customer tracked by a reservation module.
+
+Properties as follows:
+
+- `customer_id`:
+- `reservation_module_id`:
+- `first_name`:
+- `last_name`:
+- `email`:
+- `telephone`:
+- `created_at`:
+- `updated_at`:
+- `code`:
+- `user_id`:
+
+### `booking`
+
+Booking record connecting a customer, service and schedule.
+
+Properties as follows:
+
+- `booking_id`:
+- `customer_id`:
+- `reservation_module_id`:
+- `location_id`:
+- `status`:
+- `service_id`:
+- `comment`:
+- `created_at`:
+- `updated_at`:
+- `price_cents`:
+- `discount_percent`:
+- `discount_amount`:
+- `start_time`:
+- `end_time`:
+- `deleted_at`:
+- `employee_id`:
+- `parent_booking_id`:
+- `reviewable_id`:
+- `course`:
+- `people_allowed`:
+- `people_booked`:
+
+### `booking_course_time`
+
+Time segments for course-type bookings.
+
+Properties as follows:
+
+- `booking_course_time_id`:
+- `booking_id`:
+- `start_time`:
+- `end_time`:
+- `created_at`:
+- `updated_at`:
+
+### `booking_course_participant`
+
+Participants linked to course-type bookings.
+
+Properties as follows:
+
+- `booking_course_participant_id`:
+- `booking_id`:
+- `created_at`:
+- `updated_at`:
+- `customer_id`:
 
 ## Bookings
 
@@ -6924,7 +7317,7 @@ erDiagram
 }
 "booking" {
   String booking_id PK
-  String customer_id FK
+  String customer_id FK "nullable"
   String reservation_module_id FK
   String location_id FK "nullable"
   BOOKING_STATUS status
@@ -6941,6 +7334,24 @@ erDiagram
   String employee_id FK "nullable"
   String parent_booking_id FK "nullable"
   String reviewable_id FK "nullable"
+  Boolean course
+  Int people_allowed "nullable"
+  Int people_booked "nullable"
+}
+"booking_course_time" {
+  String booking_course_time_id PK
+  String booking_id FK
+  DateTime start_time
+  DateTime end_time
+  DateTime created_at
+  DateTime updated_at
+}
+"booking_course_participant" {
+  String booking_course_participant_id PK
+  String booking_id FK
+  DateTime created_at
+  DateTime updated_at
+  String customer_id FK,UK
 }
 "booking_history_log" {
   String booking_history_id PK
@@ -7027,7 +7438,10 @@ erDiagram
 "customers" }o--o| "users" : user
 "booking" }o--o| "booking" : parent_booking
 "booking" }o--o| "employee" : employee
-"booking" }o--|| "customers" : customer
+"booking" }o--o| "customers" : customer
+"booking_course_time" }o--|| "booking" : booking
+"booking_course_participant" |o--|| "customers" : customer
+"booking_course_participant" }o--|| "booking" : booking
 "booking_history_log" }o--o| "users" : user
 "booking_history_log" }o--|| "booking" : booking
 "business_users" }o--|| "users" : users
@@ -7094,6 +7508,34 @@ Properties as follows:
 - `employee_id`:
 - `parent_booking_id`:
 - `reviewable_id`:
+- `course`:
+- `people_allowed`:
+- `people_booked`:
+
+### `booking_course_time`
+
+Time segments for course-type bookings.
+
+Properties as follows:
+
+- `booking_course_time_id`:
+- `booking_id`:
+- `start_time`:
+- `end_time`:
+- `created_at`:
+- `updated_at`:
+
+### `booking_course_participant`
+
+Participants linked to course-type bookings.
+
+Properties as follows:
+
+- `booking_course_participant_id`:
+- `booking_id`:
+- `created_at`:
+- `updated_at`:
+- `customer_id`:
 
 ### `booking_history_log`
 
@@ -7111,134 +7553,6 @@ Properties as follows:
 - `created_at`:
 - `updated_at`:
 - `user_id`:
-
-## Schedules
-
-```mermaid
-erDiagram
-"employee" {
-  String employee_id PK
-  String reservation_module_id FK
-  String first_name "nullable"
-  String last_name "nullable"
-  String email "nullable"
-  String telephone "nullable"
-  String telephone_code "nullable"
-  String telephone_number "nullable"
-  String business_users_id FK,UK "nullable"
-  DateTime created_at
-  DateTime deleted_at "nullable"
-}
-"schedule" {
-  String schedule_id PK
-  String location_id FK
-  String name
-  String color "nullable"
-  DateTime start_date
-  DateTime end_date
-}
-"schedule_slot" {
-  String schedule_slot_id PK
-  String schedule_id FK
-  String schedule_employee_id FK
-  String employee_id FK
-  DateTime date
-  DateTime start_time
-  DateTime end_time
-}
-"schedule_slot_exceptions" {
-  String schedule_slot_exception_id PK
-  String schedule_slot_id FK
-  DateTime date
-  DateTime start_time
-  DateTime end_time
-  String reason "nullable"
-  SCHEDULE_SLOT_EXCEPTION_TYPE type
-}
-"booking_slots" {
-  String booking_slot_id PK
-  String schedule_slot_id FK
-  DateTime start_time
-  DateTime end_time
-}
-"schedule_slot" }o--|| "schedule" : schedule
-"schedule_slot" }o--|| "employee" : employee
-"schedule_slot_exceptions" }o--|| "schedule_slot" : schedule_slot
-"booking_slots" }o--|| "schedule_slot" : schedule_slot
-"schedule" }o--o{ "employee" : "via schedule_employee"
-"schedule" }o--o{ "schedule_slot" : "via schedule_employee"
-"employee" }o--o{ "schedule_slot" : "via schedule_employee"
-```
-
-### `employee`
-
-Staff member performing services.
-
-Properties as follows:
-
-- `employee_id`:
-- `reservation_module_id`:
-- `first_name`:
-- `last_name`:
-- `email`:
-- `telephone`:
-- `telephone_code`:
-- `telephone_number`:
-- `business_users_id`:
-- `created_at`:
-- `deleted_at`:
-
-### `schedule`
-
-Schedule template for a location (and indirectly employees).
-
-Properties as follows:
-
-- `schedule_id`:
-- `location_id`:
-- `name`:
-- `color`:
-- `start_date`:
-- `end_date`:
-
-### `schedule_slot`
-
-Bookable time slot within a schedule and employee assignment.
-
-Properties as follows:
-
-- `schedule_slot_id`:
-- `schedule_id`:
-- `schedule_employee_id`:
-- `employee_id`:
-- `date`:
-- `start_time`:
-- `end_time`:
-
-### `schedule_slot_exceptions`
-
-Exceptions to availability (vacation, closed, health, etc.).
-
-Properties as follows:
-
-- `schedule_slot_exception_id`:
-- `schedule_slot_id`:
-- `date`:
-- `start_time`:
-- `end_time`:
-- `reason`:
-- `type`:
-
-### `booking_slots`
-
-Granular booking slots linked to schedule slots.
-
-Properties as follows:
-
-- `booking_slot_id`:
-- `schedule_slot_id`:
-- `start_time`:
-- `end_time`:
 
 ## Notifications
 
