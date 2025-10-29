@@ -33,7 +33,7 @@ router.get('/me/reviews', UserController.getMyReviews);
  *    * @module user,order
  *
  */
-router.get('/me/active_order_ids', UserController.getMyActiveOrderIds);
+// router.get('/me/active_order_ids', UserController.getMyActiveOrderIds);
 /**
  *    * @module order
  *
