@@ -2553,13 +2553,13 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 		const previous =
 			prevStart && prevEnd
 				? await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
-					business_id,
-					prevStart,
-					prevEnd,
-					PROMO_TYPE.SECTION,
-					undefined,
-					sectionIds
-				)
+						business_id,
+						prevStart,
+						prevEnd,
+						PROMO_TYPE.SECTION,
+						undefined,
+						sectionIds
+					)
 				: [];
 		const prior = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
 			business_id,
@@ -2673,12 +2673,12 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 		const previous =
 			prevStart && prevEnd
 				? await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
-					business_id,
-					prevStart,
-					prevEnd,
-					PROMO_TYPE.WORD,
-					wordIds
-				)
+						business_id,
+						prevStart,
+						prevEnd,
+						PROMO_TYPE.WORD,
+						wordIds
+					)
 				: [];
 		const prior = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
 			business_id,
@@ -2787,14 +2787,14 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 		const previous =
 			prevStart && prevEnd
 				? await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
-					business_id,
-					prevStart,
-					prevEnd,
-					PROMO_TYPE.AD,
-					undefined,
-					undefined,
-					adIds
-				)
+						business_id,
+						prevStart,
+						prevEnd,
+						PROMO_TYPE.AD,
+						undefined,
+						undefined,
+						adIds
+					)
 				: [];
 		const prior = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
 			business_id,

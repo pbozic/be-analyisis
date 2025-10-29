@@ -745,8 +745,8 @@ async function handlePaymentForTransferOrder(order, return_url) {
 			parseFloat(
 				[VEHICLE_CLASS.PRIVATE_DRIVER, VEHICLE_CLASS.CARGO_VAN].includes(order.preferences?.vehicle_class)
 					? order.payment.extras?.price ||
-					order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
-					CARGO_TRANSFER_FEE.CARGO_FEE
+							order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
+								CARGO_TRANSFER_FEE.CARGO_FEE
 					: 0
 			) * 100
 		);
@@ -756,11 +756,11 @@ async function handlePaymentForTransferOrder(order, return_url) {
 		//Handle automatic credits spending ~ use credits to pay platform cut first, to keep the driver cut mostly off stripe
 		const reservedCredits = order.allow_credits_usage
 			? await WalletFundsHelpers.reserveCreditsForOrder(
-				user.user_id,
-				TOTAL_COST_CENTS,
-				order.order_id,
-				FUNDS_TYPE.CREDITS_TAXI
-			)
+					user.user_id,
+					TOTAL_COST_CENTS,
+					order.order_id,
+					FUNDS_TYPE.CREDITS_TAXI
+				)
 			: [];
 		const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
 		const DISCOUNTED_TOTAL_COST = TOTAL_COST_CENTS - CREDITS_AMOUNT_RESERVED;
@@ -1427,9 +1427,9 @@ async function completeOrder(req, res) {
 							order.preferences?.vehicle_class
 						)
 							? order.payment.extras?.price ||
-							order.cargo_preferences?.additional_workers *
-							CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
-							CARGO_TRANSFER_FEE.CARGO_FEE
+									order.cargo_preferences?.additional_workers *
+										CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
+										CARGO_TRANSFER_FEE.CARGO_FEE
 							: 0
 					) * 100
 				);
@@ -1439,11 +1439,11 @@ async function completeOrder(req, res) {
 				//Handle automatic credits spending ~ use credits to pay platform cut first, to keep the driver cut mostly off stripe
 				const reservedCredits = order.allow_credits_usage
 					? await WalletFundsHelpers.reserveCreditsForOrder(
-						user.user_id,
-						TOTAL_COST_CENTS,
-						order.order_id,
-						FUNDS_TYPE.CREDITS_TAXI
-					)
+							user.user_id,
+							TOTAL_COST_CENTS,
+							order.order_id,
+							FUNDS_TYPE.CREDITS_TAXI
+						)
 					: [];
 				const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
 				const DISCOUNTED_TOTAL_COST = TOTAL_COST_CENTS - CREDITS_AMOUNT_RESERVED;
@@ -2235,8 +2235,8 @@ async function confirmWalletPayment(req, res) {
 			parseFloat(
 				[VEHICLE_CLASS.PRIVATE_DRIVER, VEHICLE_CLASS.CARGO_VAN].includes(order.preferences?.vehicle_class)
 					? order.payment.extras?.price ||
-					order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
-					CARGO_TRANSFER_FEE.CARGO_FEE
+							order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
+								CARGO_TRANSFER_FEE.CARGO_FEE
 					: 0
 			) * 100
 		);

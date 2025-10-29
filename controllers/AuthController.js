@@ -1236,26 +1236,26 @@ async function registerReservationBusiness(req, res) {
 				const userCreationObj = existingUser
 					? null
 					: {
-						email: userData.email,
-						password: userData.password,
-						user_role: 'ADMIN',
-						telephone: userData.telephone || businessData.business_telephone,
-						telephone_number: userData.telephone_number || businessData.business_telephone_number,
-						telephone_code: userData.telephone_code || businessData.business_telephone_code,
-					};
+							email: userData.email,
+							password: userData.password,
+							user_role: 'ADMIN',
+							telephone: userData.telephone || businessData.business_telephone,
+							telephone_number: userData.telephone_number || businessData.business_telephone_number,
+							telephone_code: userData.telephone_code || businessData.business_telephone_code,
+						};
 				const businessCreationObj = existingBusiness
 					? null
 					: {
-						name: businessData.name,
-						email: businessData.email,
-						telephone: businessData.telephone,
-						telephone_number: businessData.telephone_number,
-						telephone_code: businessData.telephone_code,
-						type: BUSINESS_TYPE.RESERVATION,
-						tax_id: businessData.tax_id,
-						registration_id: businessData.registration_id,
-						stripe_customer_id: stripeCustomer.id,
-					};
+							name: businessData.name,
+							email: businessData.email,
+							telephone: businessData.telephone,
+							telephone_number: businessData.telephone_number,
+							telephone_code: businessData.telephone_code,
+							type: BUSINESS_TYPE.RESERVATION,
+							tax_id: businessData.tax_id,
+							registration_id: businessData.registration_id,
+							stripe_customer_id: stripeCustomer.id,
+						};
 
 				business = existingBusiness || (await BusinessDao.createNewBusiness(businessCreationObj, tx));
 

@@ -96,13 +96,13 @@ async function getTaxiOrdersIfNotCompleted(user_id, type, isBusinessUser = false
 				...whereClause,
 				...(isBusinessUser
 					? {
-						OR: [{ user_id: user_id }, { creating_user_id: user_id }],
-					}
+							OR: [{ user_id: user_id }, { creating_user_id: user_id }],
+						}
 					: {
-						user_id: user_id,
-						subtype: ORDER_SUBTYPE.CREATED_BY_USER,
-						OR: [{ creating_user_id: null }, { creating_user_id: { not: user_id } }],
-					}),
+							user_id: user_id,
+							subtype: ORDER_SUBTYPE.CREATED_BY_USER,
+							OR: [{ creating_user_id: null }, { creating_user_id: { not: user_id } }],
+						}),
 			},
 			include: {
 				user: true,
