@@ -33,7 +33,12 @@ interface FindSlotsInput {
 	locationId?: string;
 	returnFirst?: boolean;
 }
-
+/**
+ * Find available booking slots based on the provided criteria.
+ *
+ * @param {FindSlotsInput} params - The parameters for finding slots.
+ * @returns {Promise<SlotResult[] | null>} - An array of available slots or null if none found.
+ */
 export async function findSlots({
 	reservationModuleId,
 	date,
@@ -282,13 +287,14 @@ export function splitByExceptionsId(slots: ExceptionWithoutId[]) {
  * If the start time is not before the end time, it returns false (invalid window).
  * If no assigned employee or location is provided, it returns true (available).
  * It checks for existing bookings that overlap with the provided time range.
- * @param tx Prisma.TransactionClient - Prisma transaction client to use for the query
- * @param args - Arguments for checking booking slot availability
- * @param args.reservation_module_id - ID of the reservation module
- * @param args.start_time - Start time of the booking slot (Date or ISO string)
- * @param args.end_time - End time of the booking slot (Date or ISO string)
- * @param args
- * @returns
+ * @param {Prisma.TransactionClient} tx - Prisma transaction client to use for the query
+ * @param {Object} args - Arguments for checking booking slot availability
+ * @param {string} args.reservation_module_id - ID of the reservation module
+ * @param {string | Date | null | undefined} args.start_time - Start time of the booking slot (Date or ISO string)
+ * @param {string | Date | null | undefined} args.end_time - End time of the booking slot (Date or ISO string)
+ * @param {string | null | undefined} args.employee_id - ID of the employee assigned to the booking (optional)
+ * @param {string | null | undefined} args.location_id - ID of the location for the booking (optional)
+ * @returns {Promise<boolean>} - True if the slot is available, false otherwise
  */
 export async function isBookingSlotAvailable(
 	tx: Prisma.TransactionClient,
@@ -333,9 +339,14 @@ export async function isBookingSlotAvailable(
  * If the start time is not before the end time, it returns false (invalid window).
  * It checks for schedule slots that match the criteria and ensures there are no exceptions blocking the window.
  * If the employee is scheduled for the window, it returns true; otherwise, it returns false.
- * @param tx Prisma.TransactionClient - Prisma transaction client to use for the query
- * @param args - Arguments for checking employee schedule
- * @returns True if the employee is scheduled for the window, false otherwise
+ * @param {Prisma.TransactionClient} tx - Prisma transaction client to use for the query
+ * @param {Object} args - Arguments for checking employee schedule
+ * @param {string} args.reservation_module_id - ID of the reservation module
+ * @param {string | null | undefined} args.employee_id - ID of the employee to check (optional)
+ * @param {string | null | undefined} args.location_id - ID of the location for the schedule (optional)
+ * @param {string | Date | null | undefined} args.start_time - Start time of the window (Date or ISO string)
+ * @param {string | Date | null | undefined} args.end_time - End time of the window (Date or ISO string)
+ * @returns {Promise<boolean>} - True if the employee is scheduled for the window, false otherwise
  */
 export async function isEmployeeScheduledForWindow(
 	tx: Prisma.TransactionClient,
@@ -413,7 +424,12 @@ export async function isEmployeeScheduledForWindow(
 
 	return false;
 }
-
+/**
+ * Adds validation to ensure required booking fields are present.
+ *
+ * @param {CreateBookingInput | CreateMultipleBookingsInput | UpdateBookingInput} data
+ * @param {z.RefinementCtx} ctx
+ */
 export async function addValideBookingSchema(
 	data: CreateBookingInput | CreateMultipleBookingsInput | UpdateBookingInput,
 	ctx: z.RefinementCtx

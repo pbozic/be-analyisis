@@ -2,6 +2,14 @@ import { PrismaClient, MODULE_TYPE } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+/**
+ * Check if a user has a specific permission within a module.
+ *
+ * @param {string} userId - The ID of the user to check.
+ * @param {string} permissionName - The name of the permission to check.
+ * @param {MODULE_TYPE} [module='reservations'] - The module to check the permission in.
+ * @returns {Promise<boolean>} - Returns true if the user has the permission, false otherwise.
+ */
 export async function userHasPermission(
 	userId: string,
 	permissionName: string,

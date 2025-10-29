@@ -16,9 +16,9 @@ type CanPerformActionResult = {
  * Check if a reservation module is allowed to perform a specific action.
  * - Includes subscription and addon-based actions.
  * - Honors limits and usage (business_usage).
- * @param reservationModuleId
- * @param actionName
- * @returns
+ * @param {string} reservationModuleId
+ * @param {string} actionName
+ * @returns {Promise<CanPerformActionResult>}
  */
 export async function canPerformActionReservation(
 	reservationModuleId: string,
@@ -134,6 +134,12 @@ type SubscriptionPhaseItems = {
  * - Addons: zero or more from desiredAddons, respecting desired quantities
  * - Upgrades (new items or increased quantity) → current phase
  * - Downgrades (removed items or decreased quantity) → next phase
+ *
+ * @param {Stripe.SubscriptionItem & { price: Stripe.Price & { product: Stripe.Product } }} currentPhaseItems - Current subscription items
+ * @param {action_bundle} desiredBundle - Desired bundle to apply
+ * @param {DesiredAddonInput[]} desiredAddons - Desired addons with quantities
+ * @param {action_bundle[]} existingBundleObjects - All existing bundle objects from DB
+ * @returns {SubscriptionPhaseItems} - Items for current and next phases
  */
 export function buildSchedulePhaseItems(
 	currentPhaseItems: (Stripe.SubscriptionItem & {
@@ -232,6 +238,15 @@ type CreateOrUpdateSubscriptionInput = {
 	addonPriceIds?: { priceId: string; quantity: number }[];
 	tx?: TPrisma.TransactionClient;
 };
+
+/**
+ * Create or update a reservation module's Stripe subscription schedule.
+ * - Creates new schedule if none exists.
+ * - Updates existing schedule with new bundle/addons.
+ *
+ * @param {CreateOrUpdateSubscriptionInput} input - Input parameters
+ * @returns {Promise<{ scheduleId: string; paymentRequired: boolean; clientSecret?: string }>} - Result with schedule ID and payment info
+ */
 export async function createOrUpdateReservationModuleSubscription(
 	input: CreateOrUpdateSubscriptionInput
 ): Promise<{ scheduleId: string; paymentRequired: boolean; clientSecret?: string }> {
@@ -362,8 +377,11 @@ export async function createOrUpdateReservationModuleSubscription(
  * - Updates bundle (action_bundle_id)
  * - Updates addons (business_addon rows)
  * - Updates subscription_expires_at
+ *
+ * @param {string} reservationModuleId
+ * @param {TPrisma.TransactionClient} [tx]
+ * @returns {Promise<void>}
  */
-
 export async function syncReservationModuleWithStripe(
 	reservation_module_id: string,
 	tx?: TPrisma.TransactionClient

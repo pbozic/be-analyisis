@@ -14,6 +14,7 @@ import {
 	menu_items,
 	addresses,
 	DELIVERY_ORDER_STATUS,
+	drivers,
 } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
@@ -27,8 +28,8 @@ import { DAILY_MEAL_DELIVERY_COST_CENTS } from './constants.js';
 
 /**
  * Convert JavaScript's weekday (Sunday=0) to our system's weekday (Monday=0)
- * @param jsWeekday JavaScript weekday (0-6, Sunday=0)
- * @returns Our system weekday (0-6, Monday=0)
+ * @param {number} jsWeekday JavaScript weekday (0-6, Sunday=0)
+ * @returns {number} Our system weekday (0-6, Monday=0)
  */
 function jsWeekdayToOurWeekday(jsWeekday: number): number {
 	return (jsWeekday + 6) % 7;
@@ -36,8 +37,8 @@ function jsWeekdayToOurWeekday(jsWeekday: number): number {
 
 /**
  * Convert our system's weekday (Monday=0) to JavaScript's weekday (Sunday=0)
- * @param ourWeekday Our system weekday (0-6, Monday=0)
- * @returns JavaScript weekday (0-6, Sunday=0)
+ * @param {number} ourWeekday Our system weekday (0-6, Monday=0)
+ * @returns {number} JavaScript weekday (0-6, Sunday=0)
  */
 function ourWeekdayToJsWeekday(ourWeekday: number): number {
 	return (ourWeekday + 1) % 7;
@@ -69,7 +70,12 @@ export function mapDateToEarlierWeekday(date: Date, mapping: Record<number, numb
 	result.setUTCDate(date.getUTCDate() - diff);
 	return result;
 }
-
+/**
+ * Generate an array of Dates at UTC midnight for each day in the range [date1, date2]
+ * @param {Date} date1 - Start date
+ * @param {Date} date2 - End date
+ * @returns {Date[]} - Array of Dates at UTC midnight
+ */
 function getDateRangeMidnight(date1: Date, date2: Date): Date[] {
 	const start = new Date(date1);
 	const end = new Date(date2);
@@ -88,8 +94,13 @@ function getDateRangeMidnight(date1: Date, date2: Date): Date[] {
 
 	return result;
 }
-
-export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date | string) {
+/**
+ * Generate daily meal menu categories up to a future date for all businesses that offer daily meals.
+ *
+ * @param {Date | string} future_date - The future date to generate categories up to.
+ * @returns {Promise<void>}
+ */
+export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date | string): Promise<void> {
 	//TODO: make function for date range for all busiensses that offer DMs
 	const now = new Date(new Date().setUTCHours(0, 0, 0, 0));
 	const max_date = new Date(new Date(future_date).setUTCHours(23, 59, 59, 999));
@@ -206,7 +217,12 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 		}
 	}
 }
-
+/**
+ * Generate daily meal menu categories up to a future date for a specific daily meal category.
+ *
+ * @param {string} daily_meal_category_id - The ID of the daily meal category.
+ * @param {Date | string} future_date - The future date to generate categories up to.
+ */
 export async function generateDailyMealMenuCategoriesUpToDateForCategory(
 	daily_meal_category_id: string,
 	future_date: Date | string
@@ -305,8 +321,12 @@ export async function generateDailyMealMenuCategoriesUpToDateForCategory(
 		}
 	}
 }
-
-export async function generateDailyMealMenuCategoriesAndInstancesFor14Days() {
+/**
+ * Generate daily meal menu categories and instances for the next 14 days.
+ *
+ * @returns {Promise<void>}
+ */
+export async function generateDailyMealMenuCategoriesAndInstancesFor14Days(): Promise<void> {
 	const now = new Date();
 	now.setUTCHours(0, 0, 0, 0);
 	const futureDate = new Date(now);
@@ -324,8 +344,12 @@ export async function generateDailyMealMenuCategoriesAndInstancesFor14Days() {
 		console.error(error);
 	}
 }
-
-export async function generateDMInstancesForDateSimple(datestring: string) {
+/**
+ * Generate daily meal instances for a specific date.
+ *
+ * @param {string} datestring - The date string to generate instances for.
+ */
+export async function generateDMInstancesForDateSimple(datestring: string): Promise<void> {
 	const intended_date = new Date(datestring);
 	intended_date.setUTCHours(0, 0, 0, 0);
 	const jsWeekday = intended_date.getUTCDay();
@@ -515,7 +539,12 @@ export async function generateDMInstancesForDateSimple(datestring: string) {
 		console.error(e);
 	}
 }
-export async function generateDailyMealInstancesUpToDate(max_date: Date) {
+/** * Generate daily meal instances for the next days up to max_date.
+ *
+ * @param {Date} max_date - The maximum date to generate instances up to.
+ * @returns {Promise<void>}
+ */
+export async function generateDailyMealInstancesUpToDate(max_date: Date): Promise<void> {
 	const startDate = new Date();
 	startDate.setUTCHours(0, 0, 0, 0);
 
@@ -564,7 +593,7 @@ function getUTCWeekdayDatesInRange(
  * It will also log the number of instances canceled.
  * If no instances are found, it will log that no instances were found for the subscription.
  * If the subscription is not found, it will throw an error.
- * @param subscription_id - The ID of the subscription for which to cancel instances
+ * @param {string} subscription_id - The ID of the subscription for which to cancel instances
  * @throws {Error} If the subscription is not found
  */
 export async function cancelInstancesForSubscription(subscription_id: string) {
@@ -602,9 +631,9 @@ export async function cancelInstancesForSubscription(subscription_id: string) {
  * - For RECURRING subscriptions: verifies the weekday is in the subscription's weekdays.
  * Returns the created daily_meal_instances.
  *
- * @param subscriptionId - The subscription ID
- * @param date - The date for which to create instances (Date or ISO string)
- * @returns Array of created daily_meal_instances
+ * @param {string} subscriptionId - The subscription ID
+ * @param {Date | string} date - The date for which to create instances (Date or ISO string)
+ * @returns {Promise<daily_meal_instances[]>} Array of created daily_meal_instances
  */
 export async function generateInstancesForSubscription(subscription_id: string) {
 	const sub = await DailyMealDao.getSubscriptionById(subscription_id, {
@@ -713,7 +742,14 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 		console.error(e);
 	}
 }
-
+/**
+ * Activate a subscription by its ID.
+  Generates instances for the subscription and updates its status to ACTIVE.
+  Logs any errors encountered during the process.
+ *
+ * @param {string} subscription_id - The ID of the subscription to activate.
+ * @returns {Promise<daily_meal_subscriptions | null>} The updated subscription or null if not found.
+ */
 export async function activateSubscriptionById(subscription_id: string) {
 	try {
 		await generateInstancesForSubscription(subscription_id);
@@ -726,7 +762,14 @@ export async function activateSubscriptionById(subscription_id: string) {
 		console.error(error);
 	}
 }
-
+/**
+ * Cancel a subscription by its ID.
+ * Cancels all planned instances for the subscription and updates its status to CANCELED.
+ * Logs any errors encountered during the process.
+ *
+ * @param {string} subscription_id - The ID of the subscription to cancel.
+ * @returns {Promise<daily_meal_subscriptions | null>} The updated subscription or null if not found.
+ */
 export async function cancelSubscriptionById(subscription_id: string) {
 	try {
 		await cancelInstancesForSubscription(subscription_id);
@@ -739,16 +782,22 @@ export async function cancelSubscriptionById(subscription_id: string) {
 		console.error(error);
 	}
 }
-
+/**
+ * Assigns a delivery driver with the least number of active subscriptions.
+ *
+ * @param {drivers[]} delivery_drivers - Array of delivery drivers with their active subscriptions
+ * @param {string} id_to_ignore - ID of the driver to ignore
+ * @returns {Object} - The assigned delivery driver
+ */
 function assignDeliveryDriver(
-	delivery_drivers: (delivery_drivers & { subscriptions: daily_meal_subscriptions[] })[],
+	delivery_drivers: (drivers & { subscriptions: daily_meal_subscriptions[] })[],
 	id_to_ignore?: string
 ) {
 	if (!delivery_drivers || delivery_drivers.length === 0) {
 		throw new Error('No delivery drivers available for assignment.');
 	}
 	const driver = delivery_drivers
-		.filter((d: delivery_drivers) => d.delivery_driver_id !== id_to_ignore)
+		.filter((d: drivers) => d.driver_id !== id_to_ignore)
 		.reduce((prev, current) => {
 			return (prev.subscriptions?.length || 0) < (current.subscriptions?.length || 0) ? prev : current;
 		});
@@ -756,7 +805,7 @@ function assignDeliveryDriver(
 		throw new Error('No delivery driver found with the least active subscriptions.');
 	}
 	console.log(
-		`Assigned delivery driver: ${driver.delivery_driver_id} with ${driver.subscriptions?.length} active subscriptions.`
+		`Assigned delivery driver: ${driver.driver_id} with ${driver.subscriptions?.length} active subscriptions.`
 	);
 	return driver;
 }
@@ -899,7 +948,12 @@ export async function createDailyMeals() {
 		console.error('Error creating daily meals:', error);
 	}
 }
-
+/**
+ * Disconnects a delivery driver from all their assigned daily meal subscriptions.
+ *
+ * @param {string} delivery_driver_id - The ID of the delivery driver to disconnect.
+ * @returns {Promise<void>}
+ */
 export async function disconnectDriverFromAllSubscriptions(delivery_driver_id: string) {
 	try {
 		const subscriptions = await prisma.daily_meal_subscriptions.findMany({

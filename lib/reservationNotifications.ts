@@ -64,13 +64,25 @@ export const VARIABLE_CATALOG: Record<string, string> = {
 // ————————————————————————————————————
 const PLACEHOLDER_RE = /\{([a-zA-Z0-9_.]+)\}/g;
 
+/**
+ * Extract placeholders from a template string.
+ *
+ * @param {string | null | undefined} input
+ * @returns {string[]}
+ */
 export function extractPlaceholders(input: string | null | undefined): string[] {
 	if (!input) return [];
 	const out = new Set<string>();
 	for (const m of input.matchAll(PLACEHOLDER_RE)) out.add(m[1]!);
 	return [...out];
 }
-
+/**
+ * Render a template string by replacing placeholders with variable values.
+ *
+ * @param {string | null | undefined} input
+ * @param {Record<string, string | undefined>} vars
+ * @returns {string | undefined}
+ */
 function renderTemplate(
 	input: string | null | undefined,
 	vars: Record<string, string | undefined>
@@ -78,7 +90,12 @@ function renderTemplate(
 	if (!input) return undefined;
 	return input.replace(PLACEHOLDER_RE, (_, key) => vars[key] ?? '');
 }
-
+/**
+ * Format a date as 'dd.mm.yyyy'.
+ *
+ * @param {Date | null | undefined} d
+ * @returns {string | undefined}
+ */
 function fmtDate(d: Date | null | undefined): string | undefined {
 	if (!d) return undefined;
 	return new Intl.DateTimeFormat(LOCALE, {
@@ -88,7 +105,12 @@ function fmtDate(d: Date | null | undefined): string | undefined {
 		timeZone: TZ,
 	}).format(d);
 }
-
+/**
+ * Format a date as 'HH:MM' (24-hour).
+ *
+ * @param {Date | null | undefined} d
+ * @returns {string | undefined}
+ */
 function fmtTime(d: Date | null | undefined): string | undefined {
 	if (!d) return undefined;
 	return new Intl.DateTimeFormat(LOCALE, {
@@ -98,17 +120,32 @@ function fmtTime(d: Date | null | undefined): string | undefined {
 		timeZone: TZ,
 	}).format(d);
 }
-
+/**
+ * Format a date to get the full weekday name.
+ *
+ * @param {Date | null | undefined} d
+ * @returns {string | undefined}
+ */
 function fmtWeekday(d: Date | null | undefined): string | undefined {
 	if (!d) return undefined;
 	return new Intl.DateTimeFormat(LOCALE, { weekday: 'long', timeZone: TZ }).format(d);
 }
-
+/**
+ * Format a date to get the full month name.
+ *
+ * @param {Date | null | undefined} d
+ * @returns {string | undefined}
+ */
 function fmtMonth(d: Date | null | undefined): string | undefined {
 	if (!d) return undefined;
 	return new Intl.DateTimeFormat(LOCALE, { month: 'long', timeZone: TZ }).format(d);
 }
-
+/**
+ * Format a date as a long date string (e.g. 'Monday, 1 January 2024').
+ *
+ * @param {Date | null | undefined} d
+ * @returns {string | undefined}
+ */
 function fmtDateLong(d: Date | null | undefined): string | undefined {
 	if (!d) return undefined;
 	return new Intl.DateTimeFormat(LOCALE, {
@@ -119,13 +156,20 @@ function fmtDateLong(d: Date | null | undefined): string | undefined {
 		timeZone: TZ,
 	}).format(d);
 }
-
+/** Join non-empty strings with a separator.
+ * @param {(string | null | undefined)[]} arr
+ * @param {string} [sep=', ']
+ * @returns {string | undefined}
+ */
 function joinNonEmpty(arr: (string | null | undefined)[], sep = ', '): string | undefined {
 	const v = arr.filter(Boolean).join(sep);
 	return v || undefined;
 }
 
-/** Pick 'sl' first; else the first available string value from a JSON object. */
+/** Pick 'sl' first; else the first available string value from a JSON object.
+ * @param {Prisma.JsonValue | null | undefined} v
+ * @returns {string | undefined}
+ */
 function pickMultilangString(v: Prisma.JsonValue | null | undefined): string | undefined {
 	if (!v) return undefined;
 	if (typeof v === 'string') return v;
@@ -163,7 +207,12 @@ type Loaded = {
 	location: { name?: string | null; address?: addresses | null; phone?: string | null } | null;
 	customer: (Partial<Customer> & { first_name?: string | null; last_name?: string | null }) | null;
 };
-
+/**
+ * Load necessary data for booking notifications.
+ *
+ * @param {Ctx} ctx
+ * @returns {Promise<Loaded>}
+ */
 async function loadForBooking(ctx: Ctx): Promise<Loaded> {
 	const business = await prisma.business.findFirst({
 		where: { reservation_module: { reservation_module_id: ctx.reservation_module_id } },
@@ -202,6 +251,12 @@ async function loadForBooking(ctx: Ctx): Promise<Loaded> {
 // ————————————————————————————————————
 // Variable resolution (closed-world, single service)
 // ————————————————————————————————————
+/**
+ * Resolve variables for notification templates based on the booking context.
+ *
+ * @param {Ctx} ctx
+ * @returns {Promise<Record<string, string | undefined>>}
+ */
 export async function resolveVariables(ctx: Ctx): Promise<Record<string, string | undefined>> {
 	const { business, booking, location, customer } = await loadForBooking(ctx);
 
@@ -262,16 +317,37 @@ export async function resolveVariables(ctx: Ctx): Promise<Record<string, string 
 // ————————————————————————————————————
 // Rendering helpers
 // ————————————————————————————————————
+/**
+ * Render subject using template and context.
+ *
+ * @param {string | null | undefined} subjectTpl
+ * @param {Ctx} ctx
+ * @returns {Promise<string>}
+ */
 export async function renderSubject(subjectTpl: string | null | undefined, ctx: Ctx) {
 	const vars = await resolveVariables(ctx);
 	return renderTemplate(subjectTpl, vars) ?? '';
 }
-
+/**
+ * Render text body using template and context.
+ *
+ * @param {string | null | undefined} textTpl
+ * @param {Ctx} ctx
+ * @returns {Promise<string>}
+ */
 export async function renderText(textTpl: string | null | undefined, ctx: Ctx) {
 	const vars = await resolveVariables(ctx);
 	return renderTemplate(textTpl, vars) ?? '';
 }
-
+/**
+ * Render email HTML using Pug template, subject and text templates, and context.
+ *
+ * @param {string | null | undefined} subjectTpl
+ * @param {string | null | undefined} textTpl
+ * @param {Ctx} ctx
+ * @param {string} pugTemplatePath
+ * @returns {Promise<string>}
+ */
 export async function renderEmailHtml(
 	subjectTpl: string | null | undefined,
 	textTpl: string | null | undefined,
@@ -295,6 +371,14 @@ export async function renderEmailHtml(
 // ————————————————————————————————————
 // Safety check
 // ————————————————————————————————————
+
+/**
+ * Validate that all placeholders used in the templates are known (exist in VARIABLE_CATALOG).
+ *
+ * @param {string | null | undefined} subjectTpl
+ * @param {string | null | undefined} textTpl
+ * @returns {Promise<void>}
+ */
 export function validateTemplatePlaceholders(
 	subjectTpl: string | null | undefined,
 	textTpl: string | null | undefined
@@ -370,6 +454,10 @@ function buildVariablesJsonSchema() {
 	const props = Object.fromEntries(Object.keys(VARIABLE_CATALOG).map((k) => [k, { type: 'string' }]));
 	return { type: 'object', additionalProperties: false, properties: props };
 }
+/**
+ * Bootstrap notification templates/mappings/preferences for all existing modules.
+ * @returns {Promise<void>}
+ */
 export async function bootstrapAllExistingModuleNotifications() {
 	console.log('Bootstrapping notifications for all existing modules...');
 	const modules = await prisma.reservation_module.findMany({

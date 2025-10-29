@@ -16,7 +16,15 @@ async function main() {
 		}
 	});
 }
-
+/**
+ * Generates default roles and permissions for a reservation business.
+ *
+ * @param {PrismaClient} tx
+ * @param {Object} business
+ * @param {string} business.business_id
+ * @param {string} business.name
+ * @returns {Promise<void>}
+ */
 async function generateRolesForReservationBusiness(tx: PrismaClient, business: { business_id: string; name: string }) {
 	const permissions = await tx.permission.findMany({});
 	const ROLES = [

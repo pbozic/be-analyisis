@@ -29,7 +29,12 @@ interface PromoAnalyticsRowInput {
 	type: ANALYTICS_TYPE;
 	daily_meal_subscription_id?: string;
 }
-
+/**
+ * Creates multiple promo analytics entries in bulk.
+ *
+ * @param {PromoAnalyticsRowInput[]} rows - The rows to create.
+ * @returns {Promise<{ created: number }>} - The result of the creation.
+ */
 async function createPromoAnalyticsEntries(rows: PromoAnalyticsRowInput[]) {
 	if (!rows.length) return { created: 0 };
 	const data = rows.map((r) => ({
@@ -47,7 +52,12 @@ async function createPromoAnalyticsEntries(rows: PromoAnalyticsRowInput[]) {
 	return { created: result.count };
 }
 
-// (Optional) duplicate suppression fingerprint builder (currently inactive)
+/**
+ * Checks if a similar promo analytics entry has been created within the rate-limit window.
+ *
+ * @param {PromoAnalyticsRowInput} _row
+ * @returns {Promise<boolean>}
+ */
 async function isDuplicate(_row: PromoAnalyticsRowInput): Promise<boolean> {
 	if (PROMO_ANALYTICS_RATE_LIMIT_MINUTES <= 0) return false;
 	const since = new Date(Date.now() - PROMO_ANALYTICS_RATE_LIMIT_MINUTES * 60 * 1000);

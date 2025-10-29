@@ -1,9 +1,14 @@
+import type { Prisma } from '@prisma/client';
 import type { menu_items, tax_rates } from '@prisma/client';
 
 import TaxDao from '../dao/Tax.js';
 import prisma from '../prisma/prisma.js';
-
-export async function updateMenuItemsWithNewTaxRates() {
+/**
+ * Update menu items with new tax rates.
+ *
+ * @returns {Promise<void>}
+ */
+export async function updateMenuItemsWithNewTaxRates(): Promise<void> {
 	try {
 		const activeTaxRates = await TaxDao.getActiveTaxRates();
 
@@ -13,7 +18,7 @@ export async function updateMenuItemsWithNewTaxRates() {
 			console.warn('No active tax rate found to update menu items.');
 			return;
 		}
-		await prisma.$transaction(async (tx) => {
+		await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 			// Find all menu items that need to be updated with the new tax rate
 			const menuItemsToUpdate = await tx.menu_items.findMany({
 				where: {
@@ -46,13 +51,16 @@ export async function updateMenuItemsWithNewTaxRates() {
 
 /**
  * Execute tax rate change
+ *
+ * @param {tax_rates} newTaxRate - The new tax rate to be activated
+ * @returns {Promise<void>}
  */
 async function executeTaxRateChange(newTaxRate: tax_rates): Promise<void> {
 	const taxRateId = newTaxRate.tax_rates_id;
 	console.log(`Executing tax rate change for ID: ${taxRateId}`);
 
 	try {
-		await prisma.$transaction(async (tx) => {
+		await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 			const menuItemsToUpdate = await tx.menu_items.findMany({
 				where: {
 					tax_rate: {
@@ -113,8 +121,10 @@ async function executeTaxRateChange(newTaxRate: tax_rates): Promise<void> {
 
 /**
  * Check for upcoming tax rate changes and execute them if due
+ *
+ * @returns {Promise<void>}
  */
-export async function checkTaxRateChanges() {
+export async function checkTaxRateChanges(): Promise<void> {
 	try {
 		const upcomingTaxRates = await TaxDao.getInactiveTaxRates();
 
