@@ -15,8 +15,9 @@ config();
  * @summary List all vehicles
  * @description Retrieves a list of all vehicles in the database.
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
+ * @prisma_model vehicles
  */
 async function listVehicles(req, res) {
 	try {
@@ -34,8 +35,9 @@ async function listVehicles(req, res) {
  * @description Retrieves vehicles associated with a specific business ID.
  * @pathParam {string} businessId - The ID of the business
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
+ * @prisma_model vehicles
  */
 async function listVehiclesByBusiness(req, res) {
 	const { businessId } = req.params;
@@ -54,9 +56,10 @@ async function listVehiclesByBusiness(req, res) {
  * @description Retrieves a single vehicle by its ID from the database.
  * @pathParam {string} vehicle_id - The ID of the vehicle to retrieve
  * @response 200 - Success
- * @responseContent {Vehicle} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Vehicle not found
  * @response 500 - Error fetching vehicle
+ * @prisma_model vehicles
  */
 async function getVehicleById(req, res) {
 	const { vehicle_id } = req.params;
@@ -79,8 +82,10 @@ async function getVehicleById(req, res) {
  * @description Retrieves a list of vehicles assigned to a specific driver.
  * @pathParam {string} driver_id - The ID of the driver
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error fetching vehicles for driver
+ * @prisma_model vehicles
+ * @prisma_model vehicle_drivers
  */
 async function getVehiclesByDriverId(req, res) {
 	const { driver_id } = req.params;
@@ -99,8 +104,9 @@ async function getVehiclesByDriverId(req, res) {
  * @description Retrieves a list of vehicles of a specific class.
  * @pathParam {string} vehicleClass - The class of the vehicles to retrieve
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
+ * @prisma_model vehicles
  */
 async function getVehiclesByClass(req, res) {
 	const { vehicleClass } = req.params;
@@ -119,8 +125,9 @@ async function getVehiclesByClass(req, res) {
  * @description Retrieves a list of vehicles of a specific category.
  * @pathParam {string} vehicleCategory - The category of the vehicles to retrieve
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
+ * @prisma_model vehicles
  */
 async function getVehiclesByCategory(req, res) {
 	const { vehicleCategory } = req.params;
@@ -140,8 +147,9 @@ async function getVehiclesByCategory(req, res) {
  * @pathParam {string} vehicleClass - The class of the vehicles
  * @pathParam {string} vehicleCategory - The category of the vehicles
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
+ * @prisma_model vehicles
  */
 async function getVehiclesByClassAndCategory(req, res) {
 	const { vehicleClass, vehicleCategory } = req.params;
@@ -161,8 +169,10 @@ async function getVehiclesByClassAndCategory(req, res) {
  * @pathParam {string} driverId - The ID of the driver
  * @pathParam {string} vehicleClass - The class of the vehicles to retrieve
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
+ * @prisma_model vehicles
+ * @prisma_model vehicle_drivers
  */
 async function getVehiclesOfDriverByClass(req, res) {
 	const { driverId, vehicleClass } = req.params;
@@ -182,8 +192,10 @@ async function getVehiclesOfDriverByClass(req, res) {
  * @pathParam {string} driverId - The ID of the driver
  * @pathParam {string} vehicleCategory - The category of the vehicles to retrieve
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
+ * @prisma_model vehicles
+ * @prisma_model vehicle_drivers
  */
 async function getVehiclesOfDriverByCategory(req, res) {
 	const { driverId, vehicleCategory } = req.params;
@@ -204,8 +216,10 @@ async function getVehiclesOfDriverByCategory(req, res) {
  * @pathParam {string} vehicleClass - The class of the vehicles
  * @pathParam {string} vehicleCategory - The category of the vehicles
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
+ * @prisma_model vehicles
+ * @prisma_model vehicle_drivers
  */
 async function getVehiclesOfDriverByClassAndCategory(req, res) {
 	const { driverId, vehicleClass, vehicleCategory } = req.params;
@@ -230,11 +244,14 @@ async function getVehiclesOfDriverByClassAndCategory(req, res) {
  * @summary Create a new vehicle
  * @description Adds a new vehicle to the database, including its specifications.
  * @operationId createNewVehicle
- * @bodyContent {Vehicle} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Vehicle created successfully
- * @responseContent {Vehicle} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating vehicle
+ * @prisma_model vehicles
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function createVehicle(req, res) {
 	try {
@@ -292,11 +309,14 @@ async function createVehicle(req, res) {
  * @description Updates an existing vehicle's details and specifications.
  * @operationId updateVehicle
  * @pathParam {string} vehicle_id - The ID of the vehicle to update
- * @bodyContent {VehicleUpdate} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Vehicle updated successfully
- * @responseContent {Vehicle} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating vehicle
+ * @prisma_model vehicles
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function updateVehicle(req, res) {
 	const vehicle_id = req.body.vehicle_id;
@@ -355,11 +375,12 @@ async function updateVehicle(req, res) {
  * @tag Vehicles
  * @summary Assign vehicles to a driver
  * @description Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
- * @bodyContent {array} vehicles - The vehicles to assign
- * @bodyContent {string} driver_id - The ID of the driver to whom the vehicle is being assigned
+ * @bodyContent {object} application/json
  * @response 200 - Vehicle assigned successfully
- * @responseContent {Vehicle} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error assigning vehicles to driver
+ * @prisma_model vehicle_drivers
+ * @prisma_model vehicles
  */
 async function assignVehiclesToDriver(req, res) {
 	const { vehicles, driver_id } = req.body;
@@ -394,11 +415,12 @@ async function assignVehiclesToDriver(req, res) {
  * @tag Vehicles
  * @summary Remove vehicles from a driver
  * @description Disassociates vehicles from its assigned driver by setting the vehicle's can_drive to false.
- * @bodyContent {array} vehicles - The vehicles to unassign
- * @bodyContent {string} driver_id - The ID of the driver to unassign
+ * @bodyContent {object} application/json
  * @response 200 - Vehicle disassociated successfully
- * @responseContent {Vehicle} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error removing vehicle from driver
+ * @prisma_model vehicle_drivers
+ * @prisma_model vehicles
  */
 async function removeVehiclesFromDriver(req, res) {
 	const { vehicles, driver_id } = req.body;
@@ -429,6 +451,7 @@ async function removeVehiclesFromDriver(req, res) {
  * @response 200 - Vehicle deleted successfully
  * @responseContent {object} 200.application/json { message: "Vehicle deleted successfully" }
  * @response 400 - Error deleting vehicle
+ * @prisma_model vehicles
  */
 async function deleteVehicle(req, res) {
 	try {

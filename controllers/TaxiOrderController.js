@@ -48,15 +48,16 @@ import S3Helper from '../lib/s3.js';
 const { UserSockets, io, SocketStore } = socket;
 
 /**
- * GET /taxi/order/{orderId}
+ * GET /taxi/order/:order_id
  * @tag Taxi
  * @summary Get order details.
  * @description This fetches the order details using the given order id.
  * @operationId getOrder
  * @pathParam {integer} orderId - The ID of the taxi order to retrieve
  * @response 200 - Successful operation. Returns order details in the response body.
- * @responseContent {Order} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function getOrder(req, res) {
 	const { order_id } = req.params;
@@ -76,8 +77,9 @@ async function getOrder(req, res) {
  * @description This fetches all completed orders for a specific user.
  * @operationId getCompletedDeliveryOrders
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function getActiveTaxiOrders(req, res) {
 	const { user_id, type } = req.params;
@@ -97,8 +99,9 @@ async function getActiveTaxiOrders(req, res) {
  * @description This fetches all completed orders for a specific user.
  * @operationId getCompletedDeliveryOrders
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 export async function getMyActiveTaxiOrders(req, res) {
 	const { user_id } = req.user;
@@ -181,8 +184,9 @@ async function getActiveOrdersHelper(user_id, type, isBusinessUser = false) {
  * @operationId getActiveTaxiOrdersByDriverId
  * @pathParam {integer} driver_id - The ID of the driver to retrieve active orders for
  * @response 200 - Successful operation. Returns a list of active orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function getActiveTaxiOrdersByDriverId(req, res) {
 	const { driver_id } = req.params;
@@ -215,8 +219,9 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedTaxiOrders
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function getTaxiOrdersByDriverId(req, res) {
 	const { driver_id } = req.params;
@@ -240,8 +245,9 @@ async function getTaxiOrdersByDriverId(req, res) {
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedTaxiOrders
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function getCompletedTaxiOrders(req, res) {
 	const { driver_id } = req.params;
@@ -266,8 +272,9 @@ async function getCompletedTaxiOrders(req, res) {
  * @description This fetches all canceled orders for a specific driver.
  * @operationId getCanceledTaxiOrders
  * @response 200 - Successful operation. Returns a list of canceled orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function getCanceledTaxiOrders(req, res) {
 	const { driver_id } = req.params;
@@ -292,8 +299,9 @@ async function getCanceledTaxiOrders(req, res) {
  * @description This fetches all rejected orders for a specific driver.
  * @operationId getRejectedTaxiOrders
  * @response 200 - Successful operation. Returns a list of rejected orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function getRejectedTaxiOrders(req, res) {
 	const { driver_id } = req.params;
@@ -318,8 +326,9 @@ async function getRejectedTaxiOrders(req, res) {
  * @description This fetches all taxi orders.
  * @operationId getTaxiOrders
  * @response 200 - Successful operation. Returns a list of all taxi orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function getTaxiOrders(req, res) {
 	try {
@@ -350,8 +359,9 @@ async function getTaxiOrders(req, res) {
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedTaxiOrdersByUserId
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function getCompletedTaxiOrdersByUserId(req, res) {
 	const { user_id } = req.params;
@@ -399,8 +409,9 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
  * @description This fetches all completed orders for a business.
  * @operationId getCompletedTaxiOrdersByBusinessId
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function getCompletedTaxiOrdersByBusinessId(req, res) {
 	const { business_id } = req.params;
@@ -428,8 +439,9 @@ async function getCompletedTaxiOrdersByBusinessId(req, res) {
  * @description This fetches all canceled orders for a specific driver.
  * @operationId getCanceledTaxiOrders
  * @response 200 - Successful operation. Returns a list of canceled orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function getCanceledTaxiOrdersByUserId(req, res) {
 	const { user_id } = req.params;
@@ -733,8 +745,8 @@ async function handlePaymentForTransferOrder(order, return_url) {
 			parseFloat(
 				[VEHICLE_CLASS.PRIVATE_DRIVER, VEHICLE_CLASS.CARGO_VAN].includes(order.preferences?.vehicle_class)
 					? order.payment.extras?.price ||
-							order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
-								CARGO_TRANSFER_FEE.CARGO_FEE
+					order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
+					CARGO_TRANSFER_FEE.CARGO_FEE
 					: 0
 			) * 100
 		);
@@ -744,11 +756,11 @@ async function handlePaymentForTransferOrder(order, return_url) {
 		//Handle automatic credits spending ~ use credits to pay platform cut first, to keep the driver cut mostly off stripe
 		const reservedCredits = order.allow_credits_usage
 			? await WalletFundsHelpers.reserveCreditsForOrder(
-					user.user_id,
-					TOTAL_COST_CENTS,
-					order.order_id,
-					FUNDS_TYPE.CREDITS_TAXI
-				)
+				user.user_id,
+				TOTAL_COST_CENTS,
+				order.order_id,
+				FUNDS_TYPE.CREDITS_TAXI
+			)
 			: [];
 		const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
 		const DISCOUNTED_TOTAL_COST = TOTAL_COST_CENTS - CREDITS_AMOUNT_RESERVED;
@@ -888,11 +900,14 @@ async function handlePaymentForTransferOrder(order, return_url) {
  * @description This creates a new taxi order with the provided details from the request body. Returns the created order if successful.
  * @operationId createOrder
  * @bodyDescription Request body must include necessary order details.
- * @bodyContent {TaxiOrderRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the newly created order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
+ * @prisma_model business_clients
+ * @prisma_model municipalities
  */
 async function createOrder(req, res) {
 	try {
@@ -1110,11 +1125,12 @@ function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
  * @description This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
  * @operationId createOrder
  * @bodyDescription Request body must include necessary order details.
- * @bodyContent {DeliveryOrderRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the newly created order in the response body.
- * @responseContent {DeliveryOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function createDispatchOrder(req, res) {
 	try {
@@ -1139,11 +1155,13 @@ async function createDispatchOrder(req, res) {
  * @description Accepts taxi order with the provided details from the request body. Returns the accepted order if successful.
  * @operationId acceptOrder
  * @bodyDescription Request body must include necessary order details.
- * @bodyContent {TaxiOrderRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the accepted order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
+ * @prisma_model drivers
  */
 async function acceptOrder(req, res) {
 	const { order_id } = req.body;
@@ -1244,8 +1262,10 @@ async function acceptOrder(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the completed order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
+ * @prisma_model taxi_orders
+ * @prisma_model allowances
  */
 async function completeOrder(req, res) {
 	try {
@@ -1407,9 +1427,9 @@ async function completeOrder(req, res) {
 							order.preferences?.vehicle_class
 						)
 							? order.payment.extras?.price ||
-									order.cargo_preferences?.additional_workers *
-										CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
-										CARGO_TRANSFER_FEE.CARGO_FEE
+							order.cargo_preferences?.additional_workers *
+							CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
+							CARGO_TRANSFER_FEE.CARGO_FEE
 							: 0
 					) * 100
 				);
@@ -1419,11 +1439,11 @@ async function completeOrder(req, res) {
 				//Handle automatic credits spending ~ use credits to pay platform cut first, to keep the driver cut mostly off stripe
 				const reservedCredits = order.allow_credits_usage
 					? await WalletFundsHelpers.reserveCreditsForOrder(
-							user.user_id,
-							TOTAL_COST_CENTS,
-							order.order_id,
-							FUNDS_TYPE.CREDITS_TAXI
-						)
+						user.user_id,
+						TOTAL_COST_CENTS,
+						order.order_id,
+						FUNDS_TYPE.CREDITS_TAXI
+					)
 					: [];
 				const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
 				const DISCOUNTED_TOTAL_COST = TOTAL_COST_CENTS - CREDITS_AMOUNT_RESERVED;
@@ -1686,11 +1706,13 @@ async function completeOrder(req, res) {
  * @description Updates the status of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateOrderStatus
  * @bodyDescription Request body must include 'order_id' to identify the order and 'status' to specify the new status.
- * @bodyContent {UpdateOrderStatusRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
+ * @prisma_model drivers
  */
 async function updateOrderStatus(req, res) {
 	try {
@@ -1740,11 +1762,12 @@ async function updateOrderStatus(req, res) {
  * @description Updates the vehicle preferences of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateTaxiOrderPreferences
  * @bodyDescription Request body must include 'order_id' to identify the order and 'vehicle_category' and 'vehicle_class' to specify the new vehicle preferences.
- * @bodyContent {UpdateOrderVehiclePreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function updateTaxiOrderPreferences(req, res) {
 	try {
@@ -1782,8 +1805,9 @@ async function updateTaxiOrderPreferences(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the cancelled order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
+ * @prisma_model taxi_orders
  */
 async function cancelOrder(req, res) {
 	const { order_id, status, cancellation_reason } = req.body;
@@ -1917,8 +1941,10 @@ async function cancelOrder(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the rejected order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
+ * @prisma_model taxi_orders
+ * @prisma_model taxi_order_sent
  */
 async function rejectOrder(req, res) {
 	const { order_id, status, cancellation_reason } = req.body;
@@ -2025,11 +2051,12 @@ async function rejectOrder(req, res) {
  * @description Updates the route of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateTaxiOrderRoute
  * @bodyDescription Request body must include 'order_id' and the new 'route' details.
- * @bodyContent {UpdateOrderRouteRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new route in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function updateTaxiOrderRoute(req, res) {
 	try {
@@ -2049,11 +2076,12 @@ async function updateTaxiOrderRoute(req, res) {
  * @description Updates the pickup location of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateTaxiOrderPickupLocation
  * @bodyDescription Request body must include 'order_id' and the new 'pickup_location' details.
- * @bodyContent {UpdateOrderPickupLocationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new pickup location in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function updateTaxiOrderPickupLocation(req, res) {
 	try {
@@ -2073,11 +2101,12 @@ async function updateTaxiOrderPickupLocation(req, res) {
  * @description Updates the delivery location of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateTaxiOrderDeliveryLocation
  * @bodyDescription Request body must include 'order_id' and the new 'delivery_location' details.
- * @bodyContent {UpdateOrderDeliveryLocationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new delivery location in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function updateTaxiOrderDeliveryLocation(req, res) {
 	try {
@@ -2097,11 +2126,12 @@ async function updateTaxiOrderDeliveryLocation(req, res) {
  * @description Updates the complete route of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateCompleteTaxiRoute
  * @bodyDescription Request body must include 'order_id', and the new 'route' details.
- * @bodyContent {UpdateCompleteRouteRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new complete route in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function updateCompleteTaxiRoute(req, res) {
 	const { order_id, route } = req.body;
@@ -2122,11 +2152,12 @@ async function updateCompleteTaxiRoute(req, res) {
  * @description Updates the timeline of a taxi order.
  * @operationId updateTaxiOrderTimeline
  * @bodyDescription Request body must include 'order_id', and the new 'timeline' details.
- * @bodyContent {UpdateTaxiOrderTimelineRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new timeline in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function updateTaxiOrderTimeline(req, res) {
 	const { order_id, timeline } = req.body;
@@ -2148,11 +2179,12 @@ async function updateTaxiOrderTimeline(req, res) {
  * @description Updates the payment details of the order.
  * @operationId updateTaxiOrderPayment
  * @bodyDescription Request body must include 'order_id', and the new 'route' details.
- * @bodyContent {UpdateTaxiOrderPaymentRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new payment details.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function updateTaxiOrderPayment(req, res) {
 	const { order_id, payment } = req.body;
@@ -2180,7 +2212,7 @@ async function updateTaxiOrderPayment(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Updated order with payment.status=PAID and status=PENDING
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Bad request (wrong status/type or insufficient funds)
  * @response 500 - Server error
  * @prisma_model wallet_funds
@@ -2203,8 +2235,8 @@ async function confirmWalletPayment(req, res) {
 			parseFloat(
 				[VEHICLE_CLASS.PRIVATE_DRIVER, VEHICLE_CLASS.CARGO_VAN].includes(order.preferences?.vehicle_class)
 					? order.payment.extras?.price ||
-							order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
-								CARGO_TRANSFER_FEE.CARGO_FEE
+					order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
+					CARGO_TRANSFER_FEE.CARGO_FEE
 					: 0
 			) * 100
 		);
@@ -2238,7 +2270,7 @@ async function confirmWalletPayment(req, res) {
 }
 
 /**
- * POST /taxi/order/{order_id}/signature
+ * POST /taxi/order/:order_id/signature
  * @tag Taxi
  * @summary Upload a signature for a taxi order
  * @description Stores a signature image/PDF for the order and appends a timeline entry.
@@ -2248,7 +2280,7 @@ async function confirmWalletPayment(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Updated order with new timeline entry
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Missing file data or order not found
  * @prisma_model files
  * @prisma_model taxi_orders
@@ -2284,7 +2316,7 @@ async function uploadTaxiOrderSignature(req, res) {
 }
 
 /**
- * POST /taxi/order/{order_id}/photo
+ * POST /taxi/order/:order_id/photo
  * @tag Taxi
  * @summary Upload a photo for a taxi order
  * @description Stores a photo for the order (e.g., proof) and appends a timeline entry.
@@ -2294,7 +2326,7 @@ async function uploadTaxiOrderSignature(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Updated order with new timeline entry
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Missing file data or order not found
  * @prisma_model files
  * @prisma_model taxi_orders
@@ -2330,17 +2362,18 @@ async function uploadTaxiOrderPhoto(req, res) {
 }
 
 /**
- * POST /taxi/driver
+ * POST /taxi/order/append_driver
  * @tag Taxi
  * @summary Append driver to taxi order.
  * @description Append driver to taxi order.
  * @operationId appendTaxiDriver
  * @bodyDescription Request body must include 'order_id', and 'driver_id'
- * @bodyContent {selectTaxiDriverRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new driver details.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function appendTaxiDriver(req, res) {
 	const { order_id, driver_id } = req.body;
@@ -2362,7 +2395,17 @@ async function appendTaxiDriver(req, res) {
 		res.status(500).json(e);
 	}
 }
-
+/**
+ * GET /taxi/orders/scheduled_orders
+ * @tag Taxi
+ * @summary Get all scheduled taxi orders.
+ * @description This fetches all scheduled taxi orders.
+ * @operationId getScheduledOrders
+ * @response 200 - Successful operation. Returns a list of scheduled taxi orders in the response body.
+ * @responseContent {object} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
+ */
 async function getScheduledOrders(req, res) {
 	try {
 		const orders = await TaxiOrderDao.getOrders({
@@ -2378,7 +2421,18 @@ async function getScheduledOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
-
+/**
+ * GET /taxi/orders/scheduled_orders/driver/:driver_id
+ * @tag Taxi
+ * @summary Get accepted scheduled taxi orders by driver ID.
+ * @description This fetches accepted scheduled taxi orders for a specific driver.
+ * @operationId getAcceptedScheduledOrders
+ * @pathParam {string} driver_id - Driver id
+ * @response 200 - Successful operation. Returns a list of accepted scheduled taxi orders in the response body.
+ * @responseContent {object} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
+ */
 async function getAcceptedScheduledOrders(req, res) {
 	try {
 		const orders = await TaxiOrderDao.getOrders({
@@ -2395,7 +2449,18 @@ async function getAcceptedScheduledOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
-
+/**
+ * GET /taxi/orders/scheduled_orders/user/:user_id
+ * @tag Taxi
+ * @summary Get scheduled taxi orders by user ID.
+ * @description This fetches scheduled taxi orders for a specific user.
+ * @operationId getScheduledOrdersByUserId
+ * @pathParam {string} user_id - User id
+ * @response 200 - Successful operation. Returns a list of scheduled taxi orders in the response body.
+ * @responseContent {object} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
+ */
 async function getScheduledOrdersByUserId(req, res) {
 	const { user_id } = req.params;
 	try {
@@ -2412,7 +2477,19 @@ async function getScheduledOrdersByUserId(req, res) {
 		res.status(500).json(e);
 	}
 }
-
+/**
+ * GET /taxi/order/:order_id/available-drivers
+ * @tag Taxi
+ * @summary Get available drivers for a taxi order.
+ * @description This fetches available drivers for a specific taxi order.
+ * @operationId getDriversForOrder
+ * @pathParam {string} order_id - Taxi order id
+ * @response 200 - Successful operation. Returns a list of available drivers in the response body.
+ * @responseContent {object} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model drivers
+ * @prisma_model taxi_order_sent
+ */
 async function getDriversForOrder(req, res) {
 	try {
 		const drivers = await DriverDao.getAvailableDrivers();
@@ -2438,8 +2515,9 @@ async function getDriversForOrder(req, res) {
  * @description This fetches orders with pagination.
  * @operationId getTaxiOrdersWithPagination
  * @response 200 - Successful operation. Returns a list of orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function getTaxiOrdersWithPagination(req, res) {
 	const { where, orderBy } = req.body;
@@ -2467,14 +2545,15 @@ async function getTaxiOrdersWithPagination(req, res) {
 }
 
 /**
- * GET /taxi/orders/today
+ * GET /taxi/today
  * @tag Taxi
  * @summary Get all taxi orders for today and earnings.
  * @description This fetches all taxi orders for today and earnings.
  * @operationId getTaxiOrdersToday
  * @response 200 - Successful operation. Returns a list of all taxi orders today and earnings in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function getTaxiOrdersToday(req, res) {
 	try {
@@ -2494,7 +2573,20 @@ async function getTaxiOrdersToday(req, res) {
 		res.status(500).json(e);
 	}
 }
-
+/**
+ * POST /taxi/grouped_order/cancel
+ * @tag Taxi
+ * @summary Cancel grouped taxi order by parent order ID.
+ * @description Cancels all orders in a grouped taxi order based on the provided parent order ID.
+ * @operationId cancelGroupedOrderByParentId
+ * @bodyDescription Request body must include 'parent_order_id', 'status', and 'cancellation_reason'.
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns a list of all canceled taxi order IDs.
+ * @responseContent {object} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
+ */
 async function cancelGroupedOrderByParentId(req, res) {
 	console.info('TaxiOrderController', 'CANCEL GROUP ORDER', req.body);
 	const { parent_order_id, status, cancellation_reason } = req.body;
@@ -2563,7 +2655,20 @@ async function cancelGroupedOrderByParentId(req, res) {
 		res.status(500).json(e);
 	}
 }
-
+/**
+ * POST /taxi/grouped_order/reject
+ * @tag Taxi
+ * @summary Reject grouped taxi order by parent order ID.
+ * @description Rejects all orders in a grouped taxi order based on the provided parent order ID.
+ * @operationId rejectGroupedOrderByParentId
+ * @bodyDescription Request body must include 'parent_order_id' and 'rejection_reason'.
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns a list of all rejected taxi order IDs.
+ * @responseContent {object} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
+ */
 async function rejectGroupedOrderByParentId(req, res) {
 	console.info('TaxiOrderController', 'REJECT GROUP ORDER', req.body);
 	const { parent_order_id, rejection_reason } = req.body;
@@ -2650,14 +2755,15 @@ async function rejectGroupedOrderByParentId(req, res) {
 }
 
 /**
- * GET /taxi/orders/today
+ * GET /taxi/orders/van/split
  * @tag Taxi
  * @summary Splits Van order into multiple smaller orders
  * @description If we cant find a Van driver, we offer the user to split his order into multiple smaller orders.
  * @operationId splitVanOrder
  * @response 200 - Successful operation. Returns a list of all taxi orders created.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
  */
 async function splitVanOrder(req, res) {
 	const { order_id, info } = req.body;
@@ -2686,7 +2792,21 @@ async function splitVanOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
-
+/**
+ * POST /taxi/auth/calculate_transfer_price
+ * @tag Taxi
+ * @summary Calculate transfer ride price.
+ * @description Calculates the price for a transfer ride based on pickup and delivery locations and departure time.
+ * @operationId calculateTransferPrice
+ * @bodyDescription Request body must include 'pickup_location', 'delivery_location', and 'departure_time'.
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the calculated price data in the response body.
+ * @responseContent {object} 200.application/json
+ * @response 400 - Bad request. Returns error message if price could not be calculated.
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @prisma_model taxi_orders
+ */
 async function calculateTransferPrice(req, res) {
 	const { pickup_location, delivery_location, departure_time } = req.body;
 	try {

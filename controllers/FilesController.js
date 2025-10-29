@@ -34,6 +34,20 @@ async function upsertFileOnS3Helper(user_id, file, new_file_type, new_mime_type,
 	let key = S3Helper.getFileKey(file.file_id, new_mime_type);
 	await S3Helper.SaveObject(key, new_base64, new_mime_type, { users: [user_id] }, file, file.public);
 }
+/**
+ * POST /files
+ * @tag Files
+ * @summary Create a file
+ * @description Creates a new file record and uploads its content to S3.
+ * @operationId createFile
+ * @bodyDescription The file metadata and base64 content
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - File created successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Failed to create file
+ * @prisma_model files
+ */
 async function createFile(req, res) {
 	try {
 		const user_id = req.user.user_id;
@@ -51,6 +65,22 @@ async function createFile(req, res) {
 		});
 	}
 }
+/**
+ * PATCH /files/:file_id
+ * @tag Files
+ * @summary Update a file by ID
+ * @description Updates file metadata and replaces its content in S3.
+ * @operationId updateFileById
+ * @pathParam {string} file_id - The ID of the file to update
+ * @bodyDescription The updated file metadata and base64 content
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - File updated successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - File not found
+ * @response 500 - Failed to update file
+ * @prisma_model files
+ */
 async function updateFileById(req, res) {
 	try {
 		const user_id = req.user.user_id;

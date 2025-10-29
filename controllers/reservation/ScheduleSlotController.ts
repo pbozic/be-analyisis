@@ -14,15 +14,16 @@ import {
 import { createScheduleSlotWithData, updateScheduleSlotWithData } from './ScheduleSlotExceptionController.ts';
 
 /**
- * GET /reservation/schedule-slots/list/{schedule_id}
+ * GET /reservation/schedule-slots/list/:schedule_id
  * @tag Reservation
  * @summary Get all schedule slots by schedule ID
  * @description Retrieves all schedule slots for a given schedule ID.
  * @operationId getScheduleSlotsBySchedule
  * @pathParam {string} schedule_id - The ID of the schedule.
  * @response 200 - Schedule slots retrieved successfully
- * @responseContent {ScheduleSlot[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving schedule slots
+ * @prisma_model schedule_slot
  */
 export async function getScheduleSlotsByScheduleId(
 	req: ValidatedRequest<null, { schedule_id: string }>,
@@ -44,11 +45,12 @@ export async function getScheduleSlotsByScheduleId(
  * @summary Create a new schedule slot
  * @description Creates a new schedule slot.
  * @operationId createScheduleSlot
- * @requestBody {CreateScheduleSlotInput} requestBody - The schedule slot data to create.
+ * @bodyContent {object} application/json
  * @response 201 - Schedule slot created successfully
- * @responseContent {ScheduleSlot} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating schedule slot
+ * @prisma_model schedule_slot
  */
 export async function createScheduleSlot(req: ValidatedRequest<CreateScheduleSlotInput>, res: Response): Promise<void> {
 	try {
@@ -61,17 +63,18 @@ export async function createScheduleSlot(req: ValidatedRequest<CreateScheduleSlo
 }
 
 /**
- * PUT /reservation/schedule-slots/{id}
+ * PUT /reservation/schedule-slots/:id
  * @tag Reservation
  * @summary Update a schedule slot
  * @description Updates an existing schedule slot.
  * @operationId updateScheduleSlot
  * @pathParam {string} id - The ID of the schedule slot to update.
- * @requestBody {UpdateScheduleSlotSInput} requestBody - The data to update the slot with.
+ * @bodyContent {object} application/json
  * @response 200 - Schedule slot updated successfully
- * @responseContent {ScheduleSlot} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule slot not found
  * @response 500 - Error updating schedule slot
+ * @prisma_model schedule_slot
  */
 export async function updateScheduleSlot(
 	req: ValidatedRequest<UpdateScheduleSlotInput, { id: string }>,
@@ -87,7 +90,7 @@ export async function updateScheduleSlot(
 }
 
 /**
- * DELETE /reservation/schedule-slots/{id}
+ * DELETE /reservation/schedule-slots/:id
  * @tag Reservation
  * @summary Delete a schedule slot
  * @description Deletes a schedule slot by its ID.
@@ -96,6 +99,7 @@ export async function updateScheduleSlot(
  * @response 204 - Schedule slot deleted successfully
  * @response 404 - Schedule slot not found
  * @response 500 - Error deleting schedule slot
+ * @prisma_model schedule_slot
  */
 export async function deleteScheduleSlot(req: ValidatedRequest<null, { id: string }>, res: Response): Promise<void> {
 	try {
@@ -108,16 +112,17 @@ export async function deleteScheduleSlot(req: ValidatedRequest<null, { id: strin
 }
 
 /**
- * GET /reservation/schedule-slots/{id}
+ * GET /reservation/schedule-slots/:id
  * @tag Reservation
  * @summary Get a schedule slot by ID
  * @description Retrieves a schedule slot by its ID.
  * @operationId getScheduleSlotById
  * @pathParam {string} id - The ID of the schedule slot to retrieve.
  * @response 200 - Schedule slot retrieved successfully
- * @responseContent {ScheduleSlot} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule slot not found
  * @response 500 - Error retrieving schedule slot
+ * @prisma_model schedule_slot
  */
 export async function getScheduleSlotById(req: ValidatedRequest<null, { id: string }>, res: Response): Promise<void> {
 	try {
@@ -144,11 +149,14 @@ function removeMatchingIsoDates(firstArray: string[], secondArray: string[]): st
  * @summary Create a new location schedules
  * @description Creates a new location schedules.
  * @operationId createLocationSchedule
- * @requestBody {CreateScheduleInput} requestBody - The schedule data to create.
+ * @bodyContent {object} application/json
  * @response 201 - Schedule created successfully
- * @responseContent {Schedule} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating schedule
+ * @prisma_model schedule_slot
+ * @prisma_model schedule_slot_exceptions
+ * @prisma_model booking_slots
  */
 export async function createMultipleSchedules(
 	req: ValidatedRequest<CreateMultipleSchedulesInput>,
@@ -206,11 +214,14 @@ export async function createMultipleSchedules(
  * @summary Overwrite multiple schedules with new data
  * @description Overwrites multiple schedules with new data based on the provided dates.
  * @operationId overwriteMultipleSchedules
- * @requestBody {OverwriteMultipleSchedulesInput} requestBody - The schedule data to overwrite.
+ * @bodyContent {object} application/json
  * @response 201 - Schedule created successfully
- * @responseContent {Schedule} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error overwriting schedules
+ * @prisma_model schedule_slot
+ * @prisma_model schedule_slot_exceptions
+ * @prisma_model booking_slots
  */
 export async function overwriteMultipleSchedules(
 	req: ValidatedRequest<OverwriteMultipleSchedulesInput>,
@@ -293,17 +304,20 @@ function updateUtcDateRetainTime(startTimeUtc: string, newDateUtc: string): stri
 }
 
 /**
- * PUT /reservation/schedule-slots/update-multiple-schedules/{id}
+ * PUT /reservation/schedule-slots/update-multiple-schedules/:id
  * @tag Reservation
  * @summary Update schedule with new data and creates new schedules
  * @description Updates existing schedules with new data and creates new schedules based on the provided dates.
  * @operationId updateMultipleSchedules
  * @pathParam {string} id - The ID of the schedule slot to update.
- * @requestBody {UpdateMultipleSchedulesInput} requestBody - The schedule data to create.
+ * @bodyContent {object} application/json
  * @response 201 - Schedule updated successfully and new schedules created
- * @responseContent {Schedule} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error updating schedules and creating new schedules
+ * @prisma_model schedule_slot
+ * @prisma_model schedule_slot_exceptions
+ * @prisma_model booking_slots
  */
 export async function updateMultipleSchedules(
 	req: ValidatedRequest<UpdateMultipleSchedulesInput, { id: string }>,

@@ -11,8 +11,9 @@ import { ValidatedRequest } from '../../types/validatedRequest.ts';
  * @description Retrieves all reservation service categories.
  * @operationId getReservationServiceCategories
  * @response 200 - Reservation service categories retrieved successfully
- * @responseContent {ServiceCategory[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving service categories
+ * @prisma_model service_category
  */
 export async function getServiceCategories(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
@@ -32,11 +33,12 @@ export async function getServiceCategories(req: ValidatedRequest, res: Response)
  * @summary Create a new reservation service category
  * @description Creates a new reservation service category.
  * @operationId createReservationServiceCategory
- * @requestBody {CreateServiceCategoryInput} requestBody - The service category data to create.
+ * @bodyContent {object} application/json
  * @response 201 - Service category created successfully
- * @responseContent {ServiceCategory} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating service category
+ * @prisma_model service_category
  */
 export async function createServiceCategory(
 	req: ValidatedRequest<CreateServiceCategoryInput>,
@@ -53,7 +55,7 @@ export async function createServiceCategory(
 }
 
 /**
- * DELETE /reservation/service-categories/{service_category_id}
+ * DELETE /reservation/service-categories/:service_category_id
  * @tag Reservation
  * @summary Delete a reservation service category
  * @description Deletes a reservation service category by its ID.
@@ -62,6 +64,7 @@ export async function createServiceCategory(
  * @response 204 - Service category deleted successfully
  * @response 404 - Service category not found
  * @response 500 - Error deleting service category
+ * @prisma_model service_category
  */
 export async function deleteServiceCategory(req: Request, res: Response): Promise<void> {
 	try {
@@ -74,18 +77,19 @@ export async function deleteServiceCategory(req: Request, res: Response): Promis
 }
 
 /**
- * PUT /reservation/service-categories/{service_category_id}
+ * PUT /reservation/service-categories/:service_category_id
  * @tag Reservation
  * @summary Update a reservation service category
  * @description Updates a reservation service category by its ID.
  * @operationId updateReservationServiceCategory
  * @pathParam {string} service_category_id - The ID of the service category to update.
- * @requestBody {UpdateServiceCategoryInput} requestBody - The service category data to update.
+ * @bodyContent {object} application/json
  * @response 200 - Service category updated successfully
- * @responseContent {ServiceCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Invalid input data
  * @response 404 - Service category not found
  * @response 500 - Error updating service category
+ * @prisma_model service_category
  */
 export async function updateServiceCategory(
 	req: ValidatedRequest<UpdateServiceCategoryInput, { service_category_id: string }>,
@@ -100,16 +104,17 @@ export async function updateServiceCategory(
 		res.status(500).json({ message: 'Error updating service category', error });
 	}
 }
-/** * GET /reservation/service-categories/{service_category_id}
+/** * GET /reservation/service-categories/:service_category_id
  * @tag Reservation
  * @summary Get a reservation service category by ID
  * @description Retrieves a reservation service category by its ID.
  * @operationId getReservationServiceCategoryById
  * @pathParam {string} service_category_id - The ID of the service category to retrieve.
  * @response 200 - Service category retrieved successfully
- * @responseContent {ServiceCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Service category not found
  * @response 500 - Error retrieving service category
+ * @prisma_model service_category
  */
 export async function getServiceCategoryById(req: Request, res: Response): Promise<void> {
 	try {

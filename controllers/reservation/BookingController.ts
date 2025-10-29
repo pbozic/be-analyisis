@@ -25,14 +25,15 @@ import ServiceDao from '../../dao/reservation/Service.ts';
 import CustomerDao from '../../dao/reservation/Customer.ts';
 
 /**
- * POST /bookings/list
+ * POST /reservation/reservations/bookings/list
  * @tag Reservation
  * @summary List bookings for the current reservation module
  * @operationId listBookings
- * @requestBody {ListBookingsParams} requestBody
+ * @bodyContent {object} application/json
  * @response 200 - Bookings retrieved
- * @responseContent {Booking[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving bookings
+ * @prisma_model booking
  */
 export async function listBookings(req: ValidatedRequest<ListBookingsParams>, res: Response): Promise<void> {
 	try {
@@ -53,15 +54,16 @@ export async function listBookings(req: ValidatedRequest<ListBookingsParams>, re
 }
 
 /**
- * GET /bookings/{booking_id}
+ * GET /reservation/reservations/bookings/:booking_id
  * @tag Reservation
  * @summary Get a booking by ID
  * @operationId getBookingById
  * @pathParam {string} booking_id
  * @response 200 - Booking retrieved
- * @responseContent {Booking} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Booking not found
  * @response 500 - Error retrieving booking
+ * @prisma_model booking
  */
 export async function getBooking(req: ValidatedRequest<null, { booking_id: string }>, res: Response): Promise<void> {
 	try {
@@ -77,14 +79,21 @@ export async function getBooking(req: ValidatedRequest<null, { booking_id: strin
 }
 
 /**
- * POST /bookings
+ * POST /reservation/booking
  * @tag Reservation
- * @summary Create a new booking
+ * @summary Create a new booking (public flow)
  * @operationId createBooking
- * @requestBody {CreateBookingInput} requestBody
+ * @bodyContent {object} application/json
  * @response 201 - Booking created
- * @responseContent {Booking} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error creating booking
+ * @prisma_model reservation_module
+ * @prisma_model booking
+ * @prisma_model booking_history_log
+ * @prisma_model customers
+ * @prisma_model service
+ * @prisma_model location
+ * @prisma_model employee
  */
 export async function createBooking(req: ValidatedRequest<CreateBookingInput>, res: Response): Promise<void> {
 	const { service_ids, ...base } = req.body;
@@ -127,15 +136,16 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
 }
 
 /**
- * PUT /bookings/{booking_id}
+ * PUT /reservation/reservations/bookings/:booking_id
  * @tag Reservation
  * @summary Update an existing booking
  * @operationId updateBooking
  * @pathParam {string} booking_id
- * @requestBody {UpdateBookingInput} requestBody
+ * @bodyContent {object} application/json
  * @response 200 - Booking updated
- * @responseContent {Booking} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error updating booking
+ * @prisma_model booking
  */
 export async function updateBooking(
 	req: ValidatedRequest<UpdateBookingInput, { booking_id: string }>,
@@ -157,13 +167,14 @@ export async function updateBooking(
 }
 
 /**
- * DELETE /bookings/{booking_id}
+ * DELETE /reservation/reservations/bookings/:booking_id
  * @tag Reservation
  * @summary Delete a booking
  * @operationId deleteBooking
  * @pathParam {string} booking_id
  * @response 204 - Booking deleted
  * @response 500 - Error deleting booking
+ * @prisma_model booking
  */
 export async function deleteBooking(req: ValidatedRequest<null, { booking_id: string }>, res: Response): Promise<void> {
 	try {
@@ -175,15 +186,17 @@ export async function deleteBooking(req: ValidatedRequest<null, { booking_id: st
 }
 
 /**
- * POST /bookings/{booking_id}/history
+ * POST /reservation/reservations/bookings/:booking_id/history
  * @tag Reservation
  * @summary Create a booking history log entry
  * @operationId createBookingHistoryLog
  * @pathParam {string} booking_id
- * @requestBody {CreateBookingHistoryLogInput} requestBody
+ * @bodyContent {object} application/json
  * @response 201 - Booking history log created
- * @responseContent {BookingHistoryLog} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error creating booking history log
+ * @prisma_model booking_history_log
+ * @prisma_model booking
  */
 export async function createBookingHistoryLog(
 	req: ValidatedRequest<CreateBookingHistoryLogInput, { booking_id: string }>,
@@ -202,19 +215,13 @@ export async function createBookingHistoryLog(
 }
 
 /**
- * POST /bookings/find-slots
+ * POST /reservation/booking/find-slots
  * @tag Reservation
  * @summary Find available booking slots for given filters
  * @operationId findBookingSlots
- * @requestBody {object} requestBody
- * @property {string[]} serviceIds.required - IDs of services to check availability for
- * @property {string} [locationId] - Optional location ID
- * @property {string} [employeeId] - Optional employee ID
- * @property {string} reservationModuleId.required - Reservation module ID
- * @property {string} date.required - Date for which to find slots (ISO string)
- * @property {boolean} [returnFirst=false] - If true, return only the first available slot
+ * @bodyContent {object} application/json
  * @response 200 - Slots retrieved
- * @responseContent {any[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error finding slots
  */
 export async function findBookingSlots(req: ValidatedRequest<FindBookingSlotsInput>, res: Response): Promise<void> {
@@ -241,14 +248,16 @@ export async function findBookingSlots(req: ValidatedRequest<FindBookingSlotsInp
 }
 
 /**
- * GET /reservation/bookings/locations-and-employees
+ * GET /reservation/reservations/bookings/locations-and-employees
  * @tag Reservation
  * @summary Get all reservation locations and their employees for the current reservation module
  * @description Retrieves all reservation locations and their employees for the current reservation module.
  * @operationId getLocationsAndEmployees
  * @response 200 - Reservation locations and employees retrieved successfully
- * @responseContent {bookings, employees} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving locations and employees
+ * @prisma_model location
+ * @prisma_model employee
  */
 export async function getLocationsAndEmployees(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
@@ -266,15 +275,20 @@ export async function getLocationsAndEmployees(req: ValidatedRequest, res: Respo
 }
 
 /**
- * POST /reservation/bookings/bookings-location-and-employees
+ * POST /reservation/reservations/bookings/bookings-locations-and-employees
  * @tag Reservation
  * @summary Get all bookings for given location and employees within a date range
  * @description Retrieves all bookings for a specified location and employees within a given date range.
  * @operationId getBookingsForLocationAndEmployees
- * @requestBody {AllBookingsForLocationAndEmployeesParams} requestBody - The input data for retrieving bookings.
+ * @bodyContent {object} application/json
  * @response 200 - Reservation bookings and employees retrieved successfully
- * @responseContent {Employee[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving employees with schedule slots
+ * @prisma_model booking
+ * @prisma_model employee
+ * @prisma_model schedule_slot
+ * @prisma_model schedule_slot_exceptions
+ * @prisma_model booking_slots
  */
 export async function getBookingsForLocationAndEmployees(
 	req: ValidatedRequest<AllBookingsForLocationAndEmployeesParams>,
@@ -339,14 +353,17 @@ export async function getBookingsForLocationAndEmployees(
 }
 
 /**
- * GET /reservation/bookings/services-and-employees
+ * GET /reservation/reservations/bookings/services-and-employees
  * @tag Reservation
  * @summary Get all reservation services and their employees for the current reservation module
  * @description Retrieves all reservation services and their employees for the current reservation module.
  * @operationId getServicesAndEmployees
  * @response 200 - Reservation locations and employees retrieved successfully
- * @responseContent {services, employees} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving locations and employees
+ * @prisma_model service
+ * @prisma_model employee
+ * @prisma_model customers
  */
 export async function getServicesAndEmployees(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
@@ -402,14 +419,16 @@ function splitConsecutiveSlots(
 }
 
 /**
- * POST /bookings/create-booking-admin
+ * POST /reservation/reservations/bookings/create-booking-admin
  * @tag Reservation
- * @summary Create a new booking
- * @operationId createBooking
- * @requestBody {CreateBookingInput} requestBody
+ * @summary Create a new booking (admin group)
+ * @operationId createBookingAdmin
+ * @bodyContent {object} application/json
  * @response 201 - Booking created
- * @responseContent {Booking} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error creating booking
+ * @prisma_model booking
+ * @prisma_model booking_history_log
  */
 export async function createBookingAdmin(
 	req: ValidatedRequest<CreateMultipleBookingsInput>,
@@ -470,15 +489,17 @@ export async function createBookingAdmin(
 }
 
 /**
- * PUT /bookings/update-boking-start-admin/{booking_id}
+ * PUT /reservation/reservations/bookings/update-booking-start-admin/:booking_id
  * @tag Reservation
  * @summary Update an existing booking start
  * @operationId updateBookingStartAdmin
  * @pathParam {string} booking_id
- * @requestBody {UpdateBookingInput} requestBody
+ * @bodyContent {object} application/json
  * @response 200 - Booking updated
- * @responseContent {Booking} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error updating booking
+ * @prisma_model booking
+ * @prisma_model booking_history_log
  */
 export async function updateBookingStartAdmin(
 	req: ValidatedRequest<UpdateBookingInput, { booking_id: string }>,
@@ -515,15 +536,16 @@ export async function updateBookingStartAdmin(
 }
 
 /**
- * GET /bookings/get-booking-admin/{booking_id}
+ * GET /reservation/reservations/bookings/get-booking-admin/:booking_id
  * @tag Reservation
- * @summary Get a booking by ID
- * @operationId getBookingById
+ * @summary Get a booking by ID (with children)
+ * @operationId getBookingAdmin
  * @pathParam {string} booking_id
  * @response 200 - Booking retrieved
- * @responseContent {Booking} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Booking not found
  * @response 500 - Error retrieving booking
+ * @prisma_model booking
  */
 export async function getBookingAdmin(
 	req: ValidatedRequest<null, { booking_id: string }>,
@@ -562,15 +584,17 @@ function durationInMinutes(startIso: string | undefined, endIso: string | undefi
 }
 
 /**
- * PUT /bookings/update-booking-start-admin-group/{booking_id}
+ * PUT /reservation/reservations/bookings/update-booking-start-admin-group/:booking_id
  * @tag Reservation
  * @summary Update an existing booking group start
  * @operationId updateBookingStartGroupAdmin
  * @pathParam {string} booking_id
- * @requestBody {UpdateBookingInput} requestBody
+ * @bodyContent {object} application/json
  * @response 200 - Bookings updated
- * @responseContent {Booking} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error updating booking group
+ * @prisma_model booking
+ * @prisma_model booking_history_log
  */
 export async function updateBookingStartGroupAdmin(
 	req: ValidatedRequest<UpdateBookingInput, { booking_id: string }>,
@@ -795,15 +819,17 @@ export async function updateBookingStartGroupAdmin(
 }
 
 /**
- * PUT /bookings/update-booking-start-first-group-admin/{booking_id}
+ * PUT /reservation/reservations/bookings/update-booking-start-first-group-admin/:booking_id
  * @tag Reservation
  * @summary Update booking start time for the first booking in a group and parent of the group
  * @operationId updateBookingStartFirstInGroupAdmin
  * @pathParam {string} booking_id
- * @requestBody {UpdateBookingInput} requestBody
+ * @bodyContent {object} application/json
  * @response 200 - Booking updated
- * @responseContent {Booking} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error updating booking
+ * @prisma_model booking
+ * @prisma_model booking_history_log
  */
 export async function updateBookingStartFirstInGroupAdmin(
 	req: ValidatedRequest<UpdateBookingInput, { booking_id: string }>,
@@ -862,14 +888,16 @@ export async function updateBookingStartFirstInGroupAdmin(
 }
 
 /**
- * POST /bookings/update-bookings-admin
+ * POST /reservation/reservations/bookings/update-bookings-admin
  * @tag Reservation
  * @summary Update multiple bookings
  * @operationId updateBookingGroupAdmin
- * @requestBody {UpdateMultipleBookingsInput} requestBody
+ * @bodyContent {object} application/json
  * @response 201 - Bookings updated
- * @responseContent {Booking} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error updating booking
+ * @prisma_model booking
+ * @prisma_model booking_history_log
  */
 export async function updateBookingGroupAdmin(
 	req: ValidatedRequest<UpdateMultipleBookingsInput>,
@@ -1048,14 +1076,16 @@ export function sortBookingStats(bookings: Booking[], startDate: string, endDate
 }
 
 /**
- * POST /bookings/analytics
+ * POST /reservation/reservations/bookings/analytics
  * @tag Reservation
  * @summary Get analytics for bookings
  * @operationId listBookingsAnalytics
- * @requestBody {BookingsAnalyticsParams} requestBody
+ * @bodyContent {object} application/json
  * @response 200 - Analytics retrieved
- * @responseContent {data} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving analytics
+ * @prisma_model booking
+ * @prisma_model customers
  */
 export async function getBookingsAnalytics(
 	req: ValidatedRequest<BookingsAnalyticsParams>,

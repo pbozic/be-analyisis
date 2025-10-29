@@ -9,11 +9,12 @@ config();
  * @summary Add new finance record
  * @description Adds a new finance record to the database.
  * @operationId addFinances
- * @bodyContent {Finance} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Finance record added successfully
- * @responseContent {Finance} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error adding finance record
+ * @prisma_model finances
  */
 async function createNewFinanceRecord(req, res) {
 	try {
@@ -25,16 +26,17 @@ async function createNewFinanceRecord(req, res) {
 	}
 }
 /**
- * GET finances/:finance_id
+ * GET /finances/:finance_id
  * @tag Finance
  * @summary Get finance record by ID
  * @description Retrieves a finance record by its ID.
  * @operationId getFinancesById
  * @pathParam {string} finance_id - The ID of the finance record to retrieve
  * @response 200 - Successful operation, returns finance record
- * @responseContent {Finance} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Finance record not found
  * @response 400 - Error retrieving finance record
+ * @prisma_model finances
  */
 async function getFinanceRecordById(req, res) {
 	try {
@@ -50,16 +52,17 @@ async function getFinanceRecordById(req, res) {
 	}
 }
 /**
- * GET finances/business/:business_id
+ * GET /finances/business/:business_id
  * @tag Finance
  * @summary Get finance record for a company
  * @description Retrieves the finance record associated with a specific company by the company's business ID.
  * @operationId getFinanceRecordByBusinessId
  * @pathParam {string} business_id - The ID of the business to retrieve the finance record for
  * @response 200 - Successful operation, returns finance record
- * @responseContent {Finance} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Finance record not found for the specified business
  * @response 400 - Error retrieving finance record for the business
+ * @prisma_model finances
  */
 async function getFinanceRecordByBusinessId(req, res) {
 	try {
@@ -82,11 +85,12 @@ async function getFinanceRecordByBusinessId(req, res) {
  * @description Updates an existing finance record by its ID.
  * @operationId updateFinances
  * @pathParam {string} finance_id - The ID of the finance record to update
- * @bodyContent {FinanceUpdate} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Finance record updated successfully
- * @responseContent {Finance} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating finance record
+ * @prisma_model finances
  */
 async function updateFinanceRecord(req, res) {
 	try {
@@ -107,8 +111,9 @@ async function updateFinanceRecord(req, res) {
  * @bodyContent {object} application/json - The new account number
  * @bodyRequired
  * @response 200 - Account number updated successfully
- * @responseContent {Finance} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating account number
+ * @prisma_model finances
  */
 async function updateAccountNumber(req, res) {
 	const { finance_id } = req.params;
@@ -131,8 +136,9 @@ async function updateAccountNumber(req, res) {
  * @bodyContent {object} application/json - The new bank name
  * @bodyRequired
  * @response 200 - Bank name updated successfully
- * @responseContent {Finance} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating bank name
+ * @prisma_model finances
  */
 async function updateBankName(req, res) {
 	const { finance_id } = req.params;
@@ -155,8 +161,9 @@ async function updateBankName(req, res) {
  * @bodyContent {object} application/json - The new payment preferences
  * @bodyRequired
  * @response 200 - Payment preferences updated successfully
- * @responseContent {Finance} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating payment preferences
+ * @prisma_model finances
  */
 async function updatePaymentPreferences(req, res) {
 	const { finance_id } = req.params;
@@ -178,6 +185,7 @@ async function updatePaymentPreferences(req, res) {
  * @pathParam {string} finance_id - The ID of the finance record to delete
  * @response 200 - Finance record deleted successfully
  * @response 400 - Error deleting finance record
+ * @prisma_model finances
  */
 async function deleteFinanceRecord(req, res) {
 	try {

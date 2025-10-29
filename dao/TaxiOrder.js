@@ -96,13 +96,13 @@ async function getTaxiOrdersIfNotCompleted(user_id, type, isBusinessUser = false
 				...whereClause,
 				...(isBusinessUser
 					? {
-							OR: [{ user_id: user_id }, { creating_user_id: user_id }],
-						}
+						OR: [{ user_id: user_id }, { creating_user_id: user_id }],
+					}
 					: {
-							user_id: user_id,
-							subtype: ORDER_SUBTYPE.CREATED_BY_USER,
-							OR: [{ creating_user_id: null }, { creating_user_id: { not: user_id } }],
-						}),
+						user_id: user_id,
+						subtype: ORDER_SUBTYPE.CREATED_BY_USER,
+						OR: [{ creating_user_id: null }, { creating_user_id: { not: user_id } }],
+					}),
 			},
 			include: {
 				user: true,
@@ -1053,34 +1053,6 @@ async function userActiveOrders(user_id) {
 		throw new Error(e);
 	}
 }
-async function getActiveOrderIdsForUser(user_id, scheduled = true) {
-	try {
-		const orders = await prisma.taxi_orders.findMany({
-			where: {
-				user_id: user_id,
-				status: {
-					notIn: [
-						TAXI_ORDER_STATUS.TAXI_CANCELED,
-						TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
-						TAXI_ORDER_STATUS.TAXI_COMPLETED,
-						TAXI_ORDER_STATUS.TAXI_REJECTED,
-						TAXI_ORDER_STATUS.AWAITING_PAYMENT, //TODO: Should we consider AWAIITING_PAYMENT as active order in the user's eyes?
-					],
-				},
-				is_scheduled: scheduled,
-				OR: [{ creating_user_id: null }, { creating_user_id: { not: user_id } }],
-			},
-			select: {
-				order_id: true,
-			},
-		});
-		// console.info("got order ids:", orders);
-		return orders.map((order) => order.order_id);
-	} catch (e) {
-		console.error('Error fetching orders:', e);
-		throw new Error(e.message);
-	}
-}
 async function deleteOrderSent(order_id, taxi_order_sent_id) {
 	try {
 		return prisma.taxi_order_sent.delete({
@@ -1117,7 +1089,6 @@ export { getAlreadySentOrdersByDriverId };
 export { getActiveOrdersByDriverId };
 export { getAcceptedOrders };
 export { userActiveOrders };
-export { getActiveOrderIdsForUser };
 export { getDeliveryOrdersByDriverId };
 export { deleteOrderSent };
 export default {
@@ -1146,7 +1117,6 @@ export default {
 	getActiveOrdersByDriverId,
 	getAcceptedOrders,
 	userActiveOrders,
-	getActiveOrderIdsForUser,
 	getDeliveryOrdersByDriverId,
 	deleteOrderSent,
 	acceptTaxiOrderWithRawLock,

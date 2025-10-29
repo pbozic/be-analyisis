@@ -6,9 +6,10 @@ import BusinessClientDao from '../dao/BusinessClient.js';
  * @description Returns a list of all business clients.
  * @operationId getAllBusinessClients
  * @response 200 - successful operation
- * @responseContent {BusinessClient[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business client list
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_clients
  */
 async function getAllBusinessClients(req, res) {
 	try {
@@ -27,9 +28,10 @@ async function getAllBusinessClients(req, res) {
  * @operationId getBusinessClientById
  * @pathParam {string} business_clients_id - The ID of the business client
  * @response 200 - successful operation
- * @responseContent {BusinessClient} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business client
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_clients
  */
 async function getBusinessClientById(req, res) {
 	try {
@@ -51,9 +53,10 @@ async function getBusinessClientById(req, res) {
  * @operationId getBusinessClientsByBusinessId
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - successful operation
- * @responseContent {BusinessClient[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business client list
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_clients
  */
 async function getBusinessClientsByBusinessId(req, res) {
 	try {
@@ -71,11 +74,12 @@ async function getBusinessClientsByBusinessId(req, res) {
  * @description Creates a new business client and links it to a business.
  * @operationId createBusinessClient
  * @bodyDescription The data to create a new business client
- * @bodyContent {CreateBusinessClientRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Business client created successfully. Returns the created business client.
- * @responseContent {BusinessClient} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating business client.
+ * @prisma_model business_clients
  */
 async function createBusinessClient(req, res) {
 	try {
@@ -94,12 +98,13 @@ async function createBusinessClient(req, res) {
  * @operationId updateBusinessClient
  * @pathParam {string} business_clients_id - The ID of the business client to update
  * @bodyDescription The data to update
- * @bodyContent {UpdateBusinessClientRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Business client updated successfully. Returns the updated business client.
- * @responseContent {BusinessClient} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating business client.
  * @response 404 - Business client not found.
+ * @prisma_model business_clients
  */
 async function updateBusinessClient(req, res) {
 	try {
@@ -123,6 +128,7 @@ async function updateBusinessClient(req, res) {
  * @response 200 - Business client removed successfully.
  * @responseContent {object} 200.application/json
  * @response 400 - Error removing business client.
+ * @prisma_model business_clients
  */
 async function removeBusinessClient(req, res) {
 	try {

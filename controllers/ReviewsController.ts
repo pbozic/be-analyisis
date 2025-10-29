@@ -3,18 +3,18 @@ import { Request, Response } from 'express';
 import * as ReviewsDao from '../dao/Review.js';
 
 /**
- *
- * - POST /drivers/{driver_id}/reviews
- * - @tag Reviews
- * - @summary Create a review for a driver
- * - @description Ensures reviewable for driver and creates a reviews row.
- * - @operationId reviewDriver
- * - @bodyDescription Review payload
- * - @bodyContent { "rating": 5, "comment": "Great ride" } application/json
- * - @bodyRequired
- * - @prisma_model reviewable
- * - @prisma_model reviews
- * - @response 200 - Review created
+ * POST /review/driver/:driver_id
+ * @tag Reviews
+ * @summary Create a review for a driver
+ * @description Ensures reviewable for driver and creates a reviews row.
+ * @operationId reviewDriver
+ * @bodyDescription Review payload
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Review created
+ * @responseContent {object} application/json
+ * @prisma_model reviewable
+ * @prisma_model reviews
  */
 export async function reviewDriver(req: Request, res: Response): Promise<void> {
 	try {
@@ -41,18 +41,18 @@ export async function reviewDriver(req: Request, res: Response): Promise<void> {
 }
 
 /**
- *
- * - POST /stores/{stores_id}/reviews
- * - @tag Reviews
- * - @summary Create a review for a store
- * - @description Ensures reviewable for stores and creates a reviews row.
- * - @operationId reviewStore
- * - @bodyDescription Review payload
- * - @bodyContent { "rating": 4, "comment": "Tasty food" } application/json
- * - @bodyRequired
- * - @prisma_model reviewable
- * - @prisma_model reviews
- * - @response 200 - Review created
+ * POST /review/stores/:stores_id
+ * @tag Reviews
+ * @summary Create a review for a store
+ * @description Ensures reviewable for stores and creates a reviews row.
+ * @operationId reviewStore
+ * @bodyDescription Review payload
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Review created
+ * @responseContent {object} application/json
+ * @prisma_model reviewable
+ * @prisma_model reviews
  */
 export async function reviewStore(req: Request, res: Response): Promise<void> {
 	try {
@@ -79,18 +79,18 @@ export async function reviewStore(req: Request, res: Response): Promise<void> {
 }
 
 /**
- *
- * - POST /food-drinks/{food_drinks_id}/reviews
- * - @tag Reviews
- * - @summary Create a review for food_drinks
- * - @description Ensures reviewable for food_drinks and creates a reviews row.
- * - @operationId reviewFoodDrinks
- * - @bodyDescription Review payload
- * - @bodyContent { "rating": 3, "comment": "Okay experience" } application/json
- * - @bodyRequired
- * - @prisma_model reviewable
- * - @prisma_model reviews
- * - @response 200 - Review created
+ * POST /review/food-drinks/:food_drinks_id
+ * @tag Reviews
+ * @summary Create a review for food_drinks
+ * @description Ensures reviewable for food_drinks and creates a reviews row.
+ * @operationId reviewFoodDrinks
+ * @bodyDescription Review payload
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Review created
+ * @responseContent {object} application/json
+ * @prisma_model reviewable
+ * @prisma_model reviews
  */
 export async function reviewFoodDrinks(req: Request, res: Response): Promise<void> {
 	try {

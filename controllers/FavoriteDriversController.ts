@@ -3,25 +3,25 @@ import { Request, Response } from 'express';
 import * as FavoriteDao from '../dao/UserFavoriteDriver.ts';
 
 /**
- *
- * - POST /favorite-drivers
- * - @tag FavoriteDrivers
- * - @summary Add a driver to the authenticated user's favorites
- * - @description Creates or ensures a record in user_favorite_drivers.
- * - @operationId addFavoriteDriver
- * - @bodyDescription Driver to favorite
- * - @bodyContent {
+ * POST /users/me/favorite-drivers
+ * @tag FavoriteDrivers
+ * @summary Add a driver to the authenticated user's favorites
+ * @description Creates or ensures a record in user_favorite_drivers.
+ * @operationId addFavoriteDriver
+ * @bodyDescription Driver to favorite
+ * @bodyContent {
  *   "driver_id": "uuid"
  * } application/json
- * - @bodyRequired
- * - @prisma_model user_favorite_drivers
- * - @response 200 - Favorite driver added
- * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
+ * @bodyRequired
+ * @prisma_model user_favorite_drivers
+ * @response 200 - Favorite driver added
+ * @responseContent {object} 200.application/json
+ * @responseExample 200.application/json {
  *   "user_favorite_drivers_id": "uuid",
  *   "user_id": "uuid",
  *   "driver_id": "uuid"
  * }
+ * @prisma_model user_favorite_drivers
  */
 export async function addFavoriteDriver(req: Request, res: Response): Promise<void> {
 	try {
@@ -45,14 +45,15 @@ export async function addFavoriteDriver(req: Request, res: Response): Promise<vo
 }
 
 /**
- *
- * - DELETE /favorite-drivers/{driver_id}
- * - @tag FavoriteDrivers
- * - @summary Remove a driver from the authenticated user's favorites
- * - @description Deletes a record in user_favorite_drivers by composite key.
- * - @operationId removeFavoriteDriver
- * - @prisma_model user_favorite_drivers
- * - @response 200 - Favorite driver removed
+ * DELETE /users/me/favorite-drivers/:driver_id
+ * @tag FavoriteDrivers
+ * @summary Remove a driver from the authenticated user's favorites
+ * @description Deletes a record in user_favorite_drivers by composite key.
+ * @operationId removeFavoriteDriver
+ * @pathParam {string} driver_id - ID of the driver to remove from favorites
+ * @response 200 - Favorite driver removed
+ * @responseContent {object} 200.application/json
+ * @prisma_model user_favorite_drivers
  */
 export async function removeFavoriteDriver(req: Request, res: Response): Promise<void> {
 	try {
@@ -72,14 +73,17 @@ export async function removeFavoriteDriver(req: Request, res: Response): Promise
 }
 
 /**
- *
- * - GET /favorite-drivers
- * - @tag FavoriteDrivers
- * - @summary List the authenticated user's favorite drivers
- * - @description Lists user_favorite_drivers for the user including driver data.
- * - @operationId listFavoriteDrivers
- * - @prisma_model user_favorite_drivers
- * - @response 200 - Favorites listed
+ * GET /users/me/favorite-drivers
+ * @tag FavoriteDrivers
+ * @summary List the authenticated user's favorite drivers
+ * @description Lists user_favorite_drivers for the user including driver data.
+ * @operationId listFavoriteDrivers
+ * @prisma_model user_favorite_drivers
+ * @response 200 - Favorites listed
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error listing favorites
+ * @prisma_model users
+ * @prisma_model user_favorite_drivers
  */
 export async function listFavoriteDrivers(req: Request, res: Response): Promise<void> {
 	try {

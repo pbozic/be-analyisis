@@ -7,8 +7,10 @@ import { SERVICE_TYPE } from '../lib/constants.js';
  * @description This fetches orders with pagination.
  * @operationId getOrdersWithPagination
  * @response 200 - Successful operation. Returns a list of orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model taxi_orders
+ * @prisma_model delivery_orders
  */
 async function getOrdersWithPagination(req, res) {
 	const { where, orderBy, service } = req.body;
@@ -43,17 +45,13 @@ async function getOrdersWithPagination(req, res) {
  * @summary Update driver activity settings
  * @description Updates existing driver activity settings or creates new ones if they don't exist
  * @operationId updateDriverActivitySettings
- * @bodyContent {
- *   "first_offline_lockout": 30,
- *   "second_offline_lockout": 120,
- *   "online_timeout": 120,
- *   "active": true
- * } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Settings updated successfully
  * @responseContent {object} 200.application/json
  * @response 400 - Invalid request data
  * @response 500 - Server error while updating settings
+ * @prisma_model driver_activity_settings
  */
 async function setDriversActivitySettings(req, res) {
 	const data = {
@@ -76,6 +74,18 @@ async function setDriversActivitySettings(req, res) {
 		return res.status(500).json({ error: error.message });
 	}
 }
+
+/**
+ * GET /api/overwatch/drivers/activity/settings
+ * @tag DriverSettings
+ * @summary Get active driver activity settings
+ * @description Retrieves the most recently created active driver activity settings.
+ * @operationId getDriverActivitySettings
+ * @response 200 - Settings retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Server error while fetching settings
+ * @prisma_model driver_activity_settings
+ */
 async function getDriversActivitySettings(req, res) {
 	try {
 		const settings = await prisma.driver_activity_settings.findFirst({

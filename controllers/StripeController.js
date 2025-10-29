@@ -344,6 +344,22 @@ async function handlePromoSectionBuy(session) {
 		tier: session.metadata.tier,
 	});
 }
+/**
+ * POST /stripe/webhook
+ * @tag Stripe
+ * @summary Stripe webhook handler
+ * @description Handles Stripe webhook events for payments, subscriptions, and related updates.
+ * @operationId handleStripeWebhook
+ * @bodyContent {object} application/json
+ * @response 200 - Webhook processed successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Webhook signature verification failed
+ * @prisma_model delivery_orders
+ * @prisma_model taxi_orders
+ * @prisma_model word_buy
+ * @prisma_model business
+ * @prisma_model promo_sections_buy
+ */
 async function handleWebhook(req, res) {
 	let event;
 	try {
@@ -504,16 +520,15 @@ async function handleWebhook(req, res) {
 }
 
 /**
- *
- * - DELETE /me/remove-payment-method/:pm_id
- * - @tag Users
- * - @summary Remove a payment method from the authenticated user's Stripe customer account
- * - @description Removes the specified Stripe payment method from the authenticated user's Stripe customer account. Returns the updated list of payment methods.
- * - @operationId removePaymentMethod
- * - @pathParam {string} pm_id - The Stripe payment method ID to remove
- * - @response 200 - Payment method removed successfully, returns updated payment methods
- * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
+ * DELETE /me/remove-payment-method/:pm_id
+ * @tag Users
+ * @summary Remove a payment method from the authenticated user's Stripe customer account
+ * @description Removes the specified Stripe payment method from the authenticated user's Stripe customer account. Returns the updated list of payment methods.
+ * @operationId removePaymentMethod
+ * @pathParam {string} pm_id - The Stripe payment method ID to remove
+ * @response 200 - Payment method removed successfully, returns updated payment methods
+ * @responseContent {object} 200.application/json
+ * @responseExample 200.application/json {
  *     "message": "Payment method removed successfully",
  *     "paymentMethods": [
  *       {
@@ -522,11 +537,10 @@ async function handleWebhook(req, res) {
  *       }
  *     ]
  *   }
- * - @response 400 - Error removing payment method
- * - @responseContent {object} 400.application/json
- * - @prisma_model users
+ * @response 400 - Error removing payment method
+ * @responseContent {object} 400.application/json
+ * @prisma_model users
  */
-
 async function removePaymentMethod(req, res) {
 	try {
 		const { pm_id } = req.params;

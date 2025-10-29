@@ -5,15 +5,16 @@ import { ValidatedRequest } from '../../types/validatedRequest';
 import { CreateScheduleEmployeeInput, UpdateScheduleEmployeeInput } from '../../types/reservation/Schedule';
 
 /**
- * GET /reservation/schedule-employees/list/{schedule_id}
+ * GET /reservation/schedule-employees/list/:schedule_id
  * @tag Reservation
  * @summary Get all schedule-employee assignments by schedule ID
  * @description Retrieves all schedule-employee assignments for a given schedule ID.
  * @operationId getScheduleEmployeesBySchedule
  * @pathParam {string} schedule_id - The ID of the schedule.
  * @response 200 - Schedule-employee assignments retrieved successfully
- * @responseContent {ScheduleEmployee[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving schedule employees
+ * @prisma_model schedule_employee
  */
 export async function getScheduleEmployeesByScheduleId(
 	req: ValidatedRequest<null, { schedule_id: string }>,
@@ -35,11 +36,12 @@ export async function getScheduleEmployeesByScheduleId(
  * @summary Create a new schedule-employee assignment
  * @description Creates a new schedule-employee assignment.
  * @operationId createScheduleEmployee
- * @requestBody {CreateScheduleEmployeeInput} requestBody - The schedule-employee data to create.
+ * @bodyContent {object} application/json
  * @response 201 - Schedule-employee assignment created successfully
- * @responseContent {ScheduleEmployee} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating schedule employee
+ * @prisma_model schedule_employee
  */
 export async function createScheduleEmployee(
 	req: ValidatedRequest<CreateScheduleEmployeeInput>,
@@ -55,17 +57,18 @@ export async function createScheduleEmployee(
 }
 
 /**
- * PUT /reservation/schedule-employees/{id}
+ * PUT /reservation/schedule-employees/:id
  * @tag Reservation
  * @summary Update a schedule-employee assignment
  * @description Updates an existing schedule-employee assignment.
  * @operationId updateScheduleEmployee
  * @pathParam {string} id - The ID of the assignment to update.
- * @requestBody {UpdateScheduleEmployeeInput} requestBody - The data to update the assignment with.
+ * @bodyContent {object} application/json
  * @response 200 - Schedule-employee updated successfully
- * @responseContent {ScheduleEmployee} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule-employee not found
  * @response 500 - Error updating schedule employee
+ * @prisma_model schedule_employee
  */
 export async function updateScheduleEmployee(
 	req: ValidatedRequest<UpdateScheduleEmployeeInput, { id: string }>,
@@ -81,7 +84,7 @@ export async function updateScheduleEmployee(
 }
 
 /**
- * DELETE /reservation/schedule-employees/{id}
+ * DELETE /reservation/schedule-employees/:id
  * @tag Reservation
  * @summary Delete a schedule-employee assignment
  * @description Deletes a schedule-employee assignment by its ID.
@@ -90,6 +93,7 @@ export async function updateScheduleEmployee(
  * @response 204 - Schedule-employee deleted successfully
  * @response 404 - Schedule-employee not found
  * @response 500 - Error deleting schedule employee
+ * @prisma_model schedule_employee
  */
 export async function deleteScheduleEmployee(
 	req: ValidatedRequest<null, { id: string }>,
@@ -105,16 +109,17 @@ export async function deleteScheduleEmployee(
 }
 
 /**
- * GET /reservation/schedule-employees/{id}
+ * GET /reservation/schedule-employees/:id
  * @tag Reservation
  * @summary Get a schedule-employee assignment by ID
  * @description Retrieves a schedule-employee assignment by its ID.
  * @operationId getScheduleEmployeeById
  * @pathParam {string} id - The ID of the schedule-employee to retrieve.
  * @response 200 - Schedule-employee retrieved successfully
- * @responseContent {ScheduleEmployee} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule-employee not found
  * @response 500 - Error retrieving schedule employee
+ * @prisma_model schedule_employee
  */
 export async function getScheduleEmployeeById(
 	req: ValidatedRequest<null, { id: string }>,
@@ -134,16 +139,18 @@ export async function getScheduleEmployeeById(
 }
 
 /**
- * GET /reservation/employees/{employee_id}
+ * GET /reservation/schedule-employees/schedule-slots/schedule_id
  * @tag Reservation
- * @summary Get a reservation employee by ID
- * @description Retrieves a reservation employee by its ID.
- * @operationId getReservationEmployeeById
- * @pathParam {string} employee_id - The ID of the employee to retrieve.
- * @response 200 - Employee retrieved successfully
- * @responseContent {Employee} 200.application/json
- * @response 404 - Employee not found
- * @response 500 - Error retrieving employee
+ * @summary Get employees by schedule ID with slots
+ * @description Retrieves employees for a schedule with their booking slots.
+ * @operationId getEmployeesByScheduleIdWithSlots
+ * @pathParam {string} schedule_id - The ID of the schedule.
+ * @response 200 - Employees with slots retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error retrieving employees with slots
+ * @prisma_model schedule_employee
+ * @prisma_model schedule_slot
+ * @prisma_model booking_slots
  */
 
 export async function getEmployeesByScheduleIdWithSlots(req: Request, res: Response): Promise<void> {

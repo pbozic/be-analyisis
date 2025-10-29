@@ -36,9 +36,10 @@ const { businessIndex, fullSearch } = elasticsearch;
  * @description Activates a business.
  * @operationId activateBusiness
  * @response 200 - successful operation
- * @responseContent {User[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business list
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model businesses
  */
 async function activateBusiness(req, res) {
 	try {
@@ -76,9 +77,10 @@ async function activateBusiness(req, res) {
  * @description Deactivates a business.
  * @operationId deactivateBusiness
  * @response 200 - successful operation
- * @responseContent {User[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business list
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model businesses
  */
 async function deactivateBusiness(req, res) {
 	try {
@@ -116,9 +118,10 @@ async function deactivateBusiness(req, res) {
  * @description Returns a list of businesses.
  * @operationId getBusinessesByType
  * @response 200 - successful operation
- * @responseContent {User[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business list
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model businesses
  */
 async function listBusinesses(req, res) {
 	try {
@@ -142,9 +145,12 @@ async function listBusinesses(req, res) {
  * @description Returns a list of businesses.
  * @operationId getBusinessesByIds
  * @response 200 - successful operation
- * @responseContent {User[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business list
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model businesses
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function getBusinessesByIds(req, res) {
 	try {
@@ -180,12 +186,13 @@ async function getBusinessesByIds(req, res) {
  * @summary Get a list of businesses by query, location, categories, radius, etc.
  * @description Returns a list of businesses filtered by search criteria.
  * @operationId getBusinessesSearch
- * @bodyContent {SearchBusinessesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - successful operation
- * @responseContent {SearchBusinessesResponse} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business list
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model businesses
  */
 async function searchBusinesses(req, res) {
 	try {
@@ -254,6 +261,7 @@ async function searchBusinesses(req, res) {
  * @response 200 - Successful operation, returns a list of merchant businesses
  * @responseContent {Business[]} 200.application/json
  * @response 400 - Error occurred while obtaining the merchant business list
+ * @prisma_model businesses
  */
 async function listMerchantBusinesses(req, res) {
 	//TODO: elastic search
@@ -278,6 +286,8 @@ async function listMerchantBusinesses(req, res) {
  * @response 200 - Successful operation, returns a list of merchant businesses
  * @responseContent {Business[]} 200.application/json
  * @response 400 - Error occurred while obtaining the merchant business list
+ * @prisma_model promo_sections
+ * @prisma_model businesses
  */
 async function listPromoSectionsWithMerchants(req, res) {
 	try {
@@ -390,6 +400,7 @@ async function listPromoSectionsWithMerchants(req, res) {
  * @response 200 - Successful operation, returns a list of merchant businesses offering daily meals
  * @responseContent {Business[]} 200.application/json
  * @response 400 - Error occurred while obtaining the merchant business list
+ * @prisma_model businesses
  */
 async function listMerchantBusinessesWithDailyMeals(req, res) {
 	try {
@@ -414,6 +425,7 @@ async function listMerchantBusinessesWithDailyMeals(req, res) {
  * @response 200 - Successful operation, returns a list of merchant businesses offering daily meals
  * @responseContent {Business[]} 200.application/json
  * @response 400 - Error occurred while obtaining the merchant business list
+ * @prisma_model businesses
  */
 async function listMerchantBusinessesMainInfo(req, res) {
 	try {
@@ -437,6 +449,7 @@ async function listMerchantBusinessesMainInfo(req, res) {
  * @response 200 - Successful operation, returns a list of transfer businesses
  * @responseContent {Business[]} 200.application/json
  * @response 400 - Error occurred while obtaining the transfer businesses list
+ * @prisma_model businesses
  */
 async function listTransferBusinessesMainInfo(req, res) {
 	try {
@@ -458,6 +471,7 @@ async function listTransferBusinessesMainInfo(req, res) {
  * @response 200 - Successful operation, returns a list of taxi businesses
  * @responseContent {Business[]} 200.application/json
  * @response 400 - Error occurred while obtaining the taxi business list
+ * @prisma_model businesses
  */
 async function listTransferBusinesses(req, res) {
 	try {
@@ -479,6 +493,9 @@ async function listTransferBusinesses(req, res) {
  * @responseContent {Business} 200.application/json
  * @response 404 - Business not found
  * @response 400 - Error retrieving business information
+ * @prisma_model businesses
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function getBusinessById(req, res) {
 	try {
@@ -506,6 +523,7 @@ async function getBusinessById(req, res) {
  * @responseContent {Business} 200.application/json
  * @response 404 - Business not found
  * @response 400 - Error retrieving business information
+ * @prisma_model businesses
  */
 async function getBusinessAdminDataById(req, res) {
 	try {
@@ -535,6 +553,9 @@ async function getBusinessAdminDataById(req, res) {
  * @responseContent {Business} 200.application/json
  * @response 404 - Business not found
  * @response 400 - Error retrieving business information
+ * @prisma_model businesses
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function getBusinessForSearchById(req, res) {
 	try {
@@ -591,6 +612,7 @@ async function getBusinessForSearchById(req, res) {
  * @responseContent {Business} 200.application/json
  * @response 404 - Parent business not found
  * @response 400 - Error retrieving parent business information
+ * @prisma_model businesses
  */
 async function getParentBusiness(req, res) {
 	try {
@@ -615,6 +637,7 @@ async function getParentBusiness(req, res) {
  * @response 200 - Successful operation, returns a list of child businesses
  * @responseContent {Business[]} 200.application/json
  * @response 400 - Error retrieving child businesses information
+ * @prisma_model businesses
  */
 async function getChildBusinesses(req, res) {
 	try {
@@ -637,6 +660,8 @@ async function getChildBusinesses(req, res) {
  * @response 201 - Business created successfully
  * @responseContent {Business} 201.application/json
  * @response 400 - Error creating new business
+ * @prisma_model businesses
+ * @prisma_model reviewables
  */
 async function createNewBusiness(req, res) {
 	try {
@@ -665,6 +690,7 @@ async function createNewBusiness(req, res) {
  * @response 200 - Business updated successfully. Returns the updated business details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating business information.
+ * @prisma_model businesses
  */
 async function update(req, res) {
 	console.info('update business', req.body);
@@ -700,6 +726,7 @@ async function update(req, res) {
  * @response 200 - Type updated successfully. Returns the updated business details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating business information.
+ * @prisma_model businesses
  */
 async function updateBusinessType(req, res) {
 	try {
@@ -732,6 +759,7 @@ async function updateBusinessType(req, res) {
  * @response 200 - Business unit status updated successfully. Returns the updated business details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating business information.
+ * @prisma_model businesses
  */
 async function updateIsBusinessUnit(req, res) {
 	try {
@@ -764,6 +792,7 @@ async function updateIsBusinessUnit(req, res) {
  * @response 200 - Group name updated successfully. Returns the updated business details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating business information.
+ * @prisma_model businesses
  */
 async function updateBusinessGroupName(req, res) {
 	try {
@@ -797,6 +826,7 @@ async function updateBusinessGroupName(req, res) {
  * @response 200 - Email updated successfully. Returns the updated business details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating business information.
+ * @prisma_model businesses
  */
 async function updateBusinessEmail(req, res) {
 	try {
@@ -830,6 +860,7 @@ async function updateBusinessEmail(req, res) {
  * @response 200 - Telephone updated successfully. Returns the updated business details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating business information.
+ * @prisma_model businesses
  */
 async function updateBusinessTelephone(req, res) {
 	try {
@@ -868,6 +899,7 @@ async function updateBusinessTelephone(req, res) {
  * @response 200 - Working hours updated successfully. Returns the updated business details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating business information.
+ * @prisma_model businesses
  */
 async function updateBusinessWorkingHours(req, res) {
 	try {
@@ -900,6 +932,7 @@ async function updateBusinessWorkingHours(req, res) {
  * @response 200 - Overwhelmed status updated successfully. Returns the updated restaurant details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating restaurant information.
+ * @prisma_model businesses
  */
 async function updateRestaurantOverwhelmed(req, res) {
 	try {
@@ -930,6 +963,7 @@ async function updateRestaurantOverwhelmed(req, res) {
  * @response 200 - New status updated successfully. Returns the updated business details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating business information.
+ * @prisma_model businesses
  */
 async function updateBusinessIsNew(req, res) {
 	try {
@@ -963,6 +997,7 @@ async function updateBusinessIsNew(req, res) {
  * @response 200 - Popularity status updated successfully. Returns the updated business details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating business information.
+ * @prisma_model businesses
  */
 async function updateBusinessIsPopular(req, res) {
 	try {
@@ -993,6 +1028,7 @@ async function updateBusinessIsPopular(req, res) {
  * @response 200 - Successful operation, returns a list of matching businesses
  * @responseContent {Business[]} 200.application/json
  * @response 400 - Error occurred while searching for businesses by group name
+ * @prisma_model businesses
  */
 async function getBusinessesByGroupName(req, res) {
 	const { search } = req.params;
@@ -1017,6 +1053,7 @@ async function getBusinessesByGroupName(req, res) {
  * @response 200 - Successful operation, returns a list of matching businesses
  * @responseContent {Business[]} 200.application/json
  * @response 400 - Error occurred while searching for businesses by name
+ * @prisma_model businesses
  */
 async function getBusinessesByNameSearch(req, res) {
 	const { search } = req.query;
@@ -1042,6 +1079,8 @@ async function getBusinessesByNameSearch(req, res) {
  * @bodyRequired
  * @response 200 - Address added successfully
  * @response 400 - Error adding address
+ * @prisma_model businesses
+ * @prisma_model addresses
  */
 async function addBusinessAddress(req, res) {
 	try {
@@ -1072,6 +1111,8 @@ async function addBusinessAddress(req, res) {
  * @bodyRequired
  * @response 200 - Delivery address added successfully
  * @response 400 - Error adding delivery address
+ * @prisma_model businesses
+ * @prisma_model addresses
  */
 async function addDeliveryAddress(req, res) {
 	try {
@@ -1104,6 +1145,7 @@ async function addDeliveryAddress(req, res) {
  * @response 200 - Parent business updated successfully
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating parent business
+ * @prisma_model businesses
  */
 async function updateParentBusinessId(req, res) {
 	try {
@@ -1130,6 +1172,8 @@ async function updateParentBusinessId(req, res) {
  * @response 200 - Address updated successfully. Returns the updated business details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating business address.
+ * @prisma_model businesses
+ * @prisma_model addresses
  */
 async function updateBusinessAddress(req, res) {
 	try {
@@ -1153,6 +1197,8 @@ async function updateBusinessAddress(req, res) {
  * @response 200 - Delivery address updated successfully. Returns the updated business details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating business delivery address.
+ * @prisma_model businesses
+ * @prisma_model addresses
  */
 async function updateBusinessDeliveryAddress(req, res) {
 	try {
@@ -1172,6 +1218,7 @@ async function updateBusinessDeliveryAddress(req, res) {
  * @pathParam {string} business_id - The ID of the business to delete
  * @response 200 - Business deleted successfully
  * @response 400 - Error deleting business
+ * @prisma_model businesses
  */
 async function deleteBusiness(req, res) {
 	try {
@@ -1192,6 +1239,7 @@ async function deleteBusiness(req, res) {
  * @response 200 - Child business removed from parent successfully
  * @responseContent {Business} 200.application/json
  * @response 400 - Error removing parent business from business
+ * @prisma_model businesses
  */
 async function removeParentBusinessId(req, res) {
 	try {
@@ -1213,6 +1261,10 @@ async function removeParentBusinessId(req, res) {
  * @bodyRequired
  * @response 200 - Primary address set successfully.
  * @response 400 - Error setting primary address.
+ * @prisma_model reviews
+ * @prisma_model reviewables
+ * @prisma_model users
+ * @prisma_model businesses
  */
 async function reviewBusiness(req, res) {
 	try {
@@ -1286,6 +1338,7 @@ async function confirmBusinessReview(req, res) {
  * @bodyRequired
  * @response 200 - Payment Intent created successfully.
  * @response 400 - Error creating payment intent.
+ * @prisma_model users
  */
 async function createPaymentIntent(req, res) {
 	try {
@@ -1309,6 +1362,7 @@ async function createPaymentIntent(req, res) {
  * @bodyRequired
  * @response 200 - Users sorted successfully.
  * @response 400 - Error sorting users.
+ * @prisma_model businesses
  */
 async function manualSortScheduledUsers(req, res) {
 	const { sorted_user_ids, business_id } = req.body;
@@ -1333,6 +1387,7 @@ async function manualSortScheduledUsers(req, res) {
  * @bodyRequired
  * @response 200 - Sorting type added successfully.
  * @response 400 - Error adding sorting type.
+ * @prisma_model businesses
  */
 async function addScheduledUserSortingType(req, res) {
 	const { sorting_type, business_id } = req.body;
@@ -1359,6 +1414,8 @@ async function addScheduledUserSortingType(req, res) {
  * @responseContent {object} 400.application/json The error object
  * @response 404 - Business not found or no earnings data available
  * @responseContent {object} 404.application/json The error object
+ * @prisma_model businesses
+ * @prisma_model delivery_orders
  */
 async function getBusinessEarnings(req, res) {
 	const { business_id } = req.params;
@@ -1401,6 +1458,8 @@ async function getBusinessEarnings(req, res) {
  * @responseContent {object[]} 200.application/json
  * @response 400 - Missing required parameters
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model businesses
+ * @prisma_model delivery_orders
  */
 async function getAllBusinessesEarnings(req, res) {
 	const { start_date, end_date } = req.query;
@@ -1443,6 +1502,7 @@ async function getAllBusinessesEarnings(req, res) {
  * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving total earnings
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model delivery_orders
  */
 async function getTotalEarnings(req, res) {
 	try {
@@ -1469,6 +1529,7 @@ async function getTotalEarnings(req, res) {
  * @responseContent {TotalEarnings} 200.application/json
  * @response 404 - Business not found
  * @response 400 - Error retrieving business' total earnings
+ * @prisma_model delivery_orders
  */
 async function getBusinessTotalEarnings(req, res) {
 	const { business_id: business_id } = req.params;
@@ -1489,6 +1550,22 @@ async function getBusinessTotalEarnings(req, res) {
 		res.status(400).json({ error: "Error retrieving business' total earnings", detail: error.message });
 	}
 }
+/**
+ * GET /business/:business_id/reviews
+ * @tag Business
+ * @summary Get business reviews
+ * @description Retrieves reviews for a business, including author and target details.
+ * @operationId getBusinessReviewsById
+ * @pathParam {string} business_id - The business ID
+ * @response 200 - Reviews retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Internal server error
+ * @prisma_model reviews
+ * @prisma_model users
+ * @prisma_model businesses
+ * @prisma_model documents
+ * @prisma_model files
+ */
 async function getBusinessReviewsById(req, res) {
 	const { business_id: business_id } = req.params;
 	if (!business_id) {
@@ -1591,6 +1668,9 @@ async function getBusinessReviewsById(req, res) {
  * @response 200 - Business updated successfully. Returns the updated business details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating business information.
+ * @prisma_model businesses
+ * @prisma_model addresses
+ * @prisma_model finances
  */
 async function editBusiness(req, res) {
 	const {
@@ -1650,6 +1730,18 @@ async function editBusiness(req, res) {
 		res.status(400).json({ error: 'Error updating business information', detail: error.message });
 	}
 }
+/**
+ * GET /business/stripe/status/:business_id
+ * @tag Business
+ * @summary Get Stripe account active status
+ * @description Returns whether the business's Stripe account is active.
+ * @operationId getBusinessStripeStatusByBusinessId
+ * @pathParam {string} business_id - The business ID
+ * @response 200 - Stripe status retrieved
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching Stripe status
+ * @prisma_model businesses
+ */
 async function getBusinessStripeStatusByBusinessId(req, res) {
 	try {
 		const business_id = req.params.business_id;
@@ -1664,6 +1756,18 @@ async function getBusinessStripeStatusByBusinessId(req, res) {
 		throw new Error(error);
 	}
 }
+/**
+ * GET /business/stripe/generate/:business_id
+ * @tag Business
+ * @summary Generate Stripe onboarding link
+ * @description Creates or retrieves a Stripe account and returns an onboarding link.
+ * @operationId generateBusinessStripeByBusinessId
+ * @pathParam {string} business_id - The business ID
+ * @response 200 - Onboarding link returned (HTML view)
+ * @response 400 - Business already onboarded or invalid
+ * @response 500 - Error generating Stripe account
+ * @prisma_model businesses
+ */
 async function generateBusinessStripeByBusinessId(req, res) {
 	try {
 		const business_id = req.params.business_id;
@@ -1730,6 +1834,19 @@ async function onboardingEnd(req, res) {
 		});
 	}
 }
+/**
+ * GET /business/busyness
+ * @tag Business
+ * @summary Get busyness factors for businesses
+ * @description Returns a busyness factor per business ID based on in-progress orders.
+ * @operationId getBusynessFactorsBusinessIdList
+ * @queryParam {string[]} business_ids - Array of business IDs
+ * @response 200 - Busyness factors returned
+ * @responseContent {object} 200.application/json
+ * @response 400 - Validation error
+ * @response 500 - Internal Server Error
+ * @prisma_model delivery_orders
+ */
 async function getBusynessFactorsBusinessIdList(req, res) {
 	const { business_ids } = req.query;
 	if (!business_ids) {
@@ -1756,6 +1873,22 @@ async function getBusynessFactorsBusinessIdList(req, res) {
 		res.status(500).json({ message: 'Internal Server Error while getting busyness factors' });
 	}
 }
+/**
+ * POST /favorites
+ * @tag Business
+ * @summary Add a business to the authenticated user's favorites
+ * @description Adds the given business to the user's favorites list.
+ * @operationId addBusinessToFavorites
+ * @bodyDescription The business to favorite
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Favorite created successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Validation error
+ * @response 500 - Internal Server Error
+ * @prisma_model user_favorite_businesses
+ * @prisma_model business
+ */
 async function addBusinessToFavorites(req, res) {
 	try {
 		const { business_id } = req.body;
@@ -1775,6 +1908,21 @@ async function addBusinessToFavorites(req, res) {
 		res.status(500).json({ message: 'Internal Server Error while adding Business to Favorites' });
 	}
 }
+/**
+ * DELETE /favorites
+ * @tag Business
+ * @summary Remove a business from the authenticated user's favorites
+ * @description Removes the specified favorite entry from the user's favorites list.
+ * @operationId removeBusinessFromFavorites
+ * @bodyDescription The favorite entry identifier to remove
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Favorite removed successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Validation error
+ * @response 500 - Internal Server Error
+ * @prisma_model user_favorite_businesses
+ */
 async function removeBusinessFromFavorites(req, res) {
 	try {
 		const { user_favorite_businesses_id } = req.body;
@@ -1793,6 +1941,19 @@ async function removeBusinessFromFavorites(req, res) {
 		res.status(500).json({ message: 'Internal Server Error while adding Business to Favorites' });
 	}
 }
+/**
+ * GET /favorites/{type}
+ * @tag Business
+ * @summary List authenticated user's favorite businesses
+ * @description Returns favorite businesses for the current user, optionally filtered by business type.
+ * @operationId getFavoriteBusinesses
+ * @pathParam {string} [type] - Optional business type to filter by
+ * @response 200 - Favorites retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Internal Server Error
+ * @prisma_model user_favorite_businesses
+ * @prisma_model business
+ */
 async function getFavoriteBusinesses(req, res) {
 	try {
 		const { user_id } = req.user;
@@ -1804,6 +1965,20 @@ async function getFavoriteBusinesses(req, res) {
 		res.status(500).json({ message: 'Internal Server Error while adding Business to Favorites' });
 	}
 }
+/**
+ * GET /daily-meal-users/{business_id}
+ * @tag Business
+ * @summary List scheduled users for a business
+ * @description Retrieves users scheduled for daily meals for the given business.
+ * @operationId getScheduledUsersByBusinessId
+ * @pathParam {string} business_id - The business ID
+ * @response 200 - Users retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error retrieving users
+ * @prisma_model business
+ * @prisma_model users
+ * @prisma_model addresses
+ */
 async function getScheduledUsersByBusinessId(req, res) {
 	try {
 		const users = await BusinessDao.getScheduledUsersByBusinessId(req.params.business_id);
@@ -1817,6 +1992,25 @@ async function getScheduledUsersByBusinessId(req, res) {
 		res.status(400).json({ error: 'Error getting daily meal users by business ID', e });
 	}
 }
+/**
+ * POST /scoring_points
+ * @tag Business
+ * @summary Create scoring points
+ * @description Creates scoring points for the authenticated business user for a delivery or taxi order.
+ * @operationId createScoringPoints
+ * @bodyDescription Scoring points details
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 201 - Scoring points created successfully
+ * @responseContent {object} 201.application/json
+ * @response 400 - Invalid request
+ * @response 500 - Internal server error
+ * @prisma_model scoring_points
+ * @prisma_model businesses
+ * @prisma_model users
+ * @prisma_model delivery_orders
+ * @prisma_model taxi_orders
+ */
 async function createScoringPointsHandler(req, res) {
 	try {
 		const { reason, points, taxi_order_id, delivery_order_id } = req.body;
@@ -1850,6 +2044,22 @@ async function createScoringPointsHandler(req, res) {
 		return res.status(500).json({ error: 'Internal server error' });
 	}
 }
+/**
+ * GET /purchase_order_limit/{business_id}
+ * @tag Business
+ * @summary Get remaining purchase order limit amount for current month
+ * @description Returns the remaining purchase order limit for the specified business based on taxi orders this month.
+ * @operationId getPurchaseOrderLimit
+ * @pathParam {string} business_id - The business ID
+ * @response 200 - Remaining limit returned
+ * @responseContent {object} 200.application/json
+ * @response 400 - Not found or invalid request
+ * @response 500 - Internal server error
+ * @prisma_model business
+ * @prisma_model business_users
+ * @prisma_model business_clients
+ * @prisma_model taxi_orders
+ */
 async function getPurchaseOrderLimit(req, res) {
 	const { business_id } = req.params;
 	if (!business_id) {
@@ -1867,6 +2077,18 @@ async function getPurchaseOrderLimit(req, res) {
 		return res.status(500).json({ error: 'Internal server error' });
 	}
 }
+/**
+ * DELETE /remove-payment-method/{pm_id}
+ * @tag Business
+ * @summary Remove a payment method from the business
+ * @description Detaches the specified payment method from the Stripe customer of the business of the current user.
+ * @operationId removeBusinessPaymentMethod
+ * @pathParam {string} pm_id - The Stripe payment method ID
+ * @response 200 - Payment method removed successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error removing payment method
+ * @prisma_model business
+ */
 async function removeBusinessPaymentMethod(req, res) {
 	try {
 		const { pm_id } = req.params;
@@ -1913,6 +2135,7 @@ async function removeBusinessPaymentMethod(req, res) {
  * @responseContent {LocalLocation[]} 200.application/json
  * @response 400 - Error retrieving local locations
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model local_locations
  */
 async function getLocalLocations(req, res) {
 	try {
@@ -1944,6 +2167,7 @@ async function getLocalLocations(req, res) {
  * @responseContent {object} 400.application/json The error object
  * @response 500 - Error creating local location
  * @responseContent {object} 500.application/json The error object
+ * @prisma_model business_local_locations
  */
 async function createBusinessLocalLocation(req, res) {
 	try {
@@ -1983,6 +2207,7 @@ async function createBusinessLocalLocation(req, res) {
  * @responseContent {object} 400.application/json The error object
  * @response 500 - Error updating local location
  * @responseContent {object} 500.application/json The error object
+ * @prisma_model business_local_locations
  */
 async function updateBusinessLocalLocation(req, res) {
 	try {
@@ -2002,6 +2227,22 @@ async function updateBusinessLocalLocation(req, res) {
 	}
 }
 
+/**
+ * POST /business/analytics/overall
+ * @tag Business
+ * @summary Get overall business analytics
+ * @description Retrieves overall analytics for the authenticated business user, including revenue, orders, customer types, and promo analytics.
+ * @operationId getBusinessOverallAnalytics
+ * @bodyDescription The period parameters for analytics.
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Analytics retrieved successfully.
+ * @responseContent {object} 200.application/json
+ * @response 401 - Unauthorized access.
+ * @responseContent {object} 401.application/json The error object
+ * @prisma_model delivery_orders
+ * @prisma_model promo_analytics
+ */
 async function getBusinessOverallAnalytics(req, res) {
 	try {
 		const user_id = req.user?.user_id;
@@ -2263,7 +2504,7 @@ function buildPromoBuckets(
 }
 
 /**
- * POST /business/analytics/promo/sections/{business_id}
+ * POST /business/analytics/promo/sections
  * @tag Business
  * @summary Promo analytics for sections
  * @description Returns promo analytics for sections for a business and time period, including purchased promo sections.
@@ -2312,13 +2553,13 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 		const previous =
 			prevStart && prevEnd
 				? await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
-						business_id,
-						prevStart,
-						prevEnd,
-						PROMO_TYPE.SECTION,
-						undefined,
-						sectionIds
-					)
+					business_id,
+					prevStart,
+					prevEnd,
+					PROMO_TYPE.SECTION,
+					undefined,
+					sectionIds
+				)
 				: [];
 		const prior = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
 			business_id,
@@ -2383,7 +2624,7 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 }
 
 /**
- * POST /business/analytics/promo/words/{business_id}
+ * POST /business/analytics/promo/words
  * @tag Business
  * @summary Promo analytics for words
  * @description Returns promo analytics for words for a business and time period, including purchased words.
@@ -2432,12 +2673,12 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 		const previous =
 			prevStart && prevEnd
 				? await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
-						business_id,
-						prevStart,
-						prevEnd,
-						PROMO_TYPE.WORD,
-						wordIds
-					)
+					business_id,
+					prevStart,
+					prevEnd,
+					PROMO_TYPE.WORD,
+					wordIds
+				)
 				: [];
 		const prior = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
 			business_id,
@@ -2499,6 +2740,27 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 	}
 }
 
+/**
+ * POST /business/analytics/promo/ads
+ * @tag Business
+ * @summary Promo analytics for ads
+ * @description Returns promo analytics for ads for a business and time period, including purchased ads if applicable.
+ * @operationId getBusinessPromoAdsAnalytics
+ * @bodyDescription Time period definition
+ * @bodyContent {
+ *   "type": 0,
+ *   "start_date": "2025-01-01T00:00:00.000Z",
+ *   "end_date": null,
+ *   "ids": ["optional array of promo_ads_id to filter"]
+ * } application/json
+ * @bodyRequired
+ * @response 200 - successful operation
+ * @responseContent {object} 200.application/json
+ * @response 400 - Invalid request
+ * @response 401 - Unauthorized
+ * @prisma_model promo_ads
+ * @prisma_model promo_analytics
+ */
 async function getBusinessPromoAdsAnalytics(req, res) {
 	try {
 		const user_id = req.user?.user_id;
@@ -2525,14 +2787,14 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 		const previous =
 			prevStart && prevEnd
 				? await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
-						business_id,
-						prevStart,
-						prevEnd,
-						PROMO_TYPE.AD,
-						undefined,
-						undefined,
-						adIds
-					)
+					business_id,
+					prevStart,
+					prevEnd,
+					PROMO_TYPE.AD,
+					undefined,
+					undefined,
+					adIds
+				)
 				: [];
 		const prior = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
 			business_id,

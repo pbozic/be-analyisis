@@ -12,9 +12,10 @@ const { businessIndex } = elasticsearch;
  * @description Returns a list of all business users.
  * @operationId getAllBusinessUsers
  * @response 200 - successful operation
- * @responseContent {BusinessUser[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business user list
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_users
  */
 async function getAllBusinessUsers(req, res) {
 	try {
@@ -32,9 +33,10 @@ async function getAllBusinessUsers(req, res) {
  * @description Returns a business user.
  * @operationId getBusinessUsersByUserId
  * @response 200 - successful operation
- * @responseContent {BusinessUser[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business user
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_users
  */
 async function getBusinessUserByUserId(req, res) {
 	try {
@@ -53,9 +55,10 @@ async function getBusinessUserByUserId(req, res) {
  * @operationId getBusinessUsersByBusinessId
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - successful operation
- * @responseContent {BusinessUser[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business user list
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_users
  */
 async function getBusinessUsersByBusinessId(req, res) {
 	try {
@@ -74,9 +77,10 @@ async function getBusinessUsersByBusinessId(req, res) {
  * @operationId getBusinessUsersByBusinessType
  * @pathParam {string} type - The type of the business
  * @response 200 - successful operation
- * @responseContent {BusinessUser[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business user list
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_users
  */
 async function getBusinessUsersByBusinessType(req, res) {
 	try {
@@ -96,9 +100,10 @@ async function getBusinessUsersByBusinessType(req, res) {
  * @pathParam {string} business_id - The ID of the business
  * @pathParam {string} company_role - The company role of the business users
  * @response 200 - successful operation
- * @responseContent {BusinessUser[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business user list
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_users
  */
 async function getAllBusinessUsersForBusinessByCompanyRole(req, res) {
 	try {
@@ -120,11 +125,13 @@ async function getAllBusinessUsersForBusinessByCompanyRole(req, res) {
  * @description Creates a new business user and links it to a business.
  * @operationId createBusinessUser
  * @bodyDescription The data to create a new business user
- * @bodyContent {CreateBusinessUserRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Business user created successfully. Returns the created business user.
- * @responseContent {BusinessUser} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating business user.
+ * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_users
  */
 async function createBusinessUser(req, res) {
 	try {
@@ -163,6 +170,8 @@ async function createBusinessUser(req, res) {
  * @response 200 - Business user removed successfully.
  * @responseContent {object} 200.application/json
  * @response 400 - Error removing business user.
+ * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_users
  */
 async function removeBusinessUser(req, res) {
 	try {
@@ -181,11 +190,14 @@ async function removeBusinessUser(req, res) {
  * @operationId addOperatingAddress
  * @pathParam {string} business_users_id - The ID of the business user
  * @bodyDescription The address to add
- * @bodyContent {Address} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Address added successfully. Returns the updated business user's details.
- * @responseContent {BusinessUserAddress} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error adding address.
+ * @responseContent {object} 400.application/json The error object
+ * @prisma_model addresses
+ * @prisma_model business_users
  */
 async function addOperatingAddress(req, res) {
 	try {
@@ -218,6 +230,8 @@ async function addOperatingAddress(req, res) {
  * @response 200 - Company role updated successfully
  * @responseContent {object} 200.application/json
  * @response 400 - Error updating company role
+ * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_users
  */
 async function updateCompanyRole(req, res) {
 	try {
@@ -242,6 +256,8 @@ async function updateCompanyRole(req, res) {
  * @response 200 - Company role updated successfully
  * @responseContent {object} 200.application/json
  * @response 400 - Error updating company role
+ * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_users
  */
 async function updateBusinessUserOnlineStatus(req, res) {
 	try {
@@ -268,8 +284,10 @@ async function updateBusinessUserOnlineStatus(req, res) {
  * @operationId getGroupUsersByParentId
  * @pathParam {string} business_id - The ID of the business for which to list nested child users
  * @response 200 - Successful operation, returns an array containing all business_user user_ids for given business id and their respective child_users[]
- * @responseContent {Menu[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the menu list
+ * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_users
  */
 async function getBusinessGroupsByBusinessId(req, res) {
 	try {
@@ -297,11 +315,13 @@ async function getBusinessGroupsByBusinessId(req, res) {
  * @description This endpoint is used to update the allowance of the given child_user_id for the given service_type
  * @operationId updateChildUserAllowance
  * @bodyDescription The child's group_user_id and value to set for the child user's allowance for the given service type
- * @bodyContent { business_users_id, value, type } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User allowance updated successfully. Returns the updated group_user.
- * @responseContent {business_user} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating group user enabled status.
+ * @responseContent {object} 400.application/json The error object
+ * @prisma_model business_users
  */
 async function setAllowance(req, res) {
 	const { business_users_id, wallet, purchase_order, type } = req.body;

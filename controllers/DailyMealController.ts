@@ -31,7 +31,6 @@ import DailyMealCategoryDao from '../dao/DailyMealCategory.ts';
 import { logPromoAnalytics } from '../lib/analytics.ts';
 
 /**
- *
  * - POST /delivery/orders/daily_meals/subscription/payment
  * - @tag Delivery
  * - @summary Create a daily meals subscription payment
@@ -93,8 +92,6 @@ import { logPromoAnalytics } from '../lib/analytics.ts';
  * - @prisma_model payment_splits
  * - @prisma_model wallet_funds
  * - @prisma_model payment_intent_logs
- *
- * ./prisma/schema.prisma
  */
 export async function dailyMealsSubscriptionPayment(
 	req: ValidatedRequest<DailyMealsSubscriptionRequest, unknown, DailyMealsSubscriptionQuery>,
@@ -258,7 +255,6 @@ export async function dailyMealsSubscriptionPayment(
 }
 
 /**
- *
  * - GET /delivery/orders/daily_meals/user
  * - @tag Delivery
  * - @summary Get all daily meal subscriptions for the current user
@@ -297,8 +293,6 @@ export async function dailyMealsSubscriptionPayment(
  * - @prisma_model daily_meal_subscription_days
  * - @prisma_model daily_meal_subscription_weekdays
  * - @prisma_model daily_meal_instances
- *
- * ./prisma/schema.prisma
  */
 export async function getUserDailyMealSubscriptions(
 	req: ValidatedRequest<{ start_date?: string }>,
@@ -320,7 +314,6 @@ export async function getUserDailyMealSubscriptions(
 }
 
 /**
- *
  * - GET /delivery/orders/daily_meals/business/{business_id}
  * - @tag Delivery
  * - @summary Get active daily meal subscriptions for a business
@@ -365,8 +358,6 @@ export async function getUserDailyMealSubscriptions(
  * - @prisma_model daily_meal_subscription_days
  * - @prisma_model daily_meal_subscription_weekdays
  * - @prisma_model daily_meal_instances
- *
- * ./prisma/schema.prisma
  */
 export async function getActiveDailyMealsSubscriptionsByBusinessId(
 	req: ValidatedRequest<{ start_date?: string }, { business_id: string }>,
@@ -384,7 +375,6 @@ export async function getActiveDailyMealsSubscriptionsByBusinessId(
 }
 
 /**
- *
  * - GET /business/daily_meal_subscriptions/{business_id}
  * - @tag Delivery
  * - @summary Get all daily meal subscriptions for a business
@@ -429,8 +419,6 @@ export async function getActiveDailyMealsSubscriptionsByBusinessId(
  * - @prisma_model daily_meal_subscription_days
  * - @prisma_model daily_meal_subscription_weekdays
  * - @prisma_model daily_meal_instances
- *
- * ./prisma/schema.prisma
  */
 export async function getDailyMealsSubscriptionsByBusinessId(
 	req: ValidatedRequest<unknown, { business_id: string }>,
@@ -447,7 +435,6 @@ export async function getDailyMealsSubscriptionsByBusinessId(
 }
 
 /**
- *
  * - PATCH /delivery/orders/daily_meals/subscription/{subscription_id}/activate
  * - @tag Delivery
  * - @summary Activate a daily meal subscription by ID
@@ -468,7 +455,6 @@ export async function getDailyMealsSubscriptionsByBusinessId(
  * - @prisma_model daily_meal_subscription_customers
  * - @prisma_model daily_meal_subscription_days
  * - @prisma_model daily_meal_subscription_weekdays
- * ./prisma/schema.prisma
  */
 export async function activateSubscriptionById(
 	req: ValidatedRequest<unknown, { subscription_id: string }>,
@@ -505,7 +491,6 @@ export async function activateSubscriptionById(
  * - @prisma_model daily_meal_subscription_customers
  * - @prisma_model daily_meal_subscription_days
  * - @prisma_model daily_meal_subscription_weekdays
- * ./prisma/schema.prisma
  */
 export async function cancelSubscriptionById(
 	req: ValidatedRequest<unknown, { subscription_id: string }>,
@@ -563,7 +548,6 @@ export async function cancelSubscriptionById(
  * - @prisma_model daily_meal_subscription_days
  * - @prisma_model daily_meal_subscription_weekdays
  * - @prisma_model addresses
- * ./prisma/schema.prisma
  */
 export async function cancelDailyMealInstanceById(
 	req: ValidatedRequest<unknown, { instance_id: string }>,
@@ -730,7 +714,6 @@ export async function cancelDailyMealInstanceById(
  * - @prisma_model daily_meal_subscription_weekdays
  * - @prisma_model daily_meal_instances
  * - @prisma_model payments
- * ./prisma/schema.prisma
  */
 export async function getSubscriptionById(
 	req: ValidatedRequest<unknown, { subscription_id: string }>,
@@ -782,7 +765,6 @@ export async function getSubscriptionById(
  * - @prisma_model daily_meal_subscription_days
  * - @prisma_model daily_meal_subscription_weekdays
  * - @prisma_model delivery_drivers
- * ./prisma/schema.prisma
  */
 export async function assignDeliveryDriverToSubscription(
 	req: ValidatedRequest<{ delivery_driver_id: string }, { subscription_id: string }>,

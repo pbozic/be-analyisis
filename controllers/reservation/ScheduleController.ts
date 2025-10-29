@@ -19,8 +19,9 @@ import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee.ts';
  * @description Retrieves all location schedules.
  * @operationId getLocationSchedules
  * @response 200 - Location schedules retrieved successfully
- * @responseContent {Schedule[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving schedules
+ * @prisma_model schedule
  */
 export async function getSchedule(req: Request, res: Response): Promise<void> {
 	try {
@@ -38,11 +39,12 @@ export async function getSchedule(req: Request, res: Response): Promise<void> {
  * @summary Create a new location schedules
  * @description Creates a new location schedules.
  * @operationId createLocationSchedule
- * @requestBody {CreateScheduleInput} requestBody - The schedule data to create.
+ * @bodyContent {object} application/json
  * @response 201 - Schedule created successfully
- * @responseContent {Schedule} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating schedule
+ * @prisma_model schedule
  */
 export async function createSchedule(req: ValidatedRequest<CreateScheduleInput>, res: Response): Promise<void> {
 	try {
@@ -56,17 +58,18 @@ export async function createSchedule(req: ValidatedRequest<CreateScheduleInput>,
 }
 
 /**
- * PUT /reservation/schedules/{schedule_id}
+ * PUT /reservation/schedules/:schedule_id
  * @tag Reservation
  * @summary Update a reservation schedule
  * @description Updates an existing reservation schedule.
  * @operationId updateLocationSchedule
  * @pathParam {string} schedule_id - The ID of the schedule to update.
- * @requestBody {UpdateScheduleInput} requestBody - The data to update the schedule with.
+ * @bodyContent {object} application/json
  * @response 200 - Schedule updated successfully
- * @responseContent {Schedule} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule not found
  * @response 500 - Error updating schedule
+ * @prisma_model schedule
  */
 export async function updateSchedule(
 	req: ValidatedRequest<UpdateScheduleInput, { schedule_id: string }>,
@@ -84,7 +87,7 @@ export async function updateSchedule(
 }
 
 /**
- * DELETE /reservation/schedules/{schedule_id}
+ * DELETE /reservation/schedules/:schedule_id
  * @tag Reservation
  * @summary Delete a reservation schedule
  * @description Deletes a reservation schedule by its ID.
@@ -93,6 +96,7 @@ export async function updateSchedule(
  * @response 204 - Schedule deleted successfully
  * @response 404 - Schedule not found
  * @response 500 - Error deleting schedule
+ * @prisma_model schedule
  */
 export async function deleteSchedule(
 	req: ValidatedRequest<null, { schedule_id: string }>,
@@ -109,16 +113,17 @@ export async function deleteSchedule(
 }
 
 /**
- * GET /reservation/schedules/{schedule_id}
+ * GET /reservation/schedules/:schedule_id
  * @tag Reservation
  * @summary Get a reservation schedule by ID
  * @description Retrieves a reservation schedule by its ID.
  * @operationId getLocationScheduleById
  * @pathParam {string} schedule_id - The ID of the schedule to retrieve.
  * @response 200 - Schedule retrieved successfully
- * @responseContent {Schedule} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule not found
  * @response 500 - Error retrieving schedule
+ * @prisma_model schedule
  */
 
 export async function getScheduleById(
@@ -140,17 +145,19 @@ export async function getScheduleById(
 }
 
 /**
- * PUT /reservation/schedules/schedule-with-employees/{schedule_id}
+ * PUT /reservation/schedules/schedule-with-employees/:schedule_id
  * @tag Reservation
  * @summary Update a reservation schedule with employees
  * @description Updates an existing reservation schedule with employees.
  * @operationId updateScheduleWithData
  * @pathParam {string} schedule_id - The ID of the schedule to update.
- * @requestBody {UpdateScheduleWithEmployeesInput} requestBody - The data to update the schedule with and its employees.
+ * @bodyContent {object} application/json
  * @response 200 - Schedule updated successfully
- * @responseContent {Schedule} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule not found
  * @response 500 - Error updating schedule
+ * @prisma_model schedule
+ * @prisma_model schedule_employee
  */
 export async function updateScheduleWithData(
 	req: ValidatedRequest<UpdateScheduleWithEmployeesInput, { schedule_id: string }>,
@@ -193,11 +200,13 @@ export async function updateScheduleWithData(
  * @summary Create a new reservation schedule with employees
  * @description Creates a new reservation schedule with employees.
  * @operationId createScheduleWithData
- * @requestBody {CreateScheduleWithEmployeesInput} requestBody - The data to create the schedule with and its employees.
+ * @bodyContent {object} application/json
  * @response 200 - Schedule created successfully
- * @responseContent {Schedule} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule not found
  * @response 500 - Error creating schedule
+ * @prisma_model schedule
+ * @prisma_model schedule_employee
  */
 export async function createScheduleWithData(
 	req: ValidatedRequest<CreateScheduleWithEmployeesInput>,

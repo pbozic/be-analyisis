@@ -1,6 +1,21 @@
 import WordDao from '../dao/Word.js';
 import { updateUserSubscription } from '../dao/Word.js';
 
+/**
+ * POST /promo/words
+ * @tag Word
+ * @summary Create a new word
+ * @description Creates a word with category and translations.
+ * @operationId createWord
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 201 - Word created successfully
+ * @responseContent {object} 201.application/json
+ * @response 500 - Error creating word
+ * @prisma_model words
+ * @prisma_model translations
+ * @prisma_model categories
+ */
 async function createWord(req, res) {
 	try {
 		const { wordData, translations } = req.body;
@@ -11,6 +26,22 @@ async function createWord(req, res) {
 		res.status(500).json({ error: 'Failed to create word' });
 	}
 }
+/**
+ * PATCH /promo/words/:id
+ * @tag Word
+ * @summary Update a word
+ * @description Updates word value, category, and translations.
+ * @operationId updateWord
+ * @pathParam {string} id - The word ID
+ * @bodyContent {object} application/json
+ * @response 200 - Word updated successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Word not found
+ * @response 500 - Error updating word
+ * @prisma_model words
+ * @prisma_model translations
+ * @prisma_model categories
+ */
 async function updateWord(req, res) {
 	try {
 		const { id } = req.params;
@@ -25,6 +56,19 @@ async function updateWord(req, res) {
 		res.status(500).json({ error: 'Failed to update word' });
 	}
 }
+/**
+ * DELETE /promo/words/:id
+ * @tag Word
+ * @summary Delete a word
+ * @description Deletes a word by ID.
+ * @operationId deleteWord
+ * @pathParam {string} id - The word ID
+ * @response 200 - Word deleted successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Word not found
+ * @response 500 - Error deleting word
+ * @prisma_model words
+ */
 async function deleteWord(req, res) {
 	try {
 		const { id } = req.params;
@@ -38,6 +82,21 @@ async function deleteWord(req, res) {
 		res.status(500).json({ error: 'Failed to delete word' });
 	}
 }
+/**
+ * GET /promo/words/:id
+ * @tag Word
+ * @summary Get a word by ID
+ * @description Retrieves a word with its translations and category.
+ * @operationId getWordById
+ * @pathParam {string} id - The word ID
+ * @response 200 - Word retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Word not found
+ * @response 500 - Error fetching word
+ * @prisma_model words
+ * @prisma_model translations
+ * @prisma_model categories
+ */
 async function getWordById(req, res) {
 	try {
 		const { id } = req.params;
@@ -51,6 +110,19 @@ async function getWordById(req, res) {
 		res.status(500).json({ error: 'Failed to fetch word' });
 	}
 }
+/**
+ * GET /promo/words
+ * @tag Word
+ * @summary List all words
+ * @description Retrieves all words with translations and categories.
+ * @operationId getAllWords
+ * @response 200 - Words retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching words
+ * @prisma_model words
+ * @prisma_model translations
+ * @prisma_model categories
+ */
 async function getAllWords(req, res) {
 	try {
 		const result = await WordDao.getAllWords();
@@ -60,16 +132,20 @@ async function getAllWords(req, res) {
 		res.status(500).json({ error: 'Failed to fetch words' });
 	}
 }
-async function getAllWordsByCategory(req, res) {
-	try {
-		const { category } = req.params;
-		const result = await WordDao.getAllWordsByCategory(category);
-		res.status(200).json(result);
-	} catch (error) {
-		console.error('Error fetching words by category:', error);
-		res.status(500).json({ error: 'Failed to fetch words by category' });
-	}
-}
+/**
+ * DELETE /words/{id}/category
+ * @tag Word
+ * @summary Remove category from word
+ * @description Disconnects the category from the specified word.
+ * @operationId removeCategoryFromWord
+ * @pathParam {string} id - The word ID
+ * @response 200 - Category removed successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Word not found
+ * @response 500 - Error removing category from word
+ * @prisma_model words
+ * @prisma_model categories
+ */
 async function removeCategoryFromWord(req, res) {
 	try {
 		const { id } = req.params;
@@ -83,20 +159,21 @@ async function removeCategoryFromWord(req, res) {
 		res.status(500).json({ error: 'Failed to remove category from word' });
 	}
 }
-async function addCategoryToWord(req, res) {
-	try {
-		const { id } = req.params;
-		const { category } = req.body;
-		const result = await WordDao.addCategoryToWord(id, category);
-		if (!result) {
-			return res.status(404).json({ error: 'Word not found' });
-		}
-		res.status(200).json(result);
-	} catch (error) {
-		console.error('Error adding category to word:', error);
-		res.status(500).json({ error: 'Failed to add category to word' });
-	}
-}
+/**
+ * POST /word-buys
+ * @tag WordBuy
+ * @summary Create word buy subscription items
+ * @description Creates word buy entries and ensures a Stripe subscription is active or updated.
+ * @operationId createWordBuy
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Word buy created successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error creating word buy
+ * @prisma_model word_buy
+ * @prisma_model business
+ * @prisma_model words
+ */
 async function createWordBuy(req, res) {
 	try {
 		let { words, business_id } = req.body;
@@ -108,6 +185,19 @@ async function createWordBuy(req, res) {
 		res.status(500).json({ error: 'Failed to create word buy' });
 	}
 }
+/**
+ * GET /word_buy/:id
+ * @tag WordBuy
+ * @summary Get word buy by ID
+ * @description Retrieves a single word buy entry by its ID.
+ * @operationId getWordBuyById
+ * @pathParam {string} id - The word buy ID
+ * @response 200 - Word buy retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Word buy not found
+ * @response 500 - Error fetching word buy
+ * @prisma_model word_buy
+ */
 async function getWordBuyById(req, res) {
 	try {
 		const { id } = req.params;
@@ -121,6 +211,17 @@ async function getWordBuyById(req, res) {
 		res.status(500).json({ error: 'Failed to fetch word buy' });
 	}
 }
+/**
+ * GET /word-buy
+ * @tag WordBuy
+ * @summary List all word buys
+ * @description Retrieves all word buys.
+ * @operationId getAllWordBuys
+ * @response 200 - Word buys retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching word buys
+ * @prisma_model word_buy
+ */
 async function getAllWordBuys(req, res) {
 	try {
 		const result = await WordDao.getAllWordBuys();
@@ -130,6 +231,19 @@ async function getAllWordBuys(req, res) {
 		res.status(500).json({ error: 'Failed to fetch word buys' });
 	}
 }
+/**
+ * DELETE /word-buy/:id
+ * @tag WordBuy
+ * @summary Delete a word buy
+ * @description Soft-deletes a word buy and updates user subscription state.
+ * @operationId deleteWordBuy
+ * @pathParam {string} id - The word buy ID
+ * @response 200 - Word buy deleted successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error deleting word buy
+ * @prisma_model word_buy
+ * @prisma_model business
+ */
 async function deleteWordBuy(req, res) {
 	try {
 		const { id } = req.params;
@@ -141,6 +255,20 @@ async function deleteWordBuy(req, res) {
 		res.status(500).json({ error: 'Failed to delete word buy' });
 	}
 }
+/**
+ * PATCH /word-buy/:id
+ * @tag WordBuy
+ * @summary Update a word buy
+ * @description Updates fields on a word buy, such as price.
+ * @operationId updateWordBuy
+ * @pathParam {string} id - The word buy ID
+ * @bodyContent {object} application/json
+ * @response 200 - Word buy updated successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Word buy not found
+ * @response 500 - Error updating word buy
+ * @prisma_model word_buy
+ */
 async function updateWordBuy(req, res) {
 	try {
 		const { id } = req.params;
@@ -155,6 +283,19 @@ async function updateWordBuy(req, res) {
 		res.status(500).json({ error: 'Failed to update word buy' });
 	}
 }
+/**
+ * PUT /word-buy
+ * @tag WordBuy
+ * @summary Bulk create/update word buys
+ * @description Creates or updates multiple word buys and updates Stripe subscription accordingly.
+ * @operationId updateWordBuys
+ * @bodyContent {object} application/json
+ * @response 200 - Word buys updated successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error updating word buys
+ * @prisma_model word_buy
+ * @prisma_model business
+ */
 async function updateWordBuys(req, res) {
 	try {
 		const user_id = req.user?.user_id;
@@ -166,6 +307,19 @@ async function updateWordBuys(req, res) {
 		res.status(500).json({ error: 'Failed to update word buy' });
 	}
 }
+/**
+ * GET /word-buy/business/:business_id
+ * @tag WordBuy
+ * @summary Get active word buys for a business
+ * @description Retrieves active word buys for the specified business.
+ * @operationId getWordBuysByBusiness
+ * @pathParam {string} business_id - The business ID
+ * @response 200 - Active word buys retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching word buys by business
+ * @prisma_model word_buy
+ * @prisma_model business
+ */
 async function getWordBuysByBusiness(req, res) {
 	try {
 		const { business_id } = req.params;
@@ -182,9 +336,7 @@ export { updateWord };
 export { deleteWord };
 export { getWordById };
 export { getAllWords };
-export { getAllWordsByCategory };
 export { removeCategoryFromWord };
-export { addCategoryToWord };
 export { createWordBuy };
 export { getWordBuyById };
 export { getAllWordBuys };
@@ -198,9 +350,7 @@ export default {
 	deleteWord,
 	getWordById,
 	getAllWords,
-	getAllWordsByCategory,
 	removeCategoryFromWord,
-	addCategoryToWord,
 	createWordBuy,
 	getWordBuyById,
 	getAllWordBuys,

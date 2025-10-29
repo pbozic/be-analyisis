@@ -3,16 +3,16 @@ import { Request, Response } from 'express';
 import * as TutorialsDao from '../dao/Tutorials.ts';
 
 /**
- *
- * - GET /tutorials
- * - @tag Tutorials
- * - @summary List tutorials with current user's status
- * - @description Returns all tutorials with status for the current epoch for the authenticated user.
- * - @operationId listTutorialsWithStatus
- * - @prisma_model tutorial
- * - @prisma_model user_tutorials
- * - @prisma_model user_tutorial_state
- * - @response 200 - Tutorials with status listed
+ * GET /users/me/tutorials
+ * @tag Tutorials
+ * @summary List tutorials with current user's status
+ * @description Returns all tutorials with status for the current epoch for the authenticated user.
+ * @operationId listTutorialsWithStatus
+ * @response 200 - Tutorials with status listed
+ * @responseContent {object} 200.application/json
+ * @prisma_model tutorial
+ * @prisma_model user_tutorials
+ * @prisma_model user_tutorial_state
  */
 export async function listTutorials(req: Request, res: Response): Promise<void> {
 	try {
@@ -31,19 +31,18 @@ export async function listTutorials(req: Request, res: Response): Promise<void> 
 }
 
 /**
- *
- * - POST /tutorials/state/reset
- * - @tag Tutorials
- * - @summary Reset tutorials by incrementing epoch for the authenticated user
- * - @description Increments user_tutorial_state.epoch which resets per-tutorial statuses for next run.
- * - @operationId resetTutorials
- * - @prisma_model user_tutorial_state
- * - @response 200 - Tutorials reset (epoch incremented)
- * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
+ * POST /users/me/tutorials/state/reset
+ * @tag Tutorials
+ * @summary Reset tutorials by incrementing epoch for the authenticated user
+ * @description Increments user_tutorial_state.epoch which resets per-tutorial statuses for next run.
+ * @operationId resetTutorials
+ * @response 200 - Tutorials reset (epoch incremented)
+ * @responseContent {object} 200.application/json
+ * @responseExample 200.application/json {
  *   "user_id": "uuid",
  *   "epoch": 2
  * }
+ * @prisma_model user_tutorial_state
  */
 export async function resetTutorials(req: Request, res: Response): Promise<void> {
 	try {
@@ -62,21 +61,21 @@ export async function resetTutorials(req: Request, res: Response): Promise<void>
 }
 
 /**
- *
- * - POST /tutorials/{tutorial_key}/status
- * - @tag Tutorials
- * - @summary Set a tutorial status for the authenticated user
- * - @description Upserts user_tutorials for the current epoch and given tutorial key.
- * - @operationId setTutorialStatus
- * - @bodyDescription Tutorial status payload
- * - @bodyContent {
+ * POST /users/me/tutorials/:tutorial_key/status
+ * @tag Tutorials
+ * @summary Set a tutorial status for the authenticated user
+ * @description Upserts user_tutorials for the current epoch and given tutorial key.
+ * @operationId setTutorialStatus
+ * @bodyDescription Tutorial status payload
+ * @bodyContent {
  *   "status": "COMPLETED|DISMISSED|NOT_SEEN",
  *   "versionSeen": 1
  * } application/json
- * - @bodyRequired
- * - @prisma_model tutorial
- * - @prisma_model user_tutorials
- * - @response 200 - Tutorial status updated
+ * @bodyRequired
+ * @response 200 - Tutorial status updated
+ * @responseContent {object} 200.application/json
+ * @prisma_model tutorial
+ * @prisma_model user_tutorials
  */
 export async function setTutorialStatus(req: Request, res: Response): Promise<void> {
 	try {

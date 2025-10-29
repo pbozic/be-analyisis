@@ -19,9 +19,9 @@ import { ValidatedRequest } from '../../types/validatedRequest.ts';
  * @description Retrieves all reservation services.
  * @operationId getReservationServices
  * @response 200 - Reservation services retrieved successfully
- * @responseContent {Services[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving services
- * @prisma_model services
+ * @prisma_model service
  */
 export async function getServices(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
@@ -39,12 +39,13 @@ export async function getServices(req: ValidatedRequest, res: Response): Promise
  * @summary Create a new reservation service
  * @description Creates a new reservation service.
  * @operationId createReservationService
- * @requestBody {CreateServiceInput} requestBody - The service data to create.
+ * @bodyContent {object} application/json
  * @response 201 - Service created successfully
- * @responseContent {Service} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating service
- * @prisma_model services
+ * @prisma_model service
+ * @prisma_model reservation_module
  */
 export async function createService(req: ValidatedRequest<CreateServiceInput>, res: Response): Promise<void> {
 	try {
@@ -58,7 +59,7 @@ export async function createService(req: ValidatedRequest<CreateServiceInput>, r
 }
 
 /**
- * DELETE /reservation/services/{service_id}
+ * DELETE /reservation/services/:service_id
  * @tag Reservation
  * @summary Delete a reservation service
  * @description Deletes a reservation service by its ID.
@@ -67,7 +68,7 @@ export async function createService(req: ValidatedRequest<CreateServiceInput>, r
  * @response 204 - Service deleted successfully
  * @response 404 - Service not found
  * @response 500 - Error deleting service
- * @prisma_model services
+ * @prisma_model service
  */
 export async function deleteService(req: Request, res: Response): Promise<void> {
 	try {
@@ -79,19 +80,19 @@ export async function deleteService(req: Request, res: Response): Promise<void> 
 	}
 }
 /**
- * PUT /reservation/services/{service_id}
+ * PUT /reservation/services/:service_id
  * @tag Reservation
  * @summary Update a reservation service
  * @description Updates a reservation service by its ID.
  * @operationId updateReservationService
  * @pathParam {string} service_id - The ID of the service to update.
- * @requestBody {UpdateServiceInput} requestBody - The updated service data.
+ * @bodyContent {object} application/json
  * @response 200 - Service updated successfully
- * @responseContent {Service} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Invalid input data
  * @response 404 - Service not found
  * @response 500 - Error updating service
- * @prisma_model services
+ * @prisma_model service
  */
 export async function updateService(
 	req: ValidatedRequest<UpdateServiceInput, { service_id: string }>,
@@ -122,16 +123,18 @@ export async function getServiceById(req: Request, res: Response): Promise<void>
 }
 
 /**
- * GET /reservation/services/category/{service_category_id}
+ * GET /reservation/services/category/:service_category_id
  * @tag Reservation
  * @summary Get services by service category ID
  * @description Retrieves all services associated with a specific service category ID.
  * @operationId getServicesByCategoryId
  * @pathParam {string} service_category_id - The ID of the service category to retrieve services for.
  * @response 200 - Services retrieved successfully
- * @responseContent {Service[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - No services found for this category
  * @response 500 - Error retrieving services by category
+ * @prisma_model service
+ * @prisma_model service_category
  */
 
 export async function getServicesByCategoryId(req: Request, res: Response): Promise<void> {
@@ -149,7 +152,7 @@ export async function getServicesByCategoryId(req: Request, res: Response): Prom
 }
 
 /**
- * POST /reservation/services/{service_id}/connect-category/{service_category_id}
+ * POST /reservation/services/:service_id/connect-category/:service_category_id
  * @tag Reservation
  * @summary Connect a service to a service category
  * @description Connects a service to a specific service category.
@@ -157,10 +160,11 @@ export async function getServicesByCategoryId(req: Request, res: Response): Prom
  * @pathParam {string} service_id - The ID of the service to connect.
  * @pathParam {string} service_category_id - The ID of the service category to connect to.
  * @response 200 - Service connected to category successfully
- * @responseContent {Service} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Service or category not found
  * @response 500 - Error connecting service to category
- * @prisma_model services
+ * @prisma_model service
+ * @prisma_model service_category
  */
 export async function connectServiceToCategory(
 	req: ValidatedRequest<null, { service_id: string; service_category_id: string }>,
@@ -176,16 +180,17 @@ export async function connectServiceToCategory(
 }
 
 /**
- * DELETE /reservation/services/{service_id}/disconnect-category
+ * DELETE /reservation/services/:service_id/disconnect-category
  * @tag Reservation
  * @summary Disconnect a service from its service category
  * @description Disconnects a service from its current service category.
  * @operationId disconnectServiceFromCategory
  * @pathParam {string} service_id - The ID of the service to disconnect.
  * @response 200 - Service disconnected from category successfully
- * @responseContent {Service} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Service not found
  * @response 500 - Error disconnecting service from category
+ * @prisma_model service
  */
 
 export async function disconnectServiceFromCategory(
@@ -208,8 +213,11 @@ export async function disconnectServiceFromCategory(
  * @description Retrieves all data needed for the service creation/edit form.
  * @operationId getDataForServiceForm
  * @response 200 - Data retrieved successfully
- * @responseContent {data} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving data
+ * @prisma_model service_category
+ * @prisma_model employee
+ * @prisma_model tax_rates
  */
 export async function getDataForServiceForm(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
@@ -230,11 +238,14 @@ export async function getDataForServiceForm(req: ValidatedRequest, res: Response
  * @summary Create a new reservation service with employees
  * @description Creates a new reservation service along with its assigned employees.
  * @operationId createServiceWithData
- * @requestBody {CreateServiceWithEmployeesInput} requestBody - The data to create the service and assign employees.
+ * @bodyContent {object} application/json
  * @response 200 - Schedule created successfully
- * @responseContent {Schedule} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Related entity not found
  * @response 500 - Error creating schedule
+ * @prisma_model service
+ * @prisma_model service_assignment
+ * @prisma_model employee
  */
 export async function createServiceWithData(
 	req: ValidatedRequest<CreateServiceWithEmployeesInput>,
@@ -259,19 +270,20 @@ export async function createServiceWithData(
 }
 
 /**
- * PUT /reservation/services/service-with-employees/{service_id}
+ * PUT /reservation/services/service-with-employees/:service_id
  * @tag Reservation
  * @summary Update a reservation service with employees
  * @description Updates a reservation service by its ID along with its assigned employees.
  * @operationId updateServiceWithData
  * @pathParam {string} service_id - The ID of the service to update.
- * @requestBody {UpdateServiceWithEmployeesInput} requestBody - The updated service data and its employees.
+ * @bodyContent {object} application/json
  * @response 200 - Service updated successfully
- * @responseContent {Service} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Invalid input data
  * @response 404 - Service not found
  * @response 500 - Error updating service
- * @prisma_model services
+ * @prisma_model service
+ * @prisma_model service_assignment
  */
 export async function updateServiceWithData(
 	req: ValidatedRequest<UpdateServiceWithEmployeesInput, { service_id: string }>,

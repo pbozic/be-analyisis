@@ -10,8 +10,9 @@ import { CreateCustomerInput, UpdateCustomerInput } from '../../types/reservatio
  * @description Retrieves all reservation customers for a specific business.
  * @operationId getReservationCustomers
  * @response 200 - Reservation customers retrieved successfully
- * @responseContent {Customer[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving customers
+ * @prisma_model customers
  */
 export async function getCustomers(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
@@ -33,11 +34,12 @@ export async function getCustomers(req: ValidatedRequest, res: Response): Promis
  * @summary Create a new reservation customer
  * @description Creates a new reservation customer.
  * @operationId createReservationCustomer
- * @requestBody {CreateCustomerInput} requestBody - The customer data to create.
+ * @bodyContent {object} application/json
  * @response 201 - Customer created successfully
- * @responseContent {Customer} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating customer
+ * @prisma_model customers
  */
 export async function createCustomer(req: ValidatedRequest<CreateCustomerInput>, res: Response): Promise<void> {
 	try {
@@ -55,18 +57,19 @@ export async function createCustomer(req: ValidatedRequest<CreateCustomerInput>,
 }
 
 /**
- * PUT /reservation/customers/{customer_id}
+ * PUT /reservation/customers/:customer_id
  * @tag Reservation
  * @summary Update a reservation customer
  * @description Updates an existing reservation customer.
  * @operationId updateReservationCustomer
  * @pathParam {string} customer_id - The ID of the customer to update.
- * @requestBody {UpdateCustomerInput} requestBody - The data to update the customer with.
+ * @bodyContent {object} application/json
  * @response 200 - Customer updated successfully
- * @responseContent {Customer} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Invalid input data
  * @response 404 - Customer not found
  * @response 500 - Error updating customer
+ * @prisma_model customers
  */
 export async function updateCustomer(
 	req: ValidatedRequest<UpdateCustomerInput, { customer_id: string }>,
@@ -83,7 +86,7 @@ export async function updateCustomer(
 }
 
 /**
- * DELETE /reservation/customers/{customer_id}
+ * DELETE /reservation/customers/:customer_id
  * @tag Reservation
  * @summary Delete a reservation customer
  * @description Deletes a reservation customer by its ID.
@@ -92,6 +95,7 @@ export async function updateCustomer(
  * @response 204 - Customer deleted successfully
  * @response 404 - Customer not found
  * @response 500 - Error deleting customer
+ * @prisma_model customers
  */
 export async function deleteCustomer(
 	req: ValidatedRequest<null, { customer_id: string }>,
@@ -110,16 +114,17 @@ export async function deleteCustomer(
 }
 
 /**
- * GET /reservation/customers/{customer_id}
+ * GET /reservation/customers/:customer_id
  * @tag Reservation
  * @summary Get a reservation customer by ID
  * @description Retrieves a reservation customer by its ID.
  * @operationId getReservationCustomerById
  * @pathParam {string} customer_id - The ID of the customer to retrieve.
  * @response 200 - Customer retrieved successfully
- * @responseContent {Customer} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Customer not found
  * @response 500 - Error retrieving customer
+ * @prisma_model customers
  */
 
 export async function getCustomerById(
@@ -140,16 +145,17 @@ export async function getCustomerById(
 }
 
 /**
- * GET /booking/customer/{code}
+ * GET /reservation/booking/customer/:code
  * @tag Reservation
- * @summary Get a reservation customer by ID
- * @description Retrieves a reservation customer by its ID.
- * @operationId getReservationCustomerById
- * @pathParam {string} customer_id - The ID of the customer to retrieve.
+ * @summary Get a reservation customer by code
+ * @description Retrieves a reservation customer by their unique booking code.
+ * @operationId getReservationCustomerByCode
+ * @pathParam {string} code - Customer code from booking link.
  * @response 200 - Customer retrieved successfully
- * @responseContent {Customer} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Customer not found
  * @response 500 - Error retrieving customer
+ * @prisma_model customers
  */
 
 export async function getCustomerByCode(req: ValidatedRequest<null, { code: string }>, res: Response): Promise<void> {

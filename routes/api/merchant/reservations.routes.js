@@ -1,6 +1,6 @@
 import express from 'express';
 
-import ReservationController from '../../../controllers/ReservationController.js';
+import ReservationController from '../../../controllers/TableReservationController.js';
 const router = express.Router();
 router.get('', ReservationController.getReservations);
 router.get('/:reservation_id', ReservationController.getReservationById);

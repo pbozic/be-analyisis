@@ -12,7 +12,7 @@ import { CreateUserPermissionInput, UpdateUserPermissionInput } from '../../type
  * @summary Get all user permissions for current reservation module
  * @operationId getUserPermissions
  * @response 200 - List of user permissions
- * @responseContent {UserPermission[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Failed to fetch user permissions
  */
 export async function getUserPermissions(req: ValidatedRequest, res: Response): Promise<void> {
@@ -32,7 +32,7 @@ export async function getUserPermissions(req: ValidatedRequest, res: Response): 
  * @operationId createUserPermission
  * @requestBody {CreateUserPermissionInput} requestBody
  * @response 201 - User permission created
- * @responseContent {UserPermission} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Failed to create user permission
  */
 export async function createUserPermission(
@@ -55,7 +55,7 @@ export async function createUserPermission(
  * @pathParam {string} user_permission_id - ID of the user permission
  * @requestBody {UpdateUserPermissionInput} requestBody
  * @response 200 - User permission updated
- * @responseContent {UserPermission} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Failed to update user permission
  */
 export async function updateUserPermission(
@@ -97,7 +97,7 @@ export async function deleteUserPermission(
  * @summary Get all permissions definitions (used for UI assignment)
  * @operationId getAllPermissions
  * @response 200 - List of defined permissions
- * @responseContent {Permission[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Failed to fetch permissions
  */
 export async function getAllPermissions(_req: ValidatedRequest, res: Response): Promise<void> {

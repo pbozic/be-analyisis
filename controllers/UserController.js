@@ -42,9 +42,12 @@ config();
  * @description Returns a list of users.
  * @operationId getUsers
  * @response 200 - successful operation
- * @responseContent {User[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the user list
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
  */
 async function listUsers(req, res) {
 	try {
@@ -78,9 +81,12 @@ async function listUsers(req, res) {
  * @description Returns a list of users.
  * @operationId getUsers
  * @response 200 - successful operation
- * @responseContent {User[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the user list
  * @responseContent {object} 400.application/json The error object
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
  */
 async function listPersonalUsers(req, res) {
 	try {
@@ -118,9 +124,14 @@ async function listPersonalUsers(req, res) {
  * @operationId getUserById
  * @pathParam {string} user_id - The ID of the user to retrieve
  * @response 200 - Successful operation, returns detailed user information
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - User not found
  * @response 400 - Error retrieving user information
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
+ * @prisma_model documents (see ./prisma/schemas/base.prisma)
+ * @prisma_model files (see ./prisma/schemas/base.prisma)
  */
 async function getUserById(req, res) {
 	try {
@@ -159,9 +170,20 @@ async function getUserById(req, res) {
  * @security bearerAuth: []
  * @operationId retrieveUserInformation
  * @response 200 - Successful operation, returns user info.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error obtaining user information.
  * @responseContent {object} 400.application/json
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model business_users (see ./prisma/schemas/base.prisma)
+ * @prisma_model business (see ./prisma/schemas/base.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model vehicles (see ./prisma/schemas/transport.prisma)
+ * @prisma_model driver_activity_logs (see ./prisma/schemas/transport.prisma)
+ * @prisma_model delivery_drivers (see ./prisma/schemas/delivery.prisma)
+ * @prisma_model documents (see ./prisma/schemas/base.prisma)
+ * @prisma_model files (see ./prisma/schemas/base.prisma)
  */
 async function me(req, res) {
 	try {
@@ -286,11 +308,12 @@ async function me(req, res) {
  * @description This endpoint is used to update the current user's details.
  * @operationId updateMe
  * @bodyDescription The data to update for the current user
- * @bodyContent {UpdateUserRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User updated successfully. Returns the updated user's details.
- * @responseContent {AuthenticatedUser} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateMe(req, res) {
 	try {
@@ -312,11 +335,12 @@ async function updateMe(req, res) {
  * @description This endpoint is used to update the current user's details.
  * @operationId updateMe
  * @bodyDescription The data to update for the current user
- * @bodyContent {UpdateUserRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User updated successfully. Returns the updated user's details.
- * @responseContent {AuthenticatedUser} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateUserByUserId(req, res) {
 	const { user_id, data } = req.body;
@@ -338,11 +362,12 @@ async function updateUserByUserId(req, res) {
  * @description This endpoint is used to update the current user's password.
  * @operationId updatePassword
  * @bodyDescription The current password and the new password
- * @bodyContent {UpdatePasswordRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Password updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updatePassword(req, res) {
 	try {
@@ -371,11 +396,12 @@ async function updatePassword(req, res) {
  * @description This endpoint is used to update the current user's email.
  * @operationId updateEmail
  * @bodyDescription The new email
- * @bodyContent {UpdateEmailRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Email updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateEmail(req, res) {
 	try {
@@ -405,8 +431,11 @@ async function updateEmail(req, res) {
  * @summary Updates the current user's profile picture
  * @operationId updateProfilePicture
  * @response 200 - Profile picture updated successfully
- * @responseContent {User} 200.application/json - Updated user details
+ * @responseContent {object} 200.application/json - Updated user details
  * @response 400 - Error updating profile picture
+ * @prisma_model documents (see ./prisma/schemas/base.prisma)
+ * @prisma_model files (see ./prisma/schemas/base.prisma)
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateProfilePicture(req, res) {
 	const userId = req.user.user_id;
@@ -442,11 +471,12 @@ async function updateProfilePicture(req, res) {
  * @description This endpoint is used to update the current user's taxi preferences.
  * @operationId updateUserTaxiPreferences
  * @bodyDescription The new taxi preferences
- * @bodyContent {UpdateTaxiPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Taxi preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateUserTaxiPreferences(req, res) {
 	try {
@@ -464,11 +494,12 @@ async function updateUserTaxiPreferences(req, res) {
  * @description This endpoint is used to update the current user's notification preferences.
  * @operationId updateUserNotificationPreferences
  * @bodyDescription The new notification preferences
- * @bodyContent {UpdateNotificationPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Notification preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateUserNotificationPreferences(req, res) {
 	try {
@@ -486,11 +517,12 @@ async function updateUserNotificationPreferences(req, res) {
  * @description This endpoint is used to update the current user's push notification preferences.
  * @operationId updateUserTaxiPushNotifications
  * @bodyDescription The new push notification preferences
- * @bodyContent {UpdatePushNotificationPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Push notification preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateUserTaxiPushNotifications(req, res) {
 	try {
@@ -511,11 +543,12 @@ async function updateUserTaxiPushNotifications(req, res) {
  * @description This endpoint is used to update the current user's transfer push notification preferences.
  * @operationId updateUserTransferPushNotifications
  * @bodyDescription The new push notification preferences for transfers
- * @bodyContent {UpdatePushNotificationPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Transfer push notification preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateUserTransferPushNotifications(req, res) {
 	try {
@@ -536,11 +569,12 @@ async function updateUserTransferPushNotifications(req, res) {
  * @description This endpoint is used to update the current user's delivery push notification preferences.
  * @operationId updateUserDeliveryPushNotifications
  * @bodyDescription The new push notification preferences for deliveries
- * @bodyContent {UpdatePushNotificationPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Delivery push notification preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateUserDeliveryPushNotifications(req, res) {
 	try {
@@ -561,11 +595,12 @@ async function updateUserDeliveryPushNotifications(req, res) {
  * @description This endpoint is used to update the current user's spicy preferences.
  * @operationId updateUserSpicyPreferences
  * @bodyDescription The new spicy preferences
- * @bodyContent {UpdateSpicyPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Spicy preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateUserSpicyPreferences(req, res) {
 	try {
@@ -583,11 +618,12 @@ async function updateUserSpicyPreferences(req, res) {
  * @description This endpoint is used to update the current user's transfer preferences.
  * @operationId updateUserTransferPreferences
  * @bodyDescription The new transfer preferences
- * @bodyContent {UpdateTransferPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Transfer preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateUserTransferPreferences(req, res) {
 	try {
@@ -605,11 +641,12 @@ async function updateUserTransferPreferences(req, res) {
  * @description This endpoint is used to update the current user's radio preferences.
  * @operationId updateUserRadioPreferences
  * @bodyDescription The new radio preferences
- * @bodyContent {UpdateRadioPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Radio preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateUserRadioPreferences(req, res) {
 	try {
@@ -627,11 +664,12 @@ async function updateUserRadioPreferences(req, res) {
  * @description This endpoint is used to update the current user's allergies preferences.
  * @operationId updateUserAllergiesPreferences
  * @bodyDescription The new allergies preferences
- * @bodyContent {UpdateAllergiesPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Allergies preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateUserAllergiesPreferences(req, res) {
 	try {
@@ -649,11 +687,12 @@ async function updateUserAllergiesPreferences(req, res) {
  * @description This endpoint is used to update the current user's telephone.
  * @operationId updateTelephone
  * @bodyDescription The new telephone
- * @bodyContent {UpdateTelephoneRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Telephone updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateTelephone(req, res) {
 	try {
@@ -679,6 +718,7 @@ async function updateTelephone(req, res) {
  * @operationId requestSMSVerification
  * @response 200 - SMS verification requested successfully.
  * @response 400 - Error obtaining user information.
+ * @prisma_model tokens (see ./prisma/schemas/user.prisma)
  */
 async function requestSMSVerification(req, res) {
 	try {
@@ -701,10 +741,12 @@ async function requestSMSVerification(req, res) {
  * @description This endpoint is used to verify the current user via a token.
  * @operationId verifyMe
  * @bodyDescription The token to verify the user
- * @bodyContent {VerifyUserPhoneRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User verified successfully.
  * @response 400 - Invalid token or error obtaining user information.
+ * @prisma_model tokens (see ./prisma/schemas/user.prisma)
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function verifyMe(req, res) {
 	try {
@@ -742,11 +784,13 @@ async function oneSignalId(req, res) {
  * @description This endpoint is used to add an address to the current user.
  * @operationId addAddress
  * @bodyDescription The address to add
- * @bodyContent {Address} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Address added successfully. Returns the updated user's details.
- * @responseContent {UserAddress} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error adding address.
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
  */
 async function addAddress(req, res) {
 	try {
@@ -770,6 +814,7 @@ async function addAddress(req, res) {
  * @pathParam {string} address_id - The ID of the address to delete
  * @response 200 - Address deleted successfully.
  * @response 400 - Error deleting address.
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
  */
 async function deleteAddress(req, res) {
 	try {
@@ -790,6 +835,7 @@ async function deleteAddress(req, res) {
  * @response 200 - User deleted successfully.
  * @response 400 - Error deleting user.
  * @response 404 - User not found.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function deleteUserByUserId(req, res) {
 	const { user_id } = req.params;
@@ -817,10 +863,11 @@ async function deleteUserByUserId(req, res) {
  * @operationId updateUserActiveByUserId
  * @pathParam {string} user_id - The ID of the user to disable
  * @bodyDescription The new value
- * @bodyContent {boolean} application/json
+ * @bodyContent {object} application/json
  * @response 200 - User active field updated successfully.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating active field.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateUserActiveByUserId(req, res) {
 	const { user_id } = req.params;
@@ -850,8 +897,9 @@ async function updateUserActiveByUserId(req, res) {
  * @operationId disableUserByUserId
  * @pathParam {string} user_id - The ID of the user to disable
  * @response 200 - User disabled successfully.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error disabling user.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateUserDisabledByUserId(req, res) {
 	const { user_id } = req.params;
@@ -881,8 +929,9 @@ async function updateUserDisabledByUserId(req, res) {
  * @operationId softDeleteUserByUserId
  * @pathParam {string} user_id - The ID of the user to disable
  * @response 200 - User "soft delete" successful.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error soft deleting user.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function softDeleteUserByUserId(req, res) {
 	const { user_id } = req.params;
@@ -913,8 +962,9 @@ async function softDeleteUserByUserId(req, res) {
  * @operationId disableMe
 
  * @response 200 - User disabled successfully. Returns user.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function disableMe(req, res) {
 	try {
@@ -943,12 +993,14 @@ async function disableMe(req, res) {
  * @operationId editAddress
  * @pathParam {string} address_id - The ID of the address to edit
  * @bodyDescription The address to edit
- * @bodyContent {Address} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Address edited successfully. Returns the updated user's details.
- * @responseContent {UserAddress} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error editing address.
  * @responseContent {object} 400.application/json
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
  */
 async function editAddress(req, res) {
 	try {
@@ -971,6 +1023,7 @@ async function editAddress(req, res) {
  * @pathParam {string} address_id - The ID of the address to set as primary
  * @response 200 - Primary address set successfully.
  * @response 400 - Error setting primary address.
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
  */
 async function setPrimaryAddress(req, res) {
 	try {
@@ -991,10 +1044,13 @@ async function setPrimaryAddress(req, res) {
  * @description This endpoint is used add a review of user.
  * @operationId reviewUser
  * @bodyDescription Content of the review
- * @bodyContent {ReviewRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Primary address set successfully.
  * @response 400 - Error setting primary address.
+ * @prisma_model reviews (see ./prisma/schemas/base.prisma)
+ * @prisma_model reviewable (see ./prisma/schemas/base.prisma)
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function reviewUser(req, res) {
 	try {
@@ -1038,6 +1094,7 @@ async function reviewUser(req, res) {
  * @operationId getPaymentSheetCredentials
  * @response 200 - {StripePaymentSheetCredentials}
  * @response 400 - Error obtaining payment sheet credentials
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function getPaymentSheetCredentials(req, res) {
 	try {
@@ -1060,6 +1117,21 @@ async function getPaymentSheetCredentials(req, res) {
 		res.status(400).json({ error: 'Error obtaining payment sheet credentials', e });
 	}
 }
+/**
+ * POST /users/me/requestToAddFunds
+ * @tag Users
+ * @summary Create a payment intent to add funds to wallet
+ * @description Creates a Stripe Payment Intent to top up the user's wallet. Validates amount, currency, and payment method.
+ * @operationId requestToAddFundsToWallet
+ * @bodyDescription Amount, currency and payment method to use
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Payment intent created
+ * @responseContent {object} 200.application/json
+ * @response 400 - Invalid parameters or error creating payment intent
+ * @prisma_model users
+ * @prisma_model wallet_funds
+ */
 async function requestToAddFundsToWallet(req, res) {
 	try {
 		const { amount, currency, payment_method_id, return_url } = req.body;
@@ -1102,6 +1174,20 @@ async function requestToAddFundsToWallet(req, res) {
 		res.status(400).json({ error: 'Error requesting to add funds to wallet' });
 	}
 }
+/**
+ * POST /users/me/request-payment-intent
+ * @tag Users
+ * @summary Create a general payment intent
+ * @description Creates a Stripe Payment Intent for a platform charge scoped to the current user.
+ * @operationId requestPaymentIntent
+ * @bodyDescription Amount and currency for the payment intent
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Payment intent created
+ * @responseContent {object} 200.application/json
+ * @response 400 - Invalid parameters or error creating payment intent
+ * @prisma_model users
+ */
 async function requestPaymentIntent(req, res) {
 	try {
 		const { amount, currency, return_url } = req.body;
@@ -1125,6 +1211,19 @@ async function requestPaymentIntent(req, res) {
 		res.status(400).json({ error: 'Error requesting payment intent' });
 	}
 }
+/**
+ * POST /users/me/confirm-payment-intent
+ * @tag Users
+ * @summary Confirm a payment intent
+ * @description Confirms a Stripe Payment Intent by id.
+ * @operationId confirmPaymentIntent
+ * @bodyDescription Payment intent id to confirm
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Payment intent confirmed
+ * @responseContent {object} 200.application/json
+ * @response 400 - Invalid parameters or error confirming payment intent
+ */
 async function confirmPaymentIntent(req, res) {
 	try {
 		const { payment_intent_id } = req.body;
@@ -1139,6 +1238,19 @@ async function confirmPaymentIntent(req, res) {
 		res.status(400).json({ error: 'Error confirming payment intent' });
 	}
 }
+/**
+ * GET /users/me/ping
+ * @tag Users
+ * @summary Update last-ping for driver/delivery driver
+ * @description Sets last_ping_at to now and marks driver or delivery driver as active based on current user.
+ * @operationId ping
+ * @response 200 - Driver/delivery driver online acknowledgement
+ * @responseContent {object} 200.application/json
+ * @response 400 - User is not a driver
+ * @prisma_model users
+ * @prisma_model driver
+ * @prisma_model delivery_driver
+ */
 async function ping(req, res) {
 	console.log('ping, req.user ', req.user);
 	let user = await UserDao.getUserById(req.user.user_id, {
@@ -1166,6 +1278,17 @@ async function ping(req, res) {
 		return res.status(400).json({ error: 'User is not a driver' });
 	}
 }
+/**
+ * GET /users/me/scheduled_orders
+ * @tag Users
+ * @summary List my scheduled taxi orders
+ * @description Returns pending scheduled taxi orders for the current user.
+ * @operationId getSelfScheduledOrders
+ * @response 200 - List of scheduled orders
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching scheduled orders
+ * @prisma_model taxi_orders
+ */
 async function getSelfScheduledOrders(req, res) {
 	try {
 		const orders = await TaxiOrderDao.getOrders({
@@ -1181,6 +1304,21 @@ async function getSelfScheduledOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
+/**
+ * GET /users/me/reviews
+ * @tag Users
+ * @summary List my reviews
+ * @description Returns reviews written for or by the current user, including author and target details.
+ * @operationId getMyReviews
+ * @response 200 - List of reviews
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching reviews
+ * @prisma_model reviews
+ * @prisma_model users
+ * @prisma_model business
+ * @prisma_model documents
+ * @prisma_model files
+ */
 async function getMyReviews(req, res) {
 	try {
 		let user = await UserDao.getUserById(req.user.user_id);
@@ -1265,6 +1403,23 @@ async function getMyReviews(req, res) {
 		res.status(500).json(e);
 	}
 }
+/**
+ * GET /users/:user_id/reviews
+ * @tag Users
+ * @summary List reviews related to a user
+ * @description Returns reviews for a given user or their business if they are a driver.
+ * @operationId getReviewsByUserId
+ * @pathParam {string} user_id - The user id
+ * @response 200 - List of reviews
+ * @responseContent {object} 200.application/json
+ * @response 404 - User not found
+ * @response 500 - Error fetching reviews
+ * @prisma_model reviews
+ * @prisma_model users
+ * @prisma_model business
+ * @prisma_model documents
+ * @prisma_model files
+ */
 async function getReviewsByUserId(req, res) {
 	try {
 		console.log(req.params);
@@ -1453,10 +1608,10 @@ async function getReviewsByUserId(req, res) {
  * @description This endpoint is used to register a new user and create group_user entry .
  * @operationId registerNewUser
  * @bodyDescription The required data to register a new user
- * @bodyContent {RegisterRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User registered successfully. Returns user info and tokens.
- * @responseContent {AuthenticatedUser} 200.application/json
+ * @responseContent {object} 200.application/json
  * @responseHeader {string} 200.Authorization - The newly generated access token.
  * @response 400 - Error something went wrong.
  */
@@ -1519,10 +1674,10 @@ async function registerChildUser(req, res) {
  * @description This endpoint is used to update enabled field of the given child_user_id
  * @operationId updateChildUser
  * @bodyDescription The child's group_user_id and value to set for the child user's enabled field
- * @bodyContent {group_user_id,value} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User updated successfully. Returns the updated group_user.
- * @responseContent {group_user} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating group user enabled status.
  */
 async function updateChildUserEnabledByGroupUserId(req, res) {
@@ -1550,10 +1705,10 @@ async function updateChildUserEnabledByGroupUserId(req, res) {
  * @description This endpoint is used to update the allowance of the given child_user_id for the given service_type
  * @operationId updateChildUserAllowance
  * @bodyDescription The child's group_user_id and value to set for the child user's allowance for the given service type
- * @bodyContent { group_user_id, value, type } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User allowance updated successfully. Returns the updated group_user.
- * @responseContent {group_user} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating group user enabled status.
  */
 async function updateChildUserAllowanceByGroupUserId(req, res) {
@@ -1593,28 +1748,6 @@ async function deleteChildUserByGroupUserId(req, res) {
 		res.status(400).json({ error: 'Error deleting group user', e });
 	}
 }
-// /**
-//  * DEPRECATED CODE DUE TO ADDING WALLET_FUNDS
-//  * GET /users/:user_id/wallet
-//  * @tag Users
-//  * @summary Get wallet balance for regular wallet.
-//  * @description This endpoint is used to check wallet balance for a particular user.
-//  * @operationId getPaymentSheetCredentials
-//  * @response 200 - {wallet_balance:float}
-//  * @response 400 - Error checking wallet balances
-//  */
-// async function getWalletBalance(req, res) {
-// 	try {
-// 		let user = await UserDao.getUserById(req.params.user_id);
-// 		if (user) {
-// 			return res.status(200).json({ wallet_balance: user.wallet_balance });
-// 		}
-// 		res.status(400).json({ error: "Error obtaining wallet balance" });
-// 	} catch (e) {
-// 		console.log(e);
-// 		res.status(400).json({ error: "Error obtaining wallet balance", e });
-// 	}
-// }
 /**
  * GET /users/:user_id/wallet
  * @tag Users
@@ -1623,6 +1756,7 @@ async function deleteChildUserByGroupUserId(req, res) {
  * @operationId getPaymentSheetCredentials
  * @response 200 - {wallet_balance:float}
  * @response 400 - Error checking wallet balances
+ * @prisma_model wallet_funds (see ./prisma/schemas/base.prisma)
  */
 async function getAvailableWalletBalance(req, res) {
 	try {
@@ -1641,6 +1775,9 @@ async function getAvailableWalletBalance(req, res) {
  * @operationId getPaymentSheetCredentials
  * @response 200 - {family_wallet_balance:float,family_wallet_type:string}
  * @response 400 - Error checking wallet balances
+ * @prisma_model wallet_funds (see ./prisma/schemas/base.prisma)
+ * @prisma_model group_users (see ./prisma/schemas/user.prisma)
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function getFamilyWalletBalanceAndType(req, res) {
 	try {
@@ -1685,6 +1822,8 @@ async function getFamilyWalletBalanceAndType(req, res) {
  * @response 200 - Wallet balance updated successfully.
  * @responseContent {object} 200.application/json
  * @response 400 - Error updating wallet balance.
+ * @prisma_model wallet_funds (see ./prisma/schemas/base.prisma)
+ * @prisma_model transactions (see ./prisma/schemas/base.prisma)
  */
 async function updateWalletBalance(req, res) {
 	const { user_id } = req.params;
@@ -1701,6 +1840,18 @@ async function updateWalletBalance(req, res) {
 		res.status(400).json({ error: 'Error updating wallet balance', e });
 	}
 }
+/**
+ * GET /users/:user_id/transactions
+ * @tag Users
+ * @summary List transactions for a user
+ * @description Returns wallet and order related transactions for a user.
+ * @operationId getTransactions
+ * @pathParam {string} user_id - The user id
+ * @response 200 - List of transactions
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error fetching transactions
+ * @prisma_model transactions
+ */
 async function getTransactions(req, res) {
 	const { user_id } = req.params;
 	try {
@@ -1724,8 +1875,9 @@ async function getTransactions(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Language updated successfully. Returns the updated user details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user language.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function updateUserLanguage(req, res) {
 	try {
@@ -1740,6 +1892,18 @@ async function updateUserLanguage(req, res) {
 		res.status(400).json({ error: 'Error updating user language.', e });
 	}
 }
+/**
+ * GET /users/user/:code
+ * @tag Users
+ * @summary Get user by referral code
+ * @description Finds a user by their referral code.
+ * @operationId getUserByReferralCode
+ * @pathParam {string} code - The referral code
+ * @response 200 - User found
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error fetching user by referral code
+ * @prisma_model users
+ */
 async function getUserByReferralCode(req, res) {
 	try {
 		const user = await UserDao.getUserByReferralCode(req.params.code);
@@ -1761,6 +1925,8 @@ async function getUserByReferralCode(req, res) {
  * @bodyRequired
  * @response 200 - Referral code redeemed successfully
  * @response 400 - Error redeeming referral code
+ * @prisma_model referrals (see ./prisma/schemas/base.prisma)
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function redeemReferralCode(req, res) {
 	try {
@@ -1795,6 +1961,21 @@ async function redeemReferralCode(req, res) {
 		return res.status(400).json({ error: error.message || 'Error redeeming referral code' });
 	}
 }
+/**
+ * PATCH /users/me/claim-reward
+ * @tag Users
+ * @summary Claim referral reward
+ * @description Claims referral reward credits for the current user if eligible.
+ * @operationId claimReward
+ * @bodyDescription Referral id to claim
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Reward claimed
+ * @responseContent {object} 200.application/json
+ * @response 400 - Reward already claimed or error
+ * @prisma_model referrals
+ * @prisma_model wallet_funds
+ */
 async function claimReward(req, res) {
 	try {
 		const { referral_id } = req.body;
@@ -1824,6 +2005,19 @@ async function claimReward(req, res) {
 		return res.status(400).json({ error: error.message || 'Error claiming reward' });
 	}
 }
+/**
+ * GET /users/me/credits/:service_type
+ * @tag Users
+ * @summary Get my credits and cashback
+ * @description Returns available and expired credits, and pending cashback for a given service type.
+ * @operationId getUserCredits
+ * @pathParam {string} service_type - Service type (e.g., taxi, delivery)
+ * @response 200 - Credits and cashback data
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error fetching user credits
+ * @prisma_model wallet_funds
+ * @prisma_model cashback
+ */
 async function getUserCredits(req, res) {
 	try {
 		const { service_type } = req.params;
@@ -1848,21 +2042,19 @@ async function getUserCredits(req, res) {
 		return res.status(400).json({ error: error.message || 'Error fetching user credits' });
 	}
 }
-async function getMyActiveOrderIds(req, res) {
-	const user_id = req.user.user_id;
-	try {
-		const delivery_order_ids = await DeliveryOrderDao.getActiveOrderIdsForUser(user_id);
-		const scheduled_taxi_order_ids = await TaxiOrderDao.getActiveOrderIdsForUser(user_id, true);
-		const non_scheduled_taxi_order_ids = await TaxiOrderDao.getActiveOrderIdsForUser(user_id, false);
-		return res.status(200).json({
-			scheduled_taxi_order_ids,
-			non_scheduled_taxi_order_ids,
-			delivery_order_ids,
-		});
-	} catch (error) {
-		return res.status(400).json({ error: error.message || 'Error fetching user active order ids' });
-	}
-}
+/**
+ * GET /users/me/active_orders
+ * @tag Users
+ * @summary Get my active orders
+ * @description Returns current active delivery, taxi/transfer orders and first active reservation.
+ * @operationId getMyActiveOrders
+ * @response 200 - Active orders by type
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error fetching user active orders
+ * @prisma_model delivery_orders
+ * @prisma_model taxi_orders
+ * @prisma_model reservations
+ */
 async function getMyActiveOrders(req, res) {
 	const user_id = req.user.user_id;
 	try {
@@ -1886,15 +2078,40 @@ async function getMyActiveOrders(req, res) {
 		});
 	}
 }
+/**
+ * GET /users/me/referral
+ * @tag Users
+ * @summary Get my referral record
+ * @description Returns the referral record associated with the current user, if any.
+ * @operationId getReferral
+ * @response 200 - Referral record
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error fetching referral
+ * @prisma_model referrals
+ */
 async function getReferral(req, res) {
 	try {
-		const referral = ReferralDao.getReferralByReferredUserId(req.user.user_id);
+		const referral = await ReferralDao.getReferralByReferredUserId(req.user.user_id);
 		if (!referral) return res.status(400).json({ error: 'Error fetching referral' });
 		return res.status(200).json(referral);
 	} catch (error) {
 		return res.status(400).json({ error: error.message || 'Error fetching referral' });
 	}
 }
+/**
+ * PATCH /users/me/marketing-notifications
+ * @tag Users
+ * @summary Update marketing notifications preference
+ * @description Updates the user's marketing notifications preference flags.
+ * @operationId updateMarketingNotifications
+ * @bodyDescription Preference payload
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Preferences updated
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error updating preferences
+ * @prisma_model users
+ */
 async function updateMarketingNotifications(req, res) {
 	try {
 		const user = await UserDao.updateUserMarketingNotifications(req.user.user_id, req.body.data);
@@ -1906,6 +2123,20 @@ async function updateMarketingNotifications(req, res) {
 		return res.status(400).json({ error: err.message || 'Error setting marketing notifications' });
 	}
 }
+/**
+ * PATCH /users/me/ads-personalization
+ * @tag Users
+ * @summary Update ads personalization preference
+ * @description Updates the user's ads personalization preference flags.
+ * @operationId updateAdsPersonalization
+ * @bodyDescription Preference payload
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Preferences updated
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error updating preferences
+ * @prisma_model users
+ */
 async function updateAdsPersonalization(req, res) {
 	try {
 		const user = await UserDao.updateUserAdsPersonalization(req.user.user_id, req.body.data);
@@ -1917,6 +2148,20 @@ async function updateAdsPersonalization(req, res) {
 		return res.status(400).json({ error: err.message || 'Error setting ads personalization' });
 	}
 }
+/**
+ * PATCH /users/me/newsletter
+ * @tag Users
+ * @summary Update newsletter subscription preference
+ * @description Updates the user's newsletter preference flags.
+ * @operationId updateNewsletter
+ * @bodyDescription Preference payload
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Preferences updated
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error updating preferences
+ * @prisma_model users
+ */
 async function updateNewsletter(req, res) {
 	try {
 		const user = await UserDao.updateUserNewsletter(req.user.user_id, req.body.data);
@@ -1928,6 +2173,44 @@ async function updateNewsletter(req, res) {
 		return res.status(400).json({ error: err.message || 'Error setting newsletter' });
 	}
 }
+/**
+ * POST /users/me/request-data
+ * @tag Users
+ * @summary Request my stored data (GDPR)
+ * @description Returns a comprehensive snapshot of the current user's stored data across related models.
+ * @operationId requestData
+ * @response 200 - Data payload returned
+ * @responseContent {object} 200.application/json
+ * @response 400 - Missing user id or bad request
+ * @response 500 - Error obtaining personal user data
+ * @prisma_model users
+ * @prisma_model user_roles
+ * @prisma_model user_address
+ * @prisma_model addresses
+ * @prisma_model business_users
+ * @prisma_model driver
+ * @prisma_model vehicle
+ * @prisma_model documents
+ * @prisma_model files
+ * @prisma_model driver_history_locations
+ * @prisma_model taxi_orders
+ * @prisma_model delivery_orders
+ * @prisma_model transactions
+ * @prisma_model reservations
+ * @prisma_model flag_history
+ * @prisma_model lost_items
+ * @prisma_model group_users
+ * @prisma_model wallet_funds
+ * @prisma_model referrals
+ * @prisma_model cashback
+ * @prisma_model business_teams
+ * @prisma_model order_lobbies
+ * @prisma_model promo_sections_buy
+ * @prisma_model scoring_points
+ * @prisma_model late_events
+ * @prisma_model user_favorite_businesses
+ * @prisma_model account_actions
+ */
 async function requestData(req, res) {
 	try {
 		const user_id = req.user.user_id;
@@ -1956,10 +2239,8 @@ async function requestData(req, res) {
 						online: true,
 						company_role: true,
 						created_at: true,
-						updated_at: true,
 						user_id: true,
 						business_id: true,
-						operating_address_id: true,
 						//include
 						business: {
 							select: {
@@ -2388,13 +2669,10 @@ async function requestData(req, res) {
 						// },
 						// driver: {
 						// 	select: {
-						// 		driver_id: true,
-						// 		user_id: true // Only include the essential identifiers
-						// 	}
-						// },
+						// 				user_id: true // Only include the essential identifiers
+						// 			}
 						business: {
 							select: {
-								business_id: true,
 								name: true,
 								// type: true
 							},
@@ -2860,7 +3138,6 @@ export { softDeleteUserByUserId };
 export { requestPaymentIntent };
 export { confirmPaymentIntent };
 export { getUserCredits };
-export { getMyActiveOrderIds };
 export { getMyActiveOrders };
 export { updateMarketingNotifications };
 export { updateAdsPersonalization };
@@ -2921,7 +3198,6 @@ export default {
 	requestPaymentIntent,
 	confirmPaymentIntent,
 	getUserCredits,
-	getMyActiveOrderIds,
 	getMyActiveOrders,
 	updateMarketingNotifications,
 	updateAdsPersonalization,

@@ -16,8 +16,9 @@ const { businessIndex } = elasticsearch;
  * @operationId getMenuByBusinessId
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - Successful operation, returns a list of menus
- * @responseContent {Menu[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the menu list
+ * @prisma_model menus
  */
 async function getMenuByBusinessId(req, res) {
 	try {
@@ -36,8 +37,9 @@ async function getMenuByBusinessId(req, res) {
  * @operationId getDailyMenuByBusinessId
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - Successful operation, returns a list of menus
- * @responseContent {Menu[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the menu list
+ * @prisma_model menus
  */
 async function getDailyMenuByBusinessId(req, res) {
 	try {
@@ -55,11 +57,12 @@ async function getDailyMenuByBusinessId(req, res) {
  * @description Creates a new menu for a business.
  * @operationId createMenu
  * @bodyDescription The menu details to create
- * @bodyContent {MenuCreateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Menu created successfully
- * @responseContent {Menu} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating new menu
+ * @prisma_model menus
  */
 async function createMenu(req, res) {
 	const { business_id, is_daily_meals } = req.body;
@@ -79,11 +82,13 @@ async function createMenu(req, res) {
  * @description Creates a new daily meal menu for merchant.
  * @operationId createDailyMealMenu
  * @bodyDescription The menu details to create
- * @bodyContent {MenuCreateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu created successfully
- * @responseContent {Menu} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error creating new menu
+ * @prisma_model menus
+ * @prisma_model menu_categories
  */
 async function createDailyMealMenu(req, res) {
 	const { business_id, date, menu_category } = req.body;
@@ -106,6 +111,7 @@ async function createDailyMealMenu(req, res) {
  * @pathParam {string} menu_id - The ID of the menu to delete
  * @response 204 - Menu deleted successfully
  * @response 400 - Error deleting menu
+ * @prisma_model menus
  */
 async function deleteMenu(req, res) {
 	const { menu_id } = req.params;
@@ -124,13 +130,13 @@ async function deleteMenu(req, res) {
  * @summary Set menu active status
  * @description Updates the active status of a menu.
  * @operationId setActiveMenu
- * @pathParam {string} menu_id - The ID of the menu to update
  * @bodyDescription The active status to set
- * @bodyContent {ActiveStatusRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu active status updated successfully
- * @responseContent {Menu} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu active status
+ * @prisma_model menus
  */
 async function setActiveMenu(req, res) {
 	const { menu_id, active } = req.body;
@@ -151,11 +157,12 @@ async function setActiveMenu(req, res) {
  * @description Creates a new menu category for a menu.
  * @operationId createMenuCategory
  * @bodyDescription The menu category details to create
- * @bodyContent {MenuCategoryCreateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Menu category created successfully
- * @responseContent {MenuCategory} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating new menu category
+ * @prisma_model menu_categories
  */
 async function createMenuCategory(req, res) {
 	const { menu_id, data } = req.body;
@@ -175,11 +182,12 @@ async function createMenuCategory(req, res) {
  * @description Adds a menu item ID to the ordered list of a menu category.
  * @operationId addMenuItemIdToOrder
  * @bodyDescription The menu category ID and menu item ID to add
- * @bodyContent {MenuItemOrderAddRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu item ID added to order successfully
- * @responseContent {MenuCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error adding menu item ID to order
+ * @prisma_model menu_categories
  */
 async function addMenuItemIdToOrder(req, res) {
 	const { menu_category_id, menuItemIdToAdd } = req.body;
@@ -198,11 +206,12 @@ async function addMenuItemIdToOrder(req, res) {
  * @description Removes a menu item ID from the ordered list of a menu category.
  * @operationId removeMenuItemIdFromOrder
  * @bodyDescription The menu category ID and menu item ID to remove
- * @bodyContent {MenuItemOrderRemoveRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu item ID removed from order successfully
- * @responseContent {MenuCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error removing menu item ID from order
+ * @prisma_model menu_categories
  */
 async function removeMenuItemIdFromOrder(req, res) {
 	const { menu_category_id, menuItemIdToRemove } = req.body;
@@ -221,11 +230,12 @@ async function removeMenuItemIdFromOrder(req, res) {
  * @description Adds a menu category ID to the ordered list of categories in a menu.
  * @operationId addMenuCategoryIdToOrder
  * @bodyDescription The menu ID and the menu category ID to add
- * @bodyContent {MenuCategoryOrderAddRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu category ID added to order successfully
- * @responseContent {Menu} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error adding menu category ID to order
+ * @prisma_model menus
  */
 async function addMenuCategoryIdToOrder(req, res) {
 	const { menu_id, menuCategoryIdToAdd } = req.body;
@@ -244,11 +254,12 @@ async function addMenuCategoryIdToOrder(req, res) {
  * @description Removes a menu category ID from the ordered list of categories in a menu.
  * @operationId removeMenuCategoryIdFromOrder
  * @bodyDescription The menu ID and the menu category ID to remove
- * @bodyContent {MenuCategoryOrderRemoveRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu category ID removed from order successfully
- * @responseContent {Menu} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error removing menu category ID from order
+ * @prisma_model menus
  */
 async function removeMenuCategoryIdFromOrder(req, res) {
 	const { menu_id, menuCategoryIdToRemove } = req.body;
@@ -261,15 +272,16 @@ async function removeMenuCategoryIdFromOrder(req, res) {
 	}
 }
 /**
- * GET /menus/menu-items/:category_id
+ * GET /menus/menu-items/:menu_category_id
  * @tag MenuItem
  * @summary Get menu items by category ID
  * @description Retrieves a list of menu items for a specific menu category.
  * @operationId getMenuItemsByCategoryId
- * @pathParam {string} category_id - The ID of the menu category
+ * @pathParam {string} menu_category_id - The ID of the menu category
  * @response 200 - Successful operation, returns a list of menu items
- * @responseContent {MenuItem[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the menu items
+ * @prisma_model menu_items
  */
 async function getMenuItemsByCategoryId(req, res) {
 	try {
@@ -288,8 +300,9 @@ async function getMenuItemsByCategoryId(req, res) {
  * @operationId getMenuCategoriesByMenuId
  * @pathParam {string} menu_id - The ID of the menu
  * @response 200 - Successful operation, returns a list of menu categories
- * @responseContent {MenuCategory[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the menu categories
+ * @prisma_model menu_categories
  */
 async function getMenuCategoriesByMenuId(req, res) {
 	try {
@@ -308,8 +321,9 @@ async function getMenuCategoriesByMenuId(req, res) {
  * @operationId getMenuCategoriesByBusinessId
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - Successful operation, returns a list of menu categories
- * @responseContent {MenuCategory[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the menu categories
+ * @prisma_model menu_categories
  */
 async function getMenuCategoriesByBusinessId(req, res) {
 	try {
@@ -328,8 +342,9 @@ async function getMenuCategoriesByBusinessId(req, res) {
  * @operationId getMenuItemsByBusinessId
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - Successful operation, returns a list of menu items
- * @responseContent {MenuItem[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the menu items
+ * @prisma_model menu_items
  */
 async function getMenuItemsByBusinessId(req, res) {
 	try {
@@ -351,6 +366,7 @@ async function getMenuItemsByBusinessId(req, res) {
  * @pathParam {string} menu_category_id - The ID of the menu category to delete
  * @response 204 - Menu category deleted successfully
  * @response 400 - Error deleting menu category
+ * @prisma_model menu_categories
  */
 async function deleteMenuCategory(req, res) {
 	const { menu_category_id } = req.params;
@@ -369,13 +385,13 @@ async function deleteMenuCategory(req, res) {
  * @summary Update a menu category
  * @description Updates a menu category by its ID.
  * @operationId updateMenuCategory
- * @pathParam {string} menu_category_id - The ID of the menu category to update
  * @bodyDescription The menu category details to update
- * @bodyContent {MenuCategoryUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu category updated successfully
- * @responseContent {MenuCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu category
+ * @prisma_model menu_categories
  */
 async function updateMenuCategory(req, res) {
 	const { menu_category_id, data } = req.body;
@@ -408,13 +424,13 @@ async function updateMenuCategory(req, res) {
  * @summary Update a menu order
  * @description Updates a menu order by the menu category IDs.
  * @operationId updateMenuOrder
- * @pathParam {string} menu_id - The ID of the menu to update
  * @bodyDescription The request body must include the new order of menu category IDs. This order is used to update the sequence of categories in the specified menu.
- * @bodyContent {MenuCategoryUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu category updated successfully
- * @responseContent {Menu} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu order
+ * @prisma_model menus
  */
 async function updateMenuOrder(req, res) {
 	const { menu_id, ordered_menu_categories_ids } = req.body;
@@ -433,13 +449,13 @@ async function updateMenuOrder(req, res) {
  * @summary Update a menu items order
  * @description Updates a menu items order by the menu items IDs.
  * @operationId updateMenuItemsOrder
- * @pathParam {string} menu_category_id - The ID of the menu category to update
  * @bodyDescription The request body must include the new order of menu category IDs. This order is used to update the sequence of menu items in the specified menu category.
- * @bodyContent {MenuCategoryUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu items order updated successfully
- * @responseContent {Menu} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu order
+ * @prisma_model menu_items
  */
 async function updateMenuItemsOrder(req, res) {
 	const { menu_category_id, ordered_menu_items_ids } = req.body;
@@ -458,11 +474,14 @@ async function updateMenuItemsOrder(req, res) {
  * @description Creates a new menu item for a menu category.
  * @operationId createMenuItem
  * @bodyDescription The menu item details to create
- * @bodyContent {MenuItemCreateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Menu item created successfully
- * @responseContent {MenuItem} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating new menu item
+ * @prisma_model menu_items
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function createMenuItem(req, res) {
 	const { category_id, tax_rate_id, data, image, is_copy } = req.body;
@@ -498,11 +517,13 @@ async function createMenuItem(req, res) {
  * @description Creates a new daily meals menu for a business
  * @operationId createDailyMealsMenu
  * @bodyDescription The menu details to create
- * @bodyContent {createDailyMealsMenuRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Menu created successfully
- * @responseContent {MenuItem} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating new menu
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function createDailyMealsMenu(req, res) {
 	const { business_id, data } = req.body;
@@ -527,17 +548,20 @@ async function createDailyMealsMenu(req, res) {
 	}
 }
 /**
- * GET /menus/daily-meals-menu
+ * GET /menus/daily-meals-menu/:business_id
  * @tag MenuItem
  * @summary Retrieve the last uploaded daily meals menu
  * @description Fetches the most recent daily meals menu for a business, including the menu's name and URL.
  * @operationId getLastDailyMealsMenu
+ * @pathParam {string} business_id - The ID of the business
  * @response 200 - Last daily meals menu retrieved successfully
- * @responseContent {LastDailyMealsMenuResponse} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - No daily meals menu found
- * @responseContent {Error} 404.application/json
+ * @responseContent {object} 404.application/json
  * @response 500 - Error retrieving the last daily meals menu
- * @responseContent {Error} 500.application/json
+ * @responseContent {object} 500.application/json
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function getLastUploadedDailyMealsMenu(req, res) {
 	const { business_id } = req.params;
@@ -571,6 +595,9 @@ async function getLastUploadedDailyMealsMenu(req, res) {
  * @pathParam {string} menu_item_id - The ID of the menu item to delete
  * @response 204 - Menu item deleted successfully
  * @response 400 - Error deleting menu item
+ * @prisma_model menu_items
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function deleteMenuItem(req, res) {
 	const { menu_item_id } = req.params;
@@ -590,13 +617,15 @@ async function deleteMenuItem(req, res) {
  * @summary Update a menu item
  * @description Updates a menu item by its ID.
  * @operationId updateMenuItem
- * @pathParam {string} menu_item_id - The ID of the menu item to update
  * @bodyDescription The menu item details to update
- * @bodyContent {MenuItemUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu item updated successfully
- * @responseContent {MenuItem} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu item
+ * @prisma_model menu_items
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function updateMenuItem(req, res) {
 	const { menu_item_id, data, image } = req.body;
@@ -628,13 +657,13 @@ async function updateMenuItem(req, res) {
  * @summary Update a menu item enabled field
  * @description Updates a menu item by its ID.
  * @operationId updateMenuItem
- * @pathParam {string} menu_item_id - The ID of the menu item to update
  * @bodyDescription The new menu item enabled field value
- * @bodyContent {MenuItemUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu item updated successfully
- * @responseContent {MenuItem} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu item
+ * @prisma_model menu_items
  */
 async function updateMenuItemEnabled(req, res) {
 	const { menu_item_id, is_enabled } = req.body;
@@ -648,18 +677,19 @@ async function updateMenuItemEnabled(req, res) {
 	}
 }
 /**
- * PATCH /menus/menu-items/price
+ * PATCH /menus/menu-items/:menu_item_id/price
  * @tag MenuItem
  * @summary Update menu item price
  * @description Updates the price of a menu item.
  * @operationId updateMenuItemPrice
  * @pathParam {string} menu_item_id - The ID of the menu item to update
  * @bodyDescription The new price to set
- * @bodyContent {PriceUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu item price updated successfully
- * @responseContent {MenuItem} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu item price
+ * @prisma_model menu_items
  */
 async function updateMenuItemPrice(req, res) {
 	const { menu_item_id } = req.params;
@@ -679,13 +709,14 @@ async function updateMenuItemPrice(req, res) {
  * @summary Update menu item category
  * @description Add menu item to a category.
  * @operationId addMenuItemToCategory
- * @pathParam {string} menu_item_id - The ID of the menu item to update
  * @bodyDescription The new category ID to set
- * @bodyContent {CategoryUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu item category updated successfully
- * @responseContent {MenuItem} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu item category
+ * @prisma_model menu_items
+ * @prisma_model menu_categories
  */
 async function addMenuItemMenuCategory(req, res) {
 	const { menu_item_id, menu_category_id } = req.body;
@@ -704,10 +735,11 @@ async function addMenuItemMenuCategory(req, res) {
  * @summary Remove menu item from category
  * @description Removes a menu item from its category.
  * @operationId removeMenuItemFromCategory
- * @pathParam {string} menu_item_id - The ID of the menu item to update
  * @response 200 - Menu item removed from category successfully
- * @responseContent {MenuItem} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error removing menu item from category
+ * @prisma_model menu_items
+ * @prisma_model menu_categories
  */
 async function removeMenuItemFromCategory(req, res) {
 	const { menu_item_id } = req.body;
@@ -727,11 +759,13 @@ async function removeMenuItemFromCategory(req, res) {
  * @description Adds a menu category to a menu.
  * @operationId addMenuCategory
  * @bodyDescription The menu ID and category ID to add
- * @bodyContent {AddMenuCategoryRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu category added successfully
- * @responseContent {MenuCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error adding menu category
+ * @prisma_model menus
+ * @prisma_model menu_categories
  */
 async function addMenuCategory(req, res) {
 	const { menu_id, menu_category_id } = req.body;
@@ -751,11 +785,13 @@ async function addMenuCategory(req, res) {
  * @description Removes a menu category from a menu.
  * @operationId removeMenuCategory
  * @bodyDescription The category ID to remove
- * @bodyContent {RemoveMenuCategoryRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu category removed successfully
- * @responseContent {MenuCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error removing menu category
+ * @prisma_model menus
+ * @prisma_model menu_categories
  */
 async function removeMenuCategory(req, res) {
 	const { menu_category_id } = req.body;
@@ -769,9 +805,18 @@ async function removeMenuCategory(req, res) {
 	}
 }
 /**
- * Deletes all documents and associated files based on the provided field and id.
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
+ * DELETE /menus/documents/:field/:id
+ * @tag Menu
+ * @summary Delete documents and files by field and id
+ * @description Deletes all documents and associated files based on the provided field and id.
+ * @operationId deleteDocumentsAndFilesByDocumentId
+ * @pathParam {string} field - The field to filter by
+ * @pathParam {string} id - The id value to match
+ * @response 200 - Documents and files deleted successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Failed to delete documents and files
+ * @prisma_model documents
+ * @prisma_model files
  */
 const deleteDocumentsAndFilesByDocumentId = async (req, res) => {
 	const { field, id } = req.params;
@@ -785,6 +830,19 @@ const deleteDocumentsAndFilesByDocumentId = async (req, res) => {
 		});
 	}
 };
+/**
+ * GET /menus/menu-items/date/:business_id/:date
+ * @tag MenuItem
+ * @summary Get menu items by date
+ * @description Retrieves menu items for a business on a specific date.
+ * @operationId getMenuItemsByDate
+ * @pathParam {string} business_id - The ID of the business
+ * @pathParam {string} date - The date to filter by (ISO string)
+ * @response 200 - Menu items retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error obtaining menu items
+ * @prisma_model menu_items
+ */
 const getMenuItemsByDate = async (req, res) => {
 	const { business_id, date } = req.params;
 	try {
@@ -804,6 +862,19 @@ const getMenuItemsByDate = async (req, res) => {
 		res.status(400).json({ error: 'Error obtaining menu items', e });
 	}
 };
+/**
+ * GET /menus/date/:business_id/:date
+ * @tag Menu
+ * @summary Get menu by date
+ * @description Retrieves a menu for a business on a specific date.
+ * @operationId getMenuByDate
+ * @pathParam {string} business_id - The ID of the business
+ * @pathParam {string} date - The date to filter by (ISO string)
+ * @response 200 - Menu retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error obtaining menu
+ * @prisma_model menus
+ */
 const getMenuByDate = async (req, res) => {
 	const { business_id, date } = req.params;
 	try {
@@ -814,6 +885,21 @@ const getMenuByDate = async (req, res) => {
 		res.status(400).json({ error: 'Error obtaining menu items', e });
 	}
 };
+/**
+ * PATCH /menus/daily-meal/price
+ * @tag Menu
+ * @summary Update daily meal menu price
+ * @description Updates the price for a daily meal menu category.
+ * @operationId updateDailyMealMenuPrice
+ * @bodyDescription The menu category id and new price
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Price updated and menu returned
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error updating menu price
+ * @prisma_model menu_categories
+ * @prisma_model menus
+ */
 const updateDailyMealMenuPrice = async (req, res) => {
 	const { menu_category_id, price } = req.body;
 	try {
@@ -830,6 +916,21 @@ const updateDailyMealMenuPrice = async (req, res) => {
 		res.status(400).json({ error: 'Error updating menu price', e });
 	}
 };
+/**
+ * POST /menus/menu-items/ids/:business_id
+ * @tag MenuItem
+ * @summary Get menu items by IDs
+ * @description Retrieves menu items by list of ids for a business.
+ * @operationId getMenuItemsByIds
+ * @pathParam {string} business_id - The business id
+ * @bodyDescription The list of menu item IDs
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Menu items retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error fetching menu items
+ * @prisma_model menu_items
+ */
 const getMenuItemsByIds = async (req, res) => {
 	try {
 		const menuItems = await MenuItemDao.getMenuItemsByBusinessId(req.params.business_id, {
@@ -847,6 +948,17 @@ const getMenuItemsByIds = async (req, res) => {
 		res.status(400).json({ error: 'Error fetching menu items', e });
 	}
 };
+/**
+ * GET /menus/tax-rates/active
+ * @tag Menu
+ * @summary Get active tax rates
+ * @description Retrieves all active tax rates.
+ * @operationId getActiveTaxRates
+ * @response 200 - Active tax rates retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching tax rates
+ * @prisma_model tax_rates
+ */
 const getActiveTaxRates = async (req, res) => {
 	try {
 		const taxRates = await TaxDao.getActiveTaxRates();
@@ -874,8 +986,8 @@ const getActiveTaxRates = async (req, res) => {
  *   "snapshot": { "price": 999, "names": { "en": "Burger" } }
  * } application/json
  * - @bodyRequired
- * - @prisma_model menu_item_versions
  * - @response 200 - Version created
+ * - @prisma_model menu_item_versions
  */
 export async function createMenuItemVersion(req, res) {
 	try {

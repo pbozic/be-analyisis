@@ -11,8 +11,9 @@ config();
  * @description Retrieves all documents in the system. Intended for admin usage.
  * @operationId getDocuments
  * @response 200 - Successful operation, returns all documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
+ * @prisma_model documents
  */
 async function listDocuments(req, res) {
 	try {
@@ -31,8 +32,9 @@ async function listDocuments(req, res) {
  * @operationId getDocumentById
  * @pathParam {string} document_id - The ID of the document to retrieve
  * @response 200 - Successful operation, returns the document
- * @responseContent {Document} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving the document
+ * @prisma_model documents
  */
 async function getDocumentById(req, res) {
 	try {
@@ -56,8 +58,9 @@ async function getDocumentById(req, res) {
  * @operationId getDocumentsForUser
  * @pathParam {string} userId - The ID of the user
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
+ * @prisma_model documents
  */
 async function getDocumentsForUser(req, res) {
 	try {
@@ -77,8 +80,9 @@ async function getDocumentsForUser(req, res) {
  * @operationId getDocumentsForBusiness
  * @pathParam {string} businessId - The ID of the business
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
+ * @prisma_model documents
  */
 async function getDocumentsForBusiness(req, res) {
 	try {
@@ -98,8 +102,9 @@ async function getDocumentsForBusiness(req, res) {
  * @operationId getDocumentsForDeliveryPerson
  * @pathParam {string} deliveryPersonId - The ID of the delivery person
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
+ * @prisma_model documents
  */
 async function getDocumentsForDeliveryPerson(req, res) {
 	try {
@@ -119,8 +124,9 @@ async function getDocumentsForDeliveryPerson(req, res) {
  * @operationId getDocumentsForDriver
  * @pathParam {string} driverId - The ID of the driver
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
+ * @prisma_model documents
  */
 async function getDocumentsForDriver(req, res) {
 	try {
@@ -140,8 +146,9 @@ async function getDocumentsForDriver(req, res) {
  * @operationId getDocumentsForVehicle
  * @pathParam {string} vehicleId - The ID of the vehicle
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
+ * @prisma_model documents
  */
 async function getDocumentsForVehicle(req, res) {
 	try {
@@ -161,8 +168,9 @@ async function getDocumentsForVehicle(req, res) {
  * @operationId getDocumentsByType
  * @pathParam {string} documentType - The type of the documents to retrieve
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
+ * @prisma_model documents
  */
 async function getDocumentsByDocumentType(req, res) {
 	try {
@@ -183,8 +191,9 @@ async function getDocumentsByDocumentType(req, res) {
  * @pathParam {string} businessId - The ID of the business
  * @pathParam {string} documentType - The type of the documents
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
+ * @prisma_model documents
  */
 async function getDocumentsForBusinessByDocumentType(req, res) {
 	try {
@@ -204,8 +213,9 @@ async function getDocumentsForBusinessByDocumentType(req, res) {
  * @operationId getDocumentsForUserByDocumentType
  * @pathParam {string} document_type - The type of the documents
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
+ * @prisma_model documents
  */
 async function getDocumentsForUserByDocumentType(req, res) {
 	try {
@@ -226,8 +236,9 @@ async function getDocumentsForUserByDocumentType(req, res) {
  * @pathParam {string} driverId - The ID of the driver
  * @pathParam {string} documentType - The type of the documents
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
+ * @prisma_model documents
  */
 async function getDocumentsForDriverByDocumentType(req, res) {
 	try {
@@ -248,8 +259,9 @@ async function getDocumentsForDriverByDocumentType(req, res) {
  * @pathParam {string} deliveryPersonId - The ID of the delivery person
  * @pathParam {string} documentType - The type of the documents
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
+ * @prisma_model documents
  */
 async function getDocumentsForDeliveryPersonByDocumentType(req, res) {
 	try {
@@ -270,8 +282,9 @@ async function getDocumentsForDeliveryPersonByDocumentType(req, res) {
  * @pathParam {string} vehicleId - The ID of the vehicle
  * @pathParam {string} documentType - The type of the documents
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
+ * @prisma_model documents
  */
 async function getDocumentsForVehicleByDocumentType(req, res) {
 	try {
@@ -290,11 +303,13 @@ async function getDocumentsForVehicleByDocumentType(req, res) {
  * @description Creates a new document and links it to a specific user.
  * @operationId createUserDocument
  * @pathParam {string} user_id - The ID of the user
- * @bodyContent {DocumentCreationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Document created and linked successfully
- * @responseContent {Document} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating or linking the document
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function createUserDocument(req, res) {
 	try {
@@ -317,11 +332,13 @@ async function createUserDocument(req, res) {
  * @description Creates a new document and links it to a specific business.
  * @operationId createBusinessDocument
  * @pathParam {string} business_id - The ID of the business
- * @bodyContent {DocumentCreationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Document created and linked successfully
- * @responseContent {Document} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating or linking the document
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function createBusinessDocument(req, res) {
 	try {
@@ -344,11 +361,13 @@ async function createBusinessDocument(req, res) {
  * @description Creates a new document and links it to a specific driver.
  * @operationId createDriverDocument
  * @pathParam {string} driver_id - The ID of the driver
- * @bodyContent {DocumentCreationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Document created and linked successfully
- * @responseContent {Document} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating or linking the document
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function createDriverDocument(req, res) {
 	try {
@@ -371,11 +390,13 @@ async function createDriverDocument(req, res) {
  * @description Creates a new document and links it to a specific vehicle.
  * @operationId createVehicleDocument
  * @pathParam {string} vehicle_id - The ID of the vehicle
- * @bodyContent {DocumentCreationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Document created and linked successfully
- * @responseContent {Document} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating or linking the document
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function createVehicleDocument(req, res) {
 	try {
@@ -399,11 +420,13 @@ async function createVehicleDocument(req, res) {
  * @description Creates a new document and links it to a specific delivery person.
  * @operationId createDeliveryPersonDocument
  * @pathParam {string} delivery_person_id - The ID of the delivery person
- * @bodyContent {DocumentCreationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Document created and linked successfully
- * @responseContent {Document} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating or linking the document
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function createDeliveryPersonDocument(req, res) {
 	try {
@@ -435,11 +458,12 @@ async function createDeliveryPersonDocument(req, res) {
  * @description Updates the expiration date of a specific document.
  * @operationId updateDocumentExpirationDate
  * @pathParam {string} document_id - The ID of the document to update
- * @bodyContent {UpdateExpirationDateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Document expiration date updated successfully
- * @responseContent {Document} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating document's expiration date
+ * @prisma_model documents
  */
 async function updateDocumentExpirationDate(req, res) {
 	try {
@@ -459,11 +483,12 @@ async function updateDocumentExpirationDate(req, res) {
  * @description Updates the issue date of a specific document.
  * @operationId updateDocumentIssueDate
  * @pathParam {string} document_id - The ID of the document to update
- * @bodyContent {UpdateIssueDateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Document issue date updated successfully
- * @responseContent {Document} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating document's issue date
+ * @prisma_model documents
  */
 async function updateDocumentIssueDate(req, res) {
 	try {
@@ -483,11 +508,13 @@ async function updateDocumentIssueDate(req, res) {
  * @description Updates the files associated with a specific document.
  * @operationId updateDocumentFiles
  * @pathParam {string} document_id - The ID of the document to update
- * @bodyContent {UpdateFilesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Document files updated successfully
- * @responseContent {Document} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating document's files
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function updateDocumentFiles(req, res) {
 	try {
@@ -507,11 +534,12 @@ async function updateDocumentFiles(req, res) {
  * @description Updates the additional information of a specific document.
  * @operationId updateDocumentAdditionalInfo
  * @pathParam {string} document_id - The ID of the document to update
- * @bodyContent {UpdateAdditionalInfoRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Document additional info updated successfully
- * @responseContent {Document} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating document's additional info
+ * @prisma_model documents
  */
 async function updateDocumentAdditionalInfo(req, res) {
 	try {

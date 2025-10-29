@@ -12,8 +12,9 @@ import { CreateLocationInput, UpdateLocationInput } from '../../types/reservatio
  * @description Retrieves all reservation locations for a specific business.
  * @operationId getReservationLocations
  * @response 200 - Reservation locations retrieved successfully
- * @responseContent {Location[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving locations
+ * @prisma_model location
  */
 export async function getLocations(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
@@ -35,11 +36,13 @@ export async function getLocations(req: ValidatedRequest, res: Response): Promis
  * @summary Create a new reservation location
  * @description Creates a new reservation location.
  * @operationId createReservationLocation
- * @requestBody {CreateLocationInput} requestBody - The location data to create.
+ * @bodyContent {object} application/json
  * @response 201 - Location created successfully
- * @responseContent {Location} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating location
+ * @prisma_model location
+ * @prisma_model address
  */
 export async function createLocation(req: ValidatedRequest<CreateLocationInput>, res: Response): Promise<void> {
 	try {
@@ -66,17 +69,19 @@ export async function createLocation(req: ValidatedRequest<CreateLocationInput>,
 }
 
 /**
- * PUT /reservation/locations/{location_id}
+ * PUT /reservation/locations/:location_id
  * @tag Reservation
  * @summary Update a reservation location
  * @description Updates an existing reservation location.
  * @operationId updateReservationLocation
  * @pathParam {string} location_id - The ID of the location to update.
- * @requestBody {UpdateLocationInput} requestBody - The data to update the location with.
+ * @bodyContent {object} application/json
  * @response 200 - Location updated successfully
- * @responseContent {Location} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Location not found
  * @response 500 - Error updating location
+ * @prisma_model location
+ * @prisma_model address
  */
 export async function updateLocation(
 	req: ValidatedRequest<UpdateLocationInput, { location_id: string }>,
@@ -112,7 +117,7 @@ export async function updateLocation(
 }
 
 /**
- * DELETE /reservation/locations/{location_id}
+ * DELETE /reservation/locations/:location_id
  * @tag Reservation
  * @summary Delete a reservation location
  * @description Deletes a reservation location by its ID.
@@ -121,6 +126,7 @@ export async function updateLocation(
  * @response 204 - Location deleted successfully
  * @response 404 - Location not found
  * @response 500 - Error deleting location
+ * @prisma_model location
  */
 export async function deleteLocation(
 	req: ValidatedRequest<null, { location_id: string }>,
@@ -135,16 +141,17 @@ export async function deleteLocation(
 	}
 }
 /**
- * GET /reservation/locations/{location_id}
+ * GET /reservation/locations/:location_id
  * @tag Reservation
  * @summary Get a reservation location by ID
  * @description Retrieves a reservation location by its ID.
  * @operationId getReservationLocationById
  * @pathParam {string} location_id - The ID of the location to retrieve.
  * @response 200 - Location retrieved successfully
- * @responseContent {Location} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Location not found
  * @response 500 - Error retrieving location
+ * @prisma_model location
  */
 
 export async function getLocationById(
@@ -171,8 +178,10 @@ export async function getLocationById(
  * @description Retrieves all reservation locations with their schedules.
  * @operationId getLocationsWithSchedules
  * @response 200 - Reservation locations with schedules retrieved successfully
- * @responseContent {Location[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving locations with schedules
+ * @prisma_model location
+ * @prisma_model schedule
  */
 export async function getLocationsWithSchedules(req: ValidatedRequest, res: Response): Promise<void> {
 	try {

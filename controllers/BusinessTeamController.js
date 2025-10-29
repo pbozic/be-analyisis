@@ -1,9 +1,15 @@
 import BusinessTeamDao from '../dao/BusinessTeam.js';
 /**
- * Get all business teams for a business
- * @route GET /business-teams/:business_id
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
+ * GET /business-teams/:business_id
+ * @tag BusinessTeam
+ * @summary Get all business teams for a business
+ * @description Retrieves all business teams that belong to a given business.
+ * @operationId getBusinessTeamsByBusinessId
+ * @pathParam {string} business_id - The business ID
+ * @response 200 - Business teams retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error retrieving business teams
+ * @prisma_model business_teams
  */
 const getBusinessTeamsByBusinessId = async (req, res) => {
 	try {
@@ -18,10 +24,18 @@ const getBusinessTeamsByBusinessId = async (req, res) => {
 	}
 };
 /**
- * Get a business team by ID
- * @route GET /business-teams/:business_teams_id
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
+ * GET /business-teams/:business_teams_id
+ * @tag BusinessTeam
+ * @summary Get a business team by ID
+ * @description Retrieves a single business team by its ID including users.
+ * @operationId getBusinessTeamById
+ * @pathParam {string} business_teams_id - The business team ID
+ * @response 200 - Business team retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Business team not found
+ * @response 500 - Error retrieving business team
+ * @prisma_model business_teams
+ * @prisma_model users
  */
 const getBusinessTeamById = async (req, res) => {
 	try {
@@ -39,15 +53,18 @@ const getBusinessTeamById = async (req, res) => {
 	}
 };
 /**
- * Create a new business team
- * @route POST /business-teams/create
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @body {Object} req.body
- * @body {string} req.body.business_id - ID of the business this team belongs to
- * @body {string} req.body.team_name - Name of the business team
- * @body {Object} req.body.users - Array of user IDs to assign to the team
- * @body {number} [req.body.limit_per_person] - Optional user limit_per_person for the team
+ * POST /business-teams/create
+ * @tag BusinessTeam
+ * @summary Create a new business team
+ * @description Creates a new business team; optionally assigns initial users.
+ * @operationId createBusinessTeam
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 201 - Business team created successfully
+ * @responseContent {object} 201.application/json
+ * @response 500 - Error creating business team
+ * @prisma_model business_teams
+ * @prisma_model users
  */
 const createBusinessTeam = async (req, res) => {
 	try {
@@ -77,13 +94,18 @@ const createBusinessTeam = async (req, res) => {
 	}
 };
 /**
- * Update an existing business team
- * @route PATCH /business-teams/:business_teams_id
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @body {Object} req.body - Fields to update
- * @body {string} [req.body.team_name] - New team team_name
- * @body {number} [req.body.limit_per_person] - New team limit_per_person
+ * PATCH /business-teams/:business_teams_id
+ * @tag BusinessTeam
+ * @summary Update an existing business team
+ * @description Updates fields such as team name or limit per person.
+ * @operationId updateBusinessTeam
+ * @pathParam {string} business_teams_id - The business team ID
+ * @bodyContent {object} application/json
+ * @response 200 - Business team updated successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Business team not found
+ * @response 500 - Error updating business team
+ * @prisma_model business_teams
  */
 const updateBusinessTeam = async (req, res) => {
 	try {
@@ -106,13 +128,20 @@ const updateBusinessTeam = async (req, res) => {
 };
 
 /**
- * Update users in a business team
- * @route POST /business-teams/users/:business_teams_id
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @body {Object} req.body - Two arrays to update
- * @body {Object} [req.body.users_to_add] - Array of ids of new users to add to the team
- * @body {Object} [req.body.users_to_delete] - Array of ids of users to delete from the team
+ * POST /business-teams/users/:business_teams_id
+ * @tag BusinessTeam
+ * @summary Update users in a business team
+ * @description Adds and/or removes users from the specified business team.
+ * @operationId editBusinessTeamUsers
+ * @pathParam {string} business_teams_id - The business team ID
+ * @bodyContent {object} application/json
+ * @response 200 - Business team users updated successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Invalid request
+ * @response 404 - Resource not found
+ * @response 500 - Error updating business team users
+ * @prisma_model business_teams
+ * @prisma_model users
  */
 const editBusinessTeamUsers = async (req, res) => {
 	const usersToAdd = req.body.users_to_add;
@@ -194,12 +223,18 @@ const editBusinessTeamUsers = async (req, res) => {
 	}
 };
 /**
- * Update an existing business team's limit_per_person
- * @route PATCH /business-teams/:business_teams_id/limit_per_person
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @body {Object} req.body
- * @body {number} req.body.limit_per_person - New user limit_per_person for the team
+ * PATCH /business-teams/:business_teams_id/limit_per_person
+ * @tag BusinessTeam
+ * @summary Update team limit per person
+ * @description Updates the limit_per_person value for the team.
+ * @operationId setBusinessTeamLimit
+ * @pathParam {string} business_teams_id - The business team ID
+ * @bodyContent {object} application/json
+ * @response 200 - Team limit updated successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Business team not found
+ * @response 500 - Error updating team limit
+ * @prisma_model business_teams
  */
 const setBusinessTeamLimit = async (req, res) => {
 	try {
@@ -222,12 +257,18 @@ const setBusinessTeamLimit = async (req, res) => {
 	}
 };
 /**
- * Update an existing business team's team_name
- * @route PATCH /business-teams/:business_teams_id/name
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @body {Object} req.body
- * @body {string} req.body.team_name - New name for the team
+ * PATCH /business-teams/:business_teams_id/name
+ * @tag BusinessTeam
+ * @summary Update team name
+ * @description Updates the team_name for the business team.
+ * @operationId setBusinessTeamName
+ * @pathParam {string} business_teams_id - The business team ID
+ * @bodyContent {object} application/json
+ * @response 200 - Team name updated successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Business team not found
+ * @response 500 - Error updating team name
+ * @prisma_model business_teams
  */
 const setBusinessTeamName = async (req, res) => {
 	try {
@@ -250,10 +291,16 @@ const setBusinessTeamName = async (req, res) => {
 	}
 };
 /**
- * Delete a business team
- * @route DELETE /business-teams/:business_teams_id
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
+ * DELETE /business-teams/:business_teams_id
+ * @tag BusinessTeam
+ * @summary Delete a business team
+ * @description Deletes the specified business team.
+ * @operationId deleteBusinessTeam
+ * @pathParam {string} business_teams_id - The business team ID
+ * @response 200 - Business team deleted successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error deleting business team
+ * @prisma_model business_teams
  */
 const deleteBusinessTeam = async (req, res) => {
 	try {
@@ -269,14 +316,19 @@ const deleteBusinessTeam = async (req, res) => {
 	}
 };
 /**
- * Add an unassigned user to a business team
- * @route PATCH /business-teams/add_user
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @body {Object} req.body
- * @body {string} req.body.user_id - ID of the user to add
- * @body {string} req.body.business_teams_id - ID of the team to add the user to
- * @returns {Object} Updated team with new user
+ * PATCH /business-teams/add_user
+ * @tag BusinessTeam
+ * @summary Add an unassigned user to a business team
+ * @description Adds a user to the specified team.
+ * @operationId addUserToTeam
+ * @bodyContent {object} application/json
+ * @response 200 - User added to team successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Bad request
+ * @response 404 - Resource not found
+ * @response 500 - Error adding user to team
+ * @prisma_model business_teams
+ * @prisma_model users
  */
 const addUserToTeam = async (req, res) => {
 	try {
@@ -312,13 +364,18 @@ const addUserToTeam = async (req, res) => {
 	}
 };
 /**
- * Remove a user from a business team
- * @route PATCH /business-teams/remove_user
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @body {Object} req.body
- * @body {string} req.body.user_id - ID of the user to remove
- * @returns {Object} Updated team without the removed user
+ * PATCH /business-teams/remove_user
+ * @tag BusinessTeam
+ * @summary Remove a user from a business team
+ * @description Removes a user from their current business team.
+ * @operationId removeUserFromTeam
+ * @response 200 - User removed from team successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Bad request
+ * @response 404 - Resource not found
+ * @response 500 - Error removing user from team
+ * @prisma_model business_teams
+ * @prisma_model users
  */
 const removeUserFromTeam = async (req, res) => {
 	try {
@@ -354,14 +411,19 @@ const removeUserFromTeam = async (req, res) => {
 	}
 };
 /**
- * Move a user to a different business team
- * @route PATCH /business-teams/move_user
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @body {Object} req.body
- * @body {string} req.body.user_id - ID of the user to move
- * @body {string} req.body.business_teams_id - ID of the destination team
- * @returns {Object} Updated destination team with the moved user
+ * PATCH /business-teams/move_user
+ * @tag BusinessTeam
+ * @summary Move a user to a different business team
+ * @description Moves a user from their current team (if any) to a new team.
+ * @operationId moveUserToTeam
+ * @bodyContent {object} application/json
+ * @response 200 - User moved to new team successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Bad request
+ * @response 404 - Resource not found
+ * @response 500 - Error moving user to new team
+ * @prisma_model business_teams
+ * @prisma_model users
  */
 const moveUserToTeam = async (req, res) => {
 	try {

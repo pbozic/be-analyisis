@@ -896,26 +896,6 @@ async function getInProgressDeliveryOrdersCountForBusinessId(business_id) {
 		throw new Error(e.message);
 	}
 }
-async function getActiveOrderIdsForUser(user_id) {
-	try {
-		const orders = await prisma.delivery_orders.findMany({
-			where: {
-				user_id: user_id,
-				status: {
-					notIn: DELIVERY_ORDER_END_STATES,
-				},
-			},
-			select: {
-				order_id: true,
-			},
-		});
-		// console.info("got order ids:", orders);
-		return orders.map((order) => order.order_id);
-	} catch (e) {
-		console.error('Error fetching orders:', e);
-		throw new Error(e.message);
-	}
-}
 async function removeDriverFromOrder(order_id) {
 	try {
 		const order = await prisma.delivery_orders.update({
@@ -1003,7 +983,6 @@ export { getActiveOrdersByDeliveryDriverId };
 export { connectOrderWithDriver };
 export { getActiveDeliveryOrdersForBusiness };
 export { getInProgressDeliveryOrdersCountForBusinessId };
-export { getActiveOrderIdsForUser };
 export { removeDriverFromOrder };
 export { getOrdersByBusinessLocalLocation };
 export { setDeliveryImage };
@@ -1034,7 +1013,6 @@ export default {
 	connectOrderWithDriver,
 	getActiveDeliveryOrdersForBusiness,
 	getInProgressDeliveryOrdersCountForBusinessId,
-	getActiveOrderIdsForUser,
 	removeDriverFromOrder,
 	getOrdersByBusinessLocalLocation,
 	setDeliveryImage,

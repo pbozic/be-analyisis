@@ -3,17 +3,19 @@ import { Request, Response } from 'express';
 import * as FoodDrinksDao from '../dao/FoodDrinks.ts';
 
 /**
- *
- * - PATCH /food-drinks/{food_drinks_id}/online
- * - @tag FoodDrinks
- * - @summary Toggle a food_drinks online status
- * - @description Sets a food_drinks online flag.
- * - @operationId setFoodDrinksOnline
- * - @bodyDescription Online state
- * - @bodyContent { "online": true } application/json
- * - @bodyRequired
- * - @prisma_model food_drinks
- * - @response 200 - FoodDrinks updated
+ * PATCH /food-drinks/{food_drinks_id}/online
+ * @tag FoodDrinks
+ * @summary Toggle a food_drinks online status
+ * @description Sets a food_drinks online flag.
+ * @operationId setFoodDrinksOnline
+ * @bodyDescription Online state
+ * @bodyContent { "online": true } application/json
+ * @bodyRequired
+ * @response 200 - FoodDrinks updated
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error updating food drinks
+ * @responseContent {object} 500.application/json The error object
+ * @prisma_model food_drinks
  */
 export async function setFoodDrinksOnline(req: Request, res: Response): Promise<void> {
 	try {
@@ -28,17 +30,19 @@ export async function setFoodDrinksOnline(req: Request, res: Response): Promise<
 }
 
 /**
- *
- * - PATCH /food-drinks/{food_drinks_id}/overwhelmed
- * - @tag FoodDrinks
- * - @summary Toggle a food_drinks overwhelmed status
- * - @description Sets a food_drinks overwhelmed flag.
- * - @operationId setFoodDrinksOverwhelmed
- * - @bodyDescription Overwhelmed state
- * - @bodyContent { "overwhelmed": true } application/json
- * - @bodyRequired
- * - @prisma_model food_drinks
- * - @response 200 - FoodDrinks updated
+ * PATCH /food-drinks/:food_drinks_id/overwhelmed
+ * @tag FoodDrinks
+ * @summary Toggle a food_drinks overwhelmed status
+ * @description Sets a food_drinks overwhelmed flag.
+ * @operationId setFoodDrinksOverwhelmed
+ * @bodyDescription Overwhelmed state
+ * @bodyContent { "overwhelmed": true } application/json
+ * @bodyRequired
+ * @response 200 - FoodDrinks updated
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error updating food drinks
+ * @responseContent {object} 500.application/json The error object
+ * @prisma_model food_drinks
  */
 export async function setFoodDrinksOverwhelmed(req: Request, res: Response): Promise<void> {
 	try {
@@ -53,14 +57,17 @@ export async function setFoodDrinksOverwhelmed(req: Request, res: Response): Pro
 }
 
 /**
- *
- * - POST /food-drinks/{food_drinks_id}/disable
- * - @tag FoodDrinks
- * - @summary Disable a food_drinks module
- * - @description Sets a food_drinks enabled flag to false and online flag to false.
- * - @operationId disableFoodDrinks
- * - @prisma_model food_drinks
- * - @response 200 - FoodDrinks disabled
+ * POST /food-drinks/:food_drinks_id/disable
+ * @tag FoodDrinks
+ * @summary Disable a food_drinks module
+ * @description Sets a food_drinks enabled flag to false and online flag to false.
+ * @operationId disableFoodDrinks
+ * @prisma_model food_drinks
+ * @response 200 - FoodDrinks disabled
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error disabling food drinks
+ * @responseContent {object} 500.application/json The error object
+ * @prisma_model food_drinks
  */
 export async function disableFoodDrinks(req: Request, res: Response): Promise<void> {
 	try {
@@ -73,14 +80,17 @@ export async function disableFoodDrinks(req: Request, res: Response): Promise<vo
 	}
 }
 /**
- *
- * - POST /food-drinks/{food_drinks_id}/enable
- * - @tag FoodDrinks
- * - @summary Enable a food_drinks module
- * - @description Sets a food_drinks enabled flag to true.
- * - @operationId enableFoodDrinks
- * - @prisma_model food_drinks
- * - @response 200 - FoodDrinks enabled
+ * POST /food-drinks/:food_drinks_id/enable
+ * @tag FoodDrinks
+ * @summary Enable a food_drinks module
+ * @description Sets a food_drinks enabled flag to true.
+ * @operationId enableFoodDrinks
+ * @prisma_model food_drinks
+ * @response 200 - FoodDrinks enabled
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error enabling food drinks
+ * @responseContent {object} 500.application/json The error object
+ * @prisma_model food_drinks
  */
 export async function enableFoodDrinks(req: Request, res: Response): Promise<void> {
 	try {

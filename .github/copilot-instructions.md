@@ -6,24 +6,19 @@ Whenever we request to generate docs in any file that is a part of the controlle
 
 /\*\*
 
-- POST /promo-sections
+- GET /promo-sections/:id
 - @tag PromoSection
-- @summary Create a new promo section
-- @description Creates a new promo section and associated Stripe product and pricing.
-- @operationId createPromoSection
-- @bodyDescription The promo section details to create
-- @bodyContent {
-- "key": "value",
--      ....
-- } application/json
-- @bodyRequired
-- @response 200 - Promo section created successfully
+- @summary Get a promo section by ID
+- @description Retrieves a promo section by its ID.
+- @operationId getPromoSectionById
+- @pathParam {string} id - The ID of the promo section to retrieve.
+- @response 200 - Promo section retrieved successfully
 - @responseContent {object} 200.application/json
-- @responseExample 200.application/json {
-- "key": "value",
--      ....
-- }
-- @response 500 - Error creating new promo section
+- @response 404 - Promo section not found
+- @responseContent {object} 404.application/json
+- @response 500 - Error retrieving promo section
+- @responseContent {object} 500.application/json
+- @prisma_model promo_section
   \*/
 
 2. Check the dao functions that are called and add @prisma_model to the docs, the prisma model should be visible from the dao functions await prisma.[model_name] the prisma models are defined in ./prisma/schema.prisma

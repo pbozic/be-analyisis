@@ -12,8 +12,11 @@ config();
  * @description Retrieves all lost items, including their associated documents and files.
  * @operationId getAllLostItems
  * @response 200 - Successful retrieval of lost items
- * @responseContent {LostItemsResponse[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving lost items
+ * @prisma_model lost_items
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function getAllLostItems(req, res) {
 	try {
@@ -30,11 +33,14 @@ async function getAllLostItems(req, res) {
  * @summary Report a found item
  * @description Reports a found item and adds it to the database.
  * @operationId reportFoundItem
- * @bodyContent {FoundItem} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Found item reported successfully
- * @responseContent {FoundItem} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error reporting found item
+ * @prisma_model lost_items
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function reportFoundItem(req, res) {
 	const { description, found, images, user } = req.body;
@@ -66,8 +72,11 @@ async function reportFoundItem(req, res) {
  * @operationId deleteFoundItem
  * @pathParam {string} lost_item_id - The ID of the found item to delete
  * @response 200 - Found item deleted successfully
- * @responseContent {LostItems} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error deleting found item
+ * @prisma_model lost_items
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function deleteFoundItem(req, res) {
 	try {
@@ -87,11 +96,12 @@ async function deleteFoundItem(req, res) {
  * @description Updates the details of a lost item in the database.
  * @operationId updateLostItem
  * @pathParam {string} lost_item_id - The ID of the lost item to update
- * @bodyContent {UpdateLostItem} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Lost item updated successfully
- * @responseContent {LostItem} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating lost item
+ * @prisma_model lost_items
  */
 async function updateLostItem(req, res) {
 	const { lost_item_id } = req.params;

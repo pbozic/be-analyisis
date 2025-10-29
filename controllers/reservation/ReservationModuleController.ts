@@ -10,6 +10,18 @@ import { UpdateReservationSettingsInput } from '../../types/reservation/Reservat
 config();
 const businessIndex = elasticsearch.businessIndex as (business_id?: string | null, force?: boolean) => Promise<void>;
 
+/**
+ * POST /reservation/admin/settings/update
+ * @tag Reservation
+ * @summary Update reservation settings
+ * @description Director-only: updates reservation module settings for the current business.
+ * @operationId updateReservationSettings
+ * @bodyContent {object} application/json
+ * @response 200 - Settings updated successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error updating business reservation settings
+ * @prisma_model reservation_module
+ */
 export async function updateReservationSettings(
 	req: ValidatedRequest<UpdateReservationSettingsInput>,
 	res: Response
@@ -36,6 +48,18 @@ export async function updateReservationSettings(
 	}
 }
 
+/**
+ * GET /reservation/:business_id
+ * @tag Reservation
+ * @summary Get reservation module by business ID
+ * @description Retrieves the reservation module for the authenticated business.
+ * @operationId getReservationModuleByBusinessId
+ * @pathParam {string} business_id - The ID of the business.
+ * @response 200 - Reservation module retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error retrieving reservation module
+ * @prisma_model reservation_module
+ */
 export async function getReservationModuleByBusinessId(
 	req: ValidatedRequest<null, { business_id: string }>,
 	res: Response
@@ -56,14 +80,16 @@ export async function getReservationModuleByBusinessId(
 }
 
 /**
- *
- * - PATCH /reservation/admin/{reservation_module_id}/disable
- * - @tag Reservations
- * - @summary Disable reservation module public visibility
- * - @description Sets reservation_module.publicly_visible to false.
- * - @operationId disableReservations
- * - @prisma_model reservation_module
- * - @response 200 - Module disabled
+ * PATCH /reservation/admin/:reservation_module_id/disable
+ * @tag Reservation
+ * @summary Disable reservation module public visibility
+ * @description Sets reservation_module.publicly_visible to false.
+ * @operationId disableReservations
+ * @pathParam {string} reservation_module_id - The ID of the reservation module to disable.
+ * @response 200 - Module disabled
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error disabling reservations
+ * @prisma_model reservation_module
  */
 export async function disableReservations(
 	req: ValidatedRequest<null, { reservation_module_id: string }>,
@@ -81,14 +107,16 @@ export async function disableReservations(
 	}
 }
 /**
- *
- * - PATCH /reservation/admin/{reservation_module_id}/enable
- * - @tag Reservations
- * - @summary Enable reservation module public visibility
- * - @description Sets reservation_module.publicly_visible to true.
- * - @operationId enableReservations
- * - @prisma_model reservation_module
- * - @response 200 - Module enabled
+ * PATCH /reservation/admin/:reservation_module_id/enable
+ * @tag Reservation
+ * @summary Enable reservation module public visibility
+ * @description Sets reservation_module.publicly_visible to true.
+ * @operationId enableReservations
+ * @pathParam {string} reservation_module_id - The ID of the reservation module to enable.
+ * @response 200 - Module enabled
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error enabling reservations
+ * @prisma_model reservation_module
  */
 export async function enableReservations(
 	req: ValidatedRequest<null, { reservation_module_id: string }>,
@@ -105,6 +133,18 @@ export async function enableReservations(
 		res.status(400).json({ error: 'Error enabling reservations', e });
 	}
 }
+/**
+ * POST /reservation/booking/booking-data
+ * @tag Reservation
+ * @summary Get public booking data by link hash or business ID
+ * @description Retrieves reservation module data necessary for public booking flow by public link hash or business ID.
+ * @operationId getReservationModuleBookingDataByHashOrBusinessId
+ * @bodyContent {object} application/json
+ * @response 200 - Booking data retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error fetching booking data
+ * @prisma_model reservation_module
+ */
 export async function getReservationModuleBookingDataByHashOrBusinessId(
 	req: ValidatedRequest<{ public_link_hash?: string; business_id?: string }>,
 	res: Response

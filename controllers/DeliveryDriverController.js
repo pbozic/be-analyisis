@@ -35,6 +35,8 @@ const { UserSockets, io } = socket;
  * @response 200 - Successful operation, orders sent to the delivery driver
  * @response 404 - Delivery Driver not found
  * @response 400 - Error retrieving orders
+ * @prisma_model delivery_drivers
+ * @prisma_model delivery_orders
  */
 async function resendDelegatedOrdersToDeliveryDriver(req, res) {
 	const userId = req.params.user_id;
@@ -57,16 +59,22 @@ async function resendDelegatedOrdersToDeliveryDriver(req, res) {
 }
 /**
  * PATCH /delivery_drivers/edit
- * @tag Delivery Drivers
+ * @tag DeliveryDrivers
  * @summary Edit a delivery driver
  * @description Edits the data of specific delivery driver.
  * @operationId editDeliveryDriver
  * @pathParam {string} delivery_driver_id - The ID of the delivery driver to edit
- * @bodyContent {DeliveryDriverEdit} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Delivery driver edited successfully
- * @responseContent {DeliveryDriver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating delivery driver
+ * @prisma_model delivery_drivers
+ * @prisma_model users
+ * @prisma_model addresses
+ * @prisma_model vehicles
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function editDeliveryDriver(req, res) {
 	const { user, driver, vehicle, documents, files, address } = req.body;
@@ -233,8 +241,9 @@ async function editDeliveryDriver(req, res) {
  * @description Returns a list of delivery drivers along with their user and vehicle information.
  * @operationId getDeliveryDrivers
  * @response 200 - Successful operation, returns a list of delivery drivers
- * @responseContent {DeliveryDriver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the delivery driver list
+ * @prisma_model delivery_drivers
  */
 async function listDeliveryDrivers(req, res) {
 	try {
@@ -252,7 +261,7 @@ async function listDeliveryDrivers(req, res) {
  * @description Returns a list of all delivery drivers who are currently online.
  * @operationId getOnlineDeliveryDrivers
  * @response 200 - Successful operation, returns a list of online delivery drivers
- * @responseContent {DeliveryDriver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the online delivery driver list
  */
 async function listOnlineDeliveryDrivers(req, res) {
@@ -271,7 +280,7 @@ async function listOnlineDeliveryDrivers(req, res) {
  * @description Returns a list of all delivery drivers who are currently available.
  * @operationId getAvailableDeliveryDrivers
  * @response 200 - Successful operation, returns a list of available delivery drivers
- * @responseContent {DeliveryDriver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the available delivery driver list
  */
 async function getAvailableDeliveryDrivers(req, res) {
@@ -290,7 +299,7 @@ async function getAvailableDeliveryDrivers(req, res) {
  * @description Retrieves a list of all delivery drivers that offer daily meals.
  * @operationId listDeliveryDriversWithDailyMeals
  * @response 200 - Successful operation, returns a list of delivery drivers offering daily meals
- * @responseContent {DeliveryDriver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the delivery driver list
  */
 async function listDeliveryDriversWithDailyMeals(req, res) {
@@ -312,7 +321,7 @@ async function listDeliveryDriversWithDailyMeals(req, res) {
  * @operationId getDeliveryDriverById
  * @pathParam {string} delivery_driver_id - The ID of the delivery driver to retrieve
  * @response 200 - Successful operation, returns detailed delivery driver information
- * @responseContent {DeliveryDriver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Delivery driver not found
  * @response 400 - Error retrieving delivery driver information
  */
@@ -391,7 +400,7 @@ async function getDeliveryDriverById(req, res) {
  * @operationId getDeliveryDriverByUserId
  * @pathParam {string} user_id - The ID of the delivery driver to retrieve
  * @response 200 - Successful operation, returns detailed delivery driver information
- * @responseContent {DeliveryDriver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Delivery driver not found
  * @response 400 - Error retrieving delivery driver information
  */
@@ -418,7 +427,7 @@ async function getDeliveryDriverByUserId(req, res) {
  * @operationId getDeliveryDriverByBusinessId
  * @pathParam {string} business_id - The ID of the daily meal business
  * @response 200 - Successful operation, returns detailed delivery drivers
- * @responseContent {DeliveryDriver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Delivery drivers not found
  * @response 400 - Error retrieving delivery drivers
  */
@@ -445,7 +454,7 @@ async function getDeliveryDriversByBusinessId(req, res) {
  * @operationId getDeliveryDriverLocation
  * @pathParam {string} delivery_driver_id - The ID of the delivery driver whose location is being retrieved
  * @response 200 - Successful operation, returns delivery driver's location
- * @responseContent {Location} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Delivery driver not found
  * @response 400 - Error retrieving delivery driver's location
  */
@@ -473,10 +482,10 @@ async function getDeliveryDriverLocation(req, res) {
  * @description Updates information about a specific delivery driver.
  * @operationId updateDeliveryDriverDailyMealBusiness
  * @pathParam {string} delivery_driver_id - The ID of the delivery driver to update
- * @bodyContent {DeliveryDriverUpdate} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Delivery driver updated successfully
- * @responseContent {DeliveryDriver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating delivery driver
  */
 async function updateDeliveryDriverDailyMealBusiness(req, res) {
@@ -516,10 +525,10 @@ async function updateDeliveryDriverDailyMealBusiness(req, res) {
  * @description Updates information about a specific delivery driver, excluding location.
  * @operationId updateDeliveryDriver
  * @pathParam {string} delivery_driver_id - The ID of the delivery driver to update
- * @bodyContent {DeliveryDriverUpdate} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Delivery driver updated successfully
- * @responseContent {DeliveryDriver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating delivery driver
  */
 async function updateDeliveryDriver(req, res) {
@@ -540,10 +549,10 @@ async function updateDeliveryDriver(req, res) {
  * @description Updates the location of a specific delivery driver.
  * @operationId updateDeliveryDriverLocation
  * @pathParam {string} delivery_driver_id - The ID of the delivery driver to update location for
- * @bodyContent {Location} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Location updated successfully
- * @responseContent {DeliveryDriver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating delivery driver location
  */
 async function updateDeliveryDriverLocation(req, res) {
@@ -650,7 +659,7 @@ async function updateDeliveryDriverLocation(req, res) {
  * @description Sets the online status of a specific delivery driver and emits appropriate socket events.
  * @operationId setDeliveryDriverOnlineStatus
  * @pathParam {string} delivery_driver_id - The ID of the delivery driver to update the online status for
- * @bodyContent {DeliveryDriverOnlineStatus} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Online status updated successfully
  * @responseContent {DeliveryDriver} 200.application/json
@@ -686,10 +695,10 @@ async function updateDeliveryDriverOnlineStatus(req, res) {
  * @summary Create a new delivery driver
  * @description Adds a new delivery driver to the database.
  * @operationId createNewDeliveryDriver
- * @bodyContent {DeliveryDriver} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Delivery driver created successfully
- * @responseContent {DeliveryDriver} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating delivery driver
  */
 async function createDeliveryDriver(req, res) {
@@ -716,7 +725,7 @@ async function createDeliveryDriver(req, res) {
  * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
  * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
  * @response 200 - Successful operation, returns delivery driver's earnings
- * @responseContent {Earnings} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving delivery driver's earnings
  */
@@ -758,7 +767,7 @@ async function getDriverEarnings(req, res) {
  * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
  * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
  * @response 200 - Successful operation, returns all delivery drivers' earnings
- * @responseContent {Earnings[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving all delivery drivers' earnings
  */
 async function getAllDriversEarnings(req, res) {
@@ -798,7 +807,7 @@ async function getAllDriversEarnings(req, res) {
  * @description Retrieves the total earnings of all drivers based on completed orders.
  * @operationId getTotalEarnings
  * @response 200 - Successful operation, returns total earnings for all delivery drivers
- * @responseContent {TotalEarnings} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving total earnings
  */
 async function getTotalEarnings(req, res) {
@@ -824,7 +833,7 @@ async function getTotalEarnings(req, res) {
  * @operationId getDriverTotalEarnings
  * @pathParam {string} delivery_driver_id - The ID of the delivery driver whose total earnings are being retrieved
  * @response 200 - Successful operation, returns total earnings for the specified driver
- * @responseContent {TotalEarnings} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving delivery driver's total earnings
  */

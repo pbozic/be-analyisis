@@ -49,8 +49,11 @@ const { io } = socket;
  * @description Returns a list of drivers along with their user and vehicle information.
  * @operationId getDrivers
  * @response 200 - Successful operation, returns a list of drivers
- * @responseContent {Driver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the driver list
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model vehicles (see ./prisma/schemas/transport.prisma)
  */
 async function listDrivers(req, res) {
 	try {
@@ -69,7 +72,7 @@ async function listDrivers(req, res) {
  * @operationId getDriverReviews
  * @pathParam {string} driver_id - Driver id
  * @response 200 - Reviews list
- * @responseContent {object[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @prisma_model reviews
  */
@@ -161,20 +164,10 @@ async function registerVehicleInvoices(req, res) {
  * @pathParam {string} driver_id - Driver id
  * @pathParam {string} business_premise_id - Business premise id
  * @bodyDescription Device details and optional assignment
- * @bodyContent {
- *   "name": "Device #1",
- *   "active": true,
- *   "electronic_device_id": "uuid",
- *   "assign_to_driver": true,
- *   "valid_from": "2025-01-01T00:00:00.000Z"
- * } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Device created (and assignment if requested)
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
- *   "device": {"business_premise_id": "uuid", "electronic_device_id": "uuid", "name": "Device #1", "active": true},
- *   "assignment": {"device_assignment_id": "uuid", "driver_id": "uuid", "valid_from": "2025-01-01T00:00:00.000Z"}
- * }
  * @prisma_model electronic_device
  * @prisma_model device_assignment
  */
@@ -238,14 +231,10 @@ async function disableElectronicDevice(req, res) {
  * @pathParam {string} business_premise_id - Business premise id
  * @pathParam {string} electronic_device_id - Electronic device id
  * @bodyDescription Action and optional valid_from
- * @bodyContent {
- *   "action": "assign|unassign",
- *   "valid_from": "2025-01-01T00:00:00.000Z"
- * } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Assignment changed
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json { "assignment": { "device_assignment_id": "uuid" }, "action": "assign" }
  * @prisma_model device_assignment
  */
 async function updateDeviceAssignment(req, res) {
@@ -286,8 +275,11 @@ async function updateDeviceAssignment(req, res) {
  * @description Returns a list of drivers along with their user and vehicle information.
  * @operationId getDrivers
  * @response 200 - Successful operation, returns a list of drivers
- * @responseContent {Driver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the driver list
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model vehicles (see ./prisma/schemas/transport.prisma)
  */
 async function getDriversByBusinessId(req, res) {
 	const businessId = req.params.business_id;
@@ -306,8 +298,11 @@ async function getDriversByBusinessId(req, res) {
  * @description Returns a list of drivers along with their user and vehicle information.
  * @operationId getDrivers
  * @response 200 - Successful operation, returns a list of drivers
- * @responseContent {Driver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the driver list
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model vehicles (see ./prisma/schemas/transport.prisma)
  */
 async function listDriversFull(req, res) {
 	try {
@@ -326,8 +321,9 @@ async function listDriversFull(req, res) {
  * @description Returns a list of all drivers who are currently online.
  * @operationId getOnlineDrivers
  * @response 200 - Successful operation, returns a list of online drivers
- * @responseContent {Driver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the online driver list
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
 async function listOnlineDrivers(req, res) {
 	try {
@@ -345,8 +341,9 @@ async function listOnlineDrivers(req, res) {
  * @description Returns a list of available drivers based on the specified type.
  * @operationId getAvailableDrivers
  * @response 200 - Successful operation, returns a list of available drivers
- * @responseContent {Driver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the available drivers list
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
 async function getAvailableDrivers(req, res) {
 	const { type } = req.query;
@@ -375,9 +372,10 @@ async function getUnavailableDrivers(req, res) {
  * @operationId getDriverById
  * @pathParam {string} driver_id - The ID of the driver to retrieve
  * @response 200 - Successful operation, returns detailed driver information
- * @responseContent {Driver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver information
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
 async function getDriverById(req, res) {
 	try {
@@ -400,9 +398,10 @@ async function getDriverById(req, res) {
  * @operationId getDriverLocation
  * @pathParam {string} driver_id - The ID of the driver whose location is being retrieved
  * @response 200 - Successful operation, returns driver's location
- * @responseContent {Location} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver's location
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
 async function getDriverLocation(req, res) {
 	try {
@@ -430,6 +429,9 @@ async function getDriverLocation(req, res) {
  * @response 200 - Successful operation, orders sent to the driver
  * @response 404 - Driver not found
  * @response 400 - Error retrieving orders
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model taxi_orders (see ./prisma/schemas/transport.prisma)
+ * @prisma_model delivery_orders (see ./prisma/schemas/delivery.prisma)
  */
 async function resendDelegatedOrdersToDriver(req, res) {
 	const userId = req.params?.user_id || req.user.user_id;
@@ -461,9 +463,10 @@ async function resendDelegatedOrdersToDriver(req, res) {
  * @operationId getDriverByUserId
  * @pathParam {string} user_id - The ID of the user
  * @response 200 - Successful operation, returns detailed driver information
- * @responseContent {Driver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver information
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
 async function getDriverByUserId(req, res) {
 	try {
@@ -485,8 +488,9 @@ async function getDriverByUserId(req, res) {
  * @description Retrieves a list of all drivers that offer daily meals.
  * @operationId listDriversWithDailyMeals
  * @response 200 - Successful operation, returns a list of drivers offering daily meals
- * @responseContent {Driver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the driver list
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
 async function listDriversWithDailyMeals(req, res) {
 	try {
@@ -506,9 +510,11 @@ async function listDriversWithDailyMeals(req, res) {
  * @operationId getDriversByDailyMealBusinessId
  * @pathParam {string} business_id - The ID of the daily meal business
  * @response 200 - Successful operation, returns drivers for the business
- * @responseContent {Driver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Drivers not found
  * @response 400 - Error retrieving drivers
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model business (see ./prisma/schemas/base.prisma)
  */
 async function getDriversByDailyMealBusinessId(req, res) {
 	try {
@@ -530,11 +536,13 @@ async function getDriversByDailyMealBusinessId(req, res) {
  * @description Connects or disconnects a driver's daily meal business and toggles delivers_daily_meals.
  * @operationId updateDriverDailyMealBusiness
  * @pathParam {string} driver_id - The ID of the driver to update
- * @bodyContent {Object} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Driver updated successfully
- * @responseContent {Driver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating driver
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model business (see ./prisma/schemas/base.prisma)
  */
 async function updateDriverDailyMealBusiness(req, res) {
 	const { driver_id } = req.params;
@@ -569,12 +577,14 @@ async function updateDriverDailyMealBusiness(req, res) {
  * @summary Assign a business for daily meals to a driver
  * @description Assigns a business for daily meals to the specified driver.
  * @operationId assignBusinessForDailyMealsToDriver
- * @bodyContent {Object} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Business assigned for daily meals
- * @responseContent {Object} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error assigning business for daily meals
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model business (see ./prisma/schemas/base.prisma)
  */
 async function assignBusinessForDailyMealsToDriver(req, res) {
 	const { driver_id, business_id } = req.body;
@@ -601,11 +611,12 @@ async function assignBusinessForDailyMealsToDriver(req, res) {
  * @description Updates information about a specific driver, excluding location.
  * @operationId updateDriver
  * @pathParam {string} driver_id - The ID of the driver to update
- * @bodyContent {DriverUpdate} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Driver updated successfully
- * @responseContent {Driver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating driver
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
 async function updateDriver(req, res) {
 	const { driver_id } = req.params;
@@ -625,11 +636,17 @@ async function updateDriver(req, res) {
  * @description Edits the data of specific driver.
  * @operationId editDriver
  * @pathParam {string} driver_id - The ID of the driver to edit
- * @bodyContent {DriverEdit} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Driver edited successfully
- * @responseContent {Driver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating driver
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
+ * @prisma_model documents (see ./prisma/schemas/base.prisma)
+ * @prisma_model files (see ./prisma/schemas/base.prisma)
  */
 async function editDriver(req, res) {
 	const { user, driver, documents, files, address } = req.body;
@@ -764,11 +781,15 @@ async function editDriver(req, res) {
  * @description Updates the location of a specific driver.
  * @operationId updateDriverLocation
  * @pathParam {string} driver_id - The ID of the driver to update location for
- * @bodyContent {Location} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Location updated successfully
- * @responseContent {Driver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating driver location
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model taxi_orders (see ./prisma/schemas/transport.prisma)
+ * @prisma_model delivery_orders (see ./prisma/schemas/delivery.prisma)
+ * @prisma_model driver_history_locations (see ./prisma/schemas/transport.prisma)
  */
 async function updateDriverLocation(req, res) {
 	try {
@@ -914,11 +935,12 @@ async function updateDriverLocation(req, res) {
  * @description This endpoint is used to update the current user's ride requirements.
  * @operationId updateDriverRideRequirements
  * @bodyDescription The new ride requirements of the driver.
- * @bodyContent {updateDriverRideRequirementsRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Ride requirements updated successfully. Returns the updated driver's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
 async function updateDriverRideRequirements(req, res) {
 	try {
@@ -936,15 +958,18 @@ async function updateDriverRideRequirements(req, res) {
  * @description Sets the online status of a specific driver and emits appropriate socket events.
  * @operationId setDriverOnlineStatus
  * @pathParam {string} driver_id - The ID of the driver to update the online status for
- * @bodyContent {DriverOnlineStatus} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Online status updated successfully
- * @responseContent {Driver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating online status
  *
  * Emits:
  * - "driver_available" event with driver object if online is true
  * - "driver_unavailable" event with driver_id if online is false
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model driver_activity_logs (see ./prisma/schemas/transport.prisma)
+ * @prisma_model driver_activity_settings (see ./prisma/schemas/transport.prisma)
  */
 async function updateDriverOnlineStatus(req, res) {
 	const { driver_id, online } = req.body;
@@ -998,11 +1023,16 @@ async function updateDriverOnlineStatus(req, res) {
  * @summary Create a new driver
  * @description Adds a new driver to the database.
  * @operationId createNewDriver
- * @bodyContent {Driver} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Driver created successfully
- * @responseContent {Driver} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating driver
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model user_roles (see ./prisma/schemas/user.prisma)
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model documents (see ./prisma/schemas/base.prisma)
+ * @prisma_model files (see ./prisma/schemas/base.prisma)
  */
 async function createDriver(req, res) {
 	try {
@@ -1104,9 +1134,10 @@ async function handleSosAlert(req, res) {
  * @summary Get history of locations for a driver.
  * @description Get history of locations for a driver with a given driver id and between specified time interval
  * @operationId getDriverLocationsController
- * @response 201 - Driver history locations fetched successfully
- * @responseContent {Driver} 201.application/json
+ * @response 200 - Driver history locations fetched successfully
+ * @responseContent {object} 200.application/json
  * @response 400 - Error fetching history locations for a particular driver
+ * @prisma_model driver_history_locations (see ./prisma/schemas/transport.prisma)
  */
 async function getDriverHistoryLocations(req, res) {
 	const { driver_id } = req.params;
@@ -1133,9 +1164,11 @@ async function getDriverHistoryLocations(req, res) {
  * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
  * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
  * @response 200 - Successful operation, returns driver's earnings
- * @responseContent {Earnings} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver's earnings
+ * @prisma_model taxi_orders (see ./prisma/schemas/transport.prisma)
+ * @prisma_model delivery_orders (see ./prisma/schemas/delivery.prisma)
  */
 async function getDriverEarnings(req, res) {
 	const { driver_id } = req.params;
@@ -1185,8 +1218,10 @@ async function getDriverEarnings(req, res) {
  * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
  * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
  * @response 200 - Successful operation, returns all drivers' earnings
- * @responseContent {Earnings[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving all drivers' earnings
+ * @prisma_model taxi_orders (see ./prisma/schemas/transport.prisma)
+ * @prisma_model delivery_orders (see ./prisma/schemas/delivery.prisma)
  */
 async function getAllDriversEarnings(req, res) {
 	const { start_date, end_date } = req.query;
@@ -1232,8 +1267,10 @@ async function getAllDriversEarnings(req, res) {
  * @description Retrieves the total earnings of all drivers based on completed orders.
  * @operationId getTotalEarnings
  * @response 200 - Successful operation, returns total earnings for all drivers
- * @responseContent {TotalEarnings} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving total earnings
+ * @prisma_model taxi_orders (see ./prisma/schemas/transport.prisma)
+ * @prisma_model delivery_orders (see ./prisma/schemas/delivery.prisma)
  */
 async function getTotalEarnings(req, res) {
 	try {
@@ -1263,9 +1300,11 @@ async function getTotalEarnings(req, res) {
  * @operationId getDriverTotalEarnings
  * @pathParam {string} driver_id - The ID of the driver whose total earnings are being retrieved
  * @response 200 - Successful operation, returns total earnings for the specified driver
- * @responseContent {TotalEarnings} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver's total earnings
+ * @prisma_model taxi_orders (see ./prisma/schemas/transport.prisma)
+ * @prisma_model delivery_orders (see ./prisma/schemas/delivery.prisma)
  */
 async function getDriverTotalEarnings(req, res) {
 	const { driver_id } = req.params;
@@ -1305,6 +1344,7 @@ async function getDriverTotalEarnings(req, res) {
  * @response 200 - Driver toggled successfully
  * @response 404 - Driver not found
  * @response 400 - Error toggling driver
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
 async function setDriverHandle(req, res) {
 	const { driver_id, action, type } = req.params;
@@ -1327,12 +1367,13 @@ async function setDriverHandle(req, res) {
  * @description This endpoint allows toggling the types of orders a specific driver can receive. The request body should contain an object specifying which order types (taxi, transfer, delivery) to toggle on or off.
  * @operationId toggleDriverOrders
  * @pathParam {string} driver_id - The ID of the driver to toggle
- * @bodyContent {Object} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Driver orders toggled successfully
- * @responseContent {Object} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error toggling driver orders
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
 async function toggleDriverOrders(req, res) {
 	const { driver_id } = req.params;
@@ -1358,12 +1399,13 @@ async function toggleDriverOrders(req, res) {
  * @summary Send notifications for drivers to come to work
  * @description This endpoint allows sending a "come to work" notifications to all drivers who are currently offline.
  * @operationId comeToWorkDrivers
- * @bodyContent {Object} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Notification sent out successfully
- * @responseContent {Object} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Problem sending notification
  * @response 400 - Problem sending notification
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
 let isSendingComeToWorkNotification = false;
 async function sendComeToWorkNotification(req, res) {
@@ -1408,12 +1450,14 @@ async function sendComeToWorkNotification(req, res) {
  * @description This endpoint sets the current vehicle for a specific driver. It first checks that the vehicle belongs to the driver. If a vehicle was previously assigned, it will be disconnected. The request body should contain the new vehicle ID to assign.
  * @operationId setDriverCurrentVehicle
  * @pathParam {string} driver_id - The ID of the driver
- * @bodyContent {Object} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Driver vehicle updated successfully
- * @responseContent {Object} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver or vehicle not found
  * @response 400 - Invalid vehicle ID or error setting vehicle
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model vehicles (see ./prisma/schemas/transport.prisma)
  */
 async function setCurrentVehicle(req, res) {
 	const { driver_id } = req.params;
@@ -1515,5 +1559,4 @@ export default {
 	createElectronicDeviceForPremise,
 	disableElectronicDevice,
 	updateDeviceAssignment,
-	confirmBusinessPremise,
 };

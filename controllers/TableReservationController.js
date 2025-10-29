@@ -9,8 +9,9 @@ const { UserSockets, io } = socket;
  * @description Returns a list of reservations along with their business and user information.
  * @operationId getReservations
  * @response 200 - Successful operation, returns a list of reservations
- * @responseContent {Reservation[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the reservation list
+ * @prisma_model reservations
  */
 async function getReservations(req, res) {
 	try {
@@ -29,9 +30,10 @@ async function getReservations(req, res) {
  * @operationId getReservationById
  * @pathParam {string} reservation_id - The ID of the reservation to retrieve
  * @response 200 - Successful operation, returns detailed reservation information
- * @responseContent {Reservation} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Reservation not found
  * @response 400 - Error retrieving reservation information
+ * @prisma_model reservations
  */
 async function getReservationById(req, res) {
 	try {
@@ -54,9 +56,10 @@ async function getReservationById(req, res) {
  * @operationId getReservationsByBusinessId
  * @pathParam {string} business_id - The ID of the business to retrieve reservations for
  * @response 200 - Successful operation, returns a list of reservations
- * @responseContent {Reservation[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Business not found
  * @response 400 - Error retrieving reservations
+ * @prisma_model reservations
  */
 async function getReservationsByBusinessId(req, res) {
 	try {
@@ -77,13 +80,14 @@ async function getReservationsByBusinessId(req, res) {
 }
 /**
  * GET /reservations/active/:user_id
- * @tag Delivery
+ * @tag Reservations
  * @summary Get active reservations orders.
  * @description This fetches all completed orders for a specific driver.
  * @operationId getActiveTableReservation
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @prisma_model reservations
  */
 async function getActiveTableReservation(req, res) {
 	const { user_id } = req.params;
@@ -101,11 +105,13 @@ async function getActiveTableReservation(req, res) {
  * @summary Create a new reservation
  * @description Adds a new reservation to the database.
  * @operationId createReservation
- * @bodyContent {Reservation} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Reservation created successfully
- * @responseContent {Reservation} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating reservation
+ * @prisma_model reservations
+ * @prisma_model business_users
  */
 async function createReservation(req, res) {
 	const { reservation, user_id } = req.body;
@@ -148,8 +154,9 @@ async function createReservation(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Reservation table updated successfully
- * @responseContent {Reservation} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating reservation status
+ * @prisma_model reservations
  */
 async function addTableNumber(req, res) {
 	try {
@@ -175,8 +182,9 @@ async function addTableNumber(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Reservation status updated successfully
- * @responseContent {Reservation} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating reservation status
+ * @prisma_model reservations
  */
 async function updateReservationStatus(req, res) {
 	try {
@@ -208,6 +216,7 @@ async function updateReservationStatus(req, res) {
  * @response 200 - Reservation deleted successfully
  * @responseContent {object} 200.application/json
  * @response 400 - Error deleting reservation
+ * @prisma_model reservations
  */
 async function deleteReservation(req, res) {
 	try {

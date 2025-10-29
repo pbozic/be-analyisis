@@ -23,13 +23,14 @@ import { UpsertNotificationPreferenceInput } from '../../types/reservationNotifi
 import { VARIABLE_CATALOG } from '../../lib/reservationNotifications.ts';
 
 /**
- * GET /notifications/events
+ * GET /reservation/notifications/events
  * @tag Notifications:Authoring
  * @summary List notification events
  * @operationId listNotificationEvents
  * @response 200 - Events retrieved
- * @responseContent {NotificationEvent[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
+ * @prisma_model notification_event
  */
 export async function listNotificationEvents(_req: ValidatedRequest<null>, res: Response): Promise<void> {
 	try {
@@ -41,14 +42,15 @@ export async function listNotificationEvents(_req: ValidatedRequest<null>, res: 
 }
 
 /**
- * POST /notifications/events
+ * POST /reservation/notifications/events
  * @tag Notifications:Authoring
  * @summary Create notification event
  * @operationId createNotificationEvent
- * @requestBody {CreateNotificationEventInput} requestBody
+ * @bodyContent {object} application/json
  * @response 201 - Event created
- * @responseContent {NotificationEvent} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error
+ * @prisma_model notification_event
  */
 export async function createNotificationEvent(
 	req: ValidatedRequest<CreateNotificationEventInput>,
@@ -63,15 +65,16 @@ export async function createNotificationEvent(
 }
 
 /**
- * PUT /notifications/events/{notification_event_id}
+ * PUT /reservation/notifications/events/:notification_event_id
  * @tag Notifications:Authoring
  * @summary Update notification event
  * @operationId updateNotificationEvent
  * @pathParam {string} notification_event_id
- * @requestBody {UpdateNotificationEventInput} requestBody
+ * @bodyContent {object} application/json
  * @response 200 - Event updated
- * @responseContent {NotificationEvent} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
+ * @prisma_model notification_event
  */
 export async function updateNotificationEvent(
 	req: ValidatedRequest<UpdateNotificationEventInput, { notification_event_id: string }>,
@@ -86,13 +89,14 @@ export async function updateNotificationEvent(
 }
 
 /**
- * DELETE /notifications/events/{notification_event_id}
+ * DELETE /reservation/notifications/events/:notification_event_id
  * @tag Notifications:Authoring
  * @summary Delete notification event
  * @operationId deleteNotificationEvent
  * @pathParam {string} notification_event_id
  * @response 204 - Event deleted
  * @response 500 - Error
+ * @prisma_model notification_event
  */
 export async function deleteNotificationEvent(
 	req: ValidatedRequest<null, { notification_event_id: string }>,
@@ -107,13 +111,14 @@ export async function deleteNotificationEvent(
 }
 
 /**
- * GET /notifications/templates
+ * GET /reservation/notifications/templates
  * @tag Notifications:Authoring
  * @summary List templates for current module
  * @operationId listNotificationTemplates
  * @response 200 - Templates retrieved
- * @responseContent {NotificationTemplate[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
+ * @prisma_model notification_template
  */
 export async function listNotificationTemplates(req: ValidatedRequest<null>, res: Response): Promise<void> {
 	try {
@@ -130,14 +135,15 @@ export async function listNotificationTemplates(req: ValidatedRequest<null>, res
 }
 
 /**
- * POST /notifications/templates
+ * POST /reservation/notifications/templates
  * @tag Notifications:Authoring
  * @summary Create notification template
  * @operationId createNotificationTemplate
- * @requestBody {CreateNotificationTemplateInput} requestBody
+ * @bodyContent {object} application/json
  * @response 201 - Template created
- * @responseContent {NotificationTemplate} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error
+ * @prisma_model notification_template
  */
 export async function createNotificationTemplate(
 	req: ValidatedRequest<CreateNotificationTemplateInput>,
@@ -160,15 +166,16 @@ export async function createNotificationTemplate(
 }
 
 /**
- * PUT /notifications/templates/{notification_template_id}
+ * PUT /reservation/notifications/templates/:notification_template_id
  * @tag Notifications:Authoring
  * @summary Update notification template
  * @operationId updateNotificationTemplate
  * @pathParam {string} notification_template_id
- * @requestBody {UpdateNotificationTemplateInput} requestBody
+ * @bodyContent {object} application/json
  * @response 200 - Template updated
- * @responseContent {NotificationTemplate} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
+ * @prisma_model notification_template
  */
 export async function updateNotificationTemplate(
 	req: ValidatedRequest<UpdateNotificationTemplateInput, { notification_template_id: string }>,
@@ -183,13 +190,14 @@ export async function updateNotificationTemplate(
 }
 
 /**
- * DELETE /notifications/templates/{notification_template_id}
+ * DELETE /reservation/notifications/templates/:notification_template_id
  * @tag Notifications:Authoring
  * @summary Delete notification template
  * @operationId deleteNotificationTemplate
  * @pathParam {string} notification_template_id
  * @response 204 - Template deleted
  * @response 500 - Error
+ * @prisma_model notification_template
  */
 export async function deleteNotificationTemplate(
 	req: ValidatedRequest<null, { notification_template_id: string }>,
@@ -204,15 +212,17 @@ export async function deleteNotificationTemplate(
 }
 
 /**
- * POST /notifications/templates/{notification_template_id}/versions
+ * POST /reservation/notifications/templates/:notification_template_id/versions
  * @tag Notifications:Authoring
  * @summary Create template version (auto-increment)
  * @operationId createNotificationTemplateVersion
  * @pathParam {string} notification_template_id
- * @requestBody {Omit<CreateNotificationTemplateVersionInput,"notification_template_id">} requestBody
+ * @bodyContent {object} application/json
  * @response 201 - Version created
- * @responseContent {NotificationTemplateVersion} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error
+ * @prisma_model notification_template_version
+ * @prisma_model notification_mapping
  */
 export async function createNotificationTemplateVersion(
 	req: ValidatedRequest<
@@ -238,15 +248,16 @@ export async function createNotificationTemplateVersion(
 }
 
 /**
- * PUT /notifications/versions/{notification_template_version_id}
+ * PUT /reservation/notifications/versions/:notification_template_version_id
  * @tag Notifications:Authoring
  * @summary Update template version by ID
  * @operationId updateNotificationTemplateVersionById
  * @pathParam {string} notification_template_version_id
- * @requestBody {UpdateNotificationTemplateVersionByIdInput} requestBody
+ * @bodyContent {object} application/json
  * @response 200 - Version updated
- * @responseContent {NotificationTemplateVersion} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
+ * @prisma_model notification_template_version
  */
 export async function updateNotificationTemplateVersionById(
 	req: ValidatedRequest<UpdateNotificationTemplateVersionByIdInput, { notification_template_version_id: string }>,
@@ -264,13 +275,14 @@ export async function updateNotificationTemplateVersionById(
 }
 
 /**
- * DELETE /notifications/versions/{notification_template_version_id}
+ * DELETE /reservation/notifications/versions/:notification_template_version_id
  * @tag Notifications:Authoring
  * @summary Delete template version by ID
  * @operationId deleteNotificationTemplateVersionById
  * @pathParam {string} notification_template_version_id
  * @response 204 - Version deleted
  * @response 500 - Error
+ * @prisma_model notification_template_version
  */
 export async function deleteNotificationTemplateVersionById(
 	req: ValidatedRequest<null, { notification_template_version_id: string }>,
@@ -285,13 +297,14 @@ export async function deleteNotificationTemplateVersionById(
 }
 
 /**
- * GET /notifications/mappings
+ * GET /reservation/notifications/mappings
  * @tag Notifications:Authoring
  * @summary List mappings for current module
  * @operationId listNotificationMappings
  * @response 200 - Mappings retrieved
- * @responseContent {NotificationMapping[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
+ * @prisma_model notification_mapping
  */
 export async function listNotificationMappings(req: ValidatedRequest<null>, res: Response): Promise<void> {
 	try {
@@ -308,14 +321,15 @@ export async function listNotificationMappings(req: ValidatedRequest<null>, res:
 }
 
 /**
- * POST /notifications/mappings
+ * POST /reservation/notifications/mappings
  * @tag Notifications:Authoring
  * @summary Create a mapping
  * @operationId createNotificationMapping
- * @requestBody {CreateNotificationMappingInput} requestBody
+ * @bodyContent {object} application/json
  * @response 201 - Mapping created
- * @responseContent {NotificationMapping} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error
+ * @prisma_model notification_mapping
  */
 export async function createNotificationMapping(
 	req: ValidatedRequest<CreateNotificationMappingInput>,
@@ -330,15 +344,16 @@ export async function createNotificationMapping(
 }
 
 /**
- * PUT /notifications/mappings/{notification_mapping_id}
+ * PUT /reservation/notifications/mappings/:notification_mapping_id
  * @tag Notifications:Authoring
  * @summary Update a mapping
  * @operationId updateNotificationMapping
  * @pathParam {string} notification_mapping_id
- * @requestBody {UpdateNotificationMappingInput} requestBody
+ * @bodyContent {object} application/json
  * @response 200 - Mapping updated
- * @responseContent {NotificationMapping} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
+ * @prisma_model notification_mapping
  */
 export async function updateNotificationMapping(
 	req: ValidatedRequest<UpdateNotificationMappingInput, { notification_mapping_id: string }>,
@@ -353,16 +368,17 @@ export async function updateNotificationMapping(
 }
 
 /**
- * POST /notifications/mappings/active
+ * POST /reservation/notifications/mappings/active
  * @tag Notifications:Authoring
  * @summary Set active mapping for module+event → version
  * @operationId upsertActiveNotificationMapping
- * @requestBody {object} requestBody
+ * @bodyContent {object} application/json
  * @property {string} notification_event_id.required
  * @property {string} notification_template_version_id.required
  * @response 200 - Active mapping set
- * @responseContent {NotificationMapping} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
+ * @prisma_model notification_mapping
  */
 export async function upsertActiveNotificationMapping(
 	req: ValidatedRequest<{ notification_event_id: string; notification_template_version_id: string }>,
@@ -387,13 +403,14 @@ export async function upsertActiveNotificationMapping(
 }
 
 /**
- * GET /notifications/preferences
+ * GET /reservation/notifications/preferences
  * @tag Notifications:Authoring
  * @summary List channel preferences for current module
  * @operationId listNotificationPreferences
  * @response 200 - Preferences retrieved
- * @responseContent {NotificationPreference[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
+ * @prisma_model notification_preference
  */
 export async function listNotificationPreferences(req: ValidatedRequest<null>, res: Response): Promise<void> {
 	try {
@@ -410,14 +427,15 @@ export async function listNotificationPreferences(req: ValidatedRequest<null>, r
 }
 
 /**
- * PUT /notifications/preferences
+ * PUT /reservation/notifications/preferences
  * @tag Notifications:Authoring
  * @summary Upsert event+channel preference
  * @operationId upsertNotificationPreference
- * @requestBody {UpsertNotificationPreferenceInput} requestBody
+ * @bodyContent {object} application/json
  * @response 200 - Preference upserted
- * @responseContent {NotificationPreference} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
+ * @prisma_model notification_preference
  */
 export async function upsertNotificationPreference(
 	req: ValidatedRequest<UpsertNotificationPreferenceInput>,
@@ -442,7 +460,7 @@ export async function upsertNotificationPreference(
 }
 
 /**
- * GET /notifications/channels
+ * GET /reservation/notifications/channels
  * @tag Notifications:Authoring
  * @summary List supported channels
  * @operationId listNotificationChannels
@@ -459,7 +477,7 @@ export async function listNotificationChannels(_req: ValidatedRequest<null>, res
 }
 
 /**
- * GET /notifications/variables
+ * GET /reservation/notifications/variables
  * @tag Notifications:Authoring
  * @summary List available template variables (catalog)
  * @operationId listNotificationVariables

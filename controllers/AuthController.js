@@ -32,14 +32,12 @@ config();
  * POST /auth/scheduled_users
  * @tag User
  * @summary Get scheduled users
- * @description This function fetches all scheduled users.
+ * @description Fetches all scheduled users.
  * @operationId getScheduledUsers
- * @bodyDescription Request body must include necessary order details.
- * @bodyContent {getScheduledUsersRequest} application/json
- * @bodyRequired
- * @response 200 - Successful operation. Returns the newly created order in the response body.
- * @responseContent {getScheduledUsers} 200.application/json
- * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
+ * @response 200 - Successful operation. Returns scheduled users list.
+ * @responseContent {object} 200.application/json
+ * @response 500 - Server error. Returns error message on failure.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function getScheduledUsers(req, res) {
 	try {
@@ -54,17 +52,31 @@ async function getScheduledUsers(req, res) {
 /**
  * POST /auth/login
  * @tag Authentication
- * @summary User login procedure.
- * @description This verifies the user's credentials and responds with an access token and refresh token if successful.
- * @operationId loginUser.
- * @bodyDescription Request body must include email and password for verification.
- * @bodyContent {LoginRequest} application/json
+ * @summary User login
+ * @description Verifies user credentials and returns access and refresh tokens on success.
+ * @operationId loginUser
+ * @bodyDescription Email and password for verification.
+ * @bodyContent {object} application/json
  * @bodyRequired
- * @response 200 - Successful operation. Returns user details along with accessToken and refreshToken in the response body, additionally sets Authorization header with the accessToken.
- * @responseContent {AuthenticatedUser} 200.application/json
- * @responseHeader {string} 200.Authorization - The newly generated access token.
- * @response 400 - Unsuccessful operation. Returns error message "Wrong email / password combination." if the either the email or password (or both) are incorrect.
- * @response 500 - Server error. Returns error message "Error something went wrong.." if any exception is encountered during execution.
+ * @response 200 - Returns user details with tokens; also sets Authorization header.
+ * @responseContent {object} 200.application/json
+ * @responseHeader {string} 200.Authorization - Newly generated access token.
+ * @response 400 - Wrong email/password combination or account disabled/inactive.
+ * @response 500 - Server error.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model vehicles (see ./prisma/schemas/transport.prisma)
+ * @prisma_model delivery_drivers (see ./prisma/schema.prisma)
+ * @prisma_model business_users (see ./prisma/schemas/base.prisma)
+ * @prisma_model business (see ./prisma/schemas/base.prisma)
+ * @prisma_model reservation_module (see ./prisma/schemas/reservation.prisma)
+ * @prisma_model documents (see ./prisma/schemas/base.prisma)
+ * @prisma_model files (see ./prisma/schemas/base.prisma)
+ * @prisma_model user_roles (see ./prisma/schemas/user.prisma)
+ * @prisma_model user_favorite_businesses (see ./prisma/schemas/base.prisma)
+ * @prisma_model referrals (see ./prisma/schemas/base.prisma)
  */
 async function login(req, res) {
 	let postData = req.body;
@@ -186,15 +198,21 @@ async function login(req, res) {
  * POST /auth/register
  * @tag Authentication
  * @summary Register a new user
- * @description This endpoint is used to register a new user.
+ * @description Registers a new user and returns user info with tokens.
  * @operationId registerNewUser
- * @bodyDescription The required data to register a new user
- * @bodyContent {RegisterRequest} application/json
+ * @bodyDescription User registration payload.
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User registered successfully. Returns user info and tokens.
- * @responseContent {AuthenticatedUser} 200.application/json
- * @responseHeader {string} 200.Authorization - The newly generated access token.
- * @response 400 - Error something went wrong.
+ * @responseContent {object} 200.application/json
+ * @responseHeader {string} 200.Authorization - Newly generated access token.
+ * @response 400 - Error registering user.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model user_roles (see ./prisma/schemas/user.prisma)
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model documents (see ./prisma/schemas/base.prisma)
+ * @prisma_model files (see ./prisma/schemas/base.prisma)
  */
 async function register(req, res) {
 	let postData = req.body;
@@ -267,17 +285,22 @@ async function register(req, res) {
 /**
  * POST /auth/refresh
  * @tag Authentication
- * @summary Refreshes the user's access token
- * @description This endpoint is used to refresh the user's access and refresh tokens.
+ * @summary Refresh access token
+ * @description Refreshes the user's access and refresh tokens.
  * @operationId refreshToken
- * @bodyDescription The refresh token of the user
- * @bodyContent {RefreshTokenRequest} application/json
+ * @bodyDescription The refresh token of the user.
+ * @bodyContent {object} application/json
  * @bodyRequired
- * @response 200 - Access token successfully refreshed. Returns newly generated access and refresh tokens.
- * @responseContent {RefreshTokenResponse} 200.application/json
- * @responseHeader {string} 200.Authorization - The newly generated access token.
- * @response 400 - Access Denied. No refresh token provided.
- * @response 401 - Access Denied. Token expired.
+ * @response 200 - Tokens refreshed; returns user with new tokens and Authorization header.
+ * @responseContent {object} 200.application/json
+ * @responseHeader {string} 200.Authorization - Newly generated access token.
+ * @response 400 - Access denied; no refresh token or unknown error.
+ * @response 401 - Token expired.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model user_roles (see ./prisma/schemas/user.prisma)
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model tokens (see ./prisma/schemas/base.prisma)
  */
 async function refreshToken(req, res) {
 	const refreshToken = req.body.refresh_token;
@@ -325,13 +348,16 @@ async function refreshToken(req, res) {
  * POST /auth/password-reset
  * @tag Authentication
  * @summary Request a password reset
- * @description This endpoint is used to request a password reset. It will generate and send a password reset token to the user.
+ * @description Generates and sends a password reset token to the user via email or SMS.
  * @operationId requestPasswordReset
- * @bodyDescription The email of the user who wants to reset their password.
- * @bodyContent {PasswordResetRequest} application/json
+ * @bodyDescription User email or telephone.
+ * @bodyContent {object} application/json
  * @bodyRequired
- * @response 200 - Password reset request processed. A token is sent to the user if the account is found.
+ * @response 200 - Password reset request processed; token sent if account is found.
+ * @responseContent {object} 200.application/json
  * @response 400 - Error obtaining user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model tokens (see ./prisma/schemas/base.prisma)
  */
 async function requestPasswordReset(req, res) {
 	try {
@@ -408,11 +434,20 @@ async function passwordReset(req, res) {
  * @summary Register a new taxi service
  * @description Creates a new business, multiple taxi, vehicles, and optionally finances and documents, and links them together.
  * @operationId registerTaxiService
- * @bodyContent {TaxiServiceRegistration} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Taxi service registered successfully
- * @responseContent {TaxiServiceRegistrationResponse} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error registering taxi service
+ * @prisma_model business (see ./prisma/schemas/base.prisma)
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model vehicle_drivers (see ./prisma/schemas/transport.prisma)
+ * @prisma_model vehicles (see ./prisma/schemas/transport.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model documents (see ./prisma/schemas/base.prisma)
+ * @prisma_model files (see ./prisma/schemas/base.prisma)
+ * @prisma_model user_roles (see ./prisma/schemas/user.prisma)
  */
 async function registerTaxiService(req, res) {
 	fs.writeFileSync('taxi-service.json', JSON.stringify(req.body, null, 2));
@@ -638,11 +673,19 @@ async function registerTaxiService(req, res) {
  * @summary Register a new delivery service
  * @description Creates a new business, multiple delivery drivers, vehicles, and optionally finances and documents, and links them together.
  * @operationId registerDeliveryService
- * @bodyContent {DeliveryServiceRegistration} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Delivery service registered successfully
- * @responseContent {DeliveryServiceRegistrationResponse} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error registering delivery service
+ * @prisma_model business (see ./prisma/schemas/base.prisma)
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model delivery_drivers (see ./prisma/schema.prisma)
+ * @prisma_model vehicles (see ./prisma/schemas/transport.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model documents (see ./prisma/schemas/base.prisma)
+ * @prisma_model files (see ./prisma/schemas/base.prisma)
+ * @prisma_model user_roles (see ./prisma/schemas/user.prisma)
  */
 async function registerDeliveryService(req, res) {
 	try {
@@ -829,11 +872,18 @@ async function registerDeliveryService(req, res) {
  * @summary Register a new merchant service
  * @description Creates a new business, optionally business users, finances, and documents, and links them together.
  * @operationId registerMerchantService
- * @bodyContent {MerchantServiceRegistration} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Merchant service registered successfully
- * @responseContent {MerchantServiceRegistrationResponse} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error registering merchant service
+ * @prisma_model business (see ./prisma/schemas/base.prisma)
+ * @prisma_model business_users (see ./prisma/schemas/base.prisma)
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model documents (see ./prisma/schemas/base.prisma)
+ * @prisma_model files (see ./prisma/schemas/base.prisma)
+ * @prisma_model menus (see ./prisma/schemas/delivery.prisma)
  */
 async function registerMerchantService(req, res) {
 	try {
@@ -961,11 +1011,17 @@ async function registerMerchantService(req, res) {
  * @summary Register a new business
  * @description Creates a new business, optionally business users, finances, and documents, and links them together.
  * @operationId registerBusiness
- * @bodyContent {BusinessRegistration} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Business registered successfully
- * @responseContent {BusinessRegistrationResponse} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error registering business
+ * @prisma_model business (see ./prisma/schemas/base.prisma)
+ * @prisma_model business_users (see ./prisma/schemas/base.prisma)
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
+ * @prisma_model documents (see ./prisma/schemas/base.prisma)
+ * @prisma_model files (see ./prisma/schemas/base.prisma)
  */
 async function registerBusiness(req, res) {
 	try {
@@ -1180,26 +1236,26 @@ async function registerReservationBusiness(req, res) {
 				const userCreationObj = existingUser
 					? null
 					: {
-							email: userData.email,
-							password: userData.password,
-							user_role: 'ADMIN',
-							telephone: userData.telephone || businessData.business_telephone,
-							telephone_number: userData.telephone_number || businessData.business_telephone_number,
-							telephone_code: userData.telephone_code || businessData.business_telephone_code,
-						};
+						email: userData.email,
+						password: userData.password,
+						user_role: 'ADMIN',
+						telephone: userData.telephone || businessData.business_telephone,
+						telephone_number: userData.telephone_number || businessData.business_telephone_number,
+						telephone_code: userData.telephone_code || businessData.business_telephone_code,
+					};
 				const businessCreationObj = existingBusiness
 					? null
 					: {
-							name: businessData.name,
-							email: businessData.email,
-							telephone: businessData.telephone,
-							telephone_number: businessData.telephone_number,
-							telephone_code: businessData.telephone_code,
-							type: BUSINESS_TYPE.RESERVATION,
-							tax_id: businessData.tax_id,
-							registration_id: businessData.registration_id,
-							stripe_customer_id: stripeCustomer.id,
-						};
+						name: businessData.name,
+						email: businessData.email,
+						telephone: businessData.telephone,
+						telephone_number: businessData.telephone_number,
+						telephone_code: businessData.telephone_code,
+						type: BUSINESS_TYPE.RESERVATION,
+						tax_id: businessData.tax_id,
+						registration_id: businessData.registration_id,
+						stripe_customer_id: stripeCustomer.id,
+					};
 
 				business = existingBusiness || (await BusinessDao.createNewBusiness(businessCreationObj, tx));
 
@@ -1451,12 +1507,15 @@ async function registerReservationBusiness(req, res) {
  * @summary Create a new scheduled user.
  * @description This created new scheduled user.
  * @operationId createScheduledUser
- * @bodyDescription Request body must include necessary order details.
- * @bodyContent {createScheduledUserRequest} application/json
+ * @bodyDescription Scheduled user data and optional addresses.
+ * @bodyContent {object} application/json
  * @bodyRequired
- * @response 200 - Successful operation. Returns the newly created order in the response body.
- * @responseContent {createScheduledUser} 200.application/json
- * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
+ * @response 200 - Successful operation. Returns created user and addresses.
+ * @responseContent {object} 200.application/json
+ * @response 500 - Server error.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
  */
 async function createScheduledUser(req, res) {
 	const { data, addresses } = req.body;
@@ -1484,15 +1543,18 @@ async function createScheduledUser(req, res) {
 /**
  * PATCH /update/scheduled_user
  * @tag Users
- * @summary Updates a scheduled user's details
- * @description This endpoint is used to update a scheduled user's details.
+ * @summary Update a scheduled user's details
+ * @description Updates a scheduled user's data and addresses.
  * @operationId updateScheduledUser
- * @bodyDescription The data to update for the current user
- * @bodyContent {updateScheduledUserRequest} application/json
+ * @bodyDescription user_id, data, and optional addresses array.
+ * @bodyContent {object} application/json
  * @bodyRequired
- * @response 200 - User updated successfully. Returns the updated user's details.
- * @responseContent {AuthenticatedUser} 200.application/json
+ * @response 200 - User updated successfully.
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model user_address (see ./prisma/schemas/base.prisma)
+ * @prisma_model addresses (see ./prisma/schemas/base.prisma)
  */
 async function updateScheduledUser(req, res) {
 	const { user_id, data, addresses } = req.body;
@@ -1525,6 +1587,17 @@ async function updateScheduledUser(req, res) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
+/**
+ * GET /auth/municipalities/license-required
+ * @tag Regions
+ * @summary List municipalities requiring license
+ * @description Returns municipalities where requires_license is true.
+ * @operationId getMunicipalitiesWithLicenseRequirements
+ * @response 200 - Successful operation. Returns municipalities list.
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error fetching municipalities.
+ * @prisma_model municipalities (see ./prisma/schemas/base.prisma)
+ */
 async function getMunicipalitiesWithLicenseRequirements(req, res) {
 	try {
 		let municipalities = await prisma.municipalities.findMany({
@@ -1544,15 +1617,15 @@ async function getMunicipalitiesWithLicenseRequirements(req, res) {
 }
 
 /**
- * POST auth/email_availability/:email
+ * GET /auth/email_availability/{email}
  * @tag Authentication
  * @summary Check if an email is already taken
  * @description Checks if the provided email is already registered in the system.
  * @operationId checkEmailAvailability
- * @bodyContent { "email": "user@example.com" } application/json
- * @bodyRequired
+ * @pathParam {string} email - Email to check
  * @response 200 - Returns the availability status for email.
- * @responseContent { "emailTaken": false } 200.application/json
+ * @responseContent {object} 200.application/json
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function checkEmailAvailability(req, res) {
 	try {
@@ -1572,15 +1645,15 @@ async function checkEmailAvailability(req, res) {
 }
 
 /**
- * POST auth/telephone_availability/:telephone
+ * GET /auth/telephone_availability/{telephone}
  * @tag Authentication
  * @summary Check if a telephone number is already taken
- * @description Checks if the provided telephone number is already registered in the system.
+ * @description Checks if the provided telephone is already registered in the system.
  * @operationId checkTelephoneAvailability
- * @bodyContent { "telephone": "+123456789" } application/json
- * @bodyRequired
+ * @pathParam {string} telephone - Telephone to check
  * @response 200 - Returns the availability status for telephone.
- * @responseContent { "telephoneTaken": true } 200.application/json
+ * @responseContent {object} 200.application/json
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function checkTelephoneAvailability(req, res) {
 	try {
@@ -1599,6 +1672,22 @@ async function checkTelephoneAvailability(req, res) {
 	}
 }
 
+/**
+ * POST /auth/registration-session/authenticate
+ * @tag Authentication
+ * @summary Authenticate registration session
+ * @description Authenticates user credentials and generates a registration session token.
+ * @operationId authenticateRegistrationSession
+ * @bodyDescription Email and password for verification.
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Returns registration session token.
+ * @responseContent {object} 200.application/json
+ * @response 400 - User not authenticated or invalid credentials.
+ * @response 500 - Internal server error.
+ * @prisma_model users (see ./prisma/schemas/user.prisma)
+ * @prisma_model tokens (see ./prisma/schemas/base.prisma)
+ */
 async function authenticateRegistrationSession(req, res) {
 	try {
 		if (!req.user) {

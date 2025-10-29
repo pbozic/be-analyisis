@@ -117,20 +117,17 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod, useCredits)
 }
 /**
  * POST /order_lobby/create
- * Create a new order lobby
- * @param {Object} req - Express request object
- * @param {Object} req.body - Request body
- * @param {Object} req.body.user_limits_map - Map of user IDs to their order limits
- * @param {string} req.body.lobby_name - Name of the lobby
- * @param {string} req.body.lobby_description - Description of the lobby
- * @param {string} req.body.business_id - ID of the business
- * @param {string} req.body.restaurant_id - ID of the restaurant
- * @param {string} req.body.courier_note - Note for the courier
- * @param {Object} req.body.delivery_location - Delivery location
- * @param {Object} req.user - Authenticated user object
- * @param {string} req.user.user_id - ID of the authenticated user
- * @param {Object} res - Express response object
- * @returns {Promise<Object>} Returns created lobby and lobby users with 201 status, or error with 500 status
+ * @tag OrderLobby
+ * @summary Create a new order lobby
+ * @description Creates a new order lobby and assigns users with per-user limits.
+ * @operationId createLobby
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Lobby created successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error creating lobby
+ * @prisma_model order_lobbies
+ * @prisma_model order_lobby_users
  */
 async function createLobby(req, res) {
 	try {
@@ -172,16 +169,19 @@ async function createLobby(req, res) {
 	}
 }
 /**
- * POST /order_lobby/submit/:order_lobbies_id
- * Submit the order lobby and generate a delivery order
- * @param {Object} req - Express request object
- * @param {Object} req.params - Request parameters
- * @param {string} req.params.order_lobbies_id - ID of the order lobby
- * @param {Boolean} req.params.useCredits - flag to indicate if user credits should be used
- * @param {Object} req.body - Request body
- * @param {Object} req.body.paymentMethod - Payment method for delivery order
- * @param {Object} res - Express response object
- * @returns {Promise<Object>} Returns created order with 201 status, or error with 500 status
+ * POST /order_lobby/submit/{order_lobbies_id}
+ * @tag OrderLobby
+ * @summary Submit the order lobby and generate a delivery order
+ * @description Submits an existing order lobby and creates a delivery order.
+ * @operationId submitLobby
+ * @pathParam {string} order_lobbies_id - The order lobby ID
+ * @bodyContent {object} application/json
+ * @response 200 - Order created successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error submitting lobby
+ * @prisma_model order_lobbies
+ * @prisma_model order_lobby_users
+ * @prisma_model delivery_orders
  */
 async function submitLobby(req, res) {
 	try {
@@ -212,15 +212,19 @@ async function submitLobby(req, res) {
 	}
 }
 /**
- * PUT /order_lobby/users/:order_lobbies_id
- * Set the users and their limits for an order lobby
- * @param {Object} req - Express request object
- * @param {Object} req.params - Request parameters
- * @param {string} req.params.order_lobbies_id - ID of the order lobby
- * @param {Object} req.body - Request body
- * @param {Object} req.body.user_limits_map - Map of user IDs to their updated order limits
- * @param {Object} res - Express response object
- * @returns {Promise<void>} Returns 200 status on success, data - updated order_lobby, or error with 500 status
+ * PUT /order_lobby/users/{order_lobbies_id}
+ * @tag OrderLobby
+ * @summary Set the users and their limits for an order lobby
+ * @description Adds/removes users and sets updated limits for the lobby.
+ * @operationId setLobbyUsersWithLimits
+ * @pathParam {string} order_lobbies_id - The order lobby ID
+ * @bodyContent {object} application/json
+ * @response 200 - Lobby users updated successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Order lobby not found
+ * @response 500 - Error updating lobby users
+ * @prisma_model order_lobbies
+ * @prisma_model order_lobby_users
  */
 async function setLobbyUsersWithLimits(req, res) {
 	try {
@@ -248,17 +252,18 @@ async function setLobbyUsersWithLimits(req, res) {
 	}
 }
 /**
- * PATCH /order_lobby/items/:order_lobbies_id
- * Set user-specific order lobby items
- * @param {Object} req - Express request object
- * @param {Object} req.params - Request parameters
- * @param {string} req.params.order_lobbies_id - ID of the order lobby
- * @param {Object} req.user - Authenticated user object
- * @param {string} req.user.user_id - ID of the authenticated user
- * @param {Object} req.body - Request body
- * @param {Array<Object>} req.body.items - Array of order items
- * @param {Object} res - Express response object
- * @returns {Promise<void>} Returns 200 status on success, or error with 500 status
+ * PATCH /order_lobby/items/{order_lobbies_id}
+ * @tag OrderLobby
+ * @summary Set user-specific order lobby items
+ * @description Creates, updates, or deletes items for the authenticated user in the lobby.
+ * @operationId setUserOrderLobbyItems
+ * @pathParam {string} order_lobbies_id - The order lobby ID
+ * @bodyContent {object} application/json
+ * @response 200 - Lobby items updated successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Order lobby not found
+ * @response 500 - Error updating lobby items
+ * @prisma_model order_lobby_items
  */
 async function setUserOrderLobbyItems(req, res) {
 	try {
@@ -303,13 +308,19 @@ async function setUserOrderLobbyItems(req, res) {
 	}
 }
 /**
- * DELETE /order_lobby/cancel/:order_lobbies_id
- * Cancel an order lobby
- * @param {Object} req - Express request object
- * @param {Object} req.params - Request parameters
- * @param {string} req.params.order_lobbies_id - ID of the order lobby to cancel
- * @param {Object} res - Express response object
- * @returns {Promise<void>} Returns 200 status on success, or error with 500 status
+ * DELETE /order_lobby/cancel/{order_lobbies_id}
+ * @tag OrderLobby
+ * @summary Cancel an order lobby
+ * @description Cancels an order lobby and removes all users with their items.
+ * @operationId cancelLobby
+ * @pathParam {string} order_lobbies_id - The order lobby ID
+ * @response 200 - Lobby canceled successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Order lobby not found
+ * @response 500 - Error canceling lobby
+ * @prisma_model order_lobbies
+ * @prisma_model order_lobby_users
+ * @prisma_model order_lobby_items
  */
 async function cancelLobby(req, res) {
 	try {
@@ -338,14 +349,20 @@ async function cancelLobby(req, res) {
 	}
 }
 /**
- * DELETE /order_lobby/delete_user/:order_lobbies_id/:user_id
- * Delete a user from an order lobby
- * @param {Object} req - Express request object
- * @param {Object} req.params - Request parameters
- * @param {string} req.params.order_lobbies_id - ID of the order lobby to cancel
- * @param {string} req.params.user_id - Array of user IDs to remove from the lobby
- * @param {Object} res - Express response object
- * @returns {Promise<void>} Returns 200 status on success, or error with 500 status
+ * DELETE /order_lobby/delete_user/{order_lobbies_id}/{user_id}
+ * @tag OrderLobby
+ * @summary Delete a user from an order lobby
+ * @description Removes a specific user from the lobby and notifies them.
+ * @operationId deleteUserFromLobby
+ * @pathParam {string} order_lobbies_id - The order lobby ID
+ * @pathParam {string} user_id - The user ID
+ * @response 200 - User removed from lobby successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Lobby or user not found
+ * @response 500 - Error removing user from lobby
+ * @prisma_model order_lobbies
+ * @prisma_model order_lobby_users
+ * @prisma_model order_lobby_items
  */
 async function deleteUserFromLobby(req, res) {
 	try {
@@ -368,13 +385,20 @@ async function deleteUserFromLobby(req, res) {
 	}
 }
 /**
- * GET /order_lobby/:order_lobbies_id
- * Get the order lobby by ID
- * @param {Object} req - Express request object
- * @param {Object} req.params - Request parameters
- * @param {string} req.params.order_lobbies_id - The ID of the order lobby
- * @param {Object} res - Express response object
- * @returns {Promise<void>} Returns 200 status with the order lobby data, or error with 500 status
+ * GET /order_lobby/{order_lobbies_id}
+ * @tag OrderLobby
+ * @summary Get an order lobby by ID
+ * @description Retrieves the lobby with users and their profile pictures.
+ * @operationId getOrderLobbyById
+ * @pathParam {string} order_lobbies_id - The order lobby ID
+ * @response 200 - Lobby retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 404 - Order lobby not found
+ * @response 500 - Error retrieving lobby
+ * @prisma_model order_lobbies
+ * @prisma_model order_lobby_users
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function getOrderLobbyById(req, res) {
 	try {
@@ -400,13 +424,20 @@ async function getOrderLobbyById(req, res) {
 }
 
 /**
- * GET /order_lobby/actives/:business_id
- * Get the order lobby by ID
- * @param {Object} req - Express request object
- * @param {Object} req.params - Request parameters
- * @param {string} req.params.business_id - The ID of the business
- * @param {Object} res - Express response object
- * @returns {Promise<void>} Returns 200 status with active order lobbies data, or error with 500 status
+ * GET /order_lobby/actives/{business_id}
+ * @tag OrderLobby
+ * @summary Get active order lobbies by business ID
+ * @description Retrieves a list of active order lobbies for a business.
+ * @operationId getActiveOrderLobbiesByBusinessId
+ * @pathParam {string} business_id - The business ID
+ * @response 200 - Active lobbies retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 204 - No active lobbies for business
+ * @response 500 - Error retrieving active lobbies
+ * @prisma_model order_lobbies
+ * @prisma_model order_lobby_users
+ * @prisma_model documents
+ * @prisma_model files
  */
 async function getActiveOrderLobbiesByBusinessId(req, res) {
 	try {
@@ -442,13 +473,18 @@ async function getActiveOrderLobbiesByBusinessId(req, res) {
 }
 
 /**
- * GET /order_lobby/user/:user_id
- * Get the order lobbies where user is included
- * @param {Object} req - Express request object
- * @param {Object} req.params - Request parameters
- * @param {string} req.params.user_id - The ID of the user
- * @param {Object} res - Express response object
- * @returns {Promise<void>} Returns 200 status with active order lobbies data where user is included, or error with 500 status
+ * GET /order_lobby/user/{user_id}
+ * @tag OrderLobby
+ * @summary Get order lobbies for a user
+ * @description Retrieves order lobbies where the user participates.
+ * @operationId getOrderLobbiesByUserId
+ * @pathParam {string} user_id - The user ID
+ * @response 200 - Lobbies retrieved successfully
+ * @responseContent {object} 200.application/json
+ * @response 204 - No lobbies for user
+ * @response 500 - Error retrieving lobbies for user
+ * @prisma_model order_lobbies
+ * @prisma_model order_lobby_users
  */
 async function getOrderLobbiesByUserId(req, res) {
 	const userId = req.params.user_id;

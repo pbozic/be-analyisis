@@ -1,15 +1,18 @@
 const OrderLobbyUserDao = require('../dao/OrderLobbyUsers');
 
 /**
- * PATCH /order_lobby_user/limit/:order_lobby_users_id
- * Update order lobby user's spending limit
- * @param {Object} req - Express request object
- * @param {Object} req.params - Request parameters
- * @param {string} req.params.order_lobby_users_id - ID of the order lobby user
- * @param {Object} req.body - Request body
- * @param {number} req.body.limit - New spending limit value
- * @param {Object} res - Express response object
- * @returns {Promise<Object>} Returns updated user object with 200 status, or error with 400/500 status
+ * PATCH /order_lobby_user/limit/{order_lobby_users_id}
+ * @tag OrderLobbyUser
+ * @summary Update order lobby user's spending limit
+ * @description Updates the spending limit for a user in an order lobby.
+ * @operationId setOrderLobbyUserLimit
+ * @pathParam {string} order_lobby_users_id - The order lobby user ID
+ * @bodyContent {object} application/json
+ * @response 200 - Limit updated successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Bad request
+ * @response 500 - Error updating limit
+ * @prisma_model order_lobby_users
  */
 async function setOrderLobbyUserLimit(req, res) {
 	try {

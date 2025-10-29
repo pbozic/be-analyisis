@@ -2,6 +2,22 @@ import { Request, Response } from 'express';
 
 import * as FavoriteServicesDao from '../dao/UserFavoriteServiceLinks.ts';
 
+/**
+ * PATCH /users/me/favorite-services
+ * @tag FavoriteServices
+ * @summary Update the authenticated user's favorite service links
+ * @description Updates user_favorite_service_links for the user.
+ * @operationId updateFavoriteServices
+ * @prisma_model user_favorite_service_links
+ * @bodyContent {object} application/json
+ * @response 200 - Favorites updated
+ * @responseContent {object} 200.application/json
+ * @response 400 - Invalid input data
+ * @responseContent {object} 400.application/json
+ * @response 500 - Error updating favorites
+ * @prisma_model users
+ * @prisma_model user_favorite_service_links
+ */
 export async function updateFavoriteServices(req: Request, res: Response): Promise<void> {
 	try {
 		// @ts-ignore
@@ -25,13 +41,17 @@ export async function updateFavoriteServices(req: Request, res: Response): Promi
 
 /**
  *
- * - GET /favorite-services
- * - @tag FavoriteServices
- * - @summary List the authenticated user's favorite service links
- * - @description Lists user_favorite_service_links for the user including service link data.
- * - @operationId listFavoriteServices
- * - @prisma_model user_favorite_service_links
- * - @response 200 - Favorites listed
+ * GET /users/me/favorite-services
+ * @tag FavoriteServices
+ * @summary List the authenticated user's favorite service links
+ * @description Lists user_favorite_service_links for the user including service link data.
+ * @operationId listFavoriteServices
+ * @prisma_model user_favorite_service_links
+ * @response 200 - Favorites listed
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error listing favorites
+ * @prisma_model users
+ * @prisma_model user_favorite_service_links
  */
 export async function listFavoriteServices(req: Request, res: Response): Promise<void> {
 	try {

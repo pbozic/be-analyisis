@@ -20,17 +20,50 @@ function getDiscountedPricePerQuantity(basePrice, quantity) {
 	return basePrice - (basePrice * discount) / 100;
 }
 /**
- * POST /promo-sections
- * @tag PromoSection
- * @summary Create a new promo section
- * @description Creates a new promo section and associated Stripe product and pricing.
- * @operationId createPromoSection
- * @bodyDescription The promo section details to create
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Promo section created successfully
- * @responseContent {object} 200.application/json
- * @response 500 - Error creating new promo section
+ *
+ * - POST /promo/sections
+ * - @tag PromoSection
+ * - @summary Create a new promo section
+ * - @description Creates a new promo section and translations. If canPurchase is true, tier prices are expected.
+ * - @operationId createPromoSection
+ * - @bodyDescription The promo section details to create with optional tier prices and translations
+ * - @bodyContent {
+ *   "sectionData": {
+ *     "name": "Homepage Top Slots",
+ *     "tag": "homepage_top",
+ *     "description": "Top homepage promo slots",
+ *     "service_type": "DELIVERY",
+ *     "canPurchase": true,
+ *     "t1price": 100,
+ *     "t2price": 80,
+ *     "t3price": 60
+ *   },
+ *   "translations": [
+ *     { "language": "en", "translation": "Homepage Top Slots" },
+ *     { "language": "sl", "translation": "Glavni vrh" }
+ *   ]
+ * } application/json
+ * - @bodyRequired
+ * - @response 200 - Promo section created successfully
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json {
+ *   "promo_sections_id": "uuid",
+ *   "name": "Homepage Top Slots",
+ *   "tag": "homepage_top",
+ *   "description": "Top homepage promo slots",
+ *   "service_type": "DELIVERY",
+ *   "canPurchase": true,
+ *   "t1price": 10000,
+ *   "t2price": 8000,
+ *   "t3price": 6000,
+ *   "translations": [ { "language": "en", "translation": "Homepage Top Slots" } ]
+ * }
+ * - @response 500 - Error creating new promo section
+ * - @prisma_model promo_sections
+ * - @prisma_model translatable
+ * - @prisma_model translations
+ *
+ * ./prisma/schema.prisma
  */
 async function createPromoSection(req, res) {
 	try {
@@ -44,6 +77,38 @@ async function createPromoSection(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - PATCH /promo/sections/{id}
+ * - @tag PromoSection
+ * - @summary Update a promo section
+ * - @description Updates fields and translations of a promo section by ID.
+ * - @operationId updatePromoSection
+ * - @pathParam {string} id - Promo section ID
+ * - @bodyDescription Fields to update and optional translations
+ * - @bodyContent {
+ *   "sectionData": {
+ *     "name": "Homepage Top Slots",
+ *     "description": "Updated description",
+ *     "service_type": "DELIVERY",
+ *     "canPurchase": true,
+ *     "t1price": 120,
+ *     "t2price": 90,
+ *     "t3price": 70
+ *   },
+ *   "translations": [
+ *     { "language": "en", "translation": "Homepage Top Slots" }
+ *   ]
+ * } application/json
+ * - @bodyRequired
+ * - @response 200 - Promo section updated
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error updating promo section
+ * - @prisma_model promo_sections
+ * - @prisma_model translations
+ *
+ * ./prisma/schema.prisma
+ */
 async function updatePromoSection(req, res) {
 	try {
 		const { sectionData, translations } = req.body;
@@ -58,6 +123,23 @@ async function updatePromoSection(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - PATCH /promo/sections/reorder
+ * - @tag PromoSection
+ * - @summary Reorder promo sections
+ * - @description Sets the display order of promo sections by their IDs.
+ * - @operationId reorderPromoSections
+ * - @bodyDescription Ordered array of promo_sections_id
+ * - @bodyContent { "promo_sections_ids": ["uuid1", "uuid2", "uuid3"] } application/json
+ * - @bodyRequired
+ * - @response 200 - Reordered successfully
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error reordering promo sections
+ * - @prisma_model promo_sections
+ *
+ * ./prisma/schema.prisma
+ */
 async function reorderPromoSections(req, res) {
 	try {
 		const { promo_sections_ids } = req.body;
@@ -69,15 +151,19 @@ async function reorderPromoSections(req, res) {
 	}
 }
 /**
- * DELETE /promo-sections/{id}
- * @tag PromoSection
- * @summary Delete a promo section
- * @description Deletes a promo section by its ID.
- * @operationId deletePromoSection
- * @pathParam {string} id - The ID of the promo section to delete
- * @response 200 - Promo section deleted successfully
- * @responseContent {object} 200.application/json
- * @response 500 - Error deleting promo section
+ *
+ * - DELETE /promo/sections/{id}
+ * - @tag PromoSection
+ * - @summary Delete a promo section
+ * - @description Deletes a promo section by its ID.
+ * - @operationId deletePromoSection
+ * - @pathParam {string} id - The ID of the promo section to delete
+ * - @response 200 - Promo section deleted successfully
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error deleting promo section
+ * - @prisma_model promo_sections
+ *
+ * ./prisma/schema.prisma
  */
 async function deletePromoSection(req, res) {
 	try {
@@ -88,6 +174,23 @@ async function deletePromoSection(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - GET /promo/sections/{id}
+ * - @tag PromoSection
+ * - @summary Get promo section by ID
+ * - @description Returns a promo section with translations and buys.
+ * - @operationId getPromoSectionById
+ * - @pathParam {string} id - Promo section ID
+ * - @response 200 - Found promo section
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error fetching promo section
+ * - @prisma_model promo_sections
+ * - @prisma_model translations
+ * - @prisma_model promo_sections_buy
+ *
+ * ./prisma/schema.prisma
+ */
 async function getPromoSectionById(req, res) {
 	try {
 		const promoSection = await PromoDao.getPromoSectionById(req.params.id);
@@ -101,6 +204,21 @@ async function getPromoSectionById(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - GET /promo/sections
+ * - @tag PromoSection
+ * - @summary List promo sections
+ * - @description Returns all active promo sections. Optional query: ?purchasable=true to filter.
+ * - @operationId getAllPromoSections
+ * - @response 200 - List of promo sections
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error fetching promo sections
+ * - @prisma_model promo_sections
+ * - @prisma_model translations
+ *
+ * ./prisma/schema.prisma
+ */
 async function getAllPromoSections(req, res) {
 	try {
 		const promoSections = await PromoDao.getAllPromoSections({
@@ -113,6 +231,22 @@ async function getAllPromoSections(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - GET /promo/sections/type/{type}
+ * - @tag PromoSection
+ * - @summary List promo sections by service type
+ * - @description Returns all promo sections filtered by service type.
+ * - @operationId getAllPromoSectionsByServiceType
+ * - @pathParam {string} type - Service type
+ * - @response 200 - List of promo sections by type
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error fetching promo sections by type
+ * - @prisma_model promo_sections
+ * - @prisma_model translations
+ *
+ * ./prisma/schema.prisma
+ */
 async function getAllPromoSectionsByServiceType(req, res) {
 	try {
 		const promoSections = await PromoDao.getAllPromoSectionsByServiceType(req.params.type);
@@ -122,6 +256,35 @@ async function getAllPromoSectionsByServiceType(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - POST /promo/ads
+ * - @tag PromoAd
+ * - @summary Create a promo ad
+ * - @description Creates a promo ad with optional category and banner relations.
+ * - @operationId createPromoAd
+ * - @bodyDescription Promo ad details with optional related IDs
+ * - @bodyContent {
+ *   "promoAdData": {
+ *     "title": "Summer discount",
+ *     "text": "-20% on selected items",
+ *     "service_type": "DELIVERY",
+ *     "discount": 20
+ *   },
+ *   "categories_ids": ["uuid1"],
+ *   "promo_banners_ids": ["uuidB"]
+ * } application/json
+ * - @bodyRequired
+ * - @response 200 - Promo ad created
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error creating promo ad
+ * - @prisma_model promo_ads
+ * - @prisma_model promo_ads_category
+ * - @prisma_model promo_banners
+ * - @prisma_model categories
+ *
+ * ./prisma/schema.prisma
+ */
 async function createPromoAd(req, res) {
 	try {
 		const { promoAdData, categories_ids, promo_banners_ids } = req.body;
@@ -132,6 +295,36 @@ async function createPromoAd(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - PUT /promo/ads/{id}
+ * - @tag PromoAd
+ * - @summary Update a promo ad
+ * - @description Updates a promo ad and resets its relations.
+ * - @operationId updatePromoAd
+ * - @pathParam {string} id - Promo ad ID
+ * - @bodyDescription Fields to update and relation IDs
+ * - @bodyContent {
+ *   "promoAdData": {
+ *     "title": "Summer discount updated",
+ *     "text": "-25%",
+ *     "service_type": "DELIVERY",
+ *     "discount": 25
+ *   },
+ *   "categories_ids": ["uuid1"],
+ *   "promo_banners_ids": ["uuidB"]
+ * } application/json
+ * - @bodyRequired
+ * - @response 200 - Promo ad updated
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error updating promo ad
+ * - @prisma_model promo_ads
+ * - @prisma_model promo_ads_category
+ * - @prisma_model promo_banners
+ * - @prisma_model categories
+ *
+ * ./prisma/schema.prisma
+ */
 async function updatePromoAd(req, res) {
 	try {
 		const { promoAdData, categories_ids, promo_banners_ids } = req.body;
@@ -142,6 +335,22 @@ async function updatePromoAd(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - DELETE /promo/ads/{id}
+ * - @tag PromoAd
+ * - @summary Delete a promo ad
+ * - @description Deletes a promo ad and its relations.
+ * - @operationId deletePromoAd
+ * - @pathParam {string} id - Promo ad ID
+ * - @response 200 - Deleted
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error deleting promo ad
+ * - @prisma_model promo_ads
+ * - @prisma_model promo_ads_category
+ *
+ * ./prisma/schema.prisma
+ */
 async function deletePromoAd(req, res) {
 	try {
 		const promoAd = await PromoDao.deletePromoAd(req.params.id);
@@ -151,6 +360,23 @@ async function deletePromoAd(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - GET /promo/ads/{id}
+ * - @tag PromoAd
+ * - @summary Get promo ad by ID
+ * - @description Returns promo ad with categories and banners.
+ * - @operationId getPromoAdById
+ * - @pathParam {string} id - Promo ad ID
+ * - @response 200 - Found promo ad
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error fetching promo ad
+ * - @prisma_model promo_ads
+ * - @prisma_model promo_ads_category
+ * - @prisma_model promo_banners
+ *
+ * ./prisma/schema.prisma
+ */
 async function getPromoAdById(req, res) {
 	try {
 		const promoAd = await PromoDao.getPromoAdById(req.params.id);
@@ -160,6 +386,22 @@ async function getPromoAdById(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - GET /promo/ads
+ * - @tag PromoAd
+ * - @summary List promo ads
+ * - @description Returns all promo ads with categories and banners.
+ * - @operationId getAllPromoAds
+ * - @response 200 - List of promo ads
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error fetching promo ads
+ * - @prisma_model promo_ads
+ * - @prisma_model promo_banners
+ * - @prisma_model categories
+ *
+ * ./prisma/schema.prisma
+ */
 async function getAllPromoAds(req, res) {
 	try {
 		const promoAds = await PromoDao.getAllPromoAds();
@@ -169,6 +411,21 @@ async function getAllPromoAds(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - GET /promo/ads/type/{type}
+ * - @tag PromoAd
+ * - @summary List promo ads by service type
+ * - @description Returns all promo ads filtered by service type.
+ * - @operationId getPromoAdsByServiceType
+ * - @pathParam {string} type - Service type
+ * - @response 200 - List of promo ads by type
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error fetching promo ads by type
+ * - @prisma_model promo_ads
+ *
+ * ./prisma/schema.prisma
+ */
 async function getPromoAdsByServiceType(req, res) {
 	try {
 		//TODO: add logPromoAnalytics when connected with businesses
@@ -179,6 +436,22 @@ async function getPromoAdsByServiceType(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - GET /promo/ads/category/{category}
+ * - @tag PromoAd
+ * - @summary List promo ads by category
+ * - @description Returns all promo ads that have the given category.
+ * - @operationId getPromoAdsByCategory
+ * - @pathParam {string} category - Category ID
+ * - @response 200 - List of promo ads by category
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error fetching promo ads by category
+ * - @prisma_model promo_ads
+ * - @prisma_model categories
+ *
+ * ./prisma/schema.prisma
+ */
 async function getPromoAdsByCategory(req, res) {
 	try {
 		const promoAds = await PromoDao.getAllPromoAdsByCategory(req.params.category);
@@ -188,6 +461,37 @@ async function getPromoAdsByCategory(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - POST /promo/banners
+ * - @tag PromoBanner
+ * - @summary Create a promo banner
+ * - @description Creates a promo banner with optional file and promo ad relation; uploads image to S3 when base64 provided.
+ * - @operationId createPromoBanner
+ * - @bodyDescription Banner fields and optional image file
+ * - @bodyContent {
+ *   "promoBannerData": {
+ *     "title": "Header banner",
+ *     "text": "New arrivals",
+ *     "type": "IMAGE",
+ *     "size": "WIDE",
+ *     "promo_ads_id": "uuid"
+ *   },
+ *   "imageFileData": {
+ *     "file_type": "IMAGE",
+ *     "mime_type": "image/png",
+ *     "base64": "..."
+ *   }
+ * } application/json
+ * - @bodyRequired
+ * - @response 200 - Promo banner created
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error creating promo banner
+ * - @prisma_model promo_banners
+ * - @prisma_model files
+ *
+ * ./prisma/schema.prisma
+ */
 async function createPromoBanner(req, res) {
 	try {
 		const { promoBannerData, imageFileData } = req.body;
@@ -203,6 +507,34 @@ async function createPromoBanner(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - PUT /promo/banners/{id}
+ * - @tag PromoBanner
+ * - @summary Update a promo banner
+ * - @description Updates a promo banner and optionally creates a new file when imageFileData is provided.
+ * - @operationId updatePromoBanner
+ * - @pathParam {string} id - Promo banner ID
+ * - @bodyDescription Banner fields and optional new image file
+ * - @bodyContent {
+ *   "promoBannerData": {
+ *     "title": "Header banner",
+ *     "text": "Updated text",
+ *     "type": "IMAGE",
+ *     "size": "WIDE",
+ *     "promo_ads_id": "uuid"
+ *   },
+ *   "imageFileData": { "file_type": "IMAGE", "mime_type": "image/png", "base64": "..." }
+ * } application/json
+ * - @bodyRequired false
+ * - @response 200 - Promo banner updated
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error updating promo banner
+ * - @prisma_model promo_banners
+ * - @prisma_model files
+ *
+ * ./prisma/schema.prisma
+ */
 async function updatePromoBanner(req, res) {
 	try {
 		const { promoBannerData, imageFileData } = req.body;
@@ -218,6 +550,21 @@ async function updatePromoBanner(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - DELETE /promo/banners/{id}
+ * - @tag PromoBanner
+ * - @summary Delete a promo banner
+ * - @description Deletes a promo banner by ID.
+ * - @operationId deletePromoBanner
+ * - @pathParam {string} id - Promo banner ID
+ * - @response 200 - Deleted
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error deleting promo banner
+ * - @prisma_model promo_banners
+ *
+ * ./prisma/schema.prisma
+ */
 async function deletePromoBanner(req, res) {
 	try {
 		const promoBanner = await PromoDao.deletePromoBanner(req.params.id);
@@ -227,6 +574,21 @@ async function deletePromoBanner(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - GET /promo/banners/{id}
+ * - @tag PromoBanner
+ * - @summary Get promo banner by ID
+ * - @description Returns a promo banner by ID.
+ * - @operationId getPromoBannerById
+ * - @pathParam {string} id - Promo banner ID
+ * - @response 200 - Found promo banner
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error fetching promo banner
+ * - @prisma_model promo_banners
+ *
+ * ./prisma/schema.prisma
+ */
 async function getPromoBannerById(req, res) {
 	try {
 		const promoBanner = await PromoDao.getPromoBannerById(req.params.id);
@@ -236,6 +598,23 @@ async function getPromoBannerById(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - GET /promo/banners
+ * - @tag PromoBanner
+ * - @summary List promo banners
+ * - @description Returns all promo banners including files and promo ad categories.
+ * - @operationId getAllPromoBanners
+ * - @response 200 - List of promo banners
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error fetching promo banners
+ * - @prisma_model promo_banners
+ * - @prisma_model files
+ * - @prisma_model promo_ads
+ * - @prisma_model categories
+ *
+ * ./prisma/schema.prisma
+ */
 async function getAllPromoBanners(req, res) {
 	try {
 		const promoBanners = await PromoDao.getAllPromoBanners();
@@ -245,6 +624,21 @@ async function getAllPromoBanners(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - GET /promo/banners/type/{type}
+ * - @tag PromoBanner
+ * - @summary List promo banners by type
+ * - @description Returns promo banners filtered by type.
+ * - @operationId getAllPromoBannersByType
+ * - @pathParam {string} type - Banner type
+ * - @response 200 - List of promo banners by type
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error fetching promo banners by type
+ * - @prisma_model promo_banners
+ *
+ * ./prisma/schema.prisma
+ */
 async function getAllPromoBannersByType(req, res) {
 	try {
 		const promoBanners = await PromoDao.getAllPromoBannersByType(req.params.type);
@@ -254,6 +648,21 @@ async function getAllPromoBannersByType(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - GET /promo/banners/size/{size}
+ * - @tag PromoBanner
+ * - @summary List promo banners by size
+ * - @description Returns promo banners filtered by size.
+ * - @operationId getAllPromoBannersBySize
+ * - @pathParam {string} size - Banner size
+ * - @response 200 - List of promo banners by size
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error fetching promo banners by size
+ * - @prisma_model promo_banners
+ *
+ * ./prisma/schema.prisma
+ */
 async function getAllPromoBannersBySize(req, res) {
 	try {
 		const promoBanners = await PromoDao.getAllPromoBannersBySize(req.params.size);
@@ -263,6 +672,22 @@ async function getAllPromoBannersBySize(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ *
+ * - GET /promo/banners/ad/{ad}
+ * - @tag PromoBanner
+ * - @summary List promo banners by ad
+ * - @description Returns promo banners filtered by promo ad ID.
+ * - @operationId getAllPromoBannersByAd
+ * - @pathParam {string} ad - Promo ad ID
+ * - @response 200 - List of promo banners by ad
+ * - @responseContent {object} 200.application/json
+ * - @response 500 - Error fetching promo banners by ad
+ * - @prisma_model promo_banners
+ * - @prisma_model promo_ads
+ *
+ * ./prisma/schema.prisma
+ */
 async function getAllPromoBannersByAd(req, res) {
 	try {
 		const promoBanners = await PromoDao.getAllPromoBannersByAd(req.params.ad);

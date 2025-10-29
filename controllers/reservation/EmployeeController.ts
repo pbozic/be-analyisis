@@ -19,8 +19,9 @@ import { calcBookings } from './BookingController.ts';
  * @description Retrieves all reservation employees.
  * @operationId getReservationEmployees
  * @response 200 - Reservation employees retrieved successfully
- * @responseContent {Employee[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving employees
+ * @prisma_model employee
  */
 export async function getEmployees(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
@@ -38,11 +39,14 @@ export async function getEmployees(req: ValidatedRequest, res: Response): Promis
  * @summary Create a new reservation employee
  * @description Creates a new reservation employee.
  * @operationId createReservationEmployee
- * @requestBody {CreateEmployeeInput} requestBody - The employee data to create.
+ * @bodyContent {object} application/json
  * @response 201 - Employee created successfully
- * @responseContent {Employee} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating employee
+ * @prisma_model employee
+ * @prisma_model business_users
+ * @prisma_model users
  */
 export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>, res: Response): Promise<void> {
 	try {
@@ -89,7 +93,7 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 }
 
 /**
- * DELETE /reservation/employees/{employee_id}
+ * DELETE /reservation/employees/:employee_id
  * @tag Reservation
  * @summary Delete a reservation employee
  * @description Deletes a reservation employee by its ID.
@@ -98,6 +102,8 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
  * @response 204 - Employee deleted successfully
  * @response 404 - Employee not found
  * @response 500 - Error deleting employee
+ * @prisma_model employee
+ * @prisma_model business_users
  */
 export async function deleteEmployee(req: Request, res: Response): Promise<void> {
 	try {
@@ -110,17 +116,18 @@ export async function deleteEmployee(req: Request, res: Response): Promise<void>
 }
 
 /**
- * PUT /reservation/employees/{employee_id}
+ * PUT /reservation/employees/:employee_id
  * @tag Reservation
  * @summary Update a reservation employee
  * @description Updates a reservation employee by its ID.
  * @operationId updateReservationEmployee
  * @pathParam {string} employee_id - The ID of the employee to update.
- * @requestBody {UpdateEmployeeInput} requestBody - The employee data to update.
+ * @bodyContent {object} application/json
  * @response 200 - Employee updated successfully
- * @responseContent {Employee} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Employee not found
  * @response 500 - Error updating employee
+ * @prisma_model employee
  */
 export async function updateEmployee(
 	req: ValidatedRequest<UpdateEmployeeInput, { employee_id: string }>,
@@ -137,16 +144,17 @@ export async function updateEmployee(
 }
 
 /**
- * GET /reservation/employees/{employee_id}
+ * GET /reservation/employees/:employee_id
  * @tag Reservation
  * @summary Get a reservation employee by ID
  * @description Retrieves a reservation employee by its ID.
  * @operationId getReservationEmployeeById
  * @pathParam {string} employee_id - The ID of the employee to retrieve.
  * @response 200 - Employee retrieved successfully
- * @responseContent {Employee} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Employee not found
  * @response 500 - Error retrieving employee
+ * @prisma_model employee
  */
 
 export async function getEmployeeById(req: Request, res: Response): Promise<void> {
@@ -169,10 +177,12 @@ export async function getEmployeeById(req: Request, res: Response): Promise<void
  * @summary Get all reservation employees with schedule slots
  * @description Retrieves all reservation employees with their schedule slots.
  * @operationId getEmployeesWithScheduleSlots
- * @requestBody {GetSchedulesWithSlotsInput} requestBody - The input data for retrieving employees with schedule slots.
+ * @bodyContent {object} application/json
  * @response 200 - Reservation employees with schedule slots retrieved successfully
- * @responseContent {Employee[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving employees with schedule slots
+ * @prisma_model employee
+ * @prisma_model schedule_slot
  */
 export async function getEmployeesWithScheduleSlots(
 	req: ValidatedRequest<GetSchedulesWithSlotsInput>,
@@ -211,16 +221,20 @@ export async function getEmployeesWithScheduleSlots(
 }
 
 /**
- * GET /reservation/employees/with-schedules/{employee_id}
+ * POST /reservation/employees/with-schedules/:employee_id
  * @tag Reservation
- * @summary Get a reservation employee by ID
- * @description Retrieves a reservation employee by its ID.
- * @operationId getReservationEmployeeById
+ * @summary Get a reservation employee with schedules and analytics
+ * @description Retrieves a reservation employee by its ID with schedules and booking analytics.
+ * @operationId getReservationEmployeeWithSchedules
  * @pathParam {string} employee_id - The ID of the employee to retrieve.
+ * @bodyContent {object} application/json
  * @response 200 - Employee retrieved successfully
- * @responseContent {Employee} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Employee not found
  * @response 500 - Error retrieving employee
+ * @prisma_model employee
+ * @prisma_model schedule
+ * @prisma_model booking
  */
 
 export async function getEmployeeByIdWithSchedules(

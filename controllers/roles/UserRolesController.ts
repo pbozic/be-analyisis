@@ -12,7 +12,7 @@ import { AssignUserRoleInput } from '../../types/userRoles/UserRole';
  * @operationId getUserRoles
  * @pathParam {string} user_id - The ID of the user.
  * @response 200 - Roles retrieved successfully
- * @responseContent {UserRole[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving roles
  */
 export async function getUserRoles(req: ValidatedRequest<null, { user_id: string }>, res: Response): Promise<void> {
