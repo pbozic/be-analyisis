@@ -61,3 +61,4 @@ Content-Type: `application/json`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDriverActivitySettings )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
+

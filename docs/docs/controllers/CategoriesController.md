@@ -141,3 +141,4 @@ Content-Type: `application/json`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCategoryById )
 
 <!-- DOCGEN:END getCategoryById -->
+

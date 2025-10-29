@@ -869,3 +869,4 @@ Content-Type: `application/json`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveTaxRates )
 
 <!-- DOCGEN:END getActiveTaxRates -->
+
