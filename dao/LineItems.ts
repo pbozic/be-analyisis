@@ -1,7 +1,12 @@
 import { line_items } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-
+/**
+ * Create many line items.
+ *
+ * @param {line_items[]} items
+ * @returns {Promise<Object>}
+ */
 export async function createManyLineItems(items: line_items[]) {
 	try {
 		return await prisma.line_items.createMany({ data: items, skipDuplicates: true });
@@ -10,7 +15,13 @@ export async function createManyLineItems(items: line_items[]) {
 		throw new Error(String(error));
 	}
 }
-
+/**
+ * Update a line item.
+ *
+ * @param {string} line_item_id
+ * @param {Partial<line_items>} data
+ * @returns {Promise<Object>}
+ */
 export async function updateLineItem(
 	line_item_id: string,
 	data: Partial<line_items> & { quantity?: number; removed?: boolean }

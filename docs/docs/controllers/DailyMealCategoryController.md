@@ -102,3 +102,4 @@ Content-Type: `application/json`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/activateDailyMealCategory )
 
 <!-- DOCGEN:END activateDailyMealCategory -->
+

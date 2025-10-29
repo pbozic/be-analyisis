@@ -1,5 +1,11 @@
 import prisma from '../prisma/prisma.js';
-import { TAXI_ORDER_STATUS, DOCUMENT_TYPE } from '../lib/constants.js';
+import { DOCUMENT_TYPE } from '../lib/constants.js';
+/**
+ * Get reservations with optional args and includes for business and user.
+ *
+ * @param {object} args - Prisma findMany args (where, orderBy, etc.).
+ * @returns {Promise<object[]>} Reservations.
+ */
 const getReservations = async (args) => {
 	try {
 		return await prisma.reservations.findMany({
@@ -14,6 +20,12 @@ const getReservations = async (args) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get the next upcoming or in-progress reservation for a user (not completed/rejected), excluding older than 2 hours.
+ *
+ * @param {string} user_id - User ID.
+ * @returns {Promise<object|null>} Reservation with business logo/banner flattened, or null.
+ */
 async function getReservationIfNotCompleted(user_id) {
 	try {
 		const now = new Date();
@@ -77,6 +89,12 @@ async function getReservationIfNotCompleted(user_id) {
 		throw new Error(e.message);
 	}
 }
+/**
+ * Get a reservation by id including business and user.
+ *
+ * @param {string} reservation_id - Reservation ID.
+ * @returns {Promise<object|null>} Reservation or null.
+ */
 const getReservationById = async (reservation_id) => {
 	try {
 		return await prisma.reservations.findUnique({
@@ -93,6 +111,12 @@ const getReservationById = async (reservation_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Create a reservation and include business documents; flattens logo/banner URLs.
+ *
+ * @param {object} reservationData - Reservation payload.
+ * @returns {Promise<object|null>} Created reservation with flattened business images, or null.
+ */
 const createReservation = async (reservationData) => {
 	try {
 		const reservation = await prisma.reservations.create({
@@ -142,6 +166,13 @@ const createReservation = async (reservationData) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update a reservation's status.
+ *
+ * @param {string} reservation_id - Reservation ID.
+ * @param {string} status - New status.
+ * @returns {Promise<object>} Updated reservation.
+ */
 const updateReservationStatus = async (reservation_id, status) => {
 	try {
 		return await prisma.reservations.update({
@@ -157,6 +188,13 @@ const updateReservationStatus = async (reservation_id, status) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Set the table number on a reservation.
+ *
+ * @param {string} reservation_id - Reservation ID.
+ * @param {string|number} table - Table identifier.
+ * @returns {Promise<object>} Updated reservation.
+ */
 const addTableNumber = async (reservation_id, table) => {
 	try {
 		return await prisma.reservations.update({
@@ -172,6 +210,12 @@ const addTableNumber = async (reservation_id, table) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Delete a reservation by id.
+ *
+ * @param {string} reservation_id - Reservation ID.
+ * @returns {Promise<object>} Deleted reservation.
+ */
 const deleteReservation = async (reservation_id) => {
 	try {
 		return await prisma.reservations.delete({

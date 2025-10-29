@@ -42,8 +42,8 @@ const defaultIncludeObj = {
 
 /**
  * Get active daily meal subscriptions by business_id
- * @param business_id
- * @param args
+ * @param {string} business_id
+ * @param {Prisma.daily_meal_subscriptionsWhereArgs} args
  * @returns daily_meal_subscriptions[]
  */
 export async function getDailyMealSubscriptionsByBusinessId(
@@ -65,9 +65,9 @@ export async function getDailyMealSubscriptionsByBusinessId(
 
 /**
  * Get active daily meal subscriptions by business_id and optional start_date.
- * @param business_id
- * @param start_date
- * @returns daily_meal_subscriptions[]
+ * @param {string} business_id
+ * @param {string} [start_date]
+ * @returns {Promise<daily_meal_subscriptions[]>}
  */
 export async function getActiveDailyMealSubscriptionsByBusinessId(business_id: string, start_date?: string) {
 	const normalizedDate = start_date ? new Date(new Date(start_date).setUTCHours(0, 0, 0, 0)) : null;
@@ -94,9 +94,9 @@ export async function getActiveDailyMealSubscriptionsByBusinessId(business_id: s
 
 /**
  * Get daily meal subscriptions by user_id and optional start_date.
- * @param user_id
- * @param start_date
- * @returns daily_meal_subscriptions[]
+ * @param {string} user_id
+ * @param {string} [start_date]
+ * @returns {Promise<daily_meal_subscriptions[]>}
  */
 export async function getDailyMealSubscriptionsByUserId(user_id: string, start_date?: string) {
 	const normalizedDate = start_date ? new Date(new Date(start_date).setUTCHours(0, 0, 0, 0)) : null;
@@ -135,8 +135,8 @@ export async function getDailyMealSubscriptionsByUserId(user_id: string, start_d
 
 /**
  * Get today's daily meal subscriptions by business_id.
- * @param business_id
- * @returns daily_meal_subscriptions[]
+ * @param {string} business_id
+ * @returns {Promise<daily_meal_subscriptions[]>}
  */
 export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: string) {
 	const todayStart = new Date();
@@ -184,8 +184,8 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 
 /**
  * Get daily meal subscriptions by grouped_id.
- * @param grouped_id
- * @returns daily_meal_subscriptions[]
+ * @param {string} grouped_id
+ * @returns {Promise<daily_meal_subscriptions[]>}
  */
 export async function getDailyMealSubscriptionById(id: string) {
 	return prisma.daily_meal_subscriptions.findMany({
@@ -204,92 +204,19 @@ export async function getDailyMealSubscriptionById(id: string) {
 }
 
 /**
- *
- * - POST
- * - @tag Delivery
- * - @summary Create a daily meals subscription
- * - @description Creates a new daily_meal_subscriptions record with nested daily_meal_subscription_customers, daily_meal_subscription_days, and daily_meal_subscription_weekdays depending on the type.
- * - @operationId createDailyMealSubscription
- * - @bodyDescription The daily meals subscription details to create
- * - @bodyContent {
- *     "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "start_date": "2025-07-01T00:00:00.000Z",
- *     "end_date": null,
- *     "type": "DAYS",
- *     "courier_comment": "Leave at the door",
- *     "customers": [
- *       {
- *         "menu_category_id": "c9b1e7c2-1234-4f8a-9b2e-abcdef123456",
- *         "name": "John",
- *         "surname": "Doe",
- *         "phone": "+123456789",
- *         "restaurant_comment": "No onions"
- *       }
- *     ],
- *     "days": [
- *       {
- *         "intended_date": "2025-07-01T00:00:00.000Z",
- *         "delivery_date": "2025-07-01T12:00:00.000Z"
- *       }
- *     ],
- *     "weekdays": [
- *       {
- *         "intended_weekday": 1,
- *         "delivery_weekday": 1
- *       }
- *     ]
- *   } application/json
- * - @bodyRequired
- * - @response 200 - Daily meal subscription created successfully
- * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
- *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "start_date": "2025-07-01T00:00:00.000Z",
- *     "end_date": null,
- *     "type": "DAYS",
- *     "status": "AWAITING_PAYMENT",
- *     "courier_comment": "Leave at the door",
- *     "created_at": "2025-07-01T00:00:00.000Z",
- *     "updated_at": "2025-07-01T00:00:00.000Z",
- *     "customers": [
- *       {
- *         "id": "uuid",
- *         "menu_category_id": "c9b1e7c2-1234-4f8a-9b2e-abcdef123456",
- *         "name": "John",
- *         "surname": "Doe",
- *         "phone": "+123456789",
- *         "restaurant_comment": "No onions"
- *       }
- *     ],
- *     "days": [
- *       {
- *         "id": "uuid",
- *         "intended_date": "2025-07-01T00:00:00.000Z",
- *         "delivery_date": "2025-07-01T12:00:00.000Z"
- *       }
- *     ],
- *     "weekdays": [
- *       {
- *         "id": "uuid",
- *         "intended_weekday": 1,
- *         "delivery_weekday": 1
- *       }
- *     ]
- *   }
- * - @response 500 - Error creating daily meal subscription
- * - @prisma_model daily_meal_subscriptions
- * - @prisma_model daily_meal_subscription_customers
- * - @prisma_model daily_meal_subscription_days
- * - @prisma_model daily_meal_subscription_weekdays
- *
- * ./prisma/schema.prisma
+ * Create a daily meal subscription.
+ * @param {string} user_id
+ * @param {string} business_id
+ * @param {string} delivery_address_id
+ * @param {SUBSCRIPTION_TYPE} type
+ * @param {Array<DailyMealsCartPersonWithPrice>} customers
+ * @param {Date | string} start_date
+ * @param {Date | string | null} end_date
+ * @param {Array<{ intended_date: Date | string; delivery_date: Date | string; }>} [days]
+ * @param {Array<{ intended_weekday: number; delivery_weekday: number; }>} [weekdays]
+ * @param {string | null} [courier_comment]
+ * @returns {Promise<daily_meal_subscriptions>}
  */
-
 export async function createDailyMealSubscription(
 	user_id: string,
 	business_id: string,
@@ -378,14 +305,27 @@ export async function createDailyMealSubscription(
 		throw new Error(`Error creating daily meal subscription: ${message}`);
 	}
 }
-
+/**
+ * Get subscription by id.
+ *
+ * @param {string} id
+ * @param {Prisma.daily_meal_subscriptionsInclude} [includeObj]
+ * @returns {Promise<daily_meal_subscriptions | null>}
+ */
 export async function getSubscriptionById(id: string, includeObj?: Prisma.daily_meal_subscriptionsInclude) {
 	return await prisma.daily_meal_subscriptions.findUnique({
 		where: { id },
 		include: includeObj || defaultIncludeObj,
 	});
 }
-
+/**
+ * Update subscription status.
+ *
+ * @param {string} id
+ * @param {SUBSCRIPTION_STATUS} status
+ * @param {Prisma.daily_meal_subscriptionsInclude} [includeObj]
+ * @returns {Promise<daily_meal_subscriptions>}
+ */
 export async function updateSubscriptionStatus(
 	id: string,
 	status: SUBSCRIPTION_STATUS,
@@ -397,7 +337,14 @@ export async function updateSubscriptionStatus(
 		include: includeObj || defaultIncludeObj,
 	});
 }
-
+/**
+ * Connect subscription with delivery driver.
+ *
+ * @param {string} id
+ * @param {string} delivery_driver_id
+ * @param {Prisma.daily_meal_subscriptionsInclude} [includeObj]
+ * @returns {Promise<daily_meal_subscriptions>}
+ */
 export async function connectSubscriptionWithDriver(
 	id: string,
 	delivery_driver_id: string,
@@ -415,7 +362,13 @@ export async function connectSubscriptionWithDriver(
 		include: includeObj || defaultIncludeObj,
 	});
 }
-
+/**
+ * Update daily meal instances status.
+ *
+ * @param {string[]} instance_ids
+ * @param {DAILY_MEAL_INSTANCE_STATUS} status
+ * @returns {Promise<Prisma.BatchPayload>}
+ */
 export async function updateDailyMealInstances(instance_ids: string[], status: DAILY_MEAL_INSTANCE_STATUS) {
 	return await prisma.daily_meal_instances.updateMany({
 		where: {
@@ -424,7 +377,13 @@ export async function updateDailyMealInstances(instance_ids: string[], status: D
 		data: { status: status },
 	});
 }
-
+/**
+ * Update daily meal instance status by id.
+ *
+ * @param {string} instance_id
+ * @param {DAILY_MEAL_INSTANCE_STATUS} status
+ * @returns {Promise<daily_meal_instances>}
+ */
 export async function updateDailyMealInstanceStatusById(instance_id: string, status: DAILY_MEAL_INSTANCE_STATUS) {
 	return await prisma.daily_meal_instances.update({
 		where: {

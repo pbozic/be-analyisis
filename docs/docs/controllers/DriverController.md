@@ -457,12 +457,12 @@ Content-Type: `application/json`
 **Description**: Get history of locations for a driver with a given driver id and between specified time interval
 
 **Responses:**
-- 201
+- 200
 - 400
 
 **Response Content:**
 
-- Status: 201, Type: `unknown`, Content-Type: `application/json`
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDriverLocationsController )
 
@@ -650,3 +650,152 @@ Content-Type: `application/json`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setDriverCurrentVehicle )
 
 <!-- DOCGEN:END setCurrentVehicle -->
+
+<!-- DOCGEN:START getDriverReviews -->
+### getDriverReviews
+
+**Summary**: List reviews for a driver
+
+**Description**: Returns all reviews written about the specified driver.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driver_id |  |
+
+**Responses:**
+- 200
+- 404
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDriverReviews )
+
+<!-- DOCGEN:END getDriverReviews -->
+
+<!-- DOCGEN:START unlinkDriverFromBusiness -->
+### unlinkDriverFromBusiness
+
+**Summary**: Remove driver by unlinking from business
+
+**Description**: Deletes the driver entity while keeping the user account active.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driver_id |  |
+
+**Responses:**
+- 200
+- 404
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/unlinkDriverFromBusiness )
+
+<!-- DOCGEN:END unlinkDriverFromBusiness -->
+
+<!-- DOCGEN:START registerVehicleInvoices -->
+### registerVehicleInvoices
+
+**Summary**: Register a vehicle for invoicing
+
+**Description**: Creates an invoices.business_premise for the driver’s transport module, an electronic_device and assigns it; links the vehicle to the premise.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driver_id |  |
+| undefined | path | vehicle_id |  |
+
+**Responses:**
+- 200
+- 400
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/registerVehicleInvoices )
+
+<!-- DOCGEN:END registerVehicleInvoices -->
+
+<!-- DOCGEN:START createElectronicDeviceForPremise -->
+### createElectronicDeviceForPremise
+
+**Summary**: Create an electronic device for a business premise
+
+**Description**: Creates a new invoices.electronic_device under the given business premise. Optionally assigns it to the driver.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driver_id |  |
+| undefined | path | business_premise_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createElectronicDeviceForPremise )
+
+<!-- DOCGEN:END createElectronicDeviceForPremise -->
+
+<!-- DOCGEN:START disableElectronicDevice -->
+### disableElectronicDevice
+
+**Summary**: Disable an electronic device
+
+**Description**: Sets invoices.electronic_device.active to false for the given device.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driver_id |  |
+| undefined | path | business_premise_id |  |
+| undefined | path | electronic_device_id |  |
+
+**Responses:**
+- 200
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/disableElectronicDevice )
+
+<!-- DOCGEN:END disableElectronicDevice -->
+
+<!-- DOCGEN:START updateDeviceAssignment -->
+### updateDeviceAssignment
+
+**Summary**: Assign or unassign an electronic device to/from a driver
+
+**Description**: One route to assign (create new assignment) or unassign (end current assignment) the device.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driver_id |  |
+| undefined | path | business_premise_id |  |
+| undefined | path | electronic_device_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeviceAssignment )
+
+<!-- DOCGEN:END updateDeviceAssignment -->

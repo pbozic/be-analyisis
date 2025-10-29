@@ -1,4 +1,12 @@
 import prisma from '../prisma/prisma.js';
+/**
+ * Create a new version for a menu item and set it as the current version.
+ *
+ * @param {string} menu_item_id - Menu item ID.
+ * @param {number} version - Version number.
+ * @param {object} snapshot - Snapshot payload for the version.
+ * @returns {Promise<object>} The created version record.
+ */
 const createMenuItemVersion = async (menu_item_id, version, snapshot) => {
 	// Create a transaction to update the menu item version
 	const transaction = await prisma.$transaction(async (prisma) => {
@@ -17,6 +25,15 @@ const createMenuItemVersion = async (menu_item_id, version, snapshot) => {
 	return transaction;
 };
 
+/**
+ * Create a new menu item under a category with an optional tax rate.
+ *
+ * @param {string} categoryId - Menu category ID to attach to.
+ * @param {string|null} taxRateId - Optional tax rate ID to connect.
+ * @param {object} menuItemData - Menu item fields to create.
+ * @param {boolean} is_copy - Whether this item is a copied item.
+ * @returns {Promise<object>} The created menu item.
+ */
 const createMenuItem = async (categoryId, taxRateId, menuItemData, is_copy) => {
 	return await prisma.menu_items.create({
 		data: {
@@ -33,6 +50,13 @@ const createMenuItem = async (categoryId, taxRateId, menuItemData, is_copy) => {
 		},
 	});
 };
+/**
+ * Append a menu_item_id to a category's ordered list if not present.
+ *
+ * @param {string} menu_category_id - Menu category ID.
+ * @param {string} menuItemIdToAdd - Menu item ID to add.
+ * @returns {Promise<object|undefined>} The updated category or undefined if already present.
+ */
 const addMenuItemIdToOrder = async (menu_category_id, menuItemIdToAdd) => {
 	try {
 		const category = await prisma.menu_categories.findUnique({
@@ -52,6 +76,13 @@ const addMenuItemIdToOrder = async (menu_category_id, menuItemIdToAdd) => {
 		throw error;
 	}
 };
+/**
+ * Remove a menu_item_id from a category's ordered list.
+ *
+ * @param {string} menu_category_id - Menu category ID.
+ * @param {string} menuItemIdToRemove - Menu item ID to remove.
+ * @returns {Promise<object>} The updated category.
+ */
 const removeMenuItemIdFromOrder = async (menu_category_id, menuItemIdToRemove) => {
 	try {
 		const category = await prisma.menu_categories.findUnique({
@@ -69,6 +100,12 @@ const removeMenuItemIdFromOrder = async (menu_category_id, menuItemIdToRemove) =
 		throw error;
 	}
 };
+/**
+ * Get menu items by a list of IDs including their categories and categories' categories.
+ *
+ * @param {string[]} menu_item_ids - List of menu item IDs.
+ * @returns {Promise<object[]>} Array of menu items with category context.
+ */
 const getMenuItemsByIds = async (menu_item_ids) => {
 	return await prisma.menu_items.findMany({
 		where: {
@@ -89,6 +126,13 @@ const getMenuItemsByIds = async (menu_item_ids) => {
 		},
 	});
 };
+/**
+ * Get menu items for a business with optional filters.
+ *
+ * @param {string} business_id - Business ID.
+ * @param {object} args - Additional where filters or options.
+ * @returns {Promise<object[]>} Array of menu items with documents and files.
+ */
 const getMenuItemsByBusinessId = async (business_id, args) => {
 	return await prisma.menu_items.findMany({
 		where: {
@@ -105,6 +149,12 @@ const getMenuItemsByBusinessId = async (business_id, args) => {
 		},
 	});
 };
+/**
+ * Get menu items by their menu category.
+ *
+ * @param {string} categoryId - Menu category ID.
+ * @returns {Promise<object[]>} Array of menu items.
+ */
 const getMenuItemsByCategoryId = async (categoryId) => {
 	return await prisma.menu_items.findMany({
 		where: {
@@ -112,6 +162,12 @@ const getMenuItemsByCategoryId = async (categoryId) => {
 		},
 	});
 };
+/**
+ * Delete a menu item by ID.
+ *
+ * @param {string} menuItemId - Menu item ID.
+ * @returns {Promise<object>} The deleted menu item.
+ */
 const deleteMenuItem = async (menuItemId) => {
 	return await prisma.menu_items.delete({
 		where: {
@@ -119,6 +175,13 @@ const deleteMenuItem = async (menuItemId) => {
 		},
 	});
 };
+/**
+ * Update a menu item; logs stock changes separately when stock is provided.
+ *
+ * @param {string} menuItemId - Menu item ID.
+ * @param {object} data - Partial fields to update (stock handled specially).
+ * @returns {Promise<object>} The updated menu item.
+ */
 const updateMenuItem = async (menuItemId, data) => {
 	// exclude stock from the data object if it exists
 	let { stock, ...rest } = data;
@@ -149,6 +212,13 @@ const updateMenuItem = async (menuItemId, data) => {
 		data: data,
 	});
 };
+/**
+ * Update the price for a menu item.
+ *
+ * @param {string} menuItemId - Menu item ID.
+ * @param {number} price - New price value.
+ * @returns {Promise<object>} The updated menu item.
+ */
 const updateMenuItemPrice = async (menuItemId, price) => {
 	return await prisma.menu_items.update({
 		where: {
@@ -159,6 +229,13 @@ const updateMenuItemPrice = async (menuItemId, price) => {
 		},
 	});
 };
+/**
+ * Connect a menu item to a menu category.
+ *
+ * @param {string} menu_item_id - Menu item ID.
+ * @param {string} menu_category_id - Menu category ID.
+ * @returns {Promise<object>} The updated menu item.
+ */
 const addMenuItemToCategory = async (menu_item_id, menu_category_id) => {
 	return await prisma.menu_items.update({
 		where: {
@@ -171,6 +248,12 @@ const addMenuItemToCategory = async (menu_item_id, menu_category_id) => {
 		},
 	});
 };
+/**
+ * Disconnect a menu item from its category.
+ *
+ * @param {string} menu_item_id - Menu item ID.
+ * @returns {Promise<object>} The updated menu item.
+ */
 const removeMenuItemFromCategory = async (menu_item_id) => {
 	try {
 		return await prisma.menu_items.update({

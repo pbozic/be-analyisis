@@ -2,7 +2,14 @@ import prisma from '../prisma/prisma.js';
 import { client as stripe } from '../lib/stripe.js';
 import BusinessUserDao from './BusinessUsers.js';
 import BusinessDao from './Business.js';
-
+/**
+ * Create a new word with its translations.
+ *
+ * @param {object} word
+ * @param {string} category_id
+ * @param {object[]} translations
+ * @returns {Promise<object>} Newly created word with translations.
+ */
 async function createWord(word, category_id, translations) {
 	// Create a new translatable record
 	let translatable = await prisma.translatable.create({
@@ -49,6 +56,15 @@ async function createWord(word, category_id, translations) {
 	new_word.translations = translats;
 	return new_word;
 }
+/**
+ * Update an existing word and its translations.
+ *
+ * @param {string} id
+ * @param {object} word
+ * @param {string} categories_id
+ * @param {object[]} translations
+ * @returns {Promise<object>} Updated word with translations.
+ */
 async function updateWord(id, word, categories_id, translations) {
 	// First get the existing word to access its translatable_id
 	const existingWord = await prisma.words.findUnique({
@@ -111,6 +127,12 @@ async function updateWord(id, word, categories_id, translations) {
 	}
 	return updatedWord;
 }
+/**
+ * Delete a word by id.
+ *
+ * @param {string} id
+ * @returns {Promise<object>} Deleted word.
+ */
 async function deleteWord(id) {
 	return await prisma.words.delete({
 		where: {
@@ -118,6 +140,12 @@ async function deleteWord(id) {
 		},
 	});
 }
+/**
+ * Get a word by id.
+ *
+ * @param {string} id
+ * @returns {Promise<object>} Found word.
+ */
 async function getWordById(id) {
 	try {
 		let word = await prisma.words.findUnique({
@@ -144,6 +172,11 @@ async function getWordById(id) {
 		throw new Error('Failed to get word');
 	}
 }
+/**
+ * Get all words with their translations and categories.
+ *
+ * @returns {Promise<object[]>} List of words with translations and categories.
+ */
 async function getAllWords() {
 	try {
 		let words = await prisma.words.findMany({
@@ -166,6 +199,11 @@ async function getAllWords() {
 		throw new Error('Failed to get words');
 	}
 }
+/** Get all words by category.
+ *
+ * @param {string} category
+ * @returns {Promise<object[]>} List of words in the category.
+ */
 async function getAllWordsByCategory(category) {
 	return await prisma.words.findMany({
 		where: {
@@ -175,6 +213,12 @@ async function getAllWordsByCategory(category) {
 		},
 	});
 }
+/**
+ * Remove category from a word.
+ *
+ * @param {string} id
+ * @returns {Promise<object>} Updated word.
+ */
 async function removeCategoryFromWord(id) {
 	return await prisma.words.update({
 		where: {
@@ -187,6 +231,13 @@ async function removeCategoryFromWord(id) {
 		},
 	});
 }
+/**
+ * Add category to a word.
+ *
+ * @param {string} id
+ * @param {string} category
+ * @returns {Promise<object>} Updated word.
+ */
 async function addCategoryToWord(id, category) {
 	// if word already has a category then remove it
 	const word = await getWordById(id);
@@ -206,6 +257,12 @@ async function addCategoryToWord(id, category) {
 		},
 	});
 }
+/**
+ * Create a word buy entry.
+ *
+ * @param {object} args
+ * @returns {Promise<object>} Created word buy.
+ */
 async function createWordBuy(args) {
 	return await prisma.word_buy.create({
 		data: {
@@ -225,6 +282,13 @@ async function createWordBuy(args) {
 		},
 	});
 }
+/**
+ * Update user subscription based on active word buys.
+ *
+ * @param {string} userId
+ * @param {string} business_id
+ * @returns {Promise<object>} Update result.
+ */
 export async function updateUserSubscription(userId, business_id) {
 	try {
 		const businessUser = await BusinessUserDao.getBusinessUserByUserId(userId);
@@ -455,7 +519,14 @@ export async function updateUserSubscription(userId, business_id) {
 		return { success: false, error: err?.message || 'Unknown error' };
 	}
 }
-
+/**
+ * Create word buy subscription for a set of words.
+ *
+ * @param {object[]} words
+ * @param {string} business_id
+ * @param {string} userId
+ * @returns {Promise<object>} Subscription result.
+ */
 export async function createWordBuySubscription(words, business_id, userId) {
 	try {
 		// 1) Load business & verify Stripe customer
@@ -524,7 +595,13 @@ export async function createWordBuySubscription(words, business_id, userId) {
 		throw new Error(err.message);
 	}
 }
-
+/**
+ * Add Stripe subscription ID to word buy.
+ *
+ * @param {string} id
+ * @param {string} stripe_subscription_id
+ * @returns {Promise<object>} Updated word buy.
+ */
 async function addStripeSubToWordBuy(id, stripe_subscription_id) {
 	return await prisma.word_buy.update({
 		where: {
@@ -535,6 +612,11 @@ async function addStripeSubToWordBuy(id, stripe_subscription_id) {
 		},
 	});
 }
+/** Get a word buy by id.
+ *
+ * @param {string} id
+ * @returns {Promise<object>} Found word buy.
+ */
 async function getWordBuyById(id) {
 	const wb = await prisma.word_buy.findUnique({
 		where: {
@@ -545,6 +627,11 @@ async function getWordBuyById(id) {
 	delete wb.translatable;
 	return wb;
 }
+/**
+ * Get all word buys.
+ *
+ * @returns {Promise<object[]>} Found word buys.
+ */
 async function getAllWordBuys() {
 	const wbs = await prisma.word_buy.findMany();
 	for (let wb of wbs) {
@@ -553,6 +640,12 @@ async function getAllWordBuys() {
 	}
 	return wbs;
 }
+/**
+ * Get all word buys by word.
+ *
+ * @param {string} word
+ * @returns {Promise<object[]>} Found word buys.
+ */
 async function getAllWordBuysByWord(word) {
 	const wbs = await prisma.word_buy.findMany({
 		where: {
@@ -567,6 +660,12 @@ async function getAllWordBuysByWord(word) {
 	}
 	return wbs;
 }
+/** * Get all word buys by business.
+ *
+ * @param {string} business
+ * @param {object} whereObj
+ * @returns {Promise<object[]>} Found word buys.
+ */
 async function getAllWordBuysByBusiness(business, whereObj = {}) {
 	const wbs = await prisma.word_buy.findMany({
 		where: {
@@ -593,6 +692,12 @@ async function getAllWordBuysByBusiness(business, whereObj = {}) {
 	}
 	return wbs;
 }
+/**
+ * Get active word buys by business.
+ *
+ * @param {string} business
+ * @returns {Promise<object[]>} Found word buys.
+ */
 async function getActiveWordBuysByBusiness(business) {
 	const now = new Date();
 	const wbs = await prisma.word_buy.findMany({
@@ -621,7 +726,11 @@ async function getActiveWordBuysByBusiness(business) {
 	}
 	return wbs;
 }
-
+/** Delete a word buy (soft delete).
+ *
+ * @param {string} word_buy_id
+ * @returns {Promise<object>} Updated word buy.
+ */
 async function deleteWordBuy(word_buy_id) {
 	return await prisma.word_buy.update({
 		where: {
@@ -633,7 +742,12 @@ async function deleteWordBuy(word_buy_id) {
 		},
 	});
 }
-
+/** Update a word buy.
+ *
+ * @param {string} id
+ * @param {object} data
+ * @returns {Promise<object>} Updated word buy.
+ */
 async function updateWordBuy(id, data) {
 	return await prisma.word_buy.update({
 		where: {

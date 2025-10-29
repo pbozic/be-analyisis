@@ -1,5 +1,10 @@
 const prisma = require('../prisma/prisma');
 
+/**
+ * List all ads including analytics.
+ *
+ * @returns {Promise<object[]>} A promise resolving to an array of ads.
+ */
 async function listAds() {
 	try {
 		return prisma.ads.findMany({
@@ -11,6 +16,12 @@ async function listAds() {
 		return new Error(error);
 	}
 }
+/**
+ * Create a new ad.
+ *
+ * @param {object} ad - Ad payload to create.
+ * @returns {Promise<object>} The created ad.
+ */
 async function createAd(ad) {
 	try {
 		return prisma.ads.create({
@@ -21,6 +32,12 @@ async function createAd(ad) {
 	}
 }
 
+/**
+ * Find a single ad by ID, including analytics and image file data.
+ *
+ * @param {string} id - Ad ID.
+ * @returns {Promise<object|null>} The ad record or null if not found.
+ */
 async function findAdByIdFull(id) {
 	try {
 		return prisma.ads.findUnique({
@@ -39,6 +56,12 @@ async function findAdByIdFull(id) {
 	}
 }
 
+/**
+ * Find a single ad by ID.
+ *
+ * @param {string} id - Ad ID.
+ * @returns {Promise<object|null>} The ad record or null if not found.
+ */
 async function findAdById(id) {
 	try {
 		return prisma.ads.findUnique({
@@ -51,6 +74,13 @@ async function findAdById(id) {
 	}
 }
 
+/**
+ * Update an existing ad by ID.
+ *
+ * @param {string} id - Ad ID.
+ * @param {object} ad - Partial ad fields to update.
+ * @returns {Promise<object>} The updated ad.
+ */
 async function editAd(id, ad) {
 	try {
 		return prisma.ads.update({
@@ -64,6 +94,12 @@ async function editAd(id, ad) {
 	}
 }
 
+/**
+ * List ads created by a user.
+ *
+ * @param {string} userId - User ID.
+ * @returns {Promise<object[]>} Matching ads.
+ */
 async function findAdsByUserId(userId) {
 	try {
 		return prisma.ads.findMany({
@@ -76,6 +112,12 @@ async function findAdsByUserId(userId) {
 	}
 }
 
+/**
+ * List ads for a business.
+ *
+ * @param {string} businessId - Business ID.
+ * @returns {Promise<object[]>} Matching ads.
+ */
 async function findAdsByBusinessId(businessId) {
 	try {
 		return prisma.ads.findMany({
@@ -88,6 +130,12 @@ async function findAdsByBusinessId(businessId) {
 	}
 }
 
+/**
+ * List active ads by category (single or multiple).
+ *
+ * @param {string|string[]} categories - Category or categories to filter by.
+ * @returns {Promise<object[]>} Matching active ads.
+ */
 async function findAdsByCategory(categories) {
 	const category = Array.isArray(categories) ? categories : [categories];
 	try {
@@ -104,6 +152,12 @@ async function findAdsByCategory(categories) {
 	}
 }
 
+/**
+ * Mark an ad as inactive.
+ *
+ * @param {string} id - Ad ID.
+ * @returns {Promise<object>} The updated ad.
+ */
 async function markAdInactive(id) {
 	try {
 		return prisma.ads.update({
@@ -119,6 +173,12 @@ async function markAdInactive(id) {
 	}
 }
 
+/**
+ * Mark an ad as active.
+ *
+ * @param {string} id - Ad ID.
+ * @returns {Promise<object>} The updated ad.
+ */
 async function markAdActive(id) {
 	try {
 		return prisma.ads.update({
@@ -134,6 +194,12 @@ async function markAdActive(id) {
 	}
 }
 
+/**
+ * Soft delete an ad by setting deleted_at.
+ *
+ * @param {string} id - Ad ID.
+ * @returns {Promise<object>} The updated ad.
+ */
 async function deleteAd(id) {
 	try {
 		return prisma.ads.update({
@@ -149,6 +215,11 @@ async function deleteAd(id) {
 	}
 }
 
+/**
+ * List all active ads.
+ *
+ * @returns {Promise<object[]>} Matching active ads.
+ */
 async function listActiveAds() {
 	try {
 		return prisma.ads.findMany({

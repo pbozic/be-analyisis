@@ -1,5 +1,10 @@
 import prisma from '../prisma/prisma.js';
-// Get all vehicles
+/**
+ * Get all vehicles with optional Prisma args and includes.
+ *
+ * @param {object} args - Additional Prisma findMany args.
+ * @returns {Promise<object[]>} Array of vehicles.
+ */
 const getVehicles = async (args) => {
 	try {
 		return await prisma.vehicles.findMany({
@@ -14,7 +19,12 @@ const getVehicles = async (args) => {
 		throw new Error(error);
 	}
 };
-// Get all vehicles of a certain business
+/**
+ * Get all vehicles belonging to a business with driver names and documents.
+ *
+ * @param {string} businessId - Business ID.
+ * @returns {Promise<object[]>} Array of vehicles.
+ */
 const getVehiclesByBusiness = async (businessId) => {
 	try {
 		return await prisma.vehicles.findMany({
@@ -48,6 +58,13 @@ const getVehiclesByBusiness = async (businessId) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get a vehicle by ID with drivers, current_driver, and documents; allows extra args to override includes.
+ *
+ * @param {string} vehicle_id - Vehicle ID.
+ * @param {object} args - Optional Prisma args to merge.
+ * @returns {Promise<object|null>} Vehicle or null.
+ */
 const getVehicleById = async (vehicle_id, args) => {
 	try {
 		return await prisma.vehicles.findUnique({
@@ -83,6 +100,12 @@ const getVehicleById = async (vehicle_id, args) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Create a new vehicle.
+ *
+ * @param {object} vehicle - Vehicle payload to create.
+ * @returns {Promise<object>} Created vehicle.
+ */
 const createNewVehicle = async (vehicle) => {
 	try {
 		return await prisma.vehicles.create({
@@ -93,6 +116,13 @@ const createNewVehicle = async (vehicle) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update a vehicle by ID.
+ *
+ * @param {string} vehicle_id - Vehicle ID.
+ * @param {object} vehicleData - Fields to update.
+ * @returns {Promise<object>} Updated vehicle.
+ */
 const updateVehicle = async (vehicle_id, vehicleData) => {
 	try {
 		return await prisma.vehicles.update({
@@ -104,6 +134,12 @@ const updateVehicle = async (vehicle_id, vehicleData) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get the driver IDs linked to a vehicle.
+ *
+ * @param {string} vehicle_id - Vehicle ID.
+ * @returns {Promise<{driver_id:string}[]>} Array of driver_id objects.
+ */
 const getVehicleDriversByVehicleId = async (vehicle_id) => {
 	return await prisma.vehicle_drivers.findMany({
 		where: {
@@ -114,6 +150,13 @@ const getVehicleDriversByVehicleId = async (vehicle_id) => {
 		},
 	});
 };
+/**
+ * Remove driver links for a vehicle that are not present in the newDriverIds list.
+ *
+ * @param {string} vehicle_id - Vehicle ID.
+ * @param {string[]} newDriverIds - Driver IDs to keep.
+ * @returns {Promise<void>} Resolves when done.
+ */
 const unAssignVehicleFromDrivers = async (vehicle_id, newDriverIds) => {
 	await prisma.vehicle_drivers.deleteMany({
 		where: {
@@ -124,6 +167,13 @@ const unAssignVehicleFromDrivers = async (vehicle_id, newDriverIds) => {
 		},
 	});
 };
+/**
+ * Upsert the relation linking a vehicle and a driver with can_drive=true.
+ *
+ * @param {string} vehicleId - Vehicle ID.
+ * @param {string} driverId - Driver ID.
+ * @returns {Promise<object>} Upserted vehicle_drivers record.
+ */
 const assignVehicleToDriver = async (vehicleId, driverId) => {
 	try {
 		return await prisma.vehicle_drivers.upsert({
@@ -155,6 +205,13 @@ const assignVehicleToDriver = async (vehicleId, driverId) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Connect a vehicle to a delivery driver (delivery_driver_id).
+ *
+ * @param {string} vehicleId - Vehicle ID.
+ * @param {string} driverId - Delivery driver ID.
+ * @returns {Promise<object>} Updated vehicle.
+ */
 const assignVehicleToDeliveryDriver = async (vehicleId, driverId) => {
 	try {
 		return await prisma.vehicles.update({
@@ -172,6 +229,13 @@ const assignVehicleToDeliveryDriver = async (vehicleId, driverId) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Mark a vehicle-driver relation as cannot drive (can_drive=false).
+ *
+ * @param {string} vehicleId - Vehicle ID.
+ * @param {string} driverId - Driver ID.
+ * @returns {Promise<object>} Updated vehicle_drivers record.
+ */
 const removeVehicleFromDriver = async (vehicleId, driverId) => {
 	try {
 		return await prisma.vehicle_drivers.update({
@@ -190,6 +254,12 @@ const removeVehicleFromDriver = async (vehicleId, driverId) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get vehicles by driver ID.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @returns {Promise<object[]>} Array of vehicles.
+ */
 const getVehiclesByDriverId = async (driver_id) => {
 	try {
 		return await prisma.vehicles.findMany({
@@ -204,6 +274,12 @@ const getVehiclesByDriverId = async (driver_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Delete a vehicle by ID.
+ *
+ * @param {string} vehicle_id - Vehicle ID.
+ * @returns {Promise<object>} Deleted vehicle.
+ */
 const deleteVehicle = async (vehicle_id) => {
 	try {
 		return await prisma.vehicles.delete({
@@ -214,7 +290,12 @@ const deleteVehicle = async (vehicle_id) => {
 		throw new Error(error);
 	}
 };
-// Get all vehicles of a certain class
+/**
+ * Get all vehicles of a certain class.
+ *
+ * @param {string} vehicleClass - Vehicle class.
+ * @returns {Promise<object[]>} Array of vehicles.
+ */
 const getVehiclesByClass = async (vehicleClass) => {
 	try {
 		return await prisma.vehicles.findMany({
@@ -233,7 +314,12 @@ const getVehiclesByClass = async (vehicleClass) => {
 		throw new Error(error);
 	}
 };
-// Get all vehicles of a certain category
+/**
+ * Get all vehicles of a certain category.
+ *
+ * @param {string} vehicleCategory - Vehicle category.
+ * @returns {Promise<object[]>} Array of vehicles.
+ */
 const getVehiclesByCategory = async (vehicleCategory) => {
 	try {
 		return await prisma.vehicles.findMany({
@@ -252,7 +338,13 @@ const getVehiclesByCategory = async (vehicleCategory) => {
 		throw new Error(error);
 	}
 };
-// Get all vehicles of a certain class and category
+/**
+ * Get all vehicles of a certain class and category.
+ *
+ * @param {string} vehicleClass - Vehicle class.
+ * @param {string} vehicleCategory - Vehicle category.
+ * @returns {Promise<object[]>} Array of vehicles.
+ */
 const getVehiclesByClassAndCategory = async (vehicleClass, vehicleCategory) => {
 	try {
 		return await prisma.vehicles.findMany({
@@ -271,7 +363,13 @@ const getVehiclesByClassAndCategory = async (vehicleClass, vehicleCategory) => {
 		throw new Error(error);
 	}
 };
-// Get all vehicles of a certain driver of class
+/**
+ * Get all vehicles for a driver of a certain class.
+ *
+ * @param {string} driverId - Driver ID.
+ * @param {string} vehicleClass - Vehicle class.
+ * @returns {Promise<object[]>} Array of vehicles.
+ */
 const getVehiclesOfDriverByClass = async (driverId, vehicleClass) => {
 	try {
 		return await prisma.vehicles.findMany({
@@ -291,7 +389,13 @@ const getVehiclesOfDriverByClass = async (driverId, vehicleClass) => {
 		throw new Error(error);
 	}
 };
-// Get all vehicles of a certain driver of category
+/**
+ * Get all vehicles for a driver of a certain category.
+ *
+ * @param {string} driverId - Driver ID.
+ * @param {string} vehicleCategory - Vehicle category.
+ * @returns {Promise<object[]>} Array of vehicles.
+ */
 const getVehiclesOfDriverByCategory = async (driverId, vehicleCategory) => {
 	try {
 		return await prisma.vehicles.findMany({
@@ -311,7 +415,14 @@ const getVehiclesOfDriverByCategory = async (driverId, vehicleCategory) => {
 		throw new Error(error);
 	}
 };
-// Get all vehicles of a certain driver of class and category
+/**
+ * Get all vehicles for a driver of a specific class and category.
+ *
+ * @param {string} driverId - Driver ID.
+ * @param {string} vehicleClass - Vehicle class.
+ * @param {string} vehicleCategory - Vehicle category.
+ * @returns {Promise<object[]>} Array of vehicles.
+ */
 const getVehiclesOfDriverByClassAndCategory = async (driverId, vehicleClass, vehicleCategory) => {
 	try {
 		return await prisma.vehicles.findMany({

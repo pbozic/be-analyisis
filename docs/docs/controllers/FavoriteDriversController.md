@@ -29,8 +29,18 @@ Content-Type: `application/json`
 
 **Description**: Deletes a record in user_favorite_drivers by composite key.
 
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driver_id |  |
+
 **Responses:**
 - 200
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeFavoriteDriver )
 
@@ -45,7 +55,13 @@ Content-Type: `application/json`
 
 **Responses:**
 - 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/listFavoriteDrivers )
 
 <!-- DOCGEN:END listFavoriteDrivers -->
+

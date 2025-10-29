@@ -42,3 +42,22 @@ Content-Type: `application/json`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
+
+<!-- DOCGEN:START getDriversActivitySettings -->
+### getDriversActivitySettings
+
+**Summary**: Get active driver activity settings
+
+**Description**: Retrieves the most recently created active driver activity settings.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDriverActivitySettings )
+
+<!-- DOCGEN:END getDriversActivitySettings -->

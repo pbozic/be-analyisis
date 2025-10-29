@@ -1,4 +1,11 @@
 import prisma from '../prisma/prisma.js';
+/**
+ * Create a promo section with translations; handles tier prices when canPurchase=true.
+ *
+ * @param {object} args - Section fields (name, tag, description, service_type, canPurchase, t1price, t2price, t3price).
+ * @param {object[]} translations - Array of { language, translation }.
+ * @returns {Promise<object>} Created promo section with translations.
+ */
 async function createPromoSection(args, translations) {
 	// Create a new translatable record
 	let translatable = await prisma.translatable.create({
@@ -44,6 +51,14 @@ async function createPromoSection(args, translations) {
 	new_promo_section.translations = translats;
 	return new_promo_section;
 }
+/**
+ * Update a promo section and replace translations if provided.
+ *
+ * @param {string} id - promo_sections_id.
+ * @param {object} args - Fields to update.
+ * @param {object[]} [translations] - New translations to set.
+ * @returns {Promise<object>} Updated promo section with translations.
+ */
 async function updatePromoSection(id, args, translations) {
 	const sectionData = {
 		name: args.name,
@@ -93,6 +108,12 @@ async function updatePromoSection(id, args, translations) {
 	}
 	return updated_promo_section;
 }
+/**
+ * Reorder promo sections by given list of ids; sets order by index.
+ *
+ * @param {string[]} promo_sections_ids - Ordered list of section ids.
+ * @returns {Promise<object[]>} Updated promo sections.
+ */
 async function reorderPromoSections(promo_sections_ids) {
 	try {
 		return await prisma.$transaction(
@@ -108,6 +129,12 @@ async function reorderPromoSections(promo_sections_ids) {
 		throw error;
 	}
 }
+/**
+ * Delete a promo section by id.
+ *
+ * @param {string} id - promo_sections_id.
+ * @returns {Promise<object>} Deleted promo section.
+ */
 async function deletePromoSection(id) {
 	return await prisma.promo_sections.delete({
 		where: {
@@ -115,6 +142,12 @@ async function deletePromoSection(id) {
 		},
 	});
 }
+/**
+ * Get a promo section by id with translations and purchases; flattens translations.
+ *
+ * @param {string} id - promo_sections_id.
+ * @returns {Promise<object>} Promo section with translations.
+ */
 async function getPromoSectionById(id) {
 	const promo_section = await prisma.promo_sections.findUnique({
 		where: {
@@ -136,6 +169,12 @@ async function getPromoSectionById(id) {
 	delete promo_section.translatable;
 	return promo_section;
 }
+/**
+ * Get all promo sections with optional where args and flattened translations.
+ *
+ * @param {object} args - Where filters.
+ * @returns {Promise<object[]>} Promo sections.
+ */
 async function getAllPromoSections(args) {
 	const promo_sections = await prisma.promo_sections.findMany({
 		where: { ...args },
@@ -155,6 +194,12 @@ async function getAllPromoSections(args) {
 	});
 	return promo_sections;
 }
+/**
+ * Get promo sections by service_type; includes purchases and translations.
+ *
+ * @param {string} type - Service type.
+ * @returns {Promise<object[]>} Promo sections.
+ */
 async function getAllPromoSectionsByServiceType(type) {
 	const promo_sections = await prisma.promo_sections.findMany({
 		where: {
@@ -176,6 +221,14 @@ async function getAllPromoSectionsByServiceType(type) {
 	});
 	return promo_sections;
 }
+/**
+ * Create a promo ad and connect categories and banners.
+ *
+ * @param {object} promoAdData - Fields for promo ad (title, text, service_type, discount?).
+ * @param {string[]} categories_ids - Category ids to connect.
+ * @param {string[]} promo_banners_ids - Banner ids to connect.
+ * @returns {Promise<object>} Created promo ad.
+ */
 async function createPromoAd(promoAdData, categories_ids, promo_banners_ids) {
 	return await prisma.promo_ads.create({
 		data: {
@@ -203,6 +256,15 @@ async function createPromoAd(promoAdData, categories_ids, promo_banners_ids) {
 		},
 	});
 }
+/**
+ * Update a promo ad; replaces category and banner relations.
+ *
+ * @param {string} id - promo_ads_id.
+ * @param {object} promoAdData - Fields to update.
+ * @param {string[]} categories_ids - Category ids to set.
+ * @param {string[]} promo_banners_ids - Banner ids to set.
+ * @returns {Promise<object>} Updated promo ad.
+ */
 async function updatePromoAd(id, promoAdData, categories_ids, promo_banners_ids) {
 	return await prisma.promo_ads.update({
 		where: {
@@ -234,6 +296,12 @@ async function updatePromoAd(id, promoAdData, categories_ids, promo_banners_ids)
 		},
 	});
 }
+/**
+ * Delete a promo ad and its category relations in a transaction.
+ *
+ * @param {string} id - promo_ads_id.
+ * @returns {Promise<object[]>} Transaction results.
+ */
 async function deletePromoAd(id) {
 	return await prisma.$transaction([
 		prisma.promo_ads_category.deleteMany({
@@ -248,6 +316,12 @@ async function deletePromoAd(id) {
 		}),
 	]);
 }
+/**
+ * Get a promo ad by id including categories and banners.
+ *
+ * @param {string} id - promo_ads_id.
+ * @returns {Promise<object|null>} Promo ad or null.
+ */
 async function getPromoAdById(id) {
 	return await prisma.promo_ads.findUnique({
 		where: {
@@ -259,6 +333,11 @@ async function getPromoAdById(id) {
 		},
 	});
 }
+/**
+ * Get all promo ads including categories and banner files.
+ *
+ * @returns {Promise<object[]>} Promo ads.
+ */
 async function getAllPromoAds() {
 	return await prisma.promo_ads.findMany({
 		include: {
@@ -271,6 +350,12 @@ async function getAllPromoAds() {
 		},
 	});
 }
+/**
+ * Get promo ads by service_type including categories and banner files.
+ *
+ * @param {string} type - Service type.
+ * @returns {Promise<object[]>} Promo ads.
+ */
 async function getAllPromoAdsByServiceType(type) {
 	return await prisma.promo_ads.findMany({
 		where: {
@@ -286,6 +371,12 @@ async function getAllPromoAdsByServiceType(type) {
 		},
 	});
 }
+/**
+ * Get promo ads by category id including categories and banner files.
+ *
+ * @param {string} category - categories_id filter.
+ * @returns {Promise<object[]>} Promo ads.
+ */
 async function getAllPromoAdsByCategory(category) {
 	return await prisma.promo_ads.findMany({
 		where: {
@@ -305,6 +396,13 @@ async function getAllPromoAdsByCategory(category) {
 		},
 	});
 }
+/**
+ * Create a promo banner and optionally create a public file; may connect to promo ad.
+ *
+ * @param {object} promoBannerData - Fields for banner (title, text, type, size, promo_ads_id?).
+ * @param {object} [imageFileData] - Optional file fields (file_type, mime_type).
+ * @returns {Promise<object>} Created promo banner with files.
+ */
 async function createPromoBanner(promoBannerData, imageFileData) {
 	const { file_type, mime_type } = imageFileData || {};
 	return await prisma.promo_banners.create({
@@ -339,6 +437,14 @@ async function createPromoBanner(promoBannerData, imageFileData) {
 		},
 	});
 }
+/**
+ * Update a promo banner; connect/disconnect promo_ad and optionally append a new file.
+ *
+ * @param {string} id - promo_banners_id.
+ * @param {object} promoBannerData - Fields to update.
+ * @param {object} [imageFileData] - Optional new file (file_type, mime_type).
+ * @returns {Promise<object>} Updated promo banner with files.
+ */
 async function updatePromoBanner(id, promoBannerData, imageFileData) {
 	try {
 		return await prisma.$transaction(async (prisma) => {
@@ -380,6 +486,12 @@ async function updatePromoBanner(id, promoBannerData, imageFileData) {
 		throw new Error('Failed to update promo banner: ' + error.message);
 	}
 }
+/**
+ * Delete a promo banner by id.
+ *
+ * @param {string} id - promo_banners_id.
+ * @returns {Promise<object>} Deleted banner.
+ */
 async function deletePromoBanner(id) {
 	return await prisma.promo_banners.delete({
 		where: {
@@ -387,6 +499,12 @@ async function deletePromoBanner(id) {
 		},
 	});
 }
+/**
+ * Get a promo banner by id.
+ *
+ * @param {string} id - promo_banners_id.
+ * @returns {Promise<object|null>} Promo banner or null.
+ */
 async function getPromoBannerById(id) {
 	return await prisma.promo_banners.findUnique({
 		where: {
@@ -394,6 +512,11 @@ async function getPromoBannerById(id) {
 		},
 	});
 }
+/**
+ * Get all promo banners including files and associated promo_ad categories.
+ *
+ * @returns {Promise<object[]>} Promo banners.
+ */
 async function getAllPromoBanners() {
 	return await prisma.promo_banners.findMany({
 		include: {
@@ -406,6 +529,12 @@ async function getAllPromoBanners() {
 		},
 	});
 }
+/**
+ * Get promo banners filtered by type including files and promo_ad categories.
+ *
+ * @param {string} type - Banner type.
+ * @returns {Promise<object[]>} Promo banners.
+ */
 async function getAllPromoBannersByType(type) {
 	return await prisma.promo_banners.findMany({
 		where: {
@@ -421,6 +550,12 @@ async function getAllPromoBannersByType(type) {
 		},
 	});
 }
+/**
+ * Get promo banners filtered by size including files and promo_ad categories.
+ *
+ * @param {string} size - Banner size.
+ * @returns {Promise<object[]>} Promo banners.
+ */
 async function getAllPromoBannersBySize(size) {
 	return await prisma.promo_banners.findMany({
 		where: {
@@ -436,6 +571,12 @@ async function getAllPromoBannersBySize(size) {
 		},
 	});
 }
+/**
+ * Get promo banners for a specific promo_ad including files and categories.
+ *
+ * @param {string} ad - promo_ads_id.
+ * @returns {Promise<object[]>} Promo banners.
+ */
 async function getAllPromoBannersByAd(ad) {
 	return await prisma.promo_banners.findMany({
 		where: {
@@ -458,6 +599,16 @@ async function getAllPromoBannersByAd(ad) {
 //         }
 //     });
 // }
+/**
+ * Create a promo_sections_buy linking business and promo section with optional activation/expires.
+ *
+ * @param {string} business_id - Business ID.
+ * @param {string} promo_sections_id - Promo section ID.
+ * @param {string|Date} [active_at] - Active from date.
+ * @param {string|Date} [expires_at] - Expires at date.
+ * @param {number} tier - Tier number.
+ * @returns {Promise<object>} Created promo_sections_buy.
+ */
 async function createPromoSectionBuy(business_id, promo_sections_id, active_at, expires_at, tier) {
 	const data = {
 		business: {
@@ -484,6 +635,12 @@ async function createPromoSectionBuy(business_id, promo_sections_id, active_at, 
 	return await prisma.promo_sections_buy.create({ data });
 }
 
+/**
+ * Get a promo_sections_buy by id.
+ *
+ * @param {string} id - promo_sections_buy_id.
+ * @returns {Promise<object|null>} Row or null.
+ */
 async function getPromoSectionBuyById(id) {
 	return await prisma.promo_sections_buy.findUnique({
 		where: {
@@ -491,9 +648,20 @@ async function getPromoSectionBuyById(id) {
 		},
 	});
 }
+/**
+ * Get all promo_sections_buy rows.
+ *
+ * @returns {Promise<object[]>} Rows.
+ */
 async function getAllPromoSectionBuys() {
 	return await prisma.promo_sections_buy.findMany();
 }
+/**
+ * Get promo_sections_buy by section id.
+ *
+ * @param {string} section - promo_sections_id.
+ * @returns {Promise<object[]>} Rows.
+ */
 async function getAllPromoSectionBuysBySection(section) {
 	return await prisma.promo_sections_buy.findMany({
 		where: {
@@ -501,6 +669,13 @@ async function getAllPromoSectionBuysBySection(section) {
 		},
 	});
 }
+/**
+ * Get paid promo_sections_buy for a business with optional extra where filters; includes section translations.
+ *
+ * @param {string} business - Business ID.
+ * @param {object} [whereObj={}] - Additional where clauses.
+ * @returns {Promise<object[]>} Rows with section translations.
+ */
 async function getAllPromoSectionBuysByBusiness(business, whereObj = {}) {
 	return await prisma.promo_sections_buy.findMany({
 		where: {
@@ -523,6 +698,12 @@ async function getAllPromoSectionBuysByBusiness(business, whereObj = {}) {
 		},
 	});
 }
+/**
+ * Get promo_sections_buy by tier value.
+ *
+ * @param {number} tier - Tier.
+ * @returns {Promise<object[]>} Rows.
+ */
 async function getAllPromoSectionBuysByTier(tier) {
 	return await prisma.promo_sections_buy.findMany({
 		where: {
@@ -530,6 +711,13 @@ async function getAllPromoSectionBuysByTier(tier) {
 		},
 	});
 }
+/**
+ * Update a promo_sections_buy row by id.
+ *
+ * @param {string} id - promo_sections_buy_id.
+ * @param {object} args - Fields to update.
+ * @returns {Promise<object>} Updated row.
+ */
 async function updatePromoSectionBuy(id, args) {
 	return await prisma.promo_sections_buy.update({
 		where: {
@@ -539,6 +727,12 @@ async function updatePromoSectionBuy(id, args) {
 	});
 }
 
+/**
+ * Get a promo_sections_buy by Stripe payment_intent_id.
+ *
+ * @param {string} payment_intent_id - Stripe payment intent id.
+ * @returns {Promise<object|null>} Row or null.
+ */
 export async function getPromoSectionBuyByPaymentIntentId(payment_intent_id) {
 	return await prisma.promo_sections_buy.findFirst({
 		where: {

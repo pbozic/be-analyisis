@@ -618,7 +618,7 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherRevoke )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
@@ -655,6 +655,56 @@ Content-Type: `application/json`
 **Responses:**
 - 200
 
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setDeliveryImage )
 
 <!-- DOCGEN:END setDeliveryImage -->
+
+<!-- DOCGEN:START acceptOrderDelivery -->
+### acceptOrderDelivery
+
+**Summary**: Accept a delivery order.
+
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
+
+<!-- DOCGEN:END acceptOrderDelivery -->
+
+<!-- DOCGEN:START startOrder -->
+### startOrder
+
+**Summary**: Start an order and log promo analytics if applicable.
+
+**Description**: This endpoint is used to start an order. It logs promotional analytics based on query parameters.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/startOrder )
+
+<!-- DOCGEN:END startOrder -->

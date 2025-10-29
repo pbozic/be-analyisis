@@ -1,4 +1,10 @@
 import prisma from '../prisma/prisma.js';
+/**
+ * Create a finances record.
+ *
+ * @param {object} financeData - Finance payload (account_holder, account_number, etc.).
+ * @returns {Promise<object>} Created finances.
+ */
 const addFinances = async (financeData) => {
 	try {
 		return await prisma.finances.create({
@@ -9,6 +15,12 @@ const addFinances = async (financeData) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Find a finance record by account number.
+ *
+ * @param {string} account_number - Account number.
+ * @returns {Promise<object|null>} Finances or null.
+ */
 const getFinancesByAccountNumber = async (account_number) => {
 	try {
 		return prisma.finances.findFirst({
@@ -20,6 +32,12 @@ const getFinancesByAccountNumber = async (account_number) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get a finances record by id.
+ *
+ * @param {string} finance_id - Finance ID.
+ * @returns {Promise<object|null>} Finances or null.
+ */
 const getFinancesById = async (finance_id) => {
 	try {
 		return await prisma.finances.findUnique({
@@ -30,6 +48,13 @@ const getFinancesById = async (finance_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update a finances record by id.
+ *
+ * @param {string} finance_id - Finance ID.
+ * @param {object} updateData - Fields to update.
+ * @returns {Promise<object>} Updated finances.
+ */
 const updateFinances = async (finance_id, updateData) => {
 	try {
 		return await prisma.finances.update({
@@ -41,6 +66,13 @@ const updateFinances = async (finance_id, updateData) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update the account holder name.
+ *
+ * @param {string} finance_id - Finance ID.
+ * @param {string} accountHolder - New account holder name.
+ * @returns {Promise<object>} Updated finances.
+ */
 const updateAccountHolder = async (finance_id, accountHolder) => {
 	try {
 		return await prisma.finances.update({
@@ -52,6 +84,13 @@ const updateAccountHolder = async (finance_id, accountHolder) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update the account number.
+ *
+ * @param {string} finance_id - Finance ID.
+ * @param {string} accountNumber - Account number.
+ * @returns {Promise<object>} Updated finances.
+ */
 const updateAccountNumber = async (finance_id, accountNumber) => {
 	try {
 		return await prisma.finances.update({
@@ -63,6 +102,13 @@ const updateAccountNumber = async (finance_id, accountNumber) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update the bank name.
+ *
+ * @param {string} finance_id - Finance ID.
+ * @param {string} bankName - Bank name.
+ * @returns {Promise<object>} Updated finances.
+ */
 const updateBankName = async (finance_id, bankName) => {
 	try {
 		return await prisma.finances.update({
@@ -74,6 +120,13 @@ const updateBankName = async (finance_id, bankName) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update the payment_preferences JSON field.
+ *
+ * @param {string} finance_id - Finance ID.
+ * @param {object} paymentPreferences - Preferences JSON.
+ * @returns {Promise<object>} Updated finances.
+ */
 const updatePaymentPreferences = async (finance_id, paymentPreferences) => {
 	try {
 		return await prisma.finances.update({
@@ -85,6 +138,12 @@ const updatePaymentPreferences = async (finance_id, paymentPreferences) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Delete a finances record by id.
+ *
+ * @param {string} finance_id - Finance ID.
+ * @returns {Promise<object>} Deleted finances.
+ */
 const deleteFinances = async (finance_id) => {
 	try {
 		return await prisma.finances.delete({
@@ -95,6 +154,13 @@ const deleteFinances = async (finance_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Link a finances record to a business.
+ *
+ * @param {string} businessId - Business ID.
+ * @param {string} financeId - Finance ID.
+ * @returns {Promise<object>} Updated business.
+ */
 const linkFinancesToBusiness = async (businessId, financeId) => {
 	try {
 		return await prisma.business.update({
@@ -112,6 +178,12 @@ const linkFinancesToBusiness = async (businessId, financeId) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Unlink finances from a business.
+ *
+ * @param {string} businessId - Business ID.
+ * @returns {Promise<object>} Updated business.
+ */
 const unlinkFinancesFromBusiness = async (businessId) => {
 	try {
 		return await prisma.business.update({
@@ -127,6 +199,12 @@ const unlinkFinancesFromBusiness = async (businessId) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get finances for a given business id.
+ *
+ * @param {string} business_id - Business ID.
+ * @returns {Promise<object|null>} Finances or null.
+ */
 const getFinanceRecordByBusinessId = async (business_id) => {
 	try {
 		const business = await prisma.business.findUnique({

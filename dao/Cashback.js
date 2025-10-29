@@ -1,5 +1,11 @@
 import prisma from '../prisma/prisma.js';
-import { CASHBACK_STATUS, CASHBACK_TYPE } from '../lib/constants.js';
+import { CASHBACK_STATUS } from '../lib/constants.js';
+/**
+ * Create a cashback entry.
+ *
+ * @param {object} data - Cashback payload (user_id, amount, type, status, order links, etc.).
+ * @returns {Promise<object>} Created cashback.
+ */
 const createCashback = async (data) => {
 	try {
 		return await prisma.cashback.create({
@@ -12,6 +18,12 @@ const createCashback = async (data) => {
 		throw error;
 	}
 };
+/**
+ * Get a user's cashback history ordered by earned_at desc.
+ *
+ * @param {string} user_id - User ID.
+ * @returns {Promise<object[]>} Cashback entries with taxi/delivery order includes.
+ */
 const getUserCashbackHistory = async (user_id) => {
 	try {
 		return prisma.cashback.findMany({
@@ -31,6 +43,13 @@ const getUserCashbackHistory = async (user_id) => {
 		throw error;
 	}
 };
+/**
+ * Get pending cashback for a user by type ordered by earned_at asc.
+ *
+ * @param {string} user_id - User ID.
+ * @param {string} type - Cashback type (CASHBACK_TYPE enum).
+ * @returns {Promise<object[]>} Pending cashback entries.
+ */
 const getPendingUserCashbackByType = async (user_id, type) => {
 	try {
 		return prisma.cashback.findMany({

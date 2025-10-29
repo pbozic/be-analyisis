@@ -1,5 +1,12 @@
 import prisma from '../prisma/prisma.js';
-// Add a new favorite business for a user
+/**
+ * Add a favorite business for a user.
+ *
+ * @param {string} user_id
+ * @param {string} business_id
+ * @param {string} business_type
+ * @returns {Promise<UserFavoriteBusiness>}
+ */
 const addFavoriteBusiness = async (user_id, business_id, business_type) => {
 	try {
 		return await prisma.user_favorite_businesses.create({
@@ -14,7 +21,12 @@ const addFavoriteBusiness = async (user_id, business_id, business_type) => {
 		throw new Error(error);
 	}
 };
-// Remove a favorite business for a user
+/**
+ * Remove a favorite business for a user.
+ *
+ * @param {string} user_favorite_businesses_id
+ * @returns {Promise<UserFavoriteBusiness>}
+ */
 const removeFavoriteBusiness = async (user_favorite_businesses_id) => {
 	try {
 		return await prisma.user_favorite_businesses.delete({
@@ -27,7 +39,13 @@ const removeFavoriteBusiness = async (user_favorite_businesses_id) => {
 		throw new Error(error);
 	}
 };
-// Get many favorite businesses by type for a user
+/**
+ * Get favorite businesses for a user, optionally filtered by business type.
+ *
+ * @param {string} user_id
+ * @param {string|null} business_type
+ * @returns {Promise<UserFavoriteBusiness[]>}
+ */
 const getFavoriteBusinesses = async (user_id, business_type = null) => {
 	try {
 		const whereClause = {

@@ -5,11 +5,7 @@
 
 **Summary**: Get scheduled users
 
-**Description**: This function fetches all scheduled users.
-
-**Request Body:** (required)
-Type: `application/json`
-Content-Type: `application/json`
+**Description**: Fetches all scheduled users.
 
 **Responses:**
 - 200
@@ -26,9 +22,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START login -->
 ### login
 
-**Summary**: User login procedure.
+**Summary**: User login
 
-**Description**: This verifies the user's credentials and responds with an access token and refresh token if successful.
+**Description**: Verifies user credentials and returns access and refresh tokens on success.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -43,7 +39,7 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/loginUser. )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/loginUser )
 
 <!-- DOCGEN:END login -->
 
@@ -52,7 +48,7 @@ Content-Type: `application/json`
 
 **Summary**: Register a new user
 
-**Description**: This endpoint is used to register a new user.
+**Description**: Registers a new user and returns user info with tokens.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -73,9 +69,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START refreshToken -->
 ### refreshToken
 
-**Summary**: Refreshes the user's access token
+**Summary**: Refresh access token
 
-**Description**: This endpoint is used to refresh the user's access and refresh tokens.
+**Description**: Refreshes the user's access and refresh tokens.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -99,7 +95,7 @@ Content-Type: `application/json`
 
 **Summary**: Request a password reset
 
-**Description**: This endpoint is used to request a password reset. It will generate and send a password reset token to the user.
+**Description**: Generates and sends a password reset token to the user via email or SMS.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -108,6 +104,10 @@ Content-Type: `application/json`
 **Responses:**
 - 200
 - 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestPasswordReset )
 
@@ -231,9 +231,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateScheduledUser -->
 ### updateScheduledUser
 
-**Summary**: Updates a scheduled user's details
+**Summary**: Update a scheduled user's details
 
-**Description**: This endpoint is used to update a scheduled user's details.
+**Description**: Updates a scheduled user's data and addresses.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -258,9 +258,11 @@ Content-Type: `application/json`
 
 **Description**: Checks if the provided email is already registered in the system.
 
-**Request Body:** (required)
-Type: `application/json`
-Content-Type: `application/json`
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | email |  |
 
 **Responses:**
 - 200
@@ -278,11 +280,13 @@ Content-Type: `application/json`
 
 **Summary**: Check if a telephone number is already taken
 
-**Description**: Checks if the provided telephone number is already registered in the system.
+**Description**: Checks if the provided telephone is already registered in the system.
 
-**Request Body:** (required)
-Type: `application/json`
-Content-Type: `application/json`
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | telephone |  |
 
 **Responses:**
 - 200
@@ -294,3 +298,46 @@ Content-Type: `application/json`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/checkTelephoneAvailability )
 
 <!-- DOCGEN:END checkTelephoneAvailability -->
+
+<!-- DOCGEN:START getMunicipalitiesWithLicenseRequirements -->
+### getMunicipalitiesWithLicenseRequirements
+
+**Summary**: List municipalities requiring license
+
+**Description**: Returns municipalities where requires_license is true.
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMunicipalitiesWithLicenseRequirements )
+
+<!-- DOCGEN:END getMunicipalitiesWithLicenseRequirements -->
+
+<!-- DOCGEN:START authenticateRegistrationSession -->
+### authenticateRegistrationSession
+
+**Summary**: Authenticate registration session
+
+**Description**: Authenticates user credentials and generates a registration session token.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/authenticateRegistrationSession )
+
+<!-- DOCGEN:END authenticateRegistrationSession -->

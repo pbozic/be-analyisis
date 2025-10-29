@@ -3,7 +3,7 @@ import { type payments, type payment_splits, type PAYMENT_METHOD, Prisma } from 
 import prisma from '../prisma/prisma.js';
 
 /**
- * Description placeholder
+ * Creates a new payment record.
  *
  * @export
  * @async
@@ -51,10 +51,8 @@ export async function createPayment(
 }
 
 /**
- * Description placeholder
+ * Gets a payment by its ID.
  *
- * @export
- * @async
  * @param {string} payment_id
  * @returns {Promise<payments | null>}
  */
@@ -83,10 +81,8 @@ export async function getPaymentById(
 }
 
 /**
- * Description placeholder
+ * Get a payment by its grouped daily meal subscription ID.
  *
- * @export
- * @async
  * @param {string} daily_meal_subscription_id
  * @returns {Promise<payments | null>}
  */
@@ -113,12 +109,9 @@ export async function getPaymentByGroupedId(daily_meal_subscription_id: string):
 }
 
 /**
- * Description placeholder
+ * Deletes a payment by its ID.
  *
- * @export
- * @async
  * @param {string} payment_id
- * @param {Partial<Pick<payments, 'amount' | 'credits_amount' | 'payment_method' | 'payment_intent_id' | 'status'>>} updates
  * @returns {Promise<payments>}
  */
 export async function updatePayment(
@@ -144,10 +137,8 @@ export async function updatePayment(
 }
 
 /**
- * Description placeholder
+ * Deletes a payment by its ID.
  *
- * @export
- * @async
  * @param {string} payment_id
  * @returns {Promise<payments>}
  */
@@ -171,10 +162,8 @@ export async function deletePayment(payment_id: string): Promise<payments> {
 }
 
 /**
- * Description placeholder
+ * List payments, optionally filtered by daily meal subscription ID.
  *
- * @export
- * @async
  * @param {(string | null)} [daily_meal_subscription_id=null]
  * @returns {Promise<payments[]>}
  */

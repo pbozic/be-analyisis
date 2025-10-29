@@ -901,3 +901,380 @@ Content-Type: `application/json`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/redeemReferralCode )
 
 <!-- DOCGEN:END redeemReferralCode -->
+
+<!-- DOCGEN:START requestToAddFundsToWallet -->
+### requestToAddFundsToWallet
+
+**Summary**: Create a payment intent to add funds to wallet
+
+**Description**: Creates a Stripe Payment Intent to top up the user's wallet. Validates amount, currency, and payment method.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestToAddFundsToWallet )
+
+<!-- DOCGEN:END requestToAddFundsToWallet -->
+
+<!-- DOCGEN:START requestPaymentIntent -->
+### requestPaymentIntent
+
+**Summary**: Create a general payment intent
+
+**Description**: Creates a Stripe Payment Intent for a platform charge scoped to the current user.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestPaymentIntent )
+
+<!-- DOCGEN:END requestPaymentIntent -->
+
+<!-- DOCGEN:START confirmPaymentIntent -->
+### confirmPaymentIntent
+
+**Summary**: Confirm a payment intent
+
+**Description**: Confirms a Stripe Payment Intent by id.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/confirmPaymentIntent )
+
+<!-- DOCGEN:END confirmPaymentIntent -->
+
+<!-- DOCGEN:START ping -->
+### ping
+
+**Summary**: Update last-ping for driver/delivery driver
+
+**Description**: Sets last_ping_at to now and marks driver or delivery driver as active based on current user.
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ping )
+
+<!-- DOCGEN:END ping -->
+
+<!-- DOCGEN:START getSelfScheduledOrders -->
+### getSelfScheduledOrders
+
+**Summary**: List my scheduled taxi orders
+
+**Description**: Returns pending scheduled taxi orders for the current user.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getSelfScheduledOrders )
+
+<!-- DOCGEN:END getSelfScheduledOrders -->
+
+<!-- DOCGEN:START getMyReviews -->
+### getMyReviews
+
+**Summary**: List my reviews
+
+**Description**: Returns reviews written for or by the current user, including author and target details.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMyReviews )
+
+<!-- DOCGEN:END getMyReviews -->
+
+<!-- DOCGEN:START getReviewsByUserId -->
+### getReviewsByUserId
+
+**Summary**: List reviews related to a user
+
+**Description**: Returns reviews for a given user or their business if they are a driver.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | user_id |  |
+
+**Responses:**
+- 200
+- 404
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getReviewsByUserId )
+
+<!-- DOCGEN:END getReviewsByUserId -->
+
+<!-- DOCGEN:START getTransactions -->
+### getTransactions
+
+**Summary**: List transactions for a user
+
+**Description**: Returns wallet and order related transactions for a user.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | user_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getTransactions )
+
+<!-- DOCGEN:END getTransactions -->
+
+<!-- DOCGEN:START getUserByReferralCode -->
+### getUserByReferralCode
+
+**Summary**: Get user by referral code
+
+**Description**: Finds a user by their referral code.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | code |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByReferralCode )
+
+<!-- DOCGEN:END getUserByReferralCode -->
+
+<!-- DOCGEN:START claimReward -->
+### claimReward
+
+**Summary**: Claim referral reward
+
+**Description**: Claims referral reward credits for the current user if eligible.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/claimReward )
+
+<!-- DOCGEN:END claimReward -->
+
+<!-- DOCGEN:START getUserCredits -->
+### getUserCredits
+
+**Summary**: Get my credits and cashback
+
+**Description**: Returns available and expired credits, and pending cashback for a given service type.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | service_type |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserCredits )
+
+<!-- DOCGEN:END getUserCredits -->
+
+<!-- DOCGEN:START getMyActiveOrders -->
+### getMyActiveOrders
+
+**Summary**: Get my active orders
+
+**Description**: Returns current active delivery, taxi/transfer orders and first active reservation.
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMyActiveOrders )
+
+<!-- DOCGEN:END getMyActiveOrders -->
+
+<!-- DOCGEN:START getReferral -->
+### getReferral
+
+**Summary**: Get my referral record
+
+**Description**: Returns the referral record associated with the current user, if any.
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getReferral )
+
+<!-- DOCGEN:END getReferral -->
+
+<!-- DOCGEN:START updateMarketingNotifications -->
+### updateMarketingNotifications
+
+**Summary**: Update marketing notifications preference
+
+**Description**: Updates the user's marketing notifications preference flags.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMarketingNotifications )
+
+<!-- DOCGEN:END updateMarketingNotifications -->
+
+<!-- DOCGEN:START updateAdsPersonalization -->
+### updateAdsPersonalization
+
+**Summary**: Update ads personalization preference
+
+**Description**: Updates the user's ads personalization preference flags.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAdsPersonalization )
+
+<!-- DOCGEN:END updateAdsPersonalization -->
+
+<!-- DOCGEN:START updateNewsletter -->
+### updateNewsletter
+
+**Summary**: Update newsletter subscription preference
+
+**Description**: Updates the user's newsletter preference flags.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateNewsletter )
+
+<!-- DOCGEN:END updateNewsletter -->
+
+<!-- DOCGEN:START requestData -->
+### requestData
+
+**Summary**: Request my stored data (GDPR)
+
+**Description**: Returns a comprehensive snapshot of the current user's stored data across related models.
+
+**Responses:**
+- 200
+- 400
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestData )
+
+<!-- DOCGEN:END requestData -->

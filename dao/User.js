@@ -6,6 +6,12 @@ import { addFileToDocument } from './File.js';
 import S3Helper from '../lib/s3.js';
 import { USER_ROLE, ACCOUNT_ACTIONS } from '../lib/constants.js';
 import WalletFundsDao from './WalletFunds.js';
+/**
+ * Get users with optional prisma args and child/parent includes.
+ *
+ * @param {object} args - Prisma findMany args.
+ * @returns {Promise<object[]>} Users.
+ */
 const getUsers = async (args) => {
 	try {
 		return prisma.users.findMany({
@@ -20,6 +26,13 @@ const getUsers = async (args) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get a user by id including business user and address info.
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} args - Additional Prisma args to merge.
+ * @returns {Promise<object|null>} User or null.
+ */
 const getUserById = async (user_id, args) => {
 	try {
 		return prisma.users.findUnique({
@@ -43,6 +56,13 @@ const getUserById = async (user_id, args) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get a user by referral code.
+ *
+ * @param {string} code - Referral code.
+ * @param {object} args - Additional Prisma args.
+ * @returns {Promise<object|null>} User or null.
+ */
 const getUserByReferralCode = async (code, args) => {
 	try {
 		return prisma.users.findUnique({
@@ -55,6 +75,11 @@ const getUserByReferralCode = async (code, args) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get scheduled daily meal users, ordered by merchant daily_users_sorted if configured.
+ *
+ * @returns {Promise<object[]>} Scheduled users with addresses.
+ */
 const getScheduledUsers = async () => {
 	try {
 		const merchantBusiness = await prisma.business.findFirst({
@@ -96,6 +121,13 @@ const getScheduledUsers = async () => {
 		throw error;
 	}
 };
+/**
+ * Find a user by matching email or telephone fields.
+ *
+ * @param {string} query - Email or telephone to match.
+ * @param {object} args - Additional Prisma args.
+ * @returns {Promise<object|null>} User or null.
+ */
 const getUserByEmailOrTelephone = async (query, args) => {
 	try {
 		return prisma.users.findFirst({
@@ -118,6 +150,13 @@ const getUserByEmailOrTelephone = async (query, args) => {
 		return new Error(error);
 	}
 };
+/**
+ * Find a user by email.
+ *
+ * @param {string} query - Email.
+ * @param {object} args - Additional Prisma args.
+ * @returns {Promise<object|null>} User or null.
+ */
 const getUserByEmail = async (query, args) => {
 	try {
 		return prisma.users.findFirst({
@@ -130,6 +169,13 @@ const getUserByEmail = async (query, args) => {
 		return new Error(error);
 	}
 };
+/**
+ * Find a user by telephone.
+ *
+ * @param {string} query - Telephone string.
+ * @param {object} args - Additional Prisma args.
+ * @returns {Promise<object|null>} User or null.
+ */
 const getUserByTelephone = async (query, args) => {
 	try {
 		console.log('getUserByTelephone called with query:', query);
@@ -145,6 +191,13 @@ const getUserByTelephone = async (query, args) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get reset token row with included user by token string.
+ *
+ * @param {string} resetToken - Reset token.
+ * @param {object} args - Additional Prisma args.
+ * @returns {Promise<object|null>} Token row or null.
+ */
 const getUserByResetToken = async (resetToken, args) => {
 	try {
 		return prisma.tokens.findUnique({
@@ -160,6 +213,13 @@ const getUserByResetToken = async (resetToken, args) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get a user by unique email.
+ *
+ * @param {string} email - Email.
+ * @param {object} args - Additional Prisma args.
+ * @returns {Promise<object|null>} User or null.
+ */
 const getUser = async (email, args) => {
 	try {
 		return prisma.users.findUnique({
@@ -172,6 +232,13 @@ const getUser = async (email, args) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update user general fields (excludes email, password, telephone, addresses, role).
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} user - Fields to update.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUser = async (user_id, user) => {
 	try {
 		// We do not allow the user to update their email, password, telephone, user_role, or addresses in a general update
@@ -195,6 +262,13 @@ const updateUser = async (user_id, user) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update user including adding address include for scheduled users.
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} user - Fields to update.
+ * @returns {Promise<object>} Updated user with addresses included.
+ */
 const updateScheduledUser = async (user_id, user) => {
 	try {
 		return await prisma.users.update({
@@ -217,6 +291,13 @@ const updateScheduledUser = async (user_id, user) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update user email.
+ *
+ * @param {string} user_id - User ID.
+ * @param {string} email - New email.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateEmail = async (user_id, email) => {
 	try {
 		return prisma.users.update({
@@ -231,6 +312,13 @@ const updateEmail = async (user_id, email) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update user telephone fields.
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} telephone - Telephone fields (telephone, telephone_code, telephone_number).
+ * @returns {Promise<object>} Updated user.
+ */
 const updateTelephone = async (user_id, telephone) => {
 	try {
 		return prisma.users.update({
@@ -245,6 +333,13 @@ const updateTelephone = async (user_id, telephone) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update user password (hashed upstream).
+ *
+ * @param {string} user_id - User ID.
+ * @param {string} password - Hashed password.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserPassword = async (user_id, password) => {
 	try {
 		return prisma.users.update({
@@ -259,6 +354,13 @@ const updateUserPassword = async (user_id, password) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update user role.
+ *
+ * @param {string} user_id - User ID.
+ * @param {string} user_role - Role enum value.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserType = async (user_id, user_role) => {
 	try {
 		return prisma.users.update({
@@ -273,6 +375,13 @@ const updateUserType = async (user_id, user_role) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update taxi preferences JSON for user.
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} taxiPreferences - JSON preferences.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserTaxiPreferences = async (user_id, taxiPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -283,6 +392,13 @@ const updateUserTaxiPreferences = async (user_id, taxiPreferences) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update user's date of birth.
+ *
+ * @param {string} user_id - User ID.
+ * @param {string|Date} dateOfBirth - Date of birth.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserDateOfBirth = async (user_id, dateOfBirth) => {
 	try {
 		return await prisma.users.update({
@@ -293,6 +409,15 @@ const updateUserDateOfBirth = async (user_id, dateOfBirth) => {
 		return new Error(error);
 	}
 };
+/**
+ * Suspend/unsuspend user and log account action in a transaction.
+ *
+ * @param {string} user_id - User ID.
+ * @param {boolean} disabled - Disabled flag.
+ * @param {string} action_creator_user_id - Admin user ID.
+ * @param {string} reason - Reason text.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserDisabled = async (user_id, disabled, action_creator_user_id, reason) => {
 	try {
 		return await prisma.$transaction(async (tx) => {
@@ -315,6 +440,13 @@ const updateUserDisabled = async (user_id, disabled, action_creator_user_id, rea
 		throw new Error('Failed to update user status');
 	}
 };
+/**
+ * Update general notification preferences JSON.
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} notificationPreferences - Preferences JSON.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserNotificationPreferences = async (user_id, notificationPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -325,6 +457,13 @@ const updateUserNotificationPreferences = async (user_id, notificationPreference
 		return new Error(error);
 	}
 };
+/**
+ * Update taxi push notification preferences JSON.
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} pushNotificationPreferences - Preferences JSON.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserTaxiPushNotifications = async (user_id, pushNotificationPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -335,6 +474,13 @@ const updateUserTaxiPushNotifications = async (user_id, pushNotificationPreferen
 		return new Error(error);
 	}
 };
+/**
+ * Update transfer push notification preferences JSON.
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} pushNotificationPreferences - Preferences JSON.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserTransferPushNotifications = async (user_id, pushNotificationPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -345,6 +491,13 @@ const updateUserTransferPushNotifications = async (user_id, pushNotificationPref
 		return new Error(error);
 	}
 };
+/**
+ * Update delivery push notification preferences JSON.
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} pushNotificationPreferences - Preferences JSON.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserDeliveryPushNotifications = async (user_id, pushNotificationPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -355,6 +508,13 @@ const updateUserDeliveryPushNotifications = async (user_id, pushNotificationPref
 		return new Error(error);
 	}
 };
+/**
+ * Update spicy preferences JSON.
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} spicyPreferences - Preferences JSON.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserSpicyPreferences = async (user_id, spicyPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -365,6 +525,13 @@ const updateUserSpicyPreferences = async (user_id, spicyPreferences) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update transfer preferences JSON.
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} transfer_preferences - Preferences JSON.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserTransferPreferences = async (user_id, transfer_preferences) => {
 	try {
 		return await prisma.users.update({
@@ -375,6 +542,13 @@ const updateUserTransferPreferences = async (user_id, transfer_preferences) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update radio preferences JSON.
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} radioPreferences - Preferences JSON.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserRadioPreferences = async (user_id, radioPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -385,6 +559,13 @@ const updateUserRadioPreferences = async (user_id, radioPreferences) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update allergies preferences JSON.
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} allergiesPreferences - Preferences JSON.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserAllergiesPreferences = async (user_id, allergiesPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -395,6 +576,13 @@ const updateUserAllergiesPreferences = async (user_id, allergiesPreferences) => 
 		return new Error(error);
 	}
 };
+/**
+ * Set phone verified flag.
+ *
+ * @param {string} user_id - User ID.
+ * @param {boolean} telephoneVerified - Verified flag.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserTelephoneVerified = async (user_id, telephoneVerified) => {
 	try {
 		return await prisma.users.update({
@@ -405,6 +593,14 @@ const updateUserTelephoneVerified = async (user_id, telephoneVerified) => {
 		return new Error(error);
 	}
 };
+/**
+ * Create a new user; optionally hash password and enforce unique email; drivers inactive by default.
+ *
+ * @param {object} user - User payload.
+ * @param {boolean} [hashPassword=false] - Whether to hash user.password.
+ * @param {object} [tx=prisma] - Prisma transaction/client.
+ * @returns {Promise<object>} Created user with relations.
+ */
 const createNewUser = async (user, hashPassword = false, tx = prisma) => {
 	try {
 		let newUser = user;
@@ -566,6 +762,12 @@ const createNewUser = async (user, hashPassword = false, tx = prisma) => {
 // 		  throw error;
 // 		}
 // }
+/**
+ * Delete user by id.
+ *
+ * @param {string} userId - User ID.
+ * @returns {Promise<object>} Deleted user.
+ */
 async function deleteUserByUserId(userId) {
 	try {
 		return await prisma.users.delete({
@@ -578,6 +780,14 @@ async function deleteUserByUserId(userId) {
 		throw error;
 	}
 }
+/**
+ * Create wallet funds record for a user and optionally attach documents and upload files to S3.
+ *
+ * @param {string} userId - User ID.
+ * @param {number} amount - Amount in currency units (not cents).
+ * @param {object[]} documents - Optional documents array with base64 files to persist.
+ * @returns {Promise<object>} Created wallet funds transaction.
+ */
 const updateWalletBalance = async (userId, amount, documents) => {
 	try {
 		const newTransaction = await WalletFundsDao.createWalletFunds(userId, Math.round(amount * 100));
@@ -630,6 +840,12 @@ const updateWalletBalance = async (userId, amount, documents) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get transactions for a user.
+ *
+ * @param {string} userId - User ID.
+ * @returns {Promise<object[]>} Transactions.
+ */
 const getTransactions = async (userId) => {
 	try {
 		return await prisma.transactions.findMany({
@@ -642,6 +858,13 @@ const getTransactions = async (userId) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update user's language preference.
+ *
+ * @param {string} user_id - User ID.
+ * @param {string} language - Language code.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserLanguage = async (user_id, language) => {
 	try {
 		return prisma.users.update({
@@ -656,6 +879,12 @@ const updateUserLanguage = async (user_id, language) => {
 		return new Error(error);
 	}
 };
+/**
+ * Anonymize user's personal data and mark phone as unverified.
+ *
+ * @param {string} user_id - User ID.
+ * @returns {Promise<object>} Updated user.
+ */
 const wipeUserPersonalData = async (user_id) => {
 	try {
 		const disabled_count = await prisma.users.count({
@@ -682,6 +911,15 @@ const wipeUserPersonalData = async (user_id) => {
 		return new Error(error);
 	}
 };
+/**
+ * Activate/deactivate user and log account action in a transaction.
+ *
+ * @param {string} user_id - User ID.
+ * @param {boolean} active - Active flag.
+ * @param {string} action_creator_user_id - Admin user ID.
+ * @param {string} reason - Reason text.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserActive = async (user_id, active, action_creator_user_id, reason) => {
 	try {
 		return await prisma.$transaction(async (tx) => {
@@ -704,6 +942,13 @@ const updateUserActive = async (user_id, active, action_creator_user_id, reason)
 		throw new Error('Failed to update user active status');
 	}
 };
+/**
+ * Set Stripe customer id for user.
+ *
+ * @param {string} user_id - User ID.
+ * @param {string} customer_id - Stripe customer id.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateStripeCustomerId = async (user_id, customer_id) => {
 	try {
 		return prisma.users.update({
@@ -718,6 +963,13 @@ const updateStripeCustomerId = async (user_id, customer_id) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update user credit fields.
+ *
+ * @param {string} user_id - User ID.
+ * @param {object} updateData - Fields to update.
+ * @returns {Promise<object>} Updated user.
+ */
 const addCredits = async (user_id, updateData) => {
 	try {
 		return prisma.users.update({
@@ -730,6 +982,13 @@ const addCredits = async (user_id, updateData) => {
 		return new Error(err);
 	}
 };
+/**
+ * Toggle marketing push notification preference.
+ *
+ * @param {string} user_id - User ID.
+ * @param {boolean} data - New value.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserMarketingNotifications = async (user_id, data) => {
 	try {
 		return prisma.users.update({
@@ -744,6 +1003,13 @@ const updateUserMarketingNotifications = async (user_id, data) => {
 		return new Error(err);
 	}
 };
+/**
+ * Toggle ads personalization preference.
+ *
+ * @param {string} user_id - User ID.
+ * @param {boolean} data - New value.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserAdsPersonalization = async (user_id, data) => {
 	try {
 		return prisma.users.update({
@@ -758,6 +1024,13 @@ const updateUserAdsPersonalization = async (user_id, data) => {
 		return new Error(err);
 	}
 };
+/**
+ * Toggle newsletter subscription.
+ *
+ * @param {string} user_id - User ID.
+ * @param {boolean} data - New value.
+ * @returns {Promise<object>} Updated user.
+ */
 const updateUserNewsletter = async (user_id, data) => {
 	try {
 		return prisma.users.update({
@@ -772,6 +1045,14 @@ const updateUserNewsletter = async (user_id, data) => {
 		return new Error(err);
 	}
 };
+/**
+ * Link one or more role rows to a user (supports transaction client).
+ *
+ * @param {string} user_id - User ID.
+ * @param {object[]} roles - Role payloads to create and link.
+ * @param {object} [tx=prisma] - Prisma transaction/client.
+ * @returns {Promise<object[]>} Created role rows.
+ */
 const linkRolesToUser = async (user_id, roles, tx = prisma) => {
 	try {
 		if (Array.isArray(roles)) {

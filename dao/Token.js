@@ -3,6 +3,12 @@ import crypto from 'crypto';
 import { TokenType } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
+/**
+ * Find an active password reset token by token string.
+ *
+ * @param {string} token - Token string.
+ * @returns {Promise<object|null>} Token row or null.
+ */
 async function getPasswordToken(token) {
 	try {
 		return prisma.tokens.findFirst({
@@ -15,6 +21,12 @@ async function getPasswordToken(token) {
 		return new Error(e);
 	}
 }
+/**
+ * Get the active SMS verification token for a user (if any).
+ *
+ * @param {object} user - User object with user_id.
+ * @returns {Promise<object|null>} Active token or null.
+ */
 async function getActiveSMSToken(user) {
 	try {
 		return prisma.tokens.findFirst({
@@ -28,6 +40,13 @@ async function getActiveSMSToken(user) {
 		return new Error(e);
 	}
 }
+/**
+ * Update a token by id.
+ *
+ * @param {string} token_id - Token ID.
+ * @param {object} data - Fields to update.
+ * @returns {Promise<object>} Updated token.
+ */
 const updateToken = async (token_id, data) => {
 	try {
 		return prisma.tokens.update({
@@ -40,6 +59,12 @@ const updateToken = async (token_id, data) => {
 		return new Error(e);
 	}
 };
+/**
+ * Save a PHONE_VERIFICATION token for a user, deactivating previous ones.
+ *
+ * @param {object} token - Token payload (user_id, token, expires_at).
+ * @returns {Promise<object>} Created token.
+ */
 const saveSMSToken = async (token) => {
 	try {
 		await prisma.tokens.updateMany({
@@ -62,6 +87,12 @@ const saveSMSToken = async (token) => {
 		return new Error(e);
 	}
 };
+/**
+ * Save a PASSWORD_RESET token for a user, deactivating previous ones.
+ *
+ * @param {object} token - Token payload (user_id, token, expires_at).
+ * @returns {Promise<object>} Created token.
+ */
 const savePasswordResetToken = async (token) => {
 	try {
 		await prisma.tokens.updateMany({
@@ -84,6 +115,12 @@ const savePasswordResetToken = async (token) => {
 		return new Error(e);
 	}
 };
+/**
+ * Generate and persist a new SMS verification token for a user.
+ *
+ * @param {object} user - User object with user_id.
+ * @returns {Promise<object>} Created token.
+ */
 async function generateSMSVerificationToken(user) {
 	let tokenObj = {
 		user_id: user.user_id,
@@ -95,6 +132,12 @@ async function generateSMSVerificationToken(user) {
 	// TODO: send SMS
 	return token;
 }
+/**
+ * Generate a unique password reset token and persist it for a user.
+ *
+ * @param {object} user - User object with user_id.
+ * @returns {Promise<object>} Created token.
+ */
 async function generatePaswordResetToken(user) {
 	let tokenHash = crypto.randomBytes(20).toString('hex');
 	const resetTokenExpires = Date.now() + 3600000 * 24; // 1 hour from now
@@ -121,6 +164,12 @@ async function generatePaswordResetToken(user) {
 	//TODO: send email
 	return token;
 }
+/**
+ * Generate a short-lived BUSINESS_REGISTRATION session token for a user.
+ *
+ * @param {object} user - User object with user_id.
+ * @returns {Promise<object>} Created token.
+ */
 async function generateRegistrationSessionToken(user) {
 	let tokenObj = {
 		user_id: user.user_id,
@@ -130,6 +179,12 @@ async function generateRegistrationSessionToken(user) {
 	};
 	return await prisma.tokens.create({ data: tokenObj });
 }
+/**
+ * Validate a BUSINESS_REGISTRATION token string and return token including user->business_users->business.
+ *
+ * @param {string} tokenString - Token string to validate.
+ * @returns {Promise<object|null>} Token row or null if invalid/expired.
+ */
 async function validateRegistrationSessionToken(tokenString) {
 	return await prisma.tokens.findFirst({
 		where: {

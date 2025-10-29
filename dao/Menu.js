@@ -1,6 +1,14 @@
 import moment from 'moment';
 
 import prisma from '../prisma/prisma.js';
+/**
+ * Create a new menu for a business.
+ *
+ * @param {string} business_id - The business ID to create the menu for.
+ * @param {boolean} [isDailyMeal=false] - Whether the menu is a daily meal menu.
+ * @param {string|Date|null} [date] - Optional date for daily meal menus.
+ * @returns {Promise<object>} The created menu record.
+ */
 const createMenu = async (business_id, isDailyMeal = false, date) => {
 	return await prisma.menus.create({
 		data: {
@@ -11,6 +19,14 @@ const createMenu = async (business_id, isDailyMeal = false, date) => {
 		},
 	});
 };
+/**
+ * List active menus for a business, optionally filtering daily meal menus by start date.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {boolean} [isDailyMeal=false] - Whether to fetch daily meal menus.
+ * @param {Date|null} [startDate=null] - Start date for filtering daily meal menus.
+ * @returns {Promise<object[]>} Array of menu records with categories and items.
+ */
 const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate = null) => {
 	let extraWhereArgs = {};
 	if (isDailyMeal) {
@@ -87,6 +103,12 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 	// });
 	return menus;
 };
+/**
+ * Delete a menu by ID.
+ *
+ * @param {string} menu_id - Menu ID.
+ * @returns {Promise<object>} The deleted menu record.
+ */
 const deleteMenu = async (menu_id) => {
 	return await prisma.menus.delete({
 		where: {
@@ -94,6 +116,13 @@ const deleteMenu = async (menu_id) => {
 		},
 	});
 };
+/**
+ * Set a menu's active flag.
+ *
+ * @param {string} menu_id - Menu ID.
+ * @param {boolean} active - New active state.
+ * @returns {Promise<object>} The updated menu record.
+ */
 const setActiveMenu = async (menu_id, active) => {
 	return await prisma.menus.update({
 		where: {
@@ -104,6 +133,13 @@ const setActiveMenu = async (menu_id, active) => {
 		},
 	});
 };
+/**
+ * Update the order of menu categories for a menu by setting menu_order_index.
+ *
+ * @param {string} menu_id - Menu ID.
+ * @param {string[]} orderedMenuCategoryIds - Ordered list of menu_category IDs belonging to the menu.
+ * @returns {Promise<object>} The updated menu record with menu_categories_ordered set.
+ */
 const updateMenuOrder = async (menu_id, orderedMenuCategoryIds) => {
 	return await prisma.$transaction(async (tx) => {
 		const validCategories = await tx.menu_categories.findMany({
@@ -133,6 +169,13 @@ const updateMenuOrder = async (menu_id, orderedMenuCategoryIds) => {
 		});
 	});
 };
+/**
+ * Get a daily meal menu for a business by date (same day match).
+ *
+ * @param {string} business_id - Business ID.
+ * @param {Date|string} date - Target date.
+ * @returns {Promise<object|null>} The menu record or null if not found.
+ */
 const getMenuByDate = async (business_id, date) => {
 	const startOfDay = new Date(date);
 	startOfDay.setHours(0, 0, 0, 0);
@@ -165,6 +208,12 @@ const getMenuByDate = async (business_id, date) => {
 		},
 	});
 };
+/**
+ * Get a menu by its ID with categories and items.
+ *
+ * @param {string} menu_id - Menu ID.
+ * @returns {Promise<object|null>} The menu record or null if not found.
+ */
 const getMenuById = async (menu_id) => {
 	return await prisma.menus.findUnique({
 		where: {

@@ -1,5 +1,11 @@
 import prisma from '../prisma/prisma.js';
 import { SERVICE_TYPE } from '../lib/constants.js';
+/**
+ * Get group_users row by parent user id.
+ *
+ * @param {string} parent_id - Parent user ID.
+ * @returns {Promise<object|null>} group_users row or null.
+ */
 const getGroupUsersByParentId = async (parent_id) => {
 	try {
 		return await prisma.group_users.findUnique({
@@ -12,6 +18,12 @@ const getGroupUsersByParentId = async (parent_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get group_user by child user id with parent_user and allowance included.
+ *
+ * @param {string} child_id - Child user ID.
+ * @returns {Promise<object|null>} group_user row or null.
+ */
 const getGroupUserByChildId = async (child_id) => {
 	try {
 		return await prisma.group_users.findFirst({
@@ -25,6 +37,12 @@ const getGroupUserByChildId = async (child_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Create a group_user link between parent and child users and bootstrap allowance.
+ *
+ * @param {object} group_user_data - Contains parent_user_id and child_user_id.
+ * @returns {Promise<object>} Created group_user.
+ */
 const createGroupUser = async (group_user_data) => {
 	const group_user = await prisma.group_users.create({
 		data: {
@@ -43,11 +61,24 @@ const createGroupUser = async (group_user_data) => {
 	});
 	return group_user;
 };
+/**
+ * Delete a group_user by id.
+ *
+ * @param {string} group_user_id - Group user ID.
+ * @returns {Promise<object>} Deleted group_user.
+ */
 const deleteGroupUser = async (group_user_id) => {
 	return await prisma.group_users.delete({
 		where: { group_user_id: group_user_id },
 	});
 };
+/**
+ * Toggle a group_user enabled flag.
+ *
+ * @param {string} group_user_id - Group user ID.
+ * @param {boolean} value - Enabled value.
+ * @returns {Promise<object>} Updated group_user.
+ */
 const updateGroupUserEnabled = async (group_user_id, value) => {
 	console.log('UPDATE ENABLED FOR GROUP_USER: ', group_user_id, ' TO VALUE: ', value);
 	return await prisma.group_users.update({
@@ -59,6 +90,14 @@ const updateGroupUserEnabled = async (group_user_id, value) => {
 		},
 	});
 };
+/**
+ * Update allowance amounts for a group_user by service type; creates allowance if missing.
+ *
+ * @param {string} group_user_id - Group user ID.
+ * @param {number} value - New allowance value.
+ * @param {string} type - Service type (SERVICE_TYPE enum).
+ * @returns {Promise<object>} group_user with allowance included.
+ */
 const updateGroupUserAllowance = async (group_user_id, value, type) => {
 	const updateData = {};
 	switch (type) {

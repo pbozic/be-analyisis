@@ -137,6 +137,7 @@ Content-Type: `application/json`
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
+- Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBusinessUser )
 
@@ -162,6 +163,7 @@ Content-Type: `application/json`
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeBusinessUser )
 
@@ -191,6 +193,7 @@ Content-Type: `application/json`
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addOperatingAddress )
 
@@ -220,6 +223,7 @@ Content-Type: `application/json`
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateCompanyRole )
 
@@ -249,6 +253,7 @@ Content-Type: `application/json`
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBusinessUserOnlineStatus )
 
@@ -274,6 +279,7 @@ Content-Type: `application/json`
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getGroupUsersByParentId )
 
@@ -297,7 +303,9 @@ Content-Type: `application/json`
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateChildUserAllowance )
 
 <!-- DOCGEN:END setAllowance -->
+

@@ -124,12 +124,6 @@ Content-Type: `application/json`
 
 **Description**: Updates the active status of a menu.
 
-**Parameters:**
-
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | menu_id |  |
-
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
@@ -272,7 +266,7 @@ Content-Type: `application/json`
 
 | Name | In | Type | Description |
 |------|----|------|-------------|
-| undefined | path | category_id |  |
+| undefined | path | menu_category_id |  |
 
 **Responses:**
 - 200
@@ -389,12 +383,6 @@ Content-Type: `application/json`
 
 **Description**: Updates a menu category by its ID.
 
-**Parameters:**
-
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | menu_category_id |  |
-
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
@@ -418,12 +406,6 @@ Content-Type: `application/json`
 
 **Description**: Updates a menu order by the menu category IDs.
 
-**Parameters:**
-
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | menu_id |  |
-
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
@@ -446,12 +428,6 @@ Content-Type: `application/json`
 **Summary**: Update a menu items order
 
 **Description**: Updates a menu items order by the menu items IDs.
-
-**Parameters:**
-
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | menu_category_id |  |
 
 **Request Body:** (required)
 Type: `application/json`
@@ -522,6 +498,12 @@ Content-Type: `application/json`
 
 **Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
 **Responses:**
 - 200
 - 404
@@ -565,12 +547,6 @@ Content-Type: `application/json`
 
 **Description**: Updates a menu item by its ID.
 
-**Parameters:**
-
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | menu_item_id |  |
-
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
@@ -593,12 +569,6 @@ Content-Type: `application/json`
 **Summary**: Update a menu item enabled field
 
 **Description**: Updates a menu item by its ID.
-
-**Parameters:**
-
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | menu_item_id |  |
 
 **Request Body:** (required)
 Type: `application/json`
@@ -652,12 +622,6 @@ Content-Type: `application/json`
 
 **Description**: Add menu item to a category.
 
-**Parameters:**
-
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | menu_item_id |  |
-
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
@@ -680,12 +644,6 @@ Content-Type: `application/json`
 **Summary**: Remove menu item from category
 
 **Description**: Removes a menu item from its category.
-
-**Parameters:**
-
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | menu_item_id |  |
 
 **Responses:**
 - 200
@@ -762,3 +720,152 @@ Content-Type: `application/json`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItemVersion )
 
 <!-- DOCGEN:END createMenuItemVersion -->
+
+<!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
+### deleteDocumentsAndFilesByDocumentId
+
+**Summary**: Delete documents and files by field and id
+
+**Description**: Deletes all documents and associated files based on the provided field and id.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | field |  |
+| undefined | path | id |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteDocumentsAndFilesByDocumentId )
+
+<!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
+
+<!-- DOCGEN:START getMenuItemsByDate -->
+### getMenuItemsByDate
+
+**Summary**: Get menu items by date
+
+**Description**: Retrieves menu items for a business on a specific date.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+| undefined | path | date |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByDate )
+
+<!-- DOCGEN:END getMenuItemsByDate -->
+
+<!-- DOCGEN:START getMenuByDate -->
+### getMenuByDate
+
+**Summary**: Get menu by date
+
+**Description**: Retrieves a menu for a business on a specific date.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+| undefined | path | date |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByDate )
+
+<!-- DOCGEN:END getMenuByDate -->
+
+<!-- DOCGEN:START updateDailyMealMenuPrice -->
+### updateDailyMealMenuPrice
+
+**Summary**: Update daily meal menu price
+
+**Description**: Updates the price for a daily meal menu category.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDailyMealMenuPrice )
+
+<!-- DOCGEN:END updateDailyMealMenuPrice -->
+
+<!-- DOCGEN:START getMenuItemsByIds -->
+### getMenuItemsByIds
+
+**Summary**: Get menu items by IDs
+
+**Description**: Retrieves menu items by list of ids for a business.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByIds )
+
+<!-- DOCGEN:END getMenuItemsByIds -->
+
+<!-- DOCGEN:START getActiveTaxRates -->
+### getActiveTaxRates
+
+**Summary**: Get active tax rates
+
+**Description**: Retrieves all active tax rates.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveTaxRates )
+
+<!-- DOCGEN:END getActiveTaxRates -->

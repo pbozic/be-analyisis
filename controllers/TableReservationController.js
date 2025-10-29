@@ -1,4 +1,4 @@
-import ReservationDao from '../dao/Reservation.js';
+import ReservationDao from '../dao/TableReservation.js';
 import socket from '../socket.js';
 import prisma from '../prisma/prisma.js';
 const { UserSockets, io } = socket;

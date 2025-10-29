@@ -462,3 +462,4 @@ Content-Type: `application/json`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDriverTotalEarnings )
 
 <!-- DOCGEN:END getDriverTotalEarnings -->
+

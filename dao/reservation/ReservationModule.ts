@@ -9,7 +9,12 @@ import type {
 	UpdateReservationModuleInput,
 	UpdateReservationSettingsInput,
 } from '../../types/reservation/ReservationModule.ts';
-
+/**
+ * Generates a unique reservation hash.
+ *
+ * @param {TPrisma.TransactionClient | null} tx
+ * @returns {Promise<string>}
+ */
 async function generateUniqueReservationHash(tx: TPrisma.TransactionClient | null): Promise<string> {
 	let unique = false;
 	let public_link_hash: string;
@@ -33,6 +38,10 @@ async function generateUniqueReservationHash(tx: TPrisma.TransactionClient | nul
 
 /**
  * Retrieves a reservation module by its ID.
+ *
+ * @param {string} reservationModuleId
+ * @param {TPrisma.TransactionClient | undefined} tx
+ * @returns {Promise<ReservationModule | null>}
  */
 export async function getReservationModuleById(
 	reservationModuleId: string,
@@ -56,6 +65,10 @@ export async function getReservationModuleById(
 
 /**
  * Retrieves a reservation module by its business ID.
+ *
+ * @param {string} businessId
+ * @param {TPrisma.TransactionClient | undefined} tx
+ * @returns {Promise<ReservationModule | null>}
  */
 export async function getReservationModuleByBusinessId(
 	businessId: string,
@@ -74,6 +87,10 @@ export async function getReservationModuleByBusinessId(
 
 /**
  * Creates a new reservation module.
+ *
+ * @param {string} business_id
+ * @param {TPrisma.TransactionClient | undefined} tx
+ * @returns {Promise<ReservationModule>}
  */
 export async function createReservationModule(
 	business_id: string,
@@ -94,6 +111,11 @@ export async function createReservationModule(
 
 /**
  * Updates an existing reservation module.
+ *
+ * @param {string} reservationModuleId
+ * @param {UpdateReservationModuleInput} data
+ * @param {TPrisma.TransactionClient | undefined} tx
+ * @returns {Promise<ReservationModule>}
  */
 export async function updateReservationModule(
 	reservationModuleId: string,
@@ -120,6 +142,11 @@ export async function updateReservationModule(
 
 /**
  * Updates an existing reservation module.
+ *
+ * @param {string} reservationModuleId
+ * @param {UpdateReservationSettingsInput} data
+ * @param {TPrisma.TransactionClient | undefined} tx
+ * @returns {Promise<ReservationModule>}
  */
 export async function updateReservationModuleSettings(
 	reservationModuleId: string,
@@ -143,6 +170,10 @@ export async function updateReservationModuleSettings(
 
 /**
  * Deletes a reservation module by its ID.
+ *
+ * @param {string} reservationModuleId
+ * @param {TPrisma.TransactionClient | undefined} tx
+ * @returns {Promise<void>}
  */
 export async function deleteReservationModule(
 	reservationModuleId: string,
@@ -160,6 +191,10 @@ export async function deleteReservationModule(
 
 /**
  * Disables a reservation module (soft) by setting publicly_visible to false.
+ *
+ * @param {string} reservationModuleId
+ * @param {TPrisma.TransactionClient | undefined} tx
+ * @returns {Promise<ReservationModule>}
  */
 export async function disableReservations(
 	reservationModuleId: string,
@@ -178,6 +213,10 @@ export async function disableReservations(
 
 /**
  * Enables a reservation module by setting publicly_visible to true.
+ *
+ * @param {string} reservationModuleId
+ * @param {TPrisma.TransactionClient | undefined} tx
+ * @returns {Promise<ReservationModule>}
  */
 export async function enableReservations(
 	reservationModuleId: string,
@@ -196,6 +235,10 @@ export async function enableReservations(
 
 /**
  * Retrieves a reservation module by its public link hash.
+ *
+ * @param {string} hash_or_businessid
+ * @param {TPrisma.TransactionClient | undefined} tx
+ * @returns {Promise<ReservationModule | null>}
  */
 export async function getReservationModuleByPublicLinkHashOrBusinessId(
 	hash_or_businessid: string,

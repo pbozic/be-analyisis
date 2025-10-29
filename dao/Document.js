@@ -1,5 +1,9 @@
 import prisma from '../prisma/prisma.js';
-import { updateFileInDocument } from './File.js';
+/**
+ * Get all documents with their files.
+ *
+ * @returns {Promise<object[]>} Array of documents.
+ */
 const getDocuments = async () => {
 	try {
 		return await prisma.documents.findMany({
@@ -12,6 +16,12 @@ const getDocuments = async () => {
 		return new Error(error);
 	}
 };
+/**
+ * Get a document by ID with files included.
+ *
+ * @param {string} documentId - Document ID.
+ * @returns {Promise<object|null>} Document or null.
+ */
 const getDocumentById = async (documentId) => {
 	try {
 		return await prisma.documents.findUnique({
@@ -25,6 +35,12 @@ const getDocumentById = async (documentId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get documents linked to a business.
+ *
+ * @param {string} businessId - Business ID.
+ * @returns {Promise<object[]>} Array of documents.
+ */
 const getDocumentsForBusiness = async (businessId) => {
 	try {
 		return await prisma.documents.findMany({
@@ -38,6 +54,12 @@ const getDocumentsForBusiness = async (businessId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get documents linked to a delivery person.
+ *
+ * @param {string} deliveryPersonId - Delivery person ID.
+ * @returns {Promise<object[]>} Array of documents.
+ */
 const getDocumentsForDeliveryPerson = async (deliveryPersonId) => {
 	try {
 		return await prisma.documents.findMany({
@@ -51,6 +73,12 @@ const getDocumentsForDeliveryPerson = async (deliveryPersonId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get documents linked to a driver.
+ *
+ * @param {string} driverId - Driver ID.
+ * @returns {Promise<object[]>} Array of documents.
+ */
 const getDocumentsForDriver = async (driverId) => {
 	try {
 		return await prisma.documents.findMany({
@@ -64,6 +92,12 @@ const getDocumentsForDriver = async (driverId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get documents linked to a user.
+ *
+ * @param {string} userId - User ID.
+ * @returns {Promise<object[]>} Array of documents.
+ */
 const getDocumentsForUser = async (userId) => {
 	try {
 		return await prisma.documents.findMany({
@@ -77,6 +111,12 @@ const getDocumentsForUser = async (userId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get documents linked to a vehicle.
+ *
+ * @param {string} vehicleId - Vehicle ID.
+ * @returns {Promise<object[]>} Array of documents.
+ */
 const getDocumentsForVehicle = async (vehicleId) => {
 	try {
 		return await prisma.documents.findMany({
@@ -90,6 +130,12 @@ const getDocumentsForVehicle = async (vehicleId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get documents by document type.
+ *
+ * @param {string} documentType - Document type.
+ * @returns {Promise<object[]>} Array of documents.
+ */
 const getDocumentsByType = async (documentType) => {
 	try {
 		return await prisma.documents.findMany({
@@ -103,6 +149,13 @@ const getDocumentsByType = async (documentType) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get documents for a user filtered by type.
+ *
+ * @param {string} userId - User ID.
+ * @param {string} documentType - Document type.
+ * @returns {Promise<object[]>} Array of documents.
+ */
 const getDocumentsForUserByType = async (userId, documentType) => {
 	try {
 		return await prisma.documents.findMany({
@@ -119,6 +172,13 @@ const getDocumentsForUserByType = async (userId, documentType) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get documents for a business filtered by type.
+ *
+ * @param {string} businessId - Business ID.
+ * @param {string} documentType - Document type.
+ * @returns {Promise<object[]>} Array of documents.
+ */
 const getDocumentsForBusinessByType = async (businessId, documentType) => {
 	try {
 		return await prisma.documents.findMany({
@@ -135,6 +195,13 @@ const getDocumentsForBusinessByType = async (businessId, documentType) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get documents for a driver filtered by type.
+ *
+ * @param {string} driverId - Driver ID.
+ * @param {string} documentType - Document type.
+ * @returns {Promise<object[]>} Array of documents.
+ */
 const getDocumentsForDriverByType = async (driverId, documentType) => {
 	try {
 		return await prisma.documents.findMany({
@@ -151,6 +218,13 @@ const getDocumentsForDriverByType = async (driverId, documentType) => {
 		return new Error(error);
 	}
 };
+/**
+ * Get documents for a delivery person filtered by type.
+ *
+ * @param {string} deliveryPersonId - Delivery person ID.
+ * @param {string} documentType - Document type.
+ * @returns {Promise<object[]>} Array of documents.
+ */
 const getDocumentsForDeliveryPersonByType = async (deliveryPersonId, documentType) => {
 	try {
 		return await prisma.documents.findMany({
@@ -167,6 +241,13 @@ const getDocumentsForDeliveryPersonByType = async (deliveryPersonId, documentTyp
 		return new Error(error);
 	}
 };
+/**
+ * Get documents for a vehicle filtered by type.
+ *
+ * @param {string} vehicleId - Vehicle ID.
+ * @param {string} documentType - Document type.
+ * @returns {Promise<object[]>} Array of documents.
+ */
 const getDocumentsForVehicleByType = async (vehicleId, documentType) => {
 	try {
 		return await prisma.documents.findMany({
@@ -183,6 +264,13 @@ const getDocumentsForVehicleByType = async (vehicleId, documentType) => {
 		return new Error(error);
 	}
 };
+/**
+ * Find a single document by type and delivery driver ID.
+ *
+ * @param {string} documentType - Document type.
+ * @param {string} deliveryDriverId - Delivery driver ID.
+ * @returns {Promise<object|null>} Document or null.
+ */
 const findDocumentByTypeAndDeliveryDriverId = async (documentType, deliveryDriverId) => {
 	try {
 		return await prisma.documents.findFirst({
@@ -195,6 +283,13 @@ const findDocumentByTypeAndDeliveryDriverId = async (documentType, deliveryDrive
 		throw new Error('Unable to find document');
 	}
 };
+/**
+ * Find a single document by type and driver ID.
+ *
+ * @param {string} documentType - Document type.
+ * @param {string} driverId - Driver ID.
+ * @returns {Promise<object|null>} Document or null.
+ */
 const findDocumentByTypeAndDriverId = async (documentType, driverId) => {
 	try {
 		return await prisma.documents.findFirst({
@@ -207,6 +302,13 @@ const findDocumentByTypeAndDriverId = async (documentType, driverId) => {
 		throw new Error('Unable to find document');
 	}
 };
+/**
+ * Create a document (sets public=true for selected types) with optional files.
+ *
+ * @param {object} documentData - Document payload.
+ * @param {object[]} [filesData=[]] - Files to create for the document.
+ * @returns {Promise<object>} Created document with files.
+ */
 const createDocument = async (documentData, filesData = []) => {
 	for (let file of filesData) {
 		delete file.data;
@@ -241,6 +343,13 @@ const createDocument = async (documentData, filesData = []) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update a document's expiration_date.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {string|Date} expirationDate - New expiration date.
+ * @returns {Promise<object>} Updated document.
+ */
 const updateDocumentExpirationDate = async (documentId, expirationDate) => {
 	try {
 		return await prisma.documents.update({
@@ -254,6 +363,13 @@ const updateDocumentExpirationDate = async (documentId, expirationDate) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update a document's issue_date.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {string|Date} issueDate - Issue date.
+ * @returns {Promise<object>} Updated document.
+ */
 const updateDocumentIssueDate = async (documentId, issueDate) => {
 	try {
 		return await prisma.documents.update({
@@ -267,6 +383,13 @@ const updateDocumentIssueDate = async (documentId, issueDate) => {
 		return new Error(error);
 	}
 };
+/**
+ * Replace a document's files with new ones.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {object[]} filesData - New files to create.
+ * @returns {Promise<object>} Updated document with files.
+ */
 const updateDocumentFiles = async (documentId, filesData) => {
 	try {
 		return await prisma.documents.update({
@@ -286,6 +409,13 @@ const updateDocumentFiles = async (documentId, filesData) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update a document's additional_info JSON field.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {object} jsonData - JSON payload.
+ * @returns {Promise<object>} Updated document.
+ */
 const updateDocumentAdditionalInfo = async (documentId, jsonData) => {
 	try {
 		return await prisma.documents.update({
@@ -297,6 +427,13 @@ const updateDocumentAdditionalInfo = async (documentId, jsonData) => {
 		return new Error(error);
 	}
 };
+/**
+ * Link a document to a user.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {string} userId - User ID.
+ * @returns {Promise<object>} Updated document.
+ */
 const linkDocumentToUser = async (documentId, userId) => {
 	try {
 		return await prisma.documents.update({
@@ -314,6 +451,13 @@ const linkDocumentToUser = async (documentId, userId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Link a document to a transaction.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {string} transactionId - Transaction ID.
+ * @returns {Promise<object>} Updated document.
+ */
 const linkDocumentToTransaction = async (documentId, transactionId) => {
 	try {
 		return await prisma.documents.update({
@@ -331,6 +475,13 @@ const linkDocumentToTransaction = async (documentId, transactionId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Link a document to a vehicle.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {string} vehicleId - Vehicle ID.
+ * @returns {Promise<object>} Updated document.
+ */
 const linkDocumentToVehicle = async (documentId, vehicleId) => {
 	try {
 		return await prisma.documents.update({
@@ -348,6 +499,13 @@ const linkDocumentToVehicle = async (documentId, vehicleId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Link a document to a menu item.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {string} menuItemId - Menu item ID.
+ * @returns {Promise<object>} Updated document.
+ */
 const linkDocumentToMenuItem = async (documentId, menuItemId) => {
 	try {
 		return await prisma.documents.update({
@@ -365,6 +523,13 @@ const linkDocumentToMenuItem = async (documentId, menuItemId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Link a document to a lost item.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {string} lostItemId - Lost item ID.
+ * @returns {Promise<object>} Updated document.
+ */
 const linkDocumentToLostItem = async (documentId, lostItemId) => {
 	try {
 		return await prisma.documents.update({
@@ -382,6 +547,13 @@ const linkDocumentToLostItem = async (documentId, lostItemId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Link a document to a driver.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {string} driverId - Driver ID.
+ * @returns {Promise<object>} Updated document.
+ */
 const linkDocumentToDriver = async (documentId, driverId) => {
 	try {
 		return await prisma.documents.update({
@@ -399,6 +571,13 @@ const linkDocumentToDriver = async (documentId, driverId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Link a document to a business.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {string} businessId - Business ID.
+ * @returns {Promise<object>} Updated document.
+ */
 const linkDocumentToBusiness = async (documentId, businessId) => {
 	try {
 		return await prisma.documents.update({
@@ -416,6 +595,13 @@ const linkDocumentToBusiness = async (documentId, businessId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Link a document to a delivery driver.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {string} deliveryDriverId - Delivery driver ID.
+ * @returns {Promise<object>} Updated document.
+ */
 const linkDocumentToDeliveryDriver = async (documentId, deliveryDriverId) => {
 	try {
 		return await prisma.documents.update({
@@ -433,6 +619,12 @@ const linkDocumentToDeliveryDriver = async (documentId, deliveryDriverId) => {
 		return new Error(error);
 	}
 };
+/**
+ * Delete a document and all its files by document ID.
+ *
+ * @param {string} documentId - Document ID.
+ * @returns {Promise<void>} Resolves when deletion completes.
+ */
 const deleteDocument = async (documentId) => {
 	try {
 		// Fetch document to get associated files
@@ -464,6 +656,13 @@ const deleteDocument = async (documentId) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Delete all documents and files linked via a specific field and id.
+ *
+ * @param {string} field - Field name on documents (e.g., 'user_id').
+ * @param {string} id - The identifier value to match.
+ * @returns {Promise<void>} Resolves when deletion completes.
+ */
 const deleteDocumentsAndFiles = async (field, id) => {
 	try {
 		// Fetch all documents based on the provided field and id
@@ -495,6 +694,13 @@ const deleteDocumentsAndFiles = async (field, id) => {
 		console.error(`Error deleting documents and files for ${field}:`, id, error);
 	}
 };
+/**
+ * Delete all documents and files by exact document_id and document_type.
+ *
+ * @param {string} documentType - Document type.
+ * @param {string} documentId - Document ID.
+ * @returns {Promise<void>} Resolves when deletion completes.
+ */
 const deleteDocumentsAndFilesByDocumentId = async (documentType, documentId) => {
 	try {
 		// Fetch all documents based on the provided documentType and documentId
@@ -533,6 +739,13 @@ const deleteDocumentsAndFilesByDocumentId = async (documentType, documentId) => 
 		);
 	}
 };
+/**
+ * Get the most recently created document of a given type for a business.
+ *
+ * @param {string} type - Document type.
+ * @param {string} business_id - Business ID.
+ * @returns {Promise<object|null>} Latest matching document or null.
+ */
 async function getLastDocumentByTypeAndBusinessId(type, business_id) {
 	return await prisma.documents.findFirst({
 		where: {
@@ -544,6 +757,13 @@ async function getLastDocumentByTypeAndBusinessId(type, business_id) {
 		},
 	});
 }
+/**
+ * Update a document's fields by document_id.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {object} updateData - Fields to update.
+ * @returns {Promise<object>} Updated document.
+ */
 const updateDocumentByDocumentId = async (documentId, updateData) => {
 	try {
 		const document = await prisma.documents.findUnique({

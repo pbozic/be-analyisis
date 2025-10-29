@@ -40,3 +40,4 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getPlacePredictions )
 
 <!-- DOCGEN:END getPlacePredictions -->
+

@@ -3,6 +3,12 @@ import AddressDao from './Address.js';
 import Constants from '../lib/constants.js';
 import { reorderMenusAndCategories } from '../lib/businessHelpers.js';
 import { ACCOUNT_ACTIONS } from '../lib/constants.js';
+/**
+ * Get a list of businesses with optional query/include arguments.
+ *
+ * @param {object} args - Additional Prisma query arguments (where, orderBy, include, etc.).
+ * @returns {Promise<object[]>} A promise resolving to an array of business records.
+ */
 const getBusinesses = async (args) => {
 	try {
 		return await prisma.business.findMany({
@@ -34,6 +40,12 @@ const getBusinesses = async (args) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get a single business by its ID with rich related data.
+ *
+ * @param {string} business_id - The ID of the business to retrieve.
+ * @returns {Promise<object|null>} A promise resolving to the business record or null if not found.
+ */
 const getBusinessById = async (business_id) => {
 	try {
 		return await prisma.business.findUnique({
@@ -111,6 +123,12 @@ const getBusinessById = async (business_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get a business by ID with admin-focused related data (users, words, promos, etc.).
+ *
+ * @param {string} business_id - The ID of the business to retrieve.
+ * @returns {Promise<object|null>} A promise resolving to the business record or null if not found.
+ */
 const getBusinessAdminDataById = async (business_id) => {
 	try {
 		return await prisma.business.findUnique({
@@ -159,6 +177,12 @@ const getBusinessAdminDataById = async (business_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get multiple businesses by IDs optimized for search results (selected fields only).
+ *
+ * @param {string|string[]} business_id - A single ID or array of business IDs.
+ * @returns {Promise<object[]>} A promise resolving to a list of business search records.
+ */
 const getBusinessesForSearchById = async (business_id) => {
 	try {
 		if (!Array.isArray(business_id)) {
@@ -244,6 +268,12 @@ const getBusinessesForSearchById = async (business_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get a single business by ID optimized for search display (selected fields only).
+ *
+ * @param {string} business_id - The ID of the business to retrieve.
+ * @returns {Promise<object|null>} A promise resolving to the business search record or null if not found.
+ */
 const getBusinessForSearchById = async (business_id) => {
 	try {
 		const tomorrow = new Date();
@@ -352,6 +382,12 @@ const getBusinessForSearchById = async (business_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Find a business by its email address.
+ *
+ * @param {string} email - The email address to search by.
+ * @returns {Promise<object|null>} A promise resolving to the business or null if not found.
+ */
 const getBusinessByEmail = async (email) => {
 	try {
 		return await prisma.business.findUnique({
@@ -379,6 +415,12 @@ const getBusinessByEmail = async (email) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Find a business by its telephone number.
+ *
+ * @param {string} telephone_number - The full telephone number to search by.
+ * @returns {Promise<object|null>} A promise resolving to the business or null if not found.
+ */
 const getBusinessByTelephone = async (telephone_number) => {
 	try {
 		return await prisma.business.findFirst({
@@ -406,6 +448,12 @@ const getBusinessByTelephone = async (telephone_number) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Search businesses by name (case-insensitive contains).
+ *
+ * @param {string} search - The search term to match against business names.
+ * @returns {Promise<object[]>} A promise resolving to matching businesses.
+ */
 const getBusinessesByNameSearch = async (search) => {
 	try {
 		return await prisma.business.findMany({
@@ -436,6 +484,12 @@ const getBusinessesByNameSearch = async (search) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Search businesses by group name (case-insensitive contains).
+ *
+ * @param {string} search - The search term to match against business group names.
+ * @returns {Promise<object[]>} A promise resolving to matching businesses.
+ */
 const getBusinessesByGroupName = async (search) => {
 	try {
 		return await prisma.business.findMany({
@@ -466,6 +520,12 @@ const getBusinessesByGroupName = async (search) => {
 		throw new Error(error);
 	}
 };
+/**
+ * List businesses by type(s), returning only main information.
+ *
+ * @param {string|string[]} type - One or more business types.
+ * @returns {Promise<object[]>} A promise resolving to matching businesses.
+ */
 const getBusinessesByTypeMainInformation = async (type) => {
 	if (!Array.isArray(type)) {
 		type = [type];
@@ -483,6 +543,13 @@ const getBusinessesByTypeMainInformation = async (type) => {
 		throw new Error(error);
 	}
 };
+/**
+ * List businesses by type(s) with rich related data, optionally filtered by extra args.
+ *
+ * @param {string|string[]} type - One or more business types.
+ * @param {object} [args={}] - Additional Prisma where/ordering filters.
+ * @returns {Promise<object[]>} A promise resolving to matching businesses with related data.
+ */
 const getBusinessesByType = async (type, args = {}) => {
 	if (!Array.isArray(type)) {
 		type = [type];
@@ -540,6 +607,12 @@ const getBusinessesByType = async (type, args = {}) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get the parent business for a given business ID.
+ *
+ * @param {string} business_id - The child business ID.
+ * @returns {Promise<object|null>} A promise resolving to the parent business or null.
+ */
 const getParentBusiness = async (business_id) => {
 	try {
 		const business = await prisma.business.findUnique({
@@ -552,6 +625,12 @@ const getParentBusiness = async (business_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get all child businesses for a parent business ID.
+ *
+ * @param {string} parent_business_id - The parent business ID.
+ * @returns {Promise<object[]>} A promise resolving to child businesses.
+ */
 const getChildBusinesses = async (parent_business_id) => {
 	try {
 		return await prisma.business.findMany({
@@ -562,6 +641,12 @@ const getChildBusinesses = async (parent_business_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Retrieve the finance record associated with a business.
+ *
+ * @param {string} business_id - The business ID.
+ * @returns {Promise<object|null>} A promise resolving to the finance record or null if none exists.
+ */
 const getFinanceRecordByBusinessId = async (business_id) => {
 	try {
 		const businessWithFinance = await prisma.business.findUnique({
@@ -584,6 +669,13 @@ const getFinanceRecordByBusinessId = async (business_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update a business with provided data (certain protected fields are stripped).
+ *
+ * @param {string} business_id - The business ID to update.
+ * @param {object} businessD - Partial business data to update.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const updateBusiness = async (business_id, businessD) => {
 	try {
 		let businessData = {
@@ -612,6 +704,13 @@ const updateBusiness = async (business_id, businessD) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update the finances entity linked to a business.
+ *
+ * @param {string} business_id - The business ID whose finance record should be updated.
+ * @param {object} financesData - Fields to update on the finance record.
+ * @returns {Promise<object>} A promise resolving to the updated finance record.
+ */
 const updateBusinessFinances = async (business_id, financesData) => {
 	try {
 		// First, retrieve the finance record associated with the business
@@ -637,6 +736,13 @@ const updateBusinessFinances = async (business_id, financesData) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update the business type.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {string} type - New business type.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const updateBusinessType = async (business_id, type) => {
 	try {
 		return await prisma.business.update({
@@ -648,6 +754,13 @@ const updateBusinessType = async (business_id, type) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update whether the business is a business unit.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {boolean} is_business_unit - New flag value.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const updateIsBusinessUnit = async (business_id, is_business_unit) => {
 	try {
 		return await prisma.business.update({
@@ -659,6 +772,13 @@ const updateIsBusinessUnit = async (business_id, is_business_unit) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update the business group name.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {string} business_group_name - The new group name.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const updateBusinessGroupName = async (business_id, business_group_name) => {
 	try {
 		return await prisma.business.update({
@@ -670,6 +790,13 @@ const updateBusinessGroupName = async (business_id, business_group_name) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update the business email.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {string} email - The new email.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const updateBusinessEmail = async (business_id, email) => {
 	try {
 		return await prisma.business.update({
@@ -681,6 +808,15 @@ const updateBusinessEmail = async (business_id, email) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update the business telephone information.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {string} telephone - Formatted telephone string.
+ * @param {string} telephone_code - Country/area code.
+ * @param {string} telephone_number - Raw number without code.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const updateBusinessTelephone = async (business_id, telephone, telephone_code, telephone_number) => {
 	try {
 		return await prisma.business.update({
@@ -692,6 +828,13 @@ const updateBusinessTelephone = async (business_id, telephone, telephone_code, t
 		throw new Error(error);
 	}
 };
+/**
+ * Update the business working hours JSON.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {object} working_hours - Working hours object.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const updateBusinessWorkingHours = async (business_id, working_hours) => {
 	try {
 		return await prisma.business.update({
@@ -703,6 +846,13 @@ const updateBusinessWorkingHours = async (business_id, working_hours) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update the restaurant_overwhelmed flag for a business.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {boolean} restaurant_overwhelmed - Whether the restaurant is overwhelmed.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const updateRestaurantOverwhelmed = async (business_id, restaurant_overwhelmed) => {
 	try {
 		return await prisma.business.update({
@@ -714,6 +864,13 @@ const updateRestaurantOverwhelmed = async (business_id, restaurant_overwhelmed) 
 		throw new Error(error);
 	}
 };
+/**
+ * Update the "new" flag for a business.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {boolean} isNew - Whether the business is new.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const updateBusinessIsNew = async (business_id, isNew) => {
 	try {
 		return await prisma.business.update({
@@ -725,6 +882,13 @@ const updateBusinessIsNew = async (business_id, isNew) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update the "popular" flag for a business.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {boolean} popular - Whether the business is popular.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const updateBusinessIsPopular = async (business_id, popular) => {
 	try {
 		return await prisma.business.update({
@@ -736,6 +900,13 @@ const updateBusinessIsPopular = async (business_id, popular) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Create a new business.
+ *
+ * @param {object} business - The business data to create.
+ * @param {object} [tx=prisma] - Optional Prisma transaction/client to use.
+ * @returns {Promise<object>} A promise resolving to the created business.
+ */
 const createNewBusiness = async (business, tx = prisma) => {
 	try {
 		return await tx.business.create({
@@ -746,6 +917,12 @@ const createNewBusiness = async (business, tx = prisma) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Delete a business by ID.
+ *
+ * @param {string} business_id - The ID of the business to delete.
+ * @returns {Promise<object>} A promise resolving to the deleted business.
+ */
 const deleteBusiness = async (business_id) => {
 	try {
 		return await prisma.business.delete({
@@ -756,6 +933,13 @@ const deleteBusiness = async (business_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Set the parent business for a business.
+ *
+ * @param {string} business_id - Child business ID.
+ * @param {string} parent_business_id - Parent business ID.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const updateParentBusiness = async (business_id, parent_business_id) => {
 	try {
 		return await prisma.business.update({
@@ -767,6 +951,12 @@ const updateParentBusiness = async (business_id, parent_business_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Remove the parent relationship from a business.
+ *
+ * @param {string} business_id - The business ID.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const removeParentBusiness = async (business_id) => {
 	try {
 		return await prisma.business.update({
@@ -778,6 +968,13 @@ const removeParentBusiness = async (business_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Add or connect an address to a business (upsert address by unique fields).
+ *
+ * @param {string} business_id - The business ID.
+ * @param {object} addressData - Address fields used for upsert and connect.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const addBusinessAddress = async (business_id, addressData) => {
 	try {
 		// Use the upsert method to handle address creation or retrieval
@@ -808,6 +1005,13 @@ const addBusinessAddress = async (business_id, addressData) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Add or connect a delivery address to a business (upsert address by unique fields).
+ *
+ * @param {string} business_id - The business ID.
+ * @param {object} addressData - Address fields used for upsert and connect.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const addDeliveryAddress = async (business_id, addressData) => {
 	try {
 		// Use the upsert method to handle address creation or retrieval
@@ -838,6 +1042,13 @@ const addDeliveryAddress = async (business_id, addressData) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update a business's main address by creating or using an existing address.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {object} address - Address data to add/connect.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 async function updateBusinessAddress(business_id, address) {
 	try {
 		const updatedAddress = await AddressDao.addAddress(address);
@@ -853,6 +1064,13 @@ async function updateBusinessAddress(business_id, address) {
 		throw new Error(error);
 	}
 }
+/**
+ * Update a business's delivery address by creating or using an existing address.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {object} deliveryAddress - Address data to add/connect as delivery address.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 async function updateBusinessDeliveryAddress(business_id, deliveryAddress) {
 	try {
 		const updatedDeliveryAddress = await AddressDao.addAddress(deliveryAddress);
@@ -869,6 +1087,12 @@ async function updateBusinessDeliveryAddress(business_id, deliveryAddress) {
 		throw new Error(error);
 	}
 }
+/**
+ * Remove the delivery address relationship from a business.
+ *
+ * @param {string} business_id - The business ID.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const removeBusinessDeliveryAddress = async (business_id) => {
 	try {
 		return await prisma.business.update({
@@ -881,6 +1105,13 @@ const removeBusinessDeliveryAddress = async (business_id) => {
 	}
 };
 
+/**
+ * Set the scheduled users sorting type for daily meals.
+ *
+ * @param {string} type - Sorting type identifier.
+ * @param {string} businessId - The business ID.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const addScheduledUserSortingType = async (type, businessId) => {
 	try {
 		return await prisma.business.update({
@@ -893,6 +1124,13 @@ const addScheduledUserSortingType = async (type, businessId) => {
 	}
 };
 
+/**
+ * Manually set the order of scheduled users for a business.
+ *
+ * @param {string[]} [sorted_users=[]] - Ordered list of user IDs.
+ * @param {string} businessId - The business ID.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 const manualSortScheduledUsers = async (sorted_users = [], businessId) => {
 	try {
 		return await prisma.business.update({
@@ -904,6 +1142,12 @@ const manualSortScheduledUsers = async (sorted_users = [], businessId) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get the Stripe account ID for a business.
+ *
+ * @param {string} business_id - The business ID.
+ * @returns {Promise<string|null>} A promise resolving to the Stripe account ID or null.
+ */
 const getBusinessStripeByBusinessId = async (business_id) => {
 	try {
 		const business_data = await prisma.business.findUnique({
@@ -941,6 +1185,14 @@ const getStripeIdsForAllBusinesses = async () => {
 		throw new Error(error);
 	}
 };
+/**
+ * Activate a business and record an UNSUSPEND account action.
+ *
+ * @param {string} business_id - The business ID to activate.
+ * @param {string} action_creator_user_id - The user ID performing the action.
+ * @param {string} reason - Reason for activation change.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 async function activateBusiness(business_id, action_creator_user_id, reason) {
 	try {
 		return await prisma.$transaction(async (tx) => {
@@ -971,6 +1223,14 @@ async function activateBusiness(business_id, action_creator_user_id, reason) {
 		throw new Error('Failed to activate business');
 	}
 }
+/**
+ * Deactivate a business and record a SUSPEND account action.
+ *
+ * @param {string} business_id - The business ID to deactivate.
+ * @param {string} action_creator_user_id - The user ID performing the action.
+ * @param {string} reason - Reason for deactivation.
+ * @returns {Promise<object>} A promise resolving to the updated business.
+ */
 async function deactivateBusiness(business_id, action_creator_user_id, reason) {
 	try {
 		return await prisma.$transaction(async (tx) => {
@@ -993,6 +1253,12 @@ async function deactivateBusiness(business_id, action_creator_user_id, reason) {
 		throw new Error('Failed to deactivate business');
 	}
 }
+/**
+ * Get users scheduled for daily meals for a given business (based on daily_users_sorted).
+ *
+ * @param {string} businessId - The business ID.
+ * @returns {Promise<object[]>} A promise resolving to an array of user records with addresses.
+ */
 const getScheduledUsersByBusinessId = async (businessId) => {
 	try {
 		const business = await prisma.business.findUnique({
@@ -1024,6 +1290,15 @@ const getScheduledUsersByBusinessId = async (businessId) => {
 		throw error;
 	}
 };
+/**
+ * Calculate the remaining purchase order limit amount for the current month.
+ *
+ * Aggregates this month's taxi orders linked to the business's users/clients and
+ * subtracts from the business.purchase_order_limit_amount.
+ *
+ * @param {string} business_id - The business ID.
+ * @returns {Promise<number>} A promise resolving to the remaining amount (>= 0).
+ */
 const getPurchaseOrderLimit = async (business_id) => {
 	try {
 		const business = await prisma.business.findUnique({

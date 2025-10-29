@@ -1,5 +1,12 @@
 import prisma from '../prisma/prisma.js';
-import { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS } from '../lib/constants.js';
+/**
+ * Create a referral linking referrer and referred users with a referral code.
+ *
+ * @param {string} referrerUserId - Referrer user ID.
+ * @param {string} referredUserId - Referred user ID.
+ * @param {string} referralCode - Referral code used.
+ * @returns {Promise<object>} Created referral with referrer included.
+ */
 const createReferral = async (referrerUserId, referredUserId, referralCode) => {
 	try {
 		return await prisma.referrals.create({
@@ -17,6 +24,12 @@ const createReferral = async (referrerUserId, referredUserId, referralCode) => {
 		throw error;
 	}
 };
+/**
+ * Get a referral by its referral_id.
+ *
+ * @param {string} referralId - Referral ID.
+ * @returns {Promise<object|null>} Referral or null.
+ */
 const getReferralByReferralId = async (referralId) => {
 	try {
 		return await prisma.referrals.findUnique({
@@ -29,6 +42,13 @@ const getReferralByReferralId = async (referralId) => {
 		throw error;
 	}
 };
+/**
+ * Update whether referral conditions are met.
+ *
+ * @param {string} referralId - Referral ID.
+ * @param {boolean} conditionsMet - Conditions met flag.
+ * @returns {Promise<object>} Updated referral.
+ */
 const updateReferralConditionsMet = async (referralId, conditionsMet) => {
 	try {
 		return await prisma.referrals.update({
@@ -44,6 +64,13 @@ const updateReferralConditionsMet = async (referralId, conditionsMet) => {
 		throw error;
 	}
 };
+/**
+ * Update whether the referral reward has been claimed.
+ *
+ * @param {string} referralId - Referral ID.
+ * @param {boolean} claimed - Reward claimed flag.
+ * @returns {Promise<object>} Updated referral.
+ */
 const updateReferralRewardClaimed = async (referralId, claimed) => {
 	try {
 		return await prisma.referrals.update({
@@ -59,6 +86,12 @@ const updateReferralRewardClaimed = async (referralId, claimed) => {
 		throw error;
 	}
 };
+/**
+ * Get a referral by referred_user_id with referrer and referred included.
+ *
+ * @param {string} referredUserId - Referred user ID.
+ * @returns {Promise<object|null>} Referral or null.
+ */
 const getReferralByReferredUserId = async (referredUserId) => {
 	try {
 		return await prisma.referrals.findUnique({
@@ -75,6 +108,12 @@ const getReferralByReferredUserId = async (referredUserId) => {
 		throw error;
 	}
 };
+/**
+ * Get referrals initiated by a referrer; includes referred user.
+ *
+ * @param {string} referrerUserId - Referrer user ID.
+ * @returns {Promise<object[]>} Referrals.
+ */
 const getReferralsByReferrerUserId = async (referrerUserId) => {
 	try {
 		return await prisma.referrals.findMany({

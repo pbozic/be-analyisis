@@ -368,3 +368,4 @@ Content-Type: `application/json`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBlogImageByFile )
 
 <!-- DOCGEN:END createBlogImageByFile -->
+

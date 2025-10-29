@@ -1,4 +1,16 @@
 import prisma from '../prisma/prisma.js';
+/**
+ * Create scoring points entry linked to business and optionally user and orders.
+ *
+ * @param {string} business_id - Business ID.
+ * @param {string|null} user_id - User ID (optional).
+ * @param {string|null} delivery_order_id - Delivery order ID (optional).
+ * @param {string|null} taxi_order_id - Taxi order ID (optional).
+ * @param {number} points - Number of points (positive/negative if isPenalty).
+ * @param {boolean} isPenalty - Whether points are a penalty.
+ * @param {string} reason - Reason text.
+ * @returns {Promise<object>} Created scoring_points row.
+ */
 async function createScoringPoints(business_id, user_id, delivery_order_id, taxi_order_id, points, isPenalty, reason) {
 	try {
 		const newScoringPoints = await prisma.scoring_points.create({
@@ -19,6 +31,12 @@ async function createScoringPoints(business_id, user_id, delivery_order_id, taxi
 		throw error;
 	}
 }
+/**
+ * Get scoring points by id with related entities.
+ *
+ * @param {string} scoring_points_id - Scoring points ID.
+ * @returns {Promise<object|null>} Row or null.
+ */
 async function getScoringPointsById(scoring_points_id) {
 	try {
 		const scoringPoints = await prisma.scoring_points.findUnique({
@@ -39,6 +57,12 @@ async function getScoringPointsById(scoring_points_id) {
 		throw error;
 	}
 }
+/**
+ * Get scoring points for a user ordered by delivery_order_id.
+ *
+ * @param {string} user_id - User ID.
+ * @returns {Promise<object[]>} Rows with related entities.
+ */
 async function getScoringPointsByUserId(user_id) {
 	try {
 		const scoringPoints = await prisma.scoring_points.findMany({
@@ -62,6 +86,12 @@ async function getScoringPointsByUserId(user_id) {
 		throw error;
 	}
 }
+/**
+ * Get scoring points for a business ordered by delivery_order_id.
+ *
+ * @param {string} business_id - Business ID.
+ * @returns {Promise<object[]>} Rows with related entities.
+ */
 async function getScoringPointsByBusinessId(business_id) {
 	try {
 		const scoringPoints = await prisma.scoring_points.findMany({
@@ -85,6 +115,13 @@ async function getScoringPointsByBusinessId(business_id) {
 		throw error;
 	}
 }
+/**
+ * Update a scoring points row and return with related entities.
+ *
+ * @param {string} scoring_points_id - Scoring points ID.
+ * @param {object} data - Fields to update.
+ * @returns {Promise<object>} Updated row.
+ */
 async function updateScoringPoints(scoring_points_id, data) {
 	try {
 		const updatedScoringPoints = await prisma.scoring_points.update({
@@ -107,6 +144,12 @@ async function updateScoringPoints(scoring_points_id, data) {
 		throw error;
 	}
 }
+/**
+ * Delete a scoring points row by id.
+ *
+ * @param {string} scoring_points_id - Scoring points ID.
+ * @returns {Promise<void>} Resolves when deleted.
+ */
 async function deleteScoringPoints(scoring_points_id) {
 	try {
 		await prisma.scoring_points.delete({

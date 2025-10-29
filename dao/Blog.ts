@@ -1,5 +1,3 @@
-import { disconnect } from 'node:process';
-
 import { Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
@@ -7,7 +5,11 @@ import type { BlogPost, SearchBlogPostsInput } from '../types/blog/BlogPost.js';
 import type { BlogCategory } from '../types/blog/BlogCategory.js';
 import type { BlogTag } from '../types/blog/BlogTag.js';
 import type { CreateBlogPostInput, UpdateBlogPostInput } from '../types/blog/BlogPost.js';
-
+/**
+ * Get all blog posts.
+ *
+ * @returns {Promise<BlogPost[]>}
+ */
 export async function getBlogPosts(): Promise<BlogPost[]> {
 	try {
 		return await prisma.blog_posts.findMany({
@@ -36,7 +38,12 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Get blog post by ID.
+ *
+ * @param {string} blog_posts_id
+ * @returns {Promise<BlogPost | null>}
+ */
 export async function getBlogPostById(blog_posts_id: string): Promise<BlogPost | null> {
 	try {
 		return await prisma.blog_posts.findUnique({
@@ -63,7 +70,12 @@ export async function getBlogPostById(blog_posts_id: string): Promise<BlogPost |
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Get blog post by slug.
+ *
+ * @param {string} slug
+ * @returns {Promise<BlogPost | null>}
+ */
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
 	try {
 		return await prisma.blog_posts.findUnique({
@@ -90,7 +102,13 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Create a new blog post.
+ *
+ * @param {CreateBlogPostInput} data
+ * @param {string} author_id
+ * @returns {Promise<BlogPost>}
+ */
 export async function createBlogPost(data: CreateBlogPostInput, author_id: string): Promise<BlogPost> {
 	try {
 		let slug = data.title
@@ -153,7 +171,13 @@ export async function createBlogPost(data: CreateBlogPostInput, author_id: strin
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Update a blog post.
+ *
+ * @param {string} blog_posts_id
+ * @param {UpdateBlogPostInput} data
+ * @returns {Promise<BlogPost>}
+ */
 export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPostInput): Promise<BlogPost> {
 	try {
 		let existingPost1 = await prisma.blog_posts.findUnique({
@@ -234,7 +258,12 @@ export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPost
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Delete a blog post.
+ *
+ * @param {string} blog_posts_id
+ * @returns {Promise<BlogPost>}
+ */
 export async function deleteBlogPost(blog_posts_id: string): Promise<BlogPost> {
 	try {
 		return await prisma.blog_posts.delete({
@@ -261,7 +290,12 @@ export async function deleteBlogPost(blog_posts_id: string): Promise<BlogPost> {
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Search blog posts.
+ *
+ * @param {SearchBlogPostsInput} query
+ * @returns {Promise<BlogPost[]>}
+ */
 export async function searchBlogPosts(query: SearchBlogPostsInput): Promise<BlogPost[]> {
 	try {
 		return await prisma.blog_posts.findMany({
@@ -308,7 +342,11 @@ export async function searchBlogPosts(query: SearchBlogPostsInput): Promise<Blog
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Get all blog categories.
+ *
+ * @returns {Promise<BlogCategory[]>}
+ */
 export async function getBlogCategories(): Promise<BlogCategory[]> {
 	try {
 		return await prisma.blog_categories.findMany({
@@ -331,7 +369,12 @@ export async function getBlogCategories(): Promise<BlogCategory[]> {
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Get blog category by ID.
+ *
+ * @param {string} blog_categories_id
+ * @returns {Promise<BlogCategory | null>}
+ */
 export async function getBlogCategoryById(blog_categories_id: string): Promise<BlogCategory | null> {
 	try {
 		return await prisma.blog_categories.findUnique({
@@ -355,7 +398,14 @@ export async function getBlogCategoryById(blog_categories_id: string): Promise<B
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Create a new blog category.
+ *
+ * @param {Object} data
+ * @param {string} data.name - The name of the blog category.
+ * @param {string|null} [data.description] - The description of the blog category.
+ * @returns {Promise<BlogCategory>}
+ */
 export async function createBlogCategory(data: { name: string; description?: string | null }): Promise<BlogCategory> {
 	try {
 		return await prisma.blog_categories.create({
@@ -379,7 +429,15 @@ export async function createBlogCategory(data: { name: string; description?: str
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Update a blog category.
+ *
+ * @param {string} blog_categories_id
+ * @param {Object} data
+ * @param {string} [data.name]
+ * @param {string|null} [data.description]
+ * @returns {Promise<BlogCategory>}
+ */
 export async function updateBlogCategory(
 	blog_categories_id: string,
 	data: { name?: string; description?: string | null }
@@ -407,7 +465,12 @@ export async function updateBlogCategory(
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Delete a blog category.
+ *
+ * @param {string} blog_categories_id
+ * @returns {Promise<BlogCategory>}
+ */
 export async function deleteBlogCategory(blog_categories_id: string): Promise<BlogCategory> {
 	try {
 		return await prisma.blog_categories.delete({
@@ -431,7 +494,11 @@ export async function deleteBlogCategory(blog_categories_id: string): Promise<Bl
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Get all blog tags.
+ *
+ * @returns {Promise<BlogTag[]>}
+ */
 export async function getBlogTags(): Promise<BlogTag[]> {
 	try {
 		return await prisma.blog_tags.findMany({
@@ -454,7 +521,12 @@ export async function getBlogTags(): Promise<BlogTag[]> {
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Get a blog tag by ID.
+ *
+ * @param {string} blog_tag_id
+ * @returns {Promise<BlogTag | null>}
+ */
 export async function getBlogTagById(blog_tag_id: string): Promise<BlogTag | null> {
 	try {
 		return await prisma.blog_tags.findUnique({
@@ -478,7 +550,14 @@ export async function getBlogTagById(blog_tag_id: string): Promise<BlogTag | nul
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Create a new blog tag.
+ *
+ * @param {Object} data
+ * @param {string} data.name - The name of the blog tag.
+ * @param {string|null} [data.description] - The description of the blog tag.
+ * @returns {Promise<BlogTag>}
+ */
 export async function createBlogTag(data: { name: string; description?: string | null }): Promise<BlogTag> {
 	try {
 		return await prisma.blog_tags.create({
@@ -502,7 +581,15 @@ export async function createBlogTag(data: { name: string; description?: string |
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Update a blog tag.
+ *
+ * @param {string} blog_tag_id
+ * @param {Object} data
+ * @param {string} [data.name]
+ * @param {string|null} [data.description]
+ * @returns {Promise<BlogTag>}
+ */
 export async function updateBlogTag(
 	blog_tag_id: string,
 	data: { name?: string; description?: string | null }
@@ -530,7 +617,12 @@ export async function updateBlogTag(
 		throw new Error(`Error fetching blog posts: ${message}`);
 	}
 }
-
+/**
+ * Delete a blog tag.
+ *
+ * @param {string} blog_tag_id
+ * @returns {Promise<BlogTag>}
+ */
 export async function deleteBlogTag(blog_tag_id: string): Promise<BlogTag> {
 	try {
 		return await prisma.blog_tags.delete({

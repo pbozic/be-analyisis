@@ -13,6 +13,12 @@ Content-Type: `application/json`
 
 **Responses:**
 - 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 500, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setStoreOnline )
 
@@ -31,6 +37,12 @@ Content-Type: `application/json`
 
 **Responses:**
 - 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 500, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setStoreOverwhelmed )
 
@@ -45,6 +57,12 @@ Content-Type: `application/json`
 
 **Responses:**
 - 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 500, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/disableStore )
 
@@ -59,7 +77,14 @@ Content-Type: `application/json`
 
 **Responses:**
 - 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 500, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/enableStore )
 
 <!-- DOCGEN:END enableStore -->
+

@@ -235,6 +235,13 @@ const deleteOrderLobby = async (orderLobbiesId) => {
 	}
 };
 
+/**
+ * Replace users in an order lobby with a new set and limits in a transaction.
+ *
+ * @param {string} orderLobbiesId - Order lobby ID.
+ * @param {object} users - Map of user_id to limit.
+ * @returns {Promise<object>} Updated order lobby with users and basic user fields.
+ */
 const editUsersInOrderLobby = async (orderLobbiesId, users) => {
 	try {
 		const orderLobby = await prisma.order_lobbies.findUnique({
@@ -286,6 +293,12 @@ const editUsersInOrderLobby = async (orderLobbiesId, users) => {
 	}
 };
 
+/**
+ * Get all active order lobbies for a business including items and users.
+ *
+ * @param {string} businessId - Business ID.
+ * @returns {Promise<object[]>} Active order lobbies.
+ */
 const getAllActiveOrderLobbiesByBusinessId = async (businessId) => {
 	try {
 		return await prisma.order_lobbies.findMany({
@@ -323,6 +336,12 @@ const getAllActiveOrderLobbiesByBusinessId = async (businessId) => {
 	}
 };
 
+/**
+ * Get active order lobbies that a user participates in including items and users.
+ *
+ * @param {string} userId - User ID.
+ * @returns {Promise<object[]>} Order lobbies.
+ */
 const getOrderLobbiesByUserId = async (userId) => {
 	try {
 		return await prisma.order_lobbies.findMany({

@@ -1,5 +1,11 @@
 import prisma from '../prisma/prisma.js';
 import UserDao from './User.js';
+/**
+ * List drivers with optional filters and included relations.
+ *
+ * @param {object} args - Additional Prisma findMany args.
+ * @returns {Promise<object[]>} Array of drivers with user and vehicles.
+ */
 const getDrivers = async (args) => {
 	try {
 		return await prisma.drivers.findMany({
@@ -24,6 +30,12 @@ const getDrivers = async (args) => {
 		throw new Error(error);
 	}
 };
+/**
+ * List drivers with full nested user documents and vehicle specifications.
+ *
+ * @param {object} args - Additional Prisma findMany args.
+ * @returns {Promise<object[]>} Array of drivers with rich relations.
+ */
 const getDriversFull = async (args) => {
 	try {
 		return await prisma.drivers.findMany({
@@ -55,6 +67,12 @@ const getDriversFull = async (args) => {
 		throw new Error(error);
 	}
 };
+/**
+ * List online drivers with optional extra filters.
+ *
+ * @param {object} args - Additional where filters.
+ * @returns {Promise<object[]>} Array of online drivers.
+ */
 const getOnlineDrivers = async (args) => {
 	try {
 		return await prisma.drivers.findMany({
@@ -81,6 +99,12 @@ const getOnlineDrivers = async (args) => {
 		throw new Error(error);
 	}
 };
+/**
+ * List drivers associated with a daily meal business.
+ *
+ * @param {string} businessId - Business ID.
+ * @returns {Promise<object[]>} Array of drivers.
+ */
 const getDriversByDailyMealBusinessId = async (businessId) => {
 	try {
 		return await prisma.drivers.findMany({
@@ -106,6 +130,12 @@ const getDriversByDailyMealBusinessId = async (businessId) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get a driver by ID with nested user, vehicle, documents, and activity logs.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @returns {Promise<object|null>} The driver record or null.
+ */
 const getDriverById = async (driver_id) => {
 	try {
 		return await prisma.drivers.findUnique({
@@ -172,6 +202,12 @@ const getDriverById = async (driver_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get a driver by user ID with related vehicles.
+ *
+ * @param {string} user_id - User ID.
+ * @returns {Promise<object|null>} The driver record or null.
+ */
 const getDriverByUserId = async (user_id) => {
 	try {
 		return await prisma.drivers.findUnique({
@@ -198,6 +234,12 @@ const getDriverByUserId = async (user_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get the current stored location for a driver.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @returns {Promise<object|null>} Location object or null.
+ */
 const getDriverLocation = async (driver_id) => {
 	try {
 		const driver = await prisma.drivers.findUnique({
@@ -212,6 +254,13 @@ const getDriverLocation = async (driver_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update a driver's online status, disconnecting current vehicle if going offline.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @param {boolean} isOnline - New online flag.
+ * @returns {Promise<object>} The updated driver with relations.
+ */
 const updateDriverOnlineStatus = async (driver_id, isOnline) => {
 	try {
 		// Only disconnect current_vehicle if going offline
@@ -246,6 +295,13 @@ const updateDriverOnlineStatus = async (driver_id, isOnline) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update driver ride requirements JSON.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @param {object} ride_requirements - Requirements payload.
+ * @returns {Promise<object>} The updated driver record.
+ */
 const updateDriverRideRequirements = async (driver_id, ride_requirements) => {
 	try {
 		return await prisma.drivers.update({
@@ -256,6 +312,13 @@ const updateDriverRideRequirements = async (driver_id, ride_requirements) => {
 		return new Error(error);
 	}
 };
+/**
+ * Update a driver's stored location.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @param {object} location - Location payload.
+ * @returns {Promise<object>} The updated driver record with relations.
+ */
 const updateDriverLocation = async (driver_id, location) => {
 	try {
 		const locationData = {
@@ -288,6 +351,16 @@ const updateDriverLocation = async (driver_id, location) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Append a location entry to a driver's history; links to either taxi/transfer order or delivery order.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @param {object} location - Location payload.
+ * @param {string|number|null} status - Optional status value.
+ * @param {string|null} order_id - Optional order ID.
+ * @param {string|undefined} type - If truthy, links to taxi/transfer order; otherwise to delivery order when order_id provided.
+ * @returns {Promise<object>} Created history location record.
+ */
 const updateDriverLocationHistory = async (driver_id, location, status, order_id, type) => {
 	const taxiOrder = !!type;
 	try {
@@ -318,6 +391,13 @@ const updateDriverLocationHistory = async (driver_id, location, status, order_id
 		throw new Error(error);
 	}
 };
+/**
+ * Update a driver (excluding location which is handled separately).
+ *
+ * @param {string} driver_id - Driver ID.
+ * @param {object} updateData - Partial fields to update.
+ * @returns {Promise<object>} The updated driver.
+ */
 const updateDriver = async (driver_id, updateData) => {
 	try {
 		delete updateData.location;
@@ -343,6 +423,13 @@ const updateDriver = async (driver_id, updateData) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Create a new driver; creates the user if not provided.
+ *
+ * @param {object} driverData - Driver fields.
+ * @param {object} userData - User fields or existing user with user_id.
+ * @returns {Promise<object>} The created driver with nested user.
+ */
 const createNewDriver = async (driverData, userData) => {
 	try {
 		let newUser = userData;
@@ -380,6 +467,12 @@ const createNewDriver = async (driverData, userData) => {
 		throw new Error(error.message); // Adjust error handling as needed
 	}
 };
+/**
+ * List available drivers (online and not on order), optionally filtered by order type.
+ *
+ * @param {string} [type] - Optional type: 'TAXI' or 'TRANSFER'.
+ * @returns {Promise<object[]>} Array of available drivers.
+ */
 const getAvailableDrivers = async (type) => {
 	try {
 		const whereObj = {
@@ -414,6 +507,11 @@ const getAvailableDrivers = async (type) => {
 		throw new Error(error);
 	}
 };
+/**
+ * List drivers who are online and currently on an order.
+ *
+ * @returns {Promise<object[]>} Array of unavailable drivers.
+ */
 const getUnavailableDrivers = async () => {
 	try {
 		return await prisma.drivers.findMany({
@@ -433,6 +531,12 @@ const getUnavailableDrivers = async () => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get the business associated with a driver.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @returns {Promise<object>} The related business.
+ */
 const getBusinessByDriverId = async (driver_id) => {
 	try {
 		// Step 1: Get the business_id from the drivers model
@@ -456,6 +560,14 @@ const getBusinessByDriverId = async (driver_id) => {
 		throw error;
 	}
 };
+/**
+ * Get a driver's location history between two timestamps as simplified coordinates.
+ *
+ * @param {string} driverId - Driver ID.
+ * @param {string|Date} startTime - Start time inclusive.
+ * @param {string|Date} endTime - End time inclusive.
+ * @returns {Promise<object[]>} Array of simplified location entries.
+ */
 async function getDriverLocations(driverId, startTime, endTime) {
 	try {
 		const locations = await prisma.driver_history_locations.findMany({
@@ -492,6 +604,14 @@ async function getDriverLocations(driverId, startTime, endTime) {
 		throw new Error('Could not fetch driver locations');
 	}
 }
+/**
+ * Get a driver's location history with time-weighted performance scoring based on speed.
+ *
+ * @param {string} driverId - Driver ID.
+ * @param {string|Date} startTime - Start time inclusive.
+ * @param {string|Date} endTime - End time inclusive.
+ * @returns {Promise<{locations: object[], averageScore: number|null}>} Locations with average performance.
+ */
 async function getDriverLocationsWithPerformance(driverId, startTime, endTime) {
 	try {
 		const rows = await prisma.driver_history_locations.findMany({
@@ -606,6 +726,14 @@ async function getDriverLocationsWithPerformance(driverId, startTime, endTime) {
 	}
 }
 
+/**
+ * Enable or disable which order types a driver handles.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @param {string} action - 'enable' to set true, anything else sets false.
+ * @param {string} type - One of 'taxi', 'transfer', 'delivery'.
+ * @returns {Promise<object>} The updated driver.
+ */
 async function setDriverHandle(driver_id, action, type) {
 	const updateData = {};
 	const isEnableAction = action === 'enable';
@@ -627,6 +755,13 @@ async function setDriverHandle(driver_id, action, type) {
 		data: updateData,
 	});
 }
+/**
+ * Toggle which order streams are active for the driver.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @param {object} types - Flags: { taxi?: boolean, transfer?: boolean, delivery?: boolean }.
+ * @returns {Promise<object>} The updated driver.
+ */
 async function toggleDriverOrders(driver_id, types) {
 	try {
 		return await prisma.drivers.update({
@@ -642,6 +777,13 @@ async function toggleDriverOrders(driver_id, types) {
 		throw new Error(error);
 	}
 }
+/**
+ * Set the driver's current vehicle, recording last used vehicle and connecting the relation.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @param {string} vehicle_id - Vehicle ID to set as current.
+ * @returns {Promise<object>} The updated driver.
+ */
 async function setDriverCurrentVehicle(driver_id, vehicle_id) {
 	try {
 		return await prisma.drivers.update({
@@ -659,6 +801,12 @@ async function setDriverCurrentVehicle(driver_id, vehicle_id) {
 		throw new Error(error);
 	}
 }
+/**
+ * Clear the driver's current vehicle relation.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @returns {Promise<object>} The updated driver.
+ */
 async function clearDriverCurrentVehicle(driver_id) {
 	try {
 		return await prisma.drivers.update({
@@ -674,6 +822,12 @@ async function clearDriverCurrentVehicle(driver_id) {
 		throw new Error(error);
 	}
 }
+/**
+ * Soft-remove a driver from transport module by nulling transport_module_id.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @returns {Promise<object>} The updated driver.
+ */
 async function removeDriver(driver_id) {
 	try {
 		return await prisma.drivers.update({
@@ -687,6 +841,13 @@ async function removeDriver(driver_id) {
 		throw new Error(error);
 	}
 }
+/**
+ * Replace the set of municipalities a driver covers with a new list.
+ *
+ * @param {string} driver_id - Driver ID.
+ * @param {string[]} newMunicipalityIds - New municipality IDs to set.
+ * @returns {Promise<void>} Resolves when update is complete.
+ */
 const addDriverMunicipalities = async (driver_id, newMunicipalityIds) => {
 	try {
 		const existingMunicipalities = await prisma.driver_municipalities.findMany({
@@ -754,6 +915,7 @@ export { getUnavailableDrivers };
 export { getDriverLocations };
 export { getDriverLocationsWithPerformance };
 export { setDriverCurrentVehicle };
+export { clearDriverCurrentVehicle };
 export { addDriverMunicipalities };
 export { removeDriver };
 export default {
@@ -778,6 +940,7 @@ export default {
 	getDriverLocations,
 	getDriverLocationsWithPerformance,
 	setDriverCurrentVehicle,
+	clearDriverCurrentVehicle,
 	addDriverMunicipalities,
 	removeDriver,
 };

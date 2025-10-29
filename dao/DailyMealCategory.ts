@@ -1,7 +1,13 @@
 import type { daily_meal_categories, daily_meal_category_prices, Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-
+/**
+ * Get daily meal category by id.
+ *
+ * @param {string} daily_meal_category_id
+ * @param {Prisma.daily_meal_categoriesInclude} [includeObj]
+ * @returns {Promise<Prisma.daily_meal_categoriesGetPayload<{ include: Prisma.daily_meal_categoriesInclude }>>}
+ */
 export async function getDailyMealCategoryById(
 	daily_meal_category_id: string,
 	includeObj?: Prisma.daily_meal_categoriesInclude
@@ -11,7 +17,15 @@ export async function getDailyMealCategoryById(
 		include: includeObj,
 	});
 }
-
+/**
+ * Create daily meal category with initial price.
+ *
+ * @param {string} business_id
+ * @param {string} category_id
+ * @param {number} price
+ * @param {Date} start_date
+ * @returns {Promise<Prisma.daily_meal_categoriesGetPayload>}
+ */
 export async function createDailyMealCategoryWithPrice({
 	business_id,
 	category_id,
@@ -42,7 +56,13 @@ export async function createDailyMealCategoryWithPrice({
 	});
 	return dmc;
 }
-
+/**
+ * Get daily meal categories for a business.
+ *
+ * @param {string} business_id
+ * @param {boolean} detailed
+ * @returns {Promise<Prisma.daily_meal_categoriesGetPayload[]>}
+ */
 export async function getDailyMealCategoriesForBusiness(business_id: string, detailed: boolean = false) {
 	return await prisma.daily_meal_categories.findMany({
 		where: { business_id },
@@ -55,7 +75,12 @@ export async function getDailyMealCategoriesForBusiness(business_id: string, det
 		},
 	});
 }
-
+/**
+ * Get active daily meal categories for a business.
+ *
+ * @param {string} business_id
+ * @returns {Promise<Prisma.daily_meal_categoriesGetPayload[]>}
+ */
 export async function getActiveDailyMealCategoriesForBusiness(business_id: string) {
 	return await prisma.daily_meal_categories.findMany({
 		where: { business_id, active: true },
@@ -68,7 +93,13 @@ export async function getActiveDailyMealCategoriesForBusiness(business_id: strin
 		},
 	});
 }
-
+/**
+ * Add price to daily meal category.
+ * @param {string} daily_meal_category_id
+ * @param {number} price
+ * @param {Date} valid_from
+ * @returns {Promise<Prisma.daily_meal_category_pricesGetPayload>}
+ */
 export async function addPriceToDailyMealCategory({
 	daily_meal_category_id,
 	price,
@@ -86,14 +117,24 @@ export async function addPriceToDailyMealCategory({
 		},
 	});
 }
-
+/**
+ * Deactivate daily meal category.
+ *
+ * @param {string} daily_meal_category_id
+ * @returns {Promise<Prisma.daily_meal_categoriesGetPayload>}
+ */
 export async function deactivateDailyMealCategory(daily_meal_category_id: string) {
 	return prisma.daily_meal_categories.update({
 		where: { daily_meal_category_id },
 		data: { active: false },
 	});
 }
-
+/**
+ * Activate daily meal category.
+ *
+ * @param {string} daily_meal_category_id
+ * @returns {Promise<Prisma.daily_meal_categoriesGetPayload>}
+ */
 export async function activateDailyMealCategory(daily_meal_category_id: string) {
 	return prisma.daily_meal_categories.update({
 		where: { daily_meal_category_id },
@@ -106,9 +147,9 @@ export async function activateDailyMealCategory(daily_meal_category_id: string) 
  * The price is the one with the latest valid_from that is less than or equal to the given date.
  * Returns null if no valid price is found.
  *
- * @param dailyMealCategory - The daily_meal_category object (must include daily_meal_category_prices: { price: number, valid_from: Date }[])
- * @param date - The date to check the price for
- * @returns number | null
+ * @param {daily_meal_categories} dailyMealCategory - The daily_meal_category object (must include daily_meal_category_prices: { price: number, valid_from: Date }[])
+ * @param {Date} date - The date to check the price for
+ * @returns {number | null}
  */
 export function getDailyMealCategoryPriceForDate(
 	dailyMealCategory: daily_meal_categories & { daily_meal_category_prices: daily_meal_category_prices[] },

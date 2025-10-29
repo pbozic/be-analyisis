@@ -1,4 +1,9 @@
 import prisma from '../prisma/prisma.js';
+/**
+ * Get all categories with translations, icon, and subcategories; flattens translations onto the result.
+ *
+ * @returns {Promise<object[]>} Array of category records with translations and relations.
+ */
 async function getCategories() {
 	try {
 		let categories = await prisma.categories.findMany({
@@ -22,6 +27,12 @@ async function getCategories() {
 		throw new Error('Failed to get categories');
 	}
 }
+/**
+ * Get categories by category_type with translations and relations.
+ *
+ * @param {string} type - Category type to filter by.
+ * @returns {Promise<object[]>} Array of category records.
+ */
 async function getCategoriesByType(type) {
 	try {
 		let categories = await prisma.categories.findMany({
@@ -51,6 +62,12 @@ async function getCategoriesByType(type) {
 		throw new Error('Failed to get categories');
 	}
 }
+/**
+ * Get a single category by ID with translations and relations.
+ *
+ * @param {string} id - Category ID.
+ * @returns {Promise<object>} The category record.
+ */
 async function getCategoryById(id) {
 	try {
 		let category = await prisma.categories.findUnique({
@@ -78,6 +95,17 @@ async function getCategoryById(id) {
 		throw error;
 	}
 }
+/**
+ * Create a new category with translations, optional parent, subcategories, and optional icon.
+ *
+ * @param {object} categoryData - Base category fields (tag, category_type, name, etc.).
+ * @param {object[]} translations - Array of translation objects to insert.
+ * @param {string[]} subcategories - Array of category IDs to connect as subcategories.
+ * @param {string[]} words - Array of word IDs to connect (unused here but kept for signature compatibility).
+ * @param {string|null} parent_categories_id - Optional parent category ID.
+ * @param {object} [iconFileData={}] - Optional icon file metadata (file_type, mime_type).
+ * @returns {Promise<object>} The created category with translations and icon included.
+ */
 async function createCategory(
 	categoryData,
 	translations,
@@ -155,6 +183,17 @@ async function createCategory(
 		throw new Error('Failed to create category: ' + error.message);
 	}
 }
+/**
+ * Update a category and its translations, subcategories, parent, and optional icon.
+ *
+ * @param {string} id - Category ID to update.
+ * @param {object} categoryData - Partial fields to update on category.
+ * @param {object[]} translations - Translations to upsert by language.
+ * @param {string[]|null} subcategories - New list of subcategory IDs (replaces existing when provided).
+ * @param {string|null} parent_categories_id - New parent category ID or null to disconnect.
+ * @param {object|null} [iconFileData=null] - Optional icon file metadata to set or update.
+ * @returns {Promise<object>} The updated category with icon included.
+ */
 async function updateCategory(
 	id,
 	categoryData,
@@ -249,6 +288,12 @@ async function updateCategory(
 		throw new Error('Failed to update category: ' + error.message);
 	}
 }
+/**
+ * Delete a category by ID after disconnecting related words.
+ *
+ * @param {string} id - Category ID.
+ * @returns {Promise<object>} The deleted category record.
+ */
 async function deleteCategory(id) {
 	try {
 		let category = await prisma.categories.findUnique({ where: { categories_id: id } });

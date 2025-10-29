@@ -3,7 +3,12 @@ import { randomUUID } from 'crypto';
 import type { tutorial as TutorialModel, user_tutorials as UserTutorialsModel } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-
+/**
+ * Get or create tutorial state for a user
+ *
+ * @param {string} user_id - The ID of the user.
+ * @returns {Promise<object>} The tutorial state.
+ */
 export async function getOrCreateState(user_id: string) {
 	let state = await prisma.user_tutorial_state.findUnique({ where: { user_id } });
 	if (!state) {
@@ -11,7 +16,12 @@ export async function getOrCreateState(user_id: string) {
 	}
 	return state;
 }
-
+/**
+ * List tutorials with user's status
+ *
+ * @param {string} user_id - The ID of the user.
+ * @returns {Promise<object[]>} The list of tutorials with their status.
+ */
 export async function listTutorialsWithStatus(user_id: string) {
 	const state = await getOrCreateState(user_id);
 	const epoch = state.epoch;
@@ -31,7 +41,15 @@ export async function listTutorialsWithStatus(user_id: string) {
 		dismissedAt: byTutorial[t.tutorial_id]?.dismissedAt || null,
 	}));
 }
-
+/**
+ * Set tutorial status for a user
+ *
+ * @param {string} user_id - The ID of the user.
+ * @param {string} tutorial_key - The key of the tutorial.
+ * @param {'NOT_SEEN' | 'COMPLETED' | 'DISMISSED'} status - The status to set.
+ * @param {number | null} versionSeen - The version seen by the user.
+ * @returns {Promise<object>} The updated tutorial status.
+ */
 export async function setTutorialStatus(
 	user_id: string,
 	tutorial_key: string,
@@ -64,7 +82,12 @@ export async function setTutorialStatus(
 		},
 	});
 }
-
+/**
+ * Increment tutorial epoch for a user
+ *
+ * @param {string} user_id - The ID of the user.
+ * @returns {Promise<object>} The updated tutorial state.
+ */
 export async function incrementEpoch(user_id: string) {
 	const state = await getOrCreateState(user_id);
 	return prisma.user_tutorial_state.update({

@@ -1,4 +1,12 @@
 import prisma from '../prisma/prisma.js';
+/**
+ * Create a single file and connect it to a document.
+ *
+ * @param {string} documentId - Document ID to connect the file to.
+ * @param {object} fileData - File payload (url, mime_type, file_type, etc.).
+ * @param {boolean} isPublic - Whether the file is public.
+ * @returns {Promise<object>} Created file.
+ */
 const addFileToDocument = async (documentId, fileData, isPublic) => {
 	fileData.public = isPublic || false;
 	try {
@@ -17,6 +25,13 @@ const addFileToDocument = async (documentId, fileData, isPublic) => {
 		return new Error(error);
 	}
 };
+/**
+ * Create multiple files and connect them to a document.
+ *
+ * @param {string} documentId - Document ID to connect the files to.
+ * @param {object|object[]} filesData - Single file payload or array of file payloads.
+ * @returns {Promise<object[]>} Created files.
+ */
 const addFilesToDocument = async (documentId, filesData) => {
 	try {
 		// Ensure filesData is treated as an array
@@ -41,6 +56,14 @@ const addFilesToDocument = async (documentId, filesData) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update a single file by id and optionally set public flag.
+ *
+ * @param {string} fileId - File ID.
+ * @param {object} updateData - Fields to update.
+ * @param {boolean} isPublic - Whether the file is public.
+ * @returns {Promise<object>} Updated file.
+ */
 const updateFileInDocument = async (fileId, updateData, isPublic) => {
 	updateData.public = isPublic || false;
 	try {
@@ -53,6 +76,12 @@ const updateFileInDocument = async (fileId, updateData, isPublic) => {
 		return new Error(error);
 	}
 };
+/**
+ * Disconnect a file from its document and delete it.
+ *
+ * @param {string} fileId - File ID.
+ * @returns {Promise<object>} Deleted file.
+ */
 const removeFileFromDocument = async (fileId) => {
 	try {
 		// First, disconnect the file from the document
@@ -74,6 +103,12 @@ const removeFileFromDocument = async (fileId) => {
 	}
 };
 // Remove all files from a document
+/**
+ * Remove all files linked to a document (disconnect and delete).
+ *
+ * @param {string} documentId - Document ID.
+ * @returns {Promise<object>} Result of deleteMany.
+ */
 const removeAllFilesFromDocument = async (documentId) => {
 	try {
 		await prisma.files.updateMany({
@@ -90,6 +125,12 @@ const removeAllFilesFromDocument = async (documentId) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get all files for a document.
+ *
+ * @param {string} document_id - Document ID.
+ * @returns {Promise<object[]>} Files.
+ */
 async function getFilesByDocumentId(document_id) {
 	return await prisma.files.findMany({
 		where: {
@@ -97,6 +138,14 @@ async function getFilesByDocumentId(document_id) {
 		},
 	});
 }
+/**
+ * Create a standalone file row (not linked to a document).
+ *
+ * @param {string} file_type - Application file type enum.
+ * @param {string} mime_type - MIME type.
+ * @param {boolean} [isPublic=false] - Whether the file is public.
+ * @returns {Promise<object>} Created file.
+ */
 async function createFile(file_type, mime_type, isPublic = false) {
 	try {
 		return await prisma.files.create({
@@ -111,6 +160,12 @@ async function createFile(file_type, mime_type, isPublic = false) {
 		throw new Error(error);
 	}
 }
+/**
+ * Get a single file by ID.
+ *
+ * @param {string} file_id - File ID.
+ * @returns {Promise<object|null>} File or null.
+ */
 async function getFile(file_id) {
 	try {
 		return await prisma.files.findUnique({
@@ -123,6 +178,15 @@ async function getFile(file_id) {
 		throw new Error(error);
 	}
 }
+/**
+ * Update file metadata by ID.
+ *
+ * @param {string} file_id - File ID.
+ * @param {string} file_type - Application file type.
+ * @param {string} mime_type - MIME type.
+ * @param {string} url - File URL.
+ * @returns {Promise<object>} Updated file.
+ */
 async function updateFileById(file_id, file_type, mime_type, url) {
 	try {
 		return await prisma.files.update({

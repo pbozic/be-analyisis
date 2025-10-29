@@ -211,3 +211,4 @@ Content-Type: `- The new payment preferences`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
+

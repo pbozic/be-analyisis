@@ -1233,3 +1233,336 @@ Content-Type: `application/json`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setBusinessTypes )
 
 <!-- DOCGEN:END setBusinessTypesForBusiness -->
+
+<!-- DOCGEN:START getBusinessReviewsById -->
+### getBusinessReviewsById
+
+**Summary**: Get business reviews
+
+**Description**: Retrieves reviews for a business, including author and target details.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessReviewsById )
+
+<!-- DOCGEN:END getBusinessReviewsById -->
+
+<!-- DOCGEN:START getBusinessStripeStatusByBusinessId -->
+### getBusinessStripeStatusByBusinessId
+
+**Summary**: Get Stripe account active status
+
+**Description**: Returns whether the business's Stripe account is active.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessStripeStatusByBusinessId )
+
+<!-- DOCGEN:END getBusinessStripeStatusByBusinessId -->
+
+<!-- DOCGEN:START generateBusinessStripeByBusinessId -->
+### generateBusinessStripeByBusinessId
+
+**Summary**: Generate Stripe onboarding link
+
+**Description**: Creates or retrieves a Stripe account and returns an onboarding link.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 400
+- 500
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/generateBusinessStripeByBusinessId )
+
+<!-- DOCGEN:END generateBusinessStripeByBusinessId -->
+
+<!-- DOCGEN:START getBusynessFactorsBusinessIdList -->
+### getBusynessFactorsBusinessIdList
+
+**Summary**: Get busyness factors for businesses
+
+**Description**: Returns a busyness factor per business ID based on in-progress orders.
+
+**Responses:**
+- 200
+- 400
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusynessFactorsBusinessIdList )
+
+<!-- DOCGEN:END getBusynessFactorsBusinessIdList -->
+
+<!-- DOCGEN:START addBusinessToFavorites -->
+### addBusinessToFavorites
+
+**Summary**: Add a business to the authenticated user's favorites
+
+**Description**: Adds the given business to the user's favorites list.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addBusinessToFavorites )
+
+<!-- DOCGEN:END addBusinessToFavorites -->
+
+<!-- DOCGEN:START removeBusinessFromFavorites -->
+### removeBusinessFromFavorites
+
+**Summary**: Remove a business from the authenticated user's favorites
+
+**Description**: Removes the specified favorite entry from the user's favorites list.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeBusinessFromFavorites )
+
+<!-- DOCGEN:END removeBusinessFromFavorites -->
+
+<!-- DOCGEN:START getFavoriteBusinesses -->
+### getFavoriteBusinesses
+
+**Summary**: List authenticated user's favorite businesses
+
+**Description**: Returns favorite businesses for the current user, optionally filtered by business type.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | type |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFavoriteBusinesses )
+
+<!-- DOCGEN:END getFavoriteBusinesses -->
+
+<!-- DOCGEN:START getScheduledUsersByBusinessId -->
+### getScheduledUsersByBusinessId
+
+**Summary**: List scheduled users for a business
+
+**Description**: Retrieves users scheduled for daily meals for the given business.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getScheduledUsersByBusinessId )
+
+<!-- DOCGEN:END getScheduledUsersByBusinessId -->
+
+<!-- DOCGEN:START createScoringPointsHandler -->
+### createScoringPointsHandler
+
+**Summary**: Create scoring points
+
+**Description**: Creates scoring points for the authenticated business user for a delivery or taxi order.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+- 500
+
+**Response Content:**
+
+- Status: 201, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createScoringPoints )
+
+<!-- DOCGEN:END createScoringPointsHandler -->
+
+<!-- DOCGEN:START getPurchaseOrderLimit -->
+### getPurchaseOrderLimit
+
+**Summary**: Get remaining purchase order limit amount for current month
+
+**Description**: Returns the remaining purchase order limit for the specified business based on taxi orders this month.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 400
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getPurchaseOrderLimit )
+
+<!-- DOCGEN:END getPurchaseOrderLimit -->
+
+<!-- DOCGEN:START removeBusinessPaymentMethod -->
+### removeBusinessPaymentMethod
+
+**Summary**: Remove a payment method from the business
+
+**Description**: Detaches the specified payment method from the Stripe customer of the business of the current user.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | pm_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeBusinessPaymentMethod )
+
+<!-- DOCGEN:END removeBusinessPaymentMethod -->
+
+<!-- DOCGEN:START getBusinessOverallAnalytics -->
+### getBusinessOverallAnalytics
+
+**Summary**: Get overall business analytics
+
+**Description**: Retrieves overall analytics for the authenticated business user, including revenue, orders, customer types, and promo analytics.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 401
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 401, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessOverallAnalytics )
+
+<!-- DOCGEN:END getBusinessOverallAnalytics -->
+
+<!-- DOCGEN:START getBusinessPromoAdsAnalytics -->
+### getBusinessPromoAdsAnalytics
+
+**Summary**: Promo analytics for ads
+
+**Description**: Returns promo analytics for ads for a business and time period, including purchased ads if applicable.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+- 401
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessPromoAdsAnalytics )
+
+<!-- DOCGEN:END getBusinessPromoAdsAnalytics -->
+
+<!-- DOCGEN:START confirmBusinessPremise -->
+### confirmBusinessPremise
+
+**Summary**: Confirm business premise registration (admin)
+
+**Description**: Sets is_registered=true and registered_at=now for the given business premise.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_premise_id |  |
+
+**Responses:**
+- 200
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/confirmBusinessPremise )
+
+<!-- DOCGEN:END confirmBusinessPremise -->

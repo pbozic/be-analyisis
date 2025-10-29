@@ -2,6 +2,11 @@ import prisma from '../prisma/prisma.js';
 import UserDao from './User.js';
 import { SERVICE_TYPE } from '../lib/constants.js';
 import { createCustomer } from '../lib/stripe.js';
+/**
+ * Get all business_user relations with included user and business.
+ *
+ * @returns {Promise<object[]>} A promise resolving to an array of business_users records.
+ */
 const getAllBusinessUsers = async () => {
 	try {
 		return await prisma.business_users.findMany({
@@ -15,6 +20,12 @@ const getAllBusinessUsers = async () => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get the business_user relation for a given user, with related business context.
+ *
+ * @param {string} userId - The user ID to search by.
+ * @returns {Promise<object|null>} A promise resolving to the business_user record or null.
+ */
 const getBusinessUserByUserId = async (userId) => {
 	try {
 		return await prisma.business_users.findFirst({
@@ -64,6 +75,12 @@ const getBusinessUserByUserId = async (userId) => {
 		throw new Error(error);
 	}
 };
+/**
+ * List business users for a specific business.
+ *
+ * @param {string} business_id - The business ID.
+ * @returns {Promise<object[]>} A promise resolving to matching business_users with users included.
+ */
 const getBusinessUsersByBusinessId = async (business_id) => {
 	try {
 		return await prisma.business_users.findMany({
@@ -77,6 +94,12 @@ const getBusinessUsersByBusinessId = async (business_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * List businesses of a given type including their business users.
+ *
+ * @param {string} type - The business type.
+ * @returns {Promise<object[]>} A promise resolving to businesses with nested business_users and users.
+ */
 const getBusinessUsersByBusinessType = async (type) => {
 	try {
 		return await prisma.business.findMany({
@@ -94,6 +117,13 @@ const getBusinessUsersByBusinessType = async (type) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Get all business users for a business filtered by company role.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {string} company_role - The role to filter by.
+ * @returns {Promise<object[]>} A promise resolving to business_users records with users included.
+ */
 const getAllBusinessUsersForBusinessByCompanyRole = async (business_id, company_role) => {
 	try {
 		return await prisma.business_users.findMany({
@@ -110,6 +140,15 @@ const getAllBusinessUsersForBusinessByCompanyRole = async (business_id, company_
 		throw new Error(error);
 	}
 };
+/**
+ * Create a business_user relation, optionally creating a new user and Stripe customer.
+ *
+ * @param {object} userData - Payload containing user data and role.
+ * @param {string} business_id - The business to attach the user to.
+ * @param {boolean} [createNewUser=true] - Whether to create a new user or link an existing one.
+ * @param {object} [tx=prisma] - Optional Prisma transaction/client to use.
+ * @returns {Promise<{user: object, businessUser: object}>} The created/linked user and business_user relation.
+ */
 const createBusinessUser = async (userData, business_id, createNewUser = true, tx = prisma) => {
 	try {
 		let stripeCustomer = await createCustomer(
@@ -144,6 +183,12 @@ const createBusinessUser = async (userData, business_id, createNewUser = true, t
 		throw new Error(error);
 	}
 };
+/**
+ * Remove a business_user relation by its ID.
+ *
+ * @param {string} business_users_id - The relation ID.
+ * @returns {Promise<object>} The deleted business_user record.
+ */
 const removeBusinessUser = async (business_users_id) => {
 	try {
 		return await prisma.business_users.delete({
@@ -154,6 +199,13 @@ const removeBusinessUser = async (business_users_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update a business_user relation.
+ *
+ * @param {string} business_users_id - The relation ID.
+ * @param {object} updates - Partial fields to update.
+ * @returns {Promise<object>} The updated business_user record.
+ */
 const updateBusinessUser = async (business_users_id, updates) => {
 	try {
 		return await prisma.business_users.update({
@@ -165,6 +217,13 @@ const updateBusinessUser = async (business_users_id, updates) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Update the company role for a business_user relation.
+ *
+ * @param {string} business_users_id - The relation ID.
+ * @param {string} company_role - The new company role.
+ * @returns {Promise<object>} The updated business_user record.
+ */
 const updateCompanyRole = async (business_users_id, company_role) => {
 	try {
 		return await prisma.business_users.update({
@@ -176,6 +235,13 @@ const updateCompanyRole = async (business_users_id, company_role) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Set the operating address for a business_user relation.
+ *
+ * @param {string} business_users_id - The relation ID.
+ * @param {string} address_id - The address ID to connect.
+ * @returns {Promise<object>} The updated business_user record.
+ */
 async function addOperatingAddress(business_users_id, address_id) {
 	try {
 		return await prisma.business_users.update({
@@ -187,6 +253,13 @@ async function addOperatingAddress(business_users_id, address_id) {
 		throw new Error(error);
 	}
 }
+/**
+ * Update online status for a business_user (e.g., delivery driver online flag).
+ *
+ * @param {string} business_users_id - The relation ID.
+ * @param {boolean} online - New online flag value.
+ * @returns {Promise<object>} The updated business_user record with business included.
+ */
 const updateBusinessUserOnlineStatus = async (business_users_id, online) => {
 	try {
 		return await prisma.business_users.update({
@@ -201,6 +274,15 @@ const updateBusinessUserOnlineStatus = async (business_users_id, online) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Upsert and update allowance amounts for a business_user based on service type.
+ *
+ * @param {string} business_users_id - The relation ID.
+ * @param {number} wallet - Wallet amount limit.
+ * @param {number} purchase_order - Purchase order amount limit.
+ * @param {string} type - Service type (TAXI, TRANSFER, DELIVERY, ANY).
+ * @returns {Promise<object>} The business_user with populated allowance.
+ */
 const updateAllowance = async (business_users_id, wallet, purchase_order, type) => {
 	const updateData = {};
 	switch (type) {

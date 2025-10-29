@@ -1,4 +1,11 @@
 import prisma from '../prisma/prisma.js';
+/**
+ * Create a menu category for a given menu and optionally connect categories.
+ *
+ * @param {string} menuId - Menu ID to attach to.
+ * @param {object} categoryData - Menu category data; may include category_ids to connect.
+ * @returns {Promise<object>} The created menu category with related data.
+ */
 const createMenuCategory = async (menuId, categoryData) => {
 	// Handle creating categories
 	let categories = categoryData.category_ids ? categoryData.category_ids : [];
@@ -48,6 +55,13 @@ const createMenuCategory = async (menuId, categoryData) => {
 	});
 	return menu_categoryR;
 };
+/**
+ * Create a menu category based on a daily meal category price entry.
+ *
+ * @param {string} menuId - Menu ID to attach to.
+ * @param {string} daily_meal_category_price_id - Reference to daily_meal_category_prices entry.
+ * @returns {Promise<object>} The created menu category with related data.
+ */
 const createDailyMealMenuCategory = async (menuId, daily_meal_category_price_id) => {
 	const existing_dmc_price = await prisma.daily_meal_category_prices.findUnique({
 		where: {
@@ -98,6 +112,13 @@ const createDailyMealMenuCategory = async (menuId, daily_meal_category_price_id)
 	return menu_category;
 };
 
+/**
+ * Append a menu_category_id to a menu's ordered list, if not already present.
+ *
+ * @param {string} menu_id - Menu ID.
+ * @param {string} menuCategoryIdToAdd - Menu category ID to append.
+ * @returns {Promise<object|undefined>} The updated menu or undefined if already present.
+ */
 const addMenuCategoryIdToOrder = async (menu_id, menuCategoryIdToAdd) => {
 	try {
 		const menu = await prisma.menus.findUnique({
@@ -117,6 +138,13 @@ const addMenuCategoryIdToOrder = async (menu_id, menuCategoryIdToAdd) => {
 		throw error;
 	}
 };
+/**
+ * Remove a menu_category_id from a menu's ordered list.
+ *
+ * @param {string} menu_id - Menu ID.
+ * @param {string} menuCategoryIdToRemove - Menu category ID to remove.
+ * @returns {Promise<object>} The updated menu.
+ */
 const removeMenuCategoryIdFromOrder = async (menu_id, menuCategoryIdToRemove) => {
 	try {
 		const menu = await prisma.menus.findUnique({
@@ -134,6 +162,12 @@ const removeMenuCategoryIdFromOrder = async (menu_id, menuCategoryIdToRemove) =>
 		throw error;
 	}
 };
+/**
+ * Get menu categories for a given menu with items and categories included; sorts items by stored order.
+ *
+ * @param {string} menu_id - Menu ID.
+ * @returns {Promise<object[]>} Array of menu categories with items.
+ */
 const getMenuCategoriesByMenuId = async (menu_id) => {
 	const categories = await prisma.menu_categories.findMany({
 		where: {
@@ -177,6 +211,12 @@ const getMenuCategoriesByMenuId = async (menu_id) => {
 	});
 	return categories;
 };
+/**
+ * Get menu categories for a business across all menus.
+ *
+ * @param {string} business_id - Business ID.
+ * @returns {Promise<object[]>} Array of menu categories with items.
+ */
 const getMenuCategoriesByBusinessId = async (business_id) => {
 	const categories = await prisma.menu_categories.findMany({
 		where: {
@@ -218,6 +258,12 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 	});
 	return categories;
 };
+/**
+ * Delete a menu category, disconnecting related category links first.
+ *
+ * @param {string} menu_category_id - Menu category ID.
+ * @returns {Promise<object>} Deleted menu category record.
+ */
 const deleteMenuCategory = async (menu_category_id) => {
 	const menu_category = await prisma.menu_categories.findUnique({
 		where: {
@@ -240,6 +286,13 @@ const deleteMenuCategory = async (menu_category_id) => {
 		},
 	});
 };
+/**
+ * Update a menu category and include category relations.
+ *
+ * @param {string} menu_category_id - Menu category ID.
+ * @param {object} data - Fields to update.
+ * @returns {Promise<object>} The updated menu category.
+ */
 const updateMenuCategory = async (menu_category_id, data) => {
 	return await prisma.menu_categories.update({
 		where: {
@@ -255,6 +308,13 @@ const updateMenuCategory = async (menu_category_id, data) => {
 		},
 	});
 };
+/**
+ * Update the ordering of menu items within a category by setting menu_category_order_index.
+ *
+ * @param {string} menu_category_id - Menu category ID.
+ * @param {string[]} ordered_menu_items_ids - Ordered list of menu_item IDs belonging to the category.
+ * @returns {Promise<object>} The updated menu category with menu_items_ordered set.
+ */
 const updateMenuItemsOrder = async (menu_category_id, ordered_menu_items_ids) => {
 	return await prisma.$transaction(async (tx) => {
 		const validItems = await tx.menu_items.findMany({
@@ -284,6 +344,13 @@ const updateMenuItemsOrder = async (menu_category_id, ordered_menu_items_ids) =>
 		});
 	});
 };
+/**
+ * Connect a menu category to a menu.
+ *
+ * @param {string} menu_id - Menu ID.
+ * @param {string} menu_category_id - Menu category ID.
+ * @returns {Promise<object>} The updated menu category.
+ */
 const addCategoryToMenu = async (menu_id, menu_category_id) => {
 	return await prisma.menu_categories.update({
 		where: {
@@ -296,6 +363,12 @@ const addCategoryToMenu = async (menu_id, menu_category_id) => {
 		},
 	});
 };
+/**
+ * Disconnect a menu category from its menu.
+ *
+ * @param {string} menu_category_id - Menu category ID.
+ * @returns {Promise<object>} The updated menu category.
+ */
 const removeCategoryFromMenu = async (menu_category_id) => {
 	try {
 		return await prisma.menu_categories.update({
@@ -310,6 +383,13 @@ const removeCategoryFromMenu = async (menu_category_id) => {
 		throw new Error(error);
 	}
 };
+/**
+ * Link a category to a menu category.
+ *
+ * @param {string} menu_category_id - Menu category ID.
+ * @param {string} category_id - Category ID.
+ * @returns {Promise<object>} The created link record.
+ */
 const addCategoryToMenuCategory = async (menu_category_id, category_id) => {
 	return await prisma.menu_categories_categories.create({
 		data: {
@@ -322,6 +402,13 @@ const addCategoryToMenuCategory = async (menu_category_id, category_id) => {
 		},
 	});
 };
+/**
+ * Unlink a category from a menu category.
+ *
+ * @param {string} menu_category_id - Menu category ID.
+ * @param {string} category_id - Category ID.
+ * @returns {Promise<object>} The deleted link record.
+ */
 const removeCategoryFromMenuCategory = async (menu_category_id, category_id) => {
 	return await prisma.menu_categories_categories.delete({
 		where: {
@@ -332,6 +419,13 @@ const removeCategoryFromMenuCategory = async (menu_category_id, category_id) => 
 		},
 	});
 };
+/**
+ * Update the price on a menu category (daily meal context).
+ *
+ * @param {string} menu_category_id - Menu category ID.
+ * @param {number} price - New price value.
+ * @returns {Promise<object>} The updated menu category.
+ */
 const updateDailyMealMenuPrice = async (menu_category_id, price) => {
 	return await prisma.menu_categories.update({
 		where: {
@@ -342,6 +436,12 @@ const updateDailyMealMenuPrice = async (menu_category_id, price) => {
 		},
 	});
 };
+/**
+ * Get a menu category by ID with items, categories, and daily meal price.
+ *
+ * @param {string} menu_category_id - Menu category ID.
+ * @returns {Promise<object|null>} The menu category or null if not found.
+ */
 const getMenuCategoryById = async (menu_category_id) => {
 	return await prisma.menu_categories.findUnique({
 		where: {

@@ -31,7 +31,7 @@ import {
 } from '../lib/constants.js';
 import TaxiOrderDao from '../dao/TaxiOrder.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
-import ReservationDao from '../dao/Reservation.js';
+import ReservationDao from '../dao/TableReservation.js';
 import GroupDao from '../dao/Group.js';
 import CashbackDao from '../dao/Cashback.js';
 config();

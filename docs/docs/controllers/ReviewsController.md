@@ -14,6 +14,10 @@ Content-Type: `application/json`
 **Responses:**
 - 200
 
+**Response Content:**
+
+- ⚠️ Could not parse: `application/json`
+
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reviewDriver )
 
 <!-- DOCGEN:END reviewDriver -->
@@ -31,6 +35,10 @@ Content-Type: `application/json`
 
 **Responses:**
 - 200
+
+**Response Content:**
+
+- ⚠️ Could not parse: `application/json`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reviewStore )
 
@@ -50,6 +58,11 @@ Content-Type: `application/json`
 **Responses:**
 - 200
 
+**Response Content:**
+
+- ⚠️ Could not parse: `application/json`
+
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reviewFoodDrinks )
 
 <!-- DOCGEN:END reviewFoodDrinks -->
+

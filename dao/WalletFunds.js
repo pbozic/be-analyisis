@@ -75,6 +75,16 @@ async function createWalletFunds(user_id, charge_id, amount){
 	}
 }
  */
+
+/**
+ * Create wallet funds entry and associated transaction.
+ *
+ * @param {string} user_id
+ * @param {number} amount_cents
+ * @param {string|null} charge_id
+ * @param {string} transaction_type
+ * @returns {Promise<Transaction>}
+ */
 async function createWalletFunds(user_id, amount_cents, charge_id = null, transaction_type = 'CREDIT') {
 	console.log('createWalletFunds ', user_id, amount_cents);
 	return await prisma.transactions.create({
@@ -94,6 +104,13 @@ async function createWalletFunds(user_id, amount_cents, charge_id = null, transa
 		},
 	});
 }
+/**
+ * Get available wallet funds for a user by type.
+ *
+ * @param {string} userId
+ * @param {string} funds_type
+ * @returns {Promise<WalletFunds[]>}
+ */
 async function getAvailableWalletFunds(userId, funds_type) {
 	try {
 		const walletFunds = await prisma.wallet_funds.findMany({
@@ -112,6 +129,14 @@ async function getAvailableWalletFunds(userId, funds_type) {
 		throw error;
 	}
 }
+/**
+ * Get reserved wallet funds for a user by order and reserve type.
+ *
+ * @param {string} userId
+ * @param {string} order_id
+ * @param {string} reserveType
+ * @returns {Promise<WalletFunds[]>}
+ */
 async function getReservedWalletFunds(userId, order_id, reserveType = 'order') {
 	try {
 		const walletFunds = await prisma.wallet_funds.findMany({
@@ -132,6 +157,11 @@ async function getReservedWalletFunds(userId, order_id, reserveType = 'order') {
 		throw error;
 	}
 }
+/**
+ * Get all reserved wallet funds.
+ *
+ * @returns {Promise<WalletFunds[]>}
+ */
 async function getAllReservedWalletFunds() {
 	try {
 		const walletFunds = await prisma.wallet_funds.findMany({
@@ -153,6 +183,11 @@ async function getAllReservedWalletFunds() {
 		throw error;
 	}
 }
+/**
+ * Delete wallet funds by ID.
+ *
+ * @param {string} wallet_funds_id
+ */
 async function deleteWalletFunds(wallet_funds_id) {
 	try {
 		await prisma.wallet_funds.delete({
@@ -166,6 +201,15 @@ async function deleteWalletFunds(wallet_funds_id) {
 		throw error;
 	}
 }
+/**
+ * Subtract funds from wallet funds entry and create associated transaction.
+ *
+ * @param {string} walletFundsId
+ * @param {number} amount
+ * @param {string|null} order_id
+ * @param {string|null} service_type
+ * @returns {Promise<WalletFunds>}
+ */
 async function subtractFunds(walletFundsId, amount, order_id = null, service_type = null) {
 	try {
 		if (amount <= 0) {
@@ -225,6 +269,15 @@ async function subtractFunds(walletFundsId, amount, order_id = null, service_typ
 		throw error;
 	}
 }
+/**
+ * Reserve funds from a wallet funds entry.
+ *
+ * @param {string} walletFundsId
+ * @param {number} reserveAmount
+ * @param {string} orderId
+ * @param {string} reserveType
+ * @returns {Promise<WalletFunds>}
+ */
 async function reserveFunds(walletFundsId, reserveAmount, orderId, reserveType = 'order') {
 	try {
 		if (reserveAmount <= 0) {
@@ -296,6 +349,12 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId, reserveType =
 		throw error;
 	}
 }
+/**
+ * Release reserved funds back to available wallet funds.
+ *
+ * @param {string} walletFundsId
+ * @param {number} releaseAmount
+ */
 async function releaseFunds(walletFundsId, releaseAmount) {
 	try {
 		if (releaseAmount <= 0) {
@@ -387,6 +446,11 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 		throw error;
 	}
 }
+/** Get available wallet balance for a user.
+ *
+ * @param {string} userId
+ * @returns {Promise<number>}
+ */
 async function getAvailableWalletBalance(userId) {
 	try {
 		const result = await prisma.wallet_funds.aggregate({
@@ -406,6 +470,11 @@ async function getAvailableWalletBalance(userId) {
 		throw error;
 	}
 }
+/** Get available wallet balance grouped by type for a user.
+ *
+ * @param {string} userId
+ * @returns {Promise<object>} Key-value pairs of type and balance.
+ */
 async function getAvailableWalletBalanceGroupedByType(userId) {
 	try {
 		const result = await prisma.wallet_funds.groupBy({
@@ -430,6 +499,12 @@ async function getAvailableWalletBalanceGroupedByType(userId) {
 		throw error;
 	}
 }
+/**
+ * Create credit wallet funds entry.
+ *
+ * @param {object} data
+ * @returns {Promise<WalletFunds>}
+ */
 const createCredit = async (data) => {
 	try {
 		const expiryDate = new Date();
@@ -446,6 +521,13 @@ const createCredit = async (data) => {
 		throw error;
 	}
 };
+/** Convert pending cashbacks to credit wallet funds entry.
+ *
+ * @param {object} data
+ * @param {object[]} pendingCashbacks
+ * @param {Date} expiryDate
+ * @returns {Promise<WalletFunds>}
+ */
 const convertCashbacksToCredit = async (data, pendingCashbacks, expiryDate) => {
 	try {
 		return await prisma.$transaction(async (tx) => {
@@ -474,6 +556,11 @@ const convertCashbacksToCredit = async (data, pendingCashbacks, expiryDate) => {
 		throw error;
 	}
 };
+/**
+ * Expire outdated credits.
+ *
+ * @returns {Promise<number>} The number of expired credits.
+ */
 const expireOutdatedCredits = async () => {
 	const now = new Date();
 	now.setHours(0, 0, 0, 0);
@@ -494,6 +581,11 @@ const expireOutdatedCredits = async () => {
 		throw error;
 	}
 };
+/** Find credits expiring in a given number of days.
+ *
+ * @param {number} days
+ * @returns {Promise<WalletFunds[]>}
+ */
 const findCreditsExpiringInDays = async (days) => {
 	try {
 		const endDateStart = new Date();
@@ -519,6 +611,13 @@ const findCreditsExpiringInDays = async (days) => {
 		throw error;
 	}
 };
+/**
+ * Get available credits by type for a user.
+ *
+ * @param {string} userId
+ * @param {string} type
+ * @returns {Promise<WalletFunds[]>}
+ */
 const getAvailableCreditsByType = async (userId, type) => {
 	try {
 		return await prisma.wallet_funds.findMany({
@@ -535,6 +634,12 @@ const getAvailableCreditsByType = async (userId, type) => {
 		throw error;
 	}
 };
+/** Get available credits for order by type for a user.
+ *
+ * @param {string} userId
+ * @param {string} type
+ * @returns {Promise<WalletFunds[]>}
+ */
 const getAvailableCreditsForOrder = async (userId, type) => {
 	try {
 		return await prisma.wallet_funds.findMany({
@@ -553,6 +658,13 @@ const getAvailableCreditsForOrder = async (userId, type) => {
 		throw error;
 	}
 };
+/** Get reserved credits for order by type for a user.
+ *
+ * @param {string} userId
+ * @param {string} orderId
+ * @param {string} reserveType
+ * @returns {Promise<WalletFunds[]>}
+ */
 const getReservedCredits = async (userId, orderId, reserveType = 'order') => {
 	try {
 		return await prisma.wallet_funds.findMany({
@@ -573,6 +685,12 @@ const getReservedCredits = async (userId, orderId, reserveType = 'order') => {
 		throw error;
 	}
 };
+/** Get expired credits for a user by type.
+ *
+ * @param {string} userId
+ * @param {string} type
+ * @returns {Promise<WalletFunds[]>}
+ */
 const getExpiredCredits = async (userId, type) => {
 	try {
 		return await prisma.wallet_funds.findMany({

@@ -1,4 +1,14 @@
 import prisma from '../prisma/prisma.js';
+/**
+ * Create a late event for delivery or taxi order and link to business and user.
+ *
+ * @param {string} business_id - Business ID.
+ * @param {string} user_id - User ID.
+ * @param {string|null} delivery_order_id - Delivery order ID if applicable.
+ * @param {string|null} taxi_order_id - Taxi order ID if applicable.
+ * @param {number} seconds - Delay in seconds.
+ * @returns {Promise<object>} Created late event.
+ */
 async function createLateEvent(business_id, user_id, delivery_order_id, taxi_order_id, seconds) {
 	try {
 		const newLateEvent = await prisma.late_events.create({
@@ -17,6 +27,12 @@ async function createLateEvent(business_id, user_id, delivery_order_id, taxi_ord
 		throw error;
 	}
 }
+/**
+ * Get a late event by id with related entities.
+ *
+ * @param {string} late_events_id - Late event ID.
+ * @returns {Promise<object|null>} Late event or null.
+ */
 async function getLateEventById(late_events_id) {
 	try {
 		const lateEvent = await prisma.late_events.findUnique({
@@ -37,6 +53,12 @@ async function getLateEventById(late_events_id) {
 		throw error;
 	}
 }
+/**
+ * Get late events for a user with related entities.
+ *
+ * @param {string} user_id - User ID.
+ * @returns {Promise<object[]>} Late events.
+ */
 async function getLateEventsByUserId(user_id) {
 	try {
 		const lateEvents = await prisma.late_events.findMany({
@@ -60,6 +82,12 @@ async function getLateEventsByUserId(user_id) {
 		throw error;
 	}
 }
+/**
+ * Get late events for a business with related entities.
+ *
+ * @param {string} business_id - Business ID.
+ * @returns {Promise<object[]>} Late events.
+ */
 async function getLateEventsByBusinessId(business_id) {
 	try {
 		const lateEvents = await prisma.late_events.findMany({
@@ -83,6 +111,13 @@ async function getLateEventsByBusinessId(business_id) {
 		throw error;
 	}
 }
+/**
+ * Update a late event and return with related entities.
+ *
+ * @param {string} late_events_id - Late event ID.
+ * @param {object} data - Fields to update.
+ * @returns {Promise<object>} Updated late event.
+ */
 async function updateLateEvent(late_events_id, data) {
 	try {
 		const updatedLateEvent = await prisma.late_events.update({
@@ -105,6 +140,12 @@ async function updateLateEvent(late_events_id, data) {
 		throw error;
 	}
 }
+/**
+ * Delete a late event by id.
+ *
+ * @param {string} late_events_id - Late event ID.
+ * @returns {Promise<void>} Resolves when deleted.
+ */
 async function deleteLateEvent(late_events_id) {
 	try {
 		await prisma.late_events.delete({

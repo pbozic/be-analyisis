@@ -1,5 +1,11 @@
 import prisma from '../prisma/prisma.js';
-
+/**
+ * Set food_drinks online status.
+ *
+ * @param {string} food_drinks_id
+ * @param {boolean} online
+ * @returns {Promise<FoodDrinks>}
+ */
 export async function setFoodDrinksOnline(food_drinks_id: string, online: boolean) {
 	try {
 		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { online } });
@@ -9,7 +15,13 @@ export async function setFoodDrinksOnline(food_drinks_id: string, online: boolea
 		throw new Error(message);
 	}
 }
-
+/**
+ * Set food_drinks overwhelmed status.
+ *
+ * @param {string} food_drinks_id
+ * @param {boolean} overwhelmed
+ * @returns {Promise<FoodDrinks>}
+ */
 export async function setFoodDrinksOverwhelmed(food_drinks_id: string, overwhelmed: boolean) {
 	try {
 		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { overwhelmed } });
@@ -19,7 +31,12 @@ export async function setFoodDrinksOverwhelmed(food_drinks_id: string, overwhelm
 		throw new Error(message);
 	}
 }
-
+/**
+ * Disable a food_drinks entry.
+ *
+ * @param {string} food_drinks_id
+ * @returns {Promise<FoodDrinks>}
+ */
 export async function disableFoodDrinks(food_drinks_id: string) {
 	try {
 		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { enabled: false, online: false } });
@@ -29,6 +46,12 @@ export async function disableFoodDrinks(food_drinks_id: string) {
 		throw new Error(message);
 	}
 }
+/**
+ * Enable a food_drinks entry.
+ *
+ * @param {string} food_drinks_id
+ * @returns {Promise<FoodDrinks>}
+ */
 export async function enableFoodDrinks(food_drinks_id: string) {
 	try {
 		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { enabled: true } });

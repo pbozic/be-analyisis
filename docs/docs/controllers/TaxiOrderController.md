@@ -641,3 +641,249 @@ Content-Type: `application/json`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/splitVanOrder )
 
 <!-- DOCGEN:END splitVanOrder -->
+
+<!-- DOCGEN:START confirmWalletPayment -->
+### confirmWalletPayment
+
+**Summary**: Confirm wallet payment for an awaiting-payment taxi order
+
+**Description**: Reserves wallet funds (personal, family or business wallet) and marks the order as PAID, then moves it to PENDING.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/confirmWalletPayment )
+
+<!-- DOCGEN:END confirmWalletPayment -->
+
+<!-- DOCGEN:START uploadTaxiOrderSignature -->
+### uploadTaxiOrderSignature
+
+**Summary**: Upload a signature for a taxi order
+
+**Description**: Stores a signature image/PDF for the order and appends a timeline entry.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | order_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/uploadTaxiOrderSignature )
+
+<!-- DOCGEN:END uploadTaxiOrderSignature -->
+
+<!-- DOCGEN:START uploadTaxiOrderPhoto -->
+### uploadTaxiOrderPhoto
+
+**Summary**: Upload a photo for a taxi order
+
+**Description**: Stores a photo for the order (e.g., proof) and appends a timeline entry.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | order_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/uploadTaxiOrderPhoto )
+
+<!-- DOCGEN:END uploadTaxiOrderPhoto -->
+
+<!-- DOCGEN:START getScheduledOrders -->
+### getScheduledOrders
+
+**Summary**: Get all scheduled taxi orders.
+
+**Description**: This fetches all scheduled taxi orders.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getScheduledOrders )
+
+<!-- DOCGEN:END getScheduledOrders -->
+
+<!-- DOCGEN:START getAcceptedScheduledOrders -->
+### getAcceptedScheduledOrders
+
+**Summary**: Get accepted scheduled taxi orders by driver ID.
+
+**Description**: This fetches accepted scheduled taxi orders for a specific driver.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driver_id |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAcceptedScheduledOrders )
+
+<!-- DOCGEN:END getAcceptedScheduledOrders -->
+
+<!-- DOCGEN:START getScheduledOrdersByUserId -->
+### getScheduledOrdersByUserId
+
+**Summary**: Get scheduled taxi orders by user ID.
+
+**Description**: This fetches scheduled taxi orders for a specific user.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | user_id |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getScheduledOrdersByUserId )
+
+<!-- DOCGEN:END getScheduledOrdersByUserId -->
+
+<!-- DOCGEN:START getDriversForOrder -->
+### getDriversForOrder
+
+**Summary**: Get available drivers for a taxi order.
+
+**Description**: This fetches available drivers for a specific taxi order.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | order_id |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDriversForOrder )
+
+<!-- DOCGEN:END getDriversForOrder -->
+
+<!-- DOCGEN:START cancelGroupedOrderByParentId -->
+### cancelGroupedOrderByParentId
+
+**Summary**: Cancel grouped taxi order by parent order ID.
+
+**Description**: Cancels all orders in a grouped taxi order based on the provided parent order ID.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelGroupedOrderByParentId )
+
+<!-- DOCGEN:END cancelGroupedOrderByParentId -->
+
+<!-- DOCGEN:START rejectGroupedOrderByParentId -->
+### rejectGroupedOrderByParentId
+
+**Summary**: Reject grouped taxi order by parent order ID.
+
+**Description**: Rejects all orders in a grouped taxi order based on the provided parent order ID.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/rejectGroupedOrderByParentId )
+
+<!-- DOCGEN:END rejectGroupedOrderByParentId -->
+
+<!-- DOCGEN:START calculateTransferPrice -->
+### calculateTransferPrice
+
+**Summary**: Calculate transfer ride price.
+
+**Description**: Calculates the price for a transfer ride based on pickup and delivery locations and departure time.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+- 500
+
+**Response Content:**
+
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/calculateTransferPrice )
+
+<!-- DOCGEN:END calculateTransferPrice -->

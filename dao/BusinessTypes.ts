@@ -2,7 +2,12 @@ import type { Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 
-// Create a new business type (admin/seeder use)
+/**
+ * Create a new business type.
+ *
+ * @param {string} type
+ * @returns {Promise<Prisma.business_typeGetPayload>}
+ */
 export async function createBusinessType(type: string) {
 	try {
 		return await prisma.business_type.create({
@@ -15,7 +20,12 @@ export async function createBusinessType(type: string) {
 	}
 }
 
-// Get a single business type by id
+/**
+ * Get business type by id.
+ *
+ * @param {string} type_id
+ * @returns {Promise<Prisma.business_typeGetPayload>}
+ */
 export async function getBusinessTypeById(type_id: string) {
 	try {
 		return await prisma.business_type.findUnique({ where: { type_id } });
@@ -26,7 +36,13 @@ export async function getBusinessTypeById(type_id: string) {
 	}
 }
 
-// Replace all business types for a business (atomic)
+/**
+ * Set business types.
+ *
+ * @param {string} business_id
+ * @param {string[]} type_ids
+ * @returns {Promise<Prisma.business_to_typesGetPayload[]>}
+ */
 export async function setBusinessTypes(business_id: string, type_ids: string[] = []) {
 	try {
 		return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {

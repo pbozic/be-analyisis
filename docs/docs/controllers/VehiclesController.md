@@ -310,8 +310,8 @@ Content-Type: `application/json`
 **Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
-Type: `vehicles`
-Content-Type: `- The vehicles to assign`
+Type: `application/json`
+Content-Type: `application/json`
 
 **Responses:**
 - 200
@@ -333,8 +333,8 @@ Content-Type: `- The vehicles to assign`
 **Description**: Disassociates vehicles from its assigned driver by setting the vehicle's can_drive to false.
 
 **Request Body:** (optional)
-Type: `vehicles`
-Content-Type: `- The vehicles to unassign`
+Type: `application/json`
+Content-Type: `application/json`
 
 **Responses:**
 - 200
@@ -372,3 +372,4 @@ Content-Type: `- The vehicles to unassign`
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
+

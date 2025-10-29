@@ -61,10 +61,9 @@ export async function createPaymentSplit(
 /**
  * Creates multiple payment split records for a single payment using a transaction.
  * Each split will be connected to the given payment.
- * @param payment_id - The ID of the payment these splits belong to.
- * @param splits - Array of split objects to create.
- * @returns Object with the count of created splits.
- * @prisma_model payment_splits
+ * @param {string} payment_id - The ID of the payment these splits belong to.
+ * @param {Array<PaymentSplitData>} splits - Array of split objects to create.
+ * @returns {Promise<Object>} Object with the count of created splits.
  */
 export async function createManyPaymentSplits(
 	payment_id: string,
@@ -108,8 +107,8 @@ export async function createManyPaymentSplits(
 /**
  * Fetches a payment split by its payment_split_id.
  *
- * @param payment_split_id - UUID of the split to fetch.
- * @returns The payment split.
+ * @param {string} payment_split_id - UUID of the split to fetch.
+ * @returns {Promise<payment_splits | null>} The payment split.
  */
 export async function getPaymentSplitById(payment_split_id: string) {
 	return await prisma.payment_splits.findFirst({
@@ -125,9 +124,9 @@ export async function getPaymentSplitById(payment_split_id: string) {
  * Fields `amount_regular`, 'amount_credits', `destination_type`, and `_id` are immutable.
  * Allows updating `destination_id` only if it is currently null.
  *
- * @param payment_split_id - UUID of the split to update.
- * @param data - Allowed fields to update.
- * @returns The updated payment split.
+ * @param {string} payment_split_id - UUID of the split to update.
+ * @param {object} data - Allowed fields to update.
+ * @returns {Promise<payment_splits>} The updated payment split.
  */
 export async function updatePaymentSplitById(
 	payment_split_id: string,

@@ -1,5 +1,11 @@
 import prisma from '../prisma/prisma.js';
-
+/**
+ * Update user's favorite services
+ *
+ * @param {string} user_id - The ID of the user.
+ * @param {string[]} service_ids - The IDs of the services to update.
+ * @returns {Promise<object[]>} The updated favorite services.
+ */
 export async function updateFavoriteServices(user_id: string, service_ids: string[]) {
 	try {
 		// First, delete existing favorites not in the new list
@@ -25,8 +31,12 @@ export async function updateFavoriteServices(user_id: string, service_ids: strin
 		throw new Error(String(error));
 	}
 }
-
-// List user's favorite services
+/**
+ * List user's favorite services.
+ *
+ * @param {string} user_id - The ID of the user.
+ * @returns {Promise<object[]>} The user's favorite services.
+ */
 export async function listFavoriteServices(user_id: string) {
 	try {
 		return await prisma.user_favorite_service_links.findMany({

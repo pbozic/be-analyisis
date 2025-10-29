@@ -10,7 +10,13 @@ import { PREMISE_TYPE } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 
-// Minimal helpers for invoice-related setup (TypeScript)
+/**
+ * Create a business premise.
+ *
+ * @param {string} transport_module_id
+ * @param {Partial<{ name: string | null; validity_date: Date | null; special_notes: string | null; premise_type: PREMISE_TYPE; }>} data
+ * @returns {Promise<BusinessPremise>}
+ */
 export async function createBusinessPremise(
 	transport_module_id: string,
 	data: Partial<{
@@ -30,7 +36,13 @@ export async function createBusinessPremise(
 	};
 	return await prisma.business_premise.create({ data: payload });
 }
-
+/**
+ * Create an electronic device.
+ *
+ * @param {string} business_premise_id
+ * @param {Partial<{ electronic_device_id: string; name: string | null; active: boolean }>} data
+ * @returns {Promise<ElectronicDevice>}
+ */
 export async function createElectronicDevice(
 	business_premise_id: string,
 	data: Partial<{ electronic_device_id: string; name: string | null; active: boolean }> = {}
@@ -44,7 +56,15 @@ export async function createElectronicDevice(
 	};
 	return await prisma.electronic_device.create({ data: payload });
 }
-
+/**
+ * Assign a device to a driver.
+ *
+ * @param {string} driver_id
+ * @param {string} business_premise_id
+ * @param {string} electronic_device_id
+ * @param {Date} valid_from
+ * @returns {Promise<DeviceAssignment>}
+ */
 export async function assignDeviceToDriver(
 	driver_id: string,
 	business_premise_id: string,
@@ -55,11 +75,23 @@ export async function assignDeviceToDriver(
 		data: { driver_id, business_premise_id, electronic_device_id, valid_from },
 	});
 }
-
+/**
+ * Link a business premise to a vehicle.
+ *
+ * @param {string} vehicle_id
+ * @param {string} business_premise_id
+ * @returns {Promise<Vehicle>}
+ */
 export async function linkPremiseToVehicle(vehicle_id: string, business_premise_id: string): Promise<Vehicle> {
 	return await prisma.vehicles.update({ where: { vehicle_id }, data: { business_premise_id } });
 }
-
+/**
+ * Disable an electronic device.
+ *
+ * @param {string} business_premise_id
+ * @param {string} electronic_device_id
+ * @returns {Promise<ElectronicDevice>}
+ */
 export async function disableElectronicDevice(
 	business_premise_id: string,
 	electronic_device_id: string
@@ -69,7 +101,14 @@ export async function disableElectronicDevice(
 		data: { active: false },
 	});
 }
-
+/**
+ * End a device assignment.
+ *
+ * @param {string} driver_id
+ * @param {string} business_premise_id
+ * @param {string} electronic_device_id
+ * @returns {Promise<DeviceAssignment>}
+ */
 export async function endDeviceAssignment(
 	driver_id: string,
 	business_premise_id: string,
@@ -87,7 +126,12 @@ export async function endDeviceAssignment(
 		data: { valid_to: new Date() },
 	});
 }
-
+/**
+ * Confirm a business premise.
+ *
+ * @param {string} business_premise_id
+ * @returns {Promise<BusinessPremise>}
+ */
 export async function confirmBusinessPremise(business_premise_id: string): Promise<BusinessPremise> {
 	return await prisma.business_premise.update({
 		where: { business_premise_id },
