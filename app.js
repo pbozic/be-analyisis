@@ -168,9 +168,7 @@ try {
 		// 	// Some parsers accept cwd/root. If yours does, set it too:
 		// 	// cwd: projectRoot,
 		// });
-		console.log('BUILDING');
 		finalSpec = await buildOpenApiSpec();
-		console.log('FINISHED BUILDING');
 		//finalSpec = merge({}, baseSpec, specFromComments);
 		if (!finalSpec.openapi) finalSpec.openapi = '3.0.3';
 	}
