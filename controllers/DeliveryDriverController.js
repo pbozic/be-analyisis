@@ -662,7 +662,7 @@ async function updateDeliveryDriverLocation(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Online status updated successfully
- * @responseContent {DeliveryDriver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating online status
  *
  * Emits:
