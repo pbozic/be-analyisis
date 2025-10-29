@@ -1,4 +1,3 @@
-// openapi-build.js (run this at server start or prebuild)
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -6,7 +5,7 @@ import { fileURLToPath } from 'url';
 import YAML from 'js-yaml';
 import merge from 'lodash.merge';
 import SwaggerParser from '@apidevtools/swagger-parser';
-import openapi from 'openapi-comment-parser'; // the one you already use
+import openapi from 'openapi-comment-parser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -58,72 +57,86 @@ export async function buildOpenApiSpec() {
 	if (!combined.components) combined.components = {};
 	if (!combined.components.schemas) combined.components.schemas = {};
 
-	// Wire every schema file as a $ref under components.schemas
-	//console.log('RESOLVING PATH');
+	// Load legacy schema files from swagger/schemas/*.yaml
 	const schemasDir = path.resolve(projectRoot, 'swagger', 'schemas');
-	//console.log('PATH RESOLVED:', schemasDir);
-
-	// Validate schemas directory exists
-	if (!fs.existsSync(schemasDir)) {
-		console.warn(`⚠️ Schemas directory not found: ${schemasDir}`);
-		console.warn('Skipping external schema references');
-	} else {
+	if (fs.existsSync(schemasDir)) {
 		const schemaFiles = listYamlFiles(schemasDir);
-		//console.log(`📄 Found ${schemaFiles.length} schema files`);
+		console.log(`📄 Found ${schemaFiles.length} schema files in swagger/schemas`);
 
 		for (const filePath of schemaFiles) {
 			const key = pascalCaseFromFilename(filePath);
-			//console.log(`  → ${key}: ${filePath}`);
 
-			// Validate file exists and is readable
 			if (!fs.existsSync(filePath)) {
 				console.error(`❌ Schema file not found: ${filePath}`);
 				throw new Error(`Schema file missing: ${filePath}`);
 			}
 
-			// Test-parse the YAML to catch syntax errors early
 			try {
 				const parsed = safeLoadYaml(filePath);
-				//console.log(`    ✓ Parsed schema keys:`, Object.keys(parsed));
 
-				// **FIX: Register the schema directly in components.schemas**
-				// This makes #/components/schemas/Menus resolvable
-				combined.components.schemas[key] = parsed;
+				// Check if this is a components file (contains components.schemas)
+				if (parsed.components && parsed.components.schemas) {
+					console.log(`  → Merging components from: ${path.basename(filePath)}`);
+					// Merge all schemas from this file into combined.components.schemas
+					Object.assign(combined.components.schemas, parsed.components.schemas);
+
+					// Also merge other component types if present
+					if (parsed.components.parameters) {
+						if (!combined.components.parameters) combined.components.parameters = {};
+						Object.assign(combined.components.parameters, parsed.components.parameters);
+					}
+					if (parsed.components.responses) {
+						if (!combined.components.responses) combined.components.responses = {};
+						Object.assign(combined.components.responses, parsed.components.responses);
+					}
+					if (parsed.components.examples) {
+						if (!combined.components.examples) combined.components.examples = {};
+						Object.assign(combined.components.examples, parsed.components.examples);
+					}
+				} else {
+					// Legacy format: file is a single schema
+					console.log(`  → ${key}: ${path.basename(filePath)}`);
+					combined.components.schemas[key] = parsed;
+				}
 			} catch (parseErr) {
 				console.error(`❌ Invalid YAML in ${filePath}:`, parseErr.message);
 				throw new Error(`Invalid schema YAML: ${filePath}`);
 			}
 		}
+	} else {
+		console.warn(`⚠️ Schemas directory not found: ${schemasDir}`);
 	}
 
-	//console.log('🔗 BUNDLING OpenAPI spec...');
+	console.log(`✅ Loaded ${Object.keys(combined.components.schemas).length} schemas`);
+
 	try {
-		// Now bundle so all external $refs resolve (including refs inside your schema files)
+		// Write debug output
+		//const debugPath = path.resolve(projectRoot, 'debug-combined-spec.json');
+		//fs.writeFileSync(debugPath, JSON.stringify(combined, null, 2));
+		//console.log(`📝 Debug spec saved to: ${debugPath}`);
+
+		console.log('🔗 Bundling OpenAPI spec...');
+
+		// Bundle with proper options for internal refs
 		const bundled = await SwaggerParser.bundle(combined, {
 			resolve: {
-				file: {
-					read: (file) => {
-						// Custom file reader with better error messages
-						const filePath = file.url.replace('file://', '');
-						// console.log(`  Reading: ${filePath}`);
-						if (!fs.existsSync(filePath)) {
-							throw new Error(`File not found: ${filePath}`);
-						}
-						return fs.readFileSync(filePath, 'utf8');
-					},
-				},
+				// Disable external file resolution
+				file: false,
 				http: false,
 			},
-			// if you have circular schema refs and want objects inline, switch to dereference():
-			// dereference: { circular: 'ignore' }
+			dereference: {
+				circular: 'ignore', // Handle circular refs
+			},
 		});
 
-		// console.log('✅ FINISHED BUNDLING');
+		console.log('✅ FINISHED BUNDLING');
 		return bundled;
 	} catch (bundleErr) {
 		console.error('❌ Bundle failed:', bundleErr.message);
 		console.error('Stack:', bundleErr.stack);
-		// Return the unbundled spec so Swagger still loads (with broken refs)
+
+		// Return the unbundled spec so Swagger still loads
+		console.warn('⚠️ Returning unbundled spec due to bundle failure');
 		return combined;
 	}
 }

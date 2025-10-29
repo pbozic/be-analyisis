@@ -7,7 +7,7 @@ import { SERVICE_TYPE } from '../lib/constants.js';
  * @description This fetches orders with pagination.
  * @operationId getOrdersWithPagination
  * @response 200 - Successful operation. Returns a list of orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {BlogPostResponse} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getOrdersWithPagination(req, res) {
@@ -43,10 +43,10 @@ async function getOrdersWithPagination(req, res) {
  * @summary Update driver activity settings
  * @description Updates existing driver activity settings or creates new ones if they don't exist
  * @operationId updateDriverActivitySettings
- * @bodyContent {UserAddress} application/json - Updated driver settings data.
+ * @bodyContent {UserExample} application/json - Updated driver settings data.
  * @bodyRequired
  * @response 200 - Settings updated successfully
- * @responseContent {Business} 200.application/json
+ * @responseContent {BlogPostResponse} 200.application/json
  * @response 400 - Invalid request data
  * @response 500 - Server error while updating settings
  */

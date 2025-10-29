@@ -1,6 +1,8 @@
 import path from 'path';
 import url from 'node:url';
+import fs from 'node:fs';
 
+import fg from 'fast-glob';
 import { config } from 'dotenv';
 import express from 'express';
 import createError from 'http-errors';
@@ -11,6 +13,8 @@ import cors from 'cors';
 import compression from 'compression';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
+import { OpenAPIRegistry, OpenApiGeneratorV3 } from '@asteasolutions/zod-to-openapi';
+import YAML from 'js-yaml';
 
 import prisma from './prisma/prisma.js';
 import startCronJobs from './cron.js';
@@ -23,12 +27,13 @@ import { buildOpenApiSpec } from './openapi-build.js';
 const upload = multer({ storage: multer.memoryStorage() });
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const projectRoot = __dirname; //path.resolve(__dirname, '..', '..');
+//const projectRoot = __dirname;
 // app.js
 config();
 const isDev = process.env.NODE_ENV !== 'production';
 const REST_API_ENDPOINT = '/api';
 const app = express();
+const registry = new OpenAPIRegistry();
 
 app.use((req, res, next) => {
 	const header = req.headers.cookie || '';
@@ -149,27 +154,29 @@ app.use((req, res, next) => {
 // ─── Routes ─────────────────────────────────────────────────────────
 app.use(mainRouter);
 app.use(REST_API_ENDPOINT, apiRouter);
+
+// ─── GENERATE SCHEMAS FROM DTOs ─────────────────────────────────────────────────────────
+
+// import every dto file and call its register function if present
+const files = await fg(['dto/**/*.dto.{ts,js}']);
+for (const file of files) {
+	const mod = await import(path.resolve(file));
+	if (typeof mod.registerSchemas === 'function') {
+		mod.registerSchemas(registry);
+	}
+}
+
+const gen = new OpenApiGeneratorV3(registry.definitions);
+const components = gen.generateComponents();
+fs.writeFileSync('swagger/schemas/dtos.yaml', YAML.dump(components), 'utf8');
+
+//fs.writeFileSync('swagger/openapi.components.json', JSON.stringify(components, null, 2));
+
 // Uncomment if you want Swagger from comments
 let finalSpec;
 try {
 	if (process.env.ENVIRONMENT !== 'production') {
-		// const baseYamlPath = path.resolve(projectRoot, 'swagger', 'openApiConfig.yaml');
-		// const baseSpec = YAML.load(fs.readFileSync(baseYamlPath, 'utf8'));
-
-		// // 2) Generate spec from comments.
-		// // Many “comment to OpenAPI” libs resolve includes relative to CWD.
-		// // Don’t trust CWD. Hand them absolute paths.
-		// const specFromComments = openapi({
-		// 	include: [
-		// 		path.resolve(projectRoot, 'routes/**/*.js'),
-		// 		path.resolve(projectRoot, 'controllers/**/*.js'),
-		// 		path.resolve(projectRoot, 'middlewares/**/*.js'),
-		// 	],
-		// 	// Some parsers accept cwd/root. If yours does, set it too:
-		// 	// cwd: projectRoot,
-		// });
 		finalSpec = await buildOpenApiSpec();
-		//finalSpec = merge({}, baseSpec, specFromComments);
 		if (!finalSpec.openapi) finalSpec.openapi = '3.0.3';
 	}
 } catch (err) {
@@ -177,7 +184,10 @@ try {
 	console.error(err.stack);
 	process.exit(1); // or continue without Swagger if desired
 }
+
+// v1 swaggerUI
 app.use('/v1/api-docs', swaggerUi.serve, swaggerUi.setup(finalSpec, { explorer: true }));
+
 // ─── Error Handling ─────────────────────────────────────────────────
 app.use((req, res, next) => {
 	next(createError(404));

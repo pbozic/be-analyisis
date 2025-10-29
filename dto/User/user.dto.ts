@@ -1,0 +1,16 @@
+// dto/user.dto.ts
+import { z } from 'zod';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+extendZodWithOpenApi(z);
+
+export const UserSchema = z
+	.object({
+		id: z.string().openapi({ example: '1212121' }),
+		name: z.string().openapi({ example: 'John Doe' }),
+		age: z.number().openapi({ example: 42 }),
+	})
+	.openapi('UserExample');
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('UserExample', UserSchema);
+}
