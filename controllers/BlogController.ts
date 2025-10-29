@@ -28,41 +28,6 @@ import FileDao from '../dao/File.js';
  * @bodyRequired
  * @response 200 - Blog posts retrieved successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
-    "message": "Blog posts retrieved successfully",
-    "data": [
-      {
-        "blog_posts_id": "uuid",
-        "slug": "string",
-        "title": "string",
-        "short_content": "string",
-        "image_file_id": "uuid",
-        "content": {},
-        "author_id": "uuid",
-        "category_id": "uuid",
-        "publish_at": "2024-05-29T00:00:00.000Z",
-        "category": {
-          "blog_categories_id": "uuid",
-          "name": "string",
-          "description": "string"
-        },
-        "image_file": {
-          "file_id": "uuid",
-          "url": "string",
-          "file_type": "IMAGE",
-          "mime_type": "string",
-          "public": true
-        },
-        "tags": [
-          {
-            "blog_tags_id": "uuid",
-            "name": "string",
-            "description": "string"
-          }
-        ]
-      }
-    ]
-  }
  * @response 500 - Error retrieving blog posts
  * @prisma_model blog_posts
  */
@@ -91,41 +56,7 @@ export async function searchBlogPosts(req: ValidatedRequest<SearchBlogPostsInput
  * @description Retrieves a single blog post by its unique ID.
  * @operationId getBlogPostById
  * @response 200 - Blog post retrieved successfully
- * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
-    "message": "Blog post retrieved successfully",
-    "data": {
-      "blog_posts_id": "uuid",
-      "slug": "string",
-      "title": "string",
-      "short_content": "string",
-      "image_file_id": "uuid",
-      "content": {},
-      "author_id": "uuid",
-      "category_id": "uuid",
-      "publish_at": "2024-05-29T00:00:00.000Z",
-      "category": {
-        "blog_categories_id": "uuid",
-        "name": "string",
-        "description": "string"
-      },
-      "image_file": {
-        "file_id": "uuid",
-        "url": "string",
-        "file_type": "IMAGE",
-        "mime_type": "string",
-        "public": true
-      },
-      "tags": [
-        {
-          "blog_tags_id": "uuid",
-          "name": "string",
-          "description": "string"
-        }
-      ]
-    }
-  }
- * @response 404 - Blog post not found
+ * @responseContent {object} 200.application/json* @response 404 - Blog post not found
  * @response 500 - Error retrieving blog post
  * @prisma_model blog_posts
  */
@@ -157,39 +88,6 @@ export async function getBlogPostById(req: Request, res: Response): Promise<void
  * @operationId getBlogPostBySlug
  * @response 200 - Blog post retrieved successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
-    "message": "Blog post retrieved successfully",
-    "data": {
-      "blog_posts_id": "uuid",
-      "slug": "string",
-      "title": "string",
-      "short_content": "string",
-      "image_file_id": "uuid",
-      "content": {},
-      "author_id": "uuid",
-      "category_id": "uuid",
-      "publish_at": "2024-05-29T00:00:00.000Z",
-      "category": {
-        "blog_categories_id": "uuid",
-        "name": "string",
-        "description": "string"
-      },
-      "image_file": {
-        "file_id": "uuid",
-        "url": "string",
-        "file_type": "IMAGE",
-        "mime_type": "string",
-        "public": true
-      },
-      "tags": [
-        {
-          "blog_tags_id": "uuid",
-          "name": "string",
-          "description": "string"
-        }
-      ]
-    }
-  }
  * @response 404 - Blog post not found
  * @response 500 - Error retrieving blog post
  * @prisma_model blog_posts
@@ -234,20 +132,6 @@ export async function getBlogPostBySlug(req: Request, res: Response): Promise<vo
  * @bodyRequired
  * @response 201 - Blog post created successfully
  * @responseContent {object} 201.application/json
- * @responseExample 201.application/json {
-    "message": "Blog post created successfully",
-    "data": {
-      "blog_posts_id": "uuid",
-      "slug": "string",
-      "title": "string",
-      "short_content": "string",
-      "image_file_id": "uuid",
-      "content": {},
-      "author_id": "uuid",
-      "category_id": "uuid",
-      "publish_at": "2024-05-29T00:00:00.000Z"
-    }
-  }
  * @response 500 - Error creating blog post
  * @prisma_model blog_posts
  */
@@ -294,20 +178,6 @@ export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>,
  * @bodyRequired
  * @response 200 - Blog post updated successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
-    "message": "Blog post updated successfully",
-    "data": {
-      "blog_posts_id": "uuid",
-      "slug": "string",
-      "title": "string",
-      "short_content": "string",
-      "image_file_id": "uuid",
-      "content": {},
-      "author_id": "uuid",
-      "category_id": "uuid",
-      "publish_at": "2024-05-29T00:00:00.000Z"
-    }
-  }
  * @response 500 - Error updating blog post
  * @prisma_model blog_posts
  */
@@ -347,20 +217,6 @@ export async function updateBlogPost(
  * @operationId deleteBlogPost
  * @response 200 - Blog post deleted successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
-    "message": "Blog post deleted successfully",
-    "data": {
-      "blog_posts_id": "uuid",
-      "slug": "string",
-      "title": "string",
-      "short_content": "string",
-      "image_file_id": "uuid",
-      "content": {},
-      "author_id": "uuid",
-      "category_id": "uuid",
-      "publish_at": "2024-05-29T00:00:00.000Z"
-    }
-  }
  * @response 404 - Blog post not found
  * @response 500 - Error deleting blog post
  * @prisma_model blog_posts
@@ -393,22 +249,6 @@ export async function deleteBlogPost(req: Request, res: Response): Promise<void>
  * @operationId getBlogPosts
  * @response 200 - Blog posts retrieved successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
-    "message": "Blog posts retrieved successfully",
-    "data": [
-      {
-        "blog_posts_id": "uuid",
-        "slug": "string",
-        "title": "string",
-        "short_content": "string",
-        "image_file_id": "uuid",
-        "content": {},
-        "author_id": "uuid",
-        "category_id": "uuid",
-        "publish_at": "2024-05-29T00:00:00.000Z"
-      }
-    ]
-  }
  * @response 500 - Error retrieving blog posts
  * @prisma_model blog_posts
  */
@@ -429,16 +269,6 @@ export async function getBlogPosts(req: Request, res: Response): Promise<void> {
  * @operationId getBlogCategories
  * @response 200 - Blog categories retrieved successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
-    "message": "Blog categories retrieved successfully",
-    "data": [
-      {
-        "blog_categories_id": "uuid",
-        "name": "string",
-        "description": "string"
-      }
-    ]
-  }
  * @response 500 - Error retrieving blog categories
  * @prisma_model blog_categories
  */
@@ -465,14 +295,6 @@ export async function getBlogCategories(req: Request, res: Response): Promise<vo
  * @bodyRequired
  * @response 201 - Blog category created successfully
  * @responseContent {object} 201.application/json
- * @responseExample 201.application/json {
-    "message": "Blog category created successfully",
-    "data": {
-      "blog_categories_id": "uuid",
-      "name": "string",
-      "description": "string"
-    }
-  }
  * @response 500 - Error creating blog category
  * @prisma_model blog_categories
  */
@@ -494,14 +316,6 @@ export async function createBlogCategory(req: ValidatedRequest<CreateBlogCategor
  * @operationId deleteBlogCategory
  * @response 200 - Blog category deleted successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
-    "message": "Blog category deleted successfully",
-    "data": {
-      "blog_categories_id": "uuid",
-      "name": "string",
-      "description": "string"
-    }
-  }
  * @response 404 - Blog category not found
  * @response 500 - Error deleting blog category
  * @prisma_model blog_categories
@@ -540,14 +354,6 @@ export async function deleteBlogCategory(req: ValidatedRequest<object, { id: str
  * @bodyRequired
  * @response 200 - Blog category updated successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
-    "message": "Blog category updated successfully",
-    "data": {
-      "blog_categories_id": "uuid",
-      "name": "string",
-      "description": "string"
-    }
-  }
  * @response 404 - Blog category not found
  * @response 500 - Error updating blog category
  * @prisma_model blog_categories
@@ -584,16 +390,6 @@ export async function updateBlogCategory(
  * @operationId getBlogTags
  * @response 200 - Blog tags retrieved successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
-    "message": "Blog tags retrieved successfully",
-    "data": [
-      {
-        "blog_tags_id": "uuid",
-        "name": "string",
-        "description": "string"
-      }
-    ]
-  }
  * @response 500 - Error retrieving blog tags
  * @prisma_model blog_tags
  */
@@ -620,14 +416,6 @@ export async function getBlogTags(req: Request, res: Response): Promise<void> {
  * @bodyRequired
  * @response 201 - Blog tag created successfully
  * @responseContent {object} 201.application/json
- * @responseExample 201.application/json {
-    "message": "Blog tag created successfully",
-    "data": {
-      "blog_tags_id": "uuid",
-      "name": "string",
-      "description": "string"
-    }
-  }
  * @response 400 - Error creating blog tag
  * @response 500 - Error creating blog tag
  * @prisma_model blog_tags
@@ -656,14 +444,6 @@ export async function createBlogTag(req: ValidatedRequest<CreateBlogTagInput>, r
  * @operationId deleteBlogTag
  * @response 200 - Blog tag deleted successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
-    "message": "Blog tag deleted successfully",
-    "data": {
-      "blog_tags_id": "uuid",
-      "name": "string",
-      "description": "string"
-    }
-  }
  * @response 404 - Blog tag not found
  * @response 500 - Error deleting blog tag
  * @prisma_model blog_tags
@@ -704,19 +484,7 @@ export async function deleteBlogTag(
   } application/json
  * @bodyRequired
  * @response 200 - Blog tag updated successfully
- * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
-    "message": "Blog tag updated successfully",
-    "data": {
-      "blog_tags_id": "uuid",
-      "name": "string",
-      "description": "string"
-    }
-  }
- * @response 404 - Blog tag not found
- * @response 500 - Error updating blog tag
- * @prisma_model blog_tags
- */
+*/
 export async function updateBlogTag(
 	req: ValidatedRequest<UpdateBlogTagInput, { id: string }>,
 	res: Response
@@ -754,12 +522,7 @@ export async function updateBlogTag(
  * @bodyRequired
  * @response 201 - Image created successfully
  * @responseContent {object} 201.application/json
- * @responseExample 201.application/json {
-    "message": "Image created successfully",
-    "file": {
-      "url": "https://example.com/image.jpg"
-    }
-  }
+   }
  * @response 400 - Invalid image URL
  * @response 500 - Error creating image
  * @prisma_model files
@@ -812,16 +575,7 @@ export async function createBlogImageByUrl(req: ValidatedRequest<{ url: string }
  * @bodyRequired
  * @response 201 - Image created successfully
  * @responseContent {object} 201.application/json
- * @responseExample 201.application/json {
-    "message": "Image created successfully",
-    "data": {
-      "file_id": "uuid",
-      "url": "string",
-      "file_type": "IMAGE",
-      "mime_type": "string",
-      "public": true
-    }
-  }
+   }
  * @response 400 - Invalid image file
  * @response 500 - Error creating image
  * @prisma_model files

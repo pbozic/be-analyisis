@@ -1102,10 +1102,7 @@ async function registerBusiness(req, res) {
   } application/json
 - @bodyRequired
 - @response 201 - Business registered successfully
-- @responseContent {
-    "message": "Business registered successfully",
-    "business": {  business fields from ./prisma/schema.prisma  }
-  } 201.application/json
+- @responseContent {object} 201.application/json
 - @response 400 - Error registering business
 - @prisma_model users (see ./prisma/schema.prisma)
 - @prisma_model business (see ./prisma/schema.prisma)

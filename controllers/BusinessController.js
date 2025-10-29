@@ -2267,12 +2267,7 @@ function buildPromoBuckets(
  * @description Returns promo analytics for sections for a business and time period, including purchased promo sections.
  * @operationId getBusinessPromoSectionsAnalytics
  * @bodyDescription Time period definition
- * @bodyContent {
- *   "type": 0,
- *   "start_date": "2025-01-01T00:00:00.000Z",
- *   "end_date": null,
- *   "ids": ["optional array of promo_sections_id to filter"]
- * } application/json
+ * @bodyContent {} application/json
  * @bodyRequired
  * @response 200 - successful operation
  * @responseContent {object} 200.application/json
@@ -2387,12 +2382,7 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
  * @description Returns promo analytics for words for a business and time period, including purchased words.
  * @operationId getBusinessPromoWordsAnalytics
  * @bodyDescription Time period definition
- * @bodyContent {
- *   "type": 0,
- *   "start_date": "2025-01-01T00:00:00.000Z",
- *   "end_date": null,
- *   "ids": ["optional array of word_id to filter"]
- * } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - successful operation
  * @responseContent {object} 200.application/json

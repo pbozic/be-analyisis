@@ -43,10 +43,10 @@ async function getOrdersWithPagination(req, res) {
  * @summary Update driver activity settings
  * @description Updates existing driver activity settings or creates new ones if they don't exist
  * @operationId updateDriverActivitySettings
- * @bodyContent {object} application/json - Updated driver settings data.
+ * @bodyContent {UserAddress} application/json - Updated driver settings data.
  * @bodyRequired
  * @response 200 - Settings updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {Business} 200.application/json
  * @response 400 - Invalid request data
  * @response 500 - Server error while updating settings
  */

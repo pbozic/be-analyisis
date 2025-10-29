@@ -211,76 +211,10 @@ export async function getDailyMealSubscriptionById(id: string) {
  * - @description Creates a new daily_meal_subscriptions record with nested daily_meal_subscription_customers, daily_meal_subscription_days, and daily_meal_subscription_weekdays depending on the type.
  * - @operationId createDailyMealSubscription
  * - @bodyDescription The daily meals subscription details to create
- * - @bodyContent {
- *     "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "start_date": "2025-07-01T00:00:00.000Z",
- *     "end_date": null,
- *     "type": "DAYS",
- *     "courier_comment": "Leave at the door",
- *     "customers": [
- *       {
- *         "menu_category_id": "c9b1e7c2-1234-4f8a-9b2e-abcdef123456",
- *         "name": "John",
- *         "surname": "Doe",
- *         "phone": "+123456789",
- *         "restaurant_comment": "No onions"
- *       }
- *     ],
- *     "days": [
- *       {
- *         "intended_date": "2025-07-01T00:00:00.000Z",
- *         "delivery_date": "2025-07-01T12:00:00.000Z"
- *       }
- *     ],
- *     "weekdays": [
- *       {
- *         "intended_weekday": 1,
- *         "delivery_weekday": 1
- *       }
- *     ]
- *   } application/json
+ * - @bodyContent {} application/json
  * - @bodyRequired
  * - @response 200 - Daily meal subscription created successfully
  * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
- *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "start_date": "2025-07-01T00:00:00.000Z",
- *     "end_date": null,
- *     "type": "DAYS",
- *     "status": "AWAITING_PAYMENT",
- *     "courier_comment": "Leave at the door",
- *     "created_at": "2025-07-01T00:00:00.000Z",
- *     "updated_at": "2025-07-01T00:00:00.000Z",
- *     "customers": [
- *       {
- *         "id": "uuid",
- *         "menu_category_id": "c9b1e7c2-1234-4f8a-9b2e-abcdef123456",
- *         "name": "John",
- *         "surname": "Doe",
- *         "phone": "+123456789",
- *         "restaurant_comment": "No onions"
- *       }
- *     ],
- *     "days": [
- *       {
- *         "id": "uuid",
- *         "intended_date": "2025-07-01T00:00:00.000Z",
- *         "delivery_date": "2025-07-01T12:00:00.000Z"
- *       }
- *     ],
- *     "weekdays": [
- *       {
- *         "id": "uuid",
- *         "intended_weekday": 1,
- *         "delivery_weekday": 1
- *       }
- *     ]
- *   }
  * - @response 500 - Error creating daily meal subscription
  * - @prisma_model daily_meal_subscriptions
  * - @prisma_model daily_meal_subscription_customers

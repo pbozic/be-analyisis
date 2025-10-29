@@ -59,9 +59,9 @@ export async function buildOpenApiSpec() {
 	if (!combined.components.schemas) combined.components.schemas = {};
 
 	// Wire every schema file as a $ref under components.schemas
-	console.log('RESOLVING PATH');
+	//console.log('RESOLVING PATH');
 	const schemasDir = path.resolve(projectRoot, 'swagger', 'schemas');
-	console.log('PATH RESOLVED:', schemasDir);
+	//console.log('PATH RESOLVED:', schemasDir);
 
 	// Validate schemas directory exists
 	if (!fs.existsSync(schemasDir)) {
@@ -69,11 +69,11 @@ export async function buildOpenApiSpec() {
 		console.warn('Skipping external schema references');
 	} else {
 		const schemaFiles = listYamlFiles(schemasDir);
-		console.log(`📄 Found ${schemaFiles.length} schema files`);
+		//console.log(`📄 Found ${schemaFiles.length} schema files`);
 
 		for (const filePath of schemaFiles) {
 			const key = pascalCaseFromFilename(filePath);
-			console.log(`  → ${key}: ${filePath}`);
+			//console.log(`  → ${key}: ${filePath}`);
 
 			// Validate file exists and is readable
 			if (!fs.existsSync(filePath)) {
@@ -84,7 +84,11 @@ export async function buildOpenApiSpec() {
 			// Test-parse the YAML to catch syntax errors early
 			try {
 				const parsed = safeLoadYaml(filePath);
-				console.log(`    ✓ Parsed schema keys:`, Object.keys(parsed)); // ADD THIS
+				//console.log(`    ✓ Parsed schema keys:`, Object.keys(parsed));
+
+				// **FIX: Register the schema directly in components.schemas**
+				// This makes #/components/schemas/Menus resolvable
+				combined.components.schemas[key] = parsed;
 			} catch (parseErr) {
 				console.error(`❌ Invalid YAML in ${filePath}:`, parseErr.message);
 				throw new Error(`Invalid schema YAML: ${filePath}`);
@@ -92,7 +96,7 @@ export async function buildOpenApiSpec() {
 		}
 	}
 
-	console.log('🔗 BUNDLING OpenAPI spec...');
+	//console.log('🔗 BUNDLING OpenAPI spec...');
 	try {
 		// Now bundle so all external $refs resolve (including refs inside your schema files)
 		const bundled = await SwaggerParser.bundle(combined, {
@@ -101,7 +105,7 @@ export async function buildOpenApiSpec() {
 					read: (file) => {
 						// Custom file reader with better error messages
 						const filePath = file.url.replace('file://', '');
-						console.log(`  Reading: ${filePath}`);
+						// console.log(`  Reading: ${filePath}`);
 						if (!fs.existsSync(filePath)) {
 							throw new Error(`File not found: ${filePath}`);
 						}
@@ -114,50 +118,12 @@ export async function buildOpenApiSpec() {
 			// dereference: { circular: 'ignore' }
 		});
 
-		console.log('✅ FINISHED BUNDLING');
+		// console.log('✅ FINISHED BUNDLING');
 		return bundled;
 	} catch (bundleErr) {
 		console.error('❌ Bundle failed:', bundleErr.message);
 		console.error('Stack:', bundleErr.stack);
-
-		// Add detailed debugging info
-		if (bundleErr.message.includes('Token') && bundleErr.message.includes('does not exist')) {
-			console.error('\n🔍 DEBUGGING INFO:');
-			console.error("This error means a $ref is pointing to a path that doesn't exist.");
-			console.error('Common issues:');
-			console.error('  1. Using #/examples instead of #/components/examples');
-			console.error('  2. Using #/definitions instead of #/components/schemas');
-			console.error('  3. Typo in the reference path');
-			console.error('\nSearching for problematic references...\n');
-
-			// Search schema files for 'examples' refs
-			const schemasDir = path.resolve(projectRoot, 'swagger', 'schemas');
-			if (fs.existsSync(schemasDir)) {
-				const schemaFiles = listYamlFiles(schemasDir);
-				for (const file of schemaFiles) {
-					const content = fs.readFileSync(file, 'utf8');
-					if (content.includes('$ref') && content.includes('examples')) {
-						console.error(`⚠️  Found 'examples' reference in: ${file}`);
-						const lines = content.split('\n');
-						lines.forEach((line, idx) => {
-							if (line.includes('$ref') && line.includes('examples')) {
-								console.error(`   Line ${idx + 1}: ${line.trim()}`);
-							}
-						});
-					}
-				}
-			}
-
-			// Also check the combined spec
-			console.error('\n📋 Checking combined spec for invalid refs...');
-			const combinedStr = JSON.stringify(combined, null, 2);
-			if (combinedStr.includes('"$ref"') && combinedStr.includes('examples')) {
-				console.error('⚠️  Found "examples" in combined spec (check comments in controllers)');
-			}
-		}
-
 		// Return the unbundled spec so Swagger still loads (with broken refs)
-		console.warn('⚠️ Returning unbundled spec due to bundle failure');
 		return combined;
 	}
 }

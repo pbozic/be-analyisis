@@ -1249,36 +1249,10 @@ async function rejectOrder(req, res) {
  *
  * @operationId merchantAcceptOrder
  * @bodyDescription The request body must include 'order_id' to identify the order and optionally 'preparation_time' (ISO string or timestamp).
- * @bodyContent {
- *   "order_id": 123,
- *   "preparation_time": "2025-07-30T12:00:00.000Z"
- * } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Order processed and moved to next state. Returns the updated DeliveryOrder object.
- * @responseContent {
- *   "order_id": 123,
- *   "user_id": 456,
- *   "business_id": 789,
- *   "details": { ... },
- *   "status": "MERCHANT_PREPARING",
- *   "payment": { ... },
- *   "items": [ ... ],
- *   "timeline": [ ... ],
- *   "created_at": "...",
- *   "updated_at": "..."
- * } 200.application/json
- * @responseExample 200.application/json {
- *   "order_id": 123,
- *   "user_id": 456,
- *   "business_id": 789,
- *   "details": { "total_price": 1000, "delivery_cost": 100, ... },
- *   "status": "MERCHANT_PREPARING",
- *   "payment": { "type": "CARD", "status": "IN_PAYMENT_PROCESSING", ... },
- *   "items": [ { "menu_item_id": 1, "quantity": 2, ... } ],
- *   "timeline": [ { "status": "MERCHANT_ACCEPTED", "timestamp": "..." } ],
- *   "created_at": "...",
- *   "updated_at": "..."
- * }
+ * @responseContent {object} 200.application/json
  * @response 400 - Preparation time must be set if not scheduled.
  * @response 500 - Error processing the order.
  * @prisma_model delivery_orders
@@ -1553,35 +1527,10 @@ async function handleOrderProcessingFailure(order_id) {
  *
  * @operationId merchantConfirmOrderReady
  * @bodyDescription The request body must include 'order_id' to identify the order.
- * @bodyContent {
- *   "order_id": 123
- * } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Order marked as ready for pickup. Returns the updated DeliveryOrder object.
- * @responseContent {
- *   "order_id": 123,
- *   "user_id": 456,
- *   "business_id": 789,
- *   "details": { ... },
- *   "status": "MERCHANT_READY_FOR_PICKUP",
- *   "payment": { ... },
- *   "items": [ ... ],
- *   "timeline": [ ... ],
- *   "created_at": "...",
- *   "updated_at": "..."
- * } 200.application/json
- * @responseExample 200.application/json {
- *   "order_id": 123,
- *   "user_id": 456,
- *   "business_id": 789,
- *   "details": { "total_price": 1000, "delivery_cost": 100, ... },
- *   "status": "MERCHANT_READY_FOR_PICKUP",
- *   "payment": { "type": "CARD", "status": "IN_PAYMENT_PROCESSING", ... },
- *   "items": [ { "menu_item_id": 1, "quantity": 2, ... } ],
- *   "timeline": [ { "status": "MERCHANT_READY_FOR_PICKUP", "timestamp": "..." } ],
- *   "created_at": "...",
- *   "updated_at": "..."
- * }
+ * @responseContent {object} 200.application/json
  * @response 500 - Error processing the order.
  * @prisma_model delivery_orders
  * @prisma_model businesses
@@ -1614,57 +1563,10 @@ async function merchantConfirmOrderReady(req, res) {
  *
  * @operationId localConfirmMultipleOrdersReady
  * @bodyDescription The request body must include 'business_local_location_id' to identify which location's orders to process.
- * @bodyContent {
- *   "business_local_location_id": "uuid-string"
- * } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Orders marked as ready for pickup. Returns summary of processed orders.
- * @responseContent {
- *   "success": true,
- *   "processed_orders": 5,
- *   "successful_orders": 4,
- *   "failed_orders": 1,
- *   "orders": [
- *     {
- *       "order_id": 123,
- *       "status": "success",
- *       "order": { ... }
- *     },
- *     {
- *       "order_id": 124,
- *       "status": "failed",
- *       "error": "Payment processing failed"
- *     }
- *   ]
- * } 200.application/json
- * @responseExample 200.application/json {
- *   "success": true,
- *   "processed_orders": 2,
- *   "successful_orders": 2,
- *   "failed_orders": 0,
- *   "orders": [
- *     {
- *       "order_id": 123,
- *       "status": "success",
- *       "order": {
- *         "order_id": 123,
- *         "user_id": 456,
- *         "business_id": 789,
- *         "status": "MERCHANT_READY_FOR_PICKUP"
- *       }
- *     },
- *     {
- *       "order_id": 124,
- *       "status": "success",
- *       "order": {
- *         "order_id": 124,
- *         "user_id": 457,
- *         "business_id": 789,
- *         "status": "MERCHANT_READY_FOR_PICKUP"
- *       }
- *     }
- *   ]
- * }
+ * @responseContent {object}
  * @response 400 - Invalid business_local_location_id or no preparing orders found.
  * @response 500 - Error processing the orders.
  * @prisma_model delivery_orders

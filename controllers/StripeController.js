@@ -513,12 +513,6 @@ async function handleWebhook(req, res) {
  * - @pathParam {string} pm_id - The Stripe payment method ID to remove
  * - @response 200 - Payment method removed successfully, returns updated payment methods
  * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
- *     "message": "Payment method removed successfully",
- *     "paymentMethods": [
- *       {
- *         "id": "pm_1...",
- *         "card": { "brand": "visa", "last4": "4242" }
  *       }
  *     ]
  *   }
