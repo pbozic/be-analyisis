@@ -132,6 +132,15 @@ async function resolveOrCreateCustomer(
 
 	return created.customer_id;
 }
+// 1) Internal: booking create transaction
+/**
+ * Create a booking within a transaction.
+ *
+ * @param {Prisma.TransactionClient} tx
+ * @param {CreateBookingSingleInput} input
+ * @param { { validateSchedule?: boolean; ignoreBooking?: boolean } } opts
+ * @returns {Promise<Booking>}
+ */
 async function createBookingTx(
 	tx: Prisma.TransactionClient,
 	input: CreateBookingSingleInput,
@@ -249,6 +258,13 @@ async function createBookingTx(
 }
 
 // 2) Public: single create (kept for callers that need 1 booking)
+/**
+ * Create a single booking within a transaction.
+ *
+ * @param {CreateBookingSingleInput} input
+ * @param { { validateSchedule?: boolean } } opts
+ * @returns {Promise<Booking>}
+ */
 export async function createBooking(
 	input: CreateBookingSingleInput,
 	opts: { validateSchedule?: boolean } = {}
@@ -259,6 +275,13 @@ export async function createBooking(
 }
 
 // 3) Public: group create (parent + children) atomically
+/**
+ * Create a group of bookings (parent + children) within a single transaction.
+ *
+ * @param { (CreateBookingSingleInput | UpdateBookingInput)[] } inputs
+ * @param { { validateSchedule?: boolean; ignoreBooking?: boolean } } opts
+ * @returns {Promise<Booking[]>}
+ */
 export async function createBookingGroup(
 	inputs: CreateBookingSingleInput[],
 	opts: { validateSchedule?: boolean; ignoreBooking?: boolean } = {}
@@ -294,8 +317,6 @@ export async function createBookingGroup(
  * Update a booking using UpdateBookingInput. Will connect to provided customer_id,
  * otherwise patch the currently linked customer (or create one if missing and fields provided).
  *
- * @export
- * @async
  * @param {UpdateBookingInput} input
  * @returns {Promise<Booking>}
  */
@@ -434,8 +455,6 @@ export async function updateBooking(
 /**
  * Delete a booking.
  *
- * @export
- * @async
  * @param {{ booking_id: string }} input
  * @returns {Promise<Booking>}
  */
@@ -450,8 +469,6 @@ export async function deleteBooking(input: { booking_id: string }): Promise<Book
 /**
  * Get booking by id (with relations + condensed history).
  *
- * @export
- * @async
  * @param {{ booking_id: string }} input
  * @returns {Promise<(Booking & { history: Pick<BookingHistoryLog, 'booking_history_id' | 'status' | 'created_at'>[] }) | null>}
  */
@@ -486,8 +503,6 @@ export async function getBookingById(input: { booking_id: string }): Promise<
 /**
  * List bookings for a reservation module (no cursor).
  *
- * @export
- * @async
  * @param {ListBookingsParams} params
  * @returns {Promise<Booking[]>}
  */
@@ -522,8 +537,6 @@ export async function listBookingsByReservationModuleId(params: ListBookingsPara
 /**
  * Create a booking history log entry.
  *
- * @export
- * @async
  * @param {CreateBookingHistoryLogInput} input
  * @returns {Promise<BookingHistoryLog>}
  */
@@ -732,7 +745,13 @@ export async function getBookingByIdWithChildren(booking_id: string): Promise<Bo
 		throwPrisma('Error fetching booking by id', error);
 	}
 }
-
+/**
+ * Update a booking group (parent + children) using UpdateBookingInput. Will connect to provided customer_id,
+ * otherwise patch the currently linked customer (or create one if missing and fields provided).
+ * @param { (CreateBookingSingleInput | UpdateBookingInput)[] } inputs
+ * @param { { validateSchedule?: boolean; ignoreBooking?: boolean } } opts
+ * @returns {Promise<Booking[]>}
+ */
 export async function updateBookingGroup(
 	inputs: (CreateBookingSingleInput | UpdateBookingInput)[],
 	opts: { validateSchedule?: boolean; ignoreBooking?: boolean } = {}

@@ -68,7 +68,6 @@ export async function createService(serviceData: CreateServiceInput, reservation
  * @returns {Promise<Service>} A promise that resolves to the updated service.
  * @throws {Error} If there is an error updating the service.
  */
-
 export async function updateService(serviceId: string, serviceData: UpdateServiceInput): Promise<Service> {
 	try {
 		const current = await prisma.service.findUnique({
@@ -101,7 +100,6 @@ export async function updateService(serviceId: string, serviceData: UpdateServic
  * @returns {Promise<void>} A promise that resolves when the service is deleted.
  * @throws {Error} If there is an error deleting the service.
  */
-
 export async function deleteService(serviceId: string): Promise<void> {
 	try {
 		await prisma.service.delete({
@@ -118,7 +116,6 @@ export async function deleteService(serviceId: string): Promise<void> {
  * @returns {Promise<Service | null>} A promise that resolves to the service or null if not found.
  * @throws {Error} If there is an error retrieving the service.
  */
-
 export async function getServiceById(serviceId: string): Promise<Service | null> {
 	try {
 		let service = await prisma.service.findUnique({
@@ -142,7 +139,6 @@ export async function getServiceById(serviceId: string): Promise<Service | null>
  * @returns {Promise<Service>} A promise that resolves to the updated service.
  * @throws {Error} If there is an error connecting the service to the category.
  */
-
 export async function connectServiceToCategory(serviceId: string, serviceCategoryId: string): Promise<Service> {
 	try {
 		let service = await prisma.service.update({
@@ -165,7 +161,6 @@ export async function connectServiceToCategory(serviceId: string, serviceCategor
  * @returns {Promise<Service>} A promise that resolves to the updated service.
  * @throws {Error} If there is an error disconnecting the service from the category.
  */
-
 export async function disconnectServiceFromCategory(serviceId: string): Promise<Service> {
 	try {
 		let service = await prisma.service.update({
@@ -181,7 +176,12 @@ export async function disconnectServiceFromCategory(serviceId: string): Promise<
 		throw new Error('Error disconnecting service from category');
 	}
 }
-
+/**
+ * Retrieves all services for a given service category ID.
+ *
+ * @param {string} serviceCategoryId - The ID of the service category to retrieve services for.
+ * @returns {Promise<Service[]>} A promise that resolves to an array of services.
+ */
 export async function getServicesByCategoryId(serviceCategoryId: string): Promise<Service[]> {
 	try {
 		let services = await prisma.service.findMany({
