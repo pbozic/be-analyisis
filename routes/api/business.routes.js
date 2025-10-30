@@ -177,4 +177,7 @@ router.post('/analytics/overall', BusinessController.getBusinessOverallAnalytics
 router.post('/analytics/promo/ads', BusinessController.getBusinessPromoAdsAnalytics);
 router.post('/analytics/promo/sections', BusinessController.getBusinessPromoSectionsAnalytics);
 router.post('/analytics/promo/words', BusinessController.getBusinessPromoWordsAnalytics);
+
+router.patch('/:business_id/transport-module', BusinessController.toggleTransportModule);
+
 export default router;

@@ -418,14 +418,14 @@ const getBusinessByEmail = async (email) => {
 /**
  * Find a business by its telephone number.
  *
- * @param {string} telephone_number - The full telephone number to search by.
+ * @param {string} telephone - The full telephone number to search by.
  * @returns {Promise<object|null>} A promise resolving to the business or null if not found.
  */
-const getBusinessByTelephone = async (telephone_number) => {
+const getBusinessByTelephone = async (telephone) => {
 	try {
 		return await prisma.business.findFirst({
 			where: {
-				telephone_number: telephone_number,
+				telephone: telephone,
 			},
 			include: {
 				address: true,
@@ -814,14 +814,13 @@ const updateBusinessEmail = async (business_id, email) => {
  * @param {string} business_id - The business ID.
  * @param {string} telephone - Formatted telephone string.
  * @param {string} telephone_code - Country/area code.
- * @param {string} telephone_number - Raw number without code.
  * @returns {Promise<object>} A promise resolving to the updated business.
  */
-const updateBusinessTelephone = async (business_id, telephone, telephone_code, telephone_number) => {
+const updateBusinessTelephone = async (business_id, telephone, telephone_code) => {
 	try {
 		return await prisma.business.update({
 			where: { business_id },
-			data: { telephone, telephone_code, telephone_number },
+			data: { telephone, telephone_code },
 		});
 	} catch (error) {
 		console.error('Error updating business telephone:', error);

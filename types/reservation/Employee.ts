@@ -2,7 +2,6 @@
 import { z } from 'zod';
 
 import type { employee } from '../../prisma/schemas/interfaces';
-import { BookingsAnalyticsSchema } from './Booking';
 
 export const CreateEmployeeSchema = z
 	.object({

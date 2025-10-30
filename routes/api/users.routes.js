@@ -13,7 +13,6 @@ import {
 	oneSignalIdSchema,
 } from '../../joi/userSchemas.js';
 import { reviewUserSchema } from '../../joi/reviewSchemas.js';
-import { registerChildSchema } from '../../joi/authSchemas.js';
 import StripeController from '../../controllers/StripeController.js';
 import { verifyPhoneSchema } from '../../joi/userSchemas.js';
 import FavoriteDriversController from '../../controllers/FavoriteDriversController.ts';
@@ -135,19 +134,11 @@ router.post('/me/update_user', UserController.updateUserByUserId);
 router.patch('/disabled/:user_id', UserController.updateUserDisabledByUserId);
 router.patch('/active/:user_id', UserController.updateUserActiveByUserId);
 router.patch('/me/disabled', UserController.disableMe);
-router.post('/me/group_user/register-child', joi(registerChildSchema), UserController.registerChildUser);
-router.patch('/me/group_user/status/', UserController.updateChildUserEnabledByGroupUserId);
-/**
- *    * @module wallet
- *
- */
-router.patch('/me/group_user/allowance/', UserController.updateChildUserAllowanceByGroupUserId);
-/**
- *    * @module wallet
- *
- */
-router.patch('/group_user/allowance', UserController.updateChildUserAllowanceByGroupUserId);
-router.delete('/me/group_user/delete/:group_user_id', UserController.deleteChildUserByGroupUserId);
+// router.post('/me/group_user/register-child', joi(registerChildSchema), UserController.registerChildUser);
+// router.patch('/me/group_user/status/', UserController.updateChildUserEnabledByGroupUserId);
+// router.patch('/me/group_user/allowance/', UserController.updateChildUserAllowanceByGroupUserId);
+// router.patch('/group_user/allowance', UserController.updateChildUserAllowanceByGroupUserId);
+// router.delete('/me/group_user/delete/:group_user_id', UserController.deleteChildUserByGroupUserId);
 /**
  *    * @module wallet
  *
@@ -187,5 +178,8 @@ router.get('/me/favorite-services', FavoriteServicesController.listFavoriteServi
 router.get('/me/tutorials', TutorialsController.listTutorials);
 router.post('/me/tutorials/state/reset', TutorialsController.resetTutorials);
 router.post('/me/tutorials/:tutorial_key/status', TutorialsController.setTutorialStatus);
+
+router.post('/family/invite', UserController.inviteFamilyMember);
+router.post('/family/accept-invitation', UserController.acceptFamilyInvitation);
 
 export default router;

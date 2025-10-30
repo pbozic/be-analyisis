@@ -70,7 +70,7 @@ const createBusinessClient = async (clientData) => {
 			email: clientData.email,
 			telephone: `${telephone_code}${telephone_number}`,
 			telephone_code,
-			telephone_number,
+			// telephone_number,
 		};
 		return await prisma.business_clients.create({
 			data,

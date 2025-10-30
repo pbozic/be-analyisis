@@ -26,6 +26,7 @@ import PromoDao from '../dao/Promo.js';
 import WordDao from '../dao/Word.js';
 import BusinessTypesDao from '../dao/BusinessTypes.js';
 import InvoicesDao from '../dao/Invoices.js';
+import TransportDao from '../dao/Transport.js';
 config();
 const { UserSockets, io } = socket;
 const { businessIndex, fullSearch } = elasticsearch;
@@ -867,8 +868,8 @@ async function updateBusinessTelephone(req, res) {
 		let business = await BusinessDao.updateBusinessTelephone(
 			req.params.business_id,
 			req.body.telephone,
-			req.body.telephone_code,
-			req.body.telephone_number
+			req.body.telephone_code
+			// req.body.telephone_number
 		);
 		if (business) {
 			if (
@@ -2946,7 +2947,43 @@ async function confirmBusinessPremise(req, res) {
 		return res.status(500).json({ error: 'Error confirming business premise' });
 	}
 }
-
+/**
+ * PATCH /business/:business_id/transport-module
+ * @tag Business
+ * @summary Enable or disable transport module for a business
+ * @description Toggles the transport module for the specified business.
+ * @operationId toggleTransportModule
+ * @pathParam {string} business_id - The ID of the business
+ * @bodyDescription Object containing the enabled status
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Transport module toggled successfully.
+ * @responseContent {object} 200.application/json
+ * @response 400 - Invalid request body
+ * @responseContent {object} 400.application/json The error object
+ * @response 500 - Error toggling transport module
+ * @responseContent {object} 500.application/json The error object
+ * @prisma_model transport_module
+ */
+async function toggleTransportModule(req, res) {
+	try {
+		const { business_id } = req.params;
+		const { enabled } = req.body;
+		if (typeof enabled !== 'boolean') {
+			return res.status(400).json({ error: 'enabled must be a boolean' });
+		}
+		const updatedBusiness = enabled
+			? await TransportDao.enableTransportModule(business_id)
+			: await TransportDao.disableTransportModule(business_id);
+		if (updatedBusiness?.business_id) {
+			businessIndex(updatedBusiness.business_id);
+		}
+		return res.status(200).json(updatedBusiness);
+	} catch (e) {
+		console.error('Error toggling transport module:', e);
+		return res.status(500).json({ error: 'Error toggling transport module' });
+	}
+}
 export { getScheduledUsersByBusinessId };
 export { listBusinesses };
 export { listTransferBusinesses };
@@ -3013,6 +3050,7 @@ export { getBusinessPromoAdsAnalytics };
 export { getBusinessPromoSectionsAnalytics };
 export { getBusinessPromoWordsAnalytics };
 export { confirmBusinessPremise };
+export { toggleTransportModule };
 export default {
 	getScheduledUsersByBusinessId,
 	listBusinesses,
@@ -3082,4 +3120,5 @@ export default {
 	setBusinessTypesForBusiness,
 	createBusinessType,
 	confirmBusinessPremise,
+	toggleTransportModule,
 };

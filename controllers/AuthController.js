@@ -240,11 +240,10 @@ async function register(req, res) {
 		delete postData.user_roles;
 		const countryCode = postData.telephone_code;
 		const phoneNumber = postData.telephone_number;
-		//TODO: Adjust this for other country codes?
 		const normalizedPhoneNumber = await SMSHelper.getParsedPhoneNumber(postData.telephone, countryCode);
 		let userObj = {
 			...postData,
-			telephone_number: normalizedPhoneNumber?.number || phoneNumber,
+			// telephone_number: normalizedPhoneNumber?.number || phoneNumber,
 			date_of_birth: new Date(postData.date_of_birth),
 			password: hash,
 			user_role: userRole,
@@ -255,6 +254,7 @@ async function register(req, res) {
 			apple_id: postData.apple_id || null,
 			google_id: postData.google_id || null,
 		};
+		delete userObj['telephone_number'];
 		delete userObj['confirm_password'];
 		delete userObj.referral_code;
 		let user = await UserDao.createNewUser(userObj);
@@ -450,6 +450,7 @@ async function passwordReset(req, res) {
  * @prisma_model user_roles (see ./prisma/schemas/user.prisma)
  */
 async function registerTaxiService(req, res) {
+	//TODO: Update business creation by linking to transport_module
 	fs.writeFileSync('taxi-service.json', JSON.stringify(req.body, null, 2));
 	try {
 		if (req.body.business) {
@@ -503,9 +504,10 @@ async function registerTaxiService(req, res) {
 				);
 				let userObj = {
 					...driverInfo.user.data,
-					telephone_number: normalizedPhoneNumber?.number || phoneNumber,
+					// telephone_number: normalizedPhoneNumber?.number || phoneNumber,
 					stripe_customer_id: stripeCustomer.id,
 				};
+				delete userObj.telephone_number;
 				delete userObj.user_roles;
 				const newUser = await UserDao.createNewUser(userObj, true);
 				const userRoles = driverInfo.user.data.user_roles || [
@@ -688,6 +690,7 @@ async function registerTaxiService(req, res) {
  * @prisma_model user_roles (see ./prisma/schemas/user.prisma)
  */
 async function registerDeliveryService(req, res) {
+	//TODO: Update business creation by linking to transport_module
 	try {
 		if (req.body.business) {
 			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.email);
@@ -739,9 +742,10 @@ async function registerDeliveryService(req, res) {
 				);
 				let userObj = {
 					...deliveryDriverInfo.user.data,
-					telephone_number: normalizedPhoneNumber?.number || phoneNumber,
+					// telephone_number: normalizedPhoneNumber?.number || phoneNumber,
 					stripe_customer_id: stripeCustomer.id,
 				};
+				delete userObj.telephone_number;
 				delete userObj.user_roles;
 				const newUser = await UserDao.createNewUser(userObj, true);
 				const userRoles = deliveryDriverInfo.user.data.user_roles || [
@@ -886,6 +890,7 @@ async function registerDeliveryService(req, res) {
  * @prisma_model menus (see ./prisma/schemas/delivery.prisma)
  */
 async function registerMerchantService(req, res) {
+	//TODO: Update business creation by linking to stores_module/food_drinks_module
 	try {
 		// fs.writeFileSync("merchant-req.json", null, JSON.stringify(req.body, null, 2), 'utf8')
 		if (req.body.business) {
@@ -1024,6 +1029,7 @@ async function registerMerchantService(req, res) {
  * @prisma_model files (see ./prisma/schemas/base.prisma)
  */
 async function registerBusiness(req, res) {
+	//TODO: Update business creation by linking to crm_module
 	try {
 		if (req.body.business) {
 			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.data.email);
@@ -1240,7 +1246,7 @@ async function registerReservationBusiness(req, res) {
 							password: userData.password,
 							user_role: 'ADMIN',
 							telephone: userData.telephone || businessData.business_telephone,
-							telephone_number: userData.telephone_number || businessData.business_telephone_number,
+							// telephone_number: userData.telephone_number || businessData.business_telephone_number,
 							telephone_code: userData.telephone_code || businessData.business_telephone_code,
 						};
 				const businessCreationObj = existingBusiness
@@ -1249,7 +1255,7 @@ async function registerReservationBusiness(req, res) {
 							name: businessData.name,
 							email: businessData.email,
 							telephone: businessData.telephone,
-							telephone_number: businessData.telephone_number,
+							// telephone_number: businessData.telephone_number,
 							telephone_code: businessData.telephone_code,
 							type: BUSINESS_TYPE.RESERVATION,
 							tax_id: businessData.tax_id,

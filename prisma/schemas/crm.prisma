@@ -31,13 +31,13 @@ model business_clients {
     crm_module_id       String     @db.Uuid
     crm_module          crm_module @relation(fields: [crm_module_id], references: [crm_module_id])
 
-    first_name       String?
-    last_name        String?
-    email            String?
-    telephone        String
-    telephone_code   String
-    telephone_number String
-    taxi_orders      taxi_orders[]
+    first_name     String?
+    last_name      String?
+    email          String?
+    telephone      String
+    telephone_code String
+    // telephone_number String
+    taxi_orders    taxi_orders[]
 
     @@unique([telephone, crm_module_id], name: "uniqueBusinessClient")
 }

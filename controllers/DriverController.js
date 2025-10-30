@@ -1048,9 +1048,10 @@ async function createDriver(req, res) {
 		);
 		let userObj = {
 			...req.body.user.data,
-			telephone_number: normalizedPhoneNumber?.number || phoneNumber,
+			// telephone_number: normalizedPhoneNumber?.number || phoneNumber,
 			stripe_customer_id: stripeCustomer.id,
 		};
+		delete userObj.telephone_number;
 		delete userObj.user_roles;
 		const newUser = await UserDao.createNewUser(userObj, true);
 		const userRoles = req.body.user.data.user_roles || [{ role: newUser.user_role || 'DRIVER', primary: true }];

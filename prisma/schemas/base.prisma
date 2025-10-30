@@ -67,8 +67,8 @@ model business {
   registration_id     String
   email               String      @unique
   telephone           String
-  telephone_code      String // TODO: Remove later
-  telephone_number    String // TODO: Remove later
+  telephone_code      String
+  // telephone_number    String
   website_url         String?
   working_hours       Json?
   popular             Boolean     @default(true) // TODO: Remove later
@@ -77,10 +77,6 @@ model business {
   updated_at          DateTime    @default(now()) @updatedAt @db.Timestamptz(6)
   address             addresses?  @relation(name: "address", fields: [address_id], references: [address_id])
   documents           documents[]
-  logo_id             String?     @unique @db.Uuid
-  logo                files?      @relation("business_logo", fields: [logo_id], references: [file_id])
-  banner_id           String?     @unique @db.Uuid
-  banner              files?      @relation("business_banner", fields: [banner_id], references: [file_id])
   parent_business_id  String?     @db.Uuid
   parent_business     business?   @relation("parent_business", fields: [parent_business_id], references: [business_id], onDelete: SetNull)
   child_businesses    business[]  @relation("parent_business")
@@ -282,27 +278,33 @@ model documents {
 /// @erd LostItems
 /// @erd PromoAds
 model files {
-  file_id           String           @id @default(uuid()) @db.Uuid
-  url               String?
-  file_type         FILE_TYPE
-  public            Boolean          @default(false)
-  mime_type         String
-  created_at        DateTime         @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
-  document_id       String?          @db.Uuid
-  documents         documents?       @relation(fields: [document_id], references: [document_id])
-  categories        categories[]
-  blog_posts        blog_posts[]
-  business_logo     business[]       @relation("business_logo")
-  business_banner   business[]       @relation("business_banner")
-  user_id           String?          @db.Uuid
-  user              users?
-  menu_items        menu_items[]     @relation("menu_item_image") // TODO: This was needed for duplicate menu_items -> UPDATE DAO
-  lost_item_id      String?          @db.Uuid
-  lost_item         lost_items?
-  promo_banners     promo_banners[]
-  delivery_order_id String?          @db.Uuid
-  delivery_order    delivery_orders?
+  file_id            String              @id @default(uuid()) @db.Uuid
+  url                String?
+  file_type          FILE_TYPE
+  public             Boolean             @default(false)
+  mime_type          String
+  created_at         DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
+  document_id        String?             @db.Uuid
+  documents          documents?          @relation(fields: [document_id], references: [document_id])
+  categories         categories[]
+  blog_posts         blog_posts[]
+  store_logo         stores_module?      @relation("stores_logo")
+  store_banner       stores_module?      @relation("stores_banner")
+  food_drinks_logo   food_drinks_module? @relation("food_drinks_logo")
+  food_drinks_banner food_drinks_module? @relation("food_drinks_banner")
+  reservation_logo   reservation_module? @relation("reservations_logo")
+  reservation_banner reservation_module? @relation("reservations_banner")
+  user_id            String?             @db.Uuid
+  user               users?
+  driver_id          String?             @db.Uuid
+  driver             drivers?
+  menu_items         menu_items[]        @relation("menu_item_image") // TODO: This was needed for duplicate menu_items -> UPDATE DAO
+  lost_item_id       String?             @db.Uuid
+  lost_item          lost_items?
+  promo_banners      promo_banners[]
+  delivery_order_id  String?             @db.Uuid
+  delivery_order     delivery_orders?
 }
 
 /// @summary API and session tokens for users.
@@ -727,12 +729,16 @@ model promo_analytics {
 /// @namespace DailyMeals
 /// @hidden
 model translatable {
-  translatable_id String           @id @default(uuid()) @db.Uuid
-  translations    translations[]
+  translatable_id              String            @id @default(uuid()) @db.Uuid
+  translations                 translations[]
   // --------------SEPARATOR--------------
-  words           words[]
-  categories      categories[] // @namespace Menus, @namespace DailyMeals
-  promo_sections  promo_sections[]
+  words                        words[]
+  categories                   categories[] // @namespace Menus, @namespace DailyMeals
+  promo_sections               promo_sections[]
+  menu_categories_names        menu_categories[] @relation("menu_categories_names_translations") // @namespace Menus, @namespace DailyMeals
+  menu_categories_descriptions menu_categories[] @relation("menu_categories_descriptions_translations") // @namespace Menus, @namespace DailyMeals
+  menu_items_names             menu_items[]      @relation("menu_items_names_translations") // @namespace Menus, @namespace DailyMeals
+  menu_items_descriptions      menu_items[]      @relation("menu_items_descriptions_translations") // @namespace Menus, @namespace DailyMeals
 }
 
 /// @summary Translations for various translatable entities (categories, words, promo sections).
@@ -1091,13 +1097,41 @@ model tax_rates {
 }
 
 /// @summary Allergen master data.
-/// @namespace Menus
-/// @hidden
+/// @namespace MenuItems
 model allergens {
   allergen_id String  @id @default(uuid()) @db.Uuid
   name        String
   description String?
   code        Int     @unique @db.SmallInt
+
+  allergens_to_menu_items allergens_to_menu_items[]
+  users                   user_allergens[]
+}
+
+/// @summary Junction table linking allergens to menu items.
+/// @namespace MenuItems
+/// @hidden
+model allergens_to_menu_items {
+  allergen_id  String @db.Uuid
+  menu_item_id String @db.Uuid
+
+  allergen  allergens  @relation(fields: [allergen_id], references: [allergen_id], onDelete: Cascade)
+  menu_item menu_items @relation(fields: [menu_item_id], references: [menu_item_id], onDelete: Cascade)
+
+  @@id([allergen_id, menu_item_id])
+}
+
+/// @summary Junction table linking allergens to users.
+/// @namespace Users
+/// @hidden
+model user_allergens {
+  allergen_id String @db.Uuid
+  user_id     String @db.Uuid
+
+  allergen allergens @relation(fields: [allergen_id], references: [allergen_id], onDelete: Cascade)
+  user     users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@id([allergen_id, user_id])
 }
 
 /// @summary Junction table linking user favorite service links.

@@ -139,9 +139,9 @@ const getUserByEmailOrTelephone = async (query, args) => {
 					{
 						telephone: query,
 					},
-					{
-						telephone_number: query,
-					},
+					// {
+					// 	telephone_number: query,
+					// },
 				],
 			},
 			...args,
@@ -316,7 +316,7 @@ const updateEmail = async (user_id, email) => {
  * Update user telephone fields.
  *
  * @param {string} user_id - User ID.
- * @param {object} telephone - Telephone fields (telephone, telephone_code, telephone_number).
+ * @param {object} telephone - Telephone fields (telephone, telephone_code).
  * @returns {Promise<object>} Updated user.
  */
 const updateTelephone = async (user_id, telephone) => {
@@ -902,7 +902,7 @@ const wipeUserPersonalData = async (user_id) => {
 				last_name: null,
 				email: null,
 				telephone_code: '',
-				telephone_number: '',
+				// telephone_number: '',
 				telephone: fake_number,
 				phone_verified: false,
 			},

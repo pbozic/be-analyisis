@@ -9,7 +9,7 @@ model transport_module {
     updated_at          DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
     business        business          @relation(fields: [business_id], references: [business_id])
-    // Reviews linkage for transport module
+    active          Boolean           @default(false)
     reviewable_id   String?           @db.Uuid
     reviewable      reviewable?       @relation(fields: [reviewable_id], references: [reviewable_id])
     taxi_orders     taxi_orders[]
@@ -212,6 +212,8 @@ model drivers {
     current_vehicle           vehicles?                  @relation("driver_current_vehicle", fields: [current_vehicle_id], references: [vehicle_id])
     activity_logs             driver_activity_logs[]
     transport_module          transport_module?          @relation(fields: [transport_module_id], references: [transport_module_id])
+    profile_picture_id        String?                    @unique @db.Uuid
+    profile_picture           files?                     @relation(fields: [profile_picture_id], references: [file_id])
 
     daily_meals           daily_meals_drivers[]
     delivers_daily_meals  Boolean?                   @default(false)

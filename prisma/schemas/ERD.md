@@ -21,13 +21,13 @@
 - [Drivers](#drivers)
 - [Blog](#blog)
 - [Regions](#regions)
+- [MenuItems](#menuitems)
 - [CRM](#crm)
 - [Stores](#stores)
 - [FoodDrinks](#fooddrinks)
 - [DeliveryOrders](#deliveryorders)
 - [DailyMeals](#dailymeals)
 - [Menus](#menus)
-- [MenuItems](#menuitems)
 - [TableReservations](#tablereservations)
 - [OrderLobbies](#orderlobbies)
 - [Invoices](#invoices)
@@ -59,15 +59,12 @@ erDiagram
   String email UK
   String telephone
   String telephone_code
-  String telephone_number
   String website_url "nullable"
   Json working_hours "nullable"
   Boolean popular
   Boolean new
   DateTime(6) created_at
   DateTime(6) updated_at
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
   String parent_business_id FK "nullable"
   String stripe_account_id "nullable"
   String stripe_customer_id "nullable"
@@ -115,6 +112,8 @@ erDiagram
   Int hours_before_reschedule "nullable"
   Int hours_before_cancel "nullable"
   Boolean publicly_visible
+  String logo_id FK,UK "nullable"
+  String banner_id FK,UK "nullable"
   String reviewable_id FK "nullable"
 }
 "business_users" {
@@ -152,6 +151,7 @@ erDiagram
   DateTime(6) updated_at
   String document_id FK "nullable"
   String user_id "nullable"
+  String driver_id "nullable"
   String lost_item_id "nullable"
   String delivery_order_id "nullable"
 }
@@ -218,12 +218,12 @@ erDiagram
   ANALYTICS_TYPE type
 }
 "business" }o--o| "addresses" : address
-"business" |o--o| "files" : logo
-"business" |o--o| "files" : banner
 "business" }o--o| "business" : parent_business
 "scoring_points" }o--|| "business" : businesses
 "account_actions" }o--o| "business" : business
 "reservation_module" |o--|| "business" : business
+"reservation_module" |o--o| "files" : logo
+"reservation_module" |o--o| "files" : banner
 "business_users" }o--|| "business" : business
 "business_users" }o--o| "addresses" : operating_address
 "documents" }o--o| "business" : business
@@ -254,15 +254,12 @@ Properties as follows:
 - `email`:
 - `telephone`:
 - `telephone_code`:
-- `telephone_number`:
 - `website_url`:
 - `working_hours`:
 - `popular`:
 - `new`:
 - `created_at`:
 - `updated_at`:
-- `logo_id`:
-- `banner_id`:
 - `parent_business_id`:
 - `stripe_account_id`:
 - `stripe_customer_id`:
@@ -332,6 +329,8 @@ Properties as follows:
 - `hours_before_reschedule`:
 - `hours_before_cancel`:
 - `publicly_visible`:
+- `logo_id`:
+- `banner_id`:
 - `reviewable_id`:
 
 ## BusinessUsers
@@ -371,7 +370,6 @@ erDiagram
   String email "nullable"
   String telephone "nullable"
   String telephone_code "nullable"
-  String telephone_number "nullable"
   String business_users_id FK,UK "nullable"
   DateTime created_at
   DateTime deleted_at "nullable"
@@ -388,15 +386,12 @@ erDiagram
   String email UK
   String telephone
   String telephone_code
-  String telephone_number
   String website_url "nullable"
   Json working_hours "nullable"
   Boolean popular
   Boolean new
   DateTime(6) created_at
   DateTime(6) updated_at
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
   String parent_business_id FK "nullable"
   String stripe_account_id "nullable"
   String stripe_customer_id "nullable"
@@ -424,7 +419,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -521,7 +515,6 @@ Properties as follows:
 - `email`:
 - `telephone`:
 - `telephone_code`:
-- `telephone_number`:
 - `business_users_id`:
 - `created_at`:
 - `deleted_at`:
@@ -552,7 +545,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -636,7 +628,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -730,7 +721,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -837,6 +827,7 @@ erDiagram
   DateTime(6) updated_at
   String document_id FK "nullable"
   String user_id "nullable"
+  String driver_id "nullable"
   String lost_item_id "nullable"
   String delivery_order_id "nullable"
 }
@@ -890,6 +881,7 @@ erDiagram
   DateTime(6) updated_at
   String document_id FK "nullable"
   String user_id "nullable"
+  String driver_id "nullable"
   String lost_item_id "nullable"
   String delivery_order_id "nullable"
 }
@@ -905,15 +897,12 @@ erDiagram
   String email UK
   String telephone
   String telephone_code
-  String telephone_number
   String website_url "nullable"
   Json working_hours "nullable"
   Boolean popular
   Boolean new
   DateTime(6) created_at
   DateTime(6) updated_at
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
   String parent_business_id FK "nullable"
   String stripe_account_id "nullable"
   String stripe_customer_id "nullable"
@@ -1018,10 +1007,8 @@ erDiagram
 }
 "menu_items" {
   String menu_item_id PK
-  Json names
-  String image "nullable"
-  Json description
-  String allergens
+  String name_translatable_id FK
+  String description_translatable_id FK
   Int spicy_level "nullable"
   String unit_size "nullable"
   Float price
@@ -1056,7 +1043,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -1097,8 +1083,6 @@ erDiagram
   Boolean allow_newsletter "nullable"
 }
 "files" }o--o| "documents" : documents
-"business" |o--o| "files" : logo
-"business" |o--o| "files" : banner
 "business" }o--o| "business" : parent_business
 "documents" }o--o| "business" : business
 "lost_items" |o--o| "files" : image
@@ -1129,6 +1113,7 @@ Properties as follows:
 - `updated_at`:
 - `document_id`:
 - `user_id`:
+- `driver_id`:
 - `lost_item_id`:
 - `delivery_order_id`:
 
@@ -1193,7 +1178,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -1317,7 +1301,6 @@ erDiagram
   String email "nullable"
   String telephone "nullable"
   String telephone_code "nullable"
-  String telephone_number "nullable"
   String business_users_id FK,UK "nullable"
   DateTime created_at
   DateTime deleted_at "nullable"
@@ -1346,15 +1329,12 @@ erDiagram
   String email UK
   String telephone
   String telephone_code
-  String telephone_number
   String website_url "nullable"
   Json working_hours "nullable"
   Boolean popular
   Boolean new
   DateTime(6) created_at
   DateTime(6) updated_at
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
   String parent_business_id FK "nullable"
   String stripe_account_id "nullable"
   String stripe_customer_id "nullable"
@@ -1373,6 +1353,7 @@ erDiagram
   DateTime(6) updated_at
   String document_id FK "nullable"
   String user_id "nullable"
+  String driver_id "nullable"
   String lost_item_id "nullable"
   String delivery_order_id "nullable"
 }
@@ -1461,6 +1442,7 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
+  String profile_picture_id FK,UK "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -1489,8 +1471,6 @@ erDiagram
 "account_actions" }o--|| "users" : action_creator
 "customers" }o--o| "users" : user
 "business" }o--o| "addresses" : address
-"business" |o--o| "files" : logo
-"business" |o--o| "files" : banner
 "business" }o--o| "business" : parent_business
 "transactions" }o--|| "users" : user
 "transactions" }o--o| "wallet_funds" : wallet_funds
@@ -1499,9 +1479,11 @@ erDiagram
 "lost_items" }o--o| "users" : user
 "wallet_funds" }o--|| "users" : user
 "drivers" |o--o| "users" : user
+"drivers" |o--o| "files" : profile_picture
 "reviews" }o--o{ "users" : "via reviewable"
 "users" }o--o{ "business" : "via user_favorite_businesses"
 "users" }o--o{ "drivers" : "via user_favorite_drivers"
+"allergens" }o--o{ "users" : "via user_allergens"
 "users" }o--o{ "service_links" : "via user_favorite_service_links"
 "users" }o--o{ "tutorial" : "via user_tutorials"
 ```
@@ -1600,7 +1582,6 @@ Properties as follows:
 - `email`:
 - `telephone`:
 - `telephone_code`:
-- `telephone_number`:
 - `date_of_birth`:
 - `created_at`:
 - `updated_at`:
@@ -1774,7 +1755,6 @@ Properties as follows:
 - `email`:
 - `telephone`:
 - `telephone_code`:
-- `telephone_number`:
 - `business_users_id`:
 - `created_at`:
 - `deleted_at`:
@@ -1823,15 +1803,12 @@ erDiagram
   String email UK
   String telephone
   String telephone_code
-  String telephone_number
   String website_url "nullable"
   Json working_hours "nullable"
   Boolean popular
   Boolean new
   DateTime(6) created_at
   DateTime(6) updated_at
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
   String parent_business_id FK "nullable"
   String stripe_account_id "nullable"
   String stripe_customer_id "nullable"
@@ -1869,6 +1846,8 @@ erDiagram
   Int minimum_order
   Boolean overwhelmed
   Boolean online
+  String logo_id FK,UK "nullable"
+  String banner_id FK,UK "nullable"
 }
 "food_drinks_module" {
   String food_drinks_id PK
@@ -1884,6 +1863,8 @@ erDiagram
   Boolean overwhelmed
   Boolean online
   String daily_meals_id "nullable"
+  String logo_id FK,UK "nullable"
+  String banner_id FK,UK "nullable"
 }
 "local_locations" {
   String local_location_id PK
@@ -2042,7 +2023,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -2211,6 +2191,7 @@ erDiagram
   DateTime(6) updated_at
   String document_id FK "nullable"
   String user_id "nullable"
+  String driver_id "nullable"
   String lost_item_id "nullable"
   String delivery_order_id "nullable"
 }
@@ -2222,7 +2203,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -2329,7 +2309,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -2533,6 +2512,7 @@ erDiagram
   DateTime(6) updated_at
   String document_id FK "nullable"
   String user_id "nullable"
+  String driver_id "nullable"
   String lost_item_id "nullable"
   String delivery_order_id "nullable"
 }
@@ -2843,6 +2823,7 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
+  String profile_picture_id FK,UK "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -2909,7 +2890,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -3045,6 +3025,7 @@ Properties as follows:
 - `delivery_orders_toggled`:
 - `partner_cash_balance`:
 - `come_to_work_last_sent_at`:
+- `profile_picture_id`:
 - `delivers_daily_meals`:
 - `on_daily_meals`:
 - `scheduled_meals_route`:
@@ -3101,7 +3082,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -3272,6 +3252,7 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
+  String profile_picture_id FK,UK "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -3353,6 +3334,205 @@ Properties as follows:
 - `municipalities_id`:
 - `settlement_id`:
 
+## MenuItems
+
+```mermaid
+erDiagram
+"allergens" {
+  String allergen_id PK
+  String name
+  String description "nullable"
+  Int code UK
+}
+"menu_items" {
+  String menu_item_id PK
+  String name_translatable_id FK
+  String description_translatable_id FK
+  Int spicy_level "nullable"
+  String unit_size "nullable"
+  Float price
+  Float discount "nullable"
+  String sides
+  String extras
+  Json ingredients
+  String availability
+  String business_id
+  String menu_category_id FK "nullable"
+  DateTime(6) daily_date "nullable"
+  String image_file_id FK,UK "nullable"
+  Boolean requires_id_check
+  Boolean is_enabled
+  Boolean is_copy
+  Int menu_category_order_index "nullable"
+  Json allergens_text "nullable"
+  Json ingredients_text "nullable"
+  Json usage_text "nullable"
+  Json origin_text "nullable"
+  Boolean is_weighted
+  Float weight_quantity "nullable"
+  Float stock "nullable"
+  String latest_version_id "nullable"
+  String tax_rates_id FK "nullable"
+}
+"line_items" {
+  String line_item_id PK
+  String menu_item_id FK
+  String menu_item_version_id FK
+  String order_id FK
+  Int quantity
+  String comment "nullable"
+  String replacement_id "nullable"
+  String replaces_id FK,UK "nullable"
+  String parent_side_id FK "nullable"
+  String parent_extra_id FK "nullable"
+  Boolean removed
+}
+"menu_item_versions" {
+  String menu_item_version_id PK
+  String menu_item_id FK
+  Int version
+  Json snapshot
+  DateTime(6) created_at
+}
+"menu_item_stock_change" {
+  String id PK
+  String menu_item_id FK
+  Float quantity
+  String reason
+  String order_id FK "nullable"
+  DateTime created_at
+}
+"files" {
+  String file_id PK
+  String url "nullable"
+  FILE_TYPE file_type
+  Boolean public
+  String mime_type
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String document_id FK "nullable"
+  String user_id "nullable"
+  String driver_id "nullable"
+  String lost_item_id "nullable"
+  String delivery_order_id "nullable"
+}
+"tax_rates" {
+  String tax_rates_id PK
+  String name
+  String description "nullable"
+  String country "nullable"
+  Float rate
+  Boolean active
+  DateTime(6) valid_from
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  DateTime(6) activated_at "nullable"
+}
+"menu_items" |o--o| "files" : image_file
+"menu_items" }o--o| "tax_rates" : tax_rate
+"line_items" }o--|| "menu_items" : menu_item
+"line_items" }o--|| "menu_item_versions" : menu_item_version
+"line_items" |o--o| "line_items" : replaces
+"line_items" }o--o| "line_items" : parent_side
+"line_items" }o--o| "line_items" : parent_extra
+"menu_item_versions" }o--|| "menu_items" : menu_item
+"menu_item_stock_change" }o--|| "menu_items" : menu_item
+"allergens" }o--o{ "menu_items" : "via allergens_to_menu_items"
+```
+
+### `allergens`
+
+Allergen master data.
+
+Properties as follows:
+
+- `allergen_id`:
+- `name`:
+- `description`:
+- `code`:
+
+### `menu_items`
+
+Sellable dish/product with pricing and attributes.
+
+Includes allergens, ingredients, stock and tax rate. Documents can be attached.
+
+Properties as follows:
+
+- `menu_item_id`:
+- `name_translatable_id`:
+- `description_translatable_id`:
+- `spicy_level`:
+- `unit_size`:
+- `price`:
+- `discount`:
+- `sides`:
+- `extras`:
+- `ingredients`:
+- `availability`:
+- `business_id`:
+- `menu_category_id`:
+- `daily_date`:
+- `image_file_id`:
+- `requires_id_check`:
+- `is_enabled`:
+- `is_copy`:
+- `menu_category_order_index`:
+- `allergens_text`:
+- `ingredients_text`:
+- `usage_text`:
+- `origin_text`:
+- `is_weighted`:
+- `weight_quantity`:
+- `stock`:
+- `latest_version_id`:
+- `tax_rates_id`:
+
+### `line_items`
+
+Individual items within an order, including sides/extras and replacements.
+
+Properties as follows:
+
+- `line_item_id`:
+- `menu_item_id`:
+- `menu_item_version_id`:
+- `order_id`:
+- `quantity`:
+- `comment`:
+- `replacement_id`:
+- `replaces_id`:
+- `parent_side_id`:
+- `parent_extra_id`:
+- `removed`:
+
+### `menu_item_versions`
+
+Snapshot of a menu item at a specific version.
+
+Stores the state of a menu item whenever it changes, to preserve order accuracy over time.
+
+Properties as follows:
+
+- `menu_item_version_id`:
+- `menu_item_id`:
+- `version`:
+- `snapshot`:
+- `created_at`:
+
+### `menu_item_stock_change`
+
+Records changes in stock levels for menu items.
+
+Properties as follows:
+
+- `id`:
+- `menu_item_id`:
+- `quantity`:
+- `reason`:
+- `order_id`:
+- `created_at`:
+
 ## CRM
 
 ```mermaid
@@ -3374,7 +3554,6 @@ erDiagram
   String email "nullable"
   String telephone
   String telephone_code
-  String telephone_number
 }
 "business_teams" {
   String business_teams_id PK
@@ -3396,15 +3575,12 @@ erDiagram
   String email UK
   String telephone
   String telephone_code
-  String telephone_number
   String website_url "nullable"
   Json working_hours "nullable"
   Boolean popular
   Boolean new
   DateTime(6) created_at
   DateTime(6) updated_at
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
   String parent_business_id FK "nullable"
   String stripe_account_id "nullable"
   String stripe_customer_id "nullable"
@@ -3431,7 +3607,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -3513,7 +3688,6 @@ Properties as follows:
 - `email`:
 - `telephone`:
 - `telephone_code`:
-- `telephone_number`:
 
 ### `business_teams`
 
@@ -3546,6 +3720,8 @@ erDiagram
   Int minimum_order
   Boolean overwhelmed
   Boolean online
+  String logo_id FK,UK "nullable"
+  String banner_id FK,UK "nullable"
 }
 "business_local_locations" {
   String business_local_location_id PK
@@ -3573,15 +3749,12 @@ erDiagram
   String email UK
   String telephone
   String telephone_code
-  String telephone_number
   String website_url "nullable"
   Json working_hours "nullable"
   Boolean popular
   Boolean new
   DateTime(6) created_at
   DateTime(6) updated_at
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
   String parent_business_id FK "nullable"
   String stripe_account_id "nullable"
   String stripe_customer_id "nullable"
@@ -3603,12 +3776,9 @@ erDiagram
 }
 "menus" {
   String menu_id PK
-  String stores_id FK "nullable"
-  String food_drinks_id FK "nullable"
-  Boolean active
+  String stores_id FK,UK "nullable"
+  String food_drinks_id FK,UK "nullable"
   Json menu_categories_ordered "nullable"
-  Boolean isDailyMeal
-  DateTime date "nullable"
 }
 "order_lobbies" {
   String order_lobbies_id PK
@@ -3629,7 +3799,7 @@ erDiagram
 "business_local_locations" }o--|| "local_locations" : local_location
 "business_local_locations" }o--|| "stores_module" : stores_module
 "business" }o--o| "business" : parent_business
-"menus" }o--o| "stores_module" : stores_module
+"menus" |o--o| "stores_module" : stores_module
 "order_lobbies" }o--|| "stores_module" : stores_module
 "reviews" }o--o{ "stores_module" : "via reviewable"
 ```
@@ -3653,6 +3823,8 @@ Properties as follows:
 - `minimum_order`:
 - `overwhelmed`:
 - `online`:
+- `logo_id`:
+- `banner_id`:
 
 ### `business_local_locations`
 
@@ -3700,6 +3872,8 @@ erDiagram
   Boolean overwhelmed
   Boolean online
   String daily_meals_id "nullable"
+  String logo_id FK,UK "nullable"
+  String banner_id FK,UK "nullable"
 }
 "business" {
   String business_id PK
@@ -3713,15 +3887,12 @@ erDiagram
   String email UK
   String telephone
   String telephone_code
-  String telephone_number
   String website_url "nullable"
   Json working_hours "nullable"
   Boolean popular
   Boolean new
   DateTime(6) created_at
   DateTime(6) updated_at
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
   String parent_business_id FK "nullable"
   String stripe_account_id "nullable"
   String stripe_customer_id "nullable"
@@ -3749,15 +3920,14 @@ erDiagram
   Int maximum_daily_meals_subscribers "nullable"
   Json daily_users_sorted "nullable"
   SORTING_TYPE daily_users_sorting_type
+  DateTime(6) created_at
+  DateTime(6) updated_at
 }
 "menus" {
   String menu_id PK
-  String stores_id FK "nullable"
-  String food_drinks_id FK "nullable"
-  Boolean active
+  String stores_id FK,UK "nullable"
+  String food_drinks_id FK,UK "nullable"
   Json menu_categories_ordered "nullable"
-  Boolean isDailyMeal
-  DateTime date "nullable"
 }
 "table_reservations_module" {
   String id PK
@@ -3781,7 +3951,7 @@ erDiagram
 "food_drinks_module" |o--|| "business" : business
 "business" }o--o| "business" : parent_business
 "daily_meals_module" |o--|| "food_drinks_module" : food_drinks_module
-"menus" }o--o| "food_drinks_module" : food_drinks_module
+"menus" |o--o| "food_drinks_module" : food_drinks_module
 "table_reservations_module" |o--|| "food_drinks_module" : food_drinks_module
 "order_lobbies" }o--o| "food_drinks_module" : food_drinks_module
 "reviews" }o--o{ "food_drinks_module" : "via reviewable"
@@ -3808,6 +3978,8 @@ Properties as follows:
 - `overwhelmed`:
 - `online`:
 - `daily_meals_id`:
+- `logo_id`:
+- `banner_id`:
 
 ## DeliveryOrders
 
@@ -3865,7 +4037,6 @@ erDiagram
   String email "nullable"
   String telephone
   String telephone_code
-  String telephone_number
 }
 "business_users" {
   String business_users_id PK
@@ -3964,6 +4135,7 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
+  String profile_picture_id FK,UK "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -3993,7 +4165,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -4123,7 +4294,6 @@ Properties as follows:
 - `email`:
 - `telephone`:
 - `telephone_code`:
-- `telephone_number`:
 
 ## DailyMeals
 
@@ -4137,6 +4307,13 @@ erDiagram
   Int maximum_daily_meals_subscribers "nullable"
   Json daily_users_sorted "nullable"
   SORTING_TYPE daily_users_sorting_type
+  DateTime(6) created_at
+  DateTime(6) updated_at
+}
+"daily_meal_menus" {
+  String daily_meal_menu_id PK
+  String daily_meals_module_id FK
+  DateTime date
 }
 "daily_meal_subscriptions" {
   String id PK
@@ -4236,6 +4413,21 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
 }
+"menu_categories" {
+  String menu_category_id PK
+  String name_translatable_id FK
+  String description_translatable_id FK
+  String categories
+  String business_id
+  String menu_id FK "nullable"
+  String daily_meal_menu_id FK "nullable"
+  Int order "nullable"
+  Float price "nullable"
+  Json menu_items_ordered "nullable"
+  Int menu_order_index "nullable"
+  String daily_meal_category_id FK "nullable"
+  String daily_meal_category_price_id FK "nullable"
+}
 "drivers" {
   String driver_id PK
   String transport_module_id FK "nullable"
@@ -4264,6 +4456,7 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
+  String profile_picture_id FK,UK "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -4278,7 +4471,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -4318,6 +4510,7 @@ erDiagram
   Boolean allow_ads_personalization "nullable"
   Boolean allow_newsletter "nullable"
 }
+"daily_meal_menus" }o--|| "daily_meals_module" : daily_meals_module
 "daily_meal_subscriptions" }o--|| "users" : user
 "daily_meal_subscriptions" }o--o| "drivers" : driver
 "daily_meal_subscriptions" }o--|| "addresses" : delivery_address
@@ -4329,13 +4522,19 @@ erDiagram
 "daily_meal_subscription_weekdays" }o--|| "daily_meal_subscriptions" : subscription
 "daily_meal_instances" }o--|| "daily_meal_subscriptions" : subscription
 "daily_meal_instances" }o--|| "daily_meal_subscription_customers" : customer
+"daily_meal_instances" }o--|| "menu_categories" : menu_category
 "daily_meal_instances" }o--|| "daily_meal_category_prices" : daily_meal_category_price
 "daily_meal_categories" }o--|| "categories" : category
 "daily_meal_categories" }o--|| "daily_meals_module" : daily_meals_module
 "daily_meal_category_prices" }o--|| "daily_meal_categories" : daily_meal_category
 "categories" }o--o| "categories" : parent_category
+"menu_categories" }o--o| "daily_meal_menus" : daily_meal_menu
+"menu_categories" }o--o| "daily_meal_categories" : daily_meal_category
+"menu_categories" }o--o| "daily_meal_category_prices" : daily_meal_category_price
 "drivers" |o--o| "users" : user
 "translations" }o--o{ "categories" : "via translatable"
+"translations" }o--o{ "menu_categories" : "via translatable"
+"translations" }o--o{ "menu_items" : "via translatable"
 ```
 
 ### `daily_meals_module`
@@ -4353,6 +4552,20 @@ Properties as follows:
 - `maximum_daily_meals_subscribers`:
 - `daily_users_sorted`:
 - `daily_users_sorting_type`:
+- `created_at`:
+- `updated_at`:
+
+### `daily_meal_menus`
+
+Daily meal menu for a specific date.
+
+Links to daily meals module and holds menu categories for that day.
+
+Properties as follows:
+
+- `daily_meal_menu_id`:
+- `daily_meals_module_id`:
+- `date`:
 
 ### `daily_meal_subscriptions`
 
@@ -4493,20 +4706,18 @@ erDiagram
 }
 "menus" {
   String menu_id PK
-  String stores_id FK "nullable"
-  String food_drinks_id FK "nullable"
-  Boolean active
+  String stores_id FK,UK "nullable"
+  String food_drinks_id FK,UK "nullable"
   Json menu_categories_ordered "nullable"
-  Boolean isDailyMeal
-  DateTime date "nullable"
 }
 "menu_categories" {
   String menu_category_id PK
-  Json names "nullable"
-  Json description "nullable"
+  String name_translatable_id FK
+  String description_translatable_id FK
   String categories
   String business_id
   String menu_id FK "nullable"
+  String daily_meal_menu_id FK "nullable"
   Int order "nullable"
   Float price "nullable"
   Json menu_items_ordered "nullable"
@@ -4525,10 +4736,8 @@ erDiagram
 }
 "menu_items" {
   String menu_item_id PK
-  Json names
-  String image "nullable"
-  Json description
-  String allergens
+  String name_translatable_id FK
+  String description_translatable_id FK
   Int spicy_level "nullable"
   String unit_size "nullable"
   Float price
@@ -4559,6 +4768,8 @@ erDiagram
 "menu_categories" }o--o| "menus" : menu
 "menu_items" }o--o| "menu_categories" : menu_category
 "translations" }o--o{ "categories" : "via translatable"
+"translations" }o--o{ "menu_categories" : "via translatable"
+"translations" }o--o{ "menu_items" : "via translatable"
 "menu_categories" }o--o{ "categories" : "via menu_categories_categories"
 ```
 
@@ -4586,17 +4797,14 @@ Properties as follows:
 
 Menu header for a store or food_drinks venue.
 
-A menu can be daily (isDailyMeal with date) and groups menu categories.
+Links to store/restaurant and holds menu categories.
 
 Properties as follows:
 
 - `menu_id`:
 - `stores_id`:
 - `food_drinks_id`:
-- `active`:
 - `menu_categories_ordered`:
-- `isDailyMeal`:
-- `date`:
 
 ### `menu_categories`
 
@@ -4607,201 +4815,18 @@ Links to business and optionally to a daily meal category/price.
 Properties as follows:
 
 - `menu_category_id`:
-- `names`:
-- `description`:
+- `name_translatable_id`:
+- `description_translatable_id`:
 - `categories`:
 - `business_id`:
 - `menu_id`:
+- `daily_meal_menu_id`:
 - `order`:
 - `price`:
 - `menu_items_ordered`:
 - `menu_order_index`:
 - `daily_meal_category_id`:
 - `daily_meal_category_price_id`:
-
-## MenuItems
-
-```mermaid
-erDiagram
-"menu_items" {
-  String menu_item_id PK
-  Json names
-  String image "nullable"
-  Json description
-  String allergens
-  Int spicy_level "nullable"
-  String unit_size "nullable"
-  Float price
-  Float discount "nullable"
-  String sides
-  String extras
-  Json ingredients
-  String availability
-  String business_id
-  String menu_category_id FK "nullable"
-  DateTime(6) daily_date "nullable"
-  String image_file_id FK,UK "nullable"
-  Boolean requires_id_check
-  Boolean is_enabled
-  Boolean is_copy
-  Int menu_category_order_index "nullable"
-  Json allergens_text "nullable"
-  Json ingredients_text "nullable"
-  Json usage_text "nullable"
-  Json origin_text "nullable"
-  Boolean is_weighted
-  Float weight_quantity "nullable"
-  Float stock "nullable"
-  String latest_version_id "nullable"
-  String tax_rates_id FK "nullable"
-}
-"line_items" {
-  String line_item_id PK
-  String menu_item_id FK
-  String menu_item_version_id FK
-  String order_id FK
-  Int quantity
-  String comment "nullable"
-  String replacement_id "nullable"
-  String replaces_id FK,UK "nullable"
-  String parent_side_id FK "nullable"
-  String parent_extra_id FK "nullable"
-  Boolean removed
-}
-"menu_item_versions" {
-  String menu_item_version_id PK
-  String menu_item_id FK
-  Int version
-  Json snapshot
-  DateTime(6) created_at
-}
-"menu_item_stock_change" {
-  String id PK
-  String menu_item_id FK
-  Float quantity
-  String reason
-  String order_id FK "nullable"
-  DateTime created_at
-}
-"files" {
-  String file_id PK
-  String url "nullable"
-  FILE_TYPE file_type
-  Boolean public
-  String mime_type
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  String document_id FK "nullable"
-  String user_id "nullable"
-  String lost_item_id "nullable"
-  String delivery_order_id "nullable"
-}
-"tax_rates" {
-  String tax_rates_id PK
-  String name
-  String description "nullable"
-  String country "nullable"
-  Float rate
-  Boolean active
-  DateTime(6) valid_from
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  DateTime(6) activated_at "nullable"
-}
-"menu_items" |o--o| "files" : image_file
-"menu_items" }o--o| "tax_rates" : tax_rate
-"line_items" }o--|| "menu_items" : menu_item
-"line_items" }o--|| "menu_item_versions" : menu_item_version
-"line_items" |o--o| "line_items" : replaces
-"line_items" }o--o| "line_items" : parent_side
-"line_items" }o--o| "line_items" : parent_extra
-"menu_item_versions" }o--|| "menu_items" : menu_item
-"menu_item_stock_change" }o--|| "menu_items" : menu_item
-```
-
-### `menu_items`
-
-Sellable dish/product with pricing and attributes.
-
-Includes allergens, ingredients, stock and tax rate. Documents can be attached.
-
-Properties as follows:
-
-- `menu_item_id`:
-- `names`:
-- `image`:
-- `description`:
-- `allergens`:
-- `spicy_level`:
-- `unit_size`:
-- `price`:
-- `discount`:
-- `sides`:
-- `extras`:
-- `ingredients`:
-- `availability`:
-- `business_id`:
-- `menu_category_id`:
-- `daily_date`:
-- `image_file_id`:
-- `requires_id_check`:
-- `is_enabled`:
-- `is_copy`:
-- `menu_category_order_index`:
-- `allergens_text`:
-- `ingredients_text`:
-- `usage_text`:
-- `origin_text`:
-- `is_weighted`:
-- `weight_quantity`:
-- `stock`:
-- `latest_version_id`:
-- `tax_rates_id`:
-
-### `line_items`
-
-Individual items within an order, including sides/extras and replacements.
-
-Properties as follows:
-
-- `line_item_id`:
-- `menu_item_id`:
-- `menu_item_version_id`:
-- `order_id`:
-- `quantity`:
-- `comment`:
-- `replacement_id`:
-- `replaces_id`:
-- `parent_side_id`:
-- `parent_extra_id`:
-- `removed`:
-
-### `menu_item_versions`
-
-Snapshot of a menu item at a specific version.
-
-Stores the state of a menu item whenever it changes, to preserve order accuracy over time.
-
-Properties as follows:
-
-- `menu_item_version_id`:
-- `menu_item_id`:
-- `version`:
-- `snapshot`:
-- `created_at`:
-
-### `menu_item_stock_change`
-
-Records changes in stock levels for menu items.
-
-Properties as follows:
-
-- `id`:
-- `menu_item_id`:
-- `quantity`:
-- `reason`:
-- `order_id`:
-- `created_at`:
 
 ## TableReservations
 
@@ -4832,7 +4857,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -4926,6 +4950,7 @@ erDiagram
   String order_lobby_items_id PK
   String order_lobbies_id FK
   String menu_item_id FK
+  String menu_item_version_id FK
   String user_id "nullable"
   String sides
   String extras
@@ -4942,6 +4967,13 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
 }
+"menu_item_versions" {
+  String menu_item_version_id PK
+  String menu_item_id FK
+  Int version
+  Json snapshot
+  DateTime(6) created_at
+}
 "users" {
   String user_id PK
   String first_name "nullable"
@@ -4950,7 +4982,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -4990,6 +5021,7 @@ erDiagram
   Boolean allow_ads_personalization "nullable"
   Boolean allow_newsletter "nullable"
 }
+"order_lobby_items" }o--|| "menu_item_versions" : menu_item_version
 "order_lobby_items" }o--|| "order_lobbies" : order_lobbies
 "order_lobby_users" }o--|| "order_lobbies" : order_lobbies
 "order_lobby_users" }o--|| "users" : users
@@ -5024,6 +5056,7 @@ Properties as follows:
 - `order_lobby_items_id`:
 - `order_lobbies_id`:
 - `menu_item_id`:
+- `menu_item_version_id`:
 - `user_id`:
 - `sides`:
 - `extras`:
@@ -5382,6 +5415,8 @@ erDiagram
   Int hours_before_reschedule "nullable"
   Int hours_before_cancel "nullable"
   Boolean publicly_visible
+  String logo_id FK,UK "nullable"
+  String banner_id FK,UK "nullable"
   String reviewable_id FK "nullable"
 }
 "location" {
@@ -5428,7 +5463,6 @@ erDiagram
   String email "nullable"
   String telephone "nullable"
   String telephone_code "nullable"
-  String telephone_number "nullable"
   String business_users_id FK,UK "nullable"
   DateTime created_at
   DateTime deleted_at "nullable"
@@ -5616,15 +5650,12 @@ erDiagram
   String email UK
   String telephone
   String telephone_code
-  String telephone_number
   String website_url "nullable"
   Json working_hours "nullable"
   Boolean popular
   Boolean new
   DateTime(6) created_at
   DateTime(6) updated_at
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
   String parent_business_id FK "nullable"
   String stripe_account_id "nullable"
   String stripe_customer_id "nullable"
@@ -5702,6 +5733,8 @@ Properties as follows:
 - `hours_before_reschedule`:
 - `hours_before_cancel`:
 - `publicly_visible`:
+- `logo_id`:
+- `banner_id`:
 - `reviewable_id`:
 
 ### `location`
@@ -5770,7 +5803,6 @@ Properties as follows:
 - `email`:
 - `telephone`:
 - `telephone_code`:
-- `telephone_number`:
 - `business_users_id`:
 - `created_at`:
 - `deleted_at`:
@@ -6159,6 +6191,7 @@ erDiagram
   String business_id FK,UK
   DateTime(6) created_at
   DateTime(6) updated_at
+  Boolean active
   String reviewable_id FK "nullable"
 }
 "business" {
@@ -6173,15 +6206,12 @@ erDiagram
   String email UK
   String telephone
   String telephone_code
-  String telephone_number
   String website_url "nullable"
   Json working_hours "nullable"
   Boolean popular
   Boolean new
   DateTime(6) created_at
   DateTime(6) updated_at
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
   String parent_business_id FK "nullable"
   String stripe_account_id "nullable"
   String stripe_customer_id "nullable"
@@ -6297,6 +6327,7 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
+  String profile_picture_id FK,UK "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -6347,6 +6378,7 @@ Properties as follows:
 - `business_id`:
 - `created_at`:
 - `updated_at`:
+- `active`:
 - `reviewable_id`:
 
 ## TaxiOrders
@@ -6410,7 +6442,6 @@ erDiagram
   String email "nullable"
   String telephone
   String telephone_code
-  String telephone_number
 }
 "business_users" {
   String business_users_id PK
@@ -6496,6 +6527,7 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
+  String profile_picture_id FK,UK "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -6525,7 +6557,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -6659,7 +6690,6 @@ Properties as follows:
 - `email`:
 - `telephone`:
 - `telephone_code`:
-- `telephone_number`:
 
 ## Vehicles
 
@@ -6733,6 +6763,7 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
+  String profile_picture_id FK,UK "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -6828,7 +6859,6 @@ erDiagram
   String email "nullable"
   String telephone "nullable"
   String telephone_code "nullable"
-  String telephone_number "nullable"
   String business_users_id FK,UK "nullable"
   DateTime created_at
   DateTime deleted_at "nullable"
@@ -6918,7 +6948,6 @@ Properties as follows:
 - `email`:
 - `telephone`:
 - `telephone_code`:
-- `telephone_number`:
 - `business_users_id`:
 - `created_at`:
 - `deleted_at`:
@@ -6946,7 +6975,6 @@ erDiagram
   String email "nullable"
   String telephone "nullable"
   String telephone_code "nullable"
-  String telephone_number "nullable"
   String business_users_id FK,UK "nullable"
   DateTime created_at
   DateTime deleted_at "nullable"
@@ -7024,7 +7052,6 @@ Properties as follows:
 - `email`:
 - `telephone`:
 - `telephone_code`:
-- `telephone_number`:
 - `business_users_id`:
 - `created_at`:
 - `deleted_at`:
@@ -7111,7 +7138,6 @@ erDiagram
   String email "nullable"
   String telephone "nullable"
   String telephone_code "nullable"
-  String telephone_number "nullable"
   String business_users_id FK,UK "nullable"
   DateTime created_at
   DateTime deleted_at "nullable"
@@ -7211,7 +7237,6 @@ Properties as follows:
 - `email`:
 - `telephone`:
 - `telephone_code`:
-- `telephone_number`:
 - `business_users_id`:
 - `created_at`:
 - `deleted_at`:
@@ -7298,7 +7323,6 @@ erDiagram
   String email "nullable"
   String telephone "nullable"
   String telephone_code "nullable"
-  String telephone_number "nullable"
   String business_users_id FK,UK "nullable"
   DateTime created_at
   DateTime deleted_at "nullable"
@@ -7394,7 +7418,6 @@ erDiagram
   String email "nullable"
   String telephone UK
   String telephone_code
-  String telephone_number
   DateTime date_of_birth "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -7462,7 +7485,6 @@ Properties as follows:
 - `email`:
 - `telephone`:
 - `telephone_code`:
-- `telephone_number`:
 - `business_users_id`:
 - `created_at`:
 - `deleted_at`:
@@ -7788,15 +7810,12 @@ erDiagram
   String email UK
   String telephone
   String telephone_code
-  String telephone_number
   String website_url "nullable"
   Json working_hours "nullable"
   Boolean popular
   Boolean new
   DateTime(6) created_at
   DateTime(6) updated_at
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
   String parent_business_id FK "nullable"
   String stripe_account_id "nullable"
   String stripe_customer_id "nullable"
@@ -7817,6 +7836,8 @@ erDiagram
   Int minimum_order
   Boolean overwhelmed
   Boolean online
+  String logo_id FK,UK "nullable"
+  String banner_id FK,UK "nullable"
 }
 "food_drinks_module" {
   String food_drinks_id PK
@@ -7832,6 +7853,8 @@ erDiagram
   Boolean overwhelmed
   Boolean online
   String daily_meals_id "nullable"
+  String logo_id FK,UK "nullable"
+  String banner_id FK,UK "nullable"
 }
 "business" }o--o| "business" : parent_business
 "stores_module" |o--|| "business" : business

@@ -336,6 +336,69 @@ async function setAllowance(req, res) {
 		res.status(400).json({ error: 'Error updating business user allowance', e });
 	}
 }
+
+/**
+ * POST /business_users/invite
+ * @tag BusinessUsers
+ * @summary Invite business user
+ * @description Sends an invitation to a business user via email or telephone.
+ * @operationId inviteBusinessUser
+ * @bodyDescription Invitation payload
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Invitation sent successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Missing user id or contact information
+ * @response 500 - Error inviting business user
+ */
+async function inviteBusinessUser(req, res) {
+	try {
+		const userId = req.user?.user_id;
+		const { email, telephone } = req.body;
+		if (!userId) {
+			return res.status(400).json({ error: 'User ID is required' });
+		}
+		if (!email && !telephone) {
+			return res.status(400).json({ error: 'Either email or telephone is required to send an invitation' });
+		}
+		// TODO: Implement the logic to send the invitation via email or SMS
+		return res.status(200).json({ message: 'Family invitation sent successfully' });
+	} catch (error) {
+		return res.status(500).json({ error: error.message || 'Error inviting family member' });
+	}
+}
+/**
+ * POST /business_users/accept-invitation
+ * @tag BusinessUsers
+ * @summary Accept business invitation
+ * @description Accepts a business invitation using the provided invitation code.
+ * @operationId acceptBusinessInvitation
+ * @bodyDescription Invitation acceptance payload
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Invitation accepted successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Missing user id or invitation code
+ * @response 500 - Error accepting business invitation
+ * @prisma_model users
+ * @prisma_model business_users
+ */
+async function acceptBusinessInvitation(req, res) {
+	try {
+		const userId = req.user?.user_id;
+		const { invitationCode } = req.body;
+		if (!userId) {
+			return res.status(400).json({ error: 'User ID is required' });
+		}
+		if (!invitationCode) {
+			return res.status(400).json({ error: 'Invitation code is required to accept an invitation' });
+		}
+		// TODO: Implement the logic to accept the invitation using the invitationCode
+		return res.status(200).json({ message: 'Family invitation accepted successfully' });
+	} catch (error) {
+		return res.status(500).json({ error: error.message || 'Error accepting family invitation' });
+	}
+}
 export { updateCompanyRole };
 export { getAllBusinessUsersForBusinessByCompanyRole };
 export { getAllBusinessUsers };
@@ -348,6 +411,8 @@ export { removeBusinessUser };
 export { updateBusinessUserOnlineStatus };
 export { getBusinessGroupsByBusinessId };
 export { setAllowance };
+export { inviteBusinessUser };
+export { acceptBusinessInvitation };
 export default {
 	updateCompanyRole,
 	getAllBusinessUsersForBusinessByCompanyRole,
@@ -361,4 +426,6 @@ export default {
 	updateBusinessUserOnlineStatus,
 	getBusinessGroupsByBusinessId,
 	setAllowance,
+	inviteBusinessUser,
+	acceptBusinessInvitation,
 };

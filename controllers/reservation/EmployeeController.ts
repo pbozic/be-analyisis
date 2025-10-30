@@ -70,7 +70,7 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 					last_name: employeeData.last_name,
 					telephone: employeeData.telephone,
 					telephone_code: employeeData.telephone_code,
-					telephone_number: employeeData.telephone_number,
+					// telephone_number: employeeData.telephone_number,
 				},
 			},
 			businessId,
@@ -84,7 +84,7 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 			email: employeeData.email,
 			telephone: employeeData.telephone as string,
 			telephone_code: employeeData.telephone_code as string,
-			telephone_number: employeeData.telephone_number as string,
+			// telephone_number: employeeData.telephone_number as string,
 		});
 		res.status(201).json(employee);
 	} catch (error) {

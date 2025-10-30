@@ -952,7 +952,7 @@ async function createOrder(req, res) {
 						first_name: businessClient.first_name,
 						last_name: businessClient.last_name,
 						telephone: businessClient.telephone,
-						telephone_number: businessClient.telephone_number,
+						// telephone_number: businessClient.telephone_number,
 						telephone_code: businessClient.telephone_code,
 						email: businessClient.email,
 						business: {

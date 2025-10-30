@@ -19,10 +19,14 @@ model stores_module {
     delivery_address         addresses?                 @relation(name: "delivery_address", fields: [delivery_address_id], references: [address_id])
     delivery_orders          delivery_orders[]
     minimum_order            Int                        @default(0)
-    menus                    menus[]
+    menu                     menus?
     order_lobbies            order_lobbies[]
     overwhelmed              Boolean                    @default(false)
     online                   Boolean                    @default(false)
+    logo_id                  String?                    @unique @db.Uuid
+    logo                     files?                     @relation("stores_logo", fields: [logo_id], references: [file_id])
+    banner_id                String?                    @unique @db.Uuid
+    banner                   files?                     @relation("stores_banner", fields: [banner_id], references: [file_id])
 
     late_events late_events[] @relation("late_events_to_stores")
 }
@@ -48,7 +52,7 @@ model food_drinks_module {
     delivery_address    addresses?        @relation(name: "delivery_address", fields: [delivery_address_id], references: [address_id])
     delivery_orders     delivery_orders[]
     minimum_order       Int               @default(0)
-    menus               menus[]
+    menu                menus?
     order_lobbies       order_lobbies[]
 
     table_reservations_module table_reservations_module?
@@ -57,6 +61,10 @@ model food_drinks_module {
     online                    Boolean                    @default(false)
     daily_meals_id            String?                    @db.Uuid
     daily_meals_module        daily_meals_module?
+    logo_id                   String?                    @unique @db.Uuid
+    logo                      files?                     @relation("food_drinks_logo", fields: [logo_id], references: [file_id])
+    banner_id                 String?                    @unique @db.Uuid
+    banner                    files?                     @relation("food_drinks_banner", fields: [banner_id], references: [file_id])
 
     late_events late_events[] @relation("late_events_to_food_drinks")
 }
@@ -143,17 +151,21 @@ model delivery_order_sent {
 ///
 /// Defines daily meal program with categories, drivers and subscriptions.
 model daily_meals_module {
-    id                              String                     @id @default(uuid()) @db.Uuid
-    food_drinks_id                  String                     @unique @db.Uuid
-    food_drinks_module              food_drinks_module         @relation(fields: [food_drinks_id], references: [food_drinks_id])
-    daily_meals_days                DAY_OF_WEEK[]              @default([])
-    daily_meals_delivery_mapping    Json?                      @default("{\"0\": 0, \"1\": 1, \"2\": 2, \"3\": 3, \"4\": 4, \"5\": 5, \"6\": 6}")
+    id                              String             @id @default(uuid()) @db.Uuid
+    food_drinks_id                  String             @unique @db.Uuid
+    food_drinks_module              food_drinks_module @relation(fields: [food_drinks_id], references: [food_drinks_id])
+    daily_meals_days                DAY_OF_WEEK[]      @default([])
+    daily_meals_delivery_mapping    Json?              @default("{\"0\": 0, \"1\": 1, \"2\": 2, \"3\": 3, \"4\": 4, \"5\": 5, \"6\": 6}")
     maximum_daily_meals_subscribers Int?
-    daily_users_sorted              Json?                      @default("[]")
-    daily_users_sorting_type        SORTING_TYPE               @default(AUTOMATIC)
-    daily_meal_drivers              daily_meals_drivers[]
-    daily_meal_categories           daily_meal_categories[]
-    daily_meal_subscriptions        daily_meal_subscriptions[]
+    daily_users_sorted              Json?              @default("[]")
+    daily_users_sorting_type        SORTING_TYPE       @default(AUTOMATIC)
+    created_at                      DateTime           @default(now()) @db.Timestamptz(6)
+    updated_at                      DateTime           @default(now()) @updatedAt @db.Timestamptz(6)
+
+    daily_meal_menus         daily_meal_menus[]
+    daily_meal_drivers       daily_meals_drivers[]
+    daily_meal_categories    daily_meal_categories[]
+    daily_meal_subscriptions daily_meal_subscriptions[]
 }
 
 /// @summary Drivers assigned to daily meals deliveries.
@@ -257,40 +269,58 @@ model menu_categories_categories {
 /// @erd Stores
 /// @erd FoodDrinks
 ///
-/// A menu can be daily (isDailyMeal with date) and groups menu categories.
+/// Links to store/restaurant and holds menu categories.
 model menus {
-    menu_id                 String              @id @default(uuid()) @db.Uuid
-    stores_id               String?             @db.Uuid
-    food_drinks_id          String?             @db.Uuid
-    active                  Boolean             @default(true)
+    menu_id        String  @id @default(uuid()) @db.Uuid
+    stores_id      String? @unique @db.Uuid
+    food_drinks_id String? @unique @db.Uuid
+
     stores_module           stores_module?      @relation(fields: [stores_id], references: [stores_id])
     food_drinks_module      food_drinks_module? @relation(fields: [food_drinks_id], references: [food_drinks_id])
     categories              menu_categories[]
     menu_categories_ordered Json? // JSON field to store ordered category IDs
-    isDailyMeal             Boolean             @default(false)
-    date                    DateTime?           @db.Timestamp(0)
 
     @@unique([menu_id])
 }
 
+/// @summary Daily meal menu for a specific date.
+/// @namespace DailyMeals
+///
+/// Links to daily meals module and holds menu categories for that day.
+model daily_meal_menus {
+    daily_meal_menu_id    String @id @default(uuid()) @db.Uuid
+    daily_meals_module_id String @db.Uuid
+
+    daily_meals_module daily_meals_module @relation(fields: [daily_meals_module_id], references: [id])
+    categories         menu_categories[]
+    date               DateTime           @db.Timestamptz(0)
+
+    @@unique([daily_meal_menu_id])
+}
+
 /// @summary Group of menu items with optional price and ordering.
 /// @namespace Menus
+/// @erd DailyMeals
 ///
 /// Links to business and optionally to a daily meal category/price.
 model menu_categories {
-    menu_category_id           String                       @id @default(uuid()) @db.Uuid
-    names                      Json? // l10n names
-    description                Json? // l10n descriptions
-    categories                 String[]
-    business_id                String                       @db.Uuid
-    menu_items                 menu_items[]                 @relation("menu_items_in_category")
-    menu_id                    String?                      @db.Uuid
-    menu                       menus?                       @relation(fields: [menu_id], references: [menu_id], onDelete: Cascade)
-    order                      Int?
-    price                      Float?
-    menu_items_ordered         Json? // JSON field to store ordered menu item IDs
-    menu_categories_categories menu_categories_categories[]
-    menu_order_index           Int?
+    menu_category_id            String                       @id @default(uuid()) @db.Uuid
+    name_translatable_id        String                       @db.Uuid
+    names                       translatable?                @relation("menu_categories_names_translations", fields: [name_translatable_id], references: [translatable_id], onDelete: Cascade)
+    description_translatable_id String                       @db.Uuid
+    description                 translatable?                @relation("menu_categories_descriptions_translations", fields: [description_translatable_id], references: [translatable_id], onDelete: Cascade)
+    categories                  String[]
+    business_id                 String                       @db.Uuid
+    menu_items                  menu_items[]                 @relation("menu_items_in_category")
+    menu_id                     String?                      @db.Uuid
+    menu                        menus?                       @relation(fields: [menu_id], references: [menu_id], onDelete: Cascade)
+    daily_meal_menu_id          String?                      @db.Uuid
+    daily_meal_menu             daily_meal_menus?            @relation(fields: [daily_meal_menu_id], references: [daily_meal_menu_id], onDelete: Cascade)
+    order                       Int?
+    price                       Float?
+    menu_items_ordered          Json? // JSON field to store ordered menu item IDs
+    menu_categories_categories  menu_categories_categories[]
+    menu_order_index            Int?
 
     daily_meal_category_id       String?                     @db.Uuid
     daily_meal_category_price_id String?                     @db.Uuid
@@ -308,41 +338,42 @@ model menu_categories {
 ///
 /// Includes allergens, ingredients, stock and tax rate. Documents can be attached.
 model menu_items {
-    menu_item_id              String                   @id @default(uuid()) @db.Uuid
-    names                     Json // l10n names
-    image                     String?
-    description               Json // l10n descriptions
-    allergens                 String[]
-    spicy_level               Int?
-    unit_size                 String?
-    price                     Float                    @default(0)
-    discount                  Float?
-    sides                     String[] // Replace with options
-    extras                    String[] // Replace with options
-    ingredients               Json // Includes allergen and multilingual names
-    availability              String[] // Array of availability -> ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
-    business_id               String                   @db.Uuid
-    menu_category_id          String?                  @db.Uuid
-    daily_date                DateTime?                @db.Timestamptz(6)
-    menu_category             menu_categories?         @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id], onDelete: Cascade)
-    image_file_id             String?                  @unique @db.Uuid
-    image_file                files?                   @relation("menu_item_image", fields: [image_file_id], references: [file_id])
-    requires_id_check         Boolean                  @default(false)
-    is_enabled                Boolean                  @default(true)
-    is_copy                   Boolean                  @default(false)
-    menu_category_order_index Int?
-    order_lobby_items         order_lobby_items[]      @relation("lobby_item_to_menu_item")
-    allergens_text            Json?
-    ingredients_text          Json?
-    usage_text                Json?
-    origin_text               Json?
-    is_weighted               Boolean                  @default(false) // Indicates if the item is weighted (e.g., meat, fish)
-    weight_quantity           Float? // Quantity for weighted items
-    stock                     Float?                   @default(1) // Stock for the item, if applicable 
-    stock_movements           menu_item_stock_change[]
-    line_items                line_items[]
-    latest_version_id         String?                  @db.Uuid
-    versions                  menu_item_versions[]
+    menu_item_id                String                    @id @default(uuid()) @db.Uuid
+    name_translatable_id        String                    @db.Uuid
+    names                       translatable?             @relation("menu_items_names_translations", fields: [name_translatable_id], references: [translatable_id], onDelete: Cascade)
+    description_translatable_id String                    @db.Uuid
+    description                 translatable?             @relation("menu_items_descriptions_translations", fields: [description_translatable_id], references: [translatable_id], onDelete: Cascade)
+    allergens                   allergens_to_menu_items[]
+    spicy_level                 Int?
+    unit_size                   String?
+    price                       Float                     @default(0)
+    discount                    Float?
+    sides                       String[] // Replace with options
+    extras                      String[] // Replace with options
+    ingredients                 Json // Includes allergen and multilingual names
+    availability                String[] // Array of availability -> ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+    business_id                 String                    @db.Uuid
+    menu_category_id            String?                   @db.Uuid
+    daily_date                  DateTime?                 @db.Timestamptz(6)
+    menu_category               menu_categories?          @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id], onDelete: Cascade)
+    image_file_id               String?                   @unique @db.Uuid
+    image_file                  files?                    @relation("menu_item_image", fields: [image_file_id], references: [file_id])
+    requires_id_check           Boolean                   @default(false)
+    is_enabled                  Boolean                   @default(true)
+    is_copy                     Boolean                   @default(false)
+    menu_category_order_index   Int?
+    order_lobby_items           order_lobby_items[]       @relation("lobby_item_to_menu_item")
+    allergens_text              Json?
+    ingredients_text            Json?
+    usage_text                  Json?
+    origin_text                 Json?
+    is_weighted                 Boolean                   @default(false) // Indicates if the item is weighted (e.g., meat, fish)
+    weight_quantity             Float? // Quantity for weighted items
+    stock                       Float?                    @default(1) // Stock for the item, if applicable 
+    stock_movements             menu_item_stock_change[]
+    line_items                  line_items[]
+    latest_version_id           String?                   @db.Uuid
+    versions                    menu_item_versions[]
 
     tax_rates_id String?    @db.Uuid
     tax_rate     tax_rates? @relation(fields: [tax_rates_id], references: [tax_rates_id])
@@ -378,6 +409,7 @@ model line_items {
 
 /// @summary Snapshot of a menu item at a specific version.
 /// @namespace MenuItems
+/// @erd OrderLobbies
 ///
 /// Stores the state of a menu item whenever it changes, to preserve order accuracy over time.
 model menu_item_versions {
@@ -387,8 +419,9 @@ model menu_item_versions {
     snapshot             Json // Snapshot of menu_item fields at this version
     created_at           DateTime @default(now()) @db.Timestamptz(6)
 
-    menu_item  menu_items   @relation(fields: [menu_item_id], references: [menu_item_id], onDelete: Cascade)
-    line_items line_items[]
+    menu_item         menu_items          @relation(fields: [menu_item_id], references: [menu_item_id], onDelete: Cascade)
+    order_lobby_items order_lobby_items[]
+    line_items        line_items[]
 
     @@unique([menu_item_id, version], name: "uniqueMenuItemVersion")
     @@index([menu_item_id])
@@ -616,6 +649,7 @@ model order_lobby_items {
     order_lobby_items_id String   @id @default(uuid()) @db.Uuid
     order_lobbies_id     String   @db.Uuid
     menu_item_id         String   @db.Uuid
+    menu_item_version_id String   @db.Uuid
     user_id              String?  @db.Uuid
     sides                String[]
     extras               String[]
@@ -624,8 +658,9 @@ model order_lobby_items {
     created_at           DateTime @default(now()) @db.Timestamptz(6)
     updated_at           DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-    menu_items    menu_items?   @relation("lobby_item_to_menu_item", fields: [menu_item_id], references: [menu_item_id])
-    order_lobbies order_lobbies @relation("item_to_lobby", fields: [order_lobbies_id], references: [order_lobbies_id])
+    menu_items        menu_items?        @relation("lobby_item_to_menu_item", fields: [menu_item_id], references: [menu_item_id])
+    menu_item_version menu_item_versions @relation(fields: [menu_item_version_id], references: [menu_item_version_id])
+    order_lobbies     order_lobbies      @relation("item_to_lobby", fields: [order_lobbies_id], references: [order_lobbies_id])
 }
 
 /// @summary Users participating in an order lobby with spending limits.

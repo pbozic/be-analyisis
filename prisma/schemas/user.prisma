@@ -33,7 +33,7 @@ model users {
   email                                  String?
   telephone                              String                        @unique
   telephone_code                         String
-  telephone_number                       String
+  // telephone_number                       String
   date_of_birth                          DateTime?                     @db.Date
   created_at                             DateTime                      @default(now()) @db.Timestamptz(6)
   updated_at                             DateTime                      @default(now()) @updatedAt @db.Timestamptz(6)
@@ -116,6 +116,8 @@ model users {
   booking_history_log booking_history_log[]
   roles               user_role[]
   user_permissions    user_permission[]
+
+  user_allergens user_allergens[]
 }
 
 /// @summary User role assignments (simple historical list, not RBAC).

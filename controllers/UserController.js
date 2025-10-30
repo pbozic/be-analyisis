@@ -3084,6 +3084,68 @@ async function requestData(req, res) {
 		return res.status(500).json({ error: err.message || 'Error obtaining personal user data' });
 	}
 }
+/**
+ * POST /users/family/invite
+ * @tag Users
+ * @summary Invite family member
+ * @description Sends an invitation to a family member via email or telephone.
+ * @operationId inviteFamilyMember
+ * @bodyDescription Invitation payload
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Invitation sent successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Missing user id or contact information
+ * @response 500 - Error inviting family member
+ */
+async function inviteFamilyMember(req, res) {
+	try {
+		const userId = req.user?.user_id;
+		const { email, telephone } = req.body;
+		if (!userId) {
+			return res.status(400).json({ error: 'User ID is required' });
+		}
+		if (!email && !telephone) {
+			return res.status(400).json({ error: 'Either email or telephone is required to send an invitation' });
+		}
+		// TODO: Implement the logic to send the invitation via email or SMS
+		return res.status(200).json({ message: 'Family invitation sent successfully' });
+	} catch (error) {
+		return res.status(500).json({ error: error.message || 'Error inviting family member' });
+	}
+}
+/**
+ * POST /users/family/accept-invitation
+ * @tag Users
+ * @summary Accept family invitation
+ * @description Accepts a family invitation using the provided invitation code.
+ * @operationId acceptFamilyInvitation
+ * @bodyDescription Invitation acceptance payload
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Invitation accepted successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Missing user id or invitation code
+ * @response 500 - Error accepting family invitation
+ * @prisma_model users
+ * @prisma_model group_users
+ */
+async function acceptFamilyInvitation(req, res) {
+	try {
+		const userId = req.user?.user_id;
+		const { invitationCode } = req.body;
+		if (!userId) {
+			return res.status(400).json({ error: 'User ID is required' });
+		}
+		if (!invitationCode) {
+			return res.status(400).json({ error: 'Invitation code is required to accept an invitation' });
+		}
+		// TODO: Implement the logic to accept the invitation using the invitationCode
+		return res.status(200).json({ message: 'Family invitation accepted successfully' });
+	} catch (error) {
+		return res.status(500).json({ error: error.message || 'Error accepting family invitation' });
+	}
+}
 export { getReferral };
 export { claimReward };
 export { redeemReferralCode };
@@ -3143,6 +3205,8 @@ export { updateMarketingNotifications };
 export { updateAdsPersonalization };
 export { updateNewsletter };
 export { requestData };
+export { inviteFamilyMember };
+export { acceptFamilyInvitation };
 export default {
 	getReferral,
 	claimReward,
@@ -3203,4 +3267,6 @@ export default {
 	updateAdsPersonalization,
 	updateNewsletter,
 	requestData,
+	inviteFamilyMember,
+	acceptFamilyInvitation,
 };

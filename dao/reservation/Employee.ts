@@ -56,7 +56,7 @@ export async function createEmployee(employeeData: {
 	email: string;
 	telephone: string;
 	telephone_code?: string;
-	telephone_number?: string;
+	// telephone_number?: string;
 }): Promise<Employee> {
 	try {
 		let employee = await prisma.employee.create({
@@ -144,7 +144,7 @@ export async function updateEmployee(employeeId: string, employeeData: UpdateEmp
 				email: employeeData.email,
 				telephone: employeeData.telephone,
 				telephone_code: employeeData.telephone_code,
-				telephone_number: employeeData.telephone_number,
+				// telephone_number: employeeData.telephone_number,
 			},
 		});
 

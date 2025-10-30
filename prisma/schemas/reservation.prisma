@@ -44,7 +44,11 @@ model reservation_module {
   notification_provider_credentials notification_provider_credential[]
   notification_messages             notification_message[]
 
-  // Reviews linkage for Reservations module
+  logo_id   String? @unique @db.Uuid
+  logo      files?  @relation("reservations_logo", fields: [logo_id], references: [file_id])
+  banner_id String? @unique @db.Uuid
+  banner    files?  @relation("reservations_banner", fields: [banner_id], references: [file_id])
+
   reviewable_id String?     @db.Uuid
   reviewable    reviewable? @relation(fields: [reviewable_id], references: [reviewable_id])
 }
@@ -150,7 +154,7 @@ model employee {
   email                 String?
   telephone             String?
   telephone_code        String?
-  telephone_number      String?
+  // telephone_number      String?
   business_users_id     String?              @unique @db.Uuid // Optional link to user account
   business_user         business_users?      @relation(fields: [business_users_id], references: [business_users_id])
   created_at            DateTime             @default(now())
