@@ -2958,6 +2958,7 @@ erDiagram
 "documents" }o--o| "vehicles" : vehicles
 "reviews" }o--|| "users" : author
 "reviews" }o--o{ "drivers" : "via reviewable"
+"daily_meals_module" }o--o{ "drivers" : "via daily_meals_drivers"
 "drivers" }o--o{ "municipalities" : "via driver_municipalities"
 "vehicles" }o--o{ "drivers" : "via vehicle_drivers"
 ```
@@ -4320,7 +4321,7 @@ erDiagram
 "daily_meal_subscriptions" }o--|| "users" : user
 "daily_meal_subscriptions" }o--o| "drivers" : driver
 "daily_meal_subscriptions" }o--|| "addresses" : delivery_address
-"daily_meal_subscriptions" }o--|| "daily_meals_module" : daily_meals
+"daily_meal_subscriptions" }o--|| "daily_meals_module" : daily_meals_module
 "daily_meal_subscription_customers" }o--|| "daily_meal_subscriptions" : subscription
 "daily_meal_subscription_customers" }o--|| "daily_meal_categories" : daily_meal_categories
 "daily_meal_subscription_customers" }o--|| "daily_meal_category_prices" : daily_meal_category_price
@@ -4330,12 +4331,11 @@ erDiagram
 "daily_meal_instances" }o--|| "daily_meal_subscription_customers" : customer
 "daily_meal_instances" }o--|| "daily_meal_category_prices" : daily_meal_category_price
 "daily_meal_categories" }o--|| "categories" : category
-"daily_meal_categories" }o--|| "daily_meals_module" : daily_meals
+"daily_meal_categories" }o--|| "daily_meals_module" : daily_meals_module
 "daily_meal_category_prices" }o--|| "daily_meal_categories" : daily_meal_category
 "categories" }o--o| "categories" : parent_category
 "drivers" |o--o| "users" : user
 "translations" }o--o{ "categories" : "via translatable"
-"daily_meals_module" }o--o{ "drivers" : "via daily_meals_drivers"
 ```
 
 ### `daily_meals_module`

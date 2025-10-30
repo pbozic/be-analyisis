@@ -56,7 +56,7 @@ model food_drinks_module {
     overwhelmed               Boolean                    @default(false)
     online                    Boolean                    @default(false)
     daily_meals_id            String?                    @db.Uuid
-    daily_meals               daily_meals_module?
+    daily_meals_module        daily_meals_module?
 
     late_events late_events[] @relation("late_events_to_food_drinks")
 }
@@ -166,8 +166,8 @@ model daily_meals_drivers {
     created_at     DateTime @default(now()) @db.Timestamptz(6)
     updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-    daily_meals daily_meals_module @relation(fields: [daily_meals_id], references: [id])
-    driver      drivers            @relation(fields: [driver_id], references: [driver_id])
+    daily_meals_module daily_meals_module @relation(fields: [daily_meals_id], references: [id])
+    driver             drivers            @relation(fields: [driver_id], references: [driver_id])
 
     @@unique([daily_meals_id, driver_id])
     @@index([driver_id])
@@ -460,7 +460,7 @@ model daily_meal_subscriptions {
     user                 users                               @relation(fields: [user_id], references: [user_id])
     driver               drivers?                            @relation(fields: [driver_id], references: [driver_id])
     delivery_address     addresses                           @relation(fields: [delivery_address_id], references: [address_id])
-    daily_meals          daily_meals_module                  @relation(fields: [daily_meals_id], references: [id])
+    daily_meals_module   daily_meals_module                  @relation(fields: [daily_meals_id], references: [id])
     customers            daily_meal_subscription_customers[]
     days                 daily_meal_subscription_days[]
     weekdays             daily_meal_subscription_weekdays[]
@@ -558,7 +558,7 @@ model daily_meal_categories {
     active     Boolean  @default(true)
 
     category                          categories                          @relation(fields: [category_id], references: [categories_id], onDelete: Cascade)
-    daily_meals                       daily_meals_module                  @relation(fields: [daily_meals_id], references: [id], onDelete: Cascade)
+    daily_meals_module                daily_meals_module                  @relation(fields: [daily_meals_id], references: [id], onDelete: Cascade)
     menu_categories                   menu_categories[]                   @relation("daily_meal_categories_to_menu_categories")
     daily_meal_subscription_customers daily_meal_subscription_customers[]
 
