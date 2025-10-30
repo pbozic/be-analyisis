@@ -1857,7 +1857,7 @@ erDiagram
   Json details "nullable"
   ADDRESS_TYPE type
 }
-"stores" {
+"stores_module" {
   String stores_id PK
   String business_id FK,UK
   Boolean enabled
@@ -1870,7 +1870,7 @@ erDiagram
   Boolean overwhelmed
   Boolean online
 }
-"food_drinks" {
+"food_drinks_module" {
   String food_drinks_id PK
   String business_id FK,UK
   Boolean enabled
@@ -1921,10 +1921,10 @@ erDiagram
 "business_users" }o--|| "business" : business
 "business_users" }o--o| "addresses" : operating_address
 "user_address" }o--|| "addresses" : address
-"stores" |o--|| "business" : business
-"stores" }o--o| "addresses" : delivery_address
-"food_drinks" |o--|| "business" : business
-"food_drinks" }o--o| "addresses" : delivery_address
+"stores_module" |o--|| "business" : business
+"stores_module" }o--o| "addresses" : delivery_address
+"food_drinks_module" |o--|| "business" : business
+"food_drinks_module" }o--o| "addresses" : delivery_address
 "local_locations" |o--|| "addresses" : address
 "daily_meal_subscriptions" }o--|| "addresses" : delivery_address
 "location" }o--o| "addresses" : address
@@ -3533,7 +3533,7 @@ Properties as follows:
 
 ```mermaid
 erDiagram
-"stores" {
+"stores_module" {
   String stores_id PK
   String business_id FK,UK
   Boolean enabled
@@ -3624,16 +3624,16 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
 }
-"stores" |o--|| "business" : business
+"stores_module" |o--|| "business" : business
 "business_local_locations" }o--|| "local_locations" : local_location
-"business_local_locations" }o--|| "stores" : stores
+"business_local_locations" }o--|| "stores_module" : stores_module
 "business" }o--o| "business" : parent_business
-"menus" }o--o| "stores" : stores
-"order_lobbies" }o--|| "stores" : stores
-"reviews" }o--o{ "stores" : "via reviewable"
+"menus" }o--o| "stores_module" : stores_module
+"order_lobbies" }o--|| "stores_module" : stores_module
+"reviews" }o--o{ "stores_module" : "via reviewable"
 ```
 
-### `stores`
+### `stores_module`
 
 Storefront settings for a business (Delivery module).
 
@@ -3685,7 +3685,7 @@ Properties as follows:
 
 ```mermaid
 erDiagram
-"food_drinks" {
+"food_drinks_module" {
   String food_drinks_id PK
   String business_id FK,UK
   Boolean enabled
@@ -3777,16 +3777,16 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
 }
-"food_drinks" |o--|| "business" : business
+"food_drinks_module" |o--|| "business" : business
 "business" }o--o| "business" : parent_business
-"daily_meals_module" |o--|| "food_drinks" : food_drinks
-"menus" }o--o| "food_drinks" : food_drinks
-"table_reservations_module" |o--|| "food_drinks" : food_drinks
-"order_lobbies" }o--o| "food_drinks" : food_drinks
-"reviews" }o--o{ "food_drinks" : "via reviewable"
+"daily_meals_module" |o--|| "food_drinks_module" : food_drinks_module
+"menus" }o--o| "food_drinks_module" : food_drinks_module
+"table_reservations_module" |o--|| "food_drinks_module" : food_drinks_module
+"order_lobbies" }o--o| "food_drinks_module" : food_drinks_module
+"reviews" }o--o{ "food_drinks_module" : "via reviewable"
 ```
 
-### `food_drinks`
+### `food_drinks_module`
 
 Food & drinks configuration for a business (Delivery module).
 
@@ -7805,7 +7805,7 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
 }
-"stores" {
+"stores_module" {
   String stores_id PK
   String business_id FK,UK
   Boolean enabled
@@ -7818,7 +7818,7 @@ erDiagram
   Boolean overwhelmed
   Boolean online
 }
-"food_drinks" {
+"food_drinks_module" {
   String food_drinks_id PK
   String business_id FK,UK
   Boolean enabled
@@ -7834,7 +7834,7 @@ erDiagram
   String daily_meals_id "nullable"
 }
 "business" }o--o| "business" : parent_business
-"stores" |o--|| "business" : business
-"food_drinks" |o--|| "business" : business
+"stores_module" |o--|| "business" : business
+"food_drinks_module" |o--|| "business" : business
 ```
 

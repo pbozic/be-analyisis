@@ -106,8 +106,8 @@ model business {
   types              business_to_types[]
   reservation_module reservation_module?
   transport_module   transport_module?
-  stores             stores?
-  food_drinks        food_drinks?
+  stores_module      stores_module?
+  food_drinks_module food_drinks_module?
   crm_module         crm_module?
 
   @@index([parent_business_id])
@@ -337,8 +337,8 @@ model addresses {
   postal                   String?
   users                    user_address[]
   businesses               business[]                 @relation(name: "address")
-  stores                   stores[]                   @relation(name: "delivery_address")
-  food_drinks              food_drinks[]              @relation(name: "delivery_address")
+  stores_module            stores_module[]            @relation(name: "delivery_address")
+  food_drinks_module       food_drinks_module[]       @relation(name: "delivery_address")
   business_users           business_users[]           @relation("business_users_operating_address")
   daily_meal_subscriptions daily_meal_subscriptions[]
   local_locations          local_locations?
@@ -382,8 +382,8 @@ model reviewable {
   reservation_module  reservation_module[]
   reservation_booking booking[]
   transport_module    transport_module[]
-  stores              stores[]
-  food_drinks         food_drinks[]
+  stores_module       stores_module[]
+  food_drinks_module  food_drinks_module[]
 }
 
 /// @summary Review record authored by a user about a business or user.
@@ -830,12 +830,12 @@ model late_events {
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-  stores          stores?          @relation("late_events_to_stores", fields: [stores_id], references: [stores_id])
-  food_drinks     food_drinks?     @relation("late_events_to_food_drinks", fields: [food_drinks_id], references: [food_drinks_id])
-  driver          drivers?         @relation("late_events_to_driver", fields: [driver_id], references: [driver_id])
-  delivery_orders delivery_orders? @relation("late_events_to_delivery_order", fields: [delivery_order_id], references: [order_id])
-  taxi_orders     taxi_orders?     @relation("late_events_to_taxi_order", fields: [taxi_order_id], references: [order_id])
-  scoring_points  scoring_points?  @relation("late_events_to_scoring_points", fields: [scoring_points_id], references: [scoring_points_id])
+  stores_module      stores_module?      @relation("late_events_to_stores", fields: [stores_id], references: [stores_id])
+  food_drinks_module food_drinks_module? @relation("late_events_to_food_drinks", fields: [food_drinks_id], references: [food_drinks_id])
+  driver             drivers?            @relation("late_events_to_driver", fields: [driver_id], references: [driver_id])
+  delivery_orders    delivery_orders?    @relation("late_events_to_delivery_order", fields: [delivery_order_id], references: [order_id])
+  taxi_orders        taxi_orders?        @relation("late_events_to_taxi_order", fields: [taxi_order_id], references: [order_id])
+  scoring_points     scoring_points?     @relation("late_events_to_scoring_points", fields: [scoring_points_id], references: [scoring_points_id])
 }
 
 /// @summary Moderation/account actions affecting user or business accounts.
