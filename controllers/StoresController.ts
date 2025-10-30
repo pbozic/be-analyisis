@@ -1,6 +1,8 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 import * as StoresDao from '../dao/Stores.ts';
+import { ValidatedRequest } from '../types/validatedRequest.ts';
+import { StoreOnlineBody, StoreOverwhelmedBody } from '../types/stores/StoreRequests.ts';
 
 /**
  * PATCH /stores/:stores_id/online
@@ -17,10 +19,13 @@ import * as StoresDao from '../dao/Stores.ts';
  * @responseContent {object} 500.application/json The error object
  * @prisma_model stores
  */
-export async function setStoreOnline(req: Request, res: Response): Promise<void> {
+export async function setStoreOnline(
+	req: ValidatedRequest<StoreOnlineBody, { stores_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
-		const { stores_id } = req.params as { stores_id: string };
-		const { online } = req.body as { online: boolean };
+		const { stores_id } = req.params;
+		const { online } = req.body;
 		const updated = await StoresDao.setStoreOnline(stores_id, !!online);
 		res.json(updated);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,10 +49,13 @@ export async function setStoreOnline(req: Request, res: Response): Promise<void>
  * @responseContent {object} 500.application/json The error object
  * @prisma_model stores
  */
-export async function setStoreOverwhelmed(req: Request, res: Response): Promise<void> {
+export async function setStoreOverwhelmed(
+	req: ValidatedRequest<StoreOverwhelmedBody, { stores_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
-		const { stores_id } = req.params as { stores_id: string };
-		const { overwhelmed } = req.body as { overwhelmed: boolean };
+		const { stores_id } = req.params;
+		const { overwhelmed } = req.body;
 		const updated = await StoresDao.setStoreOverwhelmed(stores_id, !!overwhelmed);
 		res.json(updated);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,9 +76,12 @@ export async function setStoreOverwhelmed(req: Request, res: Response): Promise<
  * @responseContent {object} 500.application/json The error object
  * @prisma_model stores
  */
-export async function disableStore(req: Request, res: Response): Promise<void> {
+export async function disableStore(
+	req: ValidatedRequest<unknown, { stores_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
-		const { stores_id } = req.params as { stores_id: string };
+		const { stores_id } = req.params;
 		const updated = await StoresDao.disableStore(stores_id);
 		res.json(updated);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -91,9 +102,9 @@ export async function disableStore(req: Request, res: Response): Promise<void> {
  * @responseContent {object} 500.application/json The error object
  * @prisma_model stores
  */
-export async function enableStore(req: Request, res: Response): Promise<void> {
+export async function enableStore(req: ValidatedRequest<unknown, { stores_id: string }>, res: Response): Promise<void> {
 	try {
-		const { stores_id } = req.params as { stores_id: string };
+		const { stores_id } = req.params;
 		const updated = await StoresDao.enableStore(stores_id);
 		res.json(updated);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any

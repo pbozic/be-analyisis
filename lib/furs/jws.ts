@@ -1,3 +1,5 @@
+import { Buffer } from 'node:buffer';
+
 import { b64u, fromB64u } from './base64url';
 
 export type Rs256SignFn = (data: Uint8Array) => Promise<Uint8Array>;
@@ -10,7 +12,12 @@ export type JwsHeader = {
 	cty?: 'application/json';
 	typ?: 'JOSE';
 };
-
+/** Build compact JWS
+ * @param {JwsHeader} header
+ * @param {unknown} payload
+ * @param {Rs256SignFn} signFn
+ * @returns {Promise<string>} - The compact JWS string.
+ */
 export const buildCompactJws = async (header: JwsHeader, payload: unknown, signFn: Rs256SignFn): Promise<string> => {
 	const h = b64u(Buffer.from(JSON.stringify(header), 'utf8'));
 	const p = b64u(Buffer.from(JSON.stringify(payload), 'utf8'));
@@ -19,6 +26,11 @@ export const buildCompactJws = async (header: JwsHeader, payload: unknown, signF
 	const s = b64u(sig);
 	return `${signingInput}.${s}`;
 };
+
+/** Decode compact JWS
+ * @param {string} token
+ * @returns {{ header: any; payload: any; signature: Buffer }} - The decoded JWS components.
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const decodeCompactJws = (token: string): { header: any; payload: any; signature: Buffer } => {
 	const [h, p, s] = token.split('.');

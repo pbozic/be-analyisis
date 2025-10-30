@@ -1,8 +1,18 @@
+import { Buffer } from 'node:buffer';
 import crypto from 'crypto';
 
 export type RsaSha256SignFn = (data: Uint8Array) => Promise<Uint8Array>;
 
-/** Concatenate invoice fields per FURS ZOI rule (ASCII) */
+/** Concatenate invoice fields per FURS ZOI rule (ASCII)
+ * @param {Object} p
+ * @param {string} p.TaxNumber - "12345678"
+ * @param {string} p.IssueDateTimeLocal - "dd.MM.yyyy HH:mm:ss"
+ * @param {string} p.InvoiceNumber - e.g. "12345"
+ * @param {string} p.BusinessPremiseID - <=20
+ * @param {string} p.ElectronicDeviceID - <=20
+ * @param {string} p.InvoiceAmount - decimal string e.g. "12.34" (dot)
+ * @returns {string} - The concatenated string.
+ */
 export const zoiConcat = (p: {
 	TaxNumber: string; // "12345678"
 	IssueDateTimeLocal: string; // "dd.MM.yyyy HH:mm:ss"
@@ -13,19 +23,32 @@ export const zoiConcat = (p: {
 }) =>
 	p.TaxNumber + p.IssueDateTimeLocal + p.InvoiceNumber + p.BusinessPremiseID + p.ElectronicDeviceID + p.InvoiceAmount;
 
-/** Compute ZOI hex = MD5(RSA-SHA256(concat)) */
+/** Compute ZOI hex = MD5(RSA-SHA256(concat))
+ * @param {string} concatStr
+ * @param {RsaSha256SignFn} signFn
+ * @returns {Promise<string>} - The computed ZOI in hexadecimal format.
+ */
 export const computeZoiHex = async (concatStr: string, signFn: RsaSha256SignFn): Promise<string> => {
 	const sig = await signFn(new TextEncoder().encode(concatStr));
 	return crypto.createHash('md5').update(Buffer.from(sig)).digest('hex');
 };
 
-/** Convert ZOI hex -> decimal string for QR (bigint) */
+/** Convert ZOI hex -> decimal string for QR (bigint)
+ * @param {string} hex
+ * @returns {string} - The ZOI in decimal string format.
+ */
 export const zoiHexToDecimal = (hex: string): string => {
 	const bi = BigInt('0x' + hex);
 	return bi.toString(10);
 };
 
-/** Build 60-digit QR payload: ZOI_decimal(39) + TaxNumber(8) + YYMMDDHHMMSS(12) + controlDigit(1) */
+/** Build 60-digit QR payload: ZOI_decimal(39) + TaxNumber(8) + YYMMDDHHMMSS(12) + controlDigit(1)
+ * @param {Object} params
+ * @param {string} params.zoiHex - ZOI in hexadecimal format.
+ * @param {string} params.taxNumber - Tax number as string.
+ * @param {Date} params.issueDate - use local invoice issue datetime
+ * @returns {string} QR code content string.
+ */
 export const buildQr60Payload = (params: {
 	zoiHex: string;
 	taxNumber: string; // 8 digits

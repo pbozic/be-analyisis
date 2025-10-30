@@ -1,6 +1,8 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 import * as ReviewsDao from '../dao/Review.js';
+import { ValidatedRequest } from '../types/validatedRequest.ts';
+import { ReviewPayload } from '../types/reviews/ReviewRequests.ts';
 
 /**
  * POST /review/driver/:driver_id
@@ -16,16 +18,15 @@ import * as ReviewsDao from '../dao/Review.js';
  * @prisma_model reviewable
  * @prisma_model reviews
  */
-export async function reviewDriver(req: Request, res: Response): Promise<void> {
+export async function reviewDriver(
+	req: ValidatedRequest<ReviewPayload, { driver_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		// @ts-ignore
 		const author_id: string = req.user?.user_id;
-		const { driver_id } = req.params as { driver_id: string };
-		const { rating, comment, feedback } = req.body as {
-			rating?: number;
-			comment?: string;
-			feedback?: unknown;
-		};
+		const { driver_id } = req.params;
+		const { rating, comment, feedback } = req.body;
 		if (!author_id) {
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
@@ -54,16 +55,15 @@ export async function reviewDriver(req: Request, res: Response): Promise<void> {
  * @prisma_model reviewable
  * @prisma_model reviews
  */
-export async function reviewStore(req: Request, res: Response): Promise<void> {
+export async function reviewStore(
+	req: ValidatedRequest<ReviewPayload, { stores_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		// @ts-ignore
 		const author_id: string = req.user?.user_id;
-		const { stores_id } = req.params as { stores_id: string };
-		const { rating, comment, feedback } = req.body as {
-			rating?: number;
-			comment?: string;
-			feedback?: unknown;
-		};
+		const { stores_id } = req.params;
+		const { rating, comment, feedback } = req.body;
 		if (!author_id) {
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
@@ -92,16 +92,15 @@ export async function reviewStore(req: Request, res: Response): Promise<void> {
  * @prisma_model reviewable
  * @prisma_model reviews
  */
-export async function reviewFoodDrinks(req: Request, res: Response): Promise<void> {
+export async function reviewFoodDrinks(
+	req: ValidatedRequest<ReviewPayload, { food_drinks_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		// @ts-ignore
 		const author_id: string = req.user?.user_id;
-		const { food_drinks_id } = req.params as { food_drinks_id: string };
-		const { rating, comment, feedback } = req.body as {
-			rating?: number;
-			comment?: string;
-			feedback?: unknown;
-		};
+		const { food_drinks_id } = req.params;
+		const { rating, comment, feedback } = req.body;
 		if (!author_id) {
 			res.status(401).json({ error: 'Unauthorized' });
 			return;

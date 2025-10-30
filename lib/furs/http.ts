@@ -1,3 +1,10 @@
+/**
+ * POST JSON data to a URL and return status and parsed response.
+ *
+ * @param {string} url - The URL to send the request to.
+ * @param {any} body - The JSON payload to include in the request.
+ * @returns {Promise<{ status: number; data: T; raw: string }>} - The response from the server.
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const postJson = async <T = any>(url: string, body: any) => {
 	const res = await fetch(url, {

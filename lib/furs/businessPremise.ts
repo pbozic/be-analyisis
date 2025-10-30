@@ -1,10 +1,24 @@
+import { Buffer } from 'node:buffer';
+
 import type { PrismaClient } from '@prisma/client';
 
 import { buildCompactJws, JwsHeader, Rs256SignFn } from './jws';
 import { getFursUrl, FursEnv } from './urls';
 import { postJson } from './http';
 import type { BusinessPremiseRequest, FursTokenEnvelope } from '../../types/fiscal';
-
+/**
+ * Builds the payload for a Business Premise request to FURS.
+ *
+ * @param {string} p.messageId - Unique message identifier (GUID).
+ * @param {string} p.nowIso - Current date and time in ISO format.
+ * @param {number} p.taxNumber - Tax number of the business (8 digits).
+ * @param {string} p.businessPremiseId - Identifier for the business premise (max 20 characters).
+ * @param {'A' | 'B' | 'C'} p.premiseType - Type of the business premise (e.g., 'A' for taxis).
+ * @param {string} p.validityDate - Validity date in "YYYY-MM-DD" format.
+ * @param {Array<{ TaxNumber?: number; NameForeign?: string }>} [p.softwareSupplier] - Optional software supplier details.
+ * @param {string} [p.specialNotes] - Optional special notes.
+ * @returns {BusinessPremiseRequest} - The constructed Business Premise request payload.
+ */
 export const buildBusinessPremisePayload = (p: {
 	messageId: string; // GUID
 	nowIso: string; // new Date().toISOString()
@@ -27,7 +41,14 @@ export const buildBusinessPremisePayload = (p: {
 		},
 	},
 });
-
+/**
+ * Signs a Business Premise token using the provided header, payload, and signing function.
+ *
+ * @param {JwsHeader} header
+ * @param {BusinessPremiseRequest} payload
+ * @param {Rs256SignFn} signFn
+ * @returns {Promise<FursTokenEnvelope>} - The signed Business Premise token envelope.
+ */
 export const signBusinessPremiseToken = async (
 	header: JwsHeader,
 	payload: BusinessPremiseRequest,
@@ -36,7 +57,14 @@ export const signBusinessPremiseToken = async (
 	const token = await buildCompactJws(header, payload, signFn);
 	return { token };
 };
-
+/**
+ * Submits a Business Premise request to FURS and tracks the job status in the database.
+ *
+ * @param {PrismaClient} prisma
+ * @param {FursEnv} env
+ * @param {Object} params
+ * @returns {Promise<Object>} - The result of the submission.
+ */
 export const submitBusinessPremise = async (
 	prisma: PrismaClient,
 	env: FursEnv,

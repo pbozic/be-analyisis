@@ -1,6 +1,8 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 import * as FoodDrinksDao from '../dao/FoodDrinks.ts';
+import { ValidatedRequest } from '../types/validatedRequest.ts';
+import { FoodDrinksOnlineBody, FoodDrinksOverwhelmedBody } from '../types/foodDrinks/FoodDrinksRequests.ts';
 
 /**
  * PATCH /food-drinks/{food_drinks_id}/online
@@ -17,10 +19,13 @@ import * as FoodDrinksDao from '../dao/FoodDrinks.ts';
  * @responseContent {object} 500.application/json The error object
  * @prisma_model food_drinks
  */
-export async function setFoodDrinksOnline(req: Request, res: Response): Promise<void> {
+export async function setFoodDrinksOnline(
+	req: ValidatedRequest<FoodDrinksOnlineBody, { food_drinks_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
-		const { food_drinks_id } = req.params as { food_drinks_id: string };
-		const { online } = req.body as { online: boolean };
+		const { food_drinks_id } = req.params;
+		const { online } = req.body;
 		const updated = await FoodDrinksDao.setFoodDrinksOnline(food_drinks_id, !!online);
 		res.json(updated);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,10 +49,13 @@ export async function setFoodDrinksOnline(req: Request, res: Response): Promise<
  * @responseContent {object} 500.application/json The error object
  * @prisma_model food_drinks
  */
-export async function setFoodDrinksOverwhelmed(req: Request, res: Response): Promise<void> {
+export async function setFoodDrinksOverwhelmed(
+	req: ValidatedRequest<FoodDrinksOverwhelmedBody, { food_drinks_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
-		const { food_drinks_id } = req.params as { food_drinks_id: string };
-		const { overwhelmed } = req.body as { overwhelmed: boolean };
+		const { food_drinks_id } = req.params;
+		const { overwhelmed } = req.body;
 		const updated = await FoodDrinksDao.setFoodDrinksOverwhelmed(food_drinks_id, !!overwhelmed);
 		res.json(updated);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,9 +77,12 @@ export async function setFoodDrinksOverwhelmed(req: Request, res: Response): Pro
  * @responseContent {object} 500.application/json The error object
  * @prisma_model food_drinks
  */
-export async function disableFoodDrinks(req: Request, res: Response): Promise<void> {
+export async function disableFoodDrinks(
+	req: ValidatedRequest<unknown, { food_drinks_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
-		const { food_drinks_id } = req.params as { food_drinks_id: string };
+		const { food_drinks_id } = req.params;
 		const updated = await FoodDrinksDao.disableFoodDrinks(food_drinks_id);
 		res.json(updated);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -92,9 +103,12 @@ export async function disableFoodDrinks(req: Request, res: Response): Promise<vo
  * @responseContent {object} 500.application/json The error object
  * @prisma_model food_drinks
  */
-export async function enableFoodDrinks(req: Request, res: Response): Promise<void> {
+export async function enableFoodDrinks(
+	req: ValidatedRequest<unknown, { food_drinks_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
-		const { food_drinks_id } = req.params as { food_drinks_id: string };
+		const { food_drinks_id } = req.params;
 		const updated = await FoodDrinksDao.enableFoodDrinks(food_drinks_id);
 		res.json(updated);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any

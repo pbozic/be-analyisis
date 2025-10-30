@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Buffer } from 'node:buffer';
 
 import type { PrismaClient } from '@prisma/client';
 
@@ -14,7 +15,11 @@ import { zoiConcat, computeZoiHex, buildQr60Payload } from './zoi';
 import { getFursUrl, FursEnv } from './urls';
 import { postJson } from './http';
 
-/** Create invoice + nested items/taxes in DB */
+/** Create invoice + nested items/taxes in DB
+ * @param {PrismaClient} prisma
+ * @param {CreateInvoiceInput} input
+ * @returns {Promise<any>} Created invoice with items and taxes
+ */
 export const createInvoiceInDb = async (prisma: PrismaClient, input: CreateInvoiceInput) => {
 	return prisma.invoice.create({
 		data: {
@@ -66,7 +71,18 @@ export const createInvoiceInDb = async (prisma: PrismaClient, input: CreateInvoi
 	});
 };
 
-/** Compute ZOI (mobile signer) */
+/** Compute ZOI (mobile signer)
+ *
+ * @param {Object} p - The input parameters.
+ * @param {string} p.TaxNumber - The tax number.
+ * @param {string} p.IssueDateTimeLocal - The local issue date and time in "dd.MM.yyyy HH:mm:ss" format.
+ * @param {string} p.InvoiceNumber - The invoice number.
+ * @param {string} p.BusinessPremiseID - The business premise ID.
+ * @param {string} p.ElectronicDeviceID - The electronic device ID.
+ * @param {string} p.InvoiceAmount - The invoice amount as a string (e.g., "12.34").
+ * @param {Rs256SignFn} signFn - The signing function to use for computing the ZOI.
+ * @returns {Promise<{ concat: string; zoiHex: string }>} - An object containing the concatenated string and the computed ZOI in hexadecimal format.
+ */
 export const computeZoiFromInput = async (
 	p: {
 		TaxNumber: string;
@@ -83,11 +99,34 @@ export const computeZoiFromInput = async (
 	return { concat, zoiHex };
 };
 
-/** Optional QR content (60 digits) */
+/** Optional QR content (60 digits)
+ * @param {string} zoiHex - ZOI in hexadecimal format.
+ * @param {string} taxNumber - Tax number as string.
+ * @param {Date} issueDateLocal - Local issue date as Date object.
+ * @returns {string} QR code content string.
+ */
 export const buildQrString = (zoiHex: string, taxNumber: string, issueDateLocal: Date) =>
 	buildQr60Payload({ zoiHex, taxNumber, issueDate: issueDateLocal });
 
-/** Build a minimal InvoiceRequest payload (extend to your full FURS schema as needed) */
+/** Build a minimal InvoiceRequest payload (extend to your full FURS schema as needed)
+ * @param {Object} p - The input parameters.
+ * @param {string} p.messageId - Unique message ID (GUID).
+ * @param {string} p.nowIso - Current date and time in ISO format.
+ * @param {Object} p.invoice - The invoice details.
+ * @param {number} p.invoice.TaxNumber - Tax number of the business (8 digits).
+ * @param {number} [p.invoice.OperatorTaxNumber] - Optional tax number of the operator (8 digits).
+ * @param {boolean} [p.invoice.ForeignOperator] - Optional flag indicating if the operator is foreign.
+ * @param {string} p.invoice.BusinessPremiseID - Identifier for the business premise (max 20 characters).
+ * @param {string} p.invoice.ElectronicDeviceID - Identifier for the electronic device (max 20 characters).
+ * @param {'C' | 'B'} p.invoice.NumberingStructure - Numbering structure type ('C' or 'B').
+ * @param {string} p.invoice.IssueDateTime - Issue date and time in ISO format.
+ * @param {string} p.invoice.InvoiceNumber - Invoice number (max 20 characters).
+ * @param {string} p.invoice.ProtectedID - Protected ID (ZOI) in hexadecimal format.
+ * @param {string} p.invoice.InvoiceAmount - Total invoice amount as a string (e.g., "123.45").
+ * @param {string} p.invoice.PaymentAmount - Total payment amount as a string (e.g., "123.45").
+ * @param {Array<{ TaxRate: string; TaxableAmount: string; TaxAmount: string }>} p.invoice.Taxes - Array of tax details.
+ * @returns {Object} The constructed InvoiceRequest payload.
+ */
 export const buildInvoicePayload = (p: {
 	messageId: string;
 	nowIso: string;
@@ -114,7 +153,12 @@ export const buildInvoicePayload = (p: {
 	},
 });
 
-/** Sign invoice JWS */
+/** Sign invoice JWS
+ * @param {JwsHeader} header
+ * @param {any} payload - InvoiceRequest payload
+ * @param {Rs256SignFn} signFn
+ * @returns {Promise<FursTokenEnvelope>} - The signed Invoice token envelope.
+ */
 export const signInvoiceToken = async (
 	header: JwsHeader,
 	payload: any,
@@ -124,7 +168,12 @@ export const signInvoiceToken = async (
 	return { token };
 };
 
-/** Submit invoice token & log job */
+/** Submit invoice token & log job
+ * @param {PrismaClient} prisma
+ * @param {FursEnv} env
+ * @param {Object} params
+ * @returns {Promise<Object>} - The result of the submission.
+ */
 export const submitInvoice = async (
 	prisma: PrismaClient,
 	env: FursEnv,

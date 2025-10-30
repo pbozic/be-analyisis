@@ -2906,7 +2906,6 @@ export async function createBusinessType(req, res) {
  *   "type_ids": ["uuid1", "uuid2"]
  * } application/json
  * - @bodyRequired
- * - @prisma_model business_to_types
  * - @response 200 - Types updated successfully
  * - @responseContent {object} 200.application/json
  * - @responseExample 200.application/json {
@@ -2914,6 +2913,7 @@ export async function createBusinessType(req, res) {
  *   "type_ids": ["uuid1", "uuid2"]
  * }
  * - @response 500 - Error updating business types
+ * - @prisma_model business_to_types
  */
 export async function setBusinessTypesForBusiness(req, res) {
 	try {
