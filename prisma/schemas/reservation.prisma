@@ -27,16 +27,18 @@ model reservation_module {
   hours_before_cancel     Int?
   publicly_visible        Boolean @default(false)
 
-  addons             business_addon[]
-  usages             business_usage[]
-  locations          location[]
-  services           service[]
-  employees          employee[]
-  bookings           booking[]
-  customers          customers[]
-  service_categories service_category[]
-  user_roles         user_role[]
-  user_permissions   user_permission[]
+  addons                      business_addon[]
+  usages                      business_usage[]
+  locations                   location[]
+  services                    service[]
+  employees                   employee[]
+  bookings                    booking[]
+  customers                   customers[]
+  service_categories          service_category[]
+  user_roles                  user_role[]
+  user_permissions            user_permission[]
+  booking_course_times        booking_course_time[]
+  booking_course_participants booking_course_participant[]
 
   notification_templates            notification_template[]
   notification_mappings             notification_mapping[]
@@ -339,14 +341,17 @@ model booking {
 /// @namespace Bookings
 /// @namespace Courses
 model booking_course_time {
-  booking_course_time_id String   @id @default(uuid()) @db.Uuid
-  booking_id             String   @db.Uuid
-  start_time             DateTime
-  end_time               DateTime
-  created_at             DateTime @default(now())
-  updated_at             DateTime @updatedAt
+  booking_course_time_id String @id @default(uuid()) @db.Uuid
+  reservation_module_id  String @db.Uuid
 
-  booking booking @relation(fields: [booking_id], references: [booking_id])
+  booking_id String   @db.Uuid
+  start_time DateTime
+  end_time   DateTime
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  booking            booking            @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade)
+  reservation_module reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
 }
 
 /// @summary Participants linked to course-type bookings.
@@ -354,14 +359,17 @@ model booking_course_time {
 /// @namespace Bookings
 /// @namespace Courses
 model booking_course_participant {
-  booking_course_participant_id String    @id @default(uuid()) @db.Uuid
-  booking_id                    String    @db.Uuid
-  created_at                    DateTime  @default(now())
-  updated_at                    DateTime  @updatedAt
-  customer_id                   String    @unique @db.Uuid
-  customer                      customers @relation(fields: [customer_id], references: [customer_id])
+  booking_course_participant_id String @id @default(uuid()) @db.Uuid
+  reservation_module_id         String @db.Uuid
+  status                BOOKING_STATUS
+  booking_id  String    @db.Uuid
+  customer_id String    @unique @db.Uuid
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
 
-  booking booking @relation(fields: [booking_id], references: [booking_id])
+  customer    customers @relation(fields: [customer_id], references: [customer_id])
+  booking            booking            @relation(fields: [booking_id], references: [booking_id])
+  reservation_module reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
 }
 
 /// @summary Audit trail of booking status changes and actions.

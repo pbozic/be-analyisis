@@ -19,6 +19,7 @@ import {
 	CreateBookingInput,
 	CreateMultipleBookingsInput,
 	UpdateBookingInput,
+	CreateCourseParticipantInput,
 } from '../types/reservation/Booking';
 
 const SLOT_INTERVAL_MINUTES = 30;
@@ -427,11 +428,11 @@ export async function isEmployeeScheduledForWindow(
 /**
  * Adds validation to ensure required booking fields are present.
  *
- * @param {CreateBookingInput | CreateMultipleBookingsInput | UpdateBookingInput} data
+ * @param {CreateBookingInput | CreateMultipleBookingsInput | UpdateBookingInput | CreateCourseParticipantInput} data
  * @param {z.RefinementCtx} ctx
  */
 export async function addValideBookingSchema(
-	data: CreateBookingInput | CreateMultipleBookingsInput | UpdateBookingInput,
+	data: CreateBookingInput | CreateMultipleBookingsInput | UpdateBookingInput | CreateCourseParticipantInput,
 	ctx: z.RefinementCtx
 ) {
 	if (!data?.customer_id) {

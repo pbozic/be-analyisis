@@ -8,6 +8,15 @@ import type {
 	CreateBookingHistoryLogInput,
 	ListBookingsParams,
 	CreateBookingSingleInput,
+	CreateBookingCourseInput,
+	BookingCourseTimeInput,
+	BookingCourseTime,
+	CreateCourseParticipantInput,
+	BookingCourseParticipant,
+	UpdateCourseParticipantInput,
+	UpdateBookingCourseInput,
+	UpdateBookingCourseTimeInput,
+	DeleteBookingCourseTimeInput,
 } from '../../types/reservation/Booking.ts'; // <-- adjust path if different
 import { isBookingSlotAvailable, isEmployeeScheduledForWindow } from '../../lib/bookingHelpers.ts';
 
@@ -688,7 +697,7 @@ export async function updateBookingParent(
 
 /**
  * Get booking by id
- * @param {{ booking_id: string }} input
+ * @param {{ booking_id: string }} booking_id
  * @returns {Promise<Booking>}
  */
 export async function getBookingByIdWithChildren(booking_id: string): Promise<Booking> {
@@ -868,6 +877,546 @@ export async function getBookingsForAnalytics(params: ListBookingsParams): Promi
 	}
 }
 
+/**
+ * Retrieves booking cours by booking id
+ * @param {string} booking_id - The ID of the booking to retrieve course for.
+ * @returns {Promise<Booking>} A promise that resolves to an bookin course.
+ * @throws {Error} If there is an error retrieving the booking course.
+ */
+export async function getBookingCourseById(booking_id: string): Promise<Booking> {
+	try {
+		return prisma.booking.findUnique({
+			where: {
+				booking_id: booking_id,
+				course: true,
+			},
+			include: {
+				booking_course_time: { orderBy: { start_time: 'asc' } },
+				booking_course_attendees: {
+					include: {
+						customer: true,
+					},
+				},
+				service: true,
+				location: true,
+				employee: {
+					include: {
+						business_user: {
+							select: {
+								business_users_id: true,
+								business_id: true,
+								user_id: true,
+								users: {
+									select: cropped_user_columns,
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+	} catch (error) {
+		throwPrisma('Error fetching booking courses', error);
+	}
+}
+
+/**
+ * Retrieves all booking courses for a given business module.
+ * @param {ListBookingsParams} params - The parameters to filter the bookings courses.
+ * @returns {Promise<Booking[]>} A promise that resolves to an array of bookings courses.
+ * @throws {Error} If there is an error retrieving the bookings courses.
+ */
+export async function getBookingCoursesByReservationModuleId(params: ListBookingsParams): Promise<Booking[]> {
+	try {
+		const { reservation_module_id, status, from, to, location_id, employee_id } = params;
+
+		return prisma.booking.findMany({
+			where: {
+				reservation_module_id,
+				course: true,
+				...(status && status.length ? { status: { in: status } } : {}),
+				...(employee_id ? { employee_id: employee_id } : {}),
+				...(from || to
+					? {
+							start_time: {
+								...(from ? { gte: from } : {}),
+								...(to ? { lte: to } : {}),
+							},
+						}
+					: {}),
+				...(location_id ? { location_id } : {}),
+			},
+			include: {
+				booking_course_time: { orderBy: { start_time: 'asc' } },
+				location: true,
+				service: true,
+				employee: {
+					include: {
+						business_user: {
+							select: {
+								business_users_id: true,
+								business_id: true,
+								user_id: true,
+								users: {
+									select: cropped_user_columns,
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+	} catch (error) {
+		throwPrisma('Error fetching booking courses', error);
+	}
+}
+
+/**
+ * Retrieves all booking courses
+ * @param {ListBookingsParams} params - The parameters to filter the bookings courses.
+ * @returns {Promise<Booking[]>} A promise that resolves to an array of bookings courses.
+ * @throws {Error} If there is an error retrieving the bookings courses.
+ */
+export async function getBookingCourses(params: ListBookingsParams): Promise<Booking[]> {
+	try {
+		const { reservation_module_id, status, from, to } = params;
+
+		return prisma.booking.findMany({
+			where: {
+				course: true,
+				reservation_module_id,
+				...(status && status.length ? { status: { in: status } } : {}),
+				...(from || to
+					? {
+							start_time: {
+								...(from ? { gte: from } : {}),
+								...(to ? { lte: to } : {}),
+							},
+						}
+					: {}),
+			},
+			include: {
+				booking_course_time: { orderBy: { start_time: 'asc' } },
+				location: true,
+				service: true,
+				employee: {
+					include: {
+						business_user: {
+							select: {
+								business_users_id: true,
+								business_id: true,
+								user_id: true,
+								users: {
+									select: cropped_user_columns,
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+	} catch (error) {
+		throwPrisma('Error fetching booking courses', error);
+	}
+}
+
+async function createBookingCourseTx(tx: Prisma.TransactionClient, input: UpdateBookingInput): Promise<Booking> {
+	// guard module
+	const mod = await tx.reservation_module.findUnique({
+		where: { reservation_module_id: input.reservation_module_id },
+		select: { reservation_module_id: true },
+	});
+	if (!mod) throw new Error('Reservation module not found');
+	// check if employee is part of the module
+	if (input.employee_id) {
+		const employee = await tx.employee.findUnique({
+			where: { employee_id: input.employee_id },
+			select: { reservation_module_id: true },
+		});
+		if (!employee || employee.reservation_module_id !== input.reservation_module_id) {
+			throw new Error('Employee not found in this reservation module');
+		}
+	}
+	// check if service exists
+	if (input.service_id) {
+		const service = await tx.service.findUnique({
+			where: { service_id: input.service_id },
+			select: { service_id: true, reservation_module_id: true },
+		});
+		if (!service || service.reservation_module_id !== input.reservation_module_id) {
+			throw new Error('Service not found in this reservation module');
+		}
+	}
+	// check if location exists
+	if (input.location_id) {
+		const location = await tx.location.findUnique({
+			where: { location_id: input.location_id },
+			select: { location_id: true, reservation_module_id: true },
+		});
+		if (!location || location.reservation_module_id !== input.reservation_module_id) {
+			throw new Error('Location not found in this reservation module');
+		}
+	}
+	const created = await tx.booking.create({
+		data: {
+			status: BOOKING_STATUS.reserved,
+			comment: input.comment ?? null,
+			price_cents: input?.price_cents ?? null,
+			discount_percent: input.discount_percent ?? null,
+			discount_amount: input.discount_amount ?? null,
+
+			reservation_module: { connect: { reservation_module_id: input.reservation_module_id } },
+			service: { connect: { service_id: input.service_id } },
+
+			location: input.location_id ? { connect: { location_id: input.location_id } } : undefined,
+			employee: input.employee_id ? { connect: { employee_id: input.employee_id } } : undefined,
+		},
+	});
+
+	await tx.booking_history_log.create({
+		data: {
+			status: created.status,
+			type: 'created',
+			title: 'Booking Created',
+			comment: JSON.stringify(input),
+			description: input.comment ?? null,
+			booking: { connect: { booking_id: created.booking_id } },
+		},
+	});
+
+	return created as Booking;
+}
+
+/**
+ * Creates a new booking course time record.
+ * @param {BookingCourseTimeInput} bookingCourseTimeData - The data for the new booking course time.
+ * @returns {Promise<BookingCourseTime>} A promise that resolves to the created booking course time.
+ * @throws {Error} If there is an error creating the booking course time.
+ */
+export async function createBookingCourseTimeTx(
+	tx: Prisma.TransactionClient,
+	input: BookingCourseTimeInput
+): Promise<BookingCourseTime> {
+	try {
+		let bookingCourseTime = await tx.booking_course_time.create({
+			data: {
+				start_time: input.start_time,
+				end_time: input.end_time,
+				reservation_module: {
+					connect: { reservation_module_id: input.reservation_module_id },
+				},
+				booking: { connect: { booking_id: input.booking_id } },
+			},
+		});
+		return bookingCourseTime;
+	} catch (error) {
+		throw new Error('Error creating booking course time');
+	}
+}
+
+/**
+ * Updates an existing booking course time record.
+ * @param {UpdateBookingCourseTimeInput} bookingCourseTimeData - The data for the updated booking course time.
+ * @returns {Promise<BookingCourseTime>} A promise that resolves to the updated booking course time.
+ * @throws {Error} If there is an error updating the booking course time.
+ */
+export async function updateBookingCourseTimeTx(
+	tx: Prisma.TransactionClient,
+	input: UpdateBookingCourseTimeInput
+): Promise<BookingCourseTime> {
+	try {
+		let bookingCourseTime = await tx.booking_course_time.update({
+			where: { booking_course_time_id: input.booking_course_time_id },
+			data: {
+				start_time: input?.start_time ?? undefined,
+				end_time: input?.end_time ?? undefined,
+			},
+		});
+		return bookingCourseTime;
+	} catch (error) {
+		throw new Error('Error updating booking course time');
+	}
+}
+
+/**
+ * Delete a booking course time record.
+ *
+ * @param {{ booking_course_time_id: string }} input
+ * @returns {Promise<BookingCourseTime>}
+ */
+export async function deleteBookingCourseTime(
+	tx: Prisma.TransactionClient,
+	input: { booking_course_time_id: string }
+): Promise<BookingCourseTime> {
+	try {
+		return (await tx.booking_course_time.delete({
+			where: { booking_course_time_id: input.booking_course_time_id },
+		})) as BookingCourseTime;
+	} catch (error) {
+		throwPrisma('Error deleting booking course time', error);
+	}
+}
+
+/**
+ * Creates a new booking course (parent + times) within a single transaction.
+ * @param {CreateBookingCourseInput} bookingCourseTimeData - The data for the new booking course.
+ * @returns {Promise<Booking>} A promise that resolves to the created booking course.
+ * @throws {Error} If there is an error creating the booking course time.
+ */
+export async function createBookingCourse(inputs: CreateBookingCourseInput): Promise<Booking[]> {
+	return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+		let created: Booking = {} as Booking;
+		// parent
+		const booking = await createBookingCourseTx(tx, inputs as UpdateBookingInput);
+		created = booking;
+		// Initialize booking_course_time array if undefined
+		if (!created.booking_course_time) {
+			created.booking_course_time = [];
+		}
+		const timesWithId =
+			inputs.course_time?.map((ct) => ({
+				...ct,
+				booking_id: booking.booking_id,
+				reservation_module_id: booking.reservation_module_id,
+			})) || [];
+		const courseTimes: BookingCourseTimeInput[] = timesWithId;
+		for (let i = 0; i < courseTimes.length; i++) {
+			const child = await createBookingCourseTimeTx(tx, courseTimes[i] as BookingCourseTimeInput);
+			created.booking_course_time.push(child);
+		}
+		return created;
+	});
+}
+
+/**
+ * Creates a new booking course participant.
+ * @param {CreateCourseParticipantInput} bookingCourseParticipantData - The data for the new booking course participant.
+ * @returns {Promise<BookingCourseParticipant>} A promise that resolves to the created booking course participant.
+ * @throws {Error} If there is an error creating the booking course participant.
+ */
+export async function createBookingCourseParticipant(
+	input: CreateCourseParticipantInput
+): Promise<BookingCourseParticipant> {
+	return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+		const tel = composeTelephone(input);
+
+		// guard module
+		const mod = await tx.reservation_module.findUnique({
+			where: { reservation_module_id: input.reservation_module_id },
+			select: { reservation_module_id: true },
+		});
+		if (!mod) throw new Error('Reservation module not found');
+
+		const booking = await tx.booking.findUnique({
+			where: { booking_id: input.booking_id },
+			select: { booking_id: true, people_allowed: true, people_booked: true },
+		});
+		if (!booking) throw new Error('Booking not found');
+		if ((booking?.people_allowed ?? 1) > (booking?.people_booked ?? 0)) throw new Error('Course is full');
+
+		const customerId = await resolveOrCreateCustomer(tx, {
+			reservation_module_id: input.reservation_module_id,
+			customer_id: input.customer_id ?? undefined,
+			first_name: input.first_name ?? undefined,
+			last_name: input.last_name ?? undefined,
+			email: input.email ?? undefined,
+			telephone: tel ?? undefined,
+		});
+
+		const created = await tx.booking_course_participant.create({
+			data: {
+				status: BOOKING_STATUS.reserved,
+				reservation_module: { connect: { reservation_module_id: input.reservation_module_id } },
+				customer: { connect: { customer_id: customerId } },
+				booking: {
+					connect: { booking_id: input.booking_id },
+				},
+			},
+		});
+		// increment people_booked in booking
+		await tx.booking.update({
+			where: { booking_id: input.booking_id },
+			data: {
+				people_booked: { increment: 1 },
+			},
+		});
+
+		await tx.booking_history_log.create({
+			data: {
+				status: BOOKING_STATUS.reserved,
+				type: 'created',
+				title: 'Booking Created',
+				comment: JSON.stringify(input),
+				booking: { connect: { booking_id: input.booking_id } },
+			},
+		});
+
+		return created as BookingCourseParticipant;
+	});
+}
+
+/**
+ * Updates a booking course participant.
+ * @param {UpdateCourseParticipantInput} bookingCourseParticipantData - The data for the updated booking course participant.
+ * @returns {Promise<BookingCourseParticipant>} A promise that resolves to the updated booking course participant.
+ * @throws {Error} If there is an error updating the booking course participant.
+ */
+export async function cancelBookingCourseParticipant(
+	input: UpdateCourseParticipantInput
+): Promise<BookingCourseParticipant> {
+	return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+		// guard module
+		const mod = await tx.reservation_module.findUnique({
+			where: { reservation_module_id: input.reservation_module_id },
+			select: { reservation_module_id: true },
+		});
+		if (!mod) throw new Error('Reservation module not found');
+
+		const created = await tx.booking_course_participant.update({
+			where: { customer_id: input.customer_id },
+			data: {
+				status: BOOKING_STATUS.cancelled,
+			},
+		});
+		// increment people_booked in booking
+		await tx.booking.update({
+			where: { booking_id: input.booking_id },
+			data: {
+				people_booked: { decrement: 1 },
+			},
+		});
+
+		await tx.booking_history_log.create({
+			data: {
+				status: BOOKING_STATUS.reserved,
+				type: 'created',
+				title: 'Booking Created',
+				comment: JSON.stringify(input),
+				booking: { connect: { booking_id: input.booking_id } },
+			},
+		});
+
+		return created as BookingCourseParticipant;
+	});
+}
+
+/**
+ * Updates a booking course.
+ * @param {UpdateBookingCourseInput} input - The data for the updated booking course
+ * @param {string} booking_id - The ID of the booking course to update
+ * @returns {Promise<Booking>} A promise that resolves to the updated booking course.
+ * @throws {Error} If there is an error updating the booking course.
+ */
+export async function updateBookingCourse(input: UpdateBookingCourseInput, booking_id: string): Promise<Booking> {
+	try {
+		return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+			const existing = await tx.booking.findUnique({
+				where: { booking_id: booking_id },
+				select: { booking_id: true, reservation_module_id: true, people_allowed: true, people_booked: true },
+			});
+			if (!existing) throw new Error('Booking not found');
+
+			if (input.reservation_module_id && input.reservation_module_id !== existing.reservation_module_id) {
+				throw new Error('Cannot move booking across reservation modules');
+			}
+			const service = await tx.service.findUnique({
+				where: { service_id: input.service_id },
+				select: { service_id: true, price_cents: true, reservation_module_id: true },
+			});
+			if (!service) throw new Error('Service not found');
+
+			let allowed = true;
+			allowed = (existing?.people_booked ?? 0) <= (input.people_allowed ?? existing.people_allowed);
+			if (!allowed) {
+				throw new Error('Booking has more booked participants than allowed');
+			}
+
+			// Update booking with new data
+			// Note: we use `?? undefined` to avoid sending nulls to Prisma
+			// which would overwrite existing values with null.
+			const updated = await tx.booking.update({
+				where: { booking_id: booking_id },
+				data: {
+					status: input.status ?? undefined,
+					comment: input.comment ?? undefined,
+					price_cents: input.price_cents ?? undefined,
+					discount_amount: input.discount_amount ?? undefined,
+					discount_percent: input.discount_percent ?? undefined,
+					people_allowed: input.people_allowed ?? undefined,
+
+					reservation_module: input.reservation_module_id
+						? { connect: { reservation_module_id: input.reservation_module_id } }
+						: undefined,
+					service: input.service_id ? { connect: { service_id: input.service_id } } : undefined,
+					location:
+						input.location_id !== undefined
+							? input.location_id
+								? { connect: { location_id: input.location_id } }
+								: { disconnect: true }
+							: undefined,
+					employee:
+						input.employee_id !== undefined
+							? input.employee_id
+								? { connect: { employee_id: input.employee_id } }
+								: { disconnect: true }
+							: undefined,
+				},
+				include: {
+					booking_course_time: true,
+				},
+			});
+
+			const newTimes: BookingCourseTimeInput[] =
+				input.course_time_added?.map((time) => ({
+					...time,
+					booking_id: booking_id,
+					reservation_module_id: existing.reservation_module_id,
+				})) ?? [];
+			const changedTimes: UpdateBookingCourseTimeInput[] =
+				input.course_time_changed?.map((time) => ({
+					...time,
+					booking_id: booking_id,
+					reservation_module_id: existing.reservation_module_id,
+				})) ?? [];
+			const deletedTimeIds: DeleteBookingCourseTimeInput[] =
+				input.course_time_removed?.map((id) => ({
+					booking_id: booking_id,
+					reservation_module_id: existing.reservation_module_id,
+					booking_course_time_id: id?.booking_course_time_id,
+				})) ?? [];
+
+			for (let i = 0; i < newTimes.length; i++) {
+				const child = await createBookingCourseTimeTx(tx, newTimes[i] as BookingCourseTimeInput);
+				updated.booking_course_time.push(child);
+			}
+			for (let i = 0; i < changedTimes.length; i++) {
+				const child = await updateBookingCourseTimeTx(tx, changedTimes[i] as UpdateBookingCourseTimeInput);
+				updated.booking_course_time.push(child);
+			}
+			for (let i = 0; i < deletedTimeIds.length; i++) {
+				await deleteBookingCourseTime(tx, deletedTimeIds[i] as DeleteBookingCourseTimeInput);
+			}
+
+			if (input.status !== undefined) {
+				await tx.booking_history_log.create({
+					data: {
+						status: updated.status,
+						type: 'updated',
+						title: 'Booking Updated',
+						comment: JSON.stringify(input),
+						description: input.comment ?? null,
+						booking: { connect: { booking_id: updated.booking_id } },
+					},
+				});
+			}
+
+			return updated as Booking;
+		});
+	} catch (error) {
+		throwPrisma('Error updating booking', error);
+	}
+}
+
 export default {
 	createBooking,
 	updateBooking,
@@ -883,4 +1432,11 @@ export default {
 	updateBookingGroup,
 	updateStatusDelete,
 	getBookingsForAnalytics,
+	getBookingCourseById,
+	getBookingCoursesByReservationModuleId,
+	getBookingCourses,
+	createBookingCourse,
+	updateBookingCourse,
+	createBookingCourseParticipant,
+	cancelBookingCourseParticipant,
 };

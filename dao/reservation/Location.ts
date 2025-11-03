@@ -3,7 +3,7 @@ import type { Location, CreateLocationInput, UpdateLocationInput } from '../../t
 
 /**
  * Retrieves all locations for a given business ID.
- * @param {string} businessId - The ID of the business to retrieve locations for.
+ * @param {string} reservationModuleId - The ID of the business to retrieve locations for.
  * @returns {Promise<Location[]>} A promise that resolves to an array of locations.
  * @throws {Error} If there is an error retrieving the locations.
  */
