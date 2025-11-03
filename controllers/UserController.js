@@ -718,13 +718,13 @@ async function updateTelephone(req, res) {
  * @operationId requestSMSVerification
  * @response 200 - SMS verification requested successfully.
  * @response 400 - Error obtaining user information.
- * @prisma_model tokens (see ./prisma/schemas/user.prisma)
+ * @prisma_model tokens
  */
 async function requestSMSVerification(req, res) {
 	try {
 		let token = await TokenDao.generateSMSVerificationToken(req.user);
 		let user = await UserDao.getUserById(req.user.user_id);
-		await SMS.sendSMSVerification(user.telephone, token.token, user.country_code);
+		await SMS.sendSMSVerification(user.telephone, token.token, user.country_code); // TODO: replace with user.telephone_code
 		if (token) {
 			return res.status(200).json({ message: 'Token sent', telephone: user.telephone });
 		}
@@ -745,7 +745,7 @@ async function requestSMSVerification(req, res) {
  * @bodyRequired
  * @response 200 - User verified successfully.
  * @response 400 - Invalid token or error obtaining user information.
- * @prisma_model tokens (see ./prisma/schemas/user.prisma)
+ * @prisma_model tokens
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
 async function verifyMe(req, res) {
