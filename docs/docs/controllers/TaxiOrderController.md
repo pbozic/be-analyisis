@@ -1,6 +1,7 @@
 # TaxiOrderController Controller
 
 <!-- DOCGEN:START getOrder -->
+
 ### getOrder
 
 **Summary**: Get order details.
@@ -9,30 +10,29 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | orderId |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | orderId |             |
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns order details in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
 
 <!-- DOCGEN:END getOrder -->
-
-<!-- DOCGEN:START getActiveTaxiOrders -->
-### getActiveTaxiOrders
 
 **Summary**: Get active taxi orders.
 
 **Description**: This fetches all completed orders for a specific user.
 
 **Responses:**
+
 - 200
 - 500
 
@@ -40,11 +40,12 @@
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrders)
 
 <!-- DOCGEN:END getActiveTaxiOrders -->
 
 <!-- DOCGEN:START getMyActiveTaxiOrders -->
+
 ### getMyActiveTaxiOrders
 
 **Summary**: Get active taxi orders.
@@ -52,6 +53,7 @@
 **Description**: This fetches all completed orders for a specific user.
 
 **Responses:**
+
 - 200
 - 500
 
@@ -59,11 +61,12 @@
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrders)
 
 <!-- DOCGEN:END getMyActiveTaxiOrders -->
 
 <!-- DOCGEN:START getActiveTaxiOrdersByDriverId -->
+
 ### getActiveTaxiOrdersByDriverId
 
 **Summary**: Get active taxi orders for a driver.
@@ -72,23 +75,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | driver_id |  |
+| Name      | In   | Type      | Description |
+| --------- | ---- | --------- | ----------- |
+| undefined | path | driver_id |             |
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of active orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveTaxiOrdersByDriverId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveTaxiOrdersByDriverId)
 
 <!-- DOCGEN:END getActiveTaxiOrdersByDriverId -->
 
 <!-- DOCGEN:START getTaxiOrdersByDriverId -->
+
 ### getTaxiOrdersByDriverId
 
 **Summary**: Get completed taxi orders.
@@ -96,18 +101,20 @@
 **Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of completed orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedTaxiOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedTaxiOrders)
 
 <!-- DOCGEN:END getTaxiOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedTaxiOrders -->
+
 ### getCompletedTaxiOrders
 
 **Summary**: Get completed taxi orders.
@@ -115,18 +122,20 @@
 **Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of completed orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedTaxiOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedTaxiOrders)
 
 <!-- DOCGEN:END getCompletedTaxiOrders -->
 
 <!-- DOCGEN:START getCanceledTaxiOrders -->
+
 ### getCanceledTaxiOrders
 
 **Summary**: Get canceled taxi orders.
@@ -134,18 +143,20 @@
 **Description**: This fetches all canceled orders for a specific driver.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of canceled orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCanceledTaxiOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCanceledTaxiOrders)
 
 <!-- DOCGEN:END getCanceledTaxiOrders -->
 
 <!-- DOCGEN:START getRejectedTaxiOrders -->
+
 ### getRejectedTaxiOrders
 
 **Summary**: Get rejected taxi orders.
@@ -153,18 +164,20 @@
 **Description**: This fetches all rejected orders for a specific driver.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of rejected orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getRejectedTaxiOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getRejectedTaxiOrders)
 
 <!-- DOCGEN:END getRejectedTaxiOrders -->
 
 <!-- DOCGEN:START getTaxiOrders -->
+
 ### getTaxiOrders
 
 **Summary**: Get all taxi orders.
@@ -172,18 +185,20 @@
 **Description**: This fetches all taxi orders.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of all taxi orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getTaxiOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getTaxiOrders)
 
 <!-- DOCGEN:END getTaxiOrders -->
 
 <!-- DOCGEN:START getCompletedTaxiOrdersByUserId -->
+
 ### getCompletedTaxiOrdersByUserId
 
 **Summary**: Get completed taxi orders.
@@ -191,18 +206,20 @@
 **Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of completed orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedTaxiOrdersByUserId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedTaxiOrdersByUserId)
 
 <!-- DOCGEN:END getCompletedTaxiOrdersByUserId -->
 
 <!-- DOCGEN:START getCompletedTaxiOrdersByBusinessId -->
+
 ### getCompletedTaxiOrdersByBusinessId
 
 **Summary**: Get completed taxi orders.
@@ -210,18 +227,20 @@
 **Description**: This fetches all completed orders for a business.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of completed orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedTaxiOrdersByBusinessId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedTaxiOrdersByBusinessId)
 
 <!-- DOCGEN:END getCompletedTaxiOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCanceledTaxiOrdersByUserId -->
+
 ### getCanceledTaxiOrdersByUserId
 
 **Summary**: Get canceled taxi orders.
@@ -229,18 +248,20 @@
 **Description**: This fetches all canceled orders for a specific driver.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of canceled orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCanceledTaxiOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCanceledTaxiOrders)
 
 <!-- DOCGEN:END getCanceledTaxiOrdersByUserId -->
 
 <!-- DOCGEN:START createOrder -->
+
 ### createOrder
 
 **Summary**: Create a new taxi order.
@@ -252,18 +273,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the newly created order in the response body.
+- 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDispatchOrder -->
+
 ### createDispatchOrder
 
 **Summary**: Create a new delivery order as dispatch.
@@ -275,18 +298,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the newly created order in the response body.
+- 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
 
 <!-- DOCGEN:END createDispatchOrder -->
 
 <!-- DOCGEN:START acceptOrder -->
+
 ### acceptOrder
 
 **Summary**: Accept a taxi order.
@@ -298,18 +323,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the accepted order in the response body.
+- 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
 
 <!-- DOCGEN:END acceptOrder -->
 
 <!-- DOCGEN:START completeOrder -->
+
 ### completeOrder
 
 **Summary**: Complete a taxi order.
@@ -321,18 +348,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the completed order in the response body.
+- 500 - Server error. Console logs the error message and returns it in the response.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START updateOrderStatus -->
+
 ### updateOrderStatus
 
 **Summary**: Update a taxi order's status.
@@ -344,18 +373,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START updateTaxiOrderPreferences -->
+
 ### updateTaxiOrderPreferences
 
 **Summary**: Update a taxi order's vehicle preferences.
@@ -367,18 +398,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTaxiOrderPreferences )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTaxiOrderPreferences)
 
 <!-- DOCGEN:END updateTaxiOrderPreferences -->
 
 <!-- DOCGEN:START cancelOrder -->
+
 ### cancelOrder
 
 **Summary**: Cancel a taxi order.
@@ -390,18 +423,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the cancelled order in the response body.
+- 500 - Server error. Console logs the error message and returns it in the response.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelOrder)
 
 <!-- DOCGEN:END cancelOrder -->
 
 <!-- DOCGEN:START rejectOrder -->
+
 ### rejectOrder
 
 **Summary**: Reject a taxi order.
@@ -413,18 +448,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the rejected order in the response body.
+- 500 - Server error. Console logs the error message and returns it in the response.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/rejectOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/rejectOrder)
 
 <!-- DOCGEN:END rejectOrder -->
 
 <!-- DOCGEN:START updateTaxiOrderRoute -->
+
 ### updateTaxiOrderRoute
 
 **Summary**: Update a taxi order's route.
@@ -436,18 +473,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order with the new route in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTaxiOrderRoute )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTaxiOrderRoute)
 
 <!-- DOCGEN:END updateTaxiOrderRoute -->
 
 <!-- DOCGEN:START updateTaxiOrderPickupLocation -->
+
 ### updateTaxiOrderPickupLocation
 
 **Summary**: Update a taxi order's pickup location.
@@ -459,18 +498,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order with the new pickup location in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTaxiOrderPickupLocation )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTaxiOrderPickupLocation)
 
 <!-- DOCGEN:END updateTaxiOrderPickupLocation -->
 
 <!-- DOCGEN:START updateTaxiOrderDeliveryLocation -->
+
 ### updateTaxiOrderDeliveryLocation
 
 **Summary**: Update a taxi order's delivery location.
@@ -482,18 +523,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order with the new delivery location in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTaxiOrderDeliveryLocation )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTaxiOrderDeliveryLocation)
 
 <!-- DOCGEN:END updateTaxiOrderDeliveryLocation -->
 
 <!-- DOCGEN:START updateCompleteTaxiRoute -->
+
 ### updateCompleteTaxiRoute
 
 **Summary**: Update a taxi order's complete route.
@@ -505,18 +548,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order with the new complete route in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateCompleteTaxiRoute )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateCompleteTaxiRoute)
 
 <!-- DOCGEN:END updateCompleteTaxiRoute -->
 
 <!-- DOCGEN:START updateTaxiOrderTimeline -->
+
 ### updateTaxiOrderTimeline
 
 **Summary**: Update a taxi order's timeline.
@@ -528,18 +573,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order with the new timeline in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTaxiOrderTimeline )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTaxiOrderTimeline)
 
 <!-- DOCGEN:END updateTaxiOrderTimeline -->
 
 <!-- DOCGEN:START updateTaxiOrderPayment -->
+
 ### updateTaxiOrderPayment
 
 **Summary**: Update a taxi order's payment details.
@@ -551,18 +598,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order with the new payment details.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTaxiOrderPayment )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTaxiOrderPayment)
 
 <!-- DOCGEN:END updateTaxiOrderPayment -->
 
 <!-- DOCGEN:START appendTaxiDriver -->
+
 ### appendTaxiDriver
 
 **Summary**: Append driver to taxi order.
@@ -574,18 +623,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order with the new driver details.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/appendTaxiDriver )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/appendTaxiDriver)
 
 <!-- DOCGEN:END appendTaxiDriver -->
 
 <!-- DOCGEN:START getTaxiOrdersWithPagination -->
+
 ### getTaxiOrdersWithPagination
 
 **Summary**: Get taxi orders with pagination.
@@ -593,18 +644,20 @@ Content-Type: `application/json`
 **Description**: This fetches orders with pagination.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getTaxiOrdersWithPagination )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getTaxiOrdersWithPagination)
 
 <!-- DOCGEN:END getTaxiOrdersWithPagination -->
 
 <!-- DOCGEN:START getTaxiOrdersToday -->
+
 ### getTaxiOrdersToday
 
 **Summary**: Get all taxi orders for today and earnings.
@@ -612,18 +665,20 @@ Content-Type: `application/json`
 **Description**: This fetches all taxi orders for today and earnings.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of all taxi orders today and earnings in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getTaxiOrdersToday )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getTaxiOrdersToday)
 
 <!-- DOCGEN:END getTaxiOrdersToday -->
 
 <!-- DOCGEN:START splitVanOrder -->
+
 ### splitVanOrder
 
 **Summary**: Splits Van order into multiple smaller orders
@@ -631,18 +686,20 @@ Content-Type: `application/json`
 **Description**: If we cant find a Van driver, we offer the user to split his order into multiple smaller orders.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of all taxi orders created.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/splitVanOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/splitVanOrder)
 
 <!-- DOCGEN:END splitVanOrder -->
 
 <!-- DOCGEN:START confirmWalletPayment -->
+
 ### confirmWalletPayment
 
 **Summary**: Confirm wallet payment for an awaiting-payment taxi order
@@ -654,6 +711,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 - 500
@@ -662,11 +720,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/confirmWalletPayment )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/confirmWalletPayment)
 
 <!-- DOCGEN:END confirmWalletPayment -->
 
 <!-- DOCGEN:START uploadTaxiOrderSignature -->
+
 ### uploadTaxiOrderSignature
 
 **Summary**: Upload a signature for a taxi order
@@ -675,15 +734,16 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | order_id |  |
+| Name      | In   | Type     | Description |
+| --------- | ---- | -------- | ----------- |
+| undefined | path | order_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 
@@ -691,11 +751,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/uploadTaxiOrderSignature )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/uploadTaxiOrderSignature)
 
 <!-- DOCGEN:END uploadTaxiOrderSignature -->
 
 <!-- DOCGEN:START uploadTaxiOrderPhoto -->
+
 ### uploadTaxiOrderPhoto
 
 **Summary**: Upload a photo for a taxi order
@@ -704,15 +765,16 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | order_id |  |
+| Name      | In   | Type     | Description |
+| --------- | ---- | -------- | ----------- |
+| undefined | path | order_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 
@@ -720,11 +782,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/uploadTaxiOrderPhoto )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/uploadTaxiOrderPhoto)
 
 <!-- DOCGEN:END uploadTaxiOrderPhoto -->
 
 <!-- DOCGEN:START getScheduledOrders -->
+
 ### getScheduledOrders
 
 **Summary**: Get all scheduled taxi orders.
@@ -732,6 +795,7 @@ Content-Type: `application/json`
 **Description**: This fetches all scheduled taxi orders.
 
 **Responses:**
+
 - 200
 - 500
 
@@ -739,11 +803,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getScheduledOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getScheduledOrders)
 
 <!-- DOCGEN:END getScheduledOrders -->
 
 <!-- DOCGEN:START getAcceptedScheduledOrders -->
+
 ### getAcceptedScheduledOrders
 
 **Summary**: Get accepted scheduled taxi orders by driver ID.
@@ -752,11 +817,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | driver_id |  |
+| Name      | In   | Type      | Description |
+| --------- | ---- | --------- | ----------- |
+| undefined | path | driver_id |             |
 
 **Responses:**
+
 - 200
 - 500
 
@@ -764,11 +830,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAcceptedScheduledOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAcceptedScheduledOrders)
 
 <!-- DOCGEN:END getAcceptedScheduledOrders -->
 
 <!-- DOCGEN:START getScheduledOrdersByUserId -->
+
 ### getScheduledOrdersByUserId
 
 **Summary**: Get scheduled taxi orders by user ID.
@@ -777,11 +844,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | user_id |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | user_id |             |
 
 **Responses:**
+
 - 200
 - 500
 
@@ -789,11 +857,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getScheduledOrdersByUserId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getScheduledOrdersByUserId)
 
 <!-- DOCGEN:END getScheduledOrdersByUserId -->
 
 <!-- DOCGEN:START getDriversForOrder -->
+
 ### getDriversForOrder
 
 **Summary**: Get available drivers for a taxi order.
@@ -802,11 +871,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | order_id |  |
+| Name      | In   | Type     | Description |
+| --------- | ---- | -------- | ----------- |
+| undefined | path | order_id |             |
 
 **Responses:**
+
 - 200
 - 500
 
@@ -814,11 +884,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDriversForOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDriversForOrder)
 
 <!-- DOCGEN:END getDriversForOrder -->
 
 <!-- DOCGEN:START cancelGroupedOrderByParentId -->
+
 ### cancelGroupedOrderByParentId
 
 **Summary**: Cancel grouped taxi order by parent order ID.
@@ -830,6 +901,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 500
 
@@ -837,11 +909,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelGroupedOrderByParentId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelGroupedOrderByParentId)
 
 <!-- DOCGEN:END cancelGroupedOrderByParentId -->
 
 <!-- DOCGEN:START rejectGroupedOrderByParentId -->
+
 ### rejectGroupedOrderByParentId
 
 **Summary**: Reject grouped taxi order by parent order ID.
@@ -853,6 +926,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 500
 
@@ -860,11 +934,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/rejectGroupedOrderByParentId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/rejectGroupedOrderByParentId)
 
 <!-- DOCGEN:END rejectGroupedOrderByParentId -->
 
 <!-- DOCGEN:START calculateTransferPrice -->
+
 ### calculateTransferPrice
 
 **Summary**: Calculate transfer ride price.
@@ -876,6 +951,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 - 500
@@ -884,7 +960,6 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/calculateTransferPrice )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/calculateTransferPrice)
 
 <!-- DOCGEN:END calculateTransferPrice -->
-

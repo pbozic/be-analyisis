@@ -1,6 +1,7 @@
 # ReservationController Controller
 
 <!-- DOCGEN:START getReservations -->
+
 ### getReservations
 
 **Summary**: Get a list of reservations
@@ -8,18 +9,20 @@
 **Description**: Returns a list of reservations along with their business and user information.
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns a list of reservations
+- 400 - Error occurred while obtaining the reservation list
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getReservations )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getReservations)
 
 <!-- DOCGEN:END getReservations -->
 
 <!-- DOCGEN:START getReservationById -->
+
 ### getReservationById
 
 **Summary**: Get a reservation by ID
@@ -28,24 +31,26 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | reservation_id |  |
+| Name      | In   | Type           | Description |
+| --------- | ---- | -------------- | ----------- |
+| undefined | path | reservation_id |             |
 
 **Responses:**
-- 200
-- 404
-- 400
+
+- 200 - Successful operation, returns detailed reservation information
+- 404 - Reservation not found
+- 400 - Error retrieving reservation information
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getReservationById )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getReservationById)
 
 <!-- DOCGEN:END getReservationById -->
 
 <!-- DOCGEN:START getReservationsByBusinessId -->
+
 ### getReservationsByBusinessId
 
 **Summary**: Get all reservations for a business by its business ID
@@ -54,24 +59,26 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_id |  |
+| Name      | In   | Type        | Description |
+| --------- | ---- | ----------- | ----------- |
+| undefined | path | business_id |             |
 
 **Responses:**
-- 200
-- 404
-- 400
+
+- 200 - Successful operation, returns a list of reservations
+- 404 - Business not found
+- 400 - Error retrieving reservations
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getReservationsByBusinessId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getReservationsByBusinessId)
 
 <!-- DOCGEN:END getReservationsByBusinessId -->
 
 <!-- DOCGEN:START getActiveTableReservation -->
+
 ### getActiveTableReservation
 
 **Summary**: Get active reservations orders.
@@ -79,18 +86,20 @@
 **Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of completed orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveTableReservation )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveTableReservation)
 
 <!-- DOCGEN:END getActiveTableReservation -->
 
 <!-- DOCGEN:START createReservation -->
+
 ### createReservation
 
 **Summary**: Create a new reservation
@@ -102,18 +111,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 201
-- 400
+
+- 201 - Reservation created successfully
+- 400 - Error creating reservation
 
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createReservation )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createReservation)
 
 <!-- DOCGEN:END createReservation -->
 
 <!-- DOCGEN:START addTableNumber -->
+
 ### addTableNumber
 
 **Summary**: Update table number
@@ -122,27 +133,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | reservationId |  |
+| Name      | In   | Type          | Description |
+| --------- | ---- | ------------- | ----------- |
+| undefined | path | reservationId |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Reservation table updated successfully
+- 400 - Error updating reservation status
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addTableNumber )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addTableNumber)
 
 <!-- DOCGEN:END addTableNumber -->
 
 <!-- DOCGEN:START updateReservationStatus -->
+
 ### updateReservationStatus
 
 **Summary**: Update reservation status
@@ -151,27 +164,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | reservationId |  |
+| Name      | In   | Type          | Description |
+| --------- | ---- | ------------- | ----------- |
+| undefined | path | reservationId |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Reservation status updated successfully
+- 400 - Error updating reservation status
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateReservationStatus )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateReservationStatus)
 
 <!-- DOCGEN:END updateReservationStatus -->
 
 <!-- DOCGEN:START deleteReservation -->
+
 ### deleteReservation
 
 **Summary**: Delete a reservation
@@ -180,18 +195,19 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | reservationId |  |
+| Name      | In   | Type          | Description |
+| --------- | ---- | ------------- | ----------- |
+| undefined | path | reservationId |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Reservation deleted successfully
+- 400 - Error deleting reservation
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteReservation )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteReservation)
 
 <!-- DOCGEN:END deleteReservation -->

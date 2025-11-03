@@ -143,9 +143,9 @@ export async function getBookingSlotById(req: ValidatedRequest<null, { id: strin
  * @summary Create a new booking slot or update an existing one
  * @description Creates a new booking slot or updates an existing one if it already exists.
  * @operationId updateOrCreateBookingSlots
- * @bodyContent {object} application/json
- * @response 200 - Booking slots created or updated successfully
- * @responseContent {object} 200.application/json
+ * @requestBody {CreateOrUpdateBookingSlotInput} requestBody - The booking slot data to create or update.
+ * @response 201 - Booking slots created or updated successfully
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating booking slot
  * @prisma_model booking_slots
@@ -243,9 +243,9 @@ export async function createScheduleSlotWithBookingSlots(
  * @summary Update a schedule slot with booking slots
  * @description Updates schedule slot and associated booking slots.
  * @operationId updateScheduleSlotWithBookingSlots
- * @bodyContent {object} application/json
- * @response 200 - Schedule slot with booking slots updated successfully
- * @responseContent {object} 200.application/json
+ * @requestBody {UpdateScheduleSlotWithBookingSlotsInput} requestBody - The schedule slot and booking slots data to update.
+ * @response 201 - Schedule slot with booking slots updated successfully
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error updating schedule slot with booking slots
  * @prisma_model schedule_slot

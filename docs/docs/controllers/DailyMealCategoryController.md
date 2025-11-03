@@ -1,6 +1,7 @@
 # DailyMealCategoryController Controller
 
 <!-- DOCGEN:START createDailyMealCategoryWithPrice -->
+
 ### createDailyMealCategoryWithPrice
 
 **Summary**: Create a daily meal category for a business
@@ -12,6 +13,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 201
 - 500
 
@@ -19,11 +21,12 @@ Content-Type: `application/json`
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealCategoryWithPrice )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealCategoryWithPrice)
 
 <!-- DOCGEN:END createDailyMealCategoryWithPrice -->
 
 <!-- DOCGEN:START getDailyMealCategoriesForBusiness -->
+
 ### getDailyMealCategoriesForBusiness
 
 **Summary**: List active daily meal categories for a business
@@ -31,6 +34,7 @@ Content-Type: `application/json`
 **Description**: Lists all currently active daily meal categories for a business, including their latest price.
 
 **Responses:**
+
 - 200
 - 500
 
@@ -38,11 +42,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMealCategoriesForBusiness )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMealCategoriesForBusiness)
 
 <!-- DOCGEN:END getDailyMealCategoriesForBusiness -->
 
 <!-- DOCGEN:START addPriceToDailyMealCategory -->
+
 ### addPriceToDailyMealCategory
 
 **Summary**: Add a new price entry to a daily meal category
@@ -54,6 +59,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 201
 - 500
 
@@ -61,11 +67,12 @@ Content-Type: `application/json`
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addPriceToDailyMealCategory )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addPriceToDailyMealCategory)
 
 <!-- DOCGEN:END addPriceToDailyMealCategory -->
 
 <!-- DOCGEN:START deactivateDailyMealCategory -->
+
 ### deactivateDailyMealCategory
 
 **Summary**: Remove a daily meal category from a business
@@ -73,6 +80,7 @@ Content-Type: `application/json`
 **Description**: Deactivates a daily meal category from a business.
 
 **Responses:**
+
 - 200
 - 500
 
@@ -80,11 +88,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deactivateDailyMealCategory )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deactivateDailyMealCategory)
 
 <!-- DOCGEN:END deactivateDailyMealCategory -->
 
 <!-- DOCGEN:START activateDailyMealCategory -->
+
 ### activateDailyMealCategory
 
 **Summary**: Add a daily meal category back to business
@@ -92,6 +101,7 @@ Content-Type: `application/json`
 **Description**: Activates a daily meal category of a business.
 
 **Responses:**
+
 - 200
 - 500
 
@@ -99,7 +109,6 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/activateDailyMealCategory )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/activateDailyMealCategory)
 
 <!-- DOCGEN:END activateDailyMealCategory -->
-

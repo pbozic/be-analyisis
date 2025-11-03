@@ -5875,6 +5875,31 @@ paths:
           description: Invalid request data
         '500':
           description: Server error while updating settings
+    post:
+      tags:
+        - Example
+      summary: Create a new example resource
+      description: Creates a new example item and returns the created object with its ID.
+      operationId: createExample
+      responses:
+        '200':
+          description: Successful operation. Returns the created object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExampleResponse'
+        '400':
+          description: Bad request. Missing required parameters.
+        '401':
+          description: Unauthorized. Invalid or missing authentication token.
+        '404':
+          description: Not found. The resource could not be located.
+        '500':
+          description: >-
+            Server error. Returns message "Error something went wrong..." if any
+            exception occurs.
+      security:
+        - bearerAuth: []
   /promo-sections:
     post:
       tags:
@@ -7747,7 +7772,7 @@ paths:
       operationId: getPaymentSheetCredentials
       responses:
         '200':
-          description: '{wallet_balance:float}'
+          description: Wallet balance number
         '400':
           description: Error checking wallet balances
     patch:
@@ -7794,7 +7819,7 @@ paths:
       operationId: getPaymentSheetCredentials
       responses:
         '200':
-          description: '{family_wallet_balance:float,family_wallet_type:string}'
+          description: family_wallet_balance number, family_wallet_type
         '400':
           description: Error checking wallet balances
   /users/language:

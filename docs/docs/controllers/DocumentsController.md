@@ -1,6 +1,7 @@
 # DocumentsController Controller
 
 <!-- DOCGEN:START listDocuments -->
+
 ### listDocuments
 
 **Summary**: Get all documents
@@ -8,18 +9,20 @@
 **Description**: Retrieves all documents in the system. Intended for admin usage.
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns all documents
+- 400 - Error retrieving documents
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocuments )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocuments)
 
 <!-- DOCGEN:END listDocuments -->
 
 <!-- DOCGEN:START getDocumentById -->
+
 ### getDocumentById
 
 **Summary**: Get a document by ID
@@ -28,23 +31,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | document_id |  |
+| Name      | In   | Type        | Description |
+| --------- | ---- | ----------- | ----------- |
+| undefined | path | document_id |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns the document
+- 400 - Error retrieving the document
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentById )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentById)
 
 <!-- DOCGEN:END getDocumentById -->
 
 <!-- DOCGEN:START getDocumentsForUser -->
+
 ### getDocumentsForUser
 
 **Summary**: Get documents for a user
@@ -53,23 +58,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | userId |  |
+| Name      | In   | Type   | Description |
+| --------- | ---- | ------ | ----------- |
+| undefined | path | userId |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns documents
+- 400 - Error retrieving documents
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForUser )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForUser)
 
 <!-- DOCGEN:END getDocumentsForUser -->
 
 <!-- DOCGEN:START getDocumentsForBusiness -->
+
 ### getDocumentsForBusiness
 
 **Summary**: Get documents for a business
@@ -78,23 +85,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | businessId |  |
+| Name      | In   | Type       | Description |
+| --------- | ---- | ---------- | ----------- |
+| undefined | path | businessId |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns documents
+- 400 - Error retrieving documents
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForBusiness )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForBusiness)
 
 <!-- DOCGEN:END getDocumentsForBusiness -->
 
 <!-- DOCGEN:START getDocumentsForDeliveryPerson -->
+
 ### getDocumentsForDeliveryPerson
 
 **Summary**: Get documents for a delivery person
@@ -103,23 +112,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | deliveryPersonId |  |
+| Name      | In   | Type             | Description |
+| --------- | ---- | ---------------- | ----------- |
+| undefined | path | deliveryPersonId |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns documents
+- 400 - Error retrieving documents
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForDeliveryPerson )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForDeliveryPerson)
 
 <!-- DOCGEN:END getDocumentsForDeliveryPerson -->
 
 <!-- DOCGEN:START getDocumentsForDriver -->
+
 ### getDocumentsForDriver
 
 **Summary**: Get documents for a driver
@@ -128,23 +139,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | driverId |  |
+| Name      | In   | Type     | Description |
+| --------- | ---- | -------- | ----------- |
+| undefined | path | driverId |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns documents
+- 400 - Error retrieving documents
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForDriver )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForDriver)
 
 <!-- DOCGEN:END getDocumentsForDriver -->
 
 <!-- DOCGEN:START getDocumentsForVehicle -->
+
 ### getDocumentsForVehicle
 
 **Summary**: Get documents for a vehicle
@@ -153,23 +166,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | vehicleId |  |
+| Name      | In   | Type      | Description |
+| --------- | ---- | --------- | ----------- |
+| undefined | path | vehicleId |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns documents
+- 400 - Error retrieving documents
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForVehicle )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForVehicle)
 
 <!-- DOCGEN:END getDocumentsForVehicle -->
 
 <!-- DOCGEN:START getDocumentsByDocumentType -->
+
 ### getDocumentsByDocumentType
 
 **Summary**: Get documents by type
@@ -178,23 +193,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | documentType |  |
+| Name      | In   | Type         | Description |
+| --------- | ---- | ------------ | ----------- |
+| undefined | path | documentType |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns documents
+- 400 - Error retrieving documents
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsByType )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsByType)
 
 <!-- DOCGEN:END getDocumentsByDocumentType -->
 
 <!-- DOCGEN:START getDocumentsForBusinessByDocumentType -->
+
 ### getDocumentsForBusinessByDocumentType
 
 **Summary**: Get documents for a business by type
@@ -203,24 +220,26 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | businessId |  |
-| undefined | path | documentType |  |
+| Name      | In   | Type         | Description |
+| --------- | ---- | ------------ | ----------- |
+| undefined | path | businessId   |             |
+| undefined | path | documentType |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns documents
+- 400 - Error retrieving documents
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForBusinessByType )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForBusinessByType)
 
 <!-- DOCGEN:END getDocumentsForBusinessByDocumentType -->
 
 <!-- DOCGEN:START getDocumentsForUserByDocumentType -->
+
 ### getDocumentsForUserByDocumentType
 
 **Summary**: Get documents for a user by type
@@ -229,23 +248,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | document_type |  |
+| Name      | In   | Type          | Description |
+| --------- | ---- | ------------- | ----------- |
+| undefined | path | document_type |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns documents
+- 400 - Error retrieving documents
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForUserByDocumentType )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForUserByDocumentType)
 
 <!-- DOCGEN:END getDocumentsForUserByDocumentType -->
 
 <!-- DOCGEN:START getDocumentsForDriverByDocumentType -->
+
 ### getDocumentsForDriverByDocumentType
 
 **Summary**: Get documents for a driver by type
@@ -254,24 +275,26 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | driverId |  |
-| undefined | path | documentType |  |
+| Name      | In   | Type         | Description |
+| --------- | ---- | ------------ | ----------- |
+| undefined | path | driverId     |             |
+| undefined | path | documentType |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns documents
+- 400 - Error retrieving documents
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForDriverByType )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForDriverByType)
 
 <!-- DOCGEN:END getDocumentsForDriverByDocumentType -->
 
 <!-- DOCGEN:START getDocumentsForDeliveryPersonByDocumentType -->
+
 ### getDocumentsForDeliveryPersonByDocumentType
 
 **Summary**: Get documents for a delivery person by type
@@ -280,24 +303,26 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | deliveryPersonId |  |
-| undefined | path | documentType |  |
+| Name      | In   | Type             | Description |
+| --------- | ---- | ---------------- | ----------- |
+| undefined | path | deliveryPersonId |             |
+| undefined | path | documentType     |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns documents
+- 400 - Error retrieving documents
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForDeliveryPersonByType )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForDeliveryPersonByType)
 
 <!-- DOCGEN:END getDocumentsForDeliveryPersonByDocumentType -->
 
 <!-- DOCGEN:START getDocumentsForVehicleByDocumentType -->
+
 ### getDocumentsForVehicleByDocumentType
 
 **Summary**: Get documents for a vehicle by type
@@ -306,24 +331,26 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | vehicleId |  |
-| undefined | path | documentType |  |
+| Name      | In   | Type         | Description |
+| --------- | ---- | ------------ | ----------- |
+| undefined | path | vehicleId    |             |
+| undefined | path | documentType |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns documents
+- 400 - Error retrieving documents
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForVehicleByType )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDocumentsForVehicleByType)
 
 <!-- DOCGEN:END getDocumentsForVehicleByDocumentType -->
 
 <!-- DOCGEN:START createUserDocument -->
+
 ### createUserDocument
 
 **Summary**: Create a document for a user
@@ -332,27 +359,29 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | user_id |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | user_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 201
-- 400
+
+- 201 - Document created and linked successfully
+- 400 - Error creating or linking the document
 
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createUserDocument )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createUserDocument)
 
 <!-- DOCGEN:END createUserDocument -->
 
 <!-- DOCGEN:START createBusinessDocument -->
+
 ### createBusinessDocument
 
 **Summary**: Create a document for a business
@@ -361,27 +390,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_id |  |
+| Name      | In   | Type        | Description |
+| --------- | ---- | ----------- | ----------- |
+| undefined | path | business_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 201
-- 400
+
+- 201 - Document created and linked successfully
+- 400 - Error creating or linking the document
 
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBusinessDocument )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBusinessDocument)
 
 <!-- DOCGEN:END createBusinessDocument -->
 
 <!-- DOCGEN:START createDriverDocument -->
+
 ### createDriverDocument
 
 **Summary**: Create a document for a driver
@@ -390,27 +421,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | driver_id |  |
+| Name      | In   | Type      | Description |
+| --------- | ---- | --------- | ----------- |
+| undefined | path | driver_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 201
-- 400
+
+- 201 - Document created and linked successfully
+- 400 - Error creating or linking the document
 
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDriverDocument )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDriverDocument)
 
 <!-- DOCGEN:END createDriverDocument -->
 
 <!-- DOCGEN:START createVehicleDocument -->
+
 ### createVehicleDocument
 
 **Summary**: Create a document for a vehicle
@@ -419,27 +452,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | vehicle_id |  |
+| Name      | In   | Type       | Description |
+| --------- | ---- | ---------- | ----------- |
+| undefined | path | vehicle_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 201
-- 400
+
+- 201 - Document created and linked successfully
+- 400 - Error creating or linking the document
 
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createVehicleDocument )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createVehicleDocument)
 
 <!-- DOCGEN:END createVehicleDocument -->
 
 <!-- DOCGEN:START createDeliveryPersonDocument -->
+
 ### createDeliveryPersonDocument
 
 **Summary**: Create a document for a delivery person
@@ -448,27 +483,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | delivery_person_id |  |
+| Name      | In   | Type               | Description |
+| --------- | ---- | ------------------ | ----------- |
+| undefined | path | delivery_person_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 201
-- 400
+
+- 201 - Document created and linked successfully
+- 400 - Error creating or linking the document
 
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDeliveryPersonDocument )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDeliveryPersonDocument)
 
 <!-- DOCGEN:END createDeliveryPersonDocument -->
 
 <!-- DOCGEN:START updateDocumentExpirationDate -->
+
 ### updateDocumentExpirationDate
 
 **Summary**: Update document's expiration date
@@ -477,27 +514,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | document_id |  |
+| Name      | In   | Type        | Description |
+| --------- | ---- | ----------- | ----------- |
+| undefined | path | document_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Document expiration date updated successfully
+- 400 - Error updating document's expiration date
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDocumentExpirationDate )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDocumentExpirationDate)
 
 <!-- DOCGEN:END updateDocumentExpirationDate -->
 
 <!-- DOCGEN:START updateDocumentIssueDate -->
+
 ### updateDocumentIssueDate
 
 **Summary**: Update document's issue date
@@ -506,27 +545,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | document_id |  |
+| Name      | In   | Type        | Description |
+| --------- | ---- | ----------- | ----------- |
+| undefined | path | document_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Document issue date updated successfully
+- 400 - Error updating document's issue date
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDocumentIssueDate )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDocumentIssueDate)
 
 <!-- DOCGEN:END updateDocumentIssueDate -->
 
 <!-- DOCGEN:START updateDocumentFiles -->
+
 ### updateDocumentFiles
 
 **Summary**: Update document's files
@@ -535,27 +576,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | document_id |  |
+| Name      | In   | Type        | Description |
+| --------- | ---- | ----------- | ----------- |
+| undefined | path | document_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Document files updated successfully
+- 400 - Error updating document's files
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDocumentFiles )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDocumentFiles)
 
 <!-- DOCGEN:END updateDocumentFiles -->
 
 <!-- DOCGEN:START updateDocumentAdditionalInfo -->
+
 ### updateDocumentAdditionalInfo
 
 **Summary**: Update document's additional info
@@ -564,23 +607,23 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | document_id |  |
+| Name      | In   | Type        | Description |
+| --------- | ---- | ----------- | ----------- |
+| undefined | path | document_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Document additional info updated successfully
+- 400 - Error updating document's additional info
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDocumentAdditionalInfo )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDocumentAdditionalInfo)
 
 <!-- DOCGEN:END updateDocumentAdditionalInfo -->
-

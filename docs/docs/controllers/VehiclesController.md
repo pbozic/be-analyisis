@@ -1,6 +1,7 @@
 # VehiclesController Controller
 
 <!-- DOCGEN:START listVehicles -->
+
 ### listVehicles
 
 **Summary**: List all vehicles
@@ -8,18 +9,20 @@
 **Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Success
+- 500 - Error fetching vehicles
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/)
 
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
+
 ### listVehiclesByBusiness
 
 **Summary**: Get vehicles by business ID
@@ -28,23 +31,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | businessId |  |
+| Name      | In   | Type       | Description |
+| --------- | ---- | ---------- | ----------- |
+| undefined | path | businessId |             |
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Success
+- 500 - Error fetching vehicles
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/)
 
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
+
 ### getVehicleById
 
 **Summary**: Get a vehicle by ID
@@ -53,24 +58,26 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | vehicle_id |  |
+| Name      | In   | Type       | Description |
+| --------- | ---- | ---------- | ----------- |
+| undefined | path | vehicle_id |             |
 
 **Responses:**
-- 200
-- 404
-- 500
+
+- 200 - Success
+- 404 - Vehicle not found
+- 500 - Error fetching vehicle
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/)
 
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
+
 ### getVehiclesByDriverId
 
 **Summary**: Get vehicles by driver ID
@@ -79,23 +86,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | driver_id |  |
+| Name      | In   | Type      | Description |
+| --------- | ---- | --------- | ----------- |
+| undefined | path | driver_id |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Success
+- 400 - Error fetching vehicles for driver
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/)
 
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
+
 ### getVehiclesByClass
 
 **Summary**: Get vehicles by class
@@ -104,23 +113,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | vehicleClass |  |
+| Name      | In   | Type         | Description |
+| --------- | ---- | ------------ | ----------- |
+| undefined | path | vehicleClass |             |
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Success
+- 500 - Error fetching vehicles
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/)
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
+
 ### getVehiclesByCategory
 
 **Summary**: Get vehicles by category
@@ -129,23 +140,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | vehicleCategory |  |
+| Name      | In   | Type            | Description |
+| --------- | ---- | --------------- | ----------- |
+| undefined | path | vehicleCategory |             |
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Success
+- 500 - Error fetching vehicles
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/)
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
+
 ### getVehiclesByClassAndCategory
 
 **Summary**: Get vehicles by class and category
@@ -154,24 +167,26 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | vehicleClass |  |
-| undefined | path | vehicleCategory |  |
+| Name      | In   | Type            | Description |
+| --------- | ---- | --------------- | ----------- |
+| undefined | path | vehicleClass    |             |
+| undefined | path | vehicleCategory |             |
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Success
+- 500 - Error fetching vehicles
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/)
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
+
 ### getVehiclesOfDriverByClass
 
 **Summary**: Get vehicles of a certain driver by class
@@ -180,24 +195,26 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | driverId |  |
-| undefined | path | vehicleClass |  |
+| Name      | In   | Type         | Description |
+| --------- | ---- | ------------ | ----------- |
+| undefined | path | driverId     |             |
+| undefined | path | vehicleClass |             |
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Success
+- 500 - Error fetching vehicles
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/)
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
+
 ### getVehiclesOfDriverByCategory
 
 **Summary**: Get vehicles of a certain driver by category
@@ -206,24 +223,26 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | driverId |  |
-| undefined | path | vehicleCategory |  |
+| Name      | In   | Type            | Description |
+| --------- | ---- | --------------- | ----------- |
+| undefined | path | driverId        |             |
+| undefined | path | vehicleCategory |             |
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Success
+- 500 - Error fetching vehicles
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/)
 
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
+
 ### getVehiclesOfDriverByClassAndCategory
 
 **Summary**: Get vehicles of a certain driver by class and category
@@ -232,25 +251,27 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | driverId |  |
-| undefined | path | vehicleClass |  |
-| undefined | path | vehicleCategory |  |
+| Name      | In   | Type            | Description |
+| --------- | ---- | --------------- | ----------- |
+| undefined | path | driverId        |             |
+| undefined | path | vehicleClass    |             |
+| undefined | path | vehicleCategory |             |
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Success
+- 500 - Error fetching vehicles
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/)
 
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
+
 ### createVehicle
 
 **Summary**: Create a new vehicle
@@ -262,18 +283,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 201
-- 400
+
+- 201 - Vehicle created successfully
+- 400 - Error creating vehicle
 
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
+
 ### updateVehicle
 
 **Summary**: Update a vehicle
@@ -282,27 +305,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | vehicle_id |  |
+| Name      | In   | Type       | Description |
+| --------- | ---- | ---------- | ----------- |
+| undefined | path | vehicle_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Vehicle updated successfully
+- 400 - Error updating vehicle
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
+
 ### assignVehiclesToDriver
 
 **Summary**: Assign vehicles to a driver
@@ -314,6 +339,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 
@@ -321,11 +347,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/)
 
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehiclesFromDriver -->
+
 ### removeVehiclesFromDriver
 
 **Summary**: Remove vehicles from a driver
@@ -337,18 +364,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Vehicle disassociated successfully
+- 400 - Error removing vehicle from driver
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/)
 
 <!-- DOCGEN:END removeVehiclesFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
+
 ### deleteVehicle
 
 **Summary**: Delete a vehicle
@@ -357,19 +386,19 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | vehicle_id |  |
+| Name      | In   | Type       | Description |
+| --------- | ---- | ---------- | ----------- |
+| undefined | path | vehicle_id |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Vehicle deleted successfully
+- 400 - Error deleting vehicle
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`, Example: `{ message: "Vehicle deleted successfully" }`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
 
 <!-- DOCGEN:END deleteVehicle -->
-

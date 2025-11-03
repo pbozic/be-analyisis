@@ -1,6 +1,7 @@
 # FilesController Controller
 
 <!-- DOCGEN:START createFile -->
+
 ### createFile
 
 **Summary**: Create a file
@@ -12,6 +13,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 500
 
@@ -19,11 +21,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createFile )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createFile)
 
 <!-- DOCGEN:END createFile -->
 
 <!-- DOCGEN:START updateFileById -->
+
 ### updateFileById
 
 **Summary**: Update a file by ID
@@ -32,15 +35,16 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | file_id |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | file_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -49,7 +53,6 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFileById )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFileById)
 
 <!-- DOCGEN:END updateFileById -->
-

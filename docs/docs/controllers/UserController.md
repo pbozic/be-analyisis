@@ -1,6 +1,7 @@
 # UserController Controller
 
 <!-- DOCGEN:START listUsers -->
+
 ### listUsers
 
 **Summary**: Get a list of users
@@ -8,19 +9,21 @@
 **Description**: Returns a list of users.
 
 **Responses:**
-- 200
-- 400
+
+- 200 - successful operation
+- 400 - Error occurred while obtaining the user list
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 - Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUsers )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUsers)
 
 <!-- DOCGEN:END listUsers -->
 
 <!-- DOCGEN:START listPersonalUsers -->
+
 ### listPersonalUsers
 
 **Summary**: Get a list of users
@@ -28,19 +31,21 @@
 **Description**: Returns a list of users.
 
 **Responses:**
-- 200
-- 400
+
+- 200 - successful operation
+- 400 - Error occurred while obtaining the user list
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 - Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUsers )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUsers)
 
 <!-- DOCGEN:END listPersonalUsers -->
 
 <!-- DOCGEN:START getUserById -->
+
 ### getUserById
 
 **Summary**: Get a user by ID
@@ -49,24 +54,26 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | user_id |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | user_id |             |
 
 **Responses:**
-- 200
-- 404
-- 400
+
+- 200 - Successful operation, returns detailed user information
+- 404 - User not found
+- 400 - Error retrieving user information
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserById )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserById)
 
 <!-- DOCGEN:END getUserById -->
 
 <!-- DOCGEN:START me -->
+
 ### me
 
 **Summary**: Retrieve authenticated user's information
@@ -74,19 +81,21 @@
 **Description**: Retrieve the details of the authenticated user by their ID.
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns user info.
+- 400 - Error obtaining user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 - Status: 400, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/retrieveUserInformation )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/retrieveUserInformation)
 
 <!-- DOCGEN:END me -->
 
 <!-- DOCGEN:START updateMe -->
+
 ### updateMe
 
 **Summary**: Updates the current user's details
@@ -98,18 +107,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - User updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMe )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMe)
 
 <!-- DOCGEN:END updateMe -->
 
 <!-- DOCGEN:START updateUserByUserId -->
+
 ### updateUserByUserId
 
 **Summary**: Updates the current user's details
@@ -121,18 +132,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - User updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMe )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMe)
 
 <!-- DOCGEN:END updateUserByUserId -->
 
 <!-- DOCGEN:START updatePassword -->
+
 ### updatePassword
 
 **Summary**: Updates the current user's password
@@ -144,18 +157,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Password updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePassword )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePassword)
 
 <!-- DOCGEN:END updatePassword -->
 
 <!-- DOCGEN:START updateEmail -->
+
 ### updateEmail
 
 **Summary**: Updates the current user's email
@@ -167,18 +182,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Email updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateEmail )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateEmail)
 
 <!-- DOCGEN:END updateEmail -->
 
 <!-- DOCGEN:START updateProfilePicture -->
+
 ### updateProfilePicture
 
 **Summary**: Updates the current user's profile picture
@@ -186,18 +203,20 @@ Content-Type: `application/json`
 **Description**:
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Profile picture updated successfully
+- 400 - Error updating profile picture
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`, Example: `- Updated user details`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateProfilePicture )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateProfilePicture)
 
 <!-- DOCGEN:END updateProfilePicture -->
 
 <!-- DOCGEN:START updateUserTaxiPreferences -->
+
 ### updateUserTaxiPreferences
 
 **Summary**: Updates the current user's taxi preferences
@@ -209,18 +228,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Taxi preferences updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserTaxiPreferences )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserTaxiPreferences)
 
 <!-- DOCGEN:END updateUserTaxiPreferences -->
 
 <!-- DOCGEN:START updateUserNotificationPreferences -->
+
 ### updateUserNotificationPreferences
 
 **Summary**: Updates the current user's notification preferences
@@ -232,18 +253,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Notification preferences updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserNotificationPreferences )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserNotificationPreferences)
 
 <!-- DOCGEN:END updateUserNotificationPreferences -->
 
 <!-- DOCGEN:START updateUserTaxiPushNotifications -->
+
 ### updateUserTaxiPushNotifications
 
 **Summary**: Updates the current user's push notification preferences
@@ -255,18 +278,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Push notification preferences updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserTaxiPushNotifications )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserTaxiPushNotifications)
 
 <!-- DOCGEN:END updateUserTaxiPushNotifications -->
 
 <!-- DOCGEN:START updateUserTransferPushNotifications -->
+
 ### updateUserTransferPushNotifications
 
 **Summary**: Updates the current user's transfer push notification preferences
@@ -278,18 +303,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Transfer push notification preferences updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserTransferPushNotifications )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserTransferPushNotifications)
 
 <!-- DOCGEN:END updateUserTransferPushNotifications -->
 
 <!-- DOCGEN:START updateUserDeliveryPushNotifications -->
+
 ### updateUserDeliveryPushNotifications
 
 **Summary**: Updates the current user's delivery push notification preferences
@@ -301,18 +328,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Delivery push notification preferences updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserDeliveryPushNotifications )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserDeliveryPushNotifications)
 
 <!-- DOCGEN:END updateUserDeliveryPushNotifications -->
 
 <!-- DOCGEN:START updateUserSpicyPreferences -->
+
 ### updateUserSpicyPreferences
 
 **Summary**: Updates the current user's spicy preferences
@@ -324,18 +353,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Spicy preferences updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserSpicyPreferences )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserSpicyPreferences)
 
 <!-- DOCGEN:END updateUserSpicyPreferences -->
 
 <!-- DOCGEN:START updateUserTransferPreferences -->
+
 ### updateUserTransferPreferences
 
 **Summary**: Updates the current user's transfer preferences
@@ -347,18 +378,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Transfer preferences updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserTransferPreferences )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserTransferPreferences)
 
 <!-- DOCGEN:END updateUserTransferPreferences -->
 
 <!-- DOCGEN:START updateUserRadioPreferences -->
+
 ### updateUserRadioPreferences
 
 **Summary**: Updates the current user's radio preferences
@@ -370,18 +403,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Radio preferences updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserRadioPreferences )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserRadioPreferences)
 
 <!-- DOCGEN:END updateUserRadioPreferences -->
 
 <!-- DOCGEN:START updateUserAllergiesPreferences -->
+
 ### updateUserAllergiesPreferences
 
 **Summary**: Updates the current user's allergies preferences
@@ -393,18 +428,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Allergies preferences updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserAllergiesPreferences )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserAllergiesPreferences)
 
 <!-- DOCGEN:END updateUserAllergiesPreferences -->
 
 <!-- DOCGEN:START updateTelephone -->
+
 ### updateTelephone
 
 **Summary**: Updates the current user's telephone
@@ -416,18 +453,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Telephone updated successfully. Returns the updated user's details.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTelephone )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateTelephone)
 
 <!-- DOCGEN:END updateTelephone -->
 
 <!-- DOCGEN:START requestSMSVerification -->
+
 ### requestSMSVerification
 
 **Summary**: Requests SMS verification
@@ -435,14 +474,16 @@ Content-Type: `application/json`
 **Description**: This endpoint is used to request an SMS verification token.
 
 **Responses:**
-- 200
-- 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestSMSVerification )
+- 200 - SMS verification requested successfully.
+- 400 - Error obtaining user information.
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestSMSVerification)
 
 <!-- DOCGEN:END requestSMSVerification -->
 
 <!-- DOCGEN:START verifyMe -->
+
 ### verifyMe
 
 **Summary**: Verifies the current user
@@ -454,14 +495,16 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/verifyMe )
+- 200 - User verified successfully.
+- 400 - Invalid token or error obtaining user information.
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/verifyMe)
 
 <!-- DOCGEN:END verifyMe -->
 
 <!-- DOCGEN:START addAddress -->
+
 ### addAddress
 
 **Summary**: Adds an address to the current user
@@ -473,18 +516,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Address added successfully. Returns the updated user's details.
+- 400 - Error adding address.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addAddress )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addAddress)
 
 <!-- DOCGEN:END addAddress -->
 
 <!-- DOCGEN:START deleteAddress -->
+
 ### deleteAddress
 
 **Summary**: Deletes an address from the current user
@@ -493,19 +538,21 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | address_id |  |
+| Name      | In   | Type       | Description |
+| --------- | ---- | ---------- | ----------- |
+| undefined | path | address_id |             |
 
 **Responses:**
-- 200
-- 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteAddress )
+- 200 - Address deleted successfully.
+- 400 - Error deleting address.
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteAddress)
 
 <!-- DOCGEN:END deleteAddress -->
 
 <!-- DOCGEN:START deleteUserByUserId -->
+
 ### deleteUserByUserId
 
 **Summary**: Deletes a user by their ID
@@ -514,20 +561,22 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | user_id |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | user_id |             |
 
 **Responses:**
-- 200
-- 400
-- 404
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteUserByUserId )
+- 200 - User deleted successfully.
+- 400 - Error deleting user.
+- 404 - User not found.
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteUserByUserId)
 
 <!-- DOCGEN:END deleteUserByUserId -->
 
 <!-- DOCGEN:START updateUserActiveByUserId -->
+
 ### updateUserActiveByUserId
 
 **Summary**: Updates a user's active field by their ID
@@ -536,27 +585,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | user_id |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | user_id |             |
 
 **Request Body:** (optional)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - User active field updated successfully.
+- 400 - Error updating active field.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserActiveByUserId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserActiveByUserId)
 
 <!-- DOCGEN:END updateUserActiveByUserId -->
 
 <!-- DOCGEN:START updateUserDisabledByUserId -->
+
 ### updateUserDisabledByUserId
 
 **Summary**: Disables a user by their ID
@@ -565,23 +616,25 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | user_id |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | user_id |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - User disabled successfully.
+- 400 - Error disabling user.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/disableUserByUserId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/disableUserByUserId)
 
 <!-- DOCGEN:END updateUserDisabledByUserId -->
 
 <!-- DOCGEN:START softDeleteUserByUserId -->
+
 ### softDeleteUserByUserId
 
 **Summary**: Performs a "soft delete" for a user by their ID
@@ -590,23 +643,25 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | user_id |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | user_id |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - User "soft delete" successful.
+- 400 - Error soft deleting user.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/softDeleteUserByUserId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/softDeleteUserByUserId)
 
 <!-- DOCGEN:END softDeleteUserByUserId -->
 
 <!-- DOCGEN:START disableMe -->
+
 ### disableMe
 
 **Summary**: Disables the current user
@@ -614,18 +669,20 @@ Content-Type: `application/json`
 **Description**: This endpoint is used to disable the current user.
 
 **Responses:**
-- 200
-- 400
+
+- 200 - User disabled successfully. Returns user.
+- 400 - Error updating user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/disableMe )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/disableMe)
 
 <!-- DOCGEN:END disableMe -->
 
 <!-- DOCGEN:START editAddress -->
+
 ### editAddress
 
 **Summary**: Edits an address from the current user
@@ -634,28 +691,30 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | address_id |  |
+| Name      | In   | Type       | Description |
+| --------- | ---- | ---------- | ----------- |
+| undefined | path | address_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Address edited successfully. Returns the updated user's details.
+- 400 - Error editing address.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 - Status: 400, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/editAddress )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/editAddress)
 
 <!-- DOCGEN:END editAddress -->
 
 <!-- DOCGEN:START setPrimaryAddress -->
+
 ### setPrimaryAddress
 
 **Summary**: Sets an address as the primary address for the current user
@@ -664,19 +723,21 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | address_id |  |
+| Name      | In   | Type       | Description |
+| --------- | ---- | ---------- | ----------- |
+| undefined | path | address_id |             |
 
 **Responses:**
-- 200
-- 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setPrimaryAddress )
+- 200 - Primary address set successfully.
+- 400 - Error setting primary address.
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setPrimaryAddress)
 
 <!-- DOCGEN:END setPrimaryAddress -->
 
 <!-- DOCGEN:START reviewUser -->
+
 ### reviewUser
 
 **Summary**: Review a user
@@ -688,14 +749,16 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reviewUser )
+- 200 - Primary address set successfully.
+- 400 - Error setting primary address.
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reviewUser)
 
 <!-- DOCGEN:END reviewUser -->
 
 <!-- DOCGEN:START getPaymentSheetCredentials -->
+
 ### getPaymentSheetCredentials
 
 **Summary**: Get payment sheet credentials for a user
@@ -703,14 +766,16 @@ Content-Type: `application/json`
 **Description**: This endpoint is used to get Stripe payment sheet credentials for a particular user.
 
 **Responses:**
-- 200
-- 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getPaymentSheetCredentials )
+- 200 - {StripePaymentSheetCredentials}
+- 400 - Error obtaining payment sheet credentials
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getPaymentSheetCredentials)
 
 <!-- DOCGEN:END getPaymentSheetCredentials -->
 
 <!-- DOCGEN:START registerChildUser -->
+
 ### registerChildUser
 
 **Summary**: Register a new child user - new user and connected group_user entry
@@ -722,18 +787,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - User registered successfully. Returns user info and tokens.
+- 400 - Error something went wrong.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/registerNewUser )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/registerNewUser)
 
 <!-- DOCGEN:END registerChildUser -->
 
 <!-- DOCGEN:START updateChildUserEnabledByGroupUserId -->
+
 ### updateChildUserEnabledByGroupUserId
 
 **Summary**: Updates the enabled field of the given child_user_id
@@ -745,18 +812,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - User updated successfully. Returns the updated group_user.
+- 400 - Error updating group user enabled status.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateChildUser )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateChildUser)
 
 <!-- DOCGEN:END updateChildUserEnabledByGroupUserId -->
 
 <!-- DOCGEN:START updateChildUserAllowanceByGroupUserId -->
+
 ### updateChildUserAllowanceByGroupUserId
 
 **Summary**: Updates the allowance of the given child_user_id for the given service_type
@@ -768,18 +837,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - User allowance updated successfully. Returns the updated group_user.
+- 400 - Error updating group user enabled status.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateChildUserAllowance )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateChildUserAllowance)
 
 <!-- DOCGEN:END updateChildUserAllowanceByGroupUserId -->
 
 <!-- DOCGEN:START deleteChildUserByGroupUserId -->
+
 ### deleteChildUserByGroupUserId
 
 **Summary**: Deletes a group_user by their ID
@@ -788,20 +859,22 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | group_user_id |  |
+| Name      | In   | Type          | Description |
+| --------- | ---- | ------------- | ----------- |
+| undefined | path | group_user_id |             |
 
 **Responses:**
-- 200
-- 400
-- 404
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteChildUserByGroupUserId )
+- 200 - User deleted successfully.
+- 400 - Error deleting user.
+- 404 - User not found.
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteChildUserByGroupUserId)
 
 <!-- DOCGEN:END deleteChildUserByGroupUserId -->
 
 <!-- DOCGEN:START getAvailableWalletBalance -->
+
 ### getAvailableWalletBalance
 
 **Summary**: Get wallet balance from wallet_funds.
@@ -809,14 +882,16 @@ Content-Type: `application/json`
 **Description**: This endpoint is used to check available wallet balance for a particular user.
 
 **Responses:**
-- 200
-- 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getPaymentSheetCredentials )
+- 200 - Wallet balance number
+- 400 - Error checking wallet balances
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getPaymentSheetCredentials)
 
 <!-- DOCGEN:END getAvailableWalletBalance -->
 
 <!-- DOCGEN:START getFamilyWalletBalanceAndType -->
+
 ### getFamilyWalletBalanceAndType
 
 **Summary**: Get family wallet type and minimum between allowance and actual family wallet balance.
@@ -824,14 +899,16 @@ Content-Type: `application/json`
 **Description**: This endpoint is used to check wallet balance and type for a particular user.
 
 **Responses:**
-- 200
-- 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getPaymentSheetCredentials )
+- 200 - family_wallet_balance number, family_wallet_type
+- 400 - Error checking wallet balances
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getPaymentSheetCredentials)
 
 <!-- DOCGEN:END getFamilyWalletBalanceAndType -->
 
 <!-- DOCGEN:START updateWalletBalance -->
+
 ### updateWalletBalance
 
 **Summary**: Update wallet balance for a user.
@@ -840,27 +917,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | user_id |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | user_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Wallet balance updated successfully.
+- 400 - Error updating wallet balance.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateWalletBalance )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateWalletBalance)
 
 <!-- DOCGEN:END updateWalletBalance -->
 
 <!-- DOCGEN:START updateUserLanguage -->
+
 ### updateUserLanguage
 
 **Summary**: Update the language preference for a user.
@@ -872,18 +951,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Language updated successfully. Returns the updated user details.
+- 400 - Error updating user language.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserLanguage )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateUserLanguage)
 
 <!-- DOCGEN:END updateUserLanguage -->
 
 <!-- DOCGEN:START redeemReferralCode -->
+
 ### redeemReferralCode
 
 **Summary**: Redeem a referral code for an existing user
@@ -895,14 +976,16 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/redeemReferralCode )
+- 200 - Referral code redeemed successfully
+- 400 - Error redeeming referral code
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/redeemReferralCode)
 
 <!-- DOCGEN:END redeemReferralCode -->
 
 <!-- DOCGEN:START requestToAddFundsToWallet -->
+
 ### requestToAddFundsToWallet
 
 **Summary**: Create a payment intent to add funds to wallet
@@ -914,6 +997,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 
@@ -921,11 +1005,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestToAddFundsToWallet )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestToAddFundsToWallet)
 
 <!-- DOCGEN:END requestToAddFundsToWallet -->
 
 <!-- DOCGEN:START requestPaymentIntent -->
+
 ### requestPaymentIntent
 
 **Summary**: Create a general payment intent
@@ -937,6 +1022,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 
@@ -944,11 +1030,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestPaymentIntent )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestPaymentIntent)
 
 <!-- DOCGEN:END requestPaymentIntent -->
 
 <!-- DOCGEN:START confirmPaymentIntent -->
+
 ### confirmPaymentIntent
 
 **Summary**: Confirm a payment intent
@@ -960,6 +1047,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 
@@ -967,11 +1055,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/confirmPaymentIntent )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/confirmPaymentIntent)
 
 <!-- DOCGEN:END confirmPaymentIntent -->
 
 <!-- DOCGEN:START ping -->
+
 ### ping
 
 **Summary**: Update last-ping for driver/delivery driver
@@ -979,6 +1068,7 @@ Content-Type: `application/json`
 **Description**: Sets last_ping_at to now and marks driver or delivery driver as active based on current user.
 
 **Responses:**
+
 - 200
 - 400
 
@@ -986,11 +1076,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ping )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ping)
 
 <!-- DOCGEN:END ping -->
 
 <!-- DOCGEN:START getSelfScheduledOrders -->
+
 ### getSelfScheduledOrders
 
 **Summary**: List my scheduled taxi orders
@@ -998,6 +1089,7 @@ Content-Type: `application/json`
 **Description**: Returns pending scheduled taxi orders for the current user.
 
 **Responses:**
+
 - 200
 - 500
 
@@ -1005,11 +1097,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getSelfScheduledOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getSelfScheduledOrders)
 
 <!-- DOCGEN:END getSelfScheduledOrders -->
 
 <!-- DOCGEN:START getMyReviews -->
+
 ### getMyReviews
 
 **Summary**: List my reviews
@@ -1017,6 +1110,7 @@ Content-Type: `application/json`
 **Description**: Returns reviews written for or by the current user, including author and target details.
 
 **Responses:**
+
 - 200
 - 500
 
@@ -1024,11 +1118,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMyReviews )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMyReviews)
 
 <!-- DOCGEN:END getMyReviews -->
 
 <!-- DOCGEN:START getReviewsByUserId -->
+
 ### getReviewsByUserId
 
 **Summary**: List reviews related to a user
@@ -1037,11 +1132,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | user_id |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | user_id |             |
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -1050,11 +1146,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getReviewsByUserId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getReviewsByUserId)
 
 <!-- DOCGEN:END getReviewsByUserId -->
 
 <!-- DOCGEN:START getTransactions -->
+
 ### getTransactions
 
 **Summary**: List transactions for a user
@@ -1063,11 +1160,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | user_id |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | user_id |             |
 
 **Responses:**
+
 - 200
 - 400
 
@@ -1075,11 +1173,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getTransactions )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getTransactions)
 
 <!-- DOCGEN:END getTransactions -->
 
 <!-- DOCGEN:START getUserByReferralCode -->
+
 ### getUserByReferralCode
 
 **Summary**: Get user by referral code
@@ -1088,11 +1187,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | code |  |
+| Name      | In   | Type | Description |
+| --------- | ---- | ---- | ----------- |
+| undefined | path | code |             |
 
 **Responses:**
+
 - 200
 - 400
 
@@ -1100,11 +1200,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByReferralCode )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByReferralCode)
 
 <!-- DOCGEN:END getUserByReferralCode -->
 
 <!-- DOCGEN:START claimReward -->
+
 ### claimReward
 
 **Summary**: Claim referral reward
@@ -1116,6 +1217,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 
@@ -1123,11 +1225,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/claimReward )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/claimReward)
 
 <!-- DOCGEN:END claimReward -->
 
 <!-- DOCGEN:START getUserCredits -->
+
 ### getUserCredits
 
 **Summary**: Get my credits and cashback
@@ -1136,11 +1239,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | service_type |  |
+| Name      | In   | Type         | Description |
+| --------- | ---- | ------------ | ----------- |
+| undefined | path | service_type |             |
 
 **Responses:**
+
 - 200
 - 400
 
@@ -1148,11 +1252,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserCredits )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserCredits)
 
 <!-- DOCGEN:END getUserCredits -->
 
 <!-- DOCGEN:START getMyActiveOrders -->
+
 ### getMyActiveOrders
 
 **Summary**: Get my active orders
@@ -1160,6 +1265,7 @@ Content-Type: `application/json`
 **Description**: Returns current active delivery, taxi/transfer orders and first active reservation.
 
 **Responses:**
+
 - 200
 - 400
 
@@ -1167,11 +1273,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMyActiveOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMyActiveOrders)
 
 <!-- DOCGEN:END getMyActiveOrders -->
 
 <!-- DOCGEN:START getReferral -->
+
 ### getReferral
 
 **Summary**: Get my referral record
@@ -1179,6 +1286,7 @@ Content-Type: `application/json`
 **Description**: Returns the referral record associated with the current user, if any.
 
 **Responses:**
+
 - 200
 - 400
 
@@ -1186,11 +1294,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getReferral )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getReferral)
 
 <!-- DOCGEN:END getReferral -->
 
 <!-- DOCGEN:START updateMarketingNotifications -->
+
 ### updateMarketingNotifications
 
 **Summary**: Update marketing notifications preference
@@ -1202,6 +1311,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 
@@ -1209,11 +1319,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMarketingNotifications )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMarketingNotifications)
 
 <!-- DOCGEN:END updateMarketingNotifications -->
 
 <!-- DOCGEN:START updateAdsPersonalization -->
+
 ### updateAdsPersonalization
 
 **Summary**: Update ads personalization preference
@@ -1225,6 +1336,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 
@@ -1232,11 +1344,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAdsPersonalization )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAdsPersonalization)
 
 <!-- DOCGEN:END updateAdsPersonalization -->
 
 <!-- DOCGEN:START updateNewsletter -->
+
 ### updateNewsletter
 
 **Summary**: Update newsletter subscription preference
@@ -1248,6 +1361,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 
@@ -1255,11 +1369,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateNewsletter )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateNewsletter)
 
 <!-- DOCGEN:END updateNewsletter -->
 
 <!-- DOCGEN:START requestData -->
+
 ### requestData
 
 **Summary**: Request my stored data (GDPR)
@@ -1267,6 +1382,7 @@ Content-Type: `application/json`
 **Description**: Returns a comprehensive snapshot of the current user's stored data across related models.
 
 **Responses:**
+
 - 200
 - 400
 - 500
@@ -1275,7 +1391,6 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestData )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestData)
 
 <!-- DOCGEN:END requestData -->
-

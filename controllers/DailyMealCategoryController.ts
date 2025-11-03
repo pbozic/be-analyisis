@@ -26,26 +26,6 @@ import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
  * @bodyRequired
  * @response 201 - Daily meal category created successfully
  * @responseContent {object} 201.application/json
- * @responseExample 201.application/json {
- *   "daily_meal_category_id": "uuid",
- *   "business_id": "uuid",
- *   "category_id": "uuid",
- *   "created_at": "2024-07-01T00:00:00.000Z",
- *   "start_date": "2024-07-01T00:00:00.000Z",
- *   "category": {
- *     "categories_id": "uuid",
- *     "name": "string",
- *     "description": "string",
- *     "type": "string"
- *   },
- *   "daily_meal_category_prices": [
- *     {
- *       "daily_meal_category_prices_id": "uuid",
- *       "daily_meal_category_id": "uuid",
- *       "price": 1000,
- *       "valid_from": "2024-07-01T00:00:00.000Z",
- *       "created_at": "2024-07-01T00:00:00.000Z"
- *     }
  *   ]
  * }
  * @response 500 - Error creating daily meal category
@@ -145,13 +125,6 @@ export async function getDailyMealCategoriesForBusiness(
  * @bodyRequired
  * @response 201 - Price entry added successfully and menu categories updated
  * @responseContent {object} 201.application/json
- * @responseExample 201.application/json {
- *   "daily_meal_category_prices_id": "uuid",
- *   "daily_meal_category_id": "uuid",
- *   "price": 1200,
- *   "valid_from": "2024-08-01T00:00:00.000Z",
- *   "created_at": "2024-08-01T00:00:00.000Z"
- * }
  * @response 500 - Error adding price entry
  * @prisma_model daily_meal_category_prices
  */
@@ -192,14 +165,6 @@ export async function addPriceToDailyMealCategory(
  * @operationId deactivateDailyMealCategory
  * @response 200 - Daily meal category deleted successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
- *   "daily_meal_category_id": "uuid",
- *   "business_id": "uuid",
- *   "category_id": "uuid",
- *   "created_at": "2024-07-01T00:00:00.000Z",
- *   "start_date": "2024-07-01T00:00:00.000Z"
- *   "active": false,
- * }
  * @response 500 - Error deleting daily meal category
  * @prisma_model daily_meal_categories
  */
@@ -225,14 +190,6 @@ export async function deactivateDailyMealCategory(
  * @operationId activateDailyMealCategory
  * @response 200 - Daily meal category activated successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
- *   "daily_meal_category_id": "uuid",
- *   "business_id": "uuid",
- *   "category_id": "uuid",
- *   "created_at": "2024-07-01T00:00:00.000Z",
- *   "start_date": "2024-07-01T00:00:00.000Z"
- *   "active": true,
- * }
  * @response 500 - Error deleting daily meal category
  * @prisma_model daily_meal_categories
  */

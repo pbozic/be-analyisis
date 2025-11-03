@@ -200,7 +200,7 @@ function formatDocBlock(name, doc) {
 	if (responses.length) {
 		block += '**Responses:**\n';
 		for (const r of responses) {
-			block += `- ${r.name}\n`;
+			block += `- ${r.name} ${r.description}\n`;
 		}
 		block += '\n';
 	}

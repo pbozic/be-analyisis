@@ -1,6 +1,7 @@
 # BusinessTeamController Controller
 
 <!-- DOCGEN:START getBusinessTeamsByBusinessId -->
+
 ### getBusinessTeamsByBusinessId
 
 **Summary**: Get all business teams for a business
@@ -9,11 +10,12 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_id |  |
+| Name      | In   | Type        | Description |
+| --------- | ---- | ----------- | ----------- |
+| undefined | path | business_id |             |
 
 **Responses:**
+
 - 200
 - 500
 
@@ -21,11 +23,12 @@
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessTeamsByBusinessId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessTeamsByBusinessId)
 
 <!-- DOCGEN:END getBusinessTeamsByBusinessId -->
 
 <!-- DOCGEN:START getBusinessTeamById -->
+
 ### getBusinessTeamById
 
 **Summary**: Get a business team by ID
@@ -34,11 +37,12 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_teams_id |  |
+| Name      | In   | Type              | Description |
+| --------- | ---- | ----------------- | ----------- |
+| undefined | path | business_teams_id |             |
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -47,11 +51,12 @@
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessTeamById )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessTeamById)
 
 <!-- DOCGEN:END getBusinessTeamById -->
 
 <!-- DOCGEN:START createBusinessTeam -->
+
 ### createBusinessTeam
 
 **Summary**: Create a new business team
@@ -63,6 +68,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 201
 - 500
 
@@ -70,11 +76,12 @@ Content-Type: `application/json`
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBusinessTeam )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBusinessTeam)
 
 <!-- DOCGEN:END createBusinessTeam -->
 
 <!-- DOCGEN:START updateBusinessTeam -->
+
 ### updateBusinessTeam
 
 **Summary**: Update an existing business team
@@ -83,15 +90,16 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_teams_id |  |
+| Name      | In   | Type              | Description |
+| --------- | ---- | ----------------- | ----------- |
+| undefined | path | business_teams_id |             |
 
 **Request Body:** (optional)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -100,11 +108,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBusinessTeam )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBusinessTeam)
 
 <!-- DOCGEN:END updateBusinessTeam -->
 
 <!-- DOCGEN:START editBusinessTeamUsers -->
+
 ### editBusinessTeamUsers
 
 **Summary**: Update users in a business team
@@ -113,15 +122,16 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_teams_id |  |
+| Name      | In   | Type              | Description |
+| --------- | ---- | ----------------- | ----------- |
+| undefined | path | business_teams_id |             |
 
 **Request Body:** (optional)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 - 404
@@ -131,11 +141,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/editBusinessTeamUsers )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/editBusinessTeamUsers)
 
 <!-- DOCGEN:END editBusinessTeamUsers -->
 
 <!-- DOCGEN:START setBusinessTeamLimit -->
+
 ### setBusinessTeamLimit
 
 **Summary**: Update team limit per person
@@ -144,15 +155,16 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_teams_id |  |
+| Name      | In   | Type              | Description |
+| --------- | ---- | ----------------- | ----------- |
+| undefined | path | business_teams_id |             |
 
 **Request Body:** (optional)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -161,11 +173,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setBusinessTeamLimit )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setBusinessTeamLimit)
 
 <!-- DOCGEN:END setBusinessTeamLimit -->
 
 <!-- DOCGEN:START setBusinessTeamName -->
+
 ### setBusinessTeamName
 
 **Summary**: Update team name
@@ -174,15 +187,16 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_teams_id |  |
+| Name      | In   | Type              | Description |
+| --------- | ---- | ----------------- | ----------- |
+| undefined | path | business_teams_id |             |
 
 **Request Body:** (optional)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -191,11 +205,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setBusinessTeamName )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setBusinessTeamName)
 
 <!-- DOCGEN:END setBusinessTeamName -->
 
 <!-- DOCGEN:START deleteBusinessTeam -->
+
 ### deleteBusinessTeam
 
 **Summary**: Delete a business team
@@ -204,11 +219,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_teams_id |  |
+| Name      | In   | Type              | Description |
+| --------- | ---- | ----------------- | ----------- |
+| undefined | path | business_teams_id |             |
 
 **Responses:**
+
 - 200
 - 500
 
@@ -216,11 +232,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteBusinessTeam )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteBusinessTeam)
 
 <!-- DOCGEN:END deleteBusinessTeam -->
 
 <!-- DOCGEN:START addUserToTeam -->
+
 ### addUserToTeam
 
 **Summary**: Add an unassigned user to a business team
@@ -232,6 +249,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 - 404
@@ -241,11 +259,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addUserToTeam )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addUserToTeam)
 
 <!-- DOCGEN:END addUserToTeam -->
 
 <!-- DOCGEN:START removeUserFromTeam -->
+
 ### removeUserFromTeam
 
 **Summary**: Remove a user from a business team
@@ -253,6 +272,7 @@ Content-Type: `application/json`
 **Description**: Removes a user from their current business team.
 
 **Responses:**
+
 - 200
 - 400
 - 404
@@ -262,11 +282,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeUserFromTeam )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeUserFromTeam)
 
 <!-- DOCGEN:END removeUserFromTeam -->
 
 <!-- DOCGEN:START moveUserToTeam -->
+
 ### moveUserToTeam
 
 **Summary**: Move a user to a different business team
@@ -278,6 +299,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 - 404
@@ -287,7 +309,6 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/moveUserToTeam )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/moveUserToTeam)
 
 <!-- DOCGEN:END moveUserToTeam -->
-

@@ -1,6 +1,7 @@
 # BusinessClient Controller
 
 <!-- DOCGEN:START getAllBusinessClients -->
+
 ### getAllBusinessClients
 
 **Summary**: Get a list of all business clients
@@ -8,19 +9,21 @@
 **Description**: Returns a list of all business clients.
 
 **Responses:**
-- 200
-- 400
+
+- 200 - successful operation
+- 400 - Error occurred while obtaining the business client list
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 - Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllBusinessClients )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllBusinessClients)
 
 <!-- DOCGEN:END getAllBusinessClients -->
 
 <!-- DOCGEN:START getBusinessClientById -->
+
 ### getBusinessClientById
 
 **Summary**: Get a business client by ID
@@ -29,24 +32,26 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_clients_id |  |
+| Name      | In   | Type                | Description |
+| --------- | ---- | ------------------- | ----------- |
+| undefined | path | business_clients_id |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - successful operation
+- 400 - Error occurred while obtaining the business client
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 - Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessClientById )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessClientById)
 
 <!-- DOCGEN:END getBusinessClientById -->
 
 <!-- DOCGEN:START getBusinessClientsByBusinessId -->
+
 ### getBusinessClientsByBusinessId
 
 **Summary**: Get business clients by business ID
@@ -55,24 +60,26 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_id |  |
+| Name      | In   | Type        | Description |
+| --------- | ---- | ----------- | ----------- |
+| undefined | path | business_id |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - successful operation
+- 400 - Error occurred while obtaining the business client list
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 - Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessClientsByBusinessId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessClientsByBusinessId)
 
 <!-- DOCGEN:END getBusinessClientsByBusinessId -->
 
 <!-- DOCGEN:START createBusinessClient -->
+
 ### createBusinessClient
 
 **Summary**: Create a new business client
@@ -84,18 +91,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 201
-- 400
+
+- 201 - Business client created successfully. Returns the created business client.
+- 400 - Error creating business client.
 
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBusinessClient )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBusinessClient)
 
 <!-- DOCGEN:END createBusinessClient -->
 
 <!-- DOCGEN:START updateBusinessClient -->
+
 ### updateBusinessClient
 
 **Summary**: Update a business client
@@ -104,28 +113,30 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_clients_id |  |
+| Name      | In   | Type                | Description |
+| --------- | ---- | ------------------- | ----------- |
+| undefined | path | business_clients_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
-- 404
+
+- 200 - Business client updated successfully. Returns the updated business client.
+- 400 - Error updating business client.
+- 404 - Business client not found.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBusinessClient )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBusinessClient)
 
 <!-- DOCGEN:END updateBusinessClient -->
 
 <!-- DOCGEN:START removeBusinessClient -->
+
 ### removeBusinessClient
 
 **Summary**: Remove a business client
@@ -134,19 +145,19 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_clients_id |  |
+| Name      | In   | Type                | Description |
+| --------- | ---- | ------------------- | ----------- |
+| undefined | path | business_clients_id |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Business client removed successfully.
+- 400 - Error removing business client.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeBusinessClient )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeBusinessClient)
 
 <!-- DOCGEN:END removeBusinessClient -->
-

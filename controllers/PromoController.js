@@ -799,18 +799,10 @@ export async function createPaymentIntentForPromoBuy(req, res) {
  * @description Creates pending promo section buy records (unpaid) and a Stripe PaymentIntent for all of them. On successful webhook confirmation the buys become active.
  * @operationId createPromoSectionBuy
  * @bodyDescription Promo sections to purchase with tier, duration (days) and activePrice per day
- * @bodyContent {
- *   "promoSections": [
- *     { "promo_sections_id": "uuid", "tier": 1, "duration": 30, "activePrice": 12.5 }
- *   ]
- * } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Created payment intent for promo section buys
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
- *   "clientSecret": "pi_123_secret_abc",
- *   "promo_section_buy_ids": ["uuid1", "uuid2"]
- * }
  * @response 400 - Validation error
  * @response 500 - Error creating promo section buy payment intent
  * @prisma_model promo_sections_buy

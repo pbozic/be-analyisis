@@ -1,0 +1,14 @@
+components:
+  schemas:
+    UserResponse:
+      - type: object
+        properties:
+        id:
+          type: string
+          example: '78a2903f-fd11-4795-b891-eb623fc90408'
+        name:
+          type: string
+          example: Jani Kolani
+        age:
+          type: number
+          example: 18

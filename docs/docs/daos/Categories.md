@@ -1,6 +1,7 @@
 # Categories DAO
 
 <!-- DOCGEN:START getCategories -->
+
 ### getCategories
 
 **Description**: Get all categories with translations, icon, and subcategories; flattens translations onto the result.
@@ -10,11 +11,13 @@
 <!-- DOCGEN:END getCategories -->
 
 <!-- DOCGEN:START getCategoriesByType -->
+
 ### getCategoriesByType
 
 **Description**: Get categories by category_type with translations and relations.
 
 **Parameters**:
+
 - type: {string} - Category type to filter by.
 
 **Returns**: {Promise<object[]>} - Array of category records.
@@ -22,11 +25,13 @@
 <!-- DOCGEN:END getCategoriesByType -->
 
 <!-- DOCGEN:START getCategoryById -->
+
 ### getCategoryById
 
 **Description**: Get a single category by ID with translations and relations.
 
 **Parameters**:
+
 - id: {string} - Category ID.
 
 **Returns**: {Promise<object>} - The category record.
@@ -34,11 +39,13 @@
 <!-- DOCGEN:END getCategoryById -->
 
 <!-- DOCGEN:START createCategory -->
+
 ### createCategory
 
 **Description**: Create a new category with translations, optional parent, subcategories, and optional icon.
 
 **Parameters**:
+
 - categoryData: {object} - Base category fields (tag, category_type, name, etc.).
 - translations: {object[]} - Array of translation objects to insert.
 - subcategories: {string[]} - Array of category IDs to connect as subcategories.
@@ -51,11 +58,13 @@
 <!-- DOCGEN:END createCategory -->
 
 <!-- DOCGEN:START updateCategory -->
+
 ### updateCategory
 
 **Description**: Update a category and its translations, subcategories, parent, and optional icon.
 
 **Parameters**:
+
 - id: {string} - Category ID to update.
 - categoryData: {object} - Partial fields to update on category.
 - translations: {object[]} - Translations to upsert by language.
@@ -68,14 +77,15 @@
 <!-- DOCGEN:END updateCategory -->
 
 <!-- DOCGEN:START deleteCategory -->
+
 ### deleteCategory
 
 **Description**: Delete a category by ID after disconnecting related words.
 
 **Parameters**:
+
 - id: {string} - Category ID.
 
 **Returns**: {Promise<object>} - The deleted category record.
 
 <!-- DOCGEN:END deleteCategory -->
-

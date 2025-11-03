@@ -1456,7 +1456,7 @@ async function getBusinessEarnings(req, res) {
  * @queryParam {string} start_date - The start date for the earnings calculation
  * @queryParam {string} end_date - The end date for the earnings calculation
  * @response 200 - Successful operation, returns the earnings data for all businesses
- * @responseContent {object[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Missing required parameters
  * @responseContent {object} 400.application/json The error object
  * @prisma_model businesses
@@ -2511,12 +2511,7 @@ function buildPromoBuckets(
  * @description Returns promo analytics for sections for a business and time period, including purchased promo sections.
  * @operationId getBusinessPromoSectionsAnalytics
  * @bodyDescription Time period definition
- * @bodyContent {
- *   "type": 0,
- *   "start_date": "2025-01-01T00:00:00.000Z",
- *   "end_date": null,
- *   "ids": ["optional array of promo_sections_id to filter"]
- * } application/json
+ * @bodyContent {} application/json
  * @bodyRequired
  * @response 200 - successful operation
  * @responseContent {object} 200.application/json
@@ -2631,12 +2626,7 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
  * @description Returns promo analytics for words for a business and time period, including purchased words.
  * @operationId getBusinessPromoWordsAnalytics
  * @bodyDescription Time period definition
- * @bodyContent {
- *   "type": 0,
- *   "start_date": "2025-01-01T00:00:00.000Z",
- *   "end_date": null,
- *   "ids": ["optional array of word_id to filter"]
- * } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - successful operation
  * @responseContent {object} 200.application/json

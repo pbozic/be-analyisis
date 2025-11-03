@@ -48,7 +48,7 @@ async function getOrdersWithPagination(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Settings updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BlogPostResponse} 200.application/json
  * @response 400 - Invalid request data
  * @response 500 - Server error while updating settings
  * @prisma_model driver_activity_settings
@@ -101,6 +101,7 @@ async function getDriversActivitySettings(req, res) {
 		return res.status(500).json({ error: error.message });
 	}
 }
+
 export { getOrdersWithPagination };
 export { getDriversActivitySettings };
 export { setDriversActivitySettings };

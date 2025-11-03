@@ -1,6 +1,7 @@
 # AuthController Controller
 
 <!-- DOCGEN:START getScheduledUsers -->
+
 ### getScheduledUsers
 
 **Summary**: Get scheduled users
@@ -8,18 +9,20 @@
 **Description**: Fetches all scheduled users.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the newly created order in the response body.
+- 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getScheduledUsers )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getScheduledUsers)
 
 <!-- DOCGEN:END getScheduledUsers -->
 
 <!-- DOCGEN:START login -->
+
 ### login
 
 **Summary**: User login
@@ -31,19 +34,21 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
-- 500
+
+- 200 - Successful operation. Returns user details along with accessToken and refreshToken in the response body, additionally sets Authorization header with the accessToken.
+- 400 - Unsuccessful operation. Returns error message "Wrong email / password combination." if the either the email or password (or both) are incorrect.
+- 500 - Server error. Returns error message "Error something went wrong.." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/loginUser )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/loginUser)
 
 <!-- DOCGEN:END login -->
 
 <!-- DOCGEN:START register -->
+
 ### register
 
 **Summary**: Register a new user
@@ -55,18 +60,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - User registered successfully. Returns user info and tokens.
+- 400 - Error something went wrong.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/registerNewUser )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/registerNewUser)
 
 <!-- DOCGEN:END register -->
 
 <!-- DOCGEN:START refreshToken -->
+
 ### refreshToken
 
 **Summary**: Refresh access token
@@ -78,19 +85,21 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
-- 401
+
+- 200 - Access token successfully refreshed. Returns newly generated access and refresh tokens.
+- 400 - Access Denied. No refresh token provided.
+- 401 - Access Denied. Token expired.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/refreshToken )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/refreshToken)
 
 <!-- DOCGEN:END refreshToken -->
 
 <!-- DOCGEN:START requestPasswordReset -->
+
 ### requestPasswordReset
 
 **Summary**: Request a password reset
@@ -102,18 +111,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Password reset request processed. A token is sent to the user if the account is found.
+- 400 - Error obtaining user information.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestPasswordReset )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/requestPasswordReset)
 
 <!-- DOCGEN:END requestPasswordReset -->
 
 <!-- DOCGEN:START registerTaxiService -->
+
 ### registerTaxiService
 
 **Summary**: Register a new taxi service
@@ -125,18 +136,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 201
-- 400
+
+- 201 - Taxi service registered successfully
+- 400 - Error registering taxi service
 
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/registerTaxiService )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/registerTaxiService)
 
 <!-- DOCGEN:END registerTaxiService -->
 
 <!-- DOCGEN:START registerDeliveryService -->
+
 ### registerDeliveryService
 
 **Summary**: Register a new delivery service
@@ -148,18 +161,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 201
-- 400
+
+- 201 - Delivery service registered successfully
+- 400 - Error registering delivery service
 
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/registerDeliveryService )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/registerDeliveryService)
 
 <!-- DOCGEN:END registerDeliveryService -->
 
 <!-- DOCGEN:START registerMerchantService -->
+
 ### registerMerchantService
 
 **Summary**: Register a new merchant service
@@ -171,18 +186,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 201
-- 400
+
+- 201 - Merchant service registered successfully
+- 400 - Error registering merchant service
 
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/registerMerchantService )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/registerMerchantService)
 
 <!-- DOCGEN:END registerMerchantService -->
 
 <!-- DOCGEN:START registerBusiness -->
+
 ### registerBusiness
 
 **Summary**: Register a new business
@@ -194,19 +211,17 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 201
-- 400
+
+- 201 - Business registered successfully
+- 400 - Error registering business
 
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/registerBusiness )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/registerBusiness)
 
 <!-- DOCGEN:END registerBusiness -->
-
-<!-- DOCGEN:START createScheduledUser -->
-### createScheduledUser
 
 **Summary**: Create a new scheduled user.
 
@@ -217,6 +232,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 500
 
@@ -224,11 +240,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createScheduledUser )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createScheduledUser)
 
 <!-- DOCGEN:END createScheduledUser -->
 
 <!-- DOCGEN:START updateScheduledUser -->
+
 ### updateScheduledUser
 
 **Summary**: Update a scheduled user's details
@@ -240,6 +257,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 
@@ -247,11 +265,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateScheduledUser )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateScheduledUser)
 
 <!-- DOCGEN:END updateScheduledUser -->
 
 <!-- DOCGEN:START checkEmailAvailability -->
+
 ### checkEmailAvailability
 
 **Summary**: Check if an email is already taken
@@ -260,22 +279,24 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | email |  |
+| Name      | In   | Type  | Description |
+| --------- | ---- | ----- | ----------- |
+| undefined | path | email |             |
 
 **Responses:**
-- 200
+
+- 200 - Returns the availability status for email.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/checkEmailAvailability )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/checkEmailAvailability)
 
 <!-- DOCGEN:END checkEmailAvailability -->
 
 <!-- DOCGEN:START checkTelephoneAvailability -->
+
 ### checkTelephoneAvailability
 
 **Summary**: Check if a telephone number is already taken
@@ -284,22 +305,24 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | telephone |  |
+| Name      | In   | Type      | Description |
+| --------- | ---- | --------- | ----------- |
+| undefined | path | telephone |             |
 
 **Responses:**
-- 200
+
+- 200 - Returns the availability status for telephone.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/checkTelephoneAvailability )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/checkTelephoneAvailability)
 
 <!-- DOCGEN:END checkTelephoneAvailability -->
 
 <!-- DOCGEN:START getMunicipalitiesWithLicenseRequirements -->
+
 ### getMunicipalitiesWithLicenseRequirements
 
 **Summary**: List municipalities requiring license
@@ -307,6 +330,7 @@ Content-Type: `application/json`
 **Description**: Returns municipalities where requires_license is true.
 
 **Responses:**
+
 - 200
 - 400
 
@@ -314,11 +338,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMunicipalitiesWithLicenseRequirements )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMunicipalitiesWithLicenseRequirements)
 
 <!-- DOCGEN:END getMunicipalitiesWithLicenseRequirements -->
 
 <!-- DOCGEN:START authenticateRegistrationSession -->
+
 ### authenticateRegistrationSession
 
 **Summary**: Authenticate registration session
@@ -330,6 +355,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 400
 - 500
@@ -338,7 +364,6 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/authenticateRegistrationSession )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/authenticateRegistrationSession)
 
 <!-- DOCGEN:END authenticateRegistrationSession -->
-

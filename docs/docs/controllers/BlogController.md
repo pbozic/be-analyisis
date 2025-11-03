@@ -1,6 +1,7 @@
 # BlogController Controller
 
 <!-- DOCGEN:START searchBlogPosts -->
+
 ### searchBlogPosts
 
 **Summary**: Search blog posts
@@ -12,6 +13,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 500
 
@@ -19,11 +21,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/searchBlogPosts )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/searchBlogPosts)
 
 <!-- DOCGEN:END searchBlogPosts -->
 
 <!-- DOCGEN:START getBlogPostById -->
+
 ### getBlogPostById
 
 **Summary**: Get blog post by ID
@@ -31,6 +34,7 @@ Content-Type: `application/json`
 **Description**: Retrieves a single blog post by its unique ID.
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -39,11 +43,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBlogPostById )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBlogPostById)
 
 <!-- DOCGEN:END getBlogPostById -->
 
 <!-- DOCGEN:START getBlogPostBySlug -->
+
 ### getBlogPostBySlug
 
 **Summary**: Get blog post by slug
@@ -51,6 +56,7 @@ Content-Type: `application/json`
 **Description**: Retrieves a single blog post by its unique slug.
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -59,11 +65,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBlogPostBySlug )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBlogPostBySlug)
 
 <!-- DOCGEN:END getBlogPostBySlug -->
 
 <!-- DOCGEN:START createBlogPost -->
+
 ### createBlogPost
 
 **Summary**: Create a new blog post
@@ -75,6 +82,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 201
 - 500
 
@@ -82,11 +90,12 @@ Content-Type: `application/json`
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBlogPost )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBlogPost)
 
 <!-- DOCGEN:END createBlogPost -->
 
 <!-- DOCGEN:START updateBlogPost -->
+
 ### updateBlogPost
 
 **Summary**: Update a blog post
@@ -98,6 +107,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 500
 
@@ -105,11 +115,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBlogPost )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBlogPost)
 
 <!-- DOCGEN:END updateBlogPost -->
 
 <!-- DOCGEN:START deleteBlogPost -->
+
 ### deleteBlogPost
 
 **Summary**: Delete a blog post
@@ -117,6 +128,7 @@ Content-Type: `application/json`
 **Description**: Deletes a blog post by its unique ID.
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -125,11 +137,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteBlogPost )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteBlogPost)
 
 <!-- DOCGEN:END deleteBlogPost -->
 
 <!-- DOCGEN:START getBlogPosts -->
+
 ### getBlogPosts
 
 **Summary**: Get all blog posts
@@ -137,6 +150,7 @@ Content-Type: `application/json`
 **Description**: Retrieves all blog posts.
 
 **Responses:**
+
 - 200
 - 500
 
@@ -144,11 +158,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBlogPosts )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBlogPosts)
 
 <!-- DOCGEN:END getBlogPosts -->
 
 <!-- DOCGEN:START getBlogCategories -->
+
 ### getBlogCategories
 
 **Summary**: Get all blog categories
@@ -156,6 +171,7 @@ Content-Type: `application/json`
 **Description**: Retrieves all blog categories.
 
 **Responses:**
+
 - 200
 - 500
 
@@ -163,11 +179,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBlogCategories )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBlogCategories)
 
 <!-- DOCGEN:END getBlogCategories -->
 
 <!-- DOCGEN:START createBlogCategory -->
+
 ### createBlogCategory
 
 **Summary**: Create a new blog category
@@ -179,6 +196,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 201
 - 500
 
@@ -186,11 +204,12 @@ Content-Type: `application/json`
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBlogCategory )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBlogCategory)
 
 <!-- DOCGEN:END createBlogCategory -->
 
 <!-- DOCGEN:START deleteBlogCategory -->
+
 ### deleteBlogCategory
 
 **Summary**: Delete a blog category
@@ -198,6 +217,7 @@ Content-Type: `application/json`
 **Description**: Deletes a blog category by its unique ID.
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -206,11 +226,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteBlogCategory )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteBlogCategory)
 
 <!-- DOCGEN:END deleteBlogCategory -->
 
 <!-- DOCGEN:START updateBlogCategory -->
+
 ### updateBlogCategory
 
 **Summary**: Update a blog category
@@ -222,6 +243,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -230,11 +252,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBlogCategory )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBlogCategory)
 
 <!-- DOCGEN:END updateBlogCategory -->
 
 <!-- DOCGEN:START getBlogTags -->
+
 ### getBlogTags
 
 **Summary**: Get all blog tags
@@ -242,6 +265,7 @@ Content-Type: `application/json`
 **Description**: Retrieves all blog tags.
 
 **Responses:**
+
 - 200
 - 500
 
@@ -249,11 +273,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBlogTags )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBlogTags)
 
 <!-- DOCGEN:END getBlogTags -->
 
 <!-- DOCGEN:START createBlogTag -->
+
 ### createBlogTag
 
 **Summary**: Create a new blog tag
@@ -265,6 +290,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 201
 - 400
 - 500
@@ -273,11 +299,12 @@ Content-Type: `application/json`
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBlogTag )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBlogTag)
 
 <!-- DOCGEN:END createBlogTag -->
 
 <!-- DOCGEN:START deleteBlogTag -->
+
 ### deleteBlogTag
 
 **Summary**: Delete a blog tag
@@ -285,6 +312,7 @@ Content-Type: `application/json`
 **Description**: Deletes a blog tag by its unique ID.
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -293,11 +321,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteBlogTag )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteBlogTag)
 
 <!-- DOCGEN:END deleteBlogTag -->
 
 <!-- DOCGEN:START updateBlogTag -->
+
 ### updateBlogTag
 
 **Summary**: Update a blog tag
@@ -309,6 +338,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -317,11 +347,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBlogTag )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBlogTag)
 
 <!-- DOCGEN:END updateBlogTag -->
 
 <!-- DOCGEN:START createBlogImageByUrl -->
+
 ### createBlogImageByUrl
 
 **Summary**: Create blog image by URL
@@ -333,6 +364,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 201
 - 400
 - 500
@@ -341,11 +373,12 @@ Content-Type: `application/json`
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBlogImageByUrl )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBlogImageByUrl)
 
 <!-- DOCGEN:END createBlogImageByUrl -->
 
 <!-- DOCGEN:START createBlogImageByFile -->
+
 ### createBlogImageByFile
 
 **Summary**: Create blog image by file
@@ -357,6 +390,7 @@ Type: `multipart/form-data`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 201
 - 400
 - 500
@@ -365,7 +399,6 @@ Content-Type: `application/json`
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBlogImageByFile )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBlogImageByFile)
 
 <!-- DOCGEN:END createBlogImageByFile -->
-

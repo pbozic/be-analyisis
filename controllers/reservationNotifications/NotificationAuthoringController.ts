@@ -465,7 +465,7 @@ export async function upsertNotificationPreference(
  * @summary List supported channels
  * @operationId listNotificationChannels
  * @response 200 - Channels retrieved
- * @responseContent {string[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function listNotificationChannels(_req: ValidatedRequest<null>, res: Response): Promise<void> {

@@ -1,6 +1,7 @@
 # WordController Controller
 
 <!-- DOCGEN:START createWord -->
+
 ### createWord
 
 **Summary**: Create a new word
@@ -12,6 +13,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 201
 - 500
 
@@ -19,11 +21,12 @@ Content-Type: `application/json`
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createWord )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createWord)
 
 <!-- DOCGEN:END createWord -->
 
 <!-- DOCGEN:START updateWord -->
+
 ### updateWord
 
 **Summary**: Update a word
@@ -32,15 +35,16 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | id |  |
+| Name      | In   | Type | Description |
+| --------- | ---- | ---- | ----------- |
+| undefined | path | id   |             |
 
 **Request Body:** (optional)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -49,11 +53,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateWord )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateWord)
 
 <!-- DOCGEN:END updateWord -->
 
 <!-- DOCGEN:START deleteWord -->
+
 ### deleteWord
 
 **Summary**: Delete a word
@@ -62,11 +67,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | id |  |
+| Name      | In   | Type | Description |
+| --------- | ---- | ---- | ----------- |
+| undefined | path | id   |             |
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -75,11 +81,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteWord )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteWord)
 
 <!-- DOCGEN:END deleteWord -->
 
 <!-- DOCGEN:START getWordById -->
+
 ### getWordById
 
 **Summary**: Get a word by ID
@@ -88,11 +95,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | id |  |
+| Name      | In   | Type | Description |
+| --------- | ---- | ---- | ----------- |
+| undefined | path | id   |             |
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -101,11 +109,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getWordById )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getWordById)
 
 <!-- DOCGEN:END getWordById -->
 
 <!-- DOCGEN:START getAllWords -->
+
 ### getAllWords
 
 **Summary**: List all words
@@ -113,6 +122,7 @@ Content-Type: `application/json`
 **Description**: Retrieves all words with translations and categories.
 
 **Responses:**
+
 - 200
 - 500
 
@@ -120,11 +130,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllWords )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllWords)
 
 <!-- DOCGEN:END getAllWords -->
 
 <!-- DOCGEN:START removeCategoryFromWord -->
+
 ### removeCategoryFromWord
 
 **Summary**: Remove category from word
@@ -133,11 +144,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | id |  |
+| Name      | In   | Type | Description |
+| --------- | ---- | ---- | ----------- |
+| undefined | path | id   |             |
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -146,11 +158,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeCategoryFromWord )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeCategoryFromWord)
 
 <!-- DOCGEN:END removeCategoryFromWord -->
 
 <!-- DOCGEN:START createWordBuy -->
+
 ### createWordBuy
 
 **Summary**: Create word buy subscription items
@@ -162,6 +175,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 500
 
@@ -169,11 +183,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createWordBuy )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createWordBuy)
 
 <!-- DOCGEN:END createWordBuy -->
 
 <!-- DOCGEN:START getWordBuyById -->
+
 ### getWordBuyById
 
 **Summary**: Get word buy by ID
@@ -182,11 +197,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | id |  |
+| Name      | In   | Type | Description |
+| --------- | ---- | ---- | ----------- |
+| undefined | path | id   |             |
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -195,11 +211,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getWordBuyById )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getWordBuyById)
 
 <!-- DOCGEN:END getWordBuyById -->
 
 <!-- DOCGEN:START getAllWordBuys -->
+
 ### getAllWordBuys
 
 **Summary**: List all word buys
@@ -207,6 +224,7 @@ Content-Type: `application/json`
 **Description**: Retrieves all word buys.
 
 **Responses:**
+
 - 200
 - 500
 
@@ -214,11 +232,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllWordBuys )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllWordBuys)
 
 <!-- DOCGEN:END getAllWordBuys -->
 
 <!-- DOCGEN:START deleteWordBuy -->
+
 ### deleteWordBuy
 
 **Summary**: Delete a word buy
@@ -227,11 +246,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | id |  |
+| Name      | In   | Type | Description |
+| --------- | ---- | ---- | ----------- |
+| undefined | path | id   |             |
 
 **Responses:**
+
 - 200
 - 500
 
@@ -239,11 +259,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteWordBuy )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteWordBuy)
 
 <!-- DOCGEN:END deleteWordBuy -->
 
 <!-- DOCGEN:START updateWordBuy -->
+
 ### updateWordBuy
 
 **Summary**: Update a word buy
@@ -252,15 +273,16 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | id |  |
+| Name      | In   | Type | Description |
+| --------- | ---- | ---- | ----------- |
+| undefined | path | id   |             |
 
 **Request Body:** (optional)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 404
 - 500
@@ -269,11 +291,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateWordBuy )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateWordBuy)
 
 <!-- DOCGEN:END updateWordBuy -->
 
 <!-- DOCGEN:START updateWordBuys -->
+
 ### updateWordBuys
 
 **Summary**: Bulk create/update word buys
@@ -285,6 +308,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 500
 
@@ -292,11 +316,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateWordBuys )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateWordBuys)
 
 <!-- DOCGEN:END updateWordBuys -->
 
 <!-- DOCGEN:START getWordBuysByBusiness -->
+
 ### getWordBuysByBusiness
 
 **Summary**: Get active word buys for a business
@@ -305,11 +330,12 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_id |  |
+| Name      | In   | Type        | Description |
+| --------- | ---- | ----------- | ----------- |
+| undefined | path | business_id |             |
 
 **Responses:**
+
 - 200
 - 500
 
@@ -317,7 +343,6 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getWordBuysByBusiness )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getWordBuysByBusiness)
 
 <!-- DOCGEN:END getWordBuysByBusiness -->
-

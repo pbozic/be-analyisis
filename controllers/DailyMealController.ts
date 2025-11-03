@@ -37,48 +37,10 @@ import { logPromoAnalytics } from '../lib/analytics.ts';
  * - @description Creates a payment intent for a daily meals subscription, creates the subscription (with nested customers, days, weekdays), and returns the subscription id and payment intent.
  * - @operationId dailyMealsSubscriptionPayment
  * - @bodyDescription The daily meals subscription payment details to create
- * - @bodyContent {
- *     "cart": {
- *       "start_date": "2025-07-01T00:00:00.000Z",
- *       "end_date": null,
- *       "isRecurring": false,
- *       "daysOfWeek": [1, 3, 5],
- *       "dates": ["2025-07-01T00:00:00.000Z", "2025-07-03T00:00:00.000Z"],
- *       "peopleData": [
- *         {
- *           "first_name": "John",
- *           "last_name": "Doe",
- *           "telephone": "+123456789",
- *           "menu_category_id": "c9b1e7c2-1234-4f8a-9b2e-abcdef123456",
- *           "restaurant_comment": "No onions"
- *         }
- *       ],
- *       "courier_comment": "Leave at the door"
- *     },
- *     "details": {
- *       "total_price": 100.0,
- *       "delivery_cost": 10.0,
- *       "sub_total_price": 90.0,
- *       "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf"
- *     },
- *     "delivery_location": {
- *       "address": "123 Main St",
- *       "coordinates": { "latitude": 45.8150, "longitude": 15.9819 }
- *     },
- *     "payment": {
- *       "payment_type": "CARD",
- *       "payment_method_id": "pm_123456789"
- *     },
- *     "return_url": "https://example.com/return",
- *     "allow_credits_usage": true
- *   } application/json
+ * - @bodyContent {} application/json
  * - @bodyRequired
  * - @response 200 - Daily meals subscription payment created successfully
  * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
- *     "status": "Success",
- *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "payment_intent": { "id": "pi_...", ... }
  *   }
  * - @response 500 - Error creating daily meals subscription payment
  * - @prisma_model users
@@ -443,12 +405,6 @@ export async function getDailyMealsSubscriptionsByBusinessId(
  * - @pathParam {string} subscription_id - The ID of the daily meal subscription to activate
  * - @response 200 - Daily meal subscription activated successfully
  * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
- *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "status": "ACTIVE",
- *     "updated_at": "2025-07-01T00:00:00.000Z",
- *     "daily_meal_instances": [ ... ]
- *   }
  * - @response 500 - Error activating daily meal subscription
  * - @prisma_model daily_meal_subscriptions
  * - @prisma_model daily_meal_instances
@@ -479,12 +435,6 @@ export async function activateSubscriptionById(
  * - @pathParam {string} subscription_id - The ID of the daily meal subscription to cancel
  * - @response 200 - Daily meal subscription canceled successfully
  * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
- *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "status": "CANCELED",
- *     "updated_at": "2025-07-01T00:00:00.000Z",
- *     "daily_meal_instances": [ ... ]
- *   }
  * - @response 500 - Error canceling daily meal subscription
  * - @prisma_model daily_meal_subscriptions
  * - @prisma_model daily_meal_instances
@@ -528,19 +478,6 @@ export async function cancelSubscriptionById(
  * - @pathParam {string} instance_id - The ID of the daily meal instance to cancel
  * - @response 200 - Daily meal instance canceled successfully
  * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
- *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "status": "CANCELED",
- *     "updated_at": "2025-07-01T00:00:00.000Z",
- *     "daily_meal_subscription_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "daily_meal_subscription": { ... },
- *     "daily_meal_subscription_customer": { ... },
- *     "daily_meal_subscription_day": { ... },
- *     "daily_meal_subscription_weekday": { ... },
- *     "delivery_address": { ... },
- *     "created_at": "2025-07-01T00:00:00.000Z",
- *     "updated_at": "2025-07-01T00:00:00.000Z"
- * *   }
  * - @response 500 - Error canceling daily meal instance
  * - @prisma_model daily_meal_instances
  * - @prisma_model daily_meal_subscriptions
@@ -673,38 +610,11 @@ export async function cancelDailyMealInstanceById(
  * - @pathParam {string} subscription_id - The ID of the daily meal subscription to fetch
  * - @response 200 - Daily meal subscription found
  * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
- *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "start_date": "2025-07-01T00:00:00.000Z",
- *     "end_date": null,
- *     "type": "DATED",
- *     "status": "ACTIVE",
- *     "courier_comment": "Leave at the door",
- *     "created_at": "2025-07-01T00:00:00.000Z",
- *     "updated_at": "2025-07-01T00:00:00.000Z",
- *     "user": { ... },
- *     "business": { ... },
- *     "delivery_address": { ... },
- *     "customers": [ ... ],
- *     "days": [ ... ],
- *     "weekdays": [ ... ],
- *     "daily_meal_instances": [ ... ],
- *     "payment": { ... }
  *   }
  * - @response 404 - Daily meal subscription not found
  * - @responseContent {object} 404.application/json
- * - @responseExample 404.application/json {
- *     "message": "Daily meal subscription not found"
- *   }
  * - @response 500 - Error fetching daily meal subscription
  * - @responseContent {object} 500.application/json
- * - @responseExample 500.application/json {
- *     "message": "Error fetching daily meal subscription",
- *     "error": "Error message here"
- *   }
  * - @prisma_model daily_meal_subscriptions
  * - @prisma_model users
  * - @prisma_model business
@@ -747,18 +657,8 @@ export async function getSubscriptionById(
  * - @bodyRequired true
  * - @response 200 - Delivery driver assigned to daily meal subscription successfully
  * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
- *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *     "delivery_driver_id": "driver_id_here",
- *     "updated_at": "2025-07-01T00:00:00.000Z",
- *     "daily_meal_instances": [ ... ]
- *   }
  * - @response 500 - Error assigning delivery driver to daily meal subscription
  * - @responseContent {object} 500.application/json
- * - @responseExample 500.application/json {
- *     "message": "Error assigning delivery driver to subscription",
- *     "error": "Error message here"
- *   }
  * - @prisma_model daily_meal_subscriptions
  * - @prisma_model daily_meal_instances
  * - @prisma_model daily_meal_subscription_customers

@@ -1,6 +1,7 @@
 # DeliveryOrderController Controller
 
 <!-- DOCGEN:START getDeliveryOrders -->
+
 ### getDeliveryOrders
 
 **Summary**: Get all delivery orders.
@@ -8,18 +9,20 @@
 **Description**: This fetches all delivery orders.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of all orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
+
 ### getActiveDeliveryOrders
 
 **Summary**: Get all active delivery orders.
@@ -27,18 +30,20 @@
 **Description**: This fetches all active delivery orders.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of active orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
+
 ### getOrder
 
 **Summary**: Get order details.
@@ -47,23 +52,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | orderId |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | orderId |             |
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns order details in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
+
 ### getUserByDeliveryOrderId
 
 **Summary**: Get order details.
@@ -72,23 +79,25 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | order_id |  |
+| Name      | In   | Type     | Description |
+| --------- | ---- | -------- | ----------- |
+| undefined | path | order_id |             |
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns order customer details in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
+
 ### createOrder
 
 **Summary**: Create a new delivery order.
@@ -100,18 +109,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the newly created order in the response body.
+- 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START startDailyMeals -->
+
 ### startDailyMeals
 
 **Summary**: Create daily meals.
@@ -119,18 +130,20 @@ Content-Type: `application/json`
 **Description**: This creates the daily meals for the subscribed users.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns updated delivery driver.
+- 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/startDailyMeals )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/startDailyMeals)
 
 <!-- DOCGEN:END startDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDeliveryOld -->
+
 ### acceptOrderDeliveryOld
 
 **Summary**: Accept a delivery order.
@@ -142,18 +155,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the accepted order in the response body.
+- 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
 
 <!-- DOCGEN:END acceptOrderDeliveryOld -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
+
 ### cancelOrderDelivery
 
 **Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
@@ -165,19 +180,21 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
-- 500
+
+- 200 - Successful operation. Returns the updated order in the response body.
+- 400 - Bad request. Returns error message if the order delivery cannot be canceled.
+- 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
+
 ### completeOrder
 
 **Summary**: Complete a delivery order.
@@ -189,18 +206,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the completed order in the response body.
+- 500 - Server error. Console logs the error message and returns it in the response.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
+
 ### getDeliveryOrdersByDriverId
 
 **Summary**: Get completed delivery orders.
@@ -208,18 +227,20 @@ Content-Type: `application/json`
 **Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of completed orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
+
 ### getCompletedDeliveryOrdersByDriverId
 
 **Summary**: Get completed delivery orders.
@@ -227,18 +248,20 @@ Content-Type: `application/json`
 **Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of completed orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
+
 ### getActiveDeliveryOrdersByDriverId
 
 **Summary**: Get active delivery orders.
@@ -246,18 +269,20 @@ Content-Type: `application/json`
 **Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of completed orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
+
 ### getCompletedDeliveryOrdersByUserId
 
 **Summary**: Get completed delivery orders.
@@ -265,18 +290,20 @@ Content-Type: `application/json`
 **Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of completed orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
+
 ### getActiveDeliveryOrdersByUserId
 
 **Summary**: Get active delivery orders.
@@ -284,18 +311,20 @@ Content-Type: `application/json`
 **Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of completed orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
+
 ### getActiveDeliveryOrdersByBusinessId
 
 **Summary**: Get active delivery orders.
@@ -303,18 +332,20 @@ Content-Type: `application/json`
 **Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of completed orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
+
 ### getDeliveryOrdersByBusinessId
 
 **Summary**: Get delivery orders.
@@ -322,18 +353,20 @@ Content-Type: `application/json`
 **Description**: This fetches all restaurant orders.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
+
 ### getCompletedDeliveryOrdersByBusinessId
 
 **Summary**: Get completed delivery orders by business id.
@@ -341,18 +374,20 @@ Content-Type: `application/json`
 **Description**: This fetches all completed restaurant orders.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of orders in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
+
 ### updateOrderStatus
 
 **Summary**: Update a delivery order's status.
@@ -364,18 +399,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START rejectOrder -->
+
 ### rejectOrder
 
 **Summary**: Reject a delivery order.
@@ -387,89 +424,97 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/rejectOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/rejectOrder)
 
 <!-- DOCGEN:END rejectOrder -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
+
 ### merchantAcceptOrder
 
 **Summary**: Merchant accepts a delivery order and processes payment.
 
-**Description**:  Processes a delivery order from PENDING status. Captures payment (if neccessary), updates order status, and emits relevant events. Handles payment via CARD, WALLET, PLATFORM, or CASH, and moves the order through the correct state transitions. In the case of a CARD or PLATFORM payment, the payment and state transitions are left up to the stripe webhook handler. If preparation_time is provided, updates the order's pickup time.
+**Description**: Processes a delivery order from PENDING status. Captures payment (if neccessary), updates order status, and emits relevant events. Handles payment via CARD, WALLET, PLATFORM, or CASH, and moves the order through the correct state transitions. In the case of a CARD or PLATFORM payment, the payment and state transitions are left up to the stripe webhook handler. If preparation_time is provided, updates the order's pickup time.
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
-- 500
+
+- 200 - Order processed and moved to next state. Returns the updated DeliveryOrder object.
+- 400 - Preparation time must be set if not scheduled.
+- 500 - Error processing the order.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START merchantConfirmOrderReady -->
+
 ### merchantConfirmOrderReady
 
 **Summary**: Merchant confirms order is ready for pickup.
 
-**Description**:  If needed recalculates pricing and processes payment then updates the order as ready for pickup and if needed, and emits relevant events. Handles payment via CARD, WALLET, PLATFORM, or CASH, and moves the order through the correct state transitions. In the case of a CARD or PLATFORM payment, the payment and state transitions are left up to the stripe webhook handler.
+**Description**: If needed recalculates pricing and processes payment then updates the order as ready for pickup and if needed, and emits relevant events. Handles payment via CARD, WALLET, PLATFORM, or CASH, and moves the order through the correct state transitions. In the case of a CARD or PLATFORM payment, the payment and state transitions are left up to the stripe webhook handler.
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Order marked as ready for pickup. Returns the updated DeliveryOrder object.
+- 500 - Error processing the order.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantConfirmOrderReady )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantConfirmOrderReady)
 
 <!-- DOCGEN:END merchantConfirmOrderReady -->
 
 <!-- DOCGEN:START localConfirmMultipleOrdersReady -->
+
 ### localConfirmMultipleOrdersReady
 
 **Summary**: LOCAL business confirms multiple orders are ready for pickup.
 
-**Description**:  Sets all preparing orders for a specific business_local_location as ready for pickup. Only works for LOCAL business type. Recalculates pricing and processes payments for all orders, then updates them as ready for pickup and emits relevant events. Handles payment via CARD, WALLET, PLATFORM, or CASH for each order.
+**Description**: Sets all preparing orders for a specific business_local_location as ready for pickup. Only works for LOCAL business type. Recalculates pricing and processes payments for all orders, then updates them as ready for pickup and emits relevant events. Handles payment via CARD, WALLET, PLATFORM, or CASH for each order.
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
-- 500
+
+- 200 - Orders marked as ready for pickup. Returns summary of processed orders.
+- 400 - Invalid business_local_location_id or no preparing orders found.
+- 500 - Error processing the orders.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/localConfirmMultipleOrdersReady )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/localConfirmMultipleOrdersReady)
 
 <!-- DOCGEN:END localConfirmMultipleOrdersReady -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
+
 ### updateOrderPickupTime
 
 **Summary**: Update a delivery order's pickup time.
@@ -481,18 +526,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
+
 ### updateOrderDeliveryTime
 
 **Summary**: Update a delivery order's delivery time.
@@ -504,18 +551,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
+
 ### updateDeliveryOrderTimeline
 
 **Summary**: Update a delivery order's timeline.
@@ -527,18 +576,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order with the new timeline in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
+
 ### addToDeliveryOrderTimeline
 
 **Summary**: Update a delivery order's timeline by appending an entry.
@@ -550,18 +601,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order with the new timeline in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrderItems -->
+
 ### updateDeliveryOrderItems
 
 **Summary**: Update delivery order items.
@@ -573,18 +626,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated order with the new timeline in the response body.
+- 500 - Server error. Returns error message if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderItems )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderItems)
 
 <!-- DOCGEN:END updateDeliveryOrderItems -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
+
 ### getDeliveryOrdersToday
 
 **Summary**: Get all delivery orders for today and earnings.
@@ -592,18 +647,20 @@ Content-Type: `application/json`
 **Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns a list of all delivery orders today and earnings in the response body.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
+
 ### dispatcherCancel
 
 **Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
@@ -611,18 +668,20 @@ Content-Type: `application/json`
 **Description**: Cancel and if necessary refund an order
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated Order.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherRevoke )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherRevoke)
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
+
 ### dispatcherRevoke
 
 **Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
@@ -630,18 +689,20 @@ Content-Type: `application/json`
 **Description**: Cancel and if necessary refund an order
 
 **Responses:**
-- 200
-- 500
+
+- 200 - Successful operation. Returns the updated Order.
+- 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START setDeliveryImage -->
+
 ### setDeliveryImage
 
 **Summary**: Set or replace delivery proof image for an order
@@ -653,17 +714,19 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setDeliveryImage )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setDeliveryImage)
 
 <!-- DOCGEN:END setDeliveryImage -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
+
 ### acceptOrderDelivery
 
 **Summary**: Accept a delivery order.
@@ -675,6 +738,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 500
 
@@ -682,11 +746,12 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START startOrder -->
+
 ### startOrder
 
 **Summary**: Start an order and log promo analytics if applicable.
@@ -698,6 +763,7 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
+
 - 200
 - 500
 
@@ -705,7 +771,6 @@ Content-Type: `application/json`
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/startOrder )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/startOrder)
 
 <!-- DOCGEN:END startOrder -->
-

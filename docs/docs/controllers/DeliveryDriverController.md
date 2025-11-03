@@ -1,6 +1,7 @@
 # DeliveryDriverController Controller
 
 <!-- DOCGEN:START resendDelegatedOrdersToDeliveryDriver -->
+
 ### resendDelegatedOrdersToDeliveryDriver
 
 **Summary**: Send already sent pending or accepted orders to a delivery driver
@@ -8,15 +9,17 @@
 **Description**: Retrieves a list of orders for a specific delivery driver by their user ID and sends them to the delivery driver via socket emission.
 
 **Responses:**
-- 200
-- 404
-- 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/sendAcceptedOrdersToDeliveryDriver )
+- 200 - Successful operation, orders sent to the delivery driver
+- 404 - Delivery Driver not found
+- 400 - Error retrieving orders
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/sendAcceptedOrdersToDeliveryDriver)
 
 <!-- DOCGEN:END resendDelegatedOrdersToDeliveryDriver -->
 
 <!-- DOCGEN:START editDeliveryDriver -->
+
 ### editDeliveryDriver
 
 **Summary**: Edit a delivery driver
@@ -25,27 +28,29 @@
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | delivery_driver_id |  |
+| Name      | In   | Type               | Description |
+| --------- | ---- | ------------------ | ----------- |
+| undefined | path | delivery_driver_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Delivery driver edited successfully
+- 400 - Error updating delivery driver
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/editDeliveryDriver )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/editDeliveryDriver)
 
 <!-- DOCGEN:END editDeliveryDriver -->
 
 <!-- DOCGEN:START listDeliveryDrivers -->
+
 ### listDeliveryDrivers
 
 **Summary**: Get a list of delivery drivers
@@ -53,18 +58,20 @@ Content-Type: `application/json`
 **Description**: Returns a list of delivery drivers along with their user and vehicle information.
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns a list of delivery drivers
+- 400 - Error occurred while obtaining the delivery driver list
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryDrivers )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryDrivers)
 
 <!-- DOCGEN:END listDeliveryDrivers -->
 
 <!-- DOCGEN:START listOnlineDeliveryDrivers -->
+
 ### listOnlineDeliveryDrivers
 
 **Summary**: Get all online delivery drivers
@@ -72,18 +79,20 @@ Content-Type: `application/json`
 **Description**: Returns a list of all delivery drivers who are currently online.
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns a list of online delivery drivers
+- 400 - Error occurred while obtaining the online delivery driver list
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOnlineDeliveryDrivers )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOnlineDeliveryDrivers)
 
 <!-- DOCGEN:END listOnlineDeliveryDrivers -->
 
 <!-- DOCGEN:START getAvailableDeliveryDrivers -->
+
 ### getAvailableDeliveryDrivers
 
 **Summary**: Get all available delivery drivers
@@ -91,18 +100,20 @@ Content-Type: `application/json`
 **Description**: Returns a list of all delivery drivers who are currently available.
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns a list of available delivery drivers
+- 400 - Error occurred while obtaining the available delivery driver list
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAvailableDeliveryDrivers )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAvailableDeliveryDrivers)
 
 <!-- DOCGEN:END getAvailableDeliveryDrivers -->
 
 <!-- DOCGEN:START listDeliveryDriversWithDailyMeals -->
+
 ### listDeliveryDriversWithDailyMeals
 
 **Summary**: List all delivery drivers offering daily meals
@@ -110,18 +121,20 @@ Content-Type: `application/json`
 **Description**: Retrieves a list of all delivery drivers that offer daily meals.
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns a list of delivery drivers offering daily meals
+- 400 - Error occurred while obtaining the delivery driver list
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/listDeliveryDriversWithDailyMeals )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/listDeliveryDriversWithDailyMeals)
 
 <!-- DOCGEN:END listDeliveryDriversWithDailyMeals -->
 
 <!-- DOCGEN:START getDeliveryDriverById -->
+
 ### getDeliveryDriverById
 
 **Summary**: Get a delivery driver by ID
@@ -130,24 +143,26 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | delivery_driver_id |  |
+| Name      | In   | Type               | Description |
+| --------- | ---- | ------------------ | ----------- |
+| undefined | path | delivery_driver_id |             |
 
 **Responses:**
-- 200
-- 404
-- 400
+
+- 200 - Successful operation, returns detailed delivery driver information
+- 404 - Delivery driver not found
+- 400 - Error retrieving delivery driver information
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryDriverById )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryDriverById)
 
 <!-- DOCGEN:END getDeliveryDriverById -->
 
 <!-- DOCGEN:START getDeliveryDriverByUserId -->
+
 ### getDeliveryDriverByUserId
 
 **Summary**: Get a delivery driver by user ID
@@ -156,24 +171,26 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | user_id |  |
+| Name      | In   | Type    | Description |
+| --------- | ---- | ------- | ----------- |
+| undefined | path | user_id |             |
 
 **Responses:**
-- 200
-- 404
-- 400
+
+- 200 - Successful operation, returns detailed delivery driver information
+- 404 - Delivery driver not found
+- 400 - Error retrieving delivery driver information
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryDriverByUserId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryDriverByUserId)
 
 <!-- DOCGEN:END getDeliveryDriverByUserId -->
 
 <!-- DOCGEN:START getDeliveryDriversByBusinessId -->
+
 ### getDeliveryDriversByBusinessId
 
 **Summary**: Get delivery drivers by business ID
@@ -182,24 +199,26 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | business_id |  |
+| Name      | In   | Type        | Description |
+| --------- | ---- | ----------- | ----------- |
+| undefined | path | business_id |             |
 
 **Responses:**
-- 200
-- 404
-- 400
+
+- 200 - Successful operation, returns detailed delivery drivers
+- 404 - Delivery drivers not found
+- 400 - Error retrieving delivery drivers
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryDriverByBusinessId )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryDriverByBusinessId)
 
 <!-- DOCGEN:END getDeliveryDriversByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryDriverLocation -->
+
 ### getDeliveryDriverLocation
 
 **Summary**: Get delivery driver location
@@ -208,24 +227,26 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | delivery_driver_id |  |
+| Name      | In   | Type               | Description |
+| --------- | ---- | ------------------ | ----------- |
+| undefined | path | delivery_driver_id |             |
 
 **Responses:**
-- 200
-- 404
-- 400
+
+- 200 - Successful operation, returns delivery driver's location
+- 404 - Delivery driver not found
+- 400 - Error retrieving delivery driver's location
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryDriverLocation )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryDriverLocation)
 
 <!-- DOCGEN:END getDeliveryDriverLocation -->
 
 <!-- DOCGEN:START updateDeliveryDriverDailyMealBusiness -->
+
 ### updateDeliveryDriverDailyMealBusiness
 
 **Summary**: Update a delivery driver daily_meal_business
@@ -234,27 +255,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | delivery_driver_id |  |
+| Name      | In   | Type               | Description |
+| --------- | ---- | ------------------ | ----------- |
+| undefined | path | delivery_driver_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Delivery driver updated successfully
+- 400 - Error updating delivery driver
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryDriverDailyMealBusiness )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryDriverDailyMealBusiness)
 
 <!-- DOCGEN:END updateDeliveryDriverDailyMealBusiness -->
 
 <!-- DOCGEN:START updateDeliveryDriver -->
+
 ### updateDeliveryDriver
 
 **Summary**: Update a delivery driver
@@ -263,27 +286,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | delivery_driver_id |  |
+| Name      | In   | Type               | Description |
+| --------- | ---- | ------------------ | ----------- |
+| undefined | path | delivery_driver_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Delivery driver updated successfully
+- 400 - Error updating delivery driver
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryDriver )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryDriver)
 
 <!-- DOCGEN:END updateDeliveryDriver -->
 
 <!-- DOCGEN:START updateDeliveryDriverLocation -->
+
 ### updateDeliveryDriverLocation
 
 **Summary**: Update delivery driver location
@@ -292,27 +317,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | delivery_driver_id |  |
+| Name      | In   | Type               | Description |
+| --------- | ---- | ------------------ | ----------- |
+| undefined | path | delivery_driver_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Location updated successfully
+- 400 - Error updating delivery driver location
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryDriverLocation )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryDriverLocation)
 
 <!-- DOCGEN:END updateDeliveryDriverLocation -->
 
 <!-- DOCGEN:START updateDeliveryDriverOnlineStatus -->
+
 ### updateDeliveryDriverOnlineStatus
 
 **Summary**: Set delivery driver online status
@@ -321,27 +348,29 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | delivery_driver_id |  |
+| Name      | In   | Type               | Description |
+| --------- | ---- | ------------------ | ----------- |
+| undefined | path | delivery_driver_id |             |
 
 **Request Body:** (required)
 Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Online status updated successfully
+- 400 - Error updating online status Emits: - "driver_available" event with delivery driver object if online is true - "driver_unavailable" event with delivery_driver_id if online is false
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setDeliveryDriverOnlineStatus )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setDeliveryDriverOnlineStatus)
 
 <!-- DOCGEN:END updateDeliveryDriverOnlineStatus -->
 
 <!-- DOCGEN:START createDeliveryDriver -->
+
 ### createDeliveryDriver
 
 **Summary**: Create a new delivery driver
@@ -353,18 +382,20 @@ Type: `application/json`
 Content-Type: `application/json`
 
 **Responses:**
-- 201
-- 400
+
+- 201 - Delivery driver created successfully
+- 400 - Error creating delivery driver
 
 **Response Content:**
 
 - Status: 201, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewDeliveryDriver )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewDeliveryDriver)
 
 <!-- DOCGEN:END createDeliveryDriver -->
 
 <!-- DOCGEN:START getDriverEarnings -->
+
 ### getDriverEarnings
 
 **Summary**: Get earnings for a specific delivery driver
@@ -373,26 +404,28 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | delivery_driver_id |  |
-| undefined | path | start_date |  |
-| undefined | path | end_date |  |
+| Name      | In   | Type               | Description |
+| --------- | ---- | ------------------ | ----------- |
+| undefined | path | delivery_driver_id |             |
+| undefined | path | start_date         |             |
+| undefined | path | end_date           |             |
 
 **Responses:**
-- 200
-- 404
-- 400
+
+- 200 - Successful operation, returns delivery driver's earnings
+- 404 - Driver not found
+- 400 - Error retrieving delivery driver's earnings
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDriverEarnings )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDriverEarnings)
 
 <!-- DOCGEN:END getDriverEarnings -->
 
 <!-- DOCGEN:START getAllDriversEarnings -->
+
 ### getAllDriversEarnings
 
 **Summary**: Get earnings for all delivery drivers
@@ -401,24 +434,26 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | start_date |  |
-| undefined | path | end_date |  |
+| Name      | In   | Type       | Description |
+| --------- | ---- | ---------- | ----------- |
+| undefined | path | start_date |             |
+| undefined | path | end_date   |             |
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns all delivery drivers' earnings
+- 400 - Error retrieving all delivery drivers' earnings
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDriversEarnings )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDriversEarnings)
 
 <!-- DOCGEN:END getAllDriversEarnings -->
 
 <!-- DOCGEN:START getTotalEarnings -->
+
 ### getTotalEarnings
 
 **Summary**: Get total earnings for all delivery drivers
@@ -426,18 +461,20 @@ Content-Type: `application/json`
 **Description**: Retrieves the total earnings of all drivers based on completed orders.
 
 **Responses:**
-- 200
-- 400
+
+- 200 - Successful operation, returns total earnings for all delivery drivers
+- 400 - Error retrieving total earnings
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getTotalEarnings )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getTotalEarnings)
 
 <!-- DOCGEN:END getTotalEarnings -->
 
 <!-- DOCGEN:START getDriverTotalEarnings -->
+
 ### getDriverTotalEarnings
 
 **Summary**: Get total earnings for a specific delivery driver
@@ -446,20 +483,20 @@ Content-Type: `application/json`
 
 **Parameters:**
 
-| Name | In | Type | Description |
-|------|----|------|-------------|
-| undefined | path | delivery_driver_id |  |
+| Name      | In   | Type               | Description |
+| --------- | ---- | ------------------ | ----------- |
+| undefined | path | delivery_driver_id |             |
 
 **Responses:**
-- 200
-- 404
-- 400
+
+- 200 - Successful operation, returns total earnings for the specified driver
+- 404 - Driver not found
+- 400 - Error retrieving delivery driver's total earnings
 
 **Response Content:**
 
 - Status: 200, Type: `unknown`, Content-Type: `application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDriverTotalEarnings )
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDriverTotalEarnings)
 
 <!-- DOCGEN:END getDriverTotalEarnings -->
-
