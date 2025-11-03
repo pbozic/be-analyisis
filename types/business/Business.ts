@@ -1,0 +1,65 @@
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+
+import type { business, user_favorite_businesses, word_buy } from '@prisma/client';
+
+import type { Address } from '../addresses/Address.js';
+import type { Document } from '../documents/Document.js';
+import type { PromoSectionsBuy } from '../promoSections/PromoSectionsBuy.js';
+import type { PromoAnalytic } from '../promoAnalytics/PromoAnalytic.js';
+import type { ScoringPoint } from '../general/ScoringPoint.js';
+import type { AccountAction } from '../general/AccountAction.js';
+import type { BusinessMoneyFlow } from '../payments/BusinessMoneyFlow.js';
+import type { Role } from '../userRoles/Role.js';
+import type { BusinessUser } from '../businessUsers/BusinessUser.js';
+import type { BusinessType } from '../business/BusinessType.js';
+import type { ReservationModule } from '../reservation/ReservationModule.js';
+import type { TransportModule } from '../transport/TransportModule.js';
+import type { StoresModule } from '../stores/StoresModule.js';
+import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
+import type { CrmModule } from '../crm/CrmModule.js';
+
+export type Business = {
+	business_id: string;
+	address_id?: string | null;
+	is_business_unit: boolean;
+	business_group_name?: string | null;
+	name: string;
+	description?: string | null;
+	tax_id: string;
+	registration_id: string;
+	email: string;
+	telephone: string;
+	telephone_code: string;
+	website_url?: string | null;
+	working_hours?: unknown | null;
+	popular: boolean;
+	new: boolean;
+	created_at: string;
+	updated_at: string;
+	address?: Address | null;
+	documents: Document[];
+	parent_business_id?: string | null;
+	parent_business?: business | null;
+	child_businesses: business[];
+	stripe_account_id?: string | null;
+	stripe_customer_id?: string | null;
+	word_buy_stripe_subscription_id?: string | null;
+	word_buys: word_buy[];
+	promo_sections: PromoSectionsBuy[];
+	analytics: PromoAnalytic[];
+	first_activated_at?: string | null;
+	active: boolean;
+	sales_representative_id?: string | null;
+	user_favorite_businesses: user_favorite_businesses[];
+	scoring_points: ScoringPoint[];
+	account_actions: AccountAction[];
+	business_money_flows: BusinessMoneyFlow[];
+	roles: Role[];
+	business_users: BusinessUser[];
+	types: BusinessType[];
+	reservation_module?: ReservationModule | null;
+	transport_module?: TransportModule | null;
+	stores_module?: StoresModule | null;
+	food_drinks_module?: FoodDrinksModule | null;
+	crm_module?: CrmModule | null;
+};

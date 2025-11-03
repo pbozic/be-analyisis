@@ -969,10 +969,10 @@ erDiagram
   Json payment "nullable"
   Json estimates "nullable"
   Json details "nullable"
-  Json courier_instructions "nullable"
-  Json restaurant_message "nullable"
+  String courier_instructions "nullable"
+  String restaurant_message "nullable"
   String rejection_reason "nullable"
-  Json scheduled "nullable"
+  DateTime scheduled_at "nullable"
   Json timeline
   DELIVERY_ORDER_STATUS status
   DateTime(6) last_sent_at "nullable"
@@ -3994,10 +3994,10 @@ erDiagram
   Json payment "nullable"
   Json estimates "nullable"
   Json details "nullable"
-  Json courier_instructions "nullable"
-  Json restaurant_message "nullable"
+  String courier_instructions "nullable"
+  String restaurant_message "nullable"
   String rejection_reason "nullable"
-  Json scheduled "nullable"
+  DateTime scheduled_at "nullable"
   Json timeline
   DELIVERY_ORDER_STATUS status
   DateTime(6) last_sent_at "nullable"
@@ -4243,7 +4243,7 @@ Properties as follows:
 - `courier_instructions`:
 - `restaurant_message`:
 - `rejection_reason`:
-- `scheduled`:
+- `scheduled_at`:
 - `timeline`:
 - `status`:
 - `last_sent_at`:
@@ -4264,6 +4264,8 @@ Properties as follows:
 - `file_id`:
 
 ### `delivery_order_sent`
+
+History of delivery order sent to drivers.
 
 Properties as follows:
 
@@ -6240,10 +6242,10 @@ erDiagram
   Json payment "nullable"
   Json estimates "nullable"
   Json details "nullable"
-  Json courier_instructions "nullable"
-  Json restaurant_message "nullable"
+  String courier_instructions "nullable"
+  String restaurant_message "nullable"
   String rejection_reason "nullable"
-  Json scheduled "nullable"
+  DateTime scheduled_at "nullable"
   Json timeline
   DELIVERY_ORDER_STATUS status
   DateTime(6) last_sent_at "nullable"

@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { DailyMealCategoryPrice } from './DailyMealCategoryPrice';
+
 // =======================
 // DailyMealCategory Zod Schemas
 // =======================
@@ -28,13 +30,13 @@ export type AddPriceToDailyMealCategoryInput = z.infer<typeof AddPriceToDailyMea
 // Full DMC Types (from DB + schemas)
 // =======================
 
-export type DailyMealCategoryPrice = {
-	daily_meal_category_prices_id: string;
-	daily_meal_category_id: string;
-	price: number;
-	valid_from: string;
-	created_at: string;
-};
+// export type DailyMealCategoryPrice = {
+// 	daily_meal_category_prices_id: string;
+// 	daily_meal_category_id: string;
+// 	price: number;
+// 	valid_from: string;
+// 	created_at: string;
+// };
 
 export type DailyMealCategory = {
 	daily_meal_category_id: string;

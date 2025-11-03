@@ -80,11 +80,11 @@ export function modelNameToTypeName(modelName) {
 			.join('');
 	}
 	// Improved naive singularization
-	if (/ies$/.test(core)) {
+	if (/ies$/i.test(core)) {
 		core = core.replace(/ies$/, 'y');
-	} else if (/ses$/.test(core)) {
+	} else if (/ses$/i.test(core)) {
 		core = core.replace(/es$/, '');
-	} else if (core.endsWith('s') && !core.endsWith('SS')) {
+	} else if (core.endsWith('s') && !/ss$/i.test(core)) {
 		core = core.slice(0, -1);
 	}
 	return core;
@@ -152,10 +152,22 @@ function getManyToManyOppositeModel({ models, joinModelName, currentModelName })
 		const baseType = f.baseType;
 		return (!PRISMA_SCALARS.has(baseType) && baseType && /@relation\b/.test(f.attrs)) || models.has(baseType);
 	});
-	// Strict: exactly two relation fields -> treat as join
 	if (relFields.length !== 2) return null;
 	const distinct = Array.from(new Set(relFields.map((f) => f.baseType)));
 	if (distinct.length !== 2) return null;
+	// Exclude "rich" link models that have extra non-relation fields beyond ids/timestamps
+	const nonRel = join.fields.filter(
+		(f) =>
+			!((!PRISMA_SCALARS.has(f.baseType) && f.baseType && /@relation\b/.test(f.attrs)) || models.has(f.baseType))
+	);
+	const allowed = new Set(['created_at', 'updated_at']);
+	const hasMeaningful = nonRel.some((f) => {
+		const name = f.fieldName ? f.fieldName.toLowerCase() : (f.name || '').toLowerCase();
+		const looksLikeId = /(^|_)id$/.test(name);
+		const isAllowed = allowed.has(name) || looksLikeId || /@id\b/.test(f.attrs || '');
+		return !isAllowed;
+	});
+	if (hasMeaningful) return null;
 	if (!distinct.includes(currentModelName)) return null;
 	return distinct[0] === currentModelName ? distinct[1] : distinct[0];
 }

@@ -17,7 +17,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { generateModelTypeFromSchemas, modelNameToTypeName } from './utils/schemaMapper.js';
+import { generateModelTypeFromSchemas, modelNameToTypeName, parseModelsAndEnums } from './utils/schemaMapper.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -153,13 +153,130 @@ function generateDtoFile(modelName, model) {
 	fs.writeFileSync(outPath, out);
 	return outPath;
 }
-
+/**
+ * Main entry point for generating DTOs.
+ * @argument {string} target - The target model to generate DTOs for. Use 'all' to generate for all models.
+ * @argument {string} folder - The output folder under types/ to place generated DTOs.
+ * @argument {string} mode - The generation mode: 'dto' (default), 'shape', or 'map'.
+ */
 function main() {
-	const target = process.argv[2] || 'users';
-	const mode = process.argv[3] || 'shape'; // 'dto' | 'shape'
+	const target = process.argv[2] || 'all';
+	const folder = process.argv[3] || 'general';
+	const OUTPUT_DIR = path.join(ROOT, 'types', folder);
+	const mode = process.argv[4] || 'shape'; // 'dto' | 'shape' | 'map'
+
+	// Helper: read all prisma schemas (supports prisma/schemas or prisma root)
+	const prismaRoot = path.join(ROOT, 'prisma');
+	const prismaSchemasDir = path.join(prismaRoot, 'schemas');
+	const schemaDir = fs.existsSync(prismaSchemasDir) ? prismaSchemasDir : prismaRoot;
+	const allSchemaFiles = fs
+		.readdirSync(schemaDir)
+		.filter((f) => f.endsWith('.prisma'))
+		.map((f) => path.join(schemaDir, f));
+	const allSchemaContent = allSchemaFiles.map((p) => fs.readFileSync(p, 'utf8')).join('\n');
+
+	function buildNamespaceMap(content) {
+		// Capture leading triple-slash comment block before a model and extract @namespace lines
+		const rx = /((?:^\s*\/\/\/.*\n)*)\s*model\s+(\w+)\s*\{/gm;
+		const map = new Map();
+		let m;
+		while ((m = rx.exec(content))) {
+			const comments = m[1] || '';
+			const model = m[2];
+			const namespaces = Array.from(comments.matchAll(/^\s*\/\/\/\s*@namespace\s+(\w+)/gm)).map((mm) => mm[1]);
+			if (namespaces.length) map.set(model, namespaces[0]);
+		}
+		return map;
+	}
+
+	function buildHiddenSet(content) {
+		// Capture leading triple-slash comment block before a model and detect @hidden tag
+		const rx = /((?:^\s*\/\/\/.*\n)*)\s*model\s+(\w+)\s*\{/gm;
+		const hidden = new Set();
+		let m;
+		while ((m = rx.exec(content))) {
+			const comments = m[1] || '';
+			const model = m[2];
+			if (/^\s*\/\/\/\s*@hidden\b/m.test(comments)) hidden.add(model);
+		}
+		return hidden;
+	}
+
+	function normalizeNamespace(ns) {
+		if (!ns) return null;
+		return ns.charAt(0).toLowerCase() + ns.slice(1);
+	}
+
+	function findExistingTypePath(typeName) {
+		const typesDir = path.join(ROOT, 'types');
+		if (!fs.existsSync(typesDir)) return null;
+		const queue = [typesDir];
+		while (queue.length) {
+			const dir = queue.shift();
+			const ents = fs.readdirSync(dir, { withFileTypes: true });
+			for (const ent of ents) {
+				const full = path.join(dir, ent.name);
+				if (ent.isDirectory()) queue.push(full);
+				else if (ent.isFile()) {
+					const base = path.basename(full).toLowerCase();
+					const t1 = `${typeName}.ts`.toLowerCase();
+					const t2 = `${typeName}.js`.toLowerCase();
+					if (base === t1 || base === t2) return full;
+				}
+			}
+		}
+		return null;
+	}
+
+	function isJunctionModel(modelsMap, modelName) {
+		const model = modelsMap.get(modelName);
+		if (!model) return false;
+		const relFields = model.fields.filter((f) => /@relation\b/.test(f.attrs) || modelsMap.has(f.baseType));
+		if (relFields.length !== 2) return false;
+		const distinct = Array.from(new Set(relFields.map((f) => f.baseType)));
+		if (distinct.length !== 2) return false;
+		// Exclude models that have meaningful non-relation fields (beyond ids and timestamps)
+		const nonRel = model.fields.filter((f) => !(/@relation\b/.test(f.attrs) || modelsMap.has(f.baseType)));
+		const allowed = new Set(['created_at', 'updated_at']);
+		const hasMeaningful = nonRel.some((f) => {
+			const name = (f.name || f.fieldName || '').toLowerCase();
+			const looksLikeId = /(^|_)id$/.test(name);
+			const isAllowed = allowed.has(name) || looksLikeId || /@id\b/.test(f.attrs || '');
+			return !isAllowed;
+		});
+		return !hasMeaningful;
+	}
 	const schemas = readSchemas();
 	const { models } = parseModels(schemas);
 	const list = target === 'all' ? Array.from(models.keys()) : [target];
+
+	if (mode === 'map') {
+		// Parse comprehensive model map from all schema content for junction detection and namespaces
+		const parsed = parseModelsAndEnums(allSchemaContent);
+		const nsMap = buildNamespaceMap(allSchemaContent);
+		const hiddenSet = buildHiddenSet(allSchemaContent);
+		const allModels = Array.from(parsed.models.keys());
+		for (const name of allModels) {
+			// Skip explicitly hidden models (assumed junction or internal-only)
+			if (hiddenSet.has(name)) continue;
+			// Skip junction tables
+			if (isJunctionModel(parsed.models, name)) continue;
+			const typeName = modelNameToTypeName(name);
+			// Skip if a type already exists anywhere in types/
+			if (findExistingTypePath(typeName)) continue;
+			// Derive folder from first @namespace (fallback to 'dtos')
+			const ns = nsMap.get(name);
+			const normalizedNs = normalizeNamespace(ns);
+			const outDir = normalizedNs ? path.join(ROOT, 'types', normalizedNs) : OUTPUT_DIR;
+			if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+			const code = generateModelTypeFromSchemas({ rootDir: ROOT, modelName: name });
+			const header = `// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.`;
+			const outPath = path.join(outDir, `${typeName}.ts`);
+			fs.writeFileSync(outPath, `${header}\n\n${code}`);
+			console.log(`Mapped ${name} -> ${outPath}`);
+		}
+		return;
+	}
 	for (const name of list) {
 		const model = models.get(name);
 		if (!model) {
