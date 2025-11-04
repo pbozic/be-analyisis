@@ -562,7 +562,7 @@ async function removePaymentMethod(req, res) {
 		const updatedPaymentMethods = await stripe.getPaymentMethods(user.stripe_customer_id);
 		return res.status(200).json({
 			message: 'Payment method removed successfully',
-			paymentMethods: updatedPaymentMethods,
+			paymentMethods: updatedPaymentMethods, //  Stripe.PaymentMethod[]
 		});
 	} catch (error) {
 		console.error('Error removing payment method:', error);
