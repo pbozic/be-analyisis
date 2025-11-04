@@ -8,11 +8,14 @@ extendZodWithOpenApi(z);
 
 // blog_categories.ts
 
-export const CreateBlogCategorySchema = z.object({
-	name: z.string().min(1),
-	description: z.string().optional().nullable(),
-});
-export const UpdateBlogCategorySchema = CreateBlogCategorySchema.partial();
+export const CreateBlogCategorySchema = z
+	.object({
+		name: z.string().min(1),
+		description: z.string().optional().nullable(),
+	})
+	.openapi('CreateBlogCategory');
+
+export const UpdateBlogCategorySchema = CreateBlogCategorySchema.partial().openapi('UpdateBlogCategory');
 
 export type CreateBlogCategoryInput = z.infer<typeof CreateBlogCategorySchema>;
 export type UpdateBlogCategoryInput = z.infer<typeof UpdateBlogCategorySchema>;

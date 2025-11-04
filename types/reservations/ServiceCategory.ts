@@ -3,13 +3,15 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 extendZodWithOpenApi(z);
 
-export const CreateServiceCategorySchema = z.object({
-	name: z.record(z.string()),
-	parent_id: z.string().uuid().optional(),
-	color: z.string().optional(),
-});
+export const CreateServiceCategorySchema = z
+	.object({
+		name: z.record(z.string()),
+		parent_id: z.string().uuid().optional(),
+		color: z.string().optional(),
+	})
+	.openapi('CreateServiceCategory');
 
-export const UpdateServiceCategorySchema = CreateServiceCategorySchema.partial();
+export const UpdateServiceCategorySchema = CreateServiceCategorySchema.partial().openapi('UpdateServiceCategory');
 export const DeleteServiceCategorySchema = z.object({ category_id: z.string().uuid() });
 
 export type CreateServiceCategoryInput = z.infer<typeof CreateServiceCategorySchema>;

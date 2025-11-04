@@ -10,15 +10,19 @@ import { NotificationEventResponseSchema } from './NotificationEvent';
 
 extendZodWithOpenApi(z);
 
-export const UpsertNotificationPreferenceSchema = z.object({
-	notification_event_id: z.string().uuid(),
-	channel: NotificationChannelEnum,
-	enabled: z.boolean(), // explicit toggle
-});
+export const UpsertNotificationPreferenceSchema = z
+	.object({
+		notification_event_id: z.string().uuid(),
+		channel: NotificationChannelEnum,
+		enabled: z.boolean(), // explicit toggle
+	})
+	.openapi('UpsertNotificationPreference');
 
-export const DeleteNotificationPreferenceSchema = z.object({
-	notification_preference_id: z.string().uuid(),
-});
+export const DeleteNotificationPreferenceSchema = z
+	.object({
+		notification_preference_id: z.string().uuid(),
+	})
+	.openapi('DeleteNotificationPreference');
 
 export type UpsertNotificationPreferenceInput = z.infer<typeof UpsertNotificationPreferenceSchema>;
 
@@ -55,6 +59,7 @@ export type NotificationPreferenceResponse = z.infer<typeof NotificationPreferen
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateNotificationPreference', CreateNotificationPreferenceSchema);
+	registry.register('UpsertNotificationPreference', UpsertNotificationPreferenceSchema);
 	registry.register('UpdateNotificationPreference', UpdateNotificationPreferenceSchema);
 	registry.register('NotificationPreferenceResponse', NotificationPreferenceResponseSchema);
 }

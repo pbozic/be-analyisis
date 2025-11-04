@@ -2,9 +2,7 @@ import { z } from 'zod';
 import { MODULE_TYPE } from '@prisma/client';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import type { Permission } from './Permission.js';
 import type { Business } from '../business/Business.js';
-import type { User } from '../users/User.js';
 import type { RolePermission } from './RolePermission.js';
 import type { UserRole } from './UserRole.js';
 import { RolePermissionResponseSchema } from './RolePermission';
@@ -15,13 +13,15 @@ extendZodWithOpenApi(z);
 
 // --- SCHEMAS ---
 
-export const CreateRoleSchema = z.object({
-	name: z.string(),
-	module: z.nativeEnum(MODULE_TYPE),
-	business_id: z.string().uuid().optional(), // null = global
-});
+export const CreateRoleSchema = z
+	.object({
+		name: z.string(),
+		module: z.nativeEnum(MODULE_TYPE),
+		business_id: z.string().uuid().optional(), // null = global
+	})
+	.openapi('CreateRole');
 
-export const UpdateRoleSchema = CreateRoleSchema.partial();
+export const UpdateRoleSchema = CreateRoleSchema.partial().openapi('UpdateRole');
 
 export type CreateRoleInput = z.infer<typeof CreateRoleSchema>;
 export type UpdateRoleInput = z.infer<typeof UpdateRoleSchema>;

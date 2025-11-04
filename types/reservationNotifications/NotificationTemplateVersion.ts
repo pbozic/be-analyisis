@@ -14,35 +14,41 @@ import { NotificationMessageResponseSchema } from './NotificationMessage';
 extendZodWithOpenApi(z);
 
 // On create: version number is computed in DAO (next integer for the template)
-export const CreateNotificationTemplateVersionSchema = z.object({
-	notification_event_id: z.string().uuid(),
-	status: TemplateVersionStatusEnum.default('DRAFT'),
-	subject: z.string().optional().nullable(),
-	body_text: z.string().optional().nullable(),
-	variables_json_schema: JsonObjectSchema, // validate shape with AJV later
-	compiled_artifacts: JsonObjectSchema.optional(), // optional cache
-	created_by_user_id: z.string().uuid().optional(),
-});
+export const CreateNotificationTemplateVersionSchema = z
+	.object({
+		notification_event_id: z.string().uuid(),
+		status: TemplateVersionStatusEnum.default('DRAFT'),
+		subject: z.string().optional().nullable(),
+		body_text: z.string().optional().nullable(),
+		variables_json_schema: JsonObjectSchema, // validate shape with AJV later
+		compiled_artifacts: JsonObjectSchema.optional(), // optional cache
+		created_by_user_id: z.string().uuid().optional(),
+	})
+	.openapi('CreateNotificationTemplateVersion');
 
 // On update: identify by (template_id + version) OR by version_id
-export const UpdateNotificationTemplateVersionByIdSchema = z.object({
-	notification_template_version_id: z.string().uuid(),
-	status: TemplateVersionStatusEnum.optional(),
-	subject: z.string().optional().nullable(),
-	body_text: z.string().optional().nullable(),
-	variables_json_schema: JsonObjectSchema.optional(),
-	compiled_artifacts: JsonObjectSchema.optional(),
-});
+export const UpdateNotificationTemplateVersionByIdSchema = z
+	.object({
+		notification_template_version_id: z.string().uuid(),
+		status: TemplateVersionStatusEnum.optional(),
+		subject: z.string().optional().nullable(),
+		body_text: z.string().optional().nullable(),
+		variables_json_schema: JsonObjectSchema.optional(),
+		compiled_artifacts: JsonObjectSchema.optional(),
+	})
+	.openapi('UpdateNotificationTemplateVersionById');
 
-export const UpdateNotificationTemplateVersionByCompositeSchema = z.object({
-	notification_template_id: z.string().uuid(),
-	version: z.number().int().min(1),
-	status: TemplateVersionStatusEnum.optional(),
-	subject: z.string().optional().nullable(),
-	body_text: z.string().optional().nullable(),
-	variables_json_schema: JsonObjectSchema.optional(),
-	compiled_artifacts: JsonObjectSchema.optional(),
-});
+export const UpdateNotificationTemplateVersionByCompositeSchema = z
+	.object({
+		notification_template_id: z.string().uuid(),
+		version: z.number().int().min(1),
+		status: TemplateVersionStatusEnum.optional(),
+		subject: z.string().optional().nullable(),
+		body_text: z.string().optional().nullable(),
+		variables_json_schema: JsonObjectSchema.optional(),
+		compiled_artifacts: JsonObjectSchema.optional(),
+	})
+	.openapi('UpdateNotificationTemplateVersionByComposite');
 
 export const DeleteNotificationTemplateVersionByIdSchema = z.object({
 	notification_template_version_id: z.string().uuid(),
@@ -81,7 +87,11 @@ export type NotificationTemplateVersionResponse = z.infer<typeof NotificationTem
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateNotificationTemplateVersion', CreateNotificationTemplateVersionSchema);
-	registry.register('UpdateNotificationTemplateVersion', UpdateNotificationTemplateVersionSchema);
+	registry.register('UpdateNotificationTemplateVersionById', UpdateNotificationTemplateVersionByIdSchema);
+	registry.register(
+		'UpdateNotificationTemplateVersionByCompositeByComposite',
+		UpdateNotificationTemplateVersionByCompositeSchema
+	);
 	registry.register('NotificationTemplateVersionResponse', NotificationTemplateVersionResponseSchema);
 }
 

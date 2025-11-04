@@ -13,16 +13,18 @@ import { BookingCourseParticipantResponseSchema } from './BookingCourseParticipa
 
 extendZodWithOpenApi(z);
 
-export const CreateCustomerSchema = z.object({
-	first_name: z.string(),
-	last_name: z.string(),
-	email: z.string().email().optional(),
-	telephone: z.string().optional(),
-	user_id: z.string().uuid().optional(),
-	customer_id: z.string().uuid().optional(),
-});
+export const CreateCustomerSchema = z
+	.object({
+		first_name: z.string(),
+		last_name: z.string(),
+		email: z.string().email().optional(),
+		telephone: z.string().optional(),
+		user_id: z.string().uuid().optional(),
+		customer_id: z.string().uuid().optional(),
+	})
+	.openapi('CreateCustomer');
 
-export const UpdateCustomerSchema = CreateCustomerSchema.partial();
+export const UpdateCustomerSchema = CreateCustomerSchema.partial().openapi('UpdateCustomer');
 export const DeleteCustomerSchema = z.object({ customer_id: z.string().uuid() });
 
 export type CreateCustomerInput = z.infer<typeof CreateCustomerSchema>;

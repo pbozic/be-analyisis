@@ -7,16 +7,20 @@ import { NotificationMessageResponseSchema } from './NotificationMessage';
 
 extendZodWithOpenApi(z);
 
-export const CreateNotificationMessageEventSchema = z.object({
-	notification_message_id: z.string().uuid(),
-	type: z.string().min(1), // "sent","delivered","open","click","bounce",...
-	provider_raw: JsonObjectSchema.optional(),
-	occurred_at: z.date().optional(), // default now() in DB if omitted in DAO
-});
+export const CreateNotificationMessageEventSchema = z
+	.object({
+		notification_message_id: z.string().uuid(),
+		type: z.string().min(1), // "sent","delivered","open","click","bounce",...
+		provider_raw: JsonObjectSchema.optional(),
+		occurred_at: z.date().optional(), // default now() in DB if omitted in DAO
+	})
+	.openapi('CreateNotificationMessageEvent');
 
-export const DeleteNotificationMessageEventSchema = z.object({
-	notification_message_event_id: z.string().uuid(),
-});
+export const DeleteNotificationMessageEventSchema = z
+	.object({
+		notification_message_event_id: z.string().uuid(),
+	})
+	.openapi('DeleteNotificationMessageEvent');
 
 export type CreateNotificationMessageEventInput = z.infer<typeof CreateNotificationMessageEventSchema>;
 
@@ -35,7 +39,7 @@ export type NotificationMessageEventResponse = z.infer<typeof NotificationMessag
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateNotificationMessageEvent', CreateNotificationMessageEventSchema);
-	registry.register('UpdateNotificationMessageEvent', UpdateNotificationMessageEventSchema);
+	registry.register('DeleteNotificationMessageEvent', DeleteNotificationMessageEventSchema);
 	registry.register('NotificationMessageEventResponse', NotificationMessageEventResponseSchema);
 }
 

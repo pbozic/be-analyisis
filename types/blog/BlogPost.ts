@@ -6,7 +6,6 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { File } from '../files/File.js';
 import type { User } from '../users/User.js';
 import type { BlogCategory } from './BlogCategory.js';
-import type { BlogTag } from './BlogTag.js';
 import type { BlogTagsBlogPost } from './BlogTagsBlogPost.js';
 import { FileResponseSchema } from '../files/File';
 import { UserResponseSchema } from '../users/User';
@@ -52,30 +51,34 @@ export const EditorJSDataSchema = z.object({
 // =======================
 // BlogPost Zod Schema
 // =======================
-export const CreateBlogPostSchema = z.object({
-	title: z.string().min(1),
-	short_content: z.string().optional().nullable(),
-	content: EditorJSDataSchema,
-	category_id: z.string().uuid(),
-	image_file_id: z.string().uuid().optional(),
-	publish_at: z.string().datetime().optional(),
-	tag_ids: z.array(z.string().uuid()),
-	status: z.nativeEnum(BLOG_POST_STATUS).default(BLOG_POST_STATUS.DRAFT),
-});
+export const CreateBlogPostSchema = z
+	.object({
+		title: z.string().min(1),
+		short_content: z.string().optional().nullable(),
+		content: EditorJSDataSchema,
+		category_id: z.string().uuid(),
+		image_file_id: z.string().uuid().optional(),
+		publish_at: z.string().datetime().optional(),
+		tag_ids: z.array(z.string().uuid()),
+		status: z.nativeEnum(BLOG_POST_STATUS).default(BLOG_POST_STATUS.DRAFT),
+	})
+	.openapi('CreateBlogPost');
 
 export const UpdateBlogPostSchema = CreateBlogPostSchema.extend({
 	slug: z.string().optional(),
-});
+}).openapi('UpdateBlogPost');
 
-export const SearchBlogPostsSchema = z.object({
-	page: z.number().int().min(1).default(1).nullable(),
-	limit: z.number().int().min(1).max(100).default(10).nullable(),
-	query: z.string().nullable(),
-	tag_ids: z.array(z.string().uuid()).nullable(),
-	category_ids: z.array(z.string().uuid()).nullable(),
-	year: z.number().int().nullable(),
-	month: z.number().int().min(1).max(12).nullable(),
-});
+export const SearchBlogPostsSchema = z
+	.object({
+		page: z.number().int().min(1).default(1).nullable(),
+		limit: z.number().int().min(1).max(100).default(10).nullable(),
+		query: z.string().nullable(),
+		tag_ids: z.array(z.string().uuid()).nullable(),
+		category_ids: z.array(z.string().uuid()).nullable(),
+		year: z.number().int().nullable(),
+		month: z.number().int().min(1).max(12).nullable(),
+	})
+	.openapi('SearchBlogPosts');
 // =======================
 // Inferred Types from Schemas
 // =======================
@@ -102,7 +105,7 @@ export const BlogPostResponseSchema = z
 		short_content: z.string().nullable().optional(),
 		image_file_id: z.string().nullable().optional(),
 		image: FileResponseSchema.nullable().optional(),
-		content: z.unknown(),
+		content: EditorJSDataSchema,
 		status: z.nativeEnum(BLOG_POST_STATUS),
 		author_id: z.string(),
 		category_id: z.string().nullable().optional(),
@@ -120,6 +123,7 @@ export type BlogPostResponse = z.infer<typeof BlogPostResponseSchema>;
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateBlogPost', CreateBlogPostSchema);
 	registry.register('UpdateBlogPost', UpdateBlogPostSchema);
+	registry.register('SearchBlogPosts', SearchBlogPostsSchema);
 	registry.register('BlogPostResponse', BlogPostResponseSchema);
 }
 
@@ -130,7 +134,7 @@ export type BlogPost = {
 	short_content?: string | null;
 	image_file_id?: string | null;
 	image?: File | null;
-	content: unknown;
+	content: EditorJSBlock;
 	status: BLOG_POST_STATUS;
 	author_id: string;
 	category_id?: string | null;

@@ -5,8 +5,6 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { BusinessUsage } from './BusinessUsage.js';
 import type { Permission } from '../userRoles/Permission.js';
 import type { UserPermission } from '../userRoles/UserPermission.js';
-import type { ActionBundle } from './ActionBundle.js';
-import type { Addon } from './Addon.js';
 import type { ActionBundleAction } from './ActionBundleAction.js';
 import type { AddonAction } from './AddonAction.js';
 import { ActionBundleActionResponseSchema } from './ActionBundleAction';

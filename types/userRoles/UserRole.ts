@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { USER_ROLES } from '@prisma/client';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { User } from '../users/User.js';
@@ -16,19 +15,23 @@ extendZodWithOpenApi(z);
 /**
  * CreateUserRoleSchema - Assigns a role to a user within the current reservation module
  */
-export const CreateUserRoleSchema = z.object({
-	user_id: z.string().uuid(),
-	role_id: z.string().uuid(),
-});
+export const CreateUserRoleSchema = z
+	.object({
+		user_id: z.string().uuid(),
+		role_id: z.string().uuid(),
+	})
+	.openapi('CreateUserRole');
 
 /**
  * UpdateUserRoleSchema - Reassigns an existing role to a new one (within same module)
  */
-export const UpdateUserRoleSchema = z.object({
-	user_id: z.string().uuid(),
-	role_id: z.string().uuid(), // current role
-	new_role_id: z.string().uuid().optional(),
-});
+export const UpdateUserRoleSchema = z
+	.object({
+		user_id: z.string().uuid(),
+		role_id: z.string().uuid(), // current role
+		new_role_id: z.string().uuid().optional(),
+	})
+	.openapi('UpdateUserRole');
 
 // Optional: backward-compatible alias if you still use "assign/remove" terminology
 export const AssignUserRoleSchema = CreateUserRoleSchema;

@@ -8,12 +8,14 @@ extendZodWithOpenApi(z);
 
 // blog_categories.ts
 
-export const CreateBlogTagSchema = z.object({
-	name: z.string().min(1),
-	description: z.string().optional().nullable(),
-});
+export const CreateBlogTagSchema = z
+	.object({
+		name: z.string().min(1),
+		description: z.string().optional().nullable(),
+	})
+	.openapi('CreateBlogTag');
 
-export const UpdateBlogTagSchema = CreateBlogTagSchema.partial();
+export const UpdateBlogTagSchema = CreateBlogTagSchema.partial().openapi('UpdateBlogTag');
 // UpdateBlogTagSchema is the same as CreateBlogTagSchema but with all fields optional
 
 export const DeleteBlogTagSchema = z.object({

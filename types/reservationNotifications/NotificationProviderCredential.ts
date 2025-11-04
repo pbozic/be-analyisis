@@ -9,23 +9,29 @@ import { ReservationModuleResponseSchema } from '../reservations/ReservationModu
 
 extendZodWithOpenApi(z);
 
-export const CreateNotificationProviderCredentialSchema = z.object({
-	reservation_module_id: z.string().uuid(),
-	channel: NotificationChannelEnum,
-	provider: z.string().min(1, 'Provider is required'), // e.g., "sendgrid", "twilio"
-	config: JsonObjectSchema, // secrets, sender, domain, etc.
-	is_default: z.boolean().optional(), // default false in DB
-});
+export const CreateNotificationProviderCredentialSchema = z
+	.object({
+		reservation_module_id: z.string().uuid(),
+		channel: NotificationChannelEnum,
+		provider: z.string().min(1, 'Provider is required'), // e.g., "sendgrid", "twilio"
+		config: JsonObjectSchema, // secrets, sender, domain, etc.
+		is_default: z.boolean().optional(), // default false in DB
+	})
+	.openapi('CreateNotificationProviderCredential');
 
-export const UpdateNotificationProviderCredentialSchema = z.object({
-	notification_provider_credential_id: z.string().uuid(),
-	config: JsonObjectSchema.optional(),
-	is_default: z.boolean().optional(),
-});
+export const UpdateNotificationProviderCredentialSchema = z
+	.object({
+		notification_provider_credential_id: z.string().uuid(),
+		config: JsonObjectSchema.optional(),
+		is_default: z.boolean().optional(),
+	})
+	.openapi('UpdateNotificationProviderCredential');
 
-export const DeleteNotificationProviderCredentialSchema = z.object({
-	notification_provider_credential_id: z.string().uuid(),
-});
+export const DeleteNotificationProviderCredentialSchema = z
+	.object({
+		notification_provider_credential_id: z.string().uuid(),
+	})
+	.openapi('DeleteNotificationProviderCredential');
 
 export type CreateNotificationProviderCredentialInput = z.infer<typeof CreateNotificationProviderCredentialSchema>;
 export type UpdateNotificationProviderCredentialInput = z.infer<typeof UpdateNotificationProviderCredentialSchema>;
@@ -48,6 +54,7 @@ export type NotificationProviderCredentialResponse = z.infer<typeof Notification
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateNotificationProviderCredential', CreateNotificationProviderCredentialSchema);
 	registry.register('UpdateNotificationProviderCredential', UpdateNotificationProviderCredentialSchema);
+	registry.register('DeleteNotificationProviderCredential', DeleteNotificationProviderCredentialSchema);
 	registry.register('NotificationProviderCredentialResponse', NotificationProviderCredentialResponseSchema);
 }
 

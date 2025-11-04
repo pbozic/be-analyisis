@@ -3,12 +3,10 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { ReservationModule } from './ReservationModule.js';
-import type { Service } from './Service.js';
 import type { ScheduleEmployee } from './ScheduleEmployee.js';
 import type { Booking } from './Booking.js';
 import type { BusinessUser } from '../businessUsers/BusinessUser.js';
 import type { ScheduleSlot } from './ScheduleSlot.js';
-import type { Schedule } from './Schedule.js';
 import type { ServiceAssignment } from './ServiceAssignment.js';
 import { ReservationModuleResponseSchema } from './ReservationModule';
 import { ServiceAssignmentResponseSchema } from './ServiceAssignment';
@@ -34,16 +32,20 @@ export const CreateEmployeeSchema = z
 	.refine((data) => data.password === data.confirm_password, {
 		path: ['confirm_password'], // this targets the confirm_password field
 		message: 'Passwords do not match',
-	});
-export const UpdateEmployeeSchema = z.object({
-	first_name: z.string().min(1, 'First name is required'),
-	last_name: z.string().min(1, 'Last name is required'),
-	email: z.string().email('Invalid email address'),
-	telephone: z.string().optional(),
-	telephone_code: z.string().optional(),
-	telephone_number: z.string().optional(),
-	//TODO: add roles when system ready
-});
+	})
+	.openapi('CreateEmployee');
+
+export const UpdateEmployeeSchema = z
+	.object({
+		first_name: z.string().min(1, 'First name is required'),
+		last_name: z.string().min(1, 'Last name is required'),
+		email: z.string().email('Invalid email address'),
+		telephone: z.string().optional(),
+		telephone_code: z.string().optional(),
+		telephone_number: z.string().optional(),
+		//TODO: add roles when system ready
+	})
+	.openapi('UpdateEmployee');
 
 export const DeleteEmployeeSchema = z.object({ employee_id: z.string().uuid() });
 

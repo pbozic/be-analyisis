@@ -21,7 +21,6 @@ import type { NotificationProviderCredential } from '../reservationNotifications
 import type { NotificationMessage } from '../reservationNotifications/NotificationMessage.js';
 import type { File } from '../files/File.js';
 import type { Reviewable } from '../reviews/Reviewable.js';
-import type { User } from '../users/User.js';
 import type { UserRole } from '../userRoles/UserRole.js';
 import { BusinessResponseSchema } from '../business/Business';
 import { ActionBundleResponseSchema } from '../subscriptions/ActionBundle';
@@ -50,20 +49,22 @@ extendZodWithOpenApi(z);
 /**
  * --- SCHEMAS ---
  */
-export const UpdateReservationModuleSchema = z.object({
-	hours_before_reschedule: z.number().int().min(0).max(168).nullable().optional(), // up to 7 days
-	hours_before_cancel: z.number().int().min(0).max(168).nullable().optional(),
-	publicly_visible: z.boolean().optional(),
-	subscription_id: z.string().uuid().nullable().optional(),
-	subscription_active_until: z.coerce.date().nullable().optional(),
-	subscription_expires_at: z.coerce.date().nullable().optional(),
-});
+export const UpdateReservationModuleSchema = z
+	.object({
+		hours_before_reschedule: z.number().int().min(0).max(168).nullable().optional(), // up to 7 days
+		hours_before_cancel: z.number().int().min(0).max(168).nullable().optional(),
+		publicly_visible: z.boolean().optional(),
+		subscription_id: z.string().uuid().nullable().optional(),
+		subscription_active_until: z.coerce.date().nullable().optional(),
+		subscription_expires_at: z.coerce.date().nullable().optional(),
+	})
+	.openapi('UpdateReservationModule');
 
 export const UpdateReservationSettingsSchema = UpdateReservationModuleSchema.pick({
 	hours_before_reschedule: true,
 	hours_before_cancel: true,
 	publicly_visible: true,
-});
+}).openapi('UpdateReservationSettings');
 
 /**
  * --- INPUT TYPES ---
@@ -140,6 +141,8 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateReservationModule', CreateReservationModuleSchema);
 	registry.register('UpdateReservationModule', UpdateReservationModuleSchema);
 	registry.register('ReservationModuleResponse', ReservationModuleResponseSchema);
+
+	registry.register('UpdateReservationSettings', UpdateReservationSettingsSchema);
 }
 
 export type ReservationModule = {

@@ -11,17 +11,19 @@ import { ReservationModuleResponseSchema } from '../reservations/ReservationModu
 
 extendZodWithOpenApi(z);
 
-export const CreateUserPermissionSchema = z.object({
-	user_id: z.string().uuid(),
-	action_id: z.string().uuid().optional(),
-	name: z.string().optional(),
-	module: z.nativeEnum(MODULE_TYPE),
-	limit: z.number().int().optional(),
-	scope: z.nativeEnum(PERMISSION_SCOPE).default(PERMISSION_SCOPE.GLOBAL),
-	is_blocked: z.boolean().default(false),
-});
+export const CreateUserPermissionSchema = z
+	.object({
+		user_id: z.string().uuid(),
+		action_id: z.string().uuid().optional(),
+		name: z.string().optional(),
+		module: z.nativeEnum(MODULE_TYPE),
+		limit: z.number().int().optional(),
+		scope: z.nativeEnum(PERMISSION_SCOPE).default(PERMISSION_SCOPE.GLOBAL),
+		is_blocked: z.boolean().default(false),
+	})
+	.openapi('CreateUserPermission');
 
-export const UpdateUserPermissionSchema = CreateUserPermissionSchema.partial();
+export const UpdateUserPermissionSchema = CreateUserPermissionSchema.partial().openapi('UpdateUserPermission');
 
 export type CreateUserPermissionInput = z.infer<typeof CreateUserPermissionSchema>;
 export type UpdateUserPermissionInput = z.infer<typeof UpdateUserPermissionSchema>;
