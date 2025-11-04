@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee';
 import { ValidatedRequest } from '../../types/validatedRequest';
-import { CreateScheduleEmployeeInput, UpdateScheduleEmployeeInput } from '../../types/reservation/Schedule';
+import { CreateScheduleEmployeeInput, UpdateScheduleEmployeeInput } from '../../types/reservations/Schedule';
 
 /**
  * GET /reservation/schedule-employees/list/:schedule_id

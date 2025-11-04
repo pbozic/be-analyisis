@@ -464,7 +464,7 @@ async function listTransferBusinessesMainInfo(req, res) {
 	}
 }
 /**
- * GET /businesses/taxis
+ * GET /businesses/taxi
  * @tag Business
  * @summary List all taxi businesses
  * @description Retrieves a list of all businesses classified as taxis (TRANSFER).
@@ -1732,7 +1732,7 @@ async function editBusiness(req, res) {
 	}
 }
 /**
- * GET /business/stripe/status/:business_id
+ * GET /business/stripe/:business_id
  * @tag Business
  * @summary Get Stripe account active status
  * @description Returns whether the business's Stripe account is active.
@@ -1758,7 +1758,7 @@ async function getBusinessStripeStatusByBusinessId(req, res) {
 	}
 }
 /**
- * GET /business/stripe/generate/:business_id
+ * PATCH /business/stripe/generate/:business_id
  * @tag Business
  * @summary Generate Stripe onboarding link
  * @description Creates or retrieves a Stripe account and returns an onboarding link.
@@ -2851,25 +2851,24 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 }
 
 /**
- *
- * - POST /business-types
- * - @tag BusinessTypes
- * - @summary Create a new business type
- * - @description Creates a new business_type row.
- * - @operationId createBusinessType
- * - @bodyDescription The business type to create
- * - @bodyContent {
+ * POST /business/admin/business-types
+ * @tag BusinessTypes
+ * @summary Create a new business type
+ * @description Creates a new business_type row.
+ * @operationId createBusinessType
+ * @bodyDescription The business type to create
+ * @bodyContent {
  *   "type": "RESTAURANT"
  * } application/json
- * - @bodyRequired
- * - @prisma_model business_type
- * - @response 200 - Business type created successfully
- * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
+ * @bodyRequired
+ * @prisma_model business_type
+ * @response 200 - Business type created successfully
+ * @responseContent {object} 200.application/json
+ * @responseExample 200.application/json {
  *   "type_id": "uuid",
  *   "type": "RESTAURANT"
  * }
- * - @response 500 - Error creating business type
+ * @response 500 - Error creating business type
  */
 export async function createBusinessType(req, res) {
 	try {
@@ -2886,25 +2885,24 @@ export async function createBusinessType(req, res) {
 }
 
 /**
- *
- * - PUT /business/{business_id}/types
- * - @tag BusinessTypes
- * - @summary Replace all business types for a business
- * - @description Sets the list of type_ids for a given business using junction table business_to_types.
- * - @operationId setBusinessTypes
- * - @bodyDescription Array of business_type IDs to assign
- * - @bodyContent {
+ * PUT /business/admin/:business_id/types
+ * @tag BusinessTypes
+ * @summary Replace all business types for a business
+ * @description Sets the list of type_ids for a given business using junction table business_to_types.
+ * @operationId setBusinessTypes
+ * @bodyDescription Array of business_type IDs to assign
+ * @bodyContent {
  *   "type_ids": ["uuid1", "uuid2"]
  * } application/json
- * - @bodyRequired
- * - @response 200 - Types updated successfully
- * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json {
+ * @bodyRequired
+ * @response 200 - Types updated successfully
+ * @responseContent {object} 200.application/json
+ * @responseExample 200.application/json {
  *   "business_id": "uuid",
  *   "type_ids": ["uuid1", "uuid2"]
  * }
- * - @response 500 - Error updating business types
- * - @prisma_model business_to_types
+ * @response 500 - Error updating business types
+ * @prisma_model business_to_types
  */
 export async function setBusinessTypesForBusiness(req, res) {
 	try {

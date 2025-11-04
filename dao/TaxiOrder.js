@@ -68,15 +68,7 @@ async function getOrder(order_id) {
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -137,15 +129,7 @@ async function getTaxiOrdersIfNotCompleted(user_id, type, isBusinessUser = false
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -220,15 +204,7 @@ async function getActiveOrdersByDriverId(driver_id) {
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -268,15 +244,7 @@ async function getDeliveryOrdersByDriverId(driver_id, args) {
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -315,15 +283,7 @@ async function getOrdersByDriverId(driver_id, args) {
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -495,13 +455,7 @@ export async function acceptTaxiOrderWithRawLock(order, driver) {
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: { vehicle_specification: true },
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -572,15 +526,7 @@ async function acceptOrder(order, driver) {
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -619,15 +565,7 @@ async function updateOrderStatus(order_id, status) {
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -665,15 +603,7 @@ async function completeOrder(order_id) {
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -723,15 +653,7 @@ async function cancelOrder(order_id, status, cancellation_reason) {
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -801,15 +723,7 @@ async function cancelVehicleTransferOrder(user_id, status, cancellation_reason) 
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -1007,15 +921,7 @@ async function updateCompleteTaxiRoute(order_id, route) {
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -1067,15 +973,7 @@ async function updateTaxiOrderTimeline(order_id, newTimelineEntries) {
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -1146,15 +1044,7 @@ async function updateOrder(order_id, order) {
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
@@ -1197,15 +1087,7 @@ async function getAcceptedOrders() {
 								},
 							},
 						},
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								},
-							},
-						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},

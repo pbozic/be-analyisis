@@ -1,5 +1,5 @@
 import prisma from '../../prisma/prisma';
-import type { Service, CreateServiceInput, UpdateServiceInput } from '../../types/reservation/Service.ts';
+import type { Service, CreateServiceInput, UpdateServiceInput } from '../../types/reservations/Service.ts';
 /**
  * Retrieves all services for a given business ID.
  * @param {string} businessId - The ID of the business to retrieve services for.

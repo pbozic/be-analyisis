@@ -1,5 +1,5 @@
 import prisma from '../../prisma/prisma';
-import type { Customer, CreateCustomerInput, UpdateCustomerInput } from '../../types/reservation/Customer.ts';
+import type { Customer, CreateCustomerInput, UpdateCustomerInput } from '../../types/reservations/Customer.ts';
 /**
  * Retrieves all customers for a given business ID.
  * @param {string} businessId - The ID of the business to retrieve customers for.

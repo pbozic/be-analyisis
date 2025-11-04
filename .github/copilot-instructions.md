@@ -1,6 +1,6 @@
 # Documentation
 
-Whenever we request to generate docs in any file that is a part of the controllers folder please use the following instructions:
+## Whenever we request to generate docs in any file that is a part of the controllers folder please use the following instructions:
 
 1. generate docs in an openapi style like the example below, also include the ./prisma/schema.prisma
 
@@ -30,3 +30,75 @@ Whenever we request to generate docs in any file that is a part of the controlle
 5. for response you can also check the prisma model of that function we will usually return all fields, if we include (relations) you can check that prisma model that was included and also include all fields from there
 
 6. please do not overwrite the code of the function when doing all this
+
+
+## Whenever writing dtos/types for models or controllers, please follow these rules:
+1. Check schemas/primitives.ts and reuse those
+2. Create THREE schema shapes per model:
+   - Base: scalars only, no relations, no imports from other models.
+   - Ref: minimal identity for embedding elsewhere (id + label [+ optional avatar/icon]).
+   - Response/Detail: extends Base and embeds ONLY other models' Ref-variants.
+
+3. Never import another model's Response schema. Import only its Ref.
+4. Do not add relations to Ref schemas. Scalars only.
+5. Do not include secrets or contact fields in public Ref; create Private variants if needed.
+6. Use consistent naming: ModelBase, ModelRef, ModelResponse (or ModelDetail).
+7. Provide mapper functions from Prisma payloads to DTOs. Validate with zod.parse.
+8. Avoid z.lazy unless true recursion is required (trees). If recursion appears, isolate it.
+9. No circular imports. If a cycle appears, replace nested Response with Ref variant.
+10. No password in response DTOs. Ever.
+11. Keep unknown blobs out; prefer versioned small objects or TODO:shape later.
+12. put dtos in schemas/dtos/...folder structure according to model names.
+13. If a dto file is too big split it into multiple files according to the schema shapes (Base, Ref, Response/Detail)
+14. If a controller needs multiple models, check for existing dtos first, and if not found create new ones reusing existing dtos as much as possible.
+
+15. Create a schemas/dto/ folder. For each model (User, Business, BusinessUser), create:
+- schemas/dto/<model>/<model>.ts.
+
+Example of schemas/dto/<model>/<model>.ts:
+```/ schemas/dto/<model>/<model>.ts
+import { z } from 'zod';
+
+export const <Model>BaseSchema = z.object({
+  <model>_id: z.string(),
+  // scalar fields only, no relations
+  created_at: z.string().datetime(),
+  updated_at: z.string().datetime(),
+});
+
+export type <Model>Base = z.infer<typeof <Model>BaseSchema>;```
+
+### COPILOT: DTO REUSE CONTRACT
+1. DTOs are controller-agnostic. Never add fields that are only needed by a single endpoint.
+2. Shapes live in a central schemas/dto/ package. Controllers only consume; they never define DTOs.
+3. Every model exports: Base, Ref, Detail. Relations in Detail must import other models' Ref only.
+4. Reuse via composition (extend/merge), not copy. Use shared wrappers for pagination, meta, and expand.
+5. No side effects or business logic in DTOs. No DB types, no services, no controller imports.
+6. Keep outputs stable. If a one-off field is needed, create a dedicated “View” schema next to the controller, built from Base/Ref.
+7. Date/time values are strings in ISO 8601. No raw Date in DTOs.
+8. Sensitive fields are excluded by default. Add explicit Private variants if needed.
+9. Prefer pick/omit from Base to keep consistency across controllers.
+10. Avoid z.lazy unless real recursion. If recursion, isolate to that model’s tree schema.
+
+ALSO ADD 
+
+```
+export function registerSchemas(registry: OpenAPIRegistry) {
+	// Register request schemas
+	registry.register('CreateBlogPost', CreateBlogPostSchema);
+	registry.register('UpdateBlogPost', UpdateBlogPostSchema);
+	registry.register('SearchBlogPosts', SearchBlogPostsSchema);
+
+	// Register response schemas
+	registry.register('BlogPost', BlogPostResponseSchema);
+
+	// Register Editor.js schemas
+	registry.register('EditorJSData', EditorJSDataSchema);
+	registry.register('EditorJSBlock', EditorJSBlockSchemaKnown);
+	registry.register('EditorJSUnknownBlock', fallbackBlockSchema);
+
+	// Responses
+	registry.register('BlogPostResponse', BlogPostResponseSchema);
+}
+``` 
+to the bottom of the dto file registering all the schemas defined in that file.

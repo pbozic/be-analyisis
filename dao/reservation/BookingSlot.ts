@@ -1,10 +1,6 @@
 import prisma from '../../prisma/prisma';
-import type {
-	CreateBookingSlotInput,
-	UpdateBookingSlotSchemaInput,
-	BookingSlot,
-} from '../../types/reservation/Schedule';
-
+import type { CreateBookingSlotInput, UpdateBookingSlotSchemaInput } from '../../types/reservations/Schedule';
+import { BookingSlot } from '../../types/reservations/BookingSlot';
 /**
  * Retrieves all booking slots for a given schedule slot ID.
  * @param {string} scheduleSlotId - The schedule slot ID.

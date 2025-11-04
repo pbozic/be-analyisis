@@ -1,9 +1,6 @@
 import prisma from '../../prisma/prisma.js';
-import type {
-	CreateScheduleEmployeeInput,
-	UpdateScheduleEmployeeInput,
-	ScheduleEmployee,
-} from '../../types/reservation/Schedule.ts';
+import type { CreateScheduleEmployeeInput, UpdateScheduleEmployeeInput } from '../../types/reservations/Schedule.ts';
+import { ScheduleEmployee } from '../../types/reservations/ScheduleEmployee.ts';
 
 const cropped_user_columns = {
 	first_name: true,

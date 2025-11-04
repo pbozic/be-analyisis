@@ -5,7 +5,7 @@ import { Response } from 'express';
 import elasticsearch from '../../elasticsearch/index.js';
 import ReservationModuleDao from '../../dao/reservation/ReservationModule.ts';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
-import { UpdateReservationSettingsInput } from '../../types/reservation/ReservationModule.ts';
+import { UpdateReservationSettingsInput } from '../../types/reservations/ReservationModule.ts';
 
 config();
 const businessIndex = elasticsearch.businessIndex as (business_id?: string | null, force?: boolean) => Promise<void>;

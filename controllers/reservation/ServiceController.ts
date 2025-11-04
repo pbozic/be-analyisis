@@ -9,7 +9,7 @@ import {
 	UpdateServiceInput,
 	CreateServiceWithEmployeesInput,
 	UpdateServiceWithEmployeesInput,
-} from '../../types/reservation/Service.ts';
+} from '../../types/reservations/Service.ts';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 
 /**

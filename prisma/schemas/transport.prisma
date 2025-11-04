@@ -253,42 +253,26 @@ model vehicle_drivers {
 /// @erd TaxiOrders
 /// @erd DeliveryOrders
 model vehicles {
-    vehicle_id               String                  @id @unique @default(uuid()) @db.Uuid
-    transport_module_id      String?                 @db.Uuid
-    active                   Boolean?                @default(true)
-    class                    VEHICLE_CLASS?
-    category                 VEHICLE_CATEGORY?
-    make                     String?
-    model                    String?
-    color                    String?
-    license_plate            String?
-    created_at               DateTime                @default(now()) @db.Timestamptz(6)
-    updated_at               DateTime                @default(now()) @updatedAt @db.Timestamptz(6)
-    documents                documents[]
-    drivers                  vehicle_drivers[]
-    vehicle_specification_id String?                 @unique @db.Uuid
-    vehicle_specification    vehicle_specifications? @relation(fields: [vehicle_specification_id], references: [vehicle_specification_id])
-    taxi_orders              taxi_orders[]
-    delivery_orders          delivery_orders[]
-    current_driver           drivers?                @relation("driver_current_vehicle")
-    business_premise_id      String?                 @unique @db.Uuid
-    business_premise         business_premise?       @relation(fields: [business_premise_id], references: [business_premise_id])
-    invoices                 invoice[]
-    transport_module         transport_module?       @relation(fields: [transport_module_id], references: [transport_module_id])
-}
-
-/// @summary Canonical vehicle specification presets (pricing/capacity).
-/// @namespace Vehicles
-model vehicle_specifications {
-    vehicle_specification_id String           @id @unique @default(uuid()) @db.Uuid
-    class                    VEHICLE_CLASS
-    category                 VEHICLE_CATEGORY
-    people                   String
-    start_cost               String
-    per_kilometre            String
-    per_minute               String
-    vehicle_id               String?          @db.Uuid
-    vehicle                  vehicles?
+    vehicle_id          String            @id @unique @default(uuid()) @db.Uuid
+    transport_module_id String?           @db.Uuid
+    active              Boolean?          @default(true)
+    class               VEHICLE_CLASS?
+    category            VEHICLE_CATEGORY?
+    make                String?
+    model               String?
+    color               String?
+    license_plate       String?
+    created_at          DateTime          @default(now()) @db.Timestamptz(6)
+    updated_at          DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+    documents           documents[]
+    drivers             vehicle_drivers[]
+    taxi_orders         taxi_orders[]
+    delivery_orders     delivery_orders[]
+    current_driver      drivers?          @relation("driver_current_vehicle")
+    business_premise_id String?           @unique @db.Uuid
+    business_premise    business_premise? @relation(fields: [business_premise_id], references: [business_premise_id])
+    invoices            invoice[]
+    transport_module    transport_module? @relation(fields: [transport_module_id], references: [transport_module_id])
 }
 
 enum VEHICLE_TYPE {

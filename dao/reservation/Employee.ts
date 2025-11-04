@@ -1,5 +1,5 @@
 import prisma from '../../prisma/prisma';
-import type { Employee, UpdateEmployeeInput } from '../../types/reservation/Employee.ts';
+import type { Employee, UpdateEmployeeInput } from '../../types/reservations/Employee.ts';
 
 const cropped_user_columns = {
 	first_name: true,

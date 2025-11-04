@@ -1,5 +1,5 @@
 import prisma from '../../prisma/prisma';
-import type { Location, CreateLocationInput, UpdateLocationInput } from '../../types/reservation/Location.ts';
+import type { Location, CreateLocationInput, UpdateLocationInput } from '../../types/reservations/Location.ts';
 
 /**
  * Retrieves all locations for a given business ID.

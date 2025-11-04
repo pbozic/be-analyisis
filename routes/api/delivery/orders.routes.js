@@ -91,6 +91,6 @@ router.post('/timeline', DeliveryOrderController.updateDeliveryOrderTimeline);
 router.post('/add_to_timeline', DeliveryOrderController.addToDeliveryOrderTimeline);
 router.post('/order/update/items', DeliveryOrderController.updateDeliveryOrderItems);
 
-router.post('/order/image', DeliveryOrderController.setDeliveryImage);
+router.post('/order/:order_id/image', DeliveryOrderController.setDeliveryImage);
 
 export default router;

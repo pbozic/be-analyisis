@@ -9,7 +9,7 @@ import {
 	CreateOrUpdateExceptionsAndBookingsInput,
 	CreateScheduleSlotWithExceptionsAndBookingSlotsInput,
 	UpdateScheduleSlotWithBookingSlotsAndExceptionsInput,
-} from '../../types/reservation/Schedule';
+} from '../../types/reservations/Schedule';
 import BookingSlotDao from '../../dao/reservation/BookingSlot';
 import ScheduleSlotDao from '../../dao/reservation/ScheduleSlot';
 import { splitByBookingId, splitByExceptionsId } from '../../lib/bookingHelpers';

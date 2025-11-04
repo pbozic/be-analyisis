@@ -105,7 +105,7 @@ async function getActiveDeliveryOrders(req, res) {
 	}
 }
 /**
- * GET /delivery/orders/order/{orderId}
+ * GET /delivery/orders/order/:order_id
  * @tag Delivery
  * @summary Get order details.
  * @description This fetches the order details using the given order id.
@@ -367,7 +367,7 @@ async function startDailyMeals(req, res) {
 	}
 }
 /**
- * POST /delivery/order/accept
+ * POST /delivery/orders/order/accept
  * @tag Delivery
  * @summary Accept a delivery order.
  * @description Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
@@ -430,11 +430,7 @@ async function acceptOrderDeliveryOld(req, res) {
 		let driver;
 		if (order.delivery_driver?.delivery_driver_id) {
 			driver = await DeliveryDriverDao.getDeliveryDriverById(deliverer_id, {
-				vehicles: {
-					include: {
-						vehicle_specification: true,
-					},
-				},
+				vehicles: true,
 			});
 			driver.vehicle = vehicle;
 			order.driver = driver;
@@ -461,7 +457,7 @@ async function acceptOrderDeliveryOld(req, res) {
 	}
 }
 /**
- * POST /delivery/order/accept
+ * POST /delivery/orders/order/accept
  * @tag Delivery
  * @summary Accept a delivery order.
  * @description Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
@@ -546,7 +542,7 @@ async function acceptOrderDelivery(req, res) {
 	}
 }
 /**
- * POST /delivery/order/cancel_delivery
+ * POST /delivery/orders/order/cancel_delivery
  * @tag Delivery
  * @summary Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
  * @description Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
@@ -626,7 +622,7 @@ async function cancelOrderDelivery(req, res) {
 	}
 }
 /**
- * POST /delivery/order/complete
+ * POST /delivery/orders/order/complete
  * @tag Delivery
  * @summary Complete a delivery order.
  * @description Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
@@ -931,7 +927,7 @@ async function getDeliveryOrdersByDriverId(req, res) {
 	}
 }
 /**
- * GET /delivery/orders/completed
+ * GET /delivery/orders/completed/:driver_id
  * @tag Delivery
  * @summary Get completed delivery orders.
  * @description This fetches all completed orders for a specific driver.
@@ -1122,7 +1118,7 @@ async function getActiveDeliveryOrdersByBusinessId(req, res) {
 	}
 }
 /**
- * GET /delivery/orders/:business_id
+ * GET /delivery/orders/business/:business_id
  * @tag Delivery
  * @summary Get delivery orders.
  * @description This fetches all restaurant orders.
@@ -1950,7 +1946,7 @@ async function updateOrderDeliveryTime(req, res) {
 	}
 }
 /**
- * POST /delivery/order/timeline
+ * POST /delivery/orders/timeline
  * @tag Delivery
  * @summary Update a delivery order's timeline.
  * @description Updates the timeline of a taxi order.
@@ -1975,7 +1971,7 @@ async function updateDeliveryOrderTimeline(req, res) {
 	}
 }
 /**
- * POST /delivery/order/add_to_timeline
+ * POST /delivery/orders/add_to_timeline
  * @tag Delivery
  * @summary Update a delivery order's timeline by appending an entry.
  * @description Appends a new timeline entry with the given status and optional extra data in entry_data.
@@ -2054,7 +2050,7 @@ async function getDeliveryOrdersToday(req, res) {
 	}
 }
 /**
- * POST /delivery/order/dispatcher_cancel
+ * POST /delivery/orders/order/dispatcher_cancel
  * @tag Delivery
  * @summary Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
  * @description Cancel and if necessary refund an order
@@ -2130,7 +2126,7 @@ async function dispatcherCancel(req, res) {
 	}
 }
 /**
- * POST /delivery/order/dispatcher_revoke
+ * POST /delivery/orders/order/dispatcher_revoke
  * @tag Delivery
  * @summary Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
  * @description Cancel and if necessary refund an order
@@ -2269,7 +2265,7 @@ async function startOrder(req, res) {
 
 /**
  *
- * - POST /delivery/orders/{order_id}/image
+ * - POST /delivery/orders/order/:order_id/image
  * - @tag DeliveryOrders
  * - @summary Set or replace delivery proof image for an order
  * - @description Upserts a files row linked to delivery_orders via file_id/delivery_order_id.

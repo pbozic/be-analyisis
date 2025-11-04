@@ -1,5 +1,5 @@
 import prisma from '../../prisma/prisma';
-import type { CreateScheduleInput, Schedule, UpdateScheduleInput } from '../../types/reservation/Schedule.ts';
+import type { CreateScheduleInput, Schedule, UpdateScheduleInput } from '../../types/reservations/Schedule.ts';
 
 /**
  * Retrieves all schedules for a given business ID.

@@ -8,10 +8,10 @@ import {
 	CreateMultipleSchedulesInput,
 	OverwriteMultipleSchedulesInput,
 	UpdateMultipleSchedulesInput,
-	ScheduleSlotException,
-	BookingSlot,
-} from '../../types/reservation/Schedule';
+} from '../../types/reservations/Schedule';
 import { createScheduleSlotWithData, updateScheduleSlotWithData } from './ScheduleSlotExceptionController.ts';
+import { ScheduleSlotException } from '../../types/reservations/ScheduleSlotException.ts';
+import { BookingSlot } from '../../types/reservations/BookingSlot.ts';
 
 /**
  * GET /reservation/schedule-slots/list/:schedule_id

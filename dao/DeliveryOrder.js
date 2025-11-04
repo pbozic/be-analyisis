@@ -31,11 +31,7 @@ async function getOrders(args) {
 				delivery_driver: {
 					include: {
 						user: true,
-						vehicles: {
-							include: {
-								vehicle_specification: true,
-							},
-						},
+						vehicles: true,
 					},
 				},
 				driver: {
