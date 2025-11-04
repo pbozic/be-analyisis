@@ -1,7 +1,7 @@
 import prisma from '../prisma/prisma.js';
 import { SERVICE_TYPE } from '../lib/constants.js';
 /**
- * GET /overwatch/orders/pagination
+ * POST /overwatch/orders/pagination
  * @tag Overwatch
  * @summary Get orders with pagination.
  * @description This fetches orders with pagination.
@@ -40,7 +40,7 @@ async function getOrdersWithPagination(req, res) {
 	}
 }
 /**
- * PATCH /api/overwatch/drivers/activity/settings
+ * PATCH /overwatch/drivers/activity/settings
  * @tag DriverSettings
  * @summary Update driver activity settings
  * @description Updates existing driver activity settings or creates new ones if they don't exist
@@ -76,7 +76,7 @@ async function setDriversActivitySettings(req, res) {
 }
 
 /**
- * GET /api/overwatch/drivers/activity/settings
+ * GET /overwatch/drivers/activity/settings
  * @tag DriverSettings
  * @summary Get active driver activity settings
  * @description Retrieves the most recently created active driver activity settings.

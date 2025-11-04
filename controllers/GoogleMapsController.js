@@ -6,7 +6,7 @@ const { Client } = googleMapsServicesJs;
 const apiKey = process.env.GOOGLE_API_KEY;
 const client = new Client({});
 /**
- * GET /google_maps/geocode_address
+ * POST /google_maps/geocode_address
  * @tag GoogleMaps
  * @summary Fetches the geocode information for a given address
  * @description Retrieves the latitude and longitude coordinates for the provided address using the Google Maps Geocoding API.

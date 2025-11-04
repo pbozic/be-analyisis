@@ -31,29 +31,28 @@ import DailyMealCategoryDao from '../dao/DailyMealCategory.ts';
 import { logPromoAnalytics } from '../lib/analytics.ts';
 
 /**
- * - POST /delivery/orders/daily_meals/subscription/payment
- * - @tag Delivery
- * - @summary Create a daily meals subscription payment
- * - @description Creates a payment intent for a daily meals subscription, creates the subscription (with nested customers, days, weekdays), and returns the subscription id and payment intent.
- * - @operationId dailyMealsSubscriptionPayment
- * - @bodyDescription The daily meals subscription payment details to create
- * - @bodyContent {} application/json
- * - @bodyRequired
- * - @response 200 - Daily meals subscription payment created successfully
- * - @responseContent {object} 200.application/json
- *   }
- * - @response 500 - Error creating daily meals subscription payment
- * - @prisma_model users
- * - @prisma_model business
- * - @prisma_model payments
- * - @prisma_model daily_meal_subscriptions
- * - @prisma_model daily_meal_subscription_customers
- * - @prisma_model daily_meal_subscription_days
- * - @prisma_model daily_meal_subscription_weekdays
- * - @prisma_model address
- * - @prisma_model payment_splits
- * - @prisma_model wallet_funds
- * - @prisma_model payment_intent_logs
+ * POST /delivery/daily_meals/subscription/payment
+ * @tag Delivery
+ * @summary Create a daily meals subscription payment
+ * @description Creates a payment intent for a daily meals subscription, creates the subscription (with nested customers, days, weekdays), and returns the subscription id and payment intent.
+ * @operationId dailyMealsSubscriptionPayment
+ * @bodyDescription The daily meals subscription payment details to create
+ * @bodyContent {} application/json
+ * @bodyRequired
+ * @response 200 - Daily meals subscription payment created successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error creating daily meals subscription payment
+ * @prisma_model users
+ * @prisma_model business
+ * @prisma_model payments
+ * @prisma_model daily_meal_subscriptions
+ * @prisma_model daily_meal_subscription_customers
+ * @prisma_model daily_meal_subscription_days
+ * @prisma_model daily_meal_subscription_weekdays
+ * @prisma_model address
+ * @prisma_model payment_splits
+ * @prisma_model wallet_funds
+ * @prisma_model payment_intent_logs
  */
 export async function dailyMealsSubscriptionPayment(
 	req: ValidatedRequest<DailyMealsSubscriptionRequest, unknown, DailyMealsSubscriptionQuery>,
@@ -217,44 +216,44 @@ export async function dailyMealsSubscriptionPayment(
 }
 
 /**
- * - GET /delivery/orders/daily_meals/user
- * - @tag Delivery
- * - @summary Get all daily meal subscriptions for the current user
- * - @description Returns all daily meal subscriptions for the authenticated user, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances.
- * - @operationId getUserDailyMealSubscriptions
- * - @response 200 - List of daily meal subscriptions for the current user
- * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json [
- *     {
- *       "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *       "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *       "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *       "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *       "start_date": "2025-07-01T00:00:00.000Z",
- *       "end_date": null,
- *       "type": "DATED",
- *       "status": "ACTIVE",
- *       "courier_comment": "Leave at the door",
- *       "created_at": "2025-07-01T00:00:00.000Z",
- *       "updated_at": "2025-07-01T00:00:00.000Z",
- *       "user": { ... },
- *       "business": { ... },
- *       "delivery_address": { ... },
- *       "customers": [ ... ],
- *       "days": [ ... ],
- *       "weekdays": [ ... ],
- *       "daily_meal_instances": [ ... ]
- *     }
- *   ]
- * - @response 500 - Error fetching daily meal subscriptions
- * - @prisma_model daily_meal_subscriptions
- * - @prisma_model users
- * - @prisma_model business
- * - @prisma_model addresses
- * - @prisma_model daily_meal_subscription_customers
- * - @prisma_model daily_meal_subscription_days
- * - @prisma_model daily_meal_subscription_weekdays
- * - @prisma_model daily_meal_instances
+ * POST /delivery/daily_meals/user
+ * @tag Delivery
+ * @summary Get all daily meal subscriptions for the current user
+ * @description Returns all daily meal subscriptions for the authenticated user, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances.
+ * @operationId getUserDailyMealSubscriptions
+ * @response 200 - List of daily meal subscriptions for the current user
+ * @responseContent {object} 200.application/json
+ * @responseExample 200.application/json [
+ *   {
+ *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "start_date": "2025-07-01T00:00:00.000Z",
+ *     "end_date": null,
+ *     "type": "DATED",
+ *     "status": "ACTIVE",
+ *     "courier_comment": "Leave at the door",
+ *     "created_at": "2025-07-01T00:00:00.000Z",
+ *     "updated_at": "2025-07-01T00:00:00.000Z",
+ *     "user": { ... },
+ *     "business": { ... },
+ *     "delivery_address": { ... },
+ *     "customers": [ ... ],
+ *     "days": [ ... ],
+ *     "weekdays": [ ... ],
+ *     "daily_meal_instances": [ ... ]
+ *   }
+ * ]
+ * @response 500 - Error fetching daily meal subscriptions
+ * @prisma_model daily_meal_subscriptions
+ * @prisma_model users
+ * @prisma_model business
+ * @prisma_model addresses
+ * @prisma_model daily_meal_subscription_customers
+ * @prisma_model daily_meal_subscription_days
+ * @prisma_model daily_meal_subscription_weekdays
+ * @prisma_model daily_meal_instances
  */
 export async function getUserDailyMealSubscriptions(
 	req: ValidatedRequest<{ start_date?: string }>,
@@ -276,50 +275,50 @@ export async function getUserDailyMealSubscriptions(
 }
 
 /**
- * - GET /delivery/orders/daily_meals/business/{business_id}
- * - @tag Delivery
- * - @summary Get active daily meal subscriptions for a business
- * - @description Returns all daily meal subscriptions for the given business, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances. Optionally filter by start_date in the request body.
- * - @operationId getDailyMealsSubscriptionsByBusinessId
- * - @pathParam {string} business_id - The ID of the business to fetch subscriptions for
- * - @bodyDescription Optionally filter by start_date (ISO string)
- * - @bodyContent {
- *     "start_date": "2025-07-01T00:00:00.000Z"
- *   } application/json
- * - @bodyRequired false
- * - @response 200 - List of daily meal subscriptions for the business
- * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json [
- *     {
- *       "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *       "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *       "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *       "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *       "start_date": "2025-07-01T00:00:00.000Z",
- *       "end_date": null,
- *       "type": "DATED",
- *       "status": "ACTIVE",
- *       "courier_comment": "Leave at the door",
- *       "created_at": "2025-07-01T00:00:00.000Z",
- *       "updated_at": "2025-07-01T00:00:00.000Z",
- *       "user": { ... },
- *       "business": { ... },
- *       "delivery_address": { ... },
- *       "customers": [ ... ],
- *       "days": [ ... ],
- *       "weekdays": [ ... ],
- *       "daily_meal_instances": [ ... ]
- *     }
- *   ]
- * - @response 500 - Error fetching daily meal subscriptions
- * - @prisma_model daily_meal_subscriptions
- * - @prisma_model users
- * - @prisma_model business
- * - @prisma_model addresses
- * - @prisma_model daily_meal_subscription_customers
- * - @prisma_model daily_meal_subscription_days
- * - @prisma_model daily_meal_subscription_weekdays
- * - @prisma_model daily_meal_instances
+ * POST /delivery/daily_meals/business/{business_id}
+ * @tag Delivery
+ * @summary Get active daily meal subscriptions for a business
+ * @description Returns all daily meal subscriptions for the given business, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances. Optionally filter by start_date in the request body.
+ * @operationId getDailyMealsSubscriptionsByBusinessId
+ * @pathParam {string} business_id - The ID of the business to fetch subscriptions for
+ * @bodyDescription Optionally filter by start_date (ISO string)
+ * @bodyContent {
+ *   "start_date": "2025-07-01T00:00:00.000Z"
+ * } application/json
+ * @bodyRequired false
+ * @response 200 - List of daily meal subscriptions for the business
+ * @responseContent {object} 200.application/json
+ * @responseExample 200.application/json [
+ *   {
+ *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "start_date": "2025-07-01T00:00:00.000Z",
+ *     "end_date": null,
+ *     "type": "DATED",
+ *     "status": "ACTIVE",
+ *     "courier_comment": "Leave at the door",
+ *     "created_at": "2025-07-01T00:00:00.000Z",
+ *     "updated_at": "2025-07-01T00:00:00.000Z",
+ *     "user": { ... },
+ *     "business": { ... },
+ *     "delivery_address": { ... },
+ *     "customers": [ ... ],
+ *     "days": [ ... ],
+ *     "weekdays": [ ... ],
+ *     "daily_meal_instances": [ ... ]
+ *   }
+ * ]
+ * @response 500 - Error fetching daily meal subscriptions
+ * @prisma_model daily_meal_subscriptions
+ * @prisma_model users
+ * @prisma_model business
+ * @prisma_model addresses
+ * @prisma_model daily_meal_subscription_customers
+ * @prisma_model daily_meal_subscription_days
+ * @prisma_model daily_meal_subscription_weekdays
+ * @prisma_model daily_meal_instances
  */
 export async function getActiveDailyMealsSubscriptionsByBusinessId(
 	req: ValidatedRequest<{ start_date?: string }, { business_id: string }>,
@@ -337,50 +336,50 @@ export async function getActiveDailyMealsSubscriptionsByBusinessId(
 }
 
 /**
- * - GET /business/daily_meal_subscriptions/{business_id}
- * - @tag Delivery
- * - @summary Get all daily meal subscriptions for a business
- * - @description Returns all daily meal subscriptions for the given business, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances. Optionally filter by start_date in the request body.
- * - @operationId getDailyMealsSubscriptionsByBusinessId
- * - @pathParam {string} business_id - The ID of the business to fetch subscriptions for
- * - @bodyDescription Optionally filter by start_date (ISO string)
- * - @bodyContent {
- *     "start_date": "2025-07-01T00:00:00.000Z"
- *   } application/json
- * - @bodyRequired false
- * - @response 200 - List of daily meal subscriptions for the business
- * - @responseContent {object} 200.application/json
- * - @responseExample 200.application/json [
- *     {
- *       "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *       "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *       "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *       "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
- *       "start_date": "2025-07-01T00:00:00.000Z",
- *       "end_date": null,
- *       "type": "DATED",
- *       "status": "AWAITING_PAYMENT",
- *       "courier_comment": "Leave at the door",
- *       "created_at": "2025-07-01T00:00:00.000Z",
- *       "updated_at": "2025-07-01T00:00:00.000Z",
- *       "user": { ... },
- *       "business": { ... },
- *       "delivery_address": { ... },
- *       "customers": [ ... ],
- *       "days": [ ... ],
- *       "weekdays": [ ... ],
- *       "daily_meal_instances": [ ... ]
- *     }
- *   ]
- * - @response 500 - Error fetching daily meal subscriptions
- * - @prisma_model daily_meal_subscriptions
- * - @prisma_model users
- * - @prisma_model business
- * - @prisma_model addresses
- * - @prisma_model daily_meal_subscription_customers
- * - @prisma_model daily_meal_subscription_days
- * - @prisma_model daily_meal_subscription_weekdays
- * - @prisma_model daily_meal_instances
+ * GET /business/daily_meal_subscriptions/{business_id}
+ * @tag Delivery
+ * @summary Get all daily meal subscriptions for a business
+ * @description Returns all daily meal subscriptions for the given business, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances. Optionally filter by start_date in the request body.
+ * @operationId getDailyMealsSubscriptionsByBusinessId
+ * @pathParam {string} business_id - The ID of the business to fetch subscriptions for
+ * @bodyDescription Optionally filter by start_date (ISO string)
+ * @bodyContent {
+ *   "start_date": "2025-07-01T00:00:00.000Z"
+ * } application/json
+ * @bodyRequired false
+ * @response 200 - List of daily meal subscriptions for the business
+ * @responseContent {object} 200.application/json
+ * @responseExample 200.application/json [
+ *   {
+ *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "start_date": "2025-07-01T00:00:00.000Z",
+ *     "end_date": null,
+ *     "type": "DATED",
+ *     "status": "AWAITING_PAYMENT",
+ *     "courier_comment": "Leave at the door",
+ *     "created_at": "2025-07-01T00:00:00.000Z",
+ *     "updated_at": "2025-07-01T00:00:00.000Z",
+ *     "user": { ... },
+ *     "business": { ... },
+ *     "delivery_address": { ... },
+ *     "customers": [ ... ],
+ *     "days": [ ... ],
+ *     "weekdays": [ ... ],
+ *     "daily_meal_instances": [ ... ]
+ *   }
+ * ]
+ * @response 500 - Error fetching daily meal subscriptions
+ * @prisma_model daily_meal_subscriptions
+ * @prisma_model users
+ * @prisma_model business
+ * @prisma_model addresses
+ * @prisma_model daily_meal_subscription_customers
+ * @prisma_model daily_meal_subscription_days
+ * @prisma_model daily_meal_subscription_weekdays
+ * @prisma_model daily_meal_instances
  */
 export async function getDailyMealsSubscriptionsByBusinessId(
 	req: ValidatedRequest<unknown, { business_id: string }>,
@@ -397,20 +396,20 @@ export async function getDailyMealsSubscriptionsByBusinessId(
 }
 
 /**
- * - PATCH /delivery/orders/daily_meals/subscription/{subscription_id}/activate
- * - @tag Delivery
- * - @summary Activate a daily meal subscription by ID
- * - @description Activates a daily meal subscription by its ID, marking it as active and ready for delivery.
- * - @operationId activateSubscriptionById
- * - @pathParam {string} subscription_id - The ID of the daily meal subscription to activate
- * - @response 200 - Daily meal subscription activated successfully
- * - @responseContent {object} 200.application/json
- * - @response 500 - Error activating daily meal subscription
- * - @prisma_model daily_meal_subscriptions
- * - @prisma_model daily_meal_instances
- * - @prisma_model daily_meal_subscription_customers
- * - @prisma_model daily_meal_subscription_days
- * - @prisma_model daily_meal_subscription_weekdays
+ * PATCH /delivery/daily_meals/subscription/{subscription_id}/activate
+ * @tag Delivery
+ * @summary Activate a daily meal subscription by ID
+ * @description Activates a daily meal subscription by its ID, marking it as active and ready for delivery.
+ * @operationId activateSubscriptionById
+ * @pathParam {string} subscription_id - The ID of the daily meal subscription to activate
+ * @response 200 - Daily meal subscription activated successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error activating daily meal subscription
+ * @prisma_model daily_meal_subscriptions
+ * @prisma_model daily_meal_instances
+ * @prisma_model daily_meal_subscription_customers
+ * @prisma_model daily_meal_subscription_days
+ * @prisma_model daily_meal_subscription_weekdays
  */
 export async function activateSubscriptionById(
 	req: ValidatedRequest<unknown, { subscription_id: string }>,
@@ -427,20 +426,20 @@ export async function activateSubscriptionById(
 }
 
 /**
- * - PATCH /delivery/orders/daily_meals/subscription/{subscription_id}/cancel
- * - @tag Delivery
- * - @summary Cancel a daily meal subscription by ID
- * - @description Cancels a daily meal subscription by its ID, marking it as canceled and updating all related daily meal instances to CANCELED status.
- * - @operationId cancelSubscriptionById
- * - @pathParam {string} subscription_id - The ID of the daily meal subscription to cancel
- * - @response 200 - Daily meal subscription canceled successfully
- * - @responseContent {object} 200.application/json
- * - @response 500 - Error canceling daily meal subscription
- * - @prisma_model daily_meal_subscriptions
- * - @prisma_model daily_meal_instances
- * - @prisma_model daily_meal_subscription_customers
- * - @prisma_model daily_meal_subscription_days
- * - @prisma_model daily_meal_subscription_weekdays
+ * PATCH /delivery/daily_meals/subscription/{subscription_id}/cancel
+ * @tag Delivery
+ * @summary Cancel a daily meal subscription by ID
+ * @description Cancels a daily meal subscription by its ID, marking it as canceled and updating all related daily meal instances to CANCELED status.
+ * @operationId cancelSubscriptionById
+ * @pathParam {string} subscription_id - The ID of the daily meal subscription to cancel
+ * @response 200 - Daily meal subscription canceled successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error canceling daily meal subscription
+ * @prisma_model daily_meal_subscriptions
+ * @prisma_model daily_meal_instances
+ * @prisma_model daily_meal_subscription_customers
+ * @prisma_model daily_meal_subscription_days
+ * @prisma_model daily_meal_subscription_weekdays
  */
 export async function cancelSubscriptionById(
 	req: ValidatedRequest<unknown, { subscription_id: string }>,
@@ -470,21 +469,21 @@ export async function cancelSubscriptionById(
 }
 
 /**
- * - PATCH /delivery/orders/daily_meals/instance/{instance_id}/cancel
- * - @tag Delivery
- * - @summary Cancel a daily meal instance by ID
- * - @description Cancels a daily meal instance by its ID, marking it as canceled.
- * - @operationId cancelDailyMealInstanceById
- * - @pathParam {string} instance_id - The ID of the daily meal instance to cancel
- * - @response 200 - Daily meal instance canceled successfully
- * - @responseContent {object} 200.application/json
- * - @response 500 - Error canceling daily meal instance
- * - @prisma_model daily_meal_instances
- * - @prisma_model daily_meal_subscriptions
- * - @prisma_model daily_meal_subscription_customers
- * - @prisma_model daily_meal_subscription_days
- * - @prisma_model daily_meal_subscription_weekdays
- * - @prisma_model addresses
+ * PATCH /delivery/daily_meals/instance/{instance_id}/cancel
+ * @tag Delivery
+ * @summary Cancel a daily meal instance by ID
+ * @description Cancels a daily meal instance by its ID, marking it as canceled.
+ * @operationId cancelDailyMealInstanceById
+ * @pathParam {string} instance_id - The ID of the daily meal instance to cancel
+ * @response 200 - Daily meal instance canceled successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error canceling daily meal instance
+ * @prisma_model daily_meal_instances
+ * @prisma_model daily_meal_subscriptions
+ * @prisma_model daily_meal_subscription_customers
+ * @prisma_model daily_meal_subscription_days
+ * @prisma_model daily_meal_subscription_weekdays
+ * @prisma_model addresses
  */
 export async function cancelDailyMealInstanceById(
 	req: ValidatedRequest<unknown, { instance_id: string }>,
@@ -602,28 +601,27 @@ export async function cancelDailyMealInstanceById(
 }
 
 /**
- * - GET /delivery/orders/daily_meals/subscription/{subscription_id}
- * - @tag Delivery
- * - @summary Get a daily meal subscription by ID
- * - @description Returns a daily meal subscription by its ID, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances.
- * - @operationId getSubscriptionById
- * - @pathParam {string} subscription_id - The ID of the daily meal subscription to fetch
- * - @response 200 - Daily meal subscription found
- * - @responseContent {object} 200.application/json
- *   }
- * - @response 404 - Daily meal subscription not found
- * - @responseContent {object} 404.application/json
- * - @response 500 - Error fetching daily meal subscription
- * - @responseContent {object} 500.application/json
- * - @prisma_model daily_meal_subscriptions
- * - @prisma_model users
- * - @prisma_model business
- * - @prisma_model addresses
- * - @prisma_model daily_meal_subscription_customers
- * - @prisma_model daily_meal_subscription_days
- * - @prisma_model daily_meal_subscription_weekdays
- * - @prisma_model daily_meal_instances
- * - @prisma_model payments
+ * GET /delivery/daily_meals/subscription/{subscription_id}
+ * @tag Delivery
+ * @summary Get a daily meal subscription by ID
+ * @description Returns a daily meal subscription by its ID, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances.
+ * @operationId getSubscriptionById
+ * @pathParam {string} subscription_id - The ID of the daily meal subscription to fetch
+ * @response 200 - Daily meal subscription found
+ * @responseContent {object} 200.application/json
+ * @response 404 - Daily meal subscription not found
+ * @responseContent {object} 404.application/json
+ * @response 500 - Error fetching daily meal subscription
+ * @responseContent {object} 500.application/json
+ * @prisma_model daily_meal_subscriptions
+ * @prisma_model users
+ * @prisma_model business
+ * @prisma_model addresses
+ * @prisma_model daily_meal_subscription_customers
+ * @prisma_model daily_meal_subscription_days
+ * @prisma_model daily_meal_subscription_weekdays
+ * @prisma_model daily_meal_instances
+ * @prisma_model payments
  */
 export async function getSubscriptionById(
 	req: ValidatedRequest<unknown, { subscription_id: string }>,
@@ -644,27 +642,27 @@ export async function getSubscriptionById(
 }
 
 /**
- * - PATCH /delivery/orders/daily_meals/subscription/{subscription_id}/assign_driver
- * - @tag Delivery
- * - @summary Assign a delivery driver to a daily meal subscription
- * - @description Assigns a delivery driver to a daily meal subscription by its ID, updating the subscription with the driver's ID.
- * - @operationId assignDeliveryDriverToSubscription
- * - @pathParam {string} subscription_id - The ID of the daily meal subscription to assign a driver to
- * - @bodyDescription The delivery driver ID to assign
- * - @bodyContent {
- *     "delivery_driver_id": "driver_id_here"
- *   } application/json
- * - @bodyRequired true
- * - @response 200 - Delivery driver assigned to daily meal subscription successfully
- * - @responseContent {object} 200.application/json
- * - @response 500 - Error assigning delivery driver to daily meal subscription
- * - @responseContent {object} 500.application/json
- * - @prisma_model daily_meal_subscriptions
- * - @prisma_model daily_meal_instances
- * - @prisma_model daily_meal_subscription_customers
- * - @prisma_model daily_meal_subscription_days
- * - @prisma_model daily_meal_subscription_weekdays
- * - @prisma_model delivery_drivers
+ * PATCH /delivery/daily_meals/subscription/{subscription_id}/assign
+ * @tag Delivery
+ * @summary Assign a delivery driver to a daily meal subscription
+ * @description Assigns a delivery driver to a daily meal subscription by its ID, updating the subscription with the driver's ID.
+ * @operationId assignDeliveryDriverToSubscription
+ * @pathParam {string} subscription_id - The ID of the daily meal subscription to assign a driver to
+ * @bodyDescription The delivery driver ID to assign
+ * @bodyContent {
+ *   "delivery_driver_id": "driver_id_here"
+ * } application/json
+ * @bodyRequired true
+ * @response 200 - Delivery driver assigned to daily meal subscription successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error assigning delivery driver to daily meal subscription
+ * @responseContent {object} 500.application/json
+ * @prisma_model daily_meal_subscriptions
+ * @prisma_model daily_meal_instances
+ * @prisma_model daily_meal_subscription_customers
+ * @prisma_model daily_meal_subscription_days
+ * @prisma_model daily_meal_subscription_weekdays
+ * @prisma_model delivery_drivers
  */
 export async function assignDeliveryDriverToSubscription(
 	req: ValidatedRequest<{ delivery_driver_id: string }, { subscription_id: string }>,

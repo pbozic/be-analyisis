@@ -21,7 +21,7 @@ async function getCategories(req, res) {
 	}
 }
 /**
- * GET /categories/type/:category_type
+ * GET /categories/:category_type
  * @tag Categories
  * @summary Get categories by type
  * @description Retrieves categories by category type.
@@ -42,7 +42,7 @@ async function getCategoriesByType(req, res) {
 	}
 }
 /**
- * POST /categories
+ * POST /categories/category
  * @tag Categories
  * @summary Create a category
  * @description Creates a category with translations, subcategories and optional icon.
@@ -88,7 +88,7 @@ async function createCategory(req, res) {
 	}
 }
 /**
- * PATCH /categories/:id
+ * PATCH /categories/category/:id
  * @tag Categories
  * @summary Update a category
  * @description Updates a category with translations, subcategories and optional icon.
@@ -127,7 +127,7 @@ async function updateCategory(req, res) {
 	}
 }
 /**
- * DELETE /categories/:id
+ * DELETE /categories/category/:id
  * @tag Categories
  * @summary Delete a category
  * @description Deletes a category by id.
@@ -147,7 +147,7 @@ async function deleteCategory(req, res) {
 	}
 }
 /**
- * GET /categories/:id
+ * GET /categories/category/:id
  * @tag Categories
  * @summary Get category by id
  * @description Retrieves a category by id.

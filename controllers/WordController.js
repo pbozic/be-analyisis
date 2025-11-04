@@ -160,7 +160,7 @@ async function removeCategoryFromWord(req, res) {
 	}
 }
 /**
- * POST /word-buys
+ * POST /promo/word_buy
  * @tag WordBuy
  * @summary Create word buy subscription items
  * @description Creates word buy entries and ensures a Stripe subscription is active or updated.
@@ -186,7 +186,7 @@ async function createWordBuy(req, res) {
 	}
 }
 /**
- * GET /word_buy/:id
+ * GET /promo/word_buy/:id
  * @tag WordBuy
  * @summary Get word buy by ID
  * @description Retrieves a single word buy entry by its ID.
@@ -212,7 +212,7 @@ async function getWordBuyById(req, res) {
 	}
 }
 /**
- * GET /word-buy
+ * GET /promo/word_buy
  * @tag WordBuy
  * @summary List all word buys
  * @description Retrieves all word buys.
@@ -232,7 +232,7 @@ async function getAllWordBuys(req, res) {
 	}
 }
 /**
- * DELETE /word-buy/:id
+ * DELETE /promo/word_buy/:id
  * @tag WordBuy
  * @summary Delete a word buy
  * @description Soft-deletes a word buy and updates user subscription state.
@@ -256,7 +256,7 @@ async function deleteWordBuy(req, res) {
 	}
 }
 /**
- * PATCH /word-buy/:id
+ * PATCH /promo/word_buy/:id
  * @tag WordBuy
  * @summary Update a word buy
  * @description Updates fields on a word buy, such as price.
@@ -284,7 +284,7 @@ async function updateWordBuy(req, res) {
 	}
 }
 /**
- * PUT /word-buy
+ * PATCH /promo/word_buy/update
  * @tag WordBuy
  * @summary Bulk create/update word buys
  * @description Creates or updates multiple word buys and updates Stripe subscription accordingly.
@@ -308,7 +308,7 @@ async function updateWordBuys(req, res) {
 	}
 }
 /**
- * GET /word-buy/business/:business_id
+ * GET /promo/word_buy/business/:business_id
  * @tag WordBuy
  * @summary Get active word buys for a business
  * @description Retrieves active word buys for the specified business.

@@ -949,7 +949,7 @@ const getMenuItemsByIds = async (req, res) => {
 	}
 };
 /**
- * GET /menus/tax-rates/active
+ * GET /menus/menu-items/tax-rates
  * @tag Menu
  * @summary Get active tax rates
  * @description Retrieves all active tax rates.
