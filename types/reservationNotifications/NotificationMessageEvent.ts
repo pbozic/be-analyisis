@@ -21,6 +21,6 @@ export type NotificationMessageEvent = {
 	notification_message_id: string;
 	type: string;
 	provider_raw?: unknown | null;
-	occurred_at: string;
+	occurred_at: Date;
 	message: NotificationMessage;
 };

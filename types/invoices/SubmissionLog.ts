@@ -6,7 +6,7 @@ export type SubmissionLog = {
 	submission_log_id: string;
 	invoice_id: string;
 	message_id: string;
-	sent_at: string;
+	sent_at: Date;
 	http_status?: number | null;
 	transport?: string | null;
 	tls_version?: string | null;
@@ -17,5 +17,5 @@ export type SubmissionLog = {
 	request_payload?: unknown | null;
 	response_payload?: unknown | null;
 	invoice: Invoice;
-	created_at: string;
+	created_at: Date;
 };

@@ -12,14 +12,14 @@ export type BusinessPremise = {
 	transport_module_id: string;
 	name?: string | null;
 	premise_type: PREMISE_TYPE;
-	validity_date?: string | null;
+	validity_date?: Date | null;
 	special_notes?: string | null;
 	is_registered: boolean;
-	registered_at?: string | null;
+	registered_at?: Date | null;
 	transport_module: TransportModule;
 	vehicle?: Vehicle | null;
 	devices: ElectronicDevice[];
 	invoices: Invoice[];
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 };

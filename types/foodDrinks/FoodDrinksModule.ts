@@ -16,8 +16,8 @@ export type FoodDrinksModule = {
 	business_id: string;
 	enabled: boolean;
 	settings?: unknown | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	reviewable_id?: string | null;
 	reviewable?: Reviewable | null;
 	business: Business;

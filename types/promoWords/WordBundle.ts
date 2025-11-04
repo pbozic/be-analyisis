@@ -7,5 +7,5 @@ export type WordBundle = {
 	name: string;
 	description?: string | null;
 	words: Word[];
-	created_at: string;
+	created_at: Date;
 };

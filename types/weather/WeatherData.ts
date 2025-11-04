@@ -5,8 +5,8 @@ import type { Settlement } from './Settlement.js';
 
 export type WeatherData = {
 	weather_data_id: string;
-	time_epoch: string;
-	time: string;
+	time_epoch: number;
+	time: Date;
 	temp_c: number;
 	is_day: boolean;
 	condition_text: string;
@@ -32,8 +32,8 @@ export type WeatherData = {
 	gust_kph: number;
 	uv: number;
 	icon: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	municipalities_id?: string | null;
 	municipality?: Municipality | null;
 	settlement_id?: string | null;

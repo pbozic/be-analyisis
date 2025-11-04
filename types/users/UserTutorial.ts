@@ -11,9 +11,9 @@ export type UserTutorial = {
 	epoch: number;
 	status: TUTORIAL_STATUS;
 	versionSeen: number;
-	firstSeenAt?: string | null;
-	completedAt?: string | null;
-	dismissedAt?: string | null;
+	firstSeenAt?: Date | null;
+	completedAt?: Date | null;
+	dismissedAt?: Date | null;
 	user: User;
 	tutorial: Tutorial;
 };

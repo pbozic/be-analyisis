@@ -17,9 +17,9 @@ export type ScoringPoint = {
 	points: number;
 	isPenalty: boolean;
 	reason: SCORING_POINTS_REASON;
-	expiration_date?: string | null;
-	created_at: string;
-	updated_at: string;
+	expiration_date?: Date | null;
+	created_at: Date;
+	updated_at: Date;
 	users?: User | null;
 	businesses?: Business | null;
 	delivery_orders?: DeliveryOrder | null;

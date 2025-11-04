@@ -10,8 +10,8 @@ export type Referral = {
 	referred_user_id: string;
 	conditions_met: boolean;
 	reward_claimed: boolean;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	referrer: User;
 	referred: User;
 	credits: WalletFund[];

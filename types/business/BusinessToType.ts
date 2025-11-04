@@ -6,8 +6,8 @@ import type { BusinessType } from './BusinessType.js';
 export type BusinessToType = {
 	business_id: string;
 	type_id: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	business: Business;
 	business_type: BusinessType;
 };

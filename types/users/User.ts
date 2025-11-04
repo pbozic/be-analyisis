@@ -52,9 +52,9 @@ export type User = {
 	email?: string | null;
 	telephone: string;
 	telephone_code: string;
-	date_of_birth?: string | null;
-	created_at: string;
-	updated_at: string;
+	date_of_birth?: Date | null;
+	created_at: Date;
+	updated_at: Date;
 	user_role: USER_ROLES;
 	user_roles: UserRole[];
 	addresses: UserAddress[];
@@ -102,8 +102,8 @@ export type User = {
 	referrals_made: Referral[];
 	referral?: Referral | null;
 	cashback: Cashback[];
-	activated_at?: string | null;
-	deactivated_at?: string | null;
+	activated_at?: Date | null;
+	deactivated_at?: Date | null;
 	deactivated: boolean;
 	business_teams_id?: string | null;
 	business_teams?: BusinessTeam | null;

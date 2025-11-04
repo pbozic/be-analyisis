@@ -33,6 +33,6 @@ export type NotificationProviderCredential = {
 	provider: string;
 	config: unknown;
 	is_default: boolean;
-	created_at: string;
+	created_at: Date;
 	reservation_module: ReservationModule;
 };

@@ -9,7 +9,7 @@ export type MenuItemVersion = {
 	menu_item_id: string;
 	version: number;
 	snapshot: unknown;
-	created_at: string;
+	created_at: Date;
 	menu_item: MenuItem;
 	order_lobby_items: OrderLobbyItem[];
 	line_items: LineItem[];

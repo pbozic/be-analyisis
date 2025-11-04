@@ -19,8 +19,8 @@ export type PromoAnalytic = {
 	daily_meal_subscription_id?: string | null;
 	business_id: string;
 	user_id?: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	promo_type: PROMO_TYPE;
 	type: ANALYTICS_TYPE;
 	business: Business;

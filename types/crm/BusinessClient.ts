@@ -5,8 +5,8 @@ import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
 
 export type BusinessClient = {
 	business_clients_id: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	crm_module_id: string;
 	crm_module: CrmModule;
 	first_name?: string | null;

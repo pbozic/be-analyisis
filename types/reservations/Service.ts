@@ -88,7 +88,7 @@ export type Service = {
 	duration_minutes: number;
 	available_online: boolean;
 	skd_codes: string;
-	created_at: string;
+	created_at: Date;
 	tax_rate_id?: string | null;
 	course: boolean;
 	people_allowed?: number | null;

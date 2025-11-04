@@ -5,7 +5,7 @@ import type { DailyMealSubscription } from '../dailymeal/DailyMealSubscription.j
 export type DailyMealSubscriptionDay = {
 	id: string;
 	subscription_id: string;
-	intended_date: string;
-	delivery_date: string;
+	intended_date: Date;
+	delivery_date: Date;
 	subscription: DailyMealSubscription;
 };

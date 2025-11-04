@@ -17,8 +17,8 @@ export type PaymentSplit = {
 	amount_credits: number;
 	metadata?: unknown | null;
 	external_id?: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	payment: Payment;
 	payment_transfer_group?: PaymentTransferGroup | null;
 };

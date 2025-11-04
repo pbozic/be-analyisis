@@ -22,8 +22,8 @@ export type Vehicle = {
 	model?: string | null;
 	color?: string | null;
 	license_plate?: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	documents: Document[];
 	drivers: VehicleDriver[];
 	vehicle_specification_id?: string | null;

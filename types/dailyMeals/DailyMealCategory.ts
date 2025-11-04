@@ -38,8 +38,8 @@ export type DailyMealCategory = {
 	daily_meal_category_id: string;
 	daily_meals_id: string;
 	category_id: string;
-	created_at: string;
-	start_date: string;
+	created_at: Date;
+	start_date: Date;
 	active: boolean;
 	category: Category;
 	daily_meals_module: DailyMealsModule;

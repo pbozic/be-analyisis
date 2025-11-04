@@ -14,9 +14,9 @@ export type Cashback = {
 	source: CASHBACK_SOURCE;
 	status: CASHBACK_STATUS;
 	description?: string | null;
-	earned_at: string;
-	expires_at?: string | null;
-	converted_at?: string | null;
+	earned_at: Date;
+	expires_at?: Date | null;
+	converted_at?: Date | null;
 	taxi_order_id?: string | null;
 	delivery_order_id?: string | null;
 	user: User;

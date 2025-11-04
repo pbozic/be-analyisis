@@ -10,8 +10,8 @@ export type TaxiOrderSent = {
 	accepted: boolean;
 	location?: unknown | null;
 	timeline: unknown;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	order?: TaxiOrder | null;
 	driver?: Driver | null;
 	rejected: boolean;

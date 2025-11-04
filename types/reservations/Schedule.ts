@@ -234,8 +234,8 @@ export type Schedule = {
 	location_id: string;
 	name: string;
 	color?: string | null;
-	start_date: string;
-	end_date: string;
+	start_date: Date;
+	end_date: Date;
 	location: Location;
 	schedule_employees: ScheduleEmployee[];
 	schedule_slots: ScheduleSlot[];

@@ -5,7 +5,7 @@ export type DriverActivitySetting = {
 	first_offline_lockout: number;
 	second_offline_lockout: number;
 	online_timeout: number;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	active: boolean;
 };

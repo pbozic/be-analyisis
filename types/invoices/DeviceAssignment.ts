@@ -7,8 +7,8 @@ export type DeviceAssignment = {
 	driver_id: string;
 	business_premise_id: string;
 	electronic_device_id: string;
-	valid_from: string;
-	valid_to?: string | null;
+	valid_from: Date;
+	valid_to?: Date | null;
 	device: ElectronicDevice;
-	created_at: string;
+	created_at: Date;
 };

@@ -11,9 +11,9 @@ export type ScheduleSlot = {
 	schedule_id: string;
 	schedule_employee_id: string;
 	employee_id: string;
-	date: string;
-	start_time: string;
-	end_time: string;
+	date: Date;
+	start_time: Date;
+	end_time: Date;
 	booking_slots: BookingSlot[];
 	schedule: Schedule;
 	schedule_employee: ScheduleEmployee;

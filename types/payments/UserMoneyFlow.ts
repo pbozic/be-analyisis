@@ -11,6 +11,6 @@ export type UserMoneyFlow = {
 	stripe_fee: number;
 	type: TRANSACTION_TYPE;
 	payment_method?: PAYMENT_METHOD | null;
-	created_at: string;
+	created_at: Date;
 	user: User;
 };

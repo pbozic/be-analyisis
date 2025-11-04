@@ -25,11 +25,11 @@ export type Invoice = {
 	business_premise_id: string;
 	electronic_device_id: string;
 	invoice_number: string;
-	issue_datetime: string;
+	issue_datetime: Date;
 	issue_datetime_local?: string | null;
-	invoice_amount: string;
-	returns_amount?: string | null;
-	payment_amount: string;
+	invoice_amount: number;
+	returns_amount?: number | null;
+	payment_amount: number;
 	zoi: string;
 	eor?: string | null;
 	is_subsequent_submit: boolean;
@@ -43,6 +43,6 @@ export type Invoice = {
 	items: InvoiceItem[];
 	taxes: InvoiceTax[];
 	submissions: SubmissionLog[];
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 };

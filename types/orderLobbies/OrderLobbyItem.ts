@@ -14,8 +14,8 @@ export type OrderLobbyItem = {
 	extras: string;
 	quantity: number;
 	customer_note?: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	menu_items?: MenuItem | null;
 	menu_item_version: MenuItemVersion;
 	order_lobbies: OrderLobby;

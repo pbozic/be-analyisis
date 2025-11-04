@@ -3,5 +3,5 @@
 export type PaymentIntentLog = {
 	payment_intent_logs_id: string;
 	stripe_id: string;
-	created_at: string;
+	created_at: Date;
 };

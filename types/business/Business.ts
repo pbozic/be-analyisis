@@ -36,8 +36,8 @@ export type Business = {
 	working_hours?: unknown | null;
 	popular: boolean;
 	new: boolean;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	address?: Address | null;
 	documents: Document[];
 	parent_business_id?: string | null;
@@ -49,7 +49,7 @@ export type Business = {
 	word_buys: WordBuy[];
 	promo_sections: PromoSectionsBuy[];
 	analytics: PromoAnalytic[];
-	first_activated_at?: string | null;
+	first_activated_at?: Date | null;
 	active: boolean;
 	sales_representative_id?: string | null;
 	user_favorite_businesses: UserFavoriteBusiness[];

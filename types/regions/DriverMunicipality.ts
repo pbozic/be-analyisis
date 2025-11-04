@@ -7,8 +7,8 @@ export type DriverMunicipality = {
 	driver_municipalities_id: string;
 	driver_id: string;
 	municipalities_id: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	drivers: Driver;
 	municipalities: Municipality;
 };

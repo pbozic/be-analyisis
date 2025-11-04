@@ -52,10 +52,10 @@ export type ReservationModule = {
 	public_link_hash?: string | null;
 	business_id: string;
 	action_bundle_id?: string | null;
-	subscription_active_until?: string | null;
+	subscription_active_until?: Date | null;
 	business: Business;
 	action_bundle?: ActionBundle | null;
-	subscription_expires_at?: string | null;
+	subscription_expires_at?: Date | null;
 	stripe_subscription_schedule_id?: string | null;
 	hours_before_reschedule?: number | null;
 	hours_before_cancel?: number | null;

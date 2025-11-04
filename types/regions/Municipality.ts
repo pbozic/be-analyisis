@@ -13,8 +13,8 @@ export type Municipality = {
 	gis_sifra?: string | null;
 	eid_obcina?: string | null;
 	feature_id?: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	driver_municipalities: DriverMunicipality[];
 	settlements: Settlement[];
 	weather_data: WeatherData[];

@@ -12,6 +12,6 @@ export type ElectronicDevice = {
 	business_premise: BusinessPremise;
 	invoices: Invoice[];
 	assignments: DeviceAssignment[];
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 };

@@ -6,7 +6,7 @@ import type { UserFavoriteServiceLink } from './UserFavoriteServiceLink.js';
 export type ServiceLink = {
 	id: string;
 	name: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	favorited_by: UserFavoriteServiceLink[];
 };

@@ -12,12 +12,12 @@ export type WordBuy = {
 	pending_stripe_price_id?: string | null;
 	price: number;
 	pending_price?: number | null;
-	active_at?: string | null;
-	expires_at?: string | null;
+	active_at?: Date | null;
+	expires_at?: Date | null;
 	paid: boolean;
 	business_id: string;
 	business: Business;
-	created_at: string;
-	updated_at: string;
-	deleted_at?: string | null;
+	created_at: Date;
+	updated_at: Date;
+	deleted_at?: Date | null;
 };

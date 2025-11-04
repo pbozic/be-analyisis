@@ -14,6 +14,6 @@ export type DriverHistoryLocation = {
 	driver?: Driver | null;
 	order?: TaxiOrder | null;
 	delivery_order?: DeliveryOrder | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 };

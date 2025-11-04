@@ -8,9 +8,9 @@ export type DriverActivityLog = {
 	driver_activity_log_id: string;
 	driver_id: string;
 	activity_type: ACTIVITY_TYPE;
-	started_at: string;
-	ended_at?: string | null;
-	timeout_at?: string | null;
-	lockout_until?: string | null;
+	started_at: Date;
+	ended_at?: Date | null;
+	timeout_at?: Date | null;
+	lockout_until?: Date | null;
 	driver: Driver;
 };

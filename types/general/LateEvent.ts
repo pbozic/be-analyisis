@@ -17,8 +17,8 @@ export type LateEvent = {
 	taxi_order_id?: string | null;
 	scoring_points_id?: string | null;
 	seconds: number;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	stores_module?: StoresModule | null;
 	food_drinks_module?: FoodDrinksModule | null;
 	driver?: Driver | null;

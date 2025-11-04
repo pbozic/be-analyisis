@@ -6,9 +6,9 @@ export type CertificateMetadata = {
 	subject_dn: string;
 	serial_number: string;
 	sha256_thumbprint: string;
-	valid_from: string;
-	valid_to: string;
+	valid_from: Date;
+	valid_to: Date;
 	ca_chain_pinned?: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 };

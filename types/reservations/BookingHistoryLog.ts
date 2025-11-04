@@ -14,8 +14,8 @@ export type BookingHistoryLog = {
 	type?: string | null;
 	title?: string | null;
 	description?: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	user_id?: string | null;
 	user?: User | null;
 	booking: Booking;

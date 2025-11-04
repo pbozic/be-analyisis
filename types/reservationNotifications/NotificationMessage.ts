@@ -53,11 +53,11 @@ export type NotificationMessage = {
 	body_text?: string | null;
 	body_html?: string | null;
 	variables: unknown;
-	rendered_at: string;
+	rendered_at: Date;
 	provider_message_id?: string | null;
 	status: MESSAGE_STATUS;
 	error?: string | null;
-	created_at: string;
+	created_at: Date;
 	reservation_module: ReservationModule;
 	event: NotificationEvent;
 	template?: NotificationTemplate | null;

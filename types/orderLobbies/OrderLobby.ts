@@ -18,8 +18,8 @@ export type OrderLobby = {
 	food_drinks_id?: string | null;
 	creator_id: string;
 	delivery_orders_id?: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	order_lobby_items: OrderLobbyItem[];
 	order_lobby_users: OrderLobbyUser[];
 	delivery_orders?: DeliveryOrder | null;

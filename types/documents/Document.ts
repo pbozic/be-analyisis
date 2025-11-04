@@ -12,10 +12,10 @@ import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
 export type Document = {
 	document_id: string;
 	document_type: DOCUMENT_TYPE;
-	created_at: string;
-	updated_at: string;
-	expiration_date?: string | null;
-	issue_date?: string | null;
+	created_at: Date;
+	updated_at: Date;
+	expiration_date?: Date | null;
+	issue_date?: Date | null;
 	additional_info?: unknown | null;
 	public: boolean;
 	files: File[];

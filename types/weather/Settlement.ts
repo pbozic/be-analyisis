@@ -10,8 +10,8 @@ export type Settlement = {
 	eid_naselje?: string | null;
 	feature_id?: string | null;
 	geojson: unknown;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	municipality: Municipality;
 	weather_data: WeatherData[];
 	geom_generated?: unknown | null;

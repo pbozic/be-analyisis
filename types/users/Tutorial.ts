@@ -9,7 +9,7 @@ export type Tutorial = {
 	title: string;
 	version: number;
 	mandatory: boolean;
-	createdAt: string;
-	retiredAt?: string | null;
+	createdAt: Date;
+	retiredAt?: Date | null;
 	user_tutorials: UserTutorial[];
 };

@@ -15,8 +15,8 @@ export type Allowance = {
 	amount_transfer_purchase_order?: number | null;
 	amount_delivery_purchase_order?: number | null;
 	amount_any_purchase_order?: number | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	user?: GroupUser | null;
 	business_user?: BusinessUser | null;
 };

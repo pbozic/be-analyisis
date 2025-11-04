@@ -98,9 +98,9 @@ export type BlogPost = {
 	status: BLOG_POST_STATUS;
 	author_id: string;
 	category_id?: string | null;
-	publish_at: string;
-	created_at: string;
-	updated_at: string;
+	publish_at: Date;
+	created_at: Date;
+	updated_at: Date;
 	author: User;
 	category?: BlogCategory | null;
 	tags: BlogTagsBlogPost[];

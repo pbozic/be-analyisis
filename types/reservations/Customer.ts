@@ -28,8 +28,8 @@ export type Customer = {
 	last_name: string;
 	email?: string | null;
 	telephone?: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	code: string;
 	reservation_module: ReservationModule;
 	bookings: Booking[];

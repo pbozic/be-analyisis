@@ -15,9 +15,9 @@ export type WalletFund = {
 	reserved_order?: string | null;
 	reserved_daily_meals_subscription?: string | null;
 	reserved_business?: string | null;
-	created_at: string;
-	updated_at: string;
-	expires_at?: string | null;
+	created_at: Date;
+	updated_at: Date;
+	expires_at?: Date | null;
 	type: FUNDS_TYPE;
 	status?: CREDIT_STATUS | null;
 	referral?: Referral | null;

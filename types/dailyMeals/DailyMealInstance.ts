@@ -13,11 +13,11 @@ export type DailyMealInstance = {
 	subscription_customer_id: string;
 	menu_category_id: string;
 	status: DAILY_MEAL_INSTANCE_STATUS;
-	intended_date: string;
-	delivery_date: string;
+	intended_date: Date;
+	delivery_date: Date;
 	daily_meal_category_price_id: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	subscription: DailyMealSubscription;
 	customer: DailyMealSubscriptionCustomer;
 	menu_category: MenuCategory;

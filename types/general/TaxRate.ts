@@ -10,10 +10,10 @@ export type TaxRate = {
 	country?: string | null;
 	rate: number;
 	active: boolean;
-	valid_from: string;
-	created_at: string;
-	updated_at: string;
-	activated_at?: string | null;
+	valid_from: Date;
+	created_at: Date;
+	updated_at: Date;
+	activated_at?: Date | null;
 	menu_items: MenuItem[];
 	service: Service[];
 };

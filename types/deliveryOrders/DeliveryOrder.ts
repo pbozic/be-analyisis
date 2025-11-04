@@ -37,12 +37,12 @@ export type DeliveryOrder = {
 	courier_instructions?: string | null;
 	restaurant_message?: string | null;
 	rejection_reason?: string | null;
-	scheduled_at?: string | null;
+	scheduled_at?: Date | null;
 	timeline: unknown;
 	status: DELIVERY_ORDER_STATUS;
-	last_sent_at?: string | null;
-	created_at: string;
-	updated_at: string;
+	last_sent_at?: Date | null;
+	created_at: Date;
+	updated_at: Date;
 	customer?: User | null;
 	history: DeliveryOrderSent[];
 	vehicle_id?: string | null;

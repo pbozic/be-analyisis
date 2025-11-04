@@ -6,8 +6,8 @@ import type { BusinessLocalLocation } from './BusinessLocalLocation.js';
 export type LocalLocation = {
 	local_location_id: string;
 	address_id: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	address: Address;
 	business_local_locations: BusinessLocalLocation[];
 };

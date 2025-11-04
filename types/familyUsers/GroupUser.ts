@@ -7,8 +7,8 @@ export type GroupUser = {
 	group_user_id: string;
 	parent_user_id: string;
 	child_user_id: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	parent_user: User;
 	child_user: User;
 	allowance?: Allowance | null;

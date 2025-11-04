@@ -12,8 +12,8 @@ export type BookingCourseParticipant = {
 	status: BOOKING_STATUS;
 	booking_id: string;
 	customer_id: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	customer: Customer;
 	booking: Booking;
 	reservation_module: ReservationModule;

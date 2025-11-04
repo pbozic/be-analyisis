@@ -14,8 +14,8 @@ export type PromoSectionsBuy = {
 	user_id?: string | null;
 	bought_by?: User | null;
 	paid: boolean;
-	active_at?: string | null;
-	expires_at?: string | null;
+	active_at?: Date | null;
+	expires_at?: Date | null;
 	tier: number;
 	duration: number;
 };

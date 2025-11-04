@@ -8,8 +8,8 @@ export type VehicleDriver = {
 	vehicle_id: string;
 	driver_id: string;
 	can_drive: boolean;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	vehicle: Vehicle;
 	driver: Driver;
 };

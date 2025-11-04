@@ -18,8 +18,8 @@ export type PromoAd = {
 	categories: PromoAdsCategory[];
 	active: boolean;
 	code?: number | null;
-	created_at: string;
-	active_at?: string | null;
-	active_until?: string | null;
+	created_at: Date;
+	active_at?: Date | null;
+	active_until?: Date | null;
 	promo_analytics: PromoAnalytic[];
 };

@@ -27,8 +27,8 @@ export type NotificationTemplate = {
 	reservation_module_id: string;
 	key: string;
 	name: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	reservation_module: ReservationModule;
 	versions: NotificationTemplateVersion[];
 	messages: NotificationMessage[];

@@ -28,7 +28,7 @@ export type MenuItem = {
 	availability: string;
 	business_id: string;
 	menu_category_id?: string | null;
-	daily_date?: string | null;
+	daily_date?: Date | null;
 	menu_category?: MenuCategory | null;
 	image_file_id?: string | null;
 	image_file?: File | null;

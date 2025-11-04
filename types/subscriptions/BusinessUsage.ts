@@ -7,7 +7,7 @@ export type BusinessUsage = {
 	business_usage_id: string;
 	action_id: string;
 	used: number;
-	reset_date?: string | null;
+	reset_date?: Date | null;
 	reservation_module_id?: string | null;
 	action: Action;
 	reservation_module?: ReservationModule | null;

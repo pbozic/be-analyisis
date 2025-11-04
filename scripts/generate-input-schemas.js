@@ -18,7 +18,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(path.join(__dirname, '..'));
 const TYPES_DIR = path.join(ROOT, 'types');
-const SCHEMAS_DIR = path.join(ROOT, 'schemas');
+// const SCHEMAS_DIR = path.join(ROOT, 'schemas'); // no longer used in in-place mode
 
 function readAllSchemas() {
 	const prismaRoot = path.join(ROOT, 'prisma');
@@ -53,11 +53,12 @@ function parseTypeFile(filePath) {
 	if (fs.existsSync(siblingMaybe)) return null;
 	// Parse imported local types
 	const localTypeNames = new Set(
-		Array.from(src.matchAll(/import\s+type\s*\{\s*([^}]+)\s*\}\s*from\s*['"]\.\/[^'"]+['"]/g)).flatMap((m) =>
-			m[1]
-				.split(',')
-				.map((s) => s.trim())
-				.filter(Boolean)
+		Array.from(src.matchAll(/import\s+type\s*\{\s*([^}]+)\s*\}\s*from\s*['"](\.\.\/|\.\/)[^'"]+['"]/g)).flatMap(
+			(m) =>
+				m[1]
+					.split(',')
+					.map((s) => s.trim())
+					.filter(Boolean)
 		)
 	);
 	// Parse prisma imports (models + enums)
@@ -135,17 +136,11 @@ function generateSchemasForType(parsed, prismaCtx) {
 	// Build Zod schema and TS types
 	const prismaEnumsUsed = new Set();
 	const lines = [];
-	lines.push(`// Auto-generated. Do not edit manually. Source type: ${typeName}`);
-	lines.push(`import { z } from 'zod';`);
-	// Import enums from @prisma/client if needed
+	// Track enums used to ensure we add missing @prisma/client value imports at file level
 	for (const f of filtered) {
 		const base = f.baseTs;
 		if (prismaCtx.prismaEnums.has(base) || /^[A-Z0-9_]+$/.test(base)) prismaEnumsUsed.add(base);
 	}
-	if (prismaEnumsUsed.size) {
-		lines.push(`import { ${Array.from(prismaEnumsUsed).join(', ')} } from '@prisma/client';`);
-	}
-	lines.push('');
 
 	// Create schema
 	lines.push(`export const Create${typeName}Schema = z.object({`);
@@ -160,19 +155,76 @@ function generateSchemasForType(parsed, prismaCtx) {
 		lines.push(`\t${f.name}: ${zexpr},`);
 	}
 	lines.push('});');
+	lines.push(`Create${typeName}Schema.openapi('Create${typeName}');`);
 	lines.push('');
 	lines.push(`export type Create${typeName}Input = z.infer<typeof Create${typeName}Schema>;`);
 	lines.push('');
 	// Update schema: all optional
 	lines.push(`export const Update${typeName}Schema = Create${typeName}Schema.partial();`);
+	lines.push(`Update${typeName}Schema.openapi('Update${typeName}');`);
 	lines.push(`export type Update${typeName}Input = z.infer<typeof Update${typeName}Schema>;`);
 	lines.push('');
 
-	return { code: lines.join('\n'), dirRel };
+	// Registration helper for OpenAPI
+	lines.push(`export function register${typeName}InputSchemas(registry: OpenAPIRegistry) {`);
+	lines.push(`\tregistry.register('Create${typeName}', Create${typeName}Schema);`);
+	lines.push(`\tregistry.register('Update${typeName}', Update${typeName}Schema);`);
+	lines.push(`}`);
+	lines.push('');
+
+	return { code: lines.join('\n'), dirRel, prismaEnumsUsed };
 }
 
-function ensureDir(p) {
-	if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
+function insertAfterLastImport(src, block) {
+	const importStmtRx = /(\n|^)import[\s\S]*?;[\t ]*(?=\n|$)/g;
+	let last = null;
+	let m;
+	while ((m = importStmtRx.exec(src))) last = m;
+	if (last) {
+		const pos = last.index + last[0].length;
+		return src.slice(0, pos) + '\n' + block + '\n' + src.slice(pos);
+	}
+	return block + '\n' + src;
+}
+
+function ensureImportZod(src) {
+	if (/from\s*['"]zod['"]/.test(src)) return src;
+	return insertAfterLastImport(src, `import { z } from 'zod';`);
+}
+
+function ensureImportZodOpenAPI(src) {
+	if (/from\s*['"]@asteasolutions\/zod-to-openapi['"]/.test(src)) return src;
+	return insertAfterLastImport(
+		src,
+		`import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';`
+	);
+}
+
+function ensureExtendCall(src) {
+	if (/extendZodWithOpenApi\(z\)/.test(src)) return src;
+	return insertAfterLastImport(src, `extendZodWithOpenApi(z);`);
+}
+
+function getExistingPrismaValueNames(content) {
+	const names = new Set();
+	const rx = /import\s*\{\s*([^}]+)\s*\}\s*from\s*['"]@prisma\/client['"];?/gm;
+	let m;
+	while ((m = rx.exec(content))) {
+		m[1]
+			.split(',')
+			.map((s) => s.trim())
+			.filter(Boolean)
+			.forEach((n) => names.add(n));
+	}
+	return names;
+}
+
+function ensurePrismaEnumImports(src, enumNames) {
+	if (!enumNames || !enumNames.size) return src;
+	const existing = getExistingPrismaValueNames(src);
+	const missing = Array.from(enumNames).filter((n) => !existing.has(n));
+	if (!missing.length) return src;
+	return insertAfterLastImport(src, `import { ${missing.sort().join(', ')} } from '@prisma/client';`);
 }
 
 function main() {
@@ -181,23 +233,36 @@ function main() {
 	const prismaEnums = enums; // already Set
 	const typeFiles = walkTypes(TYPES_DIR);
 
-	let generatedCount = 0;
+	let updatedCount = 0;
 	for (const file of typeFiles) {
 		const parsed = parseTypeFile(file);
 		if (!parsed) continue;
-		const outDir = path.join(SCHEMAS_DIR, parsed.dirRel);
-		const outPath = path.join(outDir, `${parsed.typeName}.ts`);
+
+		let src = fs.readFileSync(file, 'utf8');
+		const createName = `Create${parsed.typeName}Schema`;
+		if (new RegExp(`export\\s+const\\s+${createName}\\b`).test(src)) {
+			continue; // do not overwrite if already present
+		}
+
 		const result = generateSchemasForType(parsed, {
 			prismaModels,
 			prismaEnums,
 			localTypeNames: parsed.localTypeNames,
 		});
-		ensureDir(outDir);
-		fs.writeFileSync(outPath, result.code);
-		console.log(`Generated ${path.relative(ROOT, outPath)}`);
-		generatedCount++;
+
+		// Ensure imports and extend call
+		src = ensureImportZod(src);
+		src = ensureImportZodOpenAPI(src);
+		src = ensurePrismaEnumImports(src, result.prismaEnumsUsed);
+		src = ensureExtendCall(src);
+
+		// Append schemas and registration
+		src = src.trimEnd() + `\n\n` + result.code + `\n`;
+		fs.writeFileSync(file, src);
+		console.log(`Augmented ${path.relative(ROOT, file)} with input schemas`);
+		updatedCount++;
 	}
-	console.log(`Done. Generated ${generatedCount} schema files.`);
+	console.log(`Done. Augmented ${updatedCount} type files with input schemas.`);
 }
 
 main();

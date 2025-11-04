@@ -30,8 +30,8 @@ export type Driver = {
 	on_order?: boolean | null;
 	working_hours?: unknown | null;
 	ride_requirements?: unknown | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	user_id?: string | null;
 	user?: User | null;
 	vehicles: VehicleDriver[];
@@ -44,7 +44,7 @@ export type Driver = {
 	documents: Document[];
 	location?: unknown | null;
 	delivery_timeline?: unknown | null;
-	last_ping_at: string;
+	last_ping_at: Date;
 	is_inactive?: boolean | null;
 	transfer_requirements?: unknown | null;
 	regions: string;
@@ -58,7 +58,7 @@ export type Driver = {
 	courier_orders_toggled?: boolean | null;
 	delivery_orders_toggled?: boolean | null;
 	partner_cash_balance?: number | null;
-	come_to_work_last_sent_at?: string | null;
+	come_to_work_last_sent_at?: Date | null;
 	driver_municipalities: DriverMunicipality[];
 	current_vehicle?: Vehicle | null;
 	activity_logs: DriverActivityLog[];

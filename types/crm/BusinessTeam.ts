@@ -8,8 +8,8 @@ export type BusinessTeam = {
 	team_name: string;
 	crm_module_id: string;
 	limit_per_person: number;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	users: User[];
 	crm_module: CrmModule;
 };

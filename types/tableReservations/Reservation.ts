@@ -8,11 +8,11 @@ import type { TableReservationsModule } from './TableReservationsModule.js';
 export type Reservation = {
 	reservation_id: string;
 	seats: number;
-	date: string;
+	date: Date;
 	time: string;
-	datetime: string;
-	created_at: string;
-	updated_at: string;
+	datetime: Date;
+	created_at: Date;
+	updated_at: Date;
 	user_id: string;
 	user: User;
 	status: RESERVATION_STATUS;

@@ -6,6 +6,6 @@ export type BookingSlot = {
 	booking_slot_id: string;
 	schedule_slot_id: string;
 	schedule_slot: ScheduleSlot;
-	start_time: string;
-	end_time: string;
+	start_time: Date;
+	end_time: Date;
 };

@@ -7,8 +7,8 @@ export type WalletTransferHistory = {
 	wallet_transfer_history_id: string;
 	order_id: string;
 	amount: number;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	success: boolean;
 	delivery_order?: DeliveryOrder | null;
 	taxi_order?: TaxiOrder | null;

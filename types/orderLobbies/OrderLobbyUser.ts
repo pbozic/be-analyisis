@@ -8,8 +8,8 @@ export type OrderLobbyUser = {
 	user_id: string;
 	order_lobbies_id: string;
 	limit: number;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	order_lobbies: OrderLobby;
 	users: User;
 };

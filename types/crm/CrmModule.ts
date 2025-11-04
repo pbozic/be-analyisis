@@ -8,8 +8,8 @@ export type CrmModule = {
 	crm_module_id: string;
 	business_id: string;
 	purchase_order_limit_amount?: number | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	business: Business;
 	business_clients: BusinessClient[];
 	business_teams: BusinessTeam[];

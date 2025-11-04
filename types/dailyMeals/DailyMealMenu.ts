@@ -8,5 +8,5 @@ export type DailyMealMenu = {
 	daily_meals_module_id: string;
 	daily_meals_module: DailyMealsModule;
 	categories: MenuCategory[];
-	date: string;
+	date: Date;
 };

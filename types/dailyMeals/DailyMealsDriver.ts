@@ -7,8 +7,8 @@ export type DailyMealsDriver = {
 	id: string;
 	daily_meals_id: string;
 	driver_id: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	daily_meals_module: DailyMealsModule;
 	driver: Driver;
 };

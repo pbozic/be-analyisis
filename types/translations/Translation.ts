@@ -9,6 +9,6 @@ export type Translation = {
 	field?: string | null;
 	language: string;
 	translation: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 };

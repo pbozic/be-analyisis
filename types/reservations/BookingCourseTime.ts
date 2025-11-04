@@ -7,10 +7,10 @@ export type BookingCourseTime = {
 	booking_course_time_id: string;
 	reservation_module_id: string;
 	booking_id: string;
-	start_time: string;
-	end_time: string;
-	created_at: string;
-	updated_at: string;
+	start_time: Date;
+	end_time: Date;
+	created_at: Date;
+	updated_at: Date;
 	booking: Booking;
 	reservation_module: ReservationModule;
 };

@@ -55,7 +55,7 @@ export type Employee = {
 	telephone_code?: string | null;
 	business_users_id?: string | null;
 	business_user?: BusinessUser | null;
-	created_at: string;
-	deleted_at?: string | null;
+	created_at: Date;
+	deleted_at?: Date | null;
 	schedule_slots: ScheduleSlot[];
 };

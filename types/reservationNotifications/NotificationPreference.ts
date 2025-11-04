@@ -23,7 +23,7 @@ export type NotificationPreference = {
 	notification_event_id: string;
 	channel: NOTIFICATION_CHANNEL;
 	enabled: boolean;
-	updated_at: string;
+	updated_at: Date;
 	reservation_module: ReservationModule;
 	event: NotificationEvent;
 };

@@ -14,8 +14,8 @@ export type Transaction = {
 	amount: number;
 	type: TRANSACTION_TYPE;
 	description?: string | null;
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 	delivery_order_id?: string | null;
 	taxi_order_id?: string | null;
 	wallet_fund_id?: string | null;

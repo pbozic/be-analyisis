@@ -63,7 +63,7 @@ export type NotificationTemplateVersion = {
 	variables_json_schema: unknown;
 	compiled_artifacts?: unknown | null;
 	created_by_user_id?: string | null;
-	created_at: string;
+	created_at: Date;
 	template: NotificationTemplate;
 	mappings: NotificationMapping[];
 	messages: NotificationMessage[];

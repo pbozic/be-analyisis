@@ -21,8 +21,8 @@ export type File = {
 	file_type: FILE_TYPE;
 	public: boolean;
 	mime_type: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	document_id?: string | null;
 	documents?: Document | null;
 	categories: Category[];

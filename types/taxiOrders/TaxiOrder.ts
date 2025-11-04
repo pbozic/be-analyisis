@@ -34,9 +34,9 @@ export type TaxiOrder = {
 	timeline: unknown;
 	preferences?: unknown | null;
 	status: TAXI_ORDER_STATUS;
-	last_sent_at?: string | null;
-	created_at: string;
-	updated_at: string;
+	last_sent_at?: Date | null;
+	created_at: Date;
+	updated_at: Date;
 	driver?: Driver | null;
 	vehicle?: Vehicle | null;
 	customer?: User | null;

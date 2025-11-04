@@ -11,8 +11,8 @@ import type { BusinessPremise } from '../invoices/BusinessPremise.js';
 export type TransportModule = {
 	transport_module_id: string;
 	business_id: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	business: Business;
 	active: boolean;
 	reviewable_id?: string | null;

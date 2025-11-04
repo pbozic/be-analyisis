@@ -9,8 +9,8 @@ export type DeliveryOrderSent = {
 	accepted: boolean;
 	location: unknown;
 	timeline: unknown;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	order?: DeliveryOrder | null;
 	driver_id?: string | null;
 	driver?: Driver | null;

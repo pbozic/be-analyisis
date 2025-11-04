@@ -13,8 +13,8 @@ export type BusinessUser = {
 	business_users_id: string;
 	online?: boolean | null;
 	company_role: COMPANY_ROLE;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	user_id: string;
 	users?: User | null;
 	business_id: string;

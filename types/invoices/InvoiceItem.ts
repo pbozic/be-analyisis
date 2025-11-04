@@ -6,11 +6,11 @@ export type InvoiceItem = {
 	invoice_item_id: string;
 	invoice_id: string;
 	description: string;
-	qty: string;
+	qty: number;
 	unit?: string | null;
-	unit_price: string;
-	tax_rate: string;
-	line_total: string;
+	unit_price: number;
+	tax_rate: number;
+	line_total: number;
 	invoice: Invoice;
-	created_at: string;
+	created_at: Date;
 };

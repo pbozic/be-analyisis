@@ -14,8 +14,8 @@ export type DailyMealSubscriptionCustomer = {
 	last_name: string;
 	telephone: string;
 	restaurant_comment?: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	subscription: DailyMealSubscription;
 	daily_meal_instances: DailyMealInstance[];
 	daily_meal_categories?: DailyMealCategory | null;

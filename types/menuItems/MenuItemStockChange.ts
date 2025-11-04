@@ -11,5 +11,5 @@ export type MenuItemStockChange = {
 	menu_item: MenuItem;
 	order_id?: string | null;
 	order?: DeliveryOrder | null;
-	created_at: string;
+	created_at: Date;
 };

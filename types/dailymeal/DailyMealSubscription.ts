@@ -19,13 +19,13 @@ export type DailyMealSubscription = {
 	daily_meals_id: string;
 	delivery_address_id: string;
 	driver_id?: string | null;
-	start_date: string;
-	end_date?: string | null;
+	start_date: Date;
+	end_date?: Date | null;
 	type: SUBSCRIPTION_TYPE;
 	status: SUBSCRIPTION_STATUS;
 	courier_comment?: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	user: User;
 	driver?: Driver | null;
 	delivery_address: Address;

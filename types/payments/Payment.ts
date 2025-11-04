@@ -14,8 +14,8 @@ export type Payment = {
 	payment_method: PAYMENT_METHOD;
 	payment_intent_id?: string | null;
 	status: PAYMENT_STATUS;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	order_type?: string | null;
 	payment_type?: string | null;
 	daily_meal_subscription_id?: string | null;

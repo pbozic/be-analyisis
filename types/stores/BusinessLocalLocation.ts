@@ -8,9 +8,9 @@ export type BusinessLocalLocation = {
 	business_local_location_id: string;
 	stores_id: string;
 	local_location_id: string;
-	created_at: string;
-	updated_at: string;
-	time: string;
+	created_at: Date;
+	updated_at: Date;
+	time: Date;
 	local_location: LocalLocation;
 	stores_module: StoresModule;
 	orders: DeliveryOrder[];

@@ -6,6 +6,6 @@ export type UserTutorialState = {
 	id: string;
 	user_id: string;
 	epoch: number;
-	updatedAt: string;
+	updatedAt: Date;
 	user: User;
 };

@@ -12,8 +12,8 @@ export type PaymentTransferGroup = {
 	amount: number;
 	metadata?: unknown | null;
 	payment_id: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	payment_splits: PaymentSplit[];
 	payment: Payment;
 };

@@ -10,12 +10,11 @@ const SCALAR_TS_MAP = {
 	String: 'string',
 	Int: 'number',
 	Float: 'number',
-	BigInt: 'string',
-	Decimal: 'string',
-	DateTime: 'string',
+	BigInt: 'number',
+	Decimal: 'number',
+	DateTime: 'Date',
 	Boolean: 'boolean',
 	Json: 'unknown',
-	Bytes: 'string',
 };
 
 const PRISMA_SCALARS = new Set(Object.keys(SCALAR_TS_MAP));

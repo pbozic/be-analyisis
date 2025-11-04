@@ -6,7 +6,7 @@ import type { BusinessToType } from './BusinessToType.js';
 export type BusinessType = {
 	type_id: string;
 	type: string;
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	businesses: BusinessToType[];
 };
