@@ -1,7 +1,7 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { Action } from '../subscriptions/Action.js';
+import type { Action } from './Action.js';
 import type { ReservationModule } from '../reservation/ReservationModule.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type BusinessUsage = {
 	business_usage_id: string;

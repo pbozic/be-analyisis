@@ -1,9 +1,11 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { PAYMENT_METHOD, PAYMENT_STATUS, payment_splits, payment_transfer_groups } from '@prisma/client';
+import { PAYMENT_METHOD, PAYMENT_STATUS } from '@prisma/client';
 
 import type { DailyMealSubscription } from '../dailymeal/DailyMealSubscription.js';
 import type { User } from '../users/User.js';
+import type { PaymentSplit } from './PaymentSplit.js';
+import type { PaymentTransferGroup } from './PaymentTransferGroup.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Payment = {
 	payment_id: string;
@@ -20,6 +22,6 @@ export type Payment = {
 	daily_meal_subscription?: DailyMealSubscription | null;
 	user_id: string;
 	user: User;
-	payment_splits: payment_transfer_groups[];
-	payment_transfer_groups: payment_splits[];
+	payment_splits: PaymentSplit[];
+	payment_transfer_groups: PaymentTransferGroup[];
 };

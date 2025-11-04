@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
-import type { notification_event } from '../../prisma/schemas/interfaces';
+import type { NotificationMapping } from './NotificationMapping.js';
+import type { NotificationPreference } from './NotificationPreference.js';
+import type { NotificationMessage } from './NotificationMessage.js';
 
 export const CreateNotificationEventSchema = z.object({
 	key: z.string().min(1, 'Key is required'), // e.g. "booking.confirmed"
@@ -20,4 +22,12 @@ export const DeleteNotificationEventSchema = z.object({
 export type CreateNotificationEventInput = z.infer<typeof CreateNotificationEventSchema>;
 export type UpdateNotificationEventInput = z.infer<typeof UpdateNotificationEventSchema>;
 
-export type NotificationEvent = notification_event;
+export type NotificationEvent = {
+	notification_event_id: string;
+	key: string;
+	name: string;
+	description?: string | null;
+	mappings: NotificationMapping[];
+	preferences: NotificationPreference[];
+	messages: NotificationMessage[];
+};

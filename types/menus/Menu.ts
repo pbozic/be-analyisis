@@ -1,9 +1,8 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { menu_categories } from '@prisma/client';
-
 import type { StoresModule } from '../stores/StoresModule.js';
 import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
+import type { MenuCategory } from './MenuCategory.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Menu = {
 	menu_id: string;
@@ -11,6 +10,6 @@ export type Menu = {
 	food_drinks_id?: string | null;
 	stores_module?: StoresModule | null;
 	food_drinks_module?: FoodDrinksModule | null;
-	categories: menu_categories[];
+	categories: MenuCategory[];
 	menu_categories_ordered?: unknown | null;
 };

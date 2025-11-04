@@ -1,9 +1,8 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { order_lobby_items } from '@prisma/client';
-
 import type { MenuItem } from './MenuItem.js';
+import type { OrderLobbyItem } from '../orderLobbies/OrderLobbyItem.js';
 import type { LineItem } from './LineItem.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type MenuItemVersion = {
 	menu_item_version_id: string;
@@ -12,6 +11,6 @@ export type MenuItemVersion = {
 	snapshot: unknown;
 	created_at: string;
 	menu_item: MenuItem;
-	order_lobby_items: order_lobby_items[];
+	order_lobby_items: OrderLobbyItem[];
 	line_items: LineItem[];
 };

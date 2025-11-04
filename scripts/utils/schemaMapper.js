@@ -91,7 +91,7 @@ export function modelNameToTypeName(modelName) {
 }
 
 // Locate a local type definition under the types/ directory, e.g. BlogCategory.ts/js
-function findLocalType(rootDir, typeName) {
+function findLocalType(rootDir, typeName, importBaseDir) {
 	const typesDir = path.join(rootDir, 'types');
 	if (!fs.existsSync(typesDir)) return null;
 
@@ -107,11 +107,11 @@ function findLocalType(rootDir, typeName) {
 			} else if (ent.isFile()) {
 				const base = path.basename(ent.name);
 				if (base === `${typeName}.ts` || base === `${typeName}.js`) {
-					// Build an ESM-like import path from the eventual output folder 'types/dtos'
-					// Prefer .js extension in import like existing Blog types
-					const importPathFromDtos = path.relative(path.join(typesDir, 'dtos'), full).replace(/\\/g, '/');
-					const withJsExt = importPathFromDtos.replace(/\.ts$/, '.js');
-					// Ensure relative import starts with ./ or ../
+					// Compute import path relative to the target output directory
+					const baseDir =
+						importBaseDir && fs.existsSync(importBaseDir) ? importBaseDir : path.join(typesDir, 'dtos');
+					const relFromBase = path.relative(baseDir, full).replace(/\\/g, '/');
+					const withJsExt = relFromBase.replace(/\.ts$/, '.js');
 					const rel = withJsExt.startsWith('.') ? withJsExt : `./${withJsExt}`;
 					return { importPath: rel, typeName };
 				}
@@ -130,9 +130,9 @@ function toTsScalarOrEnum({ baseType, enums }) {
 }
 
 // Build a relation-aware field type
-function relationFieldType({ rootDir, relatedModelName, models }) {
+function relationFieldType({ rootDir, relatedModelName, models, importBaseDir }) {
 	const relatedTypeName = modelNameToTypeName(relatedModelName);
-	const local = findLocalType(rootDir, relatedTypeName);
+	const local = findLocalType(rootDir, relatedTypeName, importBaseDir);
 	if (local) {
 		return { ts: relatedTypeName, localImport: local, prismaModelType: null };
 	}
@@ -177,6 +177,7 @@ export function buildModelTypeShape({
 	modelName, // e.g., blog_posts
 	models,
 	enums,
+	importBaseDir,
 }) {
 	const model = models.get(modelName);
 	if (!model) throw new Error(`Model not found: ${modelName}`);
@@ -207,8 +208,10 @@ export function buildModelTypeShape({
 				rootDir,
 				relatedModelName,
 				models,
+				importBaseDir,
 			});
-			if (localImport) localImports.push(localImport);
+			// Avoid importing the current type into itself for self-relations
+			if (localImport && localImport.typeName !== typeName) localImports.push(localImport);
 			if (prismaModelType) prismaImports.add(prismaModelType);
 			const itemTs = ts;
 			const typeTs = isArray ? `${itemTs}[]` : itemTs;
@@ -228,7 +231,12 @@ export function buildModelTypeShape({
 			fields.push({ name: fieldName, ts: finalTs, optional: isOptional, nullable });
 		} else if (models.has(baseType)) {
 			// This is likely a foreign key scalar (e.g., author_id: String), but if baseType references a model, be conservative
-			const { ts, prismaModelType } = relationFieldType({ rootDir, relatedModelName: baseType, models });
+			const { ts, prismaModelType } = relationFieldType({
+				rootDir,
+				relatedModelName: baseType,
+				models,
+				importBaseDir,
+			});
 			if (prismaModelType) prismaImports.add(prismaModelType);
 			fields.push({ name: fieldName, ts, optional: isOptional, nullable: isOptional });
 		} else {
@@ -255,9 +263,13 @@ export function renderTypeFile({ typeName, prismaImports, enumImports, localImpo
 		seenLocal.add(key);
 		lines.push(`import type { ${imp.typeName} } from '${imp.importPath}';`);
 	}
-	if (prismaImports.length || enumImports.length) {
-		const names = [...prismaImports, ...enumImports].sort();
+	if (prismaImports.length) {
+		const names = [...prismaImports].sort();
 		lines.push(`import type { ${names.join(', ')} } from '@prisma/client';`);
+	}
+	if (enumImports.length) {
+		const names = [...enumImports].sort();
+		lines.push(`import { ${names.join(', ')} } from '@prisma/client';`);
 	}
 	lines.push('');
 	lines.push(`export type ${typeName} = {`);
@@ -272,7 +284,7 @@ export function renderTypeFile({ typeName, prismaImports, enumImports, localImpo
 }
 
 // High-level convenience: read all prisma schema files, build a type, and return code
-export function generateModelTypeFromSchemas({ rootDir, modelName }) {
+export function generateModelTypeFromSchemas({ rootDir, modelName, targetDir }) {
 	const prismaRoot = path.join(rootDir, 'prisma');
 	const prismaSchemas = path.join(prismaRoot, 'schemas');
 	let schemaDir = prismaRoot;
@@ -284,6 +296,7 @@ export function generateModelTypeFromSchemas({ rootDir, modelName }) {
 
 	const content = schemaFiles.map((p) => fs.readFileSync(p, 'utf8')).join('\n');
 	const { models, enums } = parseModelsAndEnums(content);
-	const shape = buildModelTypeShape({ rootDir, modelName, models, enums });
+	const importBaseDir = targetDir || path.join(rootDir, 'types', 'dtos');
+	const shape = buildModelTypeShape({ rootDir, modelName, models, enums, importBaseDir });
 	return renderTypeFile(shape);
 }

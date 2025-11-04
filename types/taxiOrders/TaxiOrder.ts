@@ -1,20 +1,14 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import { ORDER_SUBTYPE, ORDER_TYPE, TAXI_ORDER_STATUS } from '@prisma/client';
 
-import type {
-	ORDER_SUBTYPE,
-	ORDER_TYPE,
-	TAXI_ORDER_STATUS,
-	business_clients,
-	driver_history_locations,
-	drivers,
-	taxi_orders,
-	vehicles,
-} from '@prisma/client';
-
+import type { Driver } from '../drivers/Driver.js';
+import type { Vehicle } from '../vehicles/Vehicle.js';
 import type { User } from '../users/User.js';
 import type { BusinessUser } from '../businessUsers/BusinessUser.js';
+import type { BusinessClient } from '../crm/BusinessClient.js';
+import type { TaxiOrderSent } from './TaxiOrderSent.js';
 import type { Document } from '../documents/Document.js';
-import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+import type { DriverHistoryLocation } from '../drivers/DriverHistoryLocation.js';
+import type { WalletTransferHistory } from '../wallet/WalletTransferHistory.js';
 import type { Transaction } from '../payments/Transaction.js';
 import type { Cashback } from '../cashback/Cashback.js';
 import type { ScoringPoint } from '../general/ScoringPoint.js';
@@ -22,6 +16,8 @@ import type { LateEvent } from '../general/LateEvent.js';
 import type { Invoice } from '../invoices/Invoice.js';
 import type { Review } from '../reviews/Review.js';
 import type { TransportModule } from '../transport/TransportModule.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type TaxiOrder = {
 	order_id: string;
@@ -41,12 +37,12 @@ export type TaxiOrder = {
 	last_sent_at?: string | null;
 	created_at: string;
 	updated_at: string;
-	driver?: drivers | null;
-	vehicle?: vehicles | null;
+	driver?: Driver | null;
+	vehicle?: Vehicle | null;
 	customer?: User | null;
 	business_users?: BusinessUser | null;
-	business_clients?: business_clients | null;
-	history: drivers[];
+	business_clients?: BusinessClient | null;
+	history: TaxiOrderSent[];
 	telephone?: string | null;
 	first_name?: string | null;
 	last_name?: string | null;
@@ -54,14 +50,14 @@ export type TaxiOrder = {
 	find_drivers_attempts?: number | null;
 	is_scheduled: boolean;
 	parent_order_id?: string | null;
-	parent_order?: taxi_orders | null;
-	grouped_orders: taxi_orders[];
+	parent_order?: TaxiOrder | null;
+	grouped_orders: TaxiOrder[];
 	type: ORDER_TYPE;
 	subtype: ORDER_SUBTYPE;
 	cargo_documents: Document[];
 	cargo_preferences?: unknown | null;
-	driver_history_locations: driver_history_locations[];
-	wallet_transfer: DeliveryOrder[];
+	driver_history_locations: DriverHistoryLocation[];
+	wallet_transfer: WalletTransferHistory[];
 	transactions: Transaction[];
 	customer_note?: string | null;
 	parent_user_type?: string | null;

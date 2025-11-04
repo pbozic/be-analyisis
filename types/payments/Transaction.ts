@@ -1,9 +1,12 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import { TRANSACTION_TYPE } from '@prisma/client';
 
-import type { TRANSACTION_TYPE, delivery_orders, taxi_orders, wallet_funds } from '@prisma/client';
-
+import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
+import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
 import type { User } from '../users/User.js';
 import type { Document } from '../documents/Document.js';
+import type { WalletFund } from '../wallet/WalletFund.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Transaction = {
 	transaction_id: string;
@@ -16,9 +19,9 @@ export type Transaction = {
 	delivery_order_id?: string | null;
 	taxi_order_id?: string | null;
 	wallet_fund_id?: string | null;
-	taxi_order?: taxi_orders | null;
-	delivery_order?: delivery_orders | null;
+	taxi_order?: TaxiOrder | null;
+	delivery_order?: DeliveryOrder | null;
 	user: User;
 	documents: Document[];
-	wallet_funds?: wallet_funds | null;
+	wallet_funds?: WalletFund | null;
 };

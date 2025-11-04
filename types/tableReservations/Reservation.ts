@@ -1,8 +1,9 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { RESERVATION_STATUS, table_reservations_module } from '@prisma/client';
+import type { table_reservations_module } from '@prisma/client';
+import { RESERVATION_STATUS } from '@prisma/client';
 
 import type { User } from '../users/User.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Reservation = {
 	reservation_id: string;

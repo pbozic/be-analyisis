@@ -1,7 +1,8 @@
 import { z } from 'zod';
+import { NOTIFICATION_CHANNEL } from '@prisma/client';
 
-import type { notification_preference } from '../../prisma/schemas/interfaces';
-import { NotificationChannelEnum } from './enums.ts';
+import type { ReservationModule } from '../reservation/ReservationModule.js';
+import type { NotificationEvent } from './NotificationEvent.js';
 
 export const UpsertNotificationPreferenceSchema = z.object({
 	notification_event_id: z.string().uuid(),
@@ -14,4 +15,14 @@ export const DeleteNotificationPreferenceSchema = z.object({
 });
 
 export type UpsertNotificationPreferenceInput = z.infer<typeof UpsertNotificationPreferenceSchema>;
-export type NotificationPreference = notification_preference;
+
+export type NotificationPreference = {
+	notification_preference_id: string;
+	reservation_module_id: string;
+	notification_event_id: string;
+	channel: NOTIFICATION_CHANNEL;
+	enabled: boolean;
+	updated_at: string;
+	reservation_module: ReservationModule;
+	event: NotificationEvent;
+};

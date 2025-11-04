@@ -1,7 +1,7 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { OrderLobby } from '../orderLobbies/OrderLobby.js';
+import type { OrderLobby } from './OrderLobby.js';
 import type { User } from '../users/User.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type OrderLobbyUser = {
 	order_lobby_users_id: string;

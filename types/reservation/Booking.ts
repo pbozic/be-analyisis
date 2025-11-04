@@ -1,9 +1,14 @@
-import { BOOKING_STATUS } from '@prisma/client';
 import { z } from 'zod';
+import { BOOKING_STATUS } from '@prisma/client';
 
-import { addValideBookingSchema } from '../../lib/bookingHelpers';
-import type { booking, booking_history_log } from '../../prisma/schemas/interfaces';
-import { UpdateCustomerSchema } from './Customer';
+import type { ReservationModule } from './ReservationModule.js';
+import type { Location } from './Location.js';
+import type { Employee } from './Employee.js';
+import type { Service } from './Service.js';
+import type { Customer } from './Customer.js';
+import type { BookingHistoryLog } from '../reservations/BookingHistoryLog.js';
+import type { Reviewable } from '../reviews/Reviewable.js';
+import type { BookingCourseTime } from './BookingCourseTime.js';
 
 // --- SCHEMAS ---
 export const ListBookingsParamsSchema = z.object({
@@ -133,7 +138,6 @@ export const BookingsAnalyticsSchema = z.object({
 
 // --- TYPES ---
 
-export type Booking = booking;
 export type BookingHistoryLog = booking_history_log;
 
 export type CreateBookingInput = z.infer<typeof CreateBookingSchema>;
@@ -150,3 +154,38 @@ export type DeleteBookingInput = z.infer<typeof DeleteBookingSchema>;
 export type ListBookingsParams = z.infer<typeof ListBookingsParamsSchema>;
 export type BookingsAnalyticsParams = z.infer<typeof BookingsAnalyticsSchema>;
 export type AllBookingsForLocationAndEmployeesParams = z.infer<typeof AllBookingsForLocationAndEmployeesSchema>;
+
+export type Booking = {
+	booking_id: string;
+	customer_id?: string | null;
+	reservation_module_id: string;
+	location_id?: string | null;
+	status: BOOKING_STATUS;
+	service_id: string;
+	comment?: string | null;
+	created_at: string;
+	updated_at: string;
+	price_cents?: number | null;
+	discount_percent?: number | null;
+	discount_amount?: number | null;
+	start_time?: string | null;
+	end_time?: string | null;
+	deleted_at?: string | null;
+	employee_id?: string | null;
+	parent_booking_id?: string | null;
+	parent_booking?: Booking | null;
+	child_bookings: Booking[];
+	reservation_module: ReservationModule;
+	location?: Location | null;
+	employee?: Employee | null;
+	service?: Service | null;
+	customer?: Customer | null;
+	booking_history_log: BookingHistoryLog[];
+	reviewable_id?: string | null;
+	reviewable?: Reviewable | null;
+	course: boolean;
+	people_allowed?: number | null;
+	people_booked?: number | null;
+	booking_course_time: BookingCourseTime[];
+	booking_course_participant: Customer[];
+};

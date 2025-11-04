@@ -1,7 +1,7 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
+import type { TaxiOrder } from './TaxiOrder.js';
 import type { Driver } from '../drivers/Driver.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type TaxiOrderSent = {
 	taxi_order_sent_id: string;

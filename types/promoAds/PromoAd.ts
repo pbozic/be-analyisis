@@ -1,8 +1,10 @@
+import { PROMO_SERVICE_TYPES } from '@prisma/client';
+
+import type { PromoBanner } from './PromoBanner.js';
+import type { Category } from '../menus/Category.js';
+import type { PromoAnalytic } from '../promoAnalytics/PromoAnalytic.js';
+
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { PROMO_SERVICE_TYPES, categories, promo_analytics } from '@prisma/client';
-
-import type { File } from '../files/File.js';
 
 export type PromoAd = {
 	promo_ads_id: string;
@@ -11,12 +13,12 @@ export type PromoAd = {
 	tag: string;
 	service_type: PROMO_SERVICE_TYPES;
 	discount: number;
-	banner: File[];
-	categories: categories[];
+	banner: PromoBanner[];
+	categories: Category[];
 	active: boolean;
 	code?: number | null;
 	created_at: string;
 	active_at?: string | null;
 	active_until?: string | null;
-	promo_analytics: promo_analytics[];
+	promo_analytics: PromoAnalytic[];
 };

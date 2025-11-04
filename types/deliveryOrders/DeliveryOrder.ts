@@ -1,29 +1,28 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import { DELIVERY_ORDER_STATUS } from '@prisma/client';
 
-import type {
-	DELIVERY_ORDER_STATUS,
-	business_local_locations,
-	driver_history_locations,
-	drivers,
-	invoice,
-	line_items,
-	menu_items,
-	order_lobbies,
-	taxi_orders,
-	transport_module,
-	vehicles,
-} from '@prisma/client';
-
+import type { LineItem } from '../menuItems/LineItem.js';
 import type { User } from '../users/User.js';
+import type { DeliveryOrderSent } from './DeliveryOrderSent.js';
+import type { Vehicle } from '../vehicles/Vehicle.js';
+import type { Driver } from '../drivers/Driver.js';
+import type { TransportModule } from '../transport/TransportModule.js';
 import type { Transaction } from '../payments/Transaction.js';
+import type { WalletTransferHistory } from '../wallet/WalletTransferHistory.js';
+import type { DriverHistoryLocation } from '../drivers/DriverHistoryLocation.js';
 import type { Cashback } from '../cashback/Cashback.js';
+import type { OrderLobby } from '../orderLobbies/OrderLobby.js';
 import type { ScoringPoint } from '../general/ScoringPoint.js';
 import type { LateEvent } from '../general/LateEvent.js';
+import type { MenuItemStockChange } from '../menuItems/MenuItemStockChange.js';
+import type { BusinessLocalLocation } from '../stores/BusinessLocalLocation.js';
 import type { PromoAnalytic } from '../promoAnalytics/PromoAnalytic.js';
+import type { Invoice } from '../invoices/Invoice.js';
 import type { Review } from '../reviews/Review.js';
 import type { StoresModule } from '../stores/StoresModule.js';
 import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
 import type { File } from '../files/File.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type DeliveryOrder = {
 	order_id: string;
@@ -33,7 +32,7 @@ export type DeliveryOrder = {
 	delivery_location: unknown;
 	payment?: unknown | null;
 	estimates?: unknown | null;
-	items: line_items[];
+	items: LineItem[];
 	details?: unknown | null;
 	courier_instructions?: string | null;
 	restaurant_message?: string | null;
@@ -45,30 +44,30 @@ export type DeliveryOrder = {
 	created_at: string;
 	updated_at: string;
 	customer?: User | null;
-	history: drivers[];
+	history: DeliveryOrderSent[];
 	vehicle_id?: string | null;
-	vehicle?: vehicles | null;
+	vehicle?: Vehicle | null;
 	driver_id?: string | null;
-	driver?: drivers | null;
+	driver?: Driver | null;
 	transport_module_id?: string | null;
-	transport_module?: transport_module | null;
+	transport_module?: TransportModule | null;
 	payment_intent_id?: string | null;
 	transactions: Transaction[];
 	find_drivers_attempts?: number | null;
 	is_daily_meal: boolean;
-	wallet_transfer: taxi_orders[];
-	driver_history_locations: driver_history_locations[];
+	wallet_transfer: WalletTransferHistory[];
+	driver_history_locations: DriverHistoryLocation[];
 	cashback: Cashback[];
-	order_lobbies?: order_lobbies | null;
+	order_lobbies?: OrderLobby | null;
 	allow_credits_usage: boolean;
 	order_number: number;
 	scoring_points: ScoringPoint[];
 	late_events: LateEvent[];
-	stock_movements: menu_items[];
+	stock_movements: MenuItemStockChange[];
 	business_local_location_id?: string | null;
-	business_local_location?: business_local_locations | null;
+	business_local_location?: BusinessLocalLocation | null;
 	promo_analytics: PromoAnalytic[];
-	invoice?: invoice | null;
+	invoice?: Invoice | null;
 	review_id?: string | null;
 	review?: Review | null;
 	stores_id?: string | null;

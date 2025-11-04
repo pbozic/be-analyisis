@@ -1,10 +1,10 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { CREDIT_STATUS, FUNDS_TYPE } from '@prisma/client';
+import { CREDIT_STATUS, FUNDS_TYPE } from '@prisma/client';
 
 import type { Referral } from '../referral/Referral.js';
 import type { User } from '../users/User.js';
 import type { Transaction } from '../payments/Transaction.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type WalletFund = {
 	wallet_funds_id: string;

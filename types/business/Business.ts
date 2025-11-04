@@ -1,9 +1,8 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { business, user_favorite_businesses, word_buy } from '@prisma/client';
+import type { user_favorite_businesses } from '@prisma/client';
 
 import type { Address } from '../addresses/Address.js';
 import type { Document } from '../documents/Document.js';
+import type { WordBuy } from '../promoWords/WordBuy.js';
 import type { PromoSectionsBuy } from '../promoSections/PromoSectionsBuy.js';
 import type { PromoAnalytic } from '../promoAnalytics/PromoAnalytic.js';
 import type { ScoringPoint } from '../general/ScoringPoint.js';
@@ -11,12 +10,14 @@ import type { AccountAction } from '../general/AccountAction.js';
 import type { BusinessMoneyFlow } from '../payments/BusinessMoneyFlow.js';
 import type { Role } from '../userRoles/Role.js';
 import type { BusinessUser } from '../businessUsers/BusinessUser.js';
-import type { BusinessType } from '../business/BusinessType.js';
+import type { BusinessType } from './BusinessType.js';
 import type { ReservationModule } from '../reservation/ReservationModule.js';
 import type { TransportModule } from '../transport/TransportModule.js';
 import type { StoresModule } from '../stores/StoresModule.js';
 import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
 import type { CrmModule } from '../crm/CrmModule.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Business = {
 	business_id: string;
@@ -39,12 +40,12 @@ export type Business = {
 	address?: Address | null;
 	documents: Document[];
 	parent_business_id?: string | null;
-	parent_business?: business | null;
-	child_businesses: business[];
+	parent_business?: Business | null;
+	child_businesses: Business[];
 	stripe_account_id?: string | null;
 	stripe_customer_id?: string | null;
 	word_buy_stripe_subscription_id?: string | null;
-	word_buys: word_buy[];
+	word_buys: WordBuy[];
 	promo_sections: PromoSectionsBuy[];
 	analytics: PromoAnalytic[];
 	first_activated_at?: string | null;

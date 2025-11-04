@@ -1,7 +1,7 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
-
-import type { CrmModule } from '../crm/CrmModule.js';
+import type { CrmModule } from './CrmModule.js';
 import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
 
 export type BusinessClient = {
 	business_clients_id: string;

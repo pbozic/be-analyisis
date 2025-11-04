@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
-import type { notification_template } from '../../prisma/schemas/interfaces';
+import type { ReservationModule } from '../reservation/ReservationModule.js';
+import type { NotificationTemplateVersion } from './NotificationTemplateVersion.js';
+import type { NotificationMessage } from './NotificationMessage.js';
 
 export const CreateNotificationTemplateSchema = z.object({
 	reservation_module_id: z.string().uuid(),
@@ -20,4 +22,14 @@ export const DeleteNotificationTemplateSchema = z.object({
 export type CreateNotificationTemplateInput = z.infer<typeof CreateNotificationTemplateSchema>;
 export type UpdateNotificationTemplateInput = z.infer<typeof UpdateNotificationTemplateSchema>;
 
-export type NotificationTemplate = notification_template;
+export type NotificationTemplate = {
+	notification_template_id: string;
+	reservation_module_id: string;
+	key: string;
+	name: string;
+	created_at: string;
+	updated_at: string;
+	reservation_module: ReservationModule;
+	versions: NotificationTemplateVersion[];
+	messages: NotificationMessage[];
+};

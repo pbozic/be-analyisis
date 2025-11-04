@@ -1,11 +1,11 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import type { user_favorite_service_links } from '@prisma/client';
 
-import type { User } from './User.js';
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type ServiceLink = {
 	id: string;
 	name: string;
 	created_at: string;
 	updated_at: string;
-	favorited_by: User[];
+	favorited_by: user_favorite_service_links[];
 };

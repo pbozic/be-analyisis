@@ -1,10 +1,11 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { DAILY_MEAL_INSTANCE_STATUS, daily_meal_category_prices } from '@prisma/client';
+import { DAILY_MEAL_INSTANCE_STATUS } from '@prisma/client';
 
 import type { DailyMealSubscription } from '../dailymeal/DailyMealSubscription.js';
-import type { DailyMealSubscriptionCustomer } from '../dailyMeals/DailyMealSubscriptionCustomer.js';
+import type { DailyMealSubscriptionCustomer } from './DailyMealSubscriptionCustomer.js';
 import type { MenuCategory } from '../menus/MenuCategory.js';
+import type { DailyMealCategoryPrice } from './DailyMealCategoryPrice.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type DailyMealInstance = {
 	id: string;
@@ -20,5 +21,5 @@ export type DailyMealInstance = {
 	subscription: DailyMealSubscription;
 	customer: DailyMealSubscriptionCustomer;
 	menu_category: MenuCategory;
-	daily_meal_category_price: daily_meal_category_prices;
+	daily_meal_category_price: DailyMealCategoryPrice;
 };

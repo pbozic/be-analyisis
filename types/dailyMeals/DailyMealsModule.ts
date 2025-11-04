@@ -1,8 +1,8 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { DAY_OF_WEEK } from '@prisma/client';
+import { DAY_OF_WEEK } from '@prisma/client';
 
 import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type DailyMealsModule = {
 	id: string;

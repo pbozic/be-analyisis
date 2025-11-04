@@ -1,9 +1,9 @@
+import { TRANSFER_GROUP_STATUS, TRANSFER_GROUP_TYPE } from '@prisma/client';
+
+import type { PaymentSplit } from './PaymentSplit.js';
+import type { Payment } from './Payment.js';
+
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { TRANSFER_GROUP_STATUS, TRANSFER_GROUP_TYPE } from '@prisma/client';
-
-import type { PaymentSplit } from '../payments/PaymentSplit.js';
-import type { Payment } from '../payments/Payment.js';
 
 export type PaymentTransferGroup = {
 	payment_transfer_group_id: string;

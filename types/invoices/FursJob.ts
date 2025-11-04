@@ -1,6 +1,6 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import { FURS_JOB_STATUS, FURS_JOB_TYPE } from '@prisma/client';
 
-import type { FURS_JOB_STATUS, FURS_JOB_TYPE } from '@prisma/client';
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type FursJob = {
 	furs_job_id: string;

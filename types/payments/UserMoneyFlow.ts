@@ -1,8 +1,8 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { PAYMENT_METHOD, TRANSACTION_TYPE } from '@prisma/client';
+import { PAYMENT_METHOD, TRANSACTION_TYPE } from '@prisma/client';
 
 import type { User } from '../users/User.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type UserMoneyFlow = {
 	balance_change_id: string;

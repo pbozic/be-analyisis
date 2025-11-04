@@ -1,10 +1,11 @@
 // blogSchemas.ts
 import { z } from 'zod';
-import type { users, files } from '@prisma/client';
 import { BLOG_POST_STATUS } from '@prisma/client';
 
+import type { File } from '../files/File.js';
+import type { User } from '../users/User.js';
 import type { BlogCategory } from './BlogCategory.js';
-import { BlogTag } from './BlogTag.js';
+import type { BlogTag } from './BlogTag.js';
 
 // =======================
 // Editor.js Zod Schemas
@@ -79,25 +80,27 @@ export type SearchBlogPostsInput = z.infer<typeof SearchBlogPostsSchema>;
 // =======================
 // Full BlogPost Type (from DB + schemas)
 // =======================
+
+export type BlogPostInput = Omit<
+	BlogPost,
+	'blog_posts_id' | 'slug' | 'author_id' | 'created_at' | 'updated_at' | 'author' | 'category'
+>;
+
 export type BlogPost = {
 	blog_posts_id: string;
 	slug: string;
 	title: string;
 	short_content?: string | null;
 	image_file_id?: string | null;
-	image?: files | null;
-	content: EditorJSData;
+	image?: File | null;
+	content: unknown;
+	status: BLOG_POST_STATUS;
 	author_id: string;
 	category_id?: string | null;
 	publish_at: string;
 	created_at: string;
 	updated_at: string;
-	author: users;
+	author: User;
 	category?: BlogCategory | null;
-	tags?: BlogTag[];
+	tags: BlogTag[];
 };
-
-export type BlogPostInput = Omit<
-	BlogPost,
-	'blog_posts_id' | 'slug' | 'author_id' | 'created_at' | 'updated_at' | 'author' | 'category'
->;

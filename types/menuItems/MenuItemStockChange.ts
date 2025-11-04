@@ -1,7 +1,7 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { MenuItem } from '../menuItems/MenuItem.js';
+import type { MenuItem } from './MenuItem.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type MenuItemStockChange = {
 	id: string;

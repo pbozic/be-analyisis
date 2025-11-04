@@ -1,6 +1,8 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import type { Driver } from '../drivers/Driver.js';
+import type { Settlement } from '../weather/Settlement.js';
+import type { WeatherData } from '../weather/WeatherData.js';
 
-import type { drivers, settlements, weather_data } from '@prisma/client';
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Municipality = {
 	municipalities_id: string;
@@ -12,8 +14,8 @@ export type Municipality = {
 	feature_id?: string | null;
 	created_at: string;
 	updated_at: string;
-	driver_municipalities: drivers[];
-	settlements: weather_data[];
-	weather_data: settlements[];
+	driver_municipalities: Driver[];
+	settlements: Settlement[];
+	weather_data: WeatherData[];
 	geom_generated?: unknown | null;
 };

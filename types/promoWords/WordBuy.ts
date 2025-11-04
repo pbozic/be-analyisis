@@ -1,7 +1,7 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { Word } from '../promoWords/Word.js';
+import type { Word } from './Word.js';
 import type { Business } from '../business/Business.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type WordBuy = {
 	word_buy_id: string;

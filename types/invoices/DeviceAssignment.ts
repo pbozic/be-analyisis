@@ -1,6 +1,6 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import type { ElectronicDevice } from './ElectronicDevice.js';
 
-import type { ElectronicDevice } from '../invoices/ElectronicDevice.js';
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type DeviceAssignment = {
 	device_assignment_id: string;

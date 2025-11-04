@@ -41,6 +41,132 @@ function stripComments(str) {
 		.replace(/^\s*\/\/\/.*$/gm, '');
 }
 
+// ===== Helpers for in-place type updates in existing files =====
+
+function parseGeneratedParts(generatedCode, typeName) {
+	// Collect local import specs (excluding @prisma/client)
+	const localImports = new Map(); // path -> Set(names)
+	const importRx = /import\s+type\s*\{\s*([^}]+)\s*\}\s*from\s*['"]([^'"]+)['"];?/g;
+	let m;
+	while ((m = importRx.exec(generatedCode))) {
+		const names = m[1]
+			.split(',')
+			.map((s) => s.trim())
+			.filter(Boolean);
+		const mod = m[2];
+		if (mod === '@prisma/client') continue;
+		if (!localImports.has(mod)) localImports.set(mod, new Set());
+		const set = localImports.get(mod);
+		names.forEach((n) => set.add(n));
+	}
+
+	// Prisma type imports
+	const prismaTypeNames = new Set();
+	const prismaValueNames = new Set();
+	const prismaTypeRx = /import\s+type\s*\{\s*([^}]+)\s*\}\s*from\s*['"]@prisma\/client['"];?/gm;
+	let ptm;
+	while ((ptm = prismaTypeRx.exec(generatedCode))) {
+		ptm[1]
+			.split(',')
+			.map((s) => s.trim())
+			.filter(Boolean)
+			.forEach((n) => prismaTypeNames.add(n));
+	}
+	const prismaValueRx = /import\s*\{\s*([^}]+)\s*\}\s*from\s*['"]@prisma\/client['"];?/gm;
+	let pvm;
+	while ((pvm = prismaValueRx.exec(generatedCode))) {
+		pvm[1]
+			.split(',')
+			.map((s) => s.trim())
+			.filter(Boolean)
+			.forEach((n) => prismaValueNames.add(n));
+	}
+
+	// Type block
+	const typeBlockRx = new RegExp(`export\\s+type\\s+${typeName}\\s*=\\s*\\{[\\s\\S]*?\\};`);
+	const tb = generatedCode.match(typeBlockRx);
+	const typeBlock = tb ? tb[0] : '';
+
+	return { localImports, prismaTypeNames, prismaValueNames, typeBlock };
+}
+
+// (mergeNamedImportLine removed: no longer needed with replace strategy)
+
+function insertImport(content, importBlock) {
+	// Insert import block after the last full import statement (single or multi-line), or at the top
+	const importStmtRx = /(\n|^)import[\s\S]*?;[\t ]*(?=\n|$)/g;
+	let lastMatch = null;
+	let m;
+	while ((m = importStmtRx.exec(content))) {
+		lastMatch = m;
+	}
+	if (lastMatch) {
+		const insertPos = lastMatch.index + lastMatch[0].length;
+		return content.slice(0, insertPos) + '\n' + importBlock + '\n' + content.slice(insertPos);
+	}
+	return importBlock + '\n' + content;
+}
+
+function stripTargetedImports(content) {
+	// Remove any existing imports from @prisma/client and any relative path (./ or ../), including multi-line
+	const importStmtRx = /(\n|^)import[\s\S]*?;[\t ]*(?=\n|$)/g;
+	return content.replace(importStmtRx, (stmt) => {
+		// Side-effect import: import 'module';
+		let m = /import\s*['"]([^'"]+)['"]/m.exec(stmt);
+		if (m) {
+			const mod = m[1];
+			if (mod === '@prisma/client' || mod.startsWith('./') || mod.startsWith('../')) return '';
+			return stmt; // keep
+		}
+		// Named/namespace import
+		m = /from\s*['"]([^'"]+)['"]/m.exec(stmt);
+		if (!m) return stmt; // not recognized, keep
+		const mod = m[1];
+		if (mod === '@prisma/client' || mod.startsWith('./') || mod.startsWith('../')) return '';
+		return stmt; // keep
+	});
+}
+
+function ensureImports(content, parts) {
+	// Replace any prior prisma/local type imports with freshly generated ones
+	let updated = stripTargetedImports(content);
+	const importLines = [];
+	if (parts.localImports.size) {
+		for (const [mod, namesSet] of parts.localImports.entries()) {
+			const namesArr = Array.from(namesSet).sort();
+			importLines.push(`import type { ${namesArr.join(', ')} } from '${mod}';`);
+		}
+	}
+	if (parts.prismaTypeNames && parts.prismaTypeNames.size) {
+		importLines.push(
+			`import type { ${Array.from(parts.prismaTypeNames).sort().join(', ')} } from '@prisma/client';`
+		);
+	}
+	if (parts.prismaValueNames && parts.prismaValueNames.size) {
+		importLines.push(`import { ${Array.from(parts.prismaValueNames).sort().join(', ')} } from '@prisma/client';`);
+	}
+	if (importLines.length) {
+		const toInsert = importLines.join('\n');
+		updated = insertImport(updated, toInsert);
+	}
+	return updated;
+}
+
+function upsertTypeInFile(filePath, generatedCode, typeName) {
+	let content = fs.readFileSync(filePath, 'utf8');
+	const parts = parseGeneratedParts(generatedCode, typeName);
+	if (!parts.typeBlock) return; // nothing to do
+	// Ensure imports present
+	content = ensureImports(content, parts);
+	// Remove existing export type declarations for this name
+	const blockTypeRx = new RegExp(`export\\s+type\\s+${typeName}\\s*=\\s*\\{[\\s\\S]*?\\};`, 'g');
+	const aliasTypeRx = new RegExp(`export\\s+type\\s+${typeName}\\s*=\\s*[^;\n]+;`, 'g');
+	content = content.replace(blockTypeRx, '');
+	content = content.replace(aliasTypeRx, '');
+	content = content.trimEnd() + `\n\n` + parts.typeBlock + `\n`;
+	fs.writeFileSync(filePath, content);
+}
+
 function parseModels(schemas) {
 	const enums = new Set();
 	const models = new Map();
@@ -262,18 +388,32 @@ function main() {
 			// Skip junction tables
 			if (isJunctionModel(parsed.models, name)) continue;
 			const typeName = modelNameToTypeName(name);
-			// Skip if a type already exists anywhere in types/
-			if (findExistingTypePath(typeName)) continue;
-			// Derive folder from first @namespace (fallback to 'dtos')
-			const ns = nsMap.get(name);
-			const normalizedNs = normalizeNamespace(ns);
-			const outDir = normalizedNs ? path.join(ROOT, 'types', normalizedNs) : OUTPUT_DIR;
-			if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
-			const code = generateModelTypeFromSchemas({ rootDir: ROOT, modelName: name });
-			const header = `// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.`;
-			const outPath = path.join(outDir, `${typeName}.ts`);
-			fs.writeFileSync(outPath, `${header}\n\n${code}`);
-			console.log(`Mapped ${name} -> ${outPath}`);
+			// If a type already exists anywhere in types/, update it in place; otherwise write to derived namespace folder
+			const existingPath = findExistingTypePath(typeName);
+			let outPath;
+			if (existingPath) {
+				outPath = existingPath;
+			} else {
+				// Derive folder from first @namespace (fallback to 'dtos')
+				const ns = nsMap.get(name);
+				const normalizedNs = normalizeNamespace(ns);
+				const outDir = normalizedNs ? path.join(ROOT, 'types', normalizedNs) : OUTPUT_DIR;
+				if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+				outPath = path.join(outDir, `${typeName}.ts`);
+			}
+			const code = generateModelTypeFromSchemas({
+				rootDir: ROOT,
+				modelName: name,
+				targetDir: path.dirname(outPath),
+			});
+			if (existingPath) {
+				upsertTypeInFile(outPath, code, typeName);
+				console.log(`Updated type ${typeName} in ${outPath}`);
+			} else {
+				const header = `// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.`;
+				fs.writeFileSync(outPath, `${header}\n\n${code}`);
+				console.log(`Mapped ${name} -> ${outPath}`);
+			}
 		}
 		return;
 	}
@@ -284,7 +424,7 @@ function main() {
 			continue;
 		}
 		if (mode === 'shape') {
-			const typeCode = generateModelTypeFromSchemas({ rootDir: ROOT, modelName: name });
+			const typeCode = generateModelTypeFromSchemas({ rootDir: ROOT, modelName: name, targetDir: OUTPUT_DIR });
 			if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 			const typeName = modelNameToTypeName(name);
 			const outPath = path.join(OUTPUT_DIR, `${typeName}.ts`);

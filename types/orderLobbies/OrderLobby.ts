@@ -1,11 +1,10 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { order_lobby_items } from '@prisma/client';
-
-import type { User } from '../users/User.js';
+import type { OrderLobbyItem } from './OrderLobbyItem.js';
+import type { OrderLobbyUser } from './OrderLobbyUser.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
 import type { StoresModule } from '../stores/StoresModule.js';
 import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type OrderLobby = {
 	order_lobbies_id: string;
@@ -21,8 +20,8 @@ export type OrderLobby = {
 	delivery_orders_id?: string | null;
 	created_at: string;
 	updated_at: string;
-	order_lobby_items: order_lobby_items[];
-	order_lobby_users: User[];
+	order_lobby_items: OrderLobbyItem[];
+	order_lobby_users: OrderLobbyUser[];
 	delivery_orders?: DeliveryOrder | null;
 	stores_module?: StoresModule | null;
 	food_drinks_module?: FoodDrinksModule | null;

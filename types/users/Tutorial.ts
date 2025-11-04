@@ -1,6 +1,6 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import type { user_tutorials } from '@prisma/client';
 
-import type { User } from './User.js';
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Tutorial = {
 	tutorial_id: string;
@@ -10,5 +10,5 @@ export type Tutorial = {
 	mandatory: boolean;
 	createdAt: string;
 	retiredAt?: string | null;
-	user_tutorials: User[];
+	user_tutorials: user_tutorials[];
 };

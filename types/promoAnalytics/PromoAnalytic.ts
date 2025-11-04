@@ -1,13 +1,14 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import { ANALYTICS_TYPE, PROMO_TYPE } from '@prisma/client';
 
-import type { ANALYTICS_TYPE, PROMO_TYPE, delivery_orders } from '@prisma/client';
-
-import type { Busines } from '../business/Busines.js';
+import type { Business } from '../business/Business.js';
 import type { User } from '../users/User.js';
 import type { PromoAd } from '../promoAds/PromoAd.js';
 import type { PromoSection } from '../promoSections/PromoSection.js';
 import type { Word } from '../promoWords/Word.js';
+import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
 import type { DailyMealSubscription } from '../dailymeal/DailyMealSubscription.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type PromoAnalytic = {
 	promo_analytics_id: string;
@@ -22,11 +23,11 @@ export type PromoAnalytic = {
 	updated_at: string;
 	promo_type: PROMO_TYPE;
 	type: ANALYTICS_TYPE;
-	business: Busines;
+	business: Business;
 	user?: User | null;
 	promo_ads?: PromoAd | null;
 	promo_sections?: PromoSection | null;
 	promo_words?: Word | null;
-	order?: delivery_orders | null;
+	order?: DeliveryOrder | null;
 	daily_meal_subscription?: DailyMealSubscription | null;
 };

@@ -1,9 +1,8 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { line_items, menu_item_versions } from '@prisma/client';
-
 import type { MenuItem } from './MenuItem.js';
+import type { MenuItemVersion } from './MenuItemVersion.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type LineItem = {
 	line_item_id: string;
@@ -13,17 +12,17 @@ export type LineItem = {
 	quantity: number;
 	comment?: string | null;
 	menu_item: MenuItem;
-	menu_item_version: menu_item_versions;
+	menu_item_version: MenuItemVersion;
 	order: DeliveryOrder;
 	replacement_id?: string | null;
-	replacement?: line_items | null;
+	replacement?: LineItem | null;
 	replaces_id?: string | null;
-	replaces?: line_items | null;
+	replaces?: LineItem | null;
 	parent_side_id?: string | null;
-	parent_side?: line_items | null;
+	parent_side?: LineItem | null;
 	parent_extra_id?: string | null;
-	parent_extra?: line_items | null;
-	sides: line_items[];
-	extras: line_items[];
+	parent_extra?: LineItem | null;
+	sides: LineItem[];
+	extras: LineItem[];
 	removed: boolean;
 };

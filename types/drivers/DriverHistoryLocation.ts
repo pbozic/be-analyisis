@@ -1,9 +1,8 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { drivers } from '@prisma/client';
-
+import type { Driver } from './Driver.js';
 import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type DriverHistoryLocation = {
 	driver_history_location_id: string;
@@ -12,7 +11,7 @@ export type DriverHistoryLocation = {
 	delivery_order_id?: string | null;
 	status?: string | null;
 	location?: unknown | null;
-	driver?: drivers | null;
+	driver?: Driver | null;
 	order?: TaxiOrder | null;
 	delivery_order?: DeliveryOrder | null;
 	created_at: string;

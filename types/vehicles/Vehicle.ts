@@ -1,14 +1,16 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { VEHICLE_CATEGORY, VEHICLE_CLASS, vehicle_specifications } from '@prisma/client';
+import type { vehicle_drivers } from '@prisma/client';
+import { VEHICLE_CATEGORY, VEHICLE_CLASS } from '@prisma/client';
 
 import type { Document } from '../documents/Document.js';
-import type { Driver } from '../drivers/Driver.js';
+import type { VehicleSpecification } from './VehicleSpecification.js';
 import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+import type { Driver } from '../drivers/Driver.js';
 import type { BusinessPremise } from '../invoices/BusinessPremise.js';
 import type { Invoice } from '../invoices/Invoice.js';
 import type { TransportModule } from '../transport/TransportModule.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Vehicle = {
 	vehicle_id: string;
@@ -23,9 +25,9 @@ export type Vehicle = {
 	created_at: string;
 	updated_at: string;
 	documents: Document[];
-	drivers: Driver[];
+	drivers: vehicle_drivers[];
 	vehicle_specification_id?: string | null;
-	vehicle_specification?: vehicle_specifications | null;
+	vehicle_specification?: VehicleSpecification | null;
 	taxi_orders: TaxiOrder[];
 	delivery_orders: DeliveryOrder[];
 	current_driver?: Driver | null;

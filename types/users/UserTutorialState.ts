@@ -1,6 +1,6 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
 import type { User } from './User.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type UserTutorialState = {
 	id: string;

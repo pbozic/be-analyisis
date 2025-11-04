@@ -1,9 +1,12 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { SCORING_POINTS_REASON, delivery_orders, late_events, taxi_orders } from '@prisma/client';
+import { SCORING_POINTS_REASON } from '@prisma/client';
 
 import type { User } from '../users/User.js';
-import type { Busines } from '../business/Busines.js';
+import type { Business } from '../business/Business.js';
+import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
+import type { LateEvent } from './LateEvent.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type ScoringPoint = {
 	scoring_points_id: string;
@@ -18,8 +21,8 @@ export type ScoringPoint = {
 	created_at: string;
 	updated_at: string;
 	users?: User | null;
-	businesses?: Busines | null;
-	delivery_orders?: delivery_orders | null;
-	taxi_orders?: taxi_orders | null;
-	late_events: late_events[];
+	businesses?: Business | null;
+	delivery_orders?: DeliveryOrder | null;
+	taxi_orders?: TaxiOrder | null;
+	late_events: LateEvent[];
 };

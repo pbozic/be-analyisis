@@ -1,9 +1,9 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { delivery_orders, taxi_orders } from '@prisma/client';
-
 import type { Reviewable } from './Reviewable.js';
 import type { User } from '../users/User.js';
+import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Review = {
 	review_id: string;
@@ -16,7 +16,7 @@ export type Review = {
 	updated_at: string;
 	reviewable: Reviewable;
 	author: User;
-	delivery_order?: delivery_orders | null;
-	taxi_order?: taxi_orders | null;
+	delivery_order?: DeliveryOrder | null;
+	taxi_order?: TaxiOrder | null;
 	vehicle_id?: string | null;
 };

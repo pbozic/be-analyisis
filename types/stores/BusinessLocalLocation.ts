@@ -1,9 +1,9 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
 import type { local_locations } from '@prisma/client';
 
-import type { StoresModule } from '../stores/StoresModule.js';
+import type { StoresModule } from './StoresModule.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type BusinessLocalLocation = {
 	business_local_location_id: string;

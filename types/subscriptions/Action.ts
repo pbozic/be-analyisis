@@ -1,18 +1,20 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import { MODULE_TYPE } from '@prisma/client';
 
-import type { MODULE_TYPE, action_bundle, addon } from '@prisma/client';
-
-import type { ReservationModule } from '../reservation/ReservationModule.js';
-import type { RolePermission } from '../userRoles/RolePermission.js';
+import type { ActionBundleAction } from './ActionBundleAction.js';
+import type { AddonAction } from './AddonAction.js';
+import type { BusinessUsage } from './BusinessUsage.js';
+import type { Permission } from '../userRoles/Permission.js';
 import type { UserPermission } from '../userRoles/UserPermission.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Action = {
 	action_id: string;
 	module: MODULE_TYPE;
 	name: string;
-	action_bundle_actions: action_bundle[];
-	addon_actions: addon[];
-	business_usages: ReservationModule[];
-	permissions: RolePermission[];
+	action_bundle_actions: ActionBundleAction[];
+	addon_actions: AddonAction[];
+	business_usages: BusinessUsage[];
+	permissions: Permission[];
 	user_permissions: UserPermission[];
 };

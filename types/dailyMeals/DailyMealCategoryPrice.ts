@@ -1,9 +1,9 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { DailyMealCategory } from '../dailyMeals/DailyMealCategory.js';
+import type { DailyMealCategory } from './DailyMealCategory.js';
 import type { MenuCategory } from '../menus/MenuCategory.js';
-import type { DailyMealInstance } from '../dailyMeals/DailyMealInstance.js';
-import type { DailyMealSubscriptionCustomer } from '../dailyMeals/DailyMealSubscriptionCustomer.js';
+import type { DailyMealInstance } from './DailyMealInstance.js';
+import type { DailyMealSubscriptionCustomer } from './DailyMealSubscriptionCustomer.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type DailyMealCategoryPrice = {
 	daily_meal_category_prices_id: string;

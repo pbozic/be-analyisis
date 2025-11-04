@@ -1,7 +1,7 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
 import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type WalletTransferHistory = {
 	wallet_transfer_history_id: string;

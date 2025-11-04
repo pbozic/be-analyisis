@@ -1,7 +1,9 @@
 // --- ENUMS ---
 import { z } from 'zod';
 
-import type { customers } from '../../prisma/schemas/interfaces';
+import type { ReservationModule } from './ReservationModule.js';
+import type { Booking } from './Booking.js';
+import type { User } from '../users/User.js';
 
 export const CreateCustomerSchema = z.object({
 	first_name: z.string(),
@@ -18,4 +20,19 @@ export const DeleteCustomerSchema = z.object({ customer_id: z.string().uuid() })
 export type CreateCustomerInput = z.infer<typeof CreateCustomerSchema>;
 export type UpdateCustomerInput = z.infer<typeof UpdateCustomerSchema>;
 
-export type Customer = customers;
+export type Customer = {
+	customer_id: string;
+	reservation_module_id: string;
+	first_name: string;
+	last_name: string;
+	email?: string | null;
+	telephone?: string | null;
+	created_at: string;
+	updated_at: string;
+	code: string;
+	reservation_module: ReservationModule;
+	bookings: Booking[];
+	user_id?: string | null;
+	user?: User | null;
+	booking_course_participants: Booking[];
+};

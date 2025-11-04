@@ -1,6 +1,8 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import { ACTIVITY_TYPE } from '@prisma/client';
 
-import type { ACTIVITY_TYPE, drivers } from '@prisma/client';
+import type { Driver } from './Driver.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type DriverActivityLog = {
 	driver_activity_log_id: string;
@@ -10,5 +12,5 @@ export type DriverActivityLog = {
 	ended_at?: string | null;
 	timeout_at?: string | null;
 	lockout_until?: string | null;
-	driver: drivers;
+	driver: Driver;
 };

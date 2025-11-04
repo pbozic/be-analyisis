@@ -1,6 +1,9 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import { MODULE_TYPE } from '@prisma/client';
 
-import type { MODULE_TYPE, addon_action, business_addon } from '@prisma/client';
+import type { AddonAction } from './AddonAction.js';
+import type { BusinessAddon } from './BusinessAddon.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Addon = {
 	addon_id: string;
@@ -9,6 +12,6 @@ export type Addon = {
 	price_cents: number;
 	stripe_price_id: string;
 	stripe_product_id: string;
-	actions: addon_action[];
-	business_addons: business_addon[];
+	actions: AddonAction[];
+	business_addons: BusinessAddon[];
 };

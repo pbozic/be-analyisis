@@ -1,8 +1,8 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
 import type { MenuItem } from '../menuItems/MenuItem.js';
 import type { MenuItemVersion } from '../menuItems/MenuItemVersion.js';
 import type { OrderLobby } from './OrderLobby.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type OrderLobbyItem = {
 	order_lobby_items_id: string;

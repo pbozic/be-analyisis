@@ -1,9 +1,9 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { LOST_FOUND_STATUS } from '@prisma/client';
+import { LOST_FOUND_STATUS } from '@prisma/client';
 
 import type { File } from '../files/File.js';
 import type { User } from '../users/User.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type LostItem = {
 	lost_item_id: string;

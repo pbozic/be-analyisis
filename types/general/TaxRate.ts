@@ -1,7 +1,7 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
 import type { MenuItem } from '../menuItems/MenuItem.js';
 import type { Service } from '../reservation/Service.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type TaxRate = {
 	tax_rates_id: string;

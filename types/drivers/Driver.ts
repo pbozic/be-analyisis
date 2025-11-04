@@ -1,20 +1,24 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { VEHICLE_TYPE, vehicles } from '@prisma/client';
+import type { vehicle_drivers } from '@prisma/client';
+import { VEHICLE_TYPE } from '@prisma/client';
 
 import type { User } from '../users/User.js';
 import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
+import type { TaxiOrderSent } from '../taxiOrders/TaxiOrderSent.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+import type { DeliveryOrderSent } from '../deliveryOrders/DeliveryOrderSent.js';
 import type { Document } from '../documents/Document.js';
-import type { DriverHistoryLocation } from '../drivers/DriverHistoryLocation.js';
+import type { DriverHistoryLocation } from './DriverHistoryLocation.js';
 import type { Municipality } from '../regions/Municipality.js';
-import type { DriverActivityLog } from '../drivers/DriverActivityLog.js';
+import type { Vehicle } from '../vehicles/Vehicle.js';
+import type { DriverActivityLog } from './DriverActivityLog.js';
 import type { TransportModule } from '../transport/TransportModule.js';
 import type { File } from '../files/File.js';
 import type { DailyMealsModule } from '../dailyMeals/DailyMealsModule.js';
 import type { DailyMealSubscription } from '../dailymeal/DailyMealSubscription.js';
 import type { Reviewable } from '../reviews/Reviewable.js';
 import type { LateEvent } from '../general/LateEvent.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Driver = {
 	driver_id: string;
@@ -27,13 +31,13 @@ export type Driver = {
 	updated_at: string;
 	user_id?: string | null;
 	user?: User | null;
-	vehicles: vehicles[];
+	vehicles: vehicle_drivers[];
 	current_vehicle_id?: string | null;
 	last_used_vehicle_id?: string | null;
 	orders: TaxiOrder[];
-	received_orders: TaxiOrder[];
+	received_orders: TaxiOrderSent[];
 	delivery_orders: DeliveryOrder[];
-	received_delivery_orders: DeliveryOrder[];
+	received_delivery_orders: DeliveryOrderSent[];
 	documents: Document[];
 	location?: unknown | null;
 	delivery_timeline?: unknown | null;
@@ -53,7 +57,7 @@ export type Driver = {
 	partner_cash_balance?: number | null;
 	come_to_work_last_sent_at?: string | null;
 	driver_municipalities: Municipality[];
-	current_vehicle?: vehicles | null;
+	current_vehicle?: Vehicle | null;
 	activity_logs: DriverActivityLog[];
 	transport_module?: TransportModule | null;
 	profile_picture_id?: string | null;

@@ -1,6 +1,6 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import type { Translatable } from './Translatable.js';
 
-import type { Translatable } from '../translations/Translatable.js';
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Translation = {
 	translations_id: string;

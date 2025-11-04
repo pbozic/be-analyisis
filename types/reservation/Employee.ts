@@ -1,7 +1,12 @@
 // --- ENUMS ---
 import { z } from 'zod';
 
-import type { employee } from '../../prisma/schemas/interfaces';
+import type { ReservationModule } from './ReservationModule.js';
+import type { Service } from './Service.js';
+import type { ScheduleEmployee } from './ScheduleEmployee.js';
+import type { Booking } from './Booking.js';
+import type { BusinessUser } from '../businessUsers/BusinessUser.js';
+import type { ScheduleSlot } from './ScheduleSlot.js';
 
 export const CreateEmployeeSchema = z
 	.object({
@@ -34,4 +39,21 @@ export const DeleteEmployeeSchema = z.object({ employee_id: z.string().uuid() })
 export type CreateEmployeeInput = z.infer<typeof CreateEmployeeSchema>;
 export type UpdateEmployeeInput = z.infer<typeof UpdateEmployeeSchema>;
 
-export type Employee = employee;
+export type Employee = {
+	employee_id: string;
+	reservation_module_id: string;
+	reservation_module: ReservationModule;
+	assignments: Service[];
+	schedules: ScheduleEmployee[];
+	bookings: Booking[];
+	first_name?: string | null;
+	last_name?: string | null;
+	email?: string | null;
+	telephone?: string | null;
+	telephone_code?: string | null;
+	business_users_id?: string | null;
+	business_user?: BusinessUser | null;
+	created_at: string;
+	deleted_at?: string | null;
+	schedule_slots: ScheduleSlot[];
+};

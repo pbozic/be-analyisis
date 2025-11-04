@@ -1,8 +1,5 @@
 import { z } from 'zod';
 
-import type { notification_mapping } from '../../prisma/schemas/interfaces';
-import { JsonObjectSchema } from './_common';
-
 export const CreateNotificationMappingSchema = z.object({
 	reservation_module_id: z.string().uuid(),
 	notification_event_id: z.string().uuid(),
@@ -25,4 +22,10 @@ export const DeleteNotificationMappingSchema = z.object({
 export type CreateNotificationMappingInput = z.infer<typeof CreateNotificationMappingSchema>;
 export type UpdateNotificationMappingInput = z.infer<typeof UpdateNotificationMappingSchema>;
 
-export type NotificationMapping = notification_mapping;
+export type NotificationMapping = {
+	notification_mapping_id: string;
+	reservation_module_id: string;
+	notification_event_id: string;
+	notification_template_version_id: string;
+	conditions?: unknown | null;
+};

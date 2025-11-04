@@ -1,17 +1,15 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import { NUMBERING_STRUCTURE } from '@prisma/client';
 
-import type {
-	NUMBERING_STRUCTURE,
-	invoice_item,
-	invoice_tax,
-	submission_log,
-	taxi_orders,
-	vehicles,
-} from '@prisma/client';
-
+import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
-import type { ElectronicDevice } from '../invoices/ElectronicDevice.js';
-import type { BusinessPremise } from '../invoices/BusinessPremise.js';
+import type { ElectronicDevice } from './ElectronicDevice.js';
+import type { BusinessPremise } from './BusinessPremise.js';
+import type { Vehicle } from '../vehicles/Vehicle.js';
+import type { InvoiceItem } from './InvoiceItem.js';
+import type { InvoiceTax } from './InvoiceTax.js';
+import type { SubmissionLog } from './SubmissionLog.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Invoice = {
 	invoice_id: string;
@@ -21,7 +19,7 @@ export type Invoice = {
 	tax_number: string;
 	taxi_order_id?: string | null;
 	delivery_order_id?: string | null;
-	taxi_order?: taxi_orders | null;
+	taxi_order?: TaxiOrder | null;
 	delivery_order?: DeliveryOrder | null;
 	numbering_structure: NUMBERING_STRUCTURE;
 	business_premise_id: string;
@@ -41,10 +39,10 @@ export type Invoice = {
 	furs_response_json?: unknown | null;
 	device: ElectronicDevice;
 	premise: BusinessPremise;
-	vehicle?: vehicles | null;
-	items: invoice_item[];
-	taxes: invoice_tax[];
-	submissions: submission_log[];
+	vehicle?: Vehicle | null;
+	items: InvoiceItem[];
+	taxes: InvoiceTax[];
+	submissions: SubmissionLog[];
 	created_at: string;
 	updated_at: string;
 };

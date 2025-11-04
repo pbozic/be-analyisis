@@ -1,8 +1,13 @@
+import { DOCUMENT_TYPE } from '@prisma/client';
+
+import type { File } from '../files/File.js';
+import type { Driver } from '../drivers/Driver.js';
+import type { Business } from '../business/Business.js';
+import type { Vehicle } from '../vehicles/Vehicle.js';
+import type { Transaction } from '../payments/Transaction.js';
+import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
+
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { DOCUMENT_TYPE, drivers, files, taxi_orders, transactions, vehicles } from '@prisma/client';
-
-import type { Busines } from '../business/Busines.js';
 
 export type Document = {
 	document_id: string;
@@ -13,15 +18,15 @@ export type Document = {
 	issue_date?: string | null;
 	additional_info?: unknown | null;
 	public: boolean;
-	files: files[];
+	files: File[];
 	driver_id?: string | null;
-	drivers?: drivers | null;
+	drivers?: Driver | null;
 	business_id?: string | null;
-	business?: Busines | null;
+	business?: Business | null;
 	vehicle_id?: string | null;
-	vehicles?: vehicles | null;
+	vehicles?: Vehicle | null;
 	transaction_id?: string | null;
-	transactions?: transactions | null;
+	transactions?: Transaction | null;
 	order_id?: string | null;
-	taxi_order?: taxi_orders | null;
+	taxi_order?: TaxiOrder | null;
 };

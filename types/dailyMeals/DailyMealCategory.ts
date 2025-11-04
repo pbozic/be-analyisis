@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
-import { DailyMealCategoryPrice } from './DailyMealCategoryPrice';
+import type { Category } from '../menus/Category.js';
+import type { DailyMealsModule } from './DailyMealsModule.js';
+import type { MenuCategory } from '../menus/MenuCategory.js';
+import type { DailyMealSubscriptionCustomer } from './DailyMealSubscriptionCustomer.js';
+import type { DailyMealCategoryPrice } from './DailyMealCategoryPrice.js';
 
 // =======================
 // DailyMealCategory Zod Schemas
@@ -30,25 +34,16 @@ export type AddPriceToDailyMealCategoryInput = z.infer<typeof AddPriceToDailyMea
 // Full DMC Types (from DB + schemas)
 // =======================
 
-// export type DailyMealCategoryPrice = {
-// 	daily_meal_category_prices_id: string;
-// 	daily_meal_category_id: string;
-// 	price: number;
-// 	valid_from: string;
-// 	created_at: string;
-// };
-
 export type DailyMealCategory = {
 	daily_meal_category_id: string;
-	business_id: string;
+	daily_meals_id: string;
 	category_id: string;
 	created_at: string;
 	start_date: string;
-	category?: {
-		categories_id: string;
-		name: string;
-		description?: string | null;
-		type: string;
-	};
-	daily_meal_category_prices?: DailyMealCategoryPrice[];
+	active: boolean;
+	category: Category;
+	daily_meals_module: DailyMealsModule;
+	menu_categories: MenuCategory[];
+	daily_meal_subscription_customers: DailyMealSubscriptionCustomer[];
+	daily_meal_category_prices: DailyMealCategoryPrice[];
 };

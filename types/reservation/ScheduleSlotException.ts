@@ -1,8 +1,8 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { SCHEDULE_SLOT_EXCEPTION_TYPE } from '@prisma/client';
+import { SCHEDULE_SLOT_EXCEPTION_TYPE } from '@prisma/client';
 
 import type { ScheduleSlot } from './ScheduleSlot.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type ScheduleSlotException = {
 	schedule_slot_exception_id: string;

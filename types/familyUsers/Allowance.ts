@@ -1,7 +1,7 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { GroupUser } from '../users/GroupUser.js';
+import type { GroupUser } from './GroupUser.js';
 import type { BusinessUser } from '../businessUsers/BusinessUser.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Allowance = {
 	allowance_id: string;

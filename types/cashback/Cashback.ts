@@ -1,8 +1,10 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { CASHBACK_SOURCE, CASHBACK_STATUS, CASHBACK_TYPE, delivery_orders, taxi_orders } from '@prisma/client';
+import { CASHBACK_SOURCE, CASHBACK_STATUS, CASHBACK_TYPE } from '@prisma/client';
 
 import type { User } from '../users/User.js';
+import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
+import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Cashback = {
 	cashback_id: string;
@@ -18,6 +20,6 @@ export type Cashback = {
 	taxi_order_id?: string | null;
 	delivery_order_id?: string | null;
 	user: User;
-	taxi_order?: taxi_orders | null;
-	delivery_order?: delivery_orders | null;
+	taxi_order?: TaxiOrder | null;
+	delivery_order?: DeliveryOrder | null;
 };

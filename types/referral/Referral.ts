@@ -1,8 +1,7 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { wallet_funds } from '@prisma/client';
-
 import type { User } from '../users/User.js';
+import type { WalletFund } from '../wallet/WalletFund.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Referral = {
 	referral_id: string;
@@ -15,5 +14,5 @@ export type Referral = {
 	updated_at: string;
 	referrer: User;
 	referred: User;
-	credits: wallet_funds[];
+	credits: WalletFund[];
 };

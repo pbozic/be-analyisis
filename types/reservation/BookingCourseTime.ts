@@ -1,6 +1,6 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import type { Booking } from './Booking.js';
 
-import type { Booking } from '../reservation/Booking.js';
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type BookingCourseTime = {
 	booking_course_time_id: string;

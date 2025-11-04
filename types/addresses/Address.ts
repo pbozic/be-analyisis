@@ -1,12 +1,14 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import type { local_locations } from '@prisma/client';
 
-import type { food_drinks_module, local_locations, stores_module } from '@prisma/client';
-
-import type { User } from '../users/User.js';
-import type { Busines } from '../business/Busines.js';
+import type { UserAddress } from '../users/UserAddress.js';
+import type { Business } from '../business/Business.js';
+import type { StoresModule } from '../stores/StoresModule.js';
+import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
 import type { BusinessUser } from '../businessUsers/BusinessUser.js';
 import type { DailyMealSubscription } from '../dailymeal/DailyMealSubscription.js';
 import type { Location } from '../reservation/Location.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type Address = {
 	address_id: string;
@@ -18,10 +20,10 @@ export type Address = {
 	city?: string | null;
 	country?: string | null;
 	postal?: string | null;
-	users: User[];
-	businesses: Busines[];
-	stores_module: stores_module[];
-	food_drinks_module: food_drinks_module[];
+	users: UserAddress[];
+	businesses: Business[];
+	stores_module: StoresModule[];
+	food_drinks_module: FoodDrinksModule[];
 	business_users: BusinessUser[];
 	daily_meal_subscriptions: DailyMealSubscription[];
 	local_locations?: local_locations | null;

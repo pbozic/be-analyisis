@@ -1,10 +1,13 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { COMPANY_ROLE, addresses, allowances, taxi_orders } from '@prisma/client';
+import { COMPANY_ROLE } from '@prisma/client';
 
 import type { User } from '../users/User.js';
-import type { Busines } from '../business/Busines.js';
+import type { Business } from '../business/Business.js';
+import type { Address } from '../addresses/Address.js';
+import type { Allowance } from '../familyUsers/Allowance.js';
+import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
 import type { Employee } from '../reservation/Employee.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type BusinessUser = {
 	business_users_id: string;
@@ -15,10 +18,10 @@ export type BusinessUser = {
 	user_id: string;
 	users?: User | null;
 	business_id: string;
-	business?: Busines | null;
+	business?: Business | null;
 	operating_address_id?: string | null;
-	operating_address?: addresses | null;
-	allowance?: allowances | null;
-	taxi_orders: taxi_orders[];
+	operating_address?: Address | null;
+	allowance?: Allowance | null;
+	taxi_orders: TaxiOrder[];
 	employee?: Employee | null;
 };

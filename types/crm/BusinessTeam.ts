@@ -1,7 +1,7 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
-
 import type { User } from '../users/User.js';
 import type { CrmModule } from './CrmModule.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
 
 export type BusinessTeam = {
 	business_teams_id: string;

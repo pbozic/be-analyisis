@@ -1,18 +1,16 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type {
-	daily_meals_module,
-	delivery_orders,
-	menus,
-	order_lobbies,
-	table_reservations_module,
-} from '@prisma/client';
+import type { table_reservations_module } from '@prisma/client';
 
 import type { Reviewable } from '../reviews/Reviewable.js';
-import type { Busines } from '../business/Busines.js';
+import type { Business } from '../business/Business.js';
 import type { Address } from '../addresses/Address.js';
+import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+import type { Menu } from '../menus/Menu.js';
+import type { OrderLobby } from '../orderLobbies/OrderLobby.js';
+import type { DailyMealsModule } from '../dailyMeals/DailyMealsModule.js';
 import type { File } from '../files/File.js';
 import type { LateEvent } from '../general/LateEvent.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type FoodDrinksModule = {
 	food_drinks_id: string;
@@ -23,19 +21,19 @@ export type FoodDrinksModule = {
 	updated_at: string;
 	reviewable_id?: string | null;
 	reviewable?: Reviewable | null;
-	business: Busines;
+	business: Business;
 	delivery_address_id?: string | null;
 	delivery_address?: Address | null;
-	delivery_orders: delivery_orders[];
+	delivery_orders: DeliveryOrder[];
 	minimum_order: number;
-	menu?: menus | null;
-	order_lobbies: order_lobbies[];
+	menu?: Menu | null;
+	order_lobbies: OrderLobby[];
 	table_reservations_module?: table_reservations_module | null;
 	seats?: number | null;
 	overwhelmed: boolean;
 	online: boolean;
 	daily_meals_id?: string | null;
-	daily_meals_module?: daily_meals_module | null;
+	daily_meals_module?: DailyMealsModule | null;
 	logo_id?: string | null;
 	logo?: File | null;
 	banner_id?: string | null;

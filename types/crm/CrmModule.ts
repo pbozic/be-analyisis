@@ -1,9 +1,8 @@
+import type { Business } from '../business/Business.js';
+import type { BusinessClient } from './BusinessClient.js';
+import type { BusinessTeam } from './BusinessTeam.js';
+
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { taxi_orders } from '@prisma/client';
-
-import type { Busines } from '../business/Busines.js';
-import type { User } from '../users/User.js';
 
 export type CrmModule = {
 	crm_module_id: string;
@@ -11,7 +10,7 @@ export type CrmModule = {
 	purchase_order_limit_amount?: number | null;
 	created_at: string;
 	updated_at: string;
-	business: Busines;
-	business_clients: taxi_orders[];
-	business_teams: User[];
+	business: Business;
+	business_clients: BusinessClient[];
+	business_teams: BusinessTeam[];
 };

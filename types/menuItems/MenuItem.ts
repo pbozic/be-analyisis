@@ -1,11 +1,14 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { allergens, line_items, menu_item_versions, order_lobby_items, tax_rates } from '@prisma/client';
-
 import type { Translatable } from '../translations/Translatable.js';
+import type { Allergen } from './Allergen.js';
 import type { MenuCategory } from '../menus/MenuCategory.js';
 import type { File } from '../files/File.js';
-import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+import type { OrderLobbyItem } from '../orderLobbies/OrderLobbyItem.js';
+import type { MenuItemStockChange } from './MenuItemStockChange.js';
+import type { LineItem } from './LineItem.js';
+import type { MenuItemVersion } from './MenuItemVersion.js';
+import type { TaxRate } from '../general/TaxRate.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type MenuItem = {
 	menu_item_id: string;
@@ -13,7 +16,7 @@ export type MenuItem = {
 	names?: Translatable | null;
 	description_translatable_id: string;
 	description?: Translatable | null;
-	allergens: allergens[];
+	allergens: Allergen[];
 	spicy_level?: number | null;
 	unit_size?: string | null;
 	price: number;
@@ -32,7 +35,7 @@ export type MenuItem = {
 	is_enabled: boolean;
 	is_copy: boolean;
 	menu_category_order_index?: number | null;
-	order_lobby_items: order_lobby_items[];
+	order_lobby_items: OrderLobbyItem[];
 	allergens_text?: unknown | null;
 	ingredients_text?: unknown | null;
 	usage_text?: unknown | null;
@@ -40,10 +43,10 @@ export type MenuItem = {
 	is_weighted: boolean;
 	weight_quantity?: number | null;
 	stock?: number | null;
-	stock_movements: DeliveryOrder[];
-	line_items: line_items[];
+	stock_movements: MenuItemStockChange[];
+	line_items: LineItem[];
 	latest_version_id?: string | null;
-	versions: menu_item_versions[];
+	versions: MenuItemVersion[];
 	tax_rates_id?: string | null;
-	tax_rate?: tax_rates | null;
+	tax_rate?: TaxRate | null;
 };

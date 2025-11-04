@@ -1,6 +1,6 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
+import type { Invoice } from './Invoice.js';
 
-import type { Invoice } from '../invoices/Invoice.js';
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type InvoiceTax = {
 	invoice_tax_id: string;

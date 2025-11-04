@@ -1,7 +1,9 @@
 import { z } from 'zod';
 import { MODULE_TYPE, PERMISSION_SCOPE } from '@prisma/client';
 
-import type { user_permission } from '../../prisma/schemas/interfaces';
+import type { User } from '../users/User.js';
+import type { Action } from '../subscriptions/Action.js';
+import type { ReservationModule } from '../reservation/ReservationModule.js';
 
 export const CreateUserPermissionSchema = z.object({
 	user_id: z.string().uuid(),
@@ -15,6 +17,21 @@ export const CreateUserPermissionSchema = z.object({
 
 export const UpdateUserPermissionSchema = CreateUserPermissionSchema.partial();
 
-export type UserPermission = user_permission;
 export type CreateUserPermissionInput = z.infer<typeof CreateUserPermissionSchema>;
 export type UpdateUserPermissionInput = z.infer<typeof UpdateUserPermissionSchema>;
+
+export type UserPermission = {
+	user_permission_id: string;
+	user_id: string;
+	reservation_module_id?: string | null;
+	action_id?: string | null;
+	name?: string | null;
+	display_name?: string | null;
+	module: MODULE_TYPE;
+	limit?: number | null;
+	scope: PERMISSION_SCOPE;
+	is_blocked: boolean;
+	user: User;
+	action?: Action | null;
+	reservation_module?: ReservationModule | null;
+};

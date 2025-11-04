@@ -1,8 +1,8 @@
+import type { BusinessPremise } from './BusinessPremise.js';
+import type { Invoice } from './Invoice.js';
+import type { DeviceAssignment } from './DeviceAssignment.js';
+
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { device_assignment, invoice } from '@prisma/client';
-
-import type { BusinessPremise } from '../invoices/BusinessPremise.js';
 
 export type ElectronicDevice = {
 	business_premise_id: string;
@@ -10,8 +10,8 @@ export type ElectronicDevice = {
 	name?: string | null;
 	active: boolean;
 	business_premise: BusinessPremise;
-	invoices: invoice[];
-	assignments: device_assignment[];
+	invoices: Invoice[];
+	assignments: DeviceAssignment[];
 	created_at: string;
 	updated_at: string;
 };

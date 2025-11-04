@@ -1,8 +1,9 @@
+import { SPLIT_DESTINATION_TYPE, SPLIT_STATUS, SPLIT_TYPE } from '@prisma/client';
+
+import type { Payment } from './Payment.js';
+import type { PaymentTransferGroup } from './PaymentTransferGroup.js';
+
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { SPLIT_DESTINATION_TYPE, SPLIT_STATUS, SPLIT_TYPE, payment_transfer_groups } from '@prisma/client';
-
-import type { Payment } from '../payments/Payment.js';
 
 export type PaymentSplit = {
 	payment_split_id: string;
@@ -19,5 +20,5 @@ export type PaymentSplit = {
 	created_at: string;
 	updated_at: string;
 	payment: Payment;
-	payment_transfer_group?: payment_transfer_groups | null;
+	payment_transfer_group?: PaymentTransferGroup | null;
 };

@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
-import type { notification_message_event } from '../../prisma/schemas/interfaces';
-import { JsonObjectSchema } from './_common';
+import type { NotificationMessage } from './NotificationMessage.js';
 
 export const CreateNotificationMessageEventSchema = z.object({
 	notification_message_id: z.string().uuid(),
@@ -15,4 +14,12 @@ export const DeleteNotificationMessageEventSchema = z.object({
 });
 
 export type CreateNotificationMessageEventInput = z.infer<typeof CreateNotificationMessageEventSchema>;
-export type NotificationMessageEvent = notification_message_event;
+
+export type NotificationMessageEvent = {
+	notification_message_event_id: string;
+	notification_message_id: string;
+	type: string;
+	provider_raw?: unknown | null;
+	occurred_at: string;
+	message: NotificationMessage;
+};

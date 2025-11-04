@@ -1,8 +1,9 @@
 import { z } from 'zod';
+import { TEMPLATE_VERSION_STATUS } from '@prisma/client';
 
-import type { notification_template_version } from '../../prisma/schemas/interfaces';
-import { JsonObjectSchema } from './_common';
-import { TemplateVersionStatusEnum } from './enums.ts';
+import type { NotificationTemplate } from './NotificationTemplate.js';
+import type { NotificationMapping } from './NotificationMapping.js';
+import type { NotificationMessage } from './NotificationMessage.js';
 
 // On create: version number is computed in DAO (next integer for the template)
 export const CreateNotificationTemplateVersionSchema = z.object({
@@ -50,4 +51,18 @@ export type UpdateNotificationTemplateVersionByCompositeInput = z.infer<
 	typeof UpdateNotificationTemplateVersionByCompositeSchema
 >;
 
-export type NotificationTemplateVersion = notification_template_version;
+export type NotificationTemplateVersion = {
+	notification_template_version_id: string;
+	notification_template_id: string;
+	version: number;
+	status: TEMPLATE_VERSION_STATUS;
+	subject?: string | null;
+	body_text?: string | null;
+	variables_json_schema: unknown;
+	compiled_artifacts?: unknown | null;
+	created_by_user_id?: string | null;
+	created_at: string;
+	template: NotificationTemplate;
+	mappings: NotificationMapping[];
+	messages: NotificationMessage[];
+};

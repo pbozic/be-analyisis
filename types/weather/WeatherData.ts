@@ -1,8 +1,7 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
-
-import type { settlements } from '@prisma/client';
-
 import type { Municipality } from '../regions/Municipality.js';
+import type { Settlement } from './Settlement.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
 
 export type WeatherData = {
 	weather_data_id: string;
@@ -38,5 +37,5 @@ export type WeatherData = {
 	municipalities_id?: string | null;
 	municipality?: Municipality | null;
 	settlement_id?: string | null;
-	settlement?: settlements | null;
+	settlement?: Settlement | null;
 };

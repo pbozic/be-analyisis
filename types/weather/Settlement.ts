@@ -1,6 +1,7 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
-
 import type { Municipality } from '../regions/Municipality.js';
+import type { WeatherData } from './WeatherData.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
 
 export type Settlement = {
 	settlement_id: string;
@@ -12,6 +13,6 @@ export type Settlement = {
 	created_at: string;
 	updated_at: string;
 	municipality: Municipality;
-	weather_data: Municipality[];
+	weather_data: WeatherData[];
 	geom_generated?: unknown | null;
 };

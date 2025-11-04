@@ -1,8 +1,11 @@
+import type { StoresModule } from '../stores/StoresModule.js';
+import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
+import type { Driver } from '../drivers/Driver.js';
+import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
+import type { ScoringPoint } from './ScoringPoint.js';
+
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { delivery_orders, drivers, food_drinks_module, stores_module, taxi_orders } from '@prisma/client';
-
-import type { ScoringPoint } from '../general/ScoringPoint.js';
 
 export type LateEvent = {
 	late_events_id: string;
@@ -16,10 +19,10 @@ export type LateEvent = {
 	seconds: number;
 	created_at: string;
 	updated_at: string;
-	stores_module?: stores_module | null;
-	food_drinks_module?: food_drinks_module | null;
-	driver?: drivers | null;
-	delivery_orders?: delivery_orders | null;
-	taxi_orders?: taxi_orders | null;
+	stores_module?: StoresModule | null;
+	food_drinks_module?: FoodDrinksModule | null;
+	driver?: Driver | null;
+	delivery_orders?: DeliveryOrder | null;
+	taxi_orders?: TaxiOrder | null;
 	scoring_points?: ScoringPoint | null;
 };

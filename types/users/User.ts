@@ -1,43 +1,40 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
-
-import type {
-	USER_ROLES,
-	account_actions,
-	addresses,
-	allergens,
-	business,
-	business_teams,
-	business_users,
-	cashback,
-	delivery_orders,
-	drivers,
-	files,
-	group_users,
-	order_lobbies,
-	payments,
-	promo_analytics,
-	promo_sections_buy,
-	referrals,
-	reviewable,
-	reviews,
-	scoring_points,
-	service_links,
-	table_reservations_module,
-	taxi_orders,
-	tokens,
-	transactions,
-	tutorial,
-	user_money_flows,
-	user_tutorial_state,
-	wallet_funds,
-} from '@prisma/client';
+import type { user_favorite_businesses, user_favorite_service_links, user_tutorials } from '@prisma/client';
+import { USER_ROLES } from '@prisma/client';
 
 import type { UserRole } from '../userRoles/UserRole.js';
+import type { UserAddress } from './UserAddress.js';
+import type { Token } from './Token.js';
+import type { BusinessUser } from '../businessUsers/BusinessUser.js';
+import type { Driver } from '../drivers/Driver.js';
+import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
+import type { File } from '../files/File.js';
+import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+import type { Reviewable } from '../reviews/Reviewable.js';
+import type { Review } from '../reviews/Review.js';
+import type { Transaction } from '../payments/Transaction.js';
+import type { Reservation } from '../tableReservations/Reservation.js';
+import type { LostItem } from '../lostItems/LostItem.js';
+import type { GroupUser } from '../familyUsers/GroupUser.js';
+import type { WalletFund } from '../wallet/WalletFund.js';
+import type { Referral } from '../referral/Referral.js';
+import type { Cashback } from '../cashback/Cashback.js';
+import type { BusinessTeam } from '../crm/BusinessTeam.js';
+import type { OrderLobbyUser } from '../orderLobbies/OrderLobbyUser.js';
+import type { PromoSectionsBuy } from '../promoSections/PromoSectionsBuy.js';
+import type { ScoringPoint } from '../general/ScoringPoint.js';
+import type { UserTutorialState } from './UserTutorialState.js';
+import type { AccountAction } from '../general/AccountAction.js';
 import type { BlogPost } from '../blog/BlogPost.js';
+import type { Payment } from '../payments/Payment.js';
+import type { PromoAnalytic } from '../promoAnalytics/PromoAnalytic.js';
 import type { DailyMealSubscription } from '../dailymeal/DailyMealSubscription.js';
+import type { UserMoneyFlow } from '../payments/UserMoneyFlow.js';
 import type { Customer } from '../reservation/Customer.js';
-import type { Booking } from '../reservation/Booking.js';
+import type { BookingHistoryLog } from '../reservations/BookingHistoryLog.js';
 import type { UserPermission } from '../userRoles/UserPermission.js';
+import type { Allergen } from '../menuItems/Allergen.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
 
 export type User = {
 	user_id: string;
@@ -52,26 +49,26 @@ export type User = {
 	updated_at: string;
 	user_role: USER_ROLES;
 	user_roles: UserRole[];
-	addresses: addresses[];
-	tokens: tokens[];
+	addresses: UserAddress[];
+	tokens: Token[];
 	phone_verified: boolean;
 	notification_preferences?: unknown | null;
 	taxi_preferences?: unknown | null;
-	business_users: business_users[];
-	driver?: drivers | null;
-	orders: taxi_orders[];
+	business_users: BusinessUser[];
+	driver?: Driver | null;
+	orders: TaxiOrder[];
 	profile_picture_id?: string | null;
-	profile_picture?: files | null;
-	delivery_orders: delivery_orders[];
+	profile_picture?: File | null;
+	delivery_orders: DeliveryOrder[];
 	reviewable_id?: string | null;
-	reviewable?: reviewable | null;
-	reviews: reviews[];
+	reviewable?: Reviewable | null;
+	reviews: Review[];
 	review_complete: boolean;
 	one_signal_id?: string | null;
 	stripe_customer_id?: string | null;
 	wallet_balance: number;
-	transactions: transactions[];
-	reservations: table_reservations_module[];
+	transactions: Transaction[];
+	reservations: Reservation[];
 	transfer_preferences?: unknown | null;
 	allergies_preferences?: unknown | null;
 	spicy_preferences?: unknown | null;
@@ -83,46 +80,46 @@ export type User = {
 	transfer_push_notification_preferences?: unknown | null;
 	delivery_push_notification_preferences?: unknown | null;
 	spoken_languages?: unknown | null;
-	lost_items: files[];
+	lost_items: LostItem[];
 	daily_meal_day_preferences?: unknown | null;
 	disabled: boolean;
 	active: boolean;
-	child_users: group_users[];
-	parent_user?: group_users | null;
+	child_users: GroupUser[];
+	parent_user?: GroupUser | null;
 	language?: string | null;
-	wallet_funds: wallet_funds[];
+	wallet_funds: WalletFund[];
 	apple_id?: string | null;
 	google_id?: string | null;
 	referral_code?: string | null;
-	referrals_made: referrals[];
-	referral?: referrals | null;
-	cashback: cashback[];
+	referrals_made: Referral[];
+	referral?: Referral | null;
+	cashback: Cashback[];
 	activated_at?: string | null;
 	deactivated_at?: string | null;
 	deactivated: boolean;
 	business_teams_id?: string | null;
-	business_teams?: business_teams | null;
-	order_lobby_users: order_lobbies[];
-	promo_section_buys: promo_sections_buy[];
+	business_teams?: BusinessTeam | null;
+	order_lobby_users: OrderLobbyUser[];
+	promo_section_buys: PromoSectionsBuy[];
 	allow_marketing_push_notifications?: boolean | null;
 	allow_ads_personalization?: boolean | null;
 	allow_newsletter?: boolean | null;
-	user_favorite_service_links: service_links[];
-	user_favorite_drivers: drivers[];
-	user_favorite_businesses: business[];
-	scoring_points: scoring_points[];
-	tutorials: tutorial[];
-	user_tutorial_state?: user_tutorial_state | null;
-	account_actions: account_actions[];
-	created_account_actions: account_actions[];
+	user_favorite_service_links: user_favorite_service_links[];
+	user_favorite_drivers: Driver[];
+	user_favorite_businesses: user_favorite_businesses[];
+	scoring_points: ScoringPoint[];
+	tutorials: user_tutorials[];
+	user_tutorial_state?: UserTutorialState | null;
+	account_actions: AccountAction[];
+	created_account_actions: AccountAction[];
 	blog_posts: BlogPost[];
-	payments: payments[];
-	promo_analytics: promo_analytics[];
+	payments: Payment[];
+	promo_analytics: PromoAnalytic[];
 	daily_meal_subscriptions: DailyMealSubscription[];
-	user_money_flows: user_money_flows[];
+	user_money_flows: UserMoneyFlow[];
 	customer: Customer[];
-	booking_history_log: Booking[];
+	booking_history_log: BookingHistoryLog[];
 	roles: UserRole[];
 	user_permissions: UserPermission[];
-	user_allergens: allergens[];
+	user_allergens: Allergen[];
 };

@@ -1,9 +1,9 @@
-// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
-
-import type { BOOKING_STATUS } from '@prisma/client';
+import { BOOKING_STATUS } from '@prisma/client';
 
 import type { User } from '../users/User.js';
 import type { Booking } from '../reservation/Booking.js';
+
+// Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
 export type BookingHistoryLog = {
 	booking_history_id: string;
