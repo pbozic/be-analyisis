@@ -2,7 +2,7 @@ import { Response } from 'express';
 
 import CustomerDao from '../../dao/reservation/Customer.ts';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
-import { CreateCustomerInput, UpdateCustomerInput } from '../../types/reservation/Customer';
+import { CreateCustomerInput, UpdateCustomerInput } from '../../types/reservations/Customer';
 /**
  * GET /reservation/customers
  * @tag Reservation

@@ -2,8 +2,8 @@ import prisma from '../../prisma/prisma';
 import type {
 	CreateScheduleSlotExceptionInput,
 	UpdateScheduleSlotExceptionInput,
-	ScheduleSlotException,
-} from '../../types/reservation/Schedule.ts';
+} from '../../types/reservations/Schedule.ts';
+import { ScheduleSlotException } from '../../types/reservations/ScheduleSlotException.ts';
 
 /**
  * Retrieves all exceptions for a given schedule slot ID.

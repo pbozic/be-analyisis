@@ -8,7 +8,7 @@ import {
 	CreateOrUpdateBookingSlotInput,
 	CreateScheduleSlotWithBookingSlotsInput,
 	UpdateScheduleSlotWithBookingSlotsInput,
-} from '../../types/reservation/Schedule';
+} from '../../types/reservations/Schedule';
 import ScheduleSlotDao from '../../dao/reservation/ScheduleSlot';
 import { splitByBookingId } from '../../lib/bookingHelpers';
 

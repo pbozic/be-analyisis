@@ -3,7 +3,7 @@ import { Response } from 'express';
 import LocationDao from '../../dao/reservation/Location.ts';
 import AddressDao from '../../dao/Address.js';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
-import { CreateLocationInput, UpdateLocationInput } from '../../types/reservation/Location';
+import { CreateLocationInput, UpdateLocationInput } from '../../types/reservations/Location';
 
 /**
  * GET /reservation/locations

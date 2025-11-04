@@ -9,7 +9,7 @@ import {
 	UpdateScheduleInput,
 	UpdateScheduleWithEmployeesInput,
 	CreateScheduleWithEmployeesInput,
-} from '../../types/reservation/Schedule.ts';
+} from '../../types/reservations/Schedule.ts';
 import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee.ts';
 
 /**

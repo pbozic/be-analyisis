@@ -8,7 +8,7 @@ import type {
 	ReservationModule,
 	UpdateReservationModuleInput,
 	UpdateReservationSettingsInput,
-} from '../../types/reservation/ReservationModule.ts';
+} from '../../types/reservations/ReservationModule.ts';
 /**
  * Generates a unique reservation hash.
  *

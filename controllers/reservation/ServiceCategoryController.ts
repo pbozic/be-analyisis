@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import ServiceCategoryDao from '../../dao/reservation/ServiceCategory.ts';
-import { CreateServiceCategoryInput, UpdateServiceCategoryInput } from '../../types/reservation/ServiceCategory.ts';
+import { CreateServiceCategoryInput, UpdateServiceCategoryInput } from '../../types/reservations/ServiceCategory.ts';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 
 /**

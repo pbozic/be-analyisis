@@ -19,14 +19,17 @@ import {
 	UpdateBookingCourseInput,
 	CreateCourseParticipantInput,
 	UpdateCourseParticipantInput,
-} from '../../types/reservation/Booking.ts';
-import { Employee } from '../../types/reservation/Employee.ts';
+} from '../../types/reservations/Booking.ts';
+import { Employee } from '../../types/reservations/Employee.ts';
 import { findSlots } from '../../lib/bookingHelpers.ts';
 import prisma from '../../prisma/prisma.js';
 import LocationDao from '../../dao/reservation/Location.ts';
 import EmployeeDao from '../../dao/reservation/Employee.ts';
 import ServiceDao from '../../dao/reservation/Service.ts';
 import CustomerDao from '../../dao/reservation/Customer.ts';
+import { ScheduleSlot } from '../../types/reservations/ScheduleSlot.ts';
+import { BookingSlot } from '../../types/reservations/BookingSlot.ts';
+import { ScheduleSlotException } from '../../types/reservations/ScheduleSlotException.ts';
 
 /**
  * POST /reservation/reservations/bookings/list
@@ -324,10 +327,12 @@ export async function getBookingsForLocationAndEmployees(
 		);
 		let employeeMap = employees.map((e) => {
 			const scheduleSlots = e.schedule_slots;
-			const scheduleBookingSlots = scheduleSlots?.map((slot) => slot.booking_slots).flat();
-			const scheduleSlotExceptions = scheduleSlots?.map((slot) => slot.schedule_slot_exceptions).flat();
+			const scheduleBookingSlots = scheduleSlots?.map((slot: ScheduleSlot) => slot.booking_slots).flat();
+			const scheduleSlotExceptions = scheduleSlots
+				?.map((slot: ScheduleSlot) => slot.schedule_slot_exceptions)
+				.flat();
 			const bookingReorder = scheduleBookingSlots
-				? scheduleBookingSlots.sort((a, b) => {
+				? scheduleBookingSlots.sort((a: BookingSlot | undefined, b: BookingSlot | undefined) => {
 						if (!a && !b) return 0;
 						if (!a) return 1;
 						if (!b) return -1;
@@ -335,12 +340,14 @@ export async function getBookingsForLocationAndEmployees(
 					})
 				: [];
 			const exceptionsReorder = scheduleSlotExceptions
-				? scheduleSlotExceptions.sort((a, b) => {
-						if (!a && !b) return 0;
-						if (!a) return 1;
-						if (!b) return -1;
-						return new Date(a.start_time).getTime() - new Date(b.start_time).getTime();
-					})
+				? scheduleSlotExceptions.sort(
+						(a: ScheduleSlotException | undefined, b: ScheduleSlotException | undefined) => {
+							if (!a && !b) return 0;
+							if (!a) return 1;
+							if (!b) return -1;
+							return new Date(a.start_time).getTime() - new Date(b.start_time).getTime();
+						}
+					)
 				: [];
 
 			return {

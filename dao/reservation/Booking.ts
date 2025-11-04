@@ -3,22 +3,22 @@ import { BOOKING_STATUS, Prisma } from '@prisma/client';
 import prisma from '../../prisma/prisma.js';
 import type {
 	Booking,
-	BookingHistoryLog,
 	UpdateBookingInput,
 	CreateBookingHistoryLogInput,
 	ListBookingsParams,
 	CreateBookingSingleInput,
 	CreateBookingCourseInput,
 	BookingCourseTimeInput,
-	BookingCourseTime,
 	CreateCourseParticipantInput,
-	BookingCourseParticipant,
 	UpdateCourseParticipantInput,
 	UpdateBookingCourseInput,
 	UpdateBookingCourseTimeInput,
 	DeleteBookingCourseTimeInput,
-} from '../../types/reservation/Booking.ts'; // <-- adjust path if different
+} from '../../types/reservations/Booking.ts'; // <-- adjust path if different
 import { isBookingSlotAvailable, isEmployeeScheduledForWindow } from '../../lib/bookingHelpers.ts';
+import { BookingHistoryLog } from '../../types/reservations/BookingHistoryLog.ts';
+import { BookingCourseTime } from '../../types/reservations/BookingCourseTime.ts';
+import { BookingCourseParticipant } from '../../types/reservations/BookingCourseParticipant.ts';
 
 const cropped_user_columns = {
 	first_name: true,

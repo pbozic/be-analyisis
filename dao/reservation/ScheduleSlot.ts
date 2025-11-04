@@ -1,9 +1,6 @@
 import prisma from '../../prisma/prisma';
-import type {
-	CreateScheduleSlotInput,
-	UpdateScheduleSlotInput,
-	ScheduleSlot,
-} from '../../types/reservation/Schedule.ts';
+import type { CreateScheduleSlotInput, UpdateScheduleSlotInput } from '../../types/reservations/Schedule.ts';
+import { ScheduleSlot } from '../../types/reservations/ScheduleSlot.ts';
 
 /**
  * Retrieves all schedule slots for a given schedule ID.

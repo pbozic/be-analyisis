@@ -3,7 +3,7 @@ import type {
 	CreateServiceCategoryInput,
 	ServiceCategory,
 	UpdateServiceCategoryInput,
-} from '../../types/reservation/ServiceCategory.ts';
+} from '../../types/reservations/ServiceCategory.ts';
 
 /**
  * Retrieves all service categories for a given business ID.

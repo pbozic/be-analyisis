@@ -6,11 +6,12 @@ import UserDao from '../../dao/User.js';
 import ScheduleDao from '../../dao/reservation/Schedule.ts';
 import BookingDao from '../../dao/reservation/Booking.ts';
 import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee.ts';
-import { CreateEmployeeInput, UpdateEmployeeInput } from '../../types/reservation/Employee.ts';
-import { ListBookingsParams, BookingsAnalyticsParams } from '../../types/reservation/Booking.ts';
-import { GetSchedulesWithSlotsInput } from '../../types/reservation/Schedule.ts';
+import { CreateEmployeeInput, UpdateEmployeeInput } from '../../types/reservations/Employee.ts';
+import { ListBookingsParams, BookingsAnalyticsParams } from '../../types/reservations/Booking.ts';
+import { GetSchedulesWithSlotsInput } from '../../types/reservations/Schedule.ts';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 import { calcBookings } from './BookingController.ts';
+import { BusinessUser } from '../../types/businessUsers/BusinessUser.ts';
 
 /**
  * GET /reservation/employees
@@ -57,9 +58,9 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 			return;
 		}
 		let reservation_module_id = req.user?.reservation_module_id as string;
-		let userExists = await UserDao.getUserByEmail(employeeData.email);
+		let userExists = await UserDao.getUserByEmail(employeeData.email, {});
 		if (!userExists) {
-			userExists = await UserDao.getUserByTelephone(employeeData.telephone);
+			userExists = await UserDao.getUserByTelephone(employeeData.telephone, {});
 		}
 		const { businessUser } = await BusinessUsersDao.createBusinessUser(
 			{
@@ -78,6 +79,7 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 		);
 		let employee = await EmployeeDao.createEmployee({
 			reservation_module_id: reservation_module_id,
+			// @ts-ignore
 			business_users_id: businessUser.business_users_id,
 			first_name: employeeData.first_name,
 			last_name: employeeData.last_name,
