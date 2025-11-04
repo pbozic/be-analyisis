@@ -430,11 +430,7 @@ async function acceptOrderDeliveryOld(req, res) {
 		let driver;
 		if (order.delivery_driver?.delivery_driver_id) {
 			driver = await DeliveryDriverDao.getDeliveryDriverById(deliverer_id, {
-				vehicles: {
-					include: {
-						vehicle_specification: true,
-					},
-				},
+				vehicles: true,
 			});
 			driver.vehicle = vehicle;
 			order.driver = driver;

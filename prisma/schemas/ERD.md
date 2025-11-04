@@ -2879,7 +2879,6 @@ erDiagram
   String license_plate "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
-  String vehicle_specification_id FK,UK "nullable"
   String business_premise_id FK,UK "nullable"
 }
 "users" {
@@ -4154,7 +4153,6 @@ erDiagram
   String license_plate "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
-  String vehicle_specification_id FK,UK "nullable"
   String business_premise_id FK,UK "nullable"
 }
 "users" {
@@ -6356,7 +6354,6 @@ erDiagram
   String license_plate "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
-  String vehicle_specification_id FK,UK "nullable"
   String business_premise_id FK,UK "nullable"
 }
 "transport_module" |o--|| "business" : business
@@ -6556,7 +6553,6 @@ erDiagram
   String license_plate "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
-  String vehicle_specification_id FK,UK "nullable"
   String business_premise_id FK,UK "nullable"
 }
 "users" {
@@ -6717,18 +6713,7 @@ erDiagram
   String license_plate "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
-  String vehicle_specification_id FK,UK "nullable"
   String business_premise_id FK,UK "nullable"
-}
-"vehicle_specifications" {
-  String vehicle_specification_id PK
-  VEHICLE_CLASS class
-  VEHICLE_CATEGORY category
-  String people
-  String start_cost
-  String per_kilometre
-  String per_minute
-  String vehicle_id "nullable"
 }
 "documents" {
   String document_id PK
@@ -6780,7 +6765,6 @@ erDiagram
   VEHICLE_TYPE vehicle_type "nullable"
   String reviewable_id FK "nullable"
 }
-"vehicles" |o--o| "vehicle_specifications" : vehicle_specification
 "documents" }o--o| "drivers" : drivers
 "documents" }o--o| "vehicles" : vehicles
 "drivers" |o--o| "vehicles" : current_vehicle
@@ -6803,23 +6787,7 @@ Properties as follows:
 - `license_plate`:
 - `created_at`:
 - `updated_at`:
-- `vehicle_specification_id`:
 - `business_premise_id`:
-
-### `vehicle_specifications`
-
-Canonical vehicle specification presets (pricing/capacity).
-
-Properties as follows:
-
-- `vehicle_specification_id`:
-- `class`:
-- `category`:
-- `people`:
-- `start_cost`:
-- `per_kilometre`:
-- `per_minute`:
-- `vehicle_id`:
 
 ## Services
 

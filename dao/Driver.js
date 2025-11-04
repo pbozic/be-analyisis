@@ -12,15 +12,7 @@ const getDrivers = async (args) => {
 			...args,
 			include: {
 				user: true,
-				vehicles: {
-					include: {
-						vehicle: {
-							include: {
-								vehicle_specification: true,
-							},
-						},
-					},
-				},
+				vehicles: true,
 				current_vehicle: true,
 				documents: false,
 			},
@@ -50,15 +42,7 @@ const getDriversFull = async (args) => {
 						},
 					},
 				},
-				vehicles: {
-					include: {
-						vehicle: {
-							include: {
-								vehicle_specification: true,
-							},
-						},
-					},
-				},
+				vehicles: true,
 				current_vehicle: true,
 			},
 		});
@@ -82,15 +66,7 @@ const getOnlineDrivers = async (args) => {
 			},
 			include: {
 				user: true,
-				vehicles: {
-					include: {
-						vehicle: {
-							include: {
-								vehicle_specification: true,
-							},
-						},
-					},
-				},
+				vehicles: true,
 				current_vehicle: true,
 			},
 		});
@@ -113,15 +89,7 @@ const getDriversByDailyMealBusinessId = async (businessId) => {
 			},
 			include: {
 				user: true,
-				vehicles: {
-					include: {
-						vehicle: {
-							include: {
-								vehicle_specification: true,
-							},
-						},
-					},
-				},
+				vehicles: true,
 				current_vehicle: true,
 			},
 		});
@@ -170,20 +138,7 @@ const getDriverById = async (driver_id) => {
 						},
 					},
 				},
-				vehicles: {
-					include: {
-						vehicle: {
-							include: {
-								vehicle_specification: true,
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
-					},
-				},
+				vehicles: true,
 				current_vehicle: true,
 				documents: {
 					include: {
@@ -216,15 +171,7 @@ const getDriverByUserId = async (user_id) => {
 			},
 			include: {
 				user: true,
-				vehicles: {
-					include: {
-						vehicle: {
-							include: {
-								vehicle_specification: true,
-							},
-						},
-					},
-				},
+				vehicles: true,
 				current_vehicle: true,
 				documents: false,
 			},
@@ -273,15 +220,7 @@ const updateDriverOnlineStatus = async (driver_id, isOnline) => {
 			},
 			include: {
 				user: true,
-				vehicles: {
-					include: {
-						vehicle: {
-							include: {
-								vehicle_specification: true,
-							},
-						},
-					},
-				},
+				vehicles: true,
 				current_vehicle: true,
 				activity_logs: {
 					orderBy: {
@@ -334,15 +273,7 @@ const updateDriverLocation = async (driver_id, location) => {
 			data: { location: locationData },
 			include: {
 				user: true,
-				vehicles: {
-					include: {
-						vehicle: {
-							include: {
-								vehicle_specification: true,
-							},
-						},
-					},
-				},
+				vehicles: true,
 				current_vehicle: true,
 			},
 		});
@@ -406,15 +337,7 @@ const updateDriver = async (driver_id, updateData) => {
 			data: { ...updateData },
 			include: {
 				user: true,
-				vehicles: {
-					include: {
-						vehicle: {
-							include: {
-								vehicle_specification: true,
-							},
-						},
-					},
-				},
+				vehicles: true,
 				current_vehicle: true,
 			},
 		});
@@ -490,15 +413,7 @@ const getAvailableDrivers = async (type) => {
 			where: whereObj,
 			include: {
 				user: true,
-				vehicles: {
-					include: {
-						vehicle: {
-							include: {
-								vehicle_specification: true,
-							},
-						},
-					},
-				},
+				vehicles: true,
 				current_vehicle: true,
 			},
 		});
@@ -518,11 +433,7 @@ const getUnavailableDrivers = async () => {
 			where: { online: true, on_order: true },
 			include: {
 				user: true,
-				vehicles: {
-					include: {
-						vehicle_specification: true,
-					},
-				},
+				vehicles: true,
 				current_vehicle: true,
 			},
 		});
