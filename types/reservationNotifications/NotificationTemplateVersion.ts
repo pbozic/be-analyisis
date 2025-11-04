@@ -1,11 +1,17 @@
 import { z } from 'zod';
 import { TEMPLATE_VERSION_STATUS } from '@prisma/client';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { NotificationTemplate } from './NotificationTemplate.js';
 import type { NotificationMapping } from './NotificationMapping.js';
 import type { NotificationMessage } from './NotificationMessage.js';
 import { JsonObjectSchema } from './_common.js';
 import { TemplateVersionStatusEnum } from './enums.js';
+import { NotificationTemplateResponseSchema } from './NotificationTemplate';
+import { NotificationMappingResponseSchema } from './NotificationMapping';
+import { NotificationMessageResponseSchema } from './NotificationMessage';
+
+extendZodWithOpenApi(z);
 
 // On create: version number is computed in DAO (next integer for the template)
 export const CreateNotificationTemplateVersionSchema = z.object({
@@ -68,3 +74,29 @@ export type NotificationTemplateVersion = {
 	mappings: NotificationMapping[];
 	messages: NotificationMessage[];
 };
+
+export const NotificationTemplateVersionResponseSchema = z
+	.object({
+		notification_template_version_id: z.string(),
+		notification_template_id: z.string(),
+		version: z.number(),
+		status: z.nativeEnum(TEMPLATE_VERSION_STATUS),
+		subject: z.string().nullable().optional(),
+		body_text: z.string().nullable().optional(),
+		variables_json_schema: z.unknown(),
+		compiled_artifacts: z.unknown().nullable().optional(),
+		created_by_user_id: z.string().nullable().optional(),
+		created_at: z.string().datetime(),
+		template: NotificationTemplateResponseSchema,
+		mappings: z.array(NotificationMappingResponseSchema),
+		messages: z.array(NotificationMessageResponseSchema),
+	})
+	.openapi('NotificationTemplateVersionResponse');
+
+export type NotificationTemplateVersionResponse = z.infer<typeof NotificationTemplateVersionResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateNotificationTemplateVersion', CreateNotificationTemplateVersionSchema);
+	registry.register('UpdateNotificationTemplateVersion', UpdateNotificationTemplateVersionSchema);
+	registry.register('NotificationTemplateVersionResponse', NotificationTemplateVersionResponseSchema);
+}

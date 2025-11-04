@@ -1,4 +1,6 @@
 import { ORDER_SUBTYPE, ORDER_TYPE, TAXI_ORDER_STATUS } from '@prisma/client';
+import { z } from 'zod';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { Driver } from '../drivers/Driver.js';
 import type { Vehicle } from '../vehicles/Vehicle.js';
@@ -16,6 +18,24 @@ import type { Review } from '../reviews/Review.js';
 import type { TransportModule } from '../transport/TransportModule.js';
 import type { TaxiOrderSent } from './TaxiOrderSent.js';
 import type { WalletTransferHistory } from '../wallet/WalletTransferHistory.js';
+import { DriverResponseSchema } from '../drivers/Driver';
+import { VehicleResponseSchema } from '../vehicles/Vehicle';
+import { UserResponseSchema } from '../users/User';
+import { BusinessUserResponseSchema } from '../businessUsers/BusinessUser';
+import { BusinessClientResponseSchema } from '../crm/BusinessClient';
+import { TaxiOrderSentResponseSchema } from './TaxiOrderSent';
+import { DocumentResponseSchema } from '../documents/Document';
+import { DriverHistoryLocationResponseSchema } from '../drivers/DriverHistoryLocation';
+import { WalletTransferHistoryResponseSchema } from '../wallet/WalletTransferHistory';
+import { TransactionResponseSchema } from '../payments/Transaction';
+import { CashbackResponseSchema } from '../cashback/Cashback';
+import { ScoringPointResponseSchema } from '../general/ScoringPoint';
+import { LateEventResponseSchema } from '../general/LateEvent';
+import { InvoiceResponseSchema } from '../invoices/Invoice';
+import { ReviewResponseSchema } from '../reviews/Review';
+import { TransportModuleResponseSchema } from '../transport/TransportModule';
+
+extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
@@ -73,3 +93,124 @@ export type TaxiOrder = {
 	transport_module_id?: string | null;
 	transport_module?: TransportModule | null;
 };
+
+export const CreateTaxiOrderSchema = z
+	.object({
+		order_id: z.string().uuid(),
+		user_id: z.string().uuid(),
+		business_users_id: z.string().uuid().nullable().optional(),
+		business_clients_id: z.string().uuid().nullable().optional(),
+		driver_id: z.string().uuid().nullable().optional(),
+		vehicle_id: z.string().uuid().nullable().optional(),
+		route: z.unknown(),
+		pickup_location: z.unknown(),
+		delivery_location: z.unknown().nullable().optional(),
+		payment: z.unknown().nullable().optional(),
+		estimates: z.unknown().nullable().optional(),
+		timeline: z.unknown(),
+		preferences: z.unknown().nullable().optional(),
+		status: z.nativeEnum(TAXI_ORDER_STATUS),
+		last_sent_at: z.unknown().nullable().optional(),
+		telephone: z.string().nullable().optional(),
+		first_name: z.string().nullable().optional(),
+		last_name: z.string().nullable().optional(),
+		cancellation_reason: z.string().nullable().optional(),
+		find_drivers_attempts: z.number().nullable().optional(),
+		is_scheduled: z.boolean(),
+		parent_order_id: z.string().uuid().nullable().optional(),
+		parent_order: z.unknown().nullable().optional(),
+		grouped_orders: z.array(z.unknown()),
+		type: z.nativeEnum(ORDER_TYPE),
+		subtype: z.nativeEnum(ORDER_SUBTYPE),
+		cargo_preferences: z.unknown().nullable().optional(),
+		customer_note: z.string().nullable().optional(),
+		parent_user_type: z.string().nullable().optional(),
+		creating_user_id: z.string().uuid().nullable().optional(),
+		allow_credits_usage: z.boolean(),
+		order_number: z.number(),
+		review_id: z.string().uuid().nullable().optional(),
+		transport_module_id: z.string().uuid().nullable().optional(),
+	})
+	.openapi('CreateTaxiOrder');
+
+export type CreateTaxiOrderInput = z.infer<typeof CreateTaxiOrderSchema>;
+
+export const UpdateTaxiOrderSchema = CreateTaxiOrderSchema.partial().openapi('UpdateTaxiOrder');
+export type UpdateTaxiOrderInput = z.infer<typeof UpdateTaxiOrderSchema>;
+
+export const baseTaxiOrderResponseSchema = z
+	.object({
+		order_id: z.string().uuid(),
+		user_id: z.string().uuid(),
+		business_users_id: z.string().uuid().nullable().optional(),
+		business_clients_id: z.string().uuid().nullable().optional(),
+		driver_id: z.string().uuid().nullable().optional(),
+		vehicle_id: z.string().uuid().nullable().optional(),
+		route: z.unknown(),
+		pickup_location: z.unknown(),
+		delivery_location: z.unknown().nullable().optional(),
+		payment: z.unknown().nullable().optional(),
+		estimates: z.unknown().nullable().optional(),
+		timeline: z.unknown(),
+		preferences: z.unknown().nullable().optional(),
+		status: z.nativeEnum(TAXI_ORDER_STATUS),
+		last_sent_at: z.string().datetime().nullable().optional(),
+		created_at: z.string().datetime(),
+		updated_at: z.string().datetime(),
+		driver: DriverResponseSchema.nullable().optional(),
+		vehicle: VehicleResponseSchema.nullable().optional(),
+		customer: UserResponseSchema.nullable().optional(),
+		business_users: BusinessUserResponseSchema.nullable().optional(),
+		business_clients: BusinessClientResponseSchema.nullable().optional(),
+		history: z.array(TaxiOrderSentResponseSchema),
+		telephone: z.string().nullable().optional(),
+		first_name: z.string().nullable().optional(),
+		last_name: z.string().nullable().optional(),
+		cancellation_reason: z.string().nullable().optional(),
+		find_drivers_attempts: z.number().nullable().optional(),
+		is_scheduled: z.boolean(),
+		parent_order_id: z.string().uuid().nullable().optional(),
+		type: z.nativeEnum(ORDER_TYPE),
+		subtype: z.nativeEnum(ORDER_SUBTYPE),
+		cargo_documents: z.array(DocumentResponseSchema),
+		cargo_preferences: z.unknown().nullable().optional(),
+		driver_history_locations: z.array(DriverHistoryLocationResponseSchema),
+		wallet_transfer: z.array(WalletTransferHistoryResponseSchema),
+		transactions: z.array(TransactionResponseSchema),
+		customer_note: z.string().nullable().optional(),
+		parent_user_type: z.string().nullable().optional(),
+		creating_user_id: z.string().uuid().nullable().optional(),
+		cashback: z.array(CashbackResponseSchema),
+		allow_credits_usage: z.boolean(),
+		order_number: z.number(),
+		scoring_points: z.array(ScoringPointResponseSchema),
+		late_events: z.array(LateEventResponseSchema),
+		invoice: InvoiceResponseSchema.nullable().optional(),
+		review_id: z.string().uuid().nullable().optional(),
+		review: ReviewResponseSchema.nullable().optional(),
+		transport_module_id: z.string().uuid().nullable().optional(),
+		transport_module: TransportModuleResponseSchema.nullable().optional(),
+	})
+	.openapi('TaxiOrderResponse');
+
+type TaxiOrderRes = z.infer<typeof baseTaxiOrderResponseSchema> & {
+	grouped_orders: TaxiOrderRes[];
+};
+
+export const TaxiOrderResponseSchema: z.ZodType<TaxiOrderRes> = baseTaxiOrderResponseSchema
+	.extend({
+		parent_order: z
+			.lazy(() => TaxiOrderResponseSchema)
+			.nullable()
+			.optional(),
+		grouped_orders: z.array(z.lazy(() => TaxiOrderResponseSchema)),
+	})
+	.openapi('TaxiOrderResponse');
+
+export type TaxiOrderResponse = z.infer<typeof TaxiOrderResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateTaxiOrder', CreateTaxiOrderSchema);
+	registry.register('UpdateTaxiOrder', UpdateTaxiOrderSchema);
+	registry.register('TaxiOrderResponse', TaxiOrderResponseSchema);
+}

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { MESSAGE_STATUS, NOTIFICATION_CHANNEL } from '@prisma/client';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { NotificationChannelEnum, MessageStatusEnum } from '../reservationNotifications/enums.js';
 import { JsonObjectSchema } from './_common.js';
@@ -8,6 +9,13 @@ import type { NotificationEvent } from './NotificationEvent.js';
 import type { NotificationTemplate } from './NotificationTemplate.js';
 import type { NotificationTemplateVersion } from './NotificationTemplateVersion.js';
 import type { NotificationMessageEvent } from './NotificationMessageEvent.js';
+import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+import { NotificationEventResponseSchema } from './NotificationEvent';
+import { NotificationTemplateResponseSchema } from './NotificationTemplate';
+import { NotificationTemplateVersionResponseSchema } from './NotificationTemplateVersion';
+import { NotificationMessageEventResponseSchema } from './NotificationMessageEvent';
+
+extendZodWithOpenApi(z);
 
 // Usually system-generated; still useful for tests or admin tooling.
 export const CreateNotificationMessageSchema = z.object({
@@ -64,3 +72,37 @@ export type NotificationMessage = {
 	version?: NotificationTemplateVersion | null;
 	events: NotificationMessageEvent[];
 };
+
+export const NotificationMessageResponseSchema = z
+	.object({
+		notification_message_id: z.string(),
+		reservation_module_id: z.string(),
+		notification_event_id: z.string(),
+		channel: z.nativeEnum(NOTIFICATION_CHANNEL),
+		notification_template_id: z.string().nullable().optional(),
+		template_version: z.number().nullable().optional(),
+		to_address: z.string().nullable().optional(),
+		subject: z.string().nullable().optional(),
+		body_text: z.string().nullable().optional(),
+		body_html: z.string().nullable().optional(),
+		variables: z.unknown(),
+		rendered_at: z.string().datetime(),
+		provider_message_id: z.string().nullable().optional(),
+		status: z.nativeEnum(MESSAGE_STATUS),
+		error: z.string().nullable().optional(),
+		created_at: z.string().datetime(),
+		reservation_module: ReservationModuleResponseSchema,
+		event: NotificationEventResponseSchema,
+		template: NotificationTemplateResponseSchema.nullable().optional(),
+		version: NotificationTemplateVersionResponseSchema.nullable().optional(),
+		events: z.array(NotificationMessageEventResponseSchema),
+	})
+	.openapi('NotificationMessageResponse');
+
+export type NotificationMessageResponse = z.infer<typeof NotificationMessageResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateNotificationMessage', CreateNotificationMessageSchema);
+	registry.register('UpdateNotificationMessage', UpdateNotificationMessageSchema);
+	registry.register('NotificationMessageResponse', NotificationMessageResponseSchema);
+}

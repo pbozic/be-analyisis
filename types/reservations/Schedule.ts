@@ -1,11 +1,17 @@
 // --- ENUMS ---
 import { z } from 'zod';
 import { SCHEDULE_SLOT_EXCEPTION_TYPE } from '@prisma/client';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { ScheduleSlot } from './ScheduleSlot.js';
 import type { Location } from './Location.js';
 import type { Employee } from './Employee.js';
 import type { ScheduleEmployee } from './ScheduleEmployee.js';
+import { LocationResponseSchema } from './Location';
+import { ScheduleEmployeeResponseSchema } from './ScheduleEmployee';
+import { ScheduleSlotResponseSchema } from './ScheduleSlot';
+
+extendZodWithOpenApi(z);
 
 export const CreateScheduleSchema = z.object({
 	location_id: z.string().uuid(),
@@ -240,3 +246,25 @@ export type Schedule = {
 	schedule_employees: ScheduleEmployee[];
 	schedule_slots: ScheduleSlot[];
 };
+
+export const ScheduleResponseSchema = z
+	.object({
+		schedule_id: z.string(),
+		location_id: z.string(),
+		name: z.string(),
+		color: z.string().nullable().optional(),
+		start_date: z.string().datetime(),
+		end_date: z.string().datetime(),
+		location: LocationResponseSchema,
+		schedule_employees: z.array(ScheduleEmployeeResponseSchema),
+		schedule_slots: z.array(ScheduleSlotResponseSchema),
+	})
+	.openapi('ScheduleResponse');
+
+export type ScheduleResponse = z.infer<typeof ScheduleResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateSchedule', CreateScheduleSchema);
+	registry.register('UpdateSchedule', UpdateScheduleSchema);
+	registry.register('ScheduleResponse', ScheduleResponseSchema);
+}

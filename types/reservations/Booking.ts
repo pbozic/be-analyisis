@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { BOOKING_STATUS } from '@prisma/client';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { addValideBookingSchema } from '../../lib/bookingHelpers';
 import type { ReservationModule } from './ReservationModule.js';
@@ -12,6 +13,17 @@ import type { Reviewable } from '../reviews/Reviewable.js';
 import type { BookingCourseTime } from './BookingCourseTime.js';
 import type { BookingCourseParticipant } from './BookingCourseParticipant.js';
 import { UpdateCustomerSchema } from './Customer';
+import { ReservationModuleResponseSchema } from './ReservationModule';
+import { LocationResponseSchema } from './Location';
+import { EmployeeResponseSchema } from './Employee';
+import { ServiceResponseSchema } from './Service';
+import { CustomerResponseSchema } from './Customer';
+import { BookingHistoryLogResponseSchema } from './BookingHistoryLog';
+import { ReviewableResponseSchema } from '../reviews/Reviewable';
+import { BookingCourseTimeResponseSchema } from './BookingCourseTime';
+import { BookingCourseParticipantResponseSchema } from './BookingCourseParticipant';
+
+extendZodWithOpenApi(z);
 
 // --- SCHEMAS ---
 export const ListBookingsParamsSchema = z.object({
@@ -280,3 +292,60 @@ export type Booking = {
 	booking_course_time: BookingCourseTime[];
 	booking_course_participant: BookingCourseParticipant[];
 };
+
+export const baseBookingResponseSchema = z
+	.object({
+		booking_id: z.string().uuid(),
+		customer_id: z.string().uuid().nullable().optional(),
+		reservation_module_id: z.string().uuid(),
+		location_id: z.string().uuid().nullable().optional(),
+		status: z.nativeEnum(BOOKING_STATUS),
+		service_id: z.string().uuid(),
+		comment: z.string().nullable().optional(),
+		created_at: z.string().datetime(),
+		updated_at: z.string().datetime(),
+		price_cents: z.number().nullable().optional(),
+		discount_percent: z.number().nullable().optional(),
+		discount_amount: z.number().nullable().optional(),
+		start_time: z.string().datetime().nullable().optional(),
+		end_time: z.string().datetime().nullable().optional(),
+		deleted_at: z.string().datetime().nullable().optional(),
+		employee_id: z.string().uuid().nullable().optional(),
+		parent_booking_id: z.string().uuid().nullable().optional(),
+		reservation_module: ReservationModuleResponseSchema,
+		location: LocationResponseSchema.nullable().optional(),
+		employee: EmployeeResponseSchema.nullable().optional(),
+		service: ServiceResponseSchema.nullable().optional(),
+		customer: CustomerResponseSchema.nullable().optional(),
+		booking_history_log: z.array(BookingHistoryLogResponseSchema),
+		reviewable_id: z.string().uuid().nullable().optional(),
+		reviewable: ReviewableResponseSchema.nullable().optional(),
+		course: z.boolean(),
+		people_allowed: z.number().nullable().optional(),
+		people_booked: z.number().nullable().optional(),
+		booking_course_time: z.array(BookingCourseTimeResponseSchema),
+		booking_course_participant: z.array(BookingCourseParticipantResponseSchema),
+	})
+	.openapi('BookingResponse');
+
+type BookingRes = z.infer<typeof baseBookingResponseSchema> & {
+	child_bookings: BookingRes[];
+};
+
+export const BookingResponseSchema: z.ZodType<BookingRes> = baseBookingResponseSchema
+	.extend({
+		parent_booking: z
+			.lazy(() => BookingResponseSchema)
+			.nullable()
+			.optional(),
+		child_bookings: z.array(z.lazy(() => BookingResponseSchema)),
+	})
+	.openapi('BookingResponse');
+
+export type BookingResponse = z.infer<typeof BookingResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateBooking', CreateBookingSchema);
+	registry.register('UpdateBooking', UpdateBookingSchema);
+	registry.register('BookingResponse', BookingResponseSchema);
+}

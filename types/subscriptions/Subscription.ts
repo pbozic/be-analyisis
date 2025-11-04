@@ -5,9 +5,13 @@ import { z } from 'zod';
 
 // --- TYPES ---
 import { MODULE_TYPE } from '@prisma/client';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { Action } from '../subscriptions/Action.js';
 import type { ReservationModule } from '../reservations/ReservationModule.js';
+import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+
+extendZodWithOpenApi(z);
 
 export const CreateSubscriptionSchema = z.object({
 	module: z.nativeEnum(MODULE_TYPE),
@@ -92,3 +96,23 @@ export type SubscriptionAction = {
 	subscription: Subscription;
 	action: Action;
 };
+
+export const SubscriptionResponseSchema = z
+	.object({
+		subscription_id: z.string(),
+		module: z.nativeEnum(MODULE_TYPE),
+		name: z.string(),
+		price_cents: z.number(),
+		stripe_price_id: z.string(),
+		actions: z.array(z.unknown()),
+		business_modules: z.array(ReservationModuleResponseSchema),
+	})
+	.openapi('SubscriptionResponse');
+
+export type SubscriptionResponse = z.infer<typeof SubscriptionResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateSubscription', CreateSubscriptionSchema);
+	registry.register('UpdateSubscription', UpdateSubscriptionSchema);
+	registry.register('SubscriptionResponse', SubscriptionResponseSchema);
+}

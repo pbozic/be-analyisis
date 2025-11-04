@@ -1,8 +1,14 @@
 import { z } from 'zod';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { ReservationModule } from '../reservations/ReservationModule.js';
 import type { NotificationTemplateVersion } from './NotificationTemplateVersion.js';
 import type { NotificationMessage } from './NotificationMessage.js';
+import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+import { NotificationTemplateVersionResponseSchema } from './NotificationTemplateVersion';
+import { NotificationMessageResponseSchema } from './NotificationMessage';
+
+extendZodWithOpenApi(z);
 
 export const CreateNotificationTemplateSchema = z.object({
 	reservation_module_id: z.string().uuid(),
@@ -33,3 +39,25 @@ export type NotificationTemplate = {
 	versions: NotificationTemplateVersion[];
 	messages: NotificationMessage[];
 };
+
+export const NotificationTemplateResponseSchema = z
+	.object({
+		notification_template_id: z.string(),
+		reservation_module_id: z.string(),
+		key: z.string(),
+		name: z.string(),
+		created_at: z.string().datetime(),
+		updated_at: z.string().datetime(),
+		reservation_module: ReservationModuleResponseSchema,
+		versions: z.array(NotificationTemplateVersionResponseSchema),
+		messages: z.array(NotificationMessageResponseSchema),
+	})
+	.openapi('NotificationTemplateResponse');
+
+export type NotificationTemplateResponse = z.infer<typeof NotificationTemplateResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateNotificationTemplate', CreateNotificationTemplateSchema);
+	registry.register('UpdateNotificationTemplate', UpdateNotificationTemplateSchema);
+	registry.register('NotificationTemplateResponse', NotificationTemplateResponseSchema);
+}

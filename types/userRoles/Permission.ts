@@ -1,9 +1,14 @@
 import { z } from 'zod';
 import { MODULE_TYPE, PERMISSION_SCOPE } from '@prisma/client';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { Role } from './Role.js';
 import type { Action } from '../subscriptions/Action.js';
 import type { RolePermission } from './RolePermission.js';
+import { RolePermissionResponseSchema } from './RolePermission';
+import { ActionResponseSchema } from '../subscriptions/Action';
+
+extendZodWithOpenApi(z);
 
 export const CreatePermissionSchema = z.object({
 	role_id: z.string().uuid(),
@@ -32,3 +37,27 @@ export type Permission = {
 	roles: RolePermission[];
 	action?: Action | null;
 };
+
+export const PermissionResponseSchema = z
+	.object({
+		permission_id: z.string(),
+		action_id: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		display_name: z.string().nullable().optional(),
+		module: z.nativeEnum(MODULE_TYPE),
+		limit: z.number().nullable().optional(),
+		scope: z.nativeEnum(PERMISSION_SCOPE),
+		group: z.string().nullable().optional(),
+		roles: z.array(RolePermissionResponseSchema),
+		action: ActionResponseSchema.nullable().optional(),
+	})
+	.openapi('PermissionResponse');
+
+export type PermissionResponse = z.infer<typeof PermissionResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreatePermission', CreatePermissionSchema);
+	registry.register('UpdatePermission', UpdatePermissionSchema);
+	registry.register('PermissionResponse', PermissionResponseSchema);
+}

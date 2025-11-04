@@ -1,7 +1,13 @@
 import { ADDRESS_TYPE } from '@prisma/client';
+import { z } from 'zod';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { User } from './User.js';
 import type { Address } from '../addresses/Address.js';
+import { UserResponseSchema } from './User';
+import { AddressResponseSchema } from '../addresses/Address';
+
+extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
@@ -14,3 +20,38 @@ export type UserAddress = {
 	users: User;
 	address: Address;
 };
+
+export const CreateUserAddressSchema = z
+	.object({
+		user_id: z.string().uuid(),
+		address_id: z.string().uuid(),
+		primary: z.boolean(),
+		details: z.unknown().nullable().optional(),
+		type: z.nativeEnum(ADDRESS_TYPE),
+	})
+	.openapi('CreateUserAddress');
+
+export type CreateUserAddressInput = z.infer<typeof CreateUserAddressSchema>;
+
+export const UpdateUserAddressSchema = CreateUserAddressSchema.partial().openapi('UpdateUserAddress');
+export type UpdateUserAddressInput = z.infer<typeof UpdateUserAddressSchema>;
+
+export const UserAddressResponseSchema = z
+	.object({
+		user_id: z.string(),
+		address_id: z.string(),
+		primary: z.boolean(),
+		details: z.unknown().nullable().optional(),
+		type: z.nativeEnum(ADDRESS_TYPE),
+		users: UserResponseSchema,
+		address: AddressResponseSchema,
+	})
+	.openapi('UserAddressResponse');
+
+export type UserAddressResponse = z.infer<typeof UserAddressResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateUserAddress', CreateUserAddressSchema);
+	registry.register('UpdateUserAddress', UpdateUserAddressSchema);
+	registry.register('UserAddressResponse', UserAddressResponseSchema);
+}

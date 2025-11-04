@@ -1,6 +1,8 @@
 import { z } from 'zod';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { JsonObjectSchema } from './_common.js';
+extendZodWithOpenApi(z);
 
 export const CreateNotificationMappingSchema = z.object({
 	reservation_module_id: z.string().uuid(),
@@ -31,3 +33,21 @@ export type NotificationMapping = {
 	notification_template_version_id: string;
 	conditions?: unknown | null;
 };
+
+export const NotificationMappingResponseSchema = z
+	.object({
+		notification_mapping_id: z.string(),
+		reservation_module_id: z.string(),
+		notification_event_id: z.string(),
+		notification_template_version_id: z.string(),
+		conditions: z.unknown().nullable().optional(),
+	})
+	.openapi('NotificationMappingResponse');
+
+export type NotificationMappingResponse = z.infer<typeof NotificationMappingResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateNotificationMapping', CreateNotificationMappingSchema);
+	registry.register('UpdateNotificationMapping', UpdateNotificationMappingSchema);
+	registry.register('NotificationMappingResponse', NotificationMappingResponseSchema);
+}

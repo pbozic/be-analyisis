@@ -1,12 +1,19 @@
 // blogSchemas.ts
 import { z } from 'zod';
 import { BLOG_POST_STATUS } from '@prisma/client';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { File } from '../files/File.js';
 import type { User } from '../users/User.js';
 import type { BlogCategory } from './BlogCategory.js';
 import type { BlogTag } from './BlogTag.js';
 import type { BlogTagsBlogPost } from './BlogTagsBlogPost.js';
+import { FileResponseSchema } from '../files/File';
+import { UserResponseSchema } from '../users/User';
+import { BlogCategoryResponseSchema } from './BlogCategory';
+import { BlogTagsBlogPostResponseSchema } from './BlogTagsBlogPost';
+
+extendZodWithOpenApi(z);
 
 // =======================
 // Editor.js Zod Schemas
@@ -105,3 +112,32 @@ export type BlogPost = {
 	category?: BlogCategory | null;
 	tags: BlogTagsBlogPost[];
 };
+
+export const BlogPostResponseSchema = z
+	.object({
+		blog_posts_id: z.string(),
+		slug: z.string(),
+		title: z.string(),
+		short_content: z.string().nullable().optional(),
+		image_file_id: z.string().nullable().optional(),
+		image: FileResponseSchema.nullable().optional(),
+		content: z.unknown(),
+		status: z.nativeEnum(BLOG_POST_STATUS),
+		author_id: z.string(),
+		category_id: z.string().nullable().optional(),
+		publish_at: z.string().datetime(),
+		created_at: z.string().datetime(),
+		updated_at: z.string().datetime(),
+		author: UserResponseSchema,
+		category: BlogCategoryResponseSchema.nullable().optional(),
+		tags: z.array(BlogTagsBlogPostResponseSchema),
+	})
+	.openapi('BlogPostResponse');
+
+export type BlogPostResponse = z.infer<typeof BlogPostResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateBlogPost', CreateBlogPostSchema);
+	registry.register('UpdateBlogPost', UpdateBlogPostSchema);
+	registry.register('BlogPostResponse', BlogPostResponseSchema);
+}

@@ -1,3 +1,6 @@
+import { z } from 'zod';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+
 import type { Address } from '../addresses/Address.js';
 import type { Document } from '../documents/Document.js';
 import type { WordBuy } from '../promoWords/WordBuy.js';
@@ -8,15 +11,32 @@ import type { AccountAction } from '../general/AccountAction.js';
 import type { BusinessMoneyFlow } from '../payments/BusinessMoneyFlow.js';
 import type { Role } from '../userRoles/Role.js';
 import type { BusinessUser } from '../businessUsers/BusinessUser.js';
-import type { BusinessType } from './BusinessType.js';
 import type { ReservationModule } from '../reservations/ReservationModule.js';
 import type { TransportModule } from '../transport/TransportModule.js';
 import type { StoresModule } from '../stores/StoresModule.js';
 import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
 import type { CrmModule } from '../crm/CrmModule.js';
-import type { User } from '../users/User.js';
 import type { UserFavoriteBusiness } from '../users/UserFavoriteBusiness.js';
 import type { BusinessToType } from './BusinessToType.js';
+import { AddressResponseSchema } from '../addresses/Address';
+import { DocumentResponseSchema } from '../documents/Document';
+import { WordBuyResponseSchema } from '../promoWords/WordBuy';
+import { PromoSectionsBuyResponseSchema } from '../promoSections/PromoSectionsBuy';
+import { PromoAnalyticResponseSchema } from '../promoAnalytics/PromoAnalytic';
+import { UserFavoriteBusinessResponseSchema } from '../users/UserFavoriteBusiness';
+import { ScoringPointResponseSchema } from '../general/ScoringPoint';
+import { AccountActionResponseSchema } from '../general/AccountAction';
+import { BusinessMoneyFlowResponseSchema } from '../payments/BusinessMoneyFlow';
+import { RoleResponseSchema } from '../userRoles/Role';
+import { BusinessUserResponseSchema } from '../businessUsers/BusinessUser';
+import { BusinessToTypeResponseSchema } from './BusinessToType';
+import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+import { TransportModuleResponseSchema } from '../transport/TransportModule';
+import { StoresModuleResponseSchema } from '../stores/StoresModule';
+import { FoodDrinksModuleResponseSchema } from '../foodDrinks/FoodDrinksModule';
+import { CrmModuleResponseSchema } from '../crm/CrmModule';
+
+extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
@@ -65,3 +85,105 @@ export type Business = {
 	food_drinks_module?: FoodDrinksModule | null;
 	crm_module?: CrmModule | null;
 };
+
+export const CreateBusinessSchema = z
+	.object({
+		business_id: z.string().uuid(),
+		address_id: z.string().uuid().nullable().optional(),
+		is_business_unit: z.boolean(),
+		business_group_name: z.string().nullable().optional(),
+		name: z.string(),
+		description: z.string().nullable().optional(),
+		tax_id: z.string().uuid(),
+		registration_id: z.string().uuid(),
+		email: z.string(),
+		telephone: z.string(),
+		telephone_code: z.string(),
+		website_url: z.string().nullable().optional(),
+		working_hours: z.unknown().nullable().optional(),
+		popular: z.boolean(),
+		new: z.boolean(),
+		parent_business_id: z.string().uuid().nullable().optional(),
+		parent_business: z.unknown().nullable().optional(),
+		child_businesses: z.array(z.unknown()),
+		stripe_account_id: z.string().uuid().nullable().optional(),
+		stripe_customer_id: z.string().uuid().nullable().optional(),
+		word_buy_stripe_subscription_id: z.string().uuid().nullable().optional(),
+		first_activated_at: z.unknown().nullable().optional(),
+		active: z.boolean(),
+		sales_representative_id: z.string().uuid().nullable().optional(),
+	})
+	.openapi('CreateBusiness');
+
+export type CreateBusinessInput = z.infer<typeof CreateBusinessSchema>;
+
+export const UpdateBusinessSchema = CreateBusinessSchema.partial().openapi('UpdateBusiness');
+export type UpdateBusinessInput = z.infer<typeof UpdateBusinessSchema>;
+
+export const baseBusinessResponseSchema = z
+	.object({
+		business_id: z.string().uuid(),
+		address_id: z.string().uuid().nullable().optional(),
+		is_business_unit: z.boolean(),
+		business_group_name: z.string().nullable().optional(),
+		name: z.string(),
+		description: z.string().nullable().optional(),
+		tax_id: z.string().uuid(),
+		registration_id: z.string().uuid(),
+		email: z.string(),
+		telephone: z.string(),
+		telephone_code: z.string(),
+		website_url: z.string().nullable().optional(),
+		working_hours: z.unknown().nullable().optional(),
+		popular: z.boolean(),
+		new: z.boolean(),
+		created_at: z.string().datetime(),
+		updated_at: z.string().datetime(),
+		address: AddressResponseSchema.nullable().optional(),
+		documents: z.array(DocumentResponseSchema),
+		parent_business_id: z.string().uuid().nullable().optional(),
+		stripe_account_id: z.string().uuid().nullable().optional(),
+		stripe_customer_id: z.string().uuid().nullable().optional(),
+		word_buy_stripe_subscription_id: z.string().uuid().nullable().optional(),
+		word_buys: z.array(WordBuyResponseSchema),
+		promo_sections: z.array(PromoSectionsBuyResponseSchema),
+		analytics: z.array(PromoAnalyticResponseSchema),
+		first_activated_at: z.string().datetime().nullable().optional(),
+		active: z.boolean(),
+		sales_representative_id: z.string().uuid().nullable().optional(),
+		user_favorite_businesses: z.array(UserFavoriteBusinessResponseSchema),
+		scoring_points: z.array(ScoringPointResponseSchema),
+		account_actions: z.array(AccountActionResponseSchema),
+		business_money_flows: z.array(BusinessMoneyFlowResponseSchema),
+		roles: z.array(RoleResponseSchema),
+		business_users: z.array(BusinessUserResponseSchema),
+		types: z.array(BusinessToTypeResponseSchema),
+		reservation_module: ReservationModuleResponseSchema.nullable().optional(),
+		transport_module: TransportModuleResponseSchema.nullable().optional(),
+		stores_module: StoresModuleResponseSchema.nullable().optional(),
+		food_drinks_module: FoodDrinksModuleResponseSchema.nullable().optional(),
+		crm_module: CrmModuleResponseSchema.nullable().optional(),
+	})
+	.openapi('BusinessResponse');
+
+type BusinessRes = z.infer<typeof baseBusinessResponseSchema> & {
+	child_businesses: BusinessRes[];
+};
+
+export const BusinessResponseSchema: z.ZodType<BusinessRes> = baseBusinessResponseSchema
+	.extend({
+		parent_business: z
+			.lazy(() => BusinessResponseSchema)
+			.nullable()
+			.optional(),
+		child_businesses: z.array(z.lazy(() => BusinessResponseSchema)),
+	})
+	.openapi('BusinessResponse');
+
+export type BusinessResponse = z.infer<typeof BusinessResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateBusiness', CreateBusinessSchema);
+	registry.register('UpdateBusiness', UpdateBusinessSchema);
+	registry.register('BusinessResponse', BusinessResponseSchema);
+}

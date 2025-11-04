@@ -1,8 +1,18 @@
+import { z } from 'zod';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+
 import type { OrderLobbyItem } from './OrderLobbyItem.js';
 import type { OrderLobbyUser } from './OrderLobbyUser.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
 import type { StoresModule } from '../stores/StoresModule.js';
 import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
+import { OrderLobbyItemResponseSchema } from './OrderLobbyItem';
+import { OrderLobbyUserResponseSchema } from './OrderLobbyUser';
+import { DeliveryOrderResponseSchema } from '../deliveryOrders/DeliveryOrder';
+import { StoresModuleResponseSchema } from '../stores/StoresModule';
+import { FoodDrinksModuleResponseSchema } from '../foodDrinks/FoodDrinksModule';
+
+extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
@@ -26,3 +36,55 @@ export type OrderLobby = {
 	stores_module?: StoresModule | null;
 	food_drinks_module?: FoodDrinksModule | null;
 };
+
+export const CreateOrderLobbySchema = z
+	.object({
+		order_lobbies_id: z.string().uuid(),
+		lobby_name: z.string(),
+		lobby_description: z.string(),
+		active: z.boolean(),
+		delivery_location: z.unknown().nullable().optional(),
+		courier_note: z.string().nullable().optional(),
+		restaurant_message: z.string().nullable().optional(),
+		stores_id: z.string().uuid(),
+		food_drinks_id: z.string().uuid().nullable().optional(),
+		creator_id: z.string().uuid(),
+		delivery_orders_id: z.string().uuid().nullable().optional(),
+	})
+	.openapi('CreateOrderLobby');
+
+export type CreateOrderLobbyInput = z.infer<typeof CreateOrderLobbySchema>;
+
+export const UpdateOrderLobbySchema = CreateOrderLobbySchema.partial().openapi('UpdateOrderLobby');
+export type UpdateOrderLobbyInput = z.infer<typeof UpdateOrderLobbySchema>;
+
+export const OrderLobbyResponseSchema = z
+	.object({
+		order_lobbies_id: z.string(),
+		lobby_name: z.string(),
+		lobby_description: z.string(),
+		active: z.boolean(),
+		delivery_location: z.unknown().nullable().optional(),
+		courier_note: z.string().nullable().optional(),
+		restaurant_message: z.string().nullable().optional(),
+		stores_id: z.string(),
+		food_drinks_id: z.string().nullable().optional(),
+		creator_id: z.string(),
+		delivery_orders_id: z.string().nullable().optional(),
+		created_at: z.string().datetime(),
+		updated_at: z.string().datetime(),
+		order_lobby_items: z.array(OrderLobbyItemResponseSchema),
+		order_lobby_users: z.array(OrderLobbyUserResponseSchema),
+		delivery_orders: DeliveryOrderResponseSchema.nullable().optional(),
+		stores_module: StoresModuleResponseSchema.nullable().optional(),
+		food_drinks_module: FoodDrinksModuleResponseSchema.nullable().optional(),
+	})
+	.openapi('OrderLobbyResponse');
+
+export type OrderLobbyResponse = z.infer<typeof OrderLobbyResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateOrderLobby', CreateOrderLobbySchema);
+	registry.register('UpdateOrderLobby', UpdateOrderLobbySchema);
+	registry.register('OrderLobbyResponse', OrderLobbyResponseSchema);
+}

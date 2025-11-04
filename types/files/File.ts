@@ -1,4 +1,6 @@
 import { FILE_TYPE } from '@prisma/client';
+import { z } from 'zod';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { Document } from '../documents/Document.js';
 import type { Category } from '../menus/Category.js';
@@ -12,6 +14,20 @@ import type { MenuItem } from '../menuItems/MenuItem.js';
 import type { LostItem } from '../lostItems/LostItem.js';
 import type { PromoBanner } from '../promoAds/PromoBanner.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
+import { DocumentResponseSchema } from '../documents/Document';
+import { CategoryResponseSchema } from '../menus/Category';
+import { BlogPostResponseSchema } from '../blog/BlogPost';
+import { StoresModuleResponseSchema } from '../stores/StoresModule';
+import { FoodDrinksModuleResponseSchema } from '../foodDrinks/FoodDrinksModule';
+import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+import { UserResponseSchema } from '../users/User';
+import { DriverResponseSchema } from '../drivers/Driver';
+import { MenuItemResponseSchema } from '../menuItems/MenuItem';
+import { LostItemResponseSchema } from '../lostItems/LostItem';
+import { PromoBannerResponseSchema } from '../promoAds/PromoBanner';
+import { DeliveryOrderResponseSchema } from '../deliveryOrders/DeliveryOrder';
+
+extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
@@ -44,3 +60,63 @@ export type File = {
 	delivery_order_id?: string | null;
 	delivery_order?: DeliveryOrder | null;
 };
+
+export const CreateFileSchema = z
+	.object({
+		file_id: z.string().uuid(),
+		url: z.string().nullable().optional(),
+		file_type: z.nativeEnum(FILE_TYPE),
+		public: z.boolean(),
+		mime_type: z.string(),
+		document_id: z.string().uuid().nullable().optional(),
+		user_id: z.string().uuid().nullable().optional(),
+		driver_id: z.string().uuid().nullable().optional(),
+		lost_item_id: z.string().uuid().nullable().optional(),
+		delivery_order_id: z.string().uuid().nullable().optional(),
+	})
+	.openapi('CreateFile');
+
+export type CreateFileInput = z.infer<typeof CreateFileSchema>;
+
+export const UpdateFileSchema = CreateFileSchema.partial().openapi('UpdateFile');
+export type UpdateFileInput = z.infer<typeof UpdateFileSchema>;
+
+export const FileResponseSchema = z
+	.object({
+		file_id: z.string(),
+		url: z.string().nullable().optional(),
+		file_type: z.nativeEnum(FILE_TYPE),
+		public: z.boolean(),
+		mime_type: z.string(),
+		created_at: z.string().datetime(),
+		updated_at: z.string().datetime(),
+		document_id: z.string().nullable().optional(),
+		documents: DocumentResponseSchema.nullable().optional(),
+		categories: z.array(CategoryResponseSchema),
+		blog_posts: z.array(BlogPostResponseSchema),
+		store_logo: StoresModuleResponseSchema.nullable().optional(),
+		store_banner: StoresModuleResponseSchema.nullable().optional(),
+		food_drinks_logo: FoodDrinksModuleResponseSchema.nullable().optional(),
+		food_drinks_banner: FoodDrinksModuleResponseSchema.nullable().optional(),
+		reservation_logo: ReservationModuleResponseSchema.nullable().optional(),
+		reservation_banner: ReservationModuleResponseSchema.nullable().optional(),
+		user_id: z.string().nullable().optional(),
+		user: UserResponseSchema.nullable().optional(),
+		driver_id: z.string().nullable().optional(),
+		driver: DriverResponseSchema.nullable().optional(),
+		menu_items: z.array(MenuItemResponseSchema),
+		lost_item_id: z.string().nullable().optional(),
+		lost_item: LostItemResponseSchema.nullable().optional(),
+		promo_banners: z.array(PromoBannerResponseSchema),
+		delivery_order_id: z.string().nullable().optional(),
+		delivery_order: DeliveryOrderResponseSchema.nullable().optional(),
+	})
+	.openapi('FileResponse');
+
+export type FileResponse = z.infer<typeof FileResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateFile', CreateFileSchema);
+	registry.register('UpdateFile', UpdateFileSchema);
+	registry.register('FileResponse', FileResponseSchema);
+}

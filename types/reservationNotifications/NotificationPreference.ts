@@ -1,9 +1,14 @@
 import { z } from 'zod';
 import { NOTIFICATION_CHANNEL } from '@prisma/client';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { NotificationChannelEnum } from '../reservationNotifications/enums.js';
 import type { ReservationModule } from '../reservations/ReservationModule.js';
 import type { NotificationEvent } from './NotificationEvent.js';
+import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+import { NotificationEventResponseSchema } from './NotificationEvent';
+
+extendZodWithOpenApi(z);
 
 export const UpsertNotificationPreferenceSchema = z.object({
 	notification_event_id: z.string().uuid(),
@@ -27,3 +32,40 @@ export type NotificationPreference = {
 	reservation_module: ReservationModule;
 	event: NotificationEvent;
 };
+
+export const CreateNotificationPreferenceSchema = z
+	.object({
+		notification_preference_id: z.string().uuid(),
+		reservation_module_id: z.string().uuid(),
+		notification_event_id: z.string().uuid(),
+		channel: z.nativeEnum(NOTIFICATION_CHANNEL),
+		enabled: z.boolean(),
+	})
+	.openapi('CreateNotificationPreference');
+
+export type CreateNotificationPreferenceInput = z.infer<typeof CreateNotificationPreferenceSchema>;
+
+export const UpdateNotificationPreferenceSchema =
+	CreateNotificationPreferenceSchema.partial().openapi('UpdateNotificationPreference');
+export type UpdateNotificationPreferenceInput = z.infer<typeof UpdateNotificationPreferenceSchema>;
+
+export const NotificationPreferenceResponseSchema = z
+	.object({
+		notification_preference_id: z.string(),
+		reservation_module_id: z.string(),
+		notification_event_id: z.string(),
+		channel: z.nativeEnum(NOTIFICATION_CHANNEL),
+		enabled: z.boolean(),
+		updated_at: z.string().datetime(),
+		reservation_module: ReservationModuleResponseSchema,
+		event: NotificationEventResponseSchema,
+	})
+	.openapi('NotificationPreferenceResponse');
+
+export type NotificationPreferenceResponse = z.infer<typeof NotificationPreferenceResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateNotificationPreference', CreateNotificationPreferenceSchema);
+	registry.register('UpdateNotificationPreference', UpdateNotificationPreferenceSchema);
+	registry.register('NotificationPreferenceResponse', NotificationPreferenceResponseSchema);
+}

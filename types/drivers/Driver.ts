@@ -1,4 +1,6 @@
 import { VEHICLE_TYPE } from '@prisma/client';
+import { z } from 'zod';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { User } from '../users/User.js';
 import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
@@ -20,6 +22,26 @@ import type { VehicleDriver } from './VehicleDriver.js';
 import type { DriverMunicipality } from '../regions/DriverMunicipality.js';
 import type { DailyMealsDriver } from '../dailyMeals/DailyMealsDriver.js';
 import type { UserFavoriteDriver } from '../users/UserFavoriteDriver.js';
+import { UserResponseSchema } from '../users/User';
+import { VehicleDriverResponseSchema } from './VehicleDriver';
+import { TaxiOrderResponseSchema } from '../taxiOrders/TaxiOrder';
+import { TaxiOrderSentResponseSchema } from '../taxiOrders/TaxiOrderSent';
+import { DeliveryOrderResponseSchema } from '../deliveryOrders/DeliveryOrder';
+import { DeliveryOrderSentResponseSchema } from '../deliveryOrders/DeliveryOrderSent';
+import { DocumentResponseSchema } from '../documents/Document';
+import { DriverHistoryLocationResponseSchema } from './DriverHistoryLocation';
+import { DriverMunicipalityResponseSchema } from '../regions/DriverMunicipality';
+import { VehicleResponseSchema } from '../vehicles/Vehicle';
+import { DriverActivityLogResponseSchema } from './DriverActivityLog';
+import { TransportModuleResponseSchema } from '../transport/TransportModule';
+import { FileResponseSchema } from '../files/File';
+import { DailyMealsDriverResponseSchema } from '../dailyMeals/DailyMealsDriver';
+import { DailyMealSubscriptionResponseSchema } from '../dailymeal/DailyMealSubscription';
+import { ReviewableResponseSchema } from '../reviews/Reviewable';
+import { LateEventResponseSchema } from '../general/LateEvent';
+import { UserFavoriteDriverResponseSchema } from '../users/UserFavoriteDriver';
+
+extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
@@ -76,3 +98,108 @@ export type Driver = {
 	late_events: LateEvent[];
 	user_favorite_drivers: UserFavoriteDriver[];
 };
+
+export const CreateDriverSchema = z
+	.object({
+		driver_id: z.string().uuid(),
+		transport_module_id: z.string().uuid().nullable().optional(),
+		online: z.boolean().nullable().optional(),
+		on_order: z.boolean().nullable().optional(),
+		working_hours: z.unknown().nullable().optional(),
+		ride_requirements: z.unknown().nullable().optional(),
+		user_id: z.string().uuid().nullable().optional(),
+		current_vehicle_id: z.string().uuid().nullable().optional(),
+		last_used_vehicle_id: z.string().uuid().nullable().optional(),
+		location: z.unknown().nullable().optional(),
+		delivery_timeline: z.unknown().nullable().optional(),
+		last_ping_at: z.unknown(),
+		is_inactive: z.boolean().nullable().optional(),
+		transfer_requirements: z.unknown().nullable().optional(),
+		regions: z.string(),
+		handles_taxi_orders: z.boolean().nullable().optional(),
+		handles_transfer_orders: z.boolean().nullable().optional(),
+		handles_courier_orders: z.boolean().nullable().optional(),
+		handles_delivery_orders: z.boolean().nullable().optional(),
+		taxi_orders_toggled: z.boolean().nullable().optional(),
+		transfer_orders_toggled: z.boolean().nullable().optional(),
+		courier_orders_toggled: z.boolean().nullable().optional(),
+		delivery_orders_toggled: z.boolean().nullable().optional(),
+		partner_cash_balance: z.number().nullable().optional(),
+		come_to_work_last_sent_at: z.unknown().nullable().optional(),
+		profile_picture_id: z.string().uuid().nullable().optional(),
+		delivers_daily_meals: z.boolean().nullable().optional(),
+		on_daily_meals: z.boolean().nullable().optional(),
+		scheduled_meals_route: z.unknown().nullable().optional(),
+		vehicle_type: z.nativeEnum(VEHICLE_TYPE).nullable().optional(),
+		reviewable_id: z.string().uuid().nullable().optional(),
+	})
+	.openapi('CreateDriver');
+
+export type CreateDriverInput = z.infer<typeof CreateDriverSchema>;
+
+export const UpdateDriverSchema = CreateDriverSchema.partial().openapi('UpdateDriver');
+export type UpdateDriverInput = z.infer<typeof UpdateDriverSchema>;
+
+export const DriverResponseSchema = z
+	.object({
+		driver_id: z.string(),
+		transport_module_id: z.string().nullable().optional(),
+		online: z.boolean().nullable().optional(),
+		on_order: z.boolean().nullable().optional(),
+		working_hours: z.unknown().nullable().optional(),
+		ride_requirements: z.unknown().nullable().optional(),
+		created_at: z.string().datetime(),
+		updated_at: z.string().datetime(),
+		user_id: z.string().nullable().optional(),
+		user: UserResponseSchema.nullable().optional(),
+		vehicles: z.array(VehicleDriverResponseSchema),
+		current_vehicle_id: z.string().nullable().optional(),
+		last_used_vehicle_id: z.string().nullable().optional(),
+		orders: z.array(TaxiOrderResponseSchema),
+		received_orders: z.array(TaxiOrderSentResponseSchema),
+		delivery_orders: z.array(DeliveryOrderResponseSchema),
+		received_delivery_orders: z.array(DeliveryOrderSentResponseSchema),
+		documents: z.array(DocumentResponseSchema),
+		location: z.unknown().nullable().optional(),
+		delivery_timeline: z.unknown().nullable().optional(),
+		last_ping_at: z.string().datetime(),
+		is_inactive: z.boolean().nullable().optional(),
+		transfer_requirements: z.unknown().nullable().optional(),
+		regions: z.string(),
+		driver_history_locations: z.array(DriverHistoryLocationResponseSchema),
+		handles_taxi_orders: z.boolean().nullable().optional(),
+		handles_transfer_orders: z.boolean().nullable().optional(),
+		handles_courier_orders: z.boolean().nullable().optional(),
+		handles_delivery_orders: z.boolean().nullable().optional(),
+		taxi_orders_toggled: z.boolean().nullable().optional(),
+		transfer_orders_toggled: z.boolean().nullable().optional(),
+		courier_orders_toggled: z.boolean().nullable().optional(),
+		delivery_orders_toggled: z.boolean().nullable().optional(),
+		partner_cash_balance: z.number().nullable().optional(),
+		come_to_work_last_sent_at: z.string().datetime().nullable().optional(),
+		driver_municipalities: z.array(DriverMunicipalityResponseSchema),
+		current_vehicle: VehicleResponseSchema.nullable().optional(),
+		activity_logs: z.array(DriverActivityLogResponseSchema),
+		transport_module: TransportModuleResponseSchema.nullable().optional(),
+		profile_picture_id: z.string().nullable().optional(),
+		profile_picture: FileResponseSchema.nullable().optional(),
+		daily_meals: z.array(DailyMealsDriverResponseSchema),
+		delivers_daily_meals: z.boolean().nullable().optional(),
+		on_daily_meals: z.boolean().nullable().optional(),
+		scheduled_meals_route: z.unknown().nullable().optional(),
+		subscriptions: z.array(DailyMealSubscriptionResponseSchema),
+		vehicle_type: z.nativeEnum(VEHICLE_TYPE).nullable().optional(),
+		reviewable_id: z.string().nullable().optional(),
+		reviewable: ReviewableResponseSchema.nullable().optional(),
+		late_events: z.array(LateEventResponseSchema),
+		user_favorite_drivers: z.array(UserFavoriteDriverResponseSchema),
+	})
+	.openapi('DriverResponse');
+
+export type DriverResponse = z.infer<typeof DriverResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateDriver', CreateDriverSchema);
+	registry.register('UpdateDriver', UpdateDriverSchema);
+	registry.register('DriverResponse', DriverResponseSchema);
+}

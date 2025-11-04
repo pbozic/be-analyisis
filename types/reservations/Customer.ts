@@ -1,10 +1,17 @@
 // --- ENUMS ---
 import { z } from 'zod';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { ReservationModule } from './ReservationModule.js';
 import type { Booking } from './Booking.js';
 import type { User } from '../users/User.js';
 import type { BookingCourseParticipant } from './BookingCourseParticipant.js';
+import { ReservationModuleResponseSchema } from './ReservationModule';
+import { BookingResponseSchema } from './Booking';
+import { UserResponseSchema } from '../users/User';
+import { BookingCourseParticipantResponseSchema } from './BookingCourseParticipant';
+
+extendZodWithOpenApi(z);
 
 export const CreateCustomerSchema = z.object({
 	first_name: z.string(),
@@ -37,3 +44,30 @@ export type Customer = {
 	user?: User | null;
 	booking_course_participants: BookingCourseParticipant[];
 };
+
+export const CustomerResponseSchema = z
+	.object({
+		customer_id: z.string(),
+		reservation_module_id: z.string(),
+		first_name: z.string(),
+		last_name: z.string(),
+		email: z.string().nullable().optional(),
+		telephone: z.string().nullable().optional(),
+		created_at: z.string().datetime(),
+		updated_at: z.string().datetime(),
+		code: z.string(),
+		reservation_module: ReservationModuleResponseSchema,
+		bookings: z.array(BookingResponseSchema),
+		user_id: z.string().nullable().optional(),
+		user: UserResponseSchema.nullable().optional(),
+		booking_course_participants: z.array(BookingCourseParticipantResponseSchema),
+	})
+	.openapi('CustomerResponse');
+
+export type CustomerResponse = z.infer<typeof CustomerResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateCustomer', CreateCustomerSchema);
+	registry.register('UpdateCustomer', UpdateCustomerSchema);
+	registry.register('CustomerResponse', CustomerResponseSchema);
+}

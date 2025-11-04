@@ -1,9 +1,15 @@
 import { z } from 'zod';
 import { USER_ROLES } from '@prisma/client';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { User } from '../users/User.js';
 import type { Role } from './Role.js';
 import type { ReservationModule } from '../reservations/ReservationModule.js';
+import { UserResponseSchema } from '../users/User';
+import { RoleResponseSchema } from './Role';
+import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+
+extendZodWithOpenApi(z);
 
 // --- SCHEMAS ---
 
@@ -41,3 +47,22 @@ export type UserRole = {
 	role: Role;
 	reservation_module?: ReservationModule | null;
 };
+
+export const UserRoleResponseSchema = z
+	.object({
+		user_id: z.string(),
+		role_id: z.string(),
+		reservation_module_id: z.string().nullable().optional(),
+		user: UserResponseSchema,
+		role: RoleResponseSchema,
+		reservation_module: ReservationModuleResponseSchema.nullable().optional(),
+	})
+	.openapi('UserRoleResponse');
+
+export type UserRoleResponse = z.infer<typeof UserRoleResponseSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateUserRole', CreateUserRoleSchema);
+	registry.register('UpdateUserRole', UpdateUserRoleSchema);
+	registry.register('UserRoleResponse', UserRoleResponseSchema);
+}
