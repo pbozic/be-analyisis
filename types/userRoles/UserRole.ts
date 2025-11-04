@@ -1,8 +1,9 @@
 import { z } from 'zod';
+import { USER_ROLES } from '@prisma/client';
 
 import type { User } from '../users/User.js';
 import type { Role } from './Role.js';
-import type { ReservationModule } from '../reservation/ReservationModule.js';
+import type { ReservationModule } from '../reservations/ReservationModule.js';
 
 // --- SCHEMAS ---
 
@@ -27,8 +28,6 @@ export const UpdateUserRoleSchema = z.object({
 export const AssignUserRoleSchema = CreateUserRoleSchema;
 
 // --- TYPES ---
-
-export type Permission = permission;
 
 export type CreateUserRoleInput = z.infer<typeof CreateUserRoleSchema>;
 export type UpdateUserRoleInput = z.infer<typeof UpdateUserRoleSchema>;

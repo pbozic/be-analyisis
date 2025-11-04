@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { BlogPost } from './BlogPost.js';
+import type { BlogPost } from '../../types/blog/BlogPost.ts';
 // blog_categories.ts
 
 export const CreateBlogTagSchema = z.object({

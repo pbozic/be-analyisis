@@ -1,7 +1,7 @@
-import type { table_reservations_module } from '@prisma/client';
 import { RESERVATION_STATUS } from '@prisma/client';
 
 import type { User } from '../users/User.js';
+import type { TableReservationsModule } from './TableReservationsModule.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
@@ -18,5 +18,5 @@ export type Reservation = {
 	status: RESERVATION_STATUS;
 	table?: number | null;
 	table_reservation_id: string;
-	table_reservations: table_reservations_module;
+	table_reservations: TableReservationsModule;
 };

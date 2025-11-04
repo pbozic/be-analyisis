@@ -1,7 +1,9 @@
 import { z } from 'zod';
 import { MESSAGE_STATUS, NOTIFICATION_CHANNEL } from '@prisma/client';
 
-import type { ReservationModule } from '../reservation/ReservationModule.js';
+import { NotificationChannelEnum, MessageStatusEnum } from '../reservationNotifications/enums.js';
+import { JsonObjectSchema } from './_common.js';
+import type { ReservationModule } from '../reservations/ReservationModule.js';
 import type { NotificationEvent } from './NotificationEvent.js';
 import type { NotificationTemplate } from './NotificationTemplate.js';
 import type { NotificationTemplateVersion } from './NotificationTemplateVersion.js';

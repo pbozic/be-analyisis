@@ -8,9 +8,9 @@
 	- <Model>UpdateDTO (input, all optional)
 	- picker helpers for create/update
 
-  Usage:
-	node scripts/generate-dtos.js users
-	node scripts/generate-dtos.js all
+	Usage:
+		node scripts/generate-dtos.js users
+		node scripts/generate-dtos.js all [folder] [mode] [--exclude-junction]
 */
 
 import fs from 'fs';
@@ -108,33 +108,63 @@ function insertImport(content, importBlock) {
 }
 
 function stripTargetedImports(content) {
-	// Remove any existing imports from @prisma/client and any relative path (./ or ../), including multi-line
+	// Only remove type-only imports from @prisma/client; leave value imports and all relative imports intact
 	const importStmtRx = /(\n|^)import[\s\S]*?;[\t ]*(?=\n|$)/g;
 	return content.replace(importStmtRx, (stmt) => {
-		// Side-effect import: import 'module';
-		let m = /import\s*['"]([^'"]+)['"]/m.exec(stmt);
-		if (m) {
-			const mod = m[1];
-			if (mod === '@prisma/client' || mod.startsWith('./') || mod.startsWith('../')) return '';
-			return stmt; // keep
-		}
-		// Named/namespace import
-		m = /from\s*['"]([^'"]+)['"]/m.exec(stmt);
-		if (!m) return stmt; // not recognized, keep
-		const mod = m[1];
-		if (mod === '@prisma/client' || mod.startsWith('./') || mod.startsWith('../')) return '';
-		return stmt; // keep
+		// Match type-only prisma import
+		const typePrisma = /import\s+type\s*\{[\s\S]*?\}\s*from\s*['"]@prisma\/client['"];?/.exec(stmt);
+		if (typePrisma) return '';
+		return stmt; // keep everything else
 	});
+}
+
+function getExistingPrismaValueNames(content) {
+	const names = new Set();
+	const rx = /import\s*\{\s*([^}]+)\s*\}\s*from\s*['"]@prisma\/client['"];?/gm;
+	let m;
+	while ((m = rx.exec(content))) {
+		m[1]
+			.split(',')
+			.map((s) => s.trim())
+			.filter(Boolean)
+			.forEach((n) => names.add(n));
+	}
+	return names;
+}
+
+function getExistingLocalTypeImports(content) {
+	// Map of module -> Set(type names) for import type { ... } from './...'
+	const map = new Map();
+	const rx = /import\s+type\s*\{\s*([^}]+)\s*\}\s*from\s*['"](\.\.\/|\.\/)[^'"]+['"];?/gm;
+	let m;
+	while ((m = rx.exec(content))) {
+		const names = m[1]
+			.split(',')
+			.map((s) => s.trim())
+			.filter(Boolean);
+		const mod = m[2] ? m[0].match(/from\s*['"]([^'"]+)['"]/)[1] : null;
+		if (!mod) continue;
+		if (!map.has(mod)) map.set(mod, new Set());
+		const set = map.get(mod);
+		names.forEach((n) => set.add(n));
+	}
+	return map;
 }
 
 function ensureImports(content, parts) {
 	// Replace any prior prisma/local type imports with freshly generated ones
 	let updated = stripTargetedImports(content);
 	const importLines = [];
+	// Local type imports: add only missing names to avoid duplicating existing relative imports
 	if (parts.localImports.size) {
+		const existingLocal = getExistingLocalTypeImports(updated);
 		for (const [mod, namesSet] of parts.localImports.entries()) {
 			const namesArr = Array.from(namesSet).sort();
-			importLines.push(`import type { ${namesArr.join(', ')} } from '${mod}';`);
+			const already = existingLocal.get(mod) || new Set();
+			const missing = namesArr.filter((n) => !already.has(n));
+			if (missing.length) {
+				importLines.push(`import type { ${missing.join(', ')} } from '${mod}';`);
+			}
 		}
 	}
 	if (parts.prismaTypeNames && parts.prismaTypeNames.size) {
@@ -143,7 +173,11 @@ function ensureImports(content, parts) {
 		);
 	}
 	if (parts.prismaValueNames && parts.prismaValueNames.size) {
-		importLines.push(`import { ${Array.from(parts.prismaValueNames).sort().join(', ')} } from '@prisma/client';`);
+		const existingValues = getExistingPrismaValueNames(updated);
+		const missing = Array.from(parts.prismaValueNames).filter((n) => !existingValues.has(n));
+		if (missing.length) {
+			importLines.push(`import { ${missing.sort().join(', ')} } from '@prisma/client';`);
+		}
 	}
 	if (importLines.length) {
 		const toInsert = importLines.join('\n');
@@ -290,6 +324,7 @@ function main() {
 	const folder = process.argv[3] || 'general';
 	const OUTPUT_DIR = path.join(ROOT, 'types', folder);
 	const mode = process.argv[4] || 'shape'; // 'dto' | 'shape' | 'map'
+	const excludeJunction = process.argv.includes('--exclude-junction');
 
 	// Helper: read all prisma schemas (supports prisma/schemas or prisma root)
 	const prismaRoot = path.join(ROOT, 'prisma');
@@ -354,13 +389,23 @@ function main() {
 		return null;
 	}
 
-	function isJunctionModel(modelsMap, modelName) {
+	function isJunctionModel(modelsMap, modelName, hiddenSet = new Set()) {
+		// Definitive signal: @hidden tag above model declaration
+		if (hiddenSet.has(modelName)) return true;
 		const model = modelsMap.get(modelName);
 		if (!model) return false;
 		const relFields = model.fields.filter((f) => /@relation\b/.test(f.attrs) || modelsMap.has(f.baseType));
-		if (relFields.length !== 2) return false;
-		const distinct = Array.from(new Set(relFields.map((f) => f.baseType)));
-		if (distinct.length !== 2) return false;
+		const distinctRelated = Array.from(new Set(relFields.map((f) => f.baseType))).filter(Boolean);
+		if (distinctRelated.length < 2) return false;
+		// Helper: does related model expose an array relation back to this model (many-to-this)?
+		const relatedHasManyToThis = (relatedModelName) => {
+			const related = modelsMap.get(relatedModelName);
+			if (!related) return false;
+			return related.fields.some((rf) => rf.baseType === modelName && rf.isArray === true);
+		};
+		// All related models should have many-to-this to be a pure junction
+		const allManyBack = distinctRelated.every((r) => relatedHasManyToThis(r));
+		if (!allManyBack) return false;
 		// Exclude models that have meaningful non-relation fields (beyond ids and timestamps)
 		const nonRel = model.fields.filter((f) => !(/@relation\b/.test(f.attrs) || modelsMap.has(f.baseType)));
 		const allowed = new Set(['created_at', 'updated_at']);
@@ -383,10 +428,11 @@ function main() {
 		const hiddenSet = buildHiddenSet(allSchemaContent);
 		const allModels = Array.from(parsed.models.keys());
 		for (const name of allModels) {
-			// Skip explicitly hidden models (assumed junction or internal-only)
-			if (hiddenSet.has(name)) continue;
-			// Skip junction tables
-			if (isJunctionModel(parsed.models, name)) continue;
+			// When requested, skip junction tables (either explicit @hidden or structurally detected)
+			if (excludeJunction) {
+				if (hiddenSet.has(name)) continue;
+				if (isJunctionModel(parsed.models, name, hiddenSet)) continue;
+			}
 			const typeName = modelNameToTypeName(name);
 			// If a type already exists anywhere in types/, update it in place; otherwise write to derived namespace folder
 			const existingPath = findExistingTypePath(typeName);
@@ -405,6 +451,8 @@ function main() {
 				rootDir: ROOT,
 				modelName: name,
 				targetDir: path.dirname(outPath),
+				hiddenModels: hiddenSet,
+				excludeJunctions: excludeJunction,
 			});
 			if (existingPath) {
 				upsertTypeInFile(outPath, code, typeName);
@@ -424,7 +472,12 @@ function main() {
 			continue;
 		}
 		if (mode === 'shape') {
-			const typeCode = generateModelTypeFromSchemas({ rootDir: ROOT, modelName: name, targetDir: OUTPUT_DIR });
+			const typeCode = generateModelTypeFromSchemas({
+				rootDir: ROOT,
+				modelName: name,
+				targetDir: OUTPUT_DIR,
+				excludeJunctions: excludeJunction,
+			});
 			if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 			const typeName = modelNameToTypeName(name);
 			const outPath = path.join(OUTPUT_DIR, `${typeName}.ts`);

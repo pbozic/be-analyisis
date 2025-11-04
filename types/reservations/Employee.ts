@@ -7,6 +7,8 @@ import type { ScheduleEmployee } from './ScheduleEmployee.js';
 import type { Booking } from './Booking.js';
 import type { BusinessUser } from '../businessUsers/BusinessUser.js';
 import type { ScheduleSlot } from './ScheduleSlot.js';
+import type { Schedule } from './Schedule.js';
+import type { ServiceAssignment } from './ServiceAssignment.js';
 
 export const CreateEmployeeSchema = z
 	.object({
@@ -43,7 +45,7 @@ export type Employee = {
 	employee_id: string;
 	reservation_module_id: string;
 	reservation_module: ReservationModule;
-	assignments: Service[];
+	assignments: ServiceAssignment[];
 	schedules: ScheduleEmployee[];
 	bookings: Booking[];
 	first_name?: string | null;

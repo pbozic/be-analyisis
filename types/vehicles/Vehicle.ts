@@ -1,4 +1,3 @@
-import type { vehicle_drivers } from '@prisma/client';
 import { VEHICLE_CATEGORY, VEHICLE_CLASS } from '@prisma/client';
 
 import type { Document } from '../documents/Document.js';
@@ -9,6 +8,7 @@ import type { Driver } from '../drivers/Driver.js';
 import type { BusinessPremise } from '../invoices/BusinessPremise.js';
 import type { Invoice } from '../invoices/Invoice.js';
 import type { TransportModule } from '../transport/TransportModule.js';
+import type { VehicleDriver } from '../drivers/VehicleDriver.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
@@ -25,7 +25,7 @@ export type Vehicle = {
 	created_at: string;
 	updated_at: string;
 	documents: Document[];
-	drivers: vehicle_drivers[];
+	drivers: VehicleDriver[];
 	vehicle_specification_id?: string | null;
 	vehicle_specification?: VehicleSpecification | null;
 	taxi_orders: TaxiOrder[];

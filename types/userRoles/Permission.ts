@@ -3,6 +3,7 @@ import { MODULE_TYPE, PERMISSION_SCOPE } from '@prisma/client';
 
 import type { Role } from './Role.js';
 import type { Action } from '../subscriptions/Action.js';
+import type { RolePermission } from './RolePermission.js';
 
 export const CreatePermissionSchema = z.object({
 	role_id: z.string().uuid(),
@@ -28,6 +29,6 @@ export type Permission = {
 	limit?: number | null;
 	scope: PERMISSION_SCOPE;
 	group?: string | null;
-	roles: Role[];
+	roles: RolePermission[];
 	action?: Action | null;
 };

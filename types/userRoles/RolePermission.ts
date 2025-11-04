@@ -1,7 +1,8 @@
 import { z } from 'zod';
-import type { role_permission } from '../../prisma/schemas/interfaces';
 
-export type RolePermission = role_permission;
+import type { role_permission } from '../../prisma/schemas/interfaces';
+import type { Role } from './Role.js';
+import type { Permission } from './Permission.js';
 
 export const GetRolePermissionsParamsSchema = z.object({
 	role_id: z.string().uuid(),
@@ -31,3 +32,11 @@ export const RolePermissionsMatrixBodySchema = z.object({
 	role_ids: z.array(z.string().uuid()).min(1),
 });
 export type RolePermissionsMatrixBody = z.infer<typeof RolePermissionsMatrixBodySchema>;
+
+export type RolePermission = {
+	role_permission_id: string;
+	role_id: string;
+	permission_id: string;
+	role: Role;
+	permission: Permission;
+};

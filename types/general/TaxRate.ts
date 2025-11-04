@@ -1,5 +1,5 @@
 import type { MenuItem } from '../menuItems/MenuItem.js';
-import type { Service } from '../reservation/Service.js';
+import type { Service } from '../reservations/Service.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 

@@ -1,7 +1,8 @@
 import { MODULE_TYPE } from '@prisma/client';
 
+import type { ReservationModule } from '../reservations/ReservationModule.js';
+import type { Action } from './Action.js';
 import type { ActionBundleAction } from './ActionBundleAction.js';
-import type { ReservationModule } from '../reservation/ReservationModule.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 

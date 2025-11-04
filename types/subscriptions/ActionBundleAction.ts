@@ -1,9 +1,11 @@
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-import type { MODULE_TYPE } from '@prisma/client';
+import { MODULE_TYPE } from '@prisma/client';
 
 import type { ActionBundle } from '../subscriptions/ActionBundle.js';
 import type { Action } from '../subscriptions/Action.js';
+import type { ActionBundle } from './ActionBundle.js';
+import type { Action } from './Action.js';
 
 export type ActionBundleAction = {
 	action_bundle_action_id: string;

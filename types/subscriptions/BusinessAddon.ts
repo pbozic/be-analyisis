@@ -1,5 +1,5 @@
 import type { Addon } from './Addon.js';
-import type { ReservationModule } from '../reservation/ReservationModule.js';
+import type { ReservationModule } from '../reservations/ReservationModule.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 

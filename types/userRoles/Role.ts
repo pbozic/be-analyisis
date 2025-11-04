@@ -2,8 +2,10 @@ import { z } from 'zod';
 import { MODULE_TYPE } from '@prisma/client';
 
 import type { Permission } from './Permission.js';
-import type { UserRole } from './UserRole.js';
 import type { Business } from '../business/Business.js';
+import type { User } from '../users/User.js';
+import type { RolePermission } from './RolePermission.js';
+import type { UserRole } from './UserRole.js';
 
 // --- SCHEMAS ---
 
@@ -23,7 +25,7 @@ export type Role = {
 	name: string;
 	module: MODULE_TYPE;
 	business_id?: string | null;
-	permissions: Permission[];
+	permissions: RolePermission[];
 	users: UserRole[];
 	is_admin: boolean;
 	business?: Business | null;

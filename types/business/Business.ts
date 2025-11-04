@@ -1,5 +1,3 @@
-import type { user_favorite_businesses } from '@prisma/client';
-
 import type { Address } from '../addresses/Address.js';
 import type { Document } from '../documents/Document.js';
 import type { WordBuy } from '../promoWords/WordBuy.js';
@@ -11,11 +9,14 @@ import type { BusinessMoneyFlow } from '../payments/BusinessMoneyFlow.js';
 import type { Role } from '../userRoles/Role.js';
 import type { BusinessUser } from '../businessUsers/BusinessUser.js';
 import type { BusinessType } from './BusinessType.js';
-import type { ReservationModule } from '../reservation/ReservationModule.js';
+import type { ReservationModule } from '../reservations/ReservationModule.js';
 import type { TransportModule } from '../transport/TransportModule.js';
 import type { StoresModule } from '../stores/StoresModule.js';
 import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
 import type { CrmModule } from '../crm/CrmModule.js';
+import type { User } from '../users/User.js';
+import type { UserFavoriteBusiness } from '../users/UserFavoriteBusiness.js';
+import type { BusinessToType } from './BusinessToType.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
@@ -51,13 +52,13 @@ export type Business = {
 	first_activated_at?: string | null;
 	active: boolean;
 	sales_representative_id?: string | null;
-	user_favorite_businesses: user_favorite_businesses[];
+	user_favorite_businesses: UserFavoriteBusiness[];
 	scoring_points: ScoringPoint[];
 	account_actions: AccountAction[];
 	business_money_flows: BusinessMoneyFlow[];
 	roles: Role[];
 	business_users: BusinessUser[];
-	types: BusinessType[];
+	types: BusinessToType[];
 	reservation_module?: ReservationModule | null;
 	transport_module?: TransportModule | null;
 	stores_module?: StoresModule | null;

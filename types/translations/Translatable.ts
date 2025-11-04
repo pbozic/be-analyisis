@@ -1,18 +1,20 @@
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-import type { categories, menu_categories, menu_items, translations } from '@prisma/client';
-
 import type { Word } from '../promoWords/Word.js';
 import type { PromoSection } from '../promoSections/PromoSection.js';
+import type { Translation } from './Translation.js';
+import type { Category } from '../menus/Category.js';
+import type { MenuCategory } from '../menus/MenuCategory.js';
+import type { MenuItem } from '../menuItems/MenuItem.js';
 
 export type Translatable = {
 	translatable_id: string;
-	translations: translations[];
+	translations: Translation[];
 	words: Word[];
-	categories: categories[];
+	categories: Category[];
 	promo_sections: PromoSection[];
-	menu_categories_names: menu_categories[];
-	menu_categories_descriptions: menu_categories[];
-	menu_items_names: menu_items[];
-	menu_items_descriptions: menu_items[];
+	menu_categories_names: MenuCategory[];
+	menu_categories_descriptions: MenuCategory[];
+	menu_items_names: MenuItem[];
+	menu_items_descriptions: MenuItem[];
 };

@@ -10,8 +10,9 @@ import type { Employee } from './Employee.js';
 import type { Booking } from './Booking.js';
 import type { Customer } from './Customer.js';
 import type { ServiceCategory } from './ServiceCategory.js';
-import type { UserRole } from '../userRoles/UserRole.js';
 import type { UserPermission } from '../userRoles/UserPermission.js';
+import type { BookingCourseTime } from './BookingCourseTime.js';
+import type { BookingCourseParticipant } from './BookingCourseParticipant.js';
 import type { NotificationTemplate } from '../reservationNotifications/NotificationTemplate.js';
 import type { NotificationMapping } from '../reservationNotifications/NotificationMapping.js';
 import type { NotificationPreference } from '../reservationNotifications/NotificationPreference.js';
@@ -19,6 +20,8 @@ import type { NotificationProviderCredential } from '../reservationNotifications
 import type { NotificationMessage } from '../reservationNotifications/NotificationMessage.js';
 import type { File } from '../files/File.js';
 import type { Reviewable } from '../reviews/Reviewable.js';
+import type { User } from '../users/User.js';
+import type { UserRole } from '../userRoles/UserRole.js';
 
 /**
  * --- SCHEMAS ---
@@ -67,6 +70,8 @@ export type ReservationModule = {
 	service_categories: ServiceCategory[];
 	user_roles: UserRole[];
 	user_permissions: UserPermission[];
+	booking_course_times: BookingCourseTime[];
+	booking_course_participants: BookingCourseParticipant[];
 	notification_templates: NotificationTemplate[];
 	notification_mappings: NotificationMapping[];
 	notification_preferences: NotificationPreference[];

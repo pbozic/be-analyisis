@@ -7,6 +7,7 @@ import type { MenuItemStockChange } from './MenuItemStockChange.js';
 import type { LineItem } from './LineItem.js';
 import type { MenuItemVersion } from './MenuItemVersion.js';
 import type { TaxRate } from '../general/TaxRate.js';
+import type { AllergensToMenuItem } from './AllergensToMenuItem.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
@@ -16,7 +17,7 @@ export type MenuItem = {
 	names?: Translatable | null;
 	description_translatable_id: string;
 	description?: Translatable | null;
-	allergens: Allergen[];
+	allergens: AllergensToMenuItem[];
 	spicy_level?: number | null;
 	unit_size?: string | null;
 	price: number;

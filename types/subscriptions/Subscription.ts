@@ -2,9 +2,12 @@
 
 // --- CREATE/UPDATE/DELETE SCHEMAS ---
 import { z } from 'zod';
+
 // --- TYPES ---
-import type { business } from '@prisma/client';
 import { MODULE_TYPE } from '@prisma/client';
+
+import type { Action } from '../subscriptions/Action.js';
+import type { ReservationModule } from '../reservations/ReservationModule.js';
 
 export const CreateSubscriptionSchema = z.object({
 	module: z.nativeEnum(MODULE_TYPE),
@@ -70,15 +73,6 @@ export type CreateAddonActionSchema = z.infer<typeof CreateAddonActionSchema>;
 export type CreateBusinessAddonSchema = z.infer<typeof CreateBusinessAddonSchema>;
 export type CreateBusinessUsageSchema = z.infer<typeof CreateBusinessUsageSchema>;
 
-export type ReservationModule = {
-	business_id: string;
-	subscription_id: string;
-	subscription: Subscription;
-	business: business;
-	addons: BusinessAddon[];
-	usages: BusinessUsage[];
-};
-
 export type Subscription = {
 	subscription_id: string;
 	module: MODULE_TYPE;
@@ -89,25 +83,6 @@ export type Subscription = {
 	business_modules: ReservationModule[];
 };
 
-export type Addon = {
-	addon_id: string;
-	module: MODULE_TYPE;
-	name: string;
-	price_cents: number;
-	stripe_price_id: string;
-	actions: AddonAction[];
-	business_addons: BusinessAddon[];
-};
-
-export type Action = {
-	action_id: string;
-	module: MODULE_TYPE;
-	name: string;
-	subscription_actions: SubscriptionAction[];
-	addon_actions: AddonAction[];
-	business_usages: BusinessUsage[];
-};
-
 export type SubscriptionAction = {
 	id: string;
 	subscription_id: string;
@@ -116,34 +91,4 @@ export type SubscriptionAction = {
 	limit?: number;
 	subscription: Subscription;
 	action: Action;
-};
-
-export type AddonAction = {
-	id: string;
-	addon_id: string;
-	action_id: string;
-	module: MODULE_TYPE;
-	limit?: number;
-	addon: Addon;
-	action: Action;
-};
-
-export type BusinessAddon = {
-	business_addon_id: string;
-	addon_id: string;
-	reservation_module_id?: string;
-	sms_module_id?: string;
-	ads_module_id?: string;
-	addon: Addon;
-	reservation_module?: ReservationModule;
-};
-
-export type BusinessUsage = {
-	business_usage_id: string;
-	action_id: string;
-	used: number;
-	reset_date?: string;
-	reservation_module_id?: string;
-	action: Action;
-	reservation_module?: ReservationModule;
 };

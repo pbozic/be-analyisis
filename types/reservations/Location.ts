@@ -6,6 +6,7 @@ import type { Schedule } from './Schedule.js';
 import type { Booking } from './Booking.js';
 import type { Address } from '../addresses/Address.js';
 import type { Service } from './Service.js';
+import type { ServiceLocation } from './ServiceLocation.js';
 
 export const CreateLocationSchema = z.object({
 	name: z.string().min(1),
@@ -42,5 +43,5 @@ export type Location = {
 	schedules: Schedule[];
 	bookings: Booking[];
 	address?: Address | null;
-	service_locations: Service[];
+	service_locations: ServiceLocation[];
 };

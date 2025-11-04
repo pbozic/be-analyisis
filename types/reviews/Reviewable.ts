@@ -1,19 +1,22 @@
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-import type { drivers, food_drinks_module, reviews, stores_module, transport_module } from '@prisma/client';
-
 import type { User } from '../users/User.js';
-import type { ReservationModule } from '../reservation/ReservationModule.js';
-import type { Booking } from '../reservation/Booking.js';
+import type { ReservationModule } from '../reservations/ReservationModule.js';
+import type { Booking } from '../reservations/Booking.js';
+import type { Review } from './Review.js';
+import type { Driver } from '../drivers/Driver.js';
+import type { TransportModule } from '../transport/TransportModule.js';
+import type { StoresModule } from '../stores/StoresModule.js';
+import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
 
 export type Reviewable = {
 	reviewable_id: string;
-	reviews: reviews[];
+	reviews: Review[];
 	user: User[];
-	driver: drivers[];
+	driver: Driver[];
 	reservation_module: ReservationModule[];
 	reservation_booking: Booking[];
-	transport_module: transport_module[];
-	stores_module: stores_module[];
-	food_drinks_module: food_drinks_module[];
+	transport_module: TransportModule[];
+	stores_module: StoresModule[];
+	food_drinks_module: FoodDrinksModule[];
 };

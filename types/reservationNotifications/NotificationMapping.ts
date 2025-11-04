@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { JsonObjectSchema } from './_common.js';
+
 export const CreateNotificationMappingSchema = z.object({
 	reservation_module_id: z.string().uuid(),
 	notification_event_id: z.string().uuid(),

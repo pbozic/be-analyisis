@@ -5,10 +5,8 @@ import type { Vehicle } from '../vehicles/Vehicle.js';
 import type { User } from '../users/User.js';
 import type { BusinessUser } from '../businessUsers/BusinessUser.js';
 import type { BusinessClient } from '../crm/BusinessClient.js';
-import type { TaxiOrderSent } from './TaxiOrderSent.js';
 import type { Document } from '../documents/Document.js';
 import type { DriverHistoryLocation } from '../drivers/DriverHistoryLocation.js';
-import type { WalletTransferHistory } from '../wallet/WalletTransferHistory.js';
 import type { Transaction } from '../payments/Transaction.js';
 import type { Cashback } from '../cashback/Cashback.js';
 import type { ScoringPoint } from '../general/ScoringPoint.js';
@@ -16,6 +14,8 @@ import type { LateEvent } from '../general/LateEvent.js';
 import type { Invoice } from '../invoices/Invoice.js';
 import type { Review } from '../reviews/Review.js';
 import type { TransportModule } from '../transport/TransportModule.js';
+import type { TaxiOrderSent } from './TaxiOrderSent.js';
+import type { WalletTransferHistory } from '../wallet/WalletTransferHistory.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 

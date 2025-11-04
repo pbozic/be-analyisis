@@ -1,14 +1,17 @@
 import { z } from 'zod';
 import { BOOKING_STATUS } from '@prisma/client';
 
+import { addValideBookingSchema } from '../../lib/bookingHelpers';
 import type { ReservationModule } from './ReservationModule.js';
 import type { Location } from './Location.js';
 import type { Employee } from './Employee.js';
 import type { Service } from './Service.js';
 import type { Customer } from './Customer.js';
-import type { BookingHistoryLog } from '../reservations/BookingHistoryLog.js';
+import type { BookingHistoryLog } from './BookingHistoryLog.js';
 import type { Reviewable } from '../reviews/Reviewable.js';
 import type { BookingCourseTime } from './BookingCourseTime.js';
+import type { BookingCourseParticipant } from './BookingCourseParticipant.js';
+import { UpdateCustomerSchema } from './Customer';
 
 // --- SCHEMAS ---
 export const ListBookingsParamsSchema = z.object({
@@ -220,10 +223,6 @@ export const UpdateCourseParticipantSchema = z.object({
 });
 // --- TYPES ---
 
-export type BookingHistoryLog = booking_history_log;
-export type BookingCourseTime = booking_course_time;
-export type BookingCourseParticipant = booking_course_participant;
-
 export type CreateBookingInput = z.infer<typeof CreateBookingSchema>;
 export type CreateMultipleBookingsInput = z.infer<typeof CreateMultipleBookingsSchema>;
 export type CreateBookingSingleInput = Omit<CreateBookingInput, 'service_ids'> & {
@@ -279,5 +278,5 @@ export type Booking = {
 	people_allowed?: number | null;
 	people_booked?: number | null;
 	booking_course_time: BookingCourseTime[];
-	booking_course_participant: Customer[];
+	booking_course_participant: BookingCourseParticipant[];
 };

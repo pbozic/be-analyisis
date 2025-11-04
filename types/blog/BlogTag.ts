@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { BlogPost } from './BlogPost.js';
+import type { BlogTagsBlogPost } from './BlogTagsBlogPost.js';
 
 // blog_categories.ts
 
@@ -24,5 +24,5 @@ export type BlogTag = {
 	blog_tags_id: string;
 	name: string;
 	description?: string | null;
-	blog_posts: BlogPost[];
+	blog_posts: BlogTagsBlogPost[];
 };

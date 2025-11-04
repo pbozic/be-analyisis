@@ -1,7 +1,8 @@
 import { MODULE_TYPE } from '@prisma/client';
 
-import type { AddonAction } from './AddonAction.js';
 import type { BusinessAddon } from './BusinessAddon.js';
+import type { Action } from './Action.js';
+import type { AddonAction } from './AddonAction.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 

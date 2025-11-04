@@ -5,7 +5,7 @@ import type { Business } from '../business/Business.js';
 import type { Address } from '../addresses/Address.js';
 import type { Allowance } from '../familyUsers/Allowance.js';
 import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
-import type { Employee } from '../reservation/Employee.js';
+import type { Employee } from '../reservations/Employee.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 

@@ -4,6 +4,7 @@ import { z } from 'zod';
 import type { ReservationModule } from './ReservationModule.js';
 import type { Booking } from './Booking.js';
 import type { User } from '../users/User.js';
+import type { BookingCourseParticipant } from './BookingCourseParticipant.js';
 
 export const CreateCustomerSchema = z.object({
 	first_name: z.string(),
@@ -34,5 +35,5 @@ export type Customer = {
 	bookings: Booking[];
 	user_id?: string | null;
 	user?: User | null;
-	booking_course_participants: Booking[];
+	booking_course_participants: BookingCourseParticipant[];
 };

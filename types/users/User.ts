@@ -1,4 +1,3 @@
-import type { user_favorite_businesses, user_favorite_service_links, user_tutorials } from '@prisma/client';
 import { USER_ROLES } from '@prisma/client';
 
 import type { UserRole } from '../userRoles/UserRole.js';
@@ -29,10 +28,19 @@ import type { Payment } from '../payments/Payment.js';
 import type { PromoAnalytic } from '../promoAnalytics/PromoAnalytic.js';
 import type { DailyMealSubscription } from '../dailymeal/DailyMealSubscription.js';
 import type { UserMoneyFlow } from '../payments/UserMoneyFlow.js';
-import type { Customer } from '../reservation/Customer.js';
+import type { Customer } from '../reservations/Customer.js';
 import type { BookingHistoryLog } from '../reservations/BookingHistoryLog.js';
 import type { UserPermission } from '../userRoles/UserPermission.js';
 import type { Allergen } from '../menuItems/Allergen.js';
+import type { ServiceLink } from './ServiceLink.js';
+import type { Business } from '../business/Business.js';
+import type { Tutorial } from './Tutorial.js';
+import type { Role } from '../userRoles/Role.js';
+import type { UserFavoriteServiceLink } from './UserFavoriteServiceLink.js';
+import type { UserFavoriteDriver } from './UserFavoriteDriver.js';
+import type { UserFavoriteBusiness } from './UserFavoriteBusiness.js';
+import type { UserTutorial } from './UserTutorial.js';
+import type { UserAllergen } from './UserAllergen.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
 
@@ -104,11 +112,11 @@ export type User = {
 	allow_marketing_push_notifications?: boolean | null;
 	allow_ads_personalization?: boolean | null;
 	allow_newsletter?: boolean | null;
-	user_favorite_service_links: user_favorite_service_links[];
-	user_favorite_drivers: Driver[];
-	user_favorite_businesses: user_favorite_businesses[];
+	user_favorite_service_links: UserFavoriteServiceLink[];
+	user_favorite_drivers: UserFavoriteDriver[];
+	user_favorite_businesses: UserFavoriteBusiness[];
 	scoring_points: ScoringPoint[];
-	tutorials: user_tutorials[];
+	tutorials: UserTutorial[];
 	user_tutorial_state?: UserTutorialState | null;
 	account_actions: AccountAction[];
 	created_account_actions: AccountAction[];
@@ -121,5 +129,5 @@ export type User = {
 	booking_history_log: BookingHistoryLog[];
 	roles: UserRole[];
 	user_permissions: UserPermission[];
-	user_allergens: Allergen[];
+	user_allergens: UserAllergen[];
 };

@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { NOTIFICATION_CHANNEL } from '@prisma/client';
 
-import type { ReservationModule } from '../reservation/ReservationModule.js';
+import { NotificationChannelEnum } from '../reservationNotifications/enums.js';
+import type { ReservationModule } from '../reservations/ReservationModule.js';
 import type { NotificationEvent } from './NotificationEvent.js';
 
 export const UpsertNotificationPreferenceSchema = z.object({

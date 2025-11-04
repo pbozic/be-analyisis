@@ -4,6 +4,8 @@ import { TEMPLATE_VERSION_STATUS } from '@prisma/client';
 import type { NotificationTemplate } from './NotificationTemplate.js';
 import type { NotificationMapping } from './NotificationMapping.js';
 import type { NotificationMessage } from './NotificationMessage.js';
+import { JsonObjectSchema } from './_common.js';
+import { TemplateVersionStatusEnum } from './enums.js';
 
 // On create: version number is computed in DAO (next integer for the template)
 export const CreateNotificationTemplateVersionSchema = z.object({

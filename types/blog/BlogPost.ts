@@ -6,6 +6,7 @@ import type { File } from '../files/File.js';
 import type { User } from '../users/User.js';
 import type { BlogCategory } from './BlogCategory.js';
 import type { BlogTag } from './BlogTag.js';
+import type { BlogTagsBlogPost } from './BlogTagsBlogPost.js';
 
 // =======================
 // Editor.js Zod Schemas
@@ -102,5 +103,5 @@ export type BlogPost = {
 	updated_at: string;
 	author: User;
 	category?: BlogCategory | null;
-	tags: BlogTag[];
+	tags: BlogTagsBlogPost[];
 };

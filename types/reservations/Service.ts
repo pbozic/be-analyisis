@@ -7,6 +7,8 @@ import type { Employee } from './Employee.js';
 import type { Booking } from './Booking.js';
 import type { Location } from './Location.js';
 import type { TaxRate } from '../general/TaxRate.js';
+import type { ServiceAssignment } from './ServiceAssignment.js';
+import type { ServiceLocation } from './ServiceLocation.js';
 
 export const CreateServiceSchema = z.object({
 	service_category_id: z.string().uuid().optional(),
@@ -92,8 +94,8 @@ export type Service = {
 	people_allowed?: number | null;
 	reservation_module: ReservationModule;
 	service_category?: ServiceCategory | null;
-	assigned_employees: Employee[];
+	assigned_employees: ServiceAssignment[];
 	bookings: Booking[];
-	service_locations: Location[];
+	service_locations: ServiceLocation[];
 	tax_rate?: TaxRate | null;
 };

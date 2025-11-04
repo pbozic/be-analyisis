@@ -1,4 +1,5 @@
-import type { user_tutorials } from '@prisma/client';
+import type { User } from './User.js';
+import type { UserTutorial } from './UserTutorial.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
@@ -10,5 +11,5 @@ export type Tutorial = {
 	mandatory: boolean;
 	createdAt: string;
 	retiredAt?: string | null;
-	user_tutorials: user_tutorials[];
+	user_tutorials: UserTutorial[];
 };

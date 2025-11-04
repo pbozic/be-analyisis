@@ -1,9 +1,11 @@
 // --- ENUMS ---
 import { z } from 'zod';
+import { SCHEDULE_SLOT_EXCEPTION_TYPE } from '@prisma/client';
 
-import type { Location } from './Location.js';
-import type { ScheduleEmployee } from './ScheduleEmployee.js';
 import type { ScheduleSlot } from './ScheduleSlot.js';
+import type { Location } from './Location.js';
+import type { Employee } from './Employee.js';
+import type { ScheduleEmployee } from './ScheduleEmployee.js';
 
 export const CreateScheduleSchema = z.object({
 	location_id: z.string().uuid(),
@@ -212,15 +214,8 @@ export type OverwriteMultipleSchedulesInput = z.infer<typeof OverwriteMultipleSc
 export type UpdateScheduleWithEmployeesInput = z.infer<typeof UpdateScheduleWithEmployeesSchema>;
 export type CreateScheduleWithEmployeesInput = z.infer<typeof CreateScheduleWithEmployeesSchema>;
 
-export type ScheduleWithoutEmployees = Omit<schedule, 'schedule_employees'>;
+export type ScheduleWithoutEmployees = Omit<Schedule, 'schedule_employees'>;
 
-export type ScheduleEmployee = schedule_employee;
-
-export type ScheduleSlot = schedule_slot;
-
-export type ScheduleSlotException = schedule_slot_exceptions;
-
-export type BookingSlot = booking_slots;
 export type BookingSlotWithoutId = CreateBookingSlotSchemaWithIdInput;
 export type BookingSlotWithId = CreateBookingSlotSchemaWithBookingIdInput;
 export type CreateScheduleSlotWithBookingSlots = CreateScheduleSlotWithBookingSlotsInput;

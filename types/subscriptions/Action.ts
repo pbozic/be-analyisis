@@ -1,10 +1,12 @@
 import { MODULE_TYPE } from '@prisma/client';
 
-import type { ActionBundleAction } from './ActionBundleAction.js';
-import type { AddonAction } from './AddonAction.js';
 import type { BusinessUsage } from './BusinessUsage.js';
 import type { Permission } from '../userRoles/Permission.js';
 import type { UserPermission } from '../userRoles/UserPermission.js';
+import type { ActionBundle } from './ActionBundle.js';
+import type { Addon } from './Addon.js';
+import type { ActionBundleAction } from './ActionBundleAction.js';
+import type { AddonAction } from './AddonAction.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 

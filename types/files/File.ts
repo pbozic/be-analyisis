@@ -5,7 +5,7 @@ import type { Category } from '../menus/Category.js';
 import type { BlogPost } from '../blog/BlogPost.js';
 import type { StoresModule } from '../stores/StoresModule.js';
 import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
-import type { ReservationModule } from '../reservation/ReservationModule.js';
+import type { ReservationModule } from '../reservations/ReservationModule.js';
 import type { User } from '../users/User.js';
 import type { Driver } from '../drivers/Driver.js';
 import type { MenuItem } from '../menuItems/MenuItem.js';

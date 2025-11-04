@@ -3,7 +3,7 @@ import { MODULE_TYPE, PERMISSION_SCOPE } from '@prisma/client';
 
 import type { User } from '../users/User.js';
 import type { Action } from '../subscriptions/Action.js';
-import type { ReservationModule } from '../reservation/ReservationModule.js';
+import type { ReservationModule } from '../reservations/ReservationModule.js';
 
 export const CreateUserPermissionSchema = z.object({
 	user_id: z.string().uuid(),

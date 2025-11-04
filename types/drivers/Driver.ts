@@ -1,11 +1,8 @@
-import type { vehicle_drivers } from '@prisma/client';
 import { VEHICLE_TYPE } from '@prisma/client';
 
 import type { User } from '../users/User.js';
 import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
-import type { TaxiOrderSent } from '../taxiOrders/TaxiOrderSent.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
-import type { DeliveryOrderSent } from '../deliveryOrders/DeliveryOrderSent.js';
 import type { Document } from '../documents/Document.js';
 import type { DriverHistoryLocation } from './DriverHistoryLocation.js';
 import type { Municipality } from '../regions/Municipality.js';
@@ -17,6 +14,12 @@ import type { DailyMealsModule } from '../dailyMeals/DailyMealsModule.js';
 import type { DailyMealSubscription } from '../dailymeal/DailyMealSubscription.js';
 import type { Reviewable } from '../reviews/Reviewable.js';
 import type { LateEvent } from '../general/LateEvent.js';
+import type { TaxiOrderSent } from '../taxiOrders/TaxiOrderSent.js';
+import type { DeliveryOrderSent } from '../deliveryOrders/DeliveryOrderSent.js';
+import type { VehicleDriver } from './VehicleDriver.js';
+import type { DriverMunicipality } from '../regions/DriverMunicipality.js';
+import type { DailyMealsDriver } from '../dailyMeals/DailyMealsDriver.js';
+import type { UserFavoriteDriver } from '../users/UserFavoriteDriver.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
@@ -31,7 +34,7 @@ export type Driver = {
 	updated_at: string;
 	user_id?: string | null;
 	user?: User | null;
-	vehicles: vehicle_drivers[];
+	vehicles: VehicleDriver[];
 	current_vehicle_id?: string | null;
 	last_used_vehicle_id?: string | null;
 	orders: TaxiOrder[];
@@ -56,13 +59,13 @@ export type Driver = {
 	delivery_orders_toggled?: boolean | null;
 	partner_cash_balance?: number | null;
 	come_to_work_last_sent_at?: string | null;
-	driver_municipalities: Municipality[];
+	driver_municipalities: DriverMunicipality[];
 	current_vehicle?: Vehicle | null;
 	activity_logs: DriverActivityLog[];
 	transport_module?: TransportModule | null;
 	profile_picture_id?: string | null;
 	profile_picture?: File | null;
-	daily_meals: DailyMealsModule[];
+	daily_meals: DailyMealsDriver[];
 	delivers_daily_meals?: boolean | null;
 	on_daily_meals?: boolean | null;
 	scheduled_meals_route?: unknown | null;
@@ -71,5 +74,5 @@ export type Driver = {
 	reviewable_id?: string | null;
 	reviewable?: Reviewable | null;
 	late_events: LateEvent[];
-	user_favorite_drivers: User[];
+	user_favorite_drivers: UserFavoriteDriver[];
 };

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import type { NotificationMessage } from './NotificationMessage.js';
+import { JsonObjectSchema } from './_common.js';
 
 export const CreateNotificationMessageEventSchema = z.object({
 	notification_message_id: z.string().uuid(),

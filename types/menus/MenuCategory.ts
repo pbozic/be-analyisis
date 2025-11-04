@@ -6,6 +6,7 @@ import type { Category } from './Category.js';
 import type { DailyMealCategory } from '../dailyMeals/DailyMealCategory.js';
 import type { DailyMealCategoryPrice } from '../dailyMeals/DailyMealCategoryPrice.js';
 import type { DailyMealInstance } from '../dailyMeals/DailyMealInstance.js';
+import type { MenuCategoriesCategory } from '../general/MenuCategoriesCategory.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
@@ -25,7 +26,7 @@ export type MenuCategory = {
 	order?: number | null;
 	price?: number | null;
 	menu_items_ordered?: unknown | null;
-	menu_categories_categories: Category[];
+	menu_categories_categories: MenuCategoriesCategory[];
 	menu_order_index?: number | null;
 	daily_meal_category_id?: string | null;
 	daily_meal_category_price_id?: string | null;

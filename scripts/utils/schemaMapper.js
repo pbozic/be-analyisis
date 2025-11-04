@@ -145,31 +145,62 @@ function relationFieldType({ rootDir, relatedModelName, models, importBaseDir })
 }
 
 // Detect if a model looks like a many-to-many junction between exactly two models
-function getManyToManyOppositeModel({ models, joinModelName, currentModelName }) {
+function getManyToManyOppositeModel({ models, joinModelName, currentModelName, hiddenModels = new Set() }) {
 	const join = models.get(joinModelName);
 	if (!join) return null;
+
+	// Helper: does related model expose a collection back to the join model?
+	const relatedHasManyToJoin = (relatedModelName) => {
+		const related = models.get(relatedModelName);
+		if (!related) return false;
+		return related.fields.some((rf) => rf.baseType === joinModelName && rf.isArray === true);
+	};
+
+	// Collect relation object fields declared in the join model
 	const relFields = join.fields.filter((f) => {
 		const baseType = f.baseType;
+		// object relations in Prisma are non-scalar and usually carry @relation
 		return (!PRISMA_SCALARS.has(baseType) && baseType && /@relation\b/.test(f.attrs)) || models.has(baseType);
 	});
-	if (relFields.length !== 2) return null;
-	const distinct = Array.from(new Set(relFields.map((f) => f.baseType)));
-	if (distinct.length !== 2) return null;
-	// Exclude "rich" link models that have extra non-relation fields beyond ids/timestamps
-	const nonRel = join.fields.filter(
-		(f) =>
-			!((!PRISMA_SCALARS.has(f.baseType) && f.baseType && /@relation\b/.test(f.attrs)) || models.has(f.baseType))
-	);
-	const allowed = new Set(['created_at', 'updated_at']);
-	const hasMeaningful = nonRel.some((f) => {
-		const name = f.fieldName ? f.fieldName.toLowerCase() : (f.name || '').toLowerCase();
-		const looksLikeId = /(^|_)id$/.test(name);
-		const isAllowed = allowed.has(name) || looksLikeId || /@id\b/.test(f.attrs || '');
-		return !isAllowed;
-	});
-	if (hasMeaningful) return null;
-	if (!distinct.includes(currentModelName)) return null;
-	return distinct[0] === currentModelName ? distinct[1] : distinct[0];
+	const distinctRelated = Array.from(new Set(relFields.map((f) => f.baseType))).filter((n) => !!n);
+
+	// Fast path: if model is explicitly hidden, treat it as a junction when it connects current to at least one other model
+	if (hiddenModels.has(joinModelName)) {
+		if (!distinctRelated.includes(currentModelName)) return null;
+		const candidates = distinctRelated.filter((n) => n !== currentModelName);
+		return candidates.length ? candidates[0] : null;
+	}
+
+	// Structural rule: two or more relations where both the current and the opposite model
+	// expose many-relations back to this join model
+	if (distinctRelated.length < 2) return null;
+	if (!distinctRelated.includes(currentModelName)) return null;
+	if (!relatedHasManyToJoin(currentModelName)) return null;
+
+	// Choose an opposite model that also has many-to-join
+	for (const candidate of distinctRelated) {
+		if (candidate === currentModelName) continue;
+		if (relatedHasManyToJoin(candidate)) {
+			// Optional guard: exclude "rich" link models that have extra non-relation fields beyond ids/timestamps
+			const nonRel = join.fields.filter(
+				(f) =>
+					!(
+						(!PRISMA_SCALARS.has(f.baseType) && f.baseType && /@relation\b/.test(f.attrs)) ||
+						models.has(f.baseType)
+					)
+			);
+			const allowed = new Set(['created_at', 'updated_at']);
+			const hasMeaningful = nonRel.some((f) => {
+				const name = f.fieldName ? f.fieldName.toLowerCase() : (f.name || '').toLowerCase();
+				const looksLikeId = /(^|_)id$/.test(name);
+				const isAllowed = allowed.has(name) || looksLikeId || /@id\b/.test(f.attrs || '');
+				return !isAllowed;
+			});
+			if (hasMeaningful) return null;
+			return candidate;
+		}
+	}
+	return null;
 }
 
 export function buildModelTypeShape({
@@ -178,6 +209,8 @@ export function buildModelTypeShape({
 	models,
 	enums,
 	importBaseDir,
+	hiddenModels = new Set(),
+	excludeJunctions = false,
 }) {
 	const model = models.get(modelName);
 	if (!model) throw new Error(`Model not found: ${modelName}`);
@@ -193,14 +226,15 @@ export function buildModelTypeShape({
 		const isRelation = /@relation\b/.test(f.attrs) || models.has(baseType);
 
 		if (isRelation) {
-			// Handle potential many-to-many via junction models: map to the opposite model if detected
+			// Handle potential many-to-many via junction models
 			let relatedModelName = baseType;
-			// Only consider junction mapping for collection relations (arrays)
-			if (isArray && models.has(baseType)) {
+			// Only consider junction flattening when excludeJunctions=true and relation is a collection
+			if (excludeJunctions && isArray && models.has(baseType)) {
 				const opposite = getManyToManyOppositeModel({
 					models,
 					joinModelName: baseType,
 					currentModelName: modelName,
+					hiddenModels,
 				});
 				if (opposite) relatedModelName = opposite;
 			}
@@ -253,6 +287,45 @@ export function buildModelTypeShape({
 	};
 }
 
+// Determine if a given model is a pure many-to-many junction table
+// Rules:
+// - If present in hiddenModels, it's considered a junction
+// - Must relate to at least two distinct models
+// - Each related model must expose an array relation back to this model (many-to-this)
+// - Exclude "rich" link models that contain meaningful non-relation fields beyond ids/timestamps
+export function isJunctionModel({ models, modelName, hiddenModels = new Set() }) {
+	if (hiddenModels.has(modelName)) return true;
+	const model = models.get(modelName);
+	if (!model) return false;
+
+	const isRelationObjectField = (fld) => {
+		const baseType = fld.baseType;
+		return (!PRISMA_SCALARS.has(baseType) && baseType && /@relation\b/.test(fld.attrs)) || models.has(baseType);
+	};
+	const relFields = model.fields.filter(isRelationObjectField);
+	const distinctRelated = Array.from(new Set(relFields.map((f) => f.baseType))).filter(Boolean);
+	if (distinctRelated.length < 2) return false;
+
+	const relatedHasManyToThis = (relatedModelName) => {
+		const related = models.get(relatedModelName);
+		if (!related) return false;
+		return related.fields.some((rf) => rf.baseType === modelName && rf.isArray === true);
+	};
+	const allManyBack = distinctRelated.every((r) => relatedHasManyToThis(r));
+	if (!allManyBack) return false;
+
+	// Exclude models with meaningful non-relation fields
+	const nonRel = model.fields.filter((f) => !isRelationObjectField(f));
+	const allowed = new Set(['created_at', 'updated_at']);
+	const hasMeaningful = nonRel.some((f) => {
+		const name = (f.fieldName || f.name || '').toLowerCase();
+		const looksLikeId = /(^|_)id$/.test(name);
+		const isAllowed = allowed.has(name) || looksLikeId || /@id\b/.test(f.attrs || '');
+		return !isAllowed;
+	});
+	return !hasMeaningful;
+}
+
 export function renderTypeFile({ typeName, prismaImports, enumImports, localImports, fields }) {
 	const lines = [];
 	// Import local types first (dedupe)
@@ -284,7 +357,13 @@ export function renderTypeFile({ typeName, prismaImports, enumImports, localImpo
 }
 
 // High-level convenience: read all prisma schema files, build a type, and return code
-export function generateModelTypeFromSchemas({ rootDir, modelName, targetDir }) {
+export function generateModelTypeFromSchemas({
+	rootDir,
+	modelName,
+	targetDir,
+	hiddenModels,
+	excludeJunctions = false,
+}) {
 	const prismaRoot = path.join(rootDir, 'prisma');
 	const prismaSchemas = path.join(prismaRoot, 'schemas');
 	let schemaDir = prismaRoot;
@@ -296,7 +375,19 @@ export function generateModelTypeFromSchemas({ rootDir, modelName, targetDir }) 
 
 	const content = schemaFiles.map((p) => fs.readFileSync(p, 'utf8')).join('\n');
 	const { models, enums } = parseModelsAndEnums(content);
+	// Optionally skip generation for junction models when requested
+	if (excludeJunctions && isJunctionModel({ models, modelName, hiddenModels: hiddenModels || new Set() })) {
+		return null;
+	}
 	const importBaseDir = targetDir || path.join(rootDir, 'types', 'dtos');
-	const shape = buildModelTypeShape({ rootDir, modelName, models, enums, importBaseDir });
+	const shape = buildModelTypeShape({
+		rootDir,
+		modelName,
+		models,
+		enums,
+		importBaseDir,
+		hiddenModels,
+		excludeJunctions,
+	});
 	return renderTypeFile(shape);
 }

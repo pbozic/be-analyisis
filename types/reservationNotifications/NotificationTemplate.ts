@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { ReservationModule } from '../reservation/ReservationModule.js';
+import type { ReservationModule } from '../reservations/ReservationModule.js';
 import type { NotificationTemplateVersion } from './NotificationTemplateVersion.js';
 import type { NotificationMessage } from './NotificationMessage.js';
 

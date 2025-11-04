@@ -2,9 +2,9 @@ import { TRANSACTION_TYPE } from '@prisma/client';
 
 import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
-import type { User } from '../users/User.js';
 import type { Document } from '../documents/Document.js';
 import type { WalletFund } from '../wallet/WalletFund.js';
+import type { User } from '../users/User.js';
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 

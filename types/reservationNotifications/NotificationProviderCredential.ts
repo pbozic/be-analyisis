@@ -1,7 +1,9 @@
 import { z } from 'zod';
 import { NOTIFICATION_CHANNEL } from '@prisma/client';
 
-import type { ReservationModule } from '../reservation/ReservationModule.js';
+import { NotificationChannelEnum } from '../reservationNotifications/enums.js';
+import { JsonObjectSchema } from './_common.js';
+import type { ReservationModule } from '../reservations/ReservationModule.js';
 
 export const CreateNotificationProviderCredentialSchema = z.object({
 	reservation_module_id: z.string().uuid(),
