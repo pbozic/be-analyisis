@@ -46,32 +46,6 @@ import { ReviewableResponseSchema } from '../reviews/Reviewable';
 
 extendZodWithOpenApi(z);
 
-/**
- * --- SCHEMAS ---
- */
-export const UpdateReservationModuleSchema = z
-	.object({
-		hours_before_reschedule: z.number().int().min(0).max(168).nullable().optional(), // up to 7 days
-		hours_before_cancel: z.number().int().min(0).max(168).nullable().optional(),
-		publicly_visible: z.boolean().optional(),
-		subscription_id: z.string().uuid().nullable().optional(),
-		subscription_active_until: z.coerce.date().nullable().optional(),
-		subscription_expires_at: z.coerce.date().nullable().optional(),
-	})
-	.openapi('UpdateReservationModule');
-
-export const UpdateReservationSettingsSchema = UpdateReservationModuleSchema.pick({
-	hours_before_reschedule: true,
-	hours_before_cancel: true,
-	publicly_visible: true,
-}).openapi('UpdateReservationSettings');
-
-/**
- * --- INPUT TYPES ---
- */
-export type UpdateReservationModuleInput = z.infer<typeof UpdateReservationModuleSchema>;
-export type UpdateReservationSettingsInput = z.infer<typeof UpdateReservationSettingsSchema>;
-
 export const CreateReservationModuleSchema = z
 	.object({
 		reservation_module_id: z.string().uuid(),
@@ -134,6 +108,14 @@ export const ReservationModuleResponseSchema = z
 		reviewable: ReviewableResponseSchema.nullable().optional(),
 	})
 	.openapi('ReservationModuleResponse');
+
+export const UpdateReservationSettingsSchema = UpdateReservationModuleSchema.pick({
+	hours_before_reschedule: true,
+	hours_before_cancel: true,
+	publicly_visible: true,
+}).openapi('UpdateReservationSettings');
+
+export type UpdateReservationSettingsInput = z.infer<typeof UpdateReservationSettingsSchema>;
 
 export type ReservationModuleResponse = z.infer<typeof ReservationModuleResponseSchema>;
 
