@@ -66,7 +66,7 @@ async function deliveryDriverSeed() {
 				cnt++;
 			}
 			let vehicles = [];
-			await prisma.vehicle_specifications.deleteMany({});
+			// await prisma.vehicle_specifications.deleteMany({});
 			await prisma.vehicles.deleteMany({});
 			let valuesDrivers = await Promise.all(drivers);
 			for (let val of valuesDrivers) {
@@ -80,29 +80,29 @@ async function deliveryDriverSeed() {
 					})
 				);
 			}
-			let vehicle_specifications = [];
-			let vehiclesValues = await Promise.all(vehicles);
-			for (let val of vehiclesValues) {
-				vehicle_specifications.push(
-					prisma.vehicle_specifications.create({
-						data: {
-							class: 'SUV',
-							category: 'STANDARD',
-							people: '1',
-							start_cost: '1',
-							per_kilometre: '1',
-							per_minute: '1',
-							vehicle_id: val.vehicle_id,
-							vehicle: {
-								connect: {
-									vehicle_id: val.vehicle_id,
-								},
-							},
-						},
-					})
-				);
-			}
-			let vehicleSpecValues = await Promise.all(vehicle_specifications);
+			// let vehicle_specifications = [];
+			// let vehiclesValues = await Promise.all(vehicles);
+			// for (let val of vehiclesValues) {
+			// 	vehicle_specifications.push(
+			// 		prisma.vehicle_specifications.create({
+			// 			data: {
+			// 				class: 'SUV',
+			// 				category: 'STANDARD',
+			// 				people: '1',
+			// 				start_cost: '1',
+			// 				per_kilometre: '1',
+			// 				per_minute: '1',
+			// 				vehicle_id: val.vehicle_id,
+			// 				vehicle: {
+			// 					connect: {
+			// 						vehicle_id: val.vehicle_id,
+			// 					},
+			// 				},
+			// 			},
+			// 		})
+			// 	);
+			// }
+			// let vehicleSpecValues = await Promise.all(vehicle_specifications);
 			resolve();
 		} catch (error) {
 			reject(error);
@@ -172,7 +172,7 @@ async function driverSeed() {
 				cnt++;
 			}
 			let vehicles = [];
-			await prisma.vehicle_specifications.deleteMany({});
+			// await prisma.vehicle_specifications.deleteMany({});
 			await prisma.vehicles.deleteMany({});
 			let valuesDrivers = await Promise.all(drivers);
 			for (let val of valuesDrivers) {
@@ -186,29 +186,29 @@ async function driverSeed() {
 					})
 				);
 			}
-			let vehicle_specifications = [];
-			let vehiclesValues = await Promise.all(vehicles);
-			for (let val of vehiclesValues) {
-				vehicle_specifications.push(
-					prisma.vehicle_specifications.create({
-						data: {
-							class: 'SUV',
-							category: 'STANDARD',
-							people: '1',
-							start_cost: '1',
-							per_kilometre: '1',
-							per_minute: '1',
-							vehicle_id: val.vehicle_id,
-							vehicle: {
-								connect: {
-									vehicle_id: val.vehicle_id,
-								},
-							},
-						},
-					})
-				);
-			}
-			let vehicleSpecValues = await Promise.all(vehicle_specifications);
+			// let vehicle_specifications = [];
+			// let vehiclesValues = await Promise.all(vehicles);
+			// for (let val of vehiclesValues) {
+			// 	vehicle_specifications.push(
+			// 		prisma.vehicle_specifications.create({
+			// 			data: {
+			// 				class: 'SUV',
+			// 				category: 'STANDARD',
+			// 				people: '1',
+			// 				start_cost: '1',
+			// 				per_kilometre: '1',
+			// 				per_minute: '1',
+			// 				vehicle_id: val.vehicle_id,
+			// 				vehicle: {
+			// 					connect: {
+			// 						vehicle_id: val.vehicle_id,
+			// 					},
+			// 				},
+			// 			},
+			// 		})
+			// 	);
+			// }
+			// let vehicleSpecValues = await Promise.all(vehicle_specifications);
 			resolve();
 		} catch (error) {
 			reject(error);

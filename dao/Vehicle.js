@@ -10,7 +10,7 @@ const getVehicles = async (args) => {
 		return await prisma.vehicles.findMany({
 			...args,
 			include: {
-				vehicle_specification: true,
+				// vehicle_specification: true,
 				documents: false,
 			},
 		});
@@ -265,7 +265,7 @@ const getVehiclesByDriverId = async (driver_id) => {
 		return await prisma.vehicles.findMany({
 			where: { driver_id },
 			include: {
-				vehicle_specification: true,
+				// vehicle_specification: true,
 				documents: false,
 			},
 		});
@@ -300,12 +300,10 @@ const getVehiclesByClass = async (vehicleClass) => {
 	try {
 		return await prisma.vehicles.findMany({
 			where: {
-				vehicle_specification: {
-					class: vehicleClass,
-				},
+				class: vehicleClass,
 			},
 			include: {
-				vehicle_specification: true,
+				// vehicle_specification: true,
 				documents: false,
 			},
 		});
@@ -324,12 +322,10 @@ const getVehiclesByCategory = async (vehicleCategory) => {
 	try {
 		return await prisma.vehicles.findMany({
 			where: {
-				vehicle_specification: {
-					category: vehicleCategory,
-				},
+				category: vehicleCategory,
 			},
 			include: {
-				vehicle_specification: true,
+				// vehicle_specification: true,
 				documents: false,
 			},
 		});
@@ -349,12 +345,11 @@ const getVehiclesByClassAndCategory = async (vehicleClass, vehicleCategory) => {
 	try {
 		return await prisma.vehicles.findMany({
 			where: {
-				vehicle_specification: {
-					AND: [{ class: vehicleClass }, { category: vehicleCategory }],
-				},
+				class: vehicleClass,
+				category: vehicleCategory,
 			},
 			include: {
-				vehicle_specification: true,
+				// vehicle_specification: true,
 				documents: false,
 			},
 		});
@@ -375,12 +370,10 @@ const getVehiclesOfDriverByClass = async (driverId, vehicleClass) => {
 		return await prisma.vehicles.findMany({
 			where: {
 				driver_id: driverId,
-				vehicle_specification: {
-					class: vehicleClass,
-				},
+				class: vehicleClass,
 			},
 			include: {
-				vehicle_specification: true,
+				// vehicle_specification: true,
 				documents: false,
 			},
 		});
@@ -401,12 +394,10 @@ const getVehiclesOfDriverByCategory = async (driverId, vehicleCategory) => {
 		return await prisma.vehicles.findMany({
 			where: {
 				driver_id: driverId,
-				vehicle_specification: {
-					category: vehicleCategory,
-				},
+				category: vehicleCategory,
 			},
 			include: {
-				vehicle_specification: true,
+				// vehicle_specification: true,
 				documents: false,
 			},
 		});
@@ -428,12 +419,11 @@ const getVehiclesOfDriverByClassAndCategory = async (driverId, vehicleClass, veh
 		return await prisma.vehicles.findMany({
 			where: {
 				driver_id: driverId,
-				vehicle_specification: {
-					AND: [{ class: vehicleClass }, { category: vehicleCategory }],
-				},
+				class: vehicleClass,
+				category: vehicleCategory,
 			},
 			include: {
-				vehicle_specification: true,
+				// vehicle_specification: true,
 				documents: false,
 			},
 		});

@@ -3,7 +3,6 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { Document } from '../documents/Document.js';
-import type { VehicleSpecification } from './VehicleSpecification.js';
 import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
 import type { Driver } from '../drivers/Driver.js';
@@ -13,7 +12,6 @@ import type { TransportModule } from '../transport/TransportModule.js';
 import type { VehicleDriver } from '../drivers/VehicleDriver.js';
 import { DocumentResponseSchema } from '../documents/Document';
 import { VehicleDriverResponseSchema } from '../drivers/VehicleDriver';
-import { VehicleSpecificationResponseSchema } from './VehicleSpecification';
 import { TaxiOrderResponseSchema } from '../taxiOrders/TaxiOrder';
 import { DeliveryOrderResponseSchema } from '../deliveryOrders/DeliveryOrder';
 import { DriverResponseSchema } from '../drivers/Driver';
@@ -36,7 +34,6 @@ export const CreateVehicleSchema = z
 		model: z.string().nullable().optional(),
 		color: z.string().nullable().optional(),
 		license_plate: z.string().nullable().optional(),
-		vehicle_specification_id: z.string().uuid().nullable().optional(),
 		business_premise_id: z.string().uuid().nullable().optional(),
 	})
 	.openapi('CreateVehicle');
@@ -61,8 +58,6 @@ export const VehicleResponseSchema = z
 		updated_at: z.string().datetime(),
 		documents: z.array(DocumentResponseSchema),
 		drivers: z.array(VehicleDriverResponseSchema),
-		vehicle_specification_id: z.string().nullable().optional(),
-		vehicle_specification: VehicleSpecificationResponseSchema.nullable().optional(),
 		taxi_orders: z.array(TaxiOrderResponseSchema),
 		delivery_orders: z.array(DeliveryOrderResponseSchema),
 		current_driver: DriverResponseSchema.nullable().optional(),
@@ -95,8 +90,6 @@ export type Vehicle = {
 	updated_at: Date;
 	documents?: Document[];
 	drivers?: VehicleDriver[];
-	vehicle_specification_id?: string | null;
-	vehicle_specification?: VehicleSpecification | null;
 	taxi_orders?: TaxiOrder[];
 	delivery_orders?: DeliveryOrder[];
 	current_driver?: Driver | null;

@@ -360,7 +360,7 @@ async function getDeliveryDriverById(req, res) {
 				},
 				vehicles: {
 					include: {
-						vehicle_specification: true,
+						// vehicle_specification: true,
 						documents: {
 							include: {
 								files: true,
