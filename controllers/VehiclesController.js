@@ -383,21 +383,21 @@ async function updateVehicle(req, res) {
  * @prisma_model vehicles
  */
 async function assignVehiclesToDriver(req, res) {
-	const { vehicles, driver_id } = req.body;
+	const { vehicle_ids, driver_id } = req.body;
 	try {
-		if (Array.isArray(vehicles) && vehicles.length > 0) {
-			for (const vehicle of vehicles) {
+		if (Array.isArray(vehicle_ids) && vehicle_ids.length > 0) {
+			for (const vehicle_id of vehicle_ids) {
 				const existingAssignment = await prisma.vehicle_drivers.findFirst({
 					where: {
-						vehicle_id: vehicle.vehicle_id,
+						vehicle_id: vehicle_id,
 						driver_id: driver_id,
 						can_drive: true,
 					},
 				});
 				if (!existingAssignment) {
-					const updatedVehicle = await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver_id);
+					const updatedVehicle = await VehicleDao.assignVehicleToDriver(vehicle_id, driver_id);
 					if (!updatedVehicle) {
-						console.error(`Error assigning vehicle ${vehicle.vehicle_id} to driver ${driver_id}`);
+						console.error(`Error assigning vehicle ${vehicle_id} to driver ${driver_id}`);
 					}
 				}
 			}
@@ -423,13 +423,13 @@ async function assignVehiclesToDriver(req, res) {
  * @prisma_model vehicles
  */
 async function removeVehiclesFromDriver(req, res) {
-	const { vehicles, driver_id } = req.body;
+	const { vehicle_ids, driver_id } = req.body;
 	try {
-		if (Array.isArray(vehicles) && vehicles.length > 0) {
-			for (const vehicle of vehicles) {
-				const updatedVehicle = await VehicleDao.removeVehicleFromDriver(vehicle.vehicle_id, driver_id);
+		if (Array.isArray(vehicle_ids) && vehicle_ids.length > 0) {
+			for (const vehicle_id of vehicle_ids) {
+				const updatedVehicle = await VehicleDao.removeVehicleFromDriver(vehicle_id, driver_id);
 				if (!updatedVehicle) {
-					console.error(`Error removing vehicle ${vehicle.vehicle_id} from driver ${driver_id}`);
+					console.error(`Error removing vehicle ${vehicle_id} from driver ${driver_id}`);
 				}
 			}
 		} else {

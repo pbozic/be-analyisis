@@ -18,13 +18,14 @@ import { DriverResponseSchema } from '../../types/drivers/Driver.js';
 import { BusinessPremiseResponseSchema } from '../../types/invoices/BusinessPremise.js';
 import { InvoiceResponseSchema } from '../../types/invoices/Invoice.js';
 import { TransportModuleResponseSchema } from '../../types/transport/TransportModule.js';
+import { UUID, Timestamp } from '../../schemas/primitives';
 
 extendZodWithOpenApi(z);
 
 // Base vehicle input (DB-level fields only; no ids/timestamps)
 export const VehicleEntityBaseSchema = z
 	.object({
-		transport_module_id: z.string().uuid().nullable().optional(),
+		transport_module_id: UUID.nullable().optional(),
 		// active: z.boolean().nullable().optional(),
 		class: z.nativeEnum(VEHICLE_CLASS).nullable().optional(),
 		category: z.nativeEnum(VEHICLE_CATEGORY).nullable().optional(),
@@ -32,8 +33,8 @@ export const VehicleEntityBaseSchema = z
 		model: z.string().nullable().optional(),
 		color: z.string().nullable().optional(),
 		license_plate: z.string().nullable().optional(),
-		// vehicle_specification_id: z.string().uuid().nullable().optional(),
-		// business_premise_id: z.string().uuid().nullable().optional(),
+		// vehicle_specification_id: UUID.nullable().optional(),
+		// business_premise_id: UUID.nullable().optional(),
 	})
 	.openapi('VehicleEntityBase');
 
@@ -49,7 +50,7 @@ export type VehicleUpdateInput = z.infer<typeof VehicleUpdateInputSchema>;
 // Driver reference for assignment arrays
 export const DriverRefSchema = z
 	.object({
-		driver_id: z.string().uuid(),
+		driver_id: UUID,
 	})
 	.openapi('DriverRef');
 export type DriverRef = z.infer<typeof DriverRefSchema>;
@@ -65,7 +66,7 @@ const BaseFileUploadSchema = z.object({
 // On update, a file may optionally carry document_id to signal it already belongs to the document
 export const FileUploadCreateSchema = BaseFileUploadSchema.openapi('FileUploadCreate');
 export const FileUploadUpdateSchema = BaseFileUploadSchema.extend({
-	document_id: z.string().uuid().optional(),
+	document_id: UUID.optional(),
 }).openapi('FileUploadUpdate');
 
 export type FileUploadCreate = z.infer<typeof FileUploadCreateSchema>;
@@ -75,8 +76,8 @@ export type FileUploadUpdate = z.infer<typeof FileUploadUpdateSchema>;
 export const DocumentDataSchema = z
 	.object({
 		document_type: z.nativeEnum(DOCUMENT_TYPE),
-		expiration_date: z.string().datetime().nullable().optional(),
-		issue_date: z.string().datetime().nullable().optional(),
+		expiration_date: Timestamp.nullable().optional(),
+		issue_date: Timestamp.nullable().optional(),
 		additional_info: z.record(z.unknown()).nullable().optional(),
 		public: z.boolean().optional(), // may be auto-set for certain types server-side
 	})
@@ -93,7 +94,7 @@ export type VehicleDocumentCreate = z.infer<typeof VehicleDocumentCreateSchema>;
 
 export const VehicleDocumentUpdateSchema = z
 	.object({
-		document_id: z.string().uuid(),
+		document_id: UUID,
 		documentData: DocumentDataSchema.partial(),
 		files: z.array(FileUploadUpdateSchema).default([]),
 	})
@@ -112,7 +113,7 @@ export type CreateVehicleRequest = z.infer<typeof CreateVehicleRequestSchema>;
 
 export const UpdateVehicleRequestSchema = z
 	.object({
-		vehicle_id: z.string().uuid(),
+		vehicle_id: UUID,
 		vehicle_information: VehicleUpdateInputSchema,
 		drivers: z.array(DriverRefSchema).default([]).nullable().optional(),
 		documents: z.array(VehicleDocumentUpdateSchema).default([]).nullable().optional(),
@@ -121,16 +122,10 @@ export const UpdateVehicleRequestSchema = z
 export type UpdateVehicleRequest = z.infer<typeof UpdateVehicleRequestSchema>;
 
 // Shared body for assign/unassign vehicles to a driver
-export const VehicleIdsArraySchema = z
-	.object({
-		vehicle_id: z.string().uuid(),
-	})
-	.openapi('VehicleIdRef');
-
 export const VehicleDriverAssignmentSchema = z
 	.object({
-		vehicles: z.array(VehicleIdsArraySchema).min(1),
-		driver_id: z.string().uuid(),
+		vehicle_ids: z.array(UUID).min(1),
+		driver_id: UUID,
 	})
 	.openapi('VehicleDriverAssignment');
 export type VehicleDriverAssignment = z.infer<typeof VehicleDriverAssignmentSchema>;
@@ -174,9 +169,9 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('VehicleDocumentUpdate', VehicleDocumentUpdateSchema);
 	registry.register('CreateVehicleRequest', CreateVehicleRequestSchema);
 	registry.register('UpdateVehicleRequest', UpdateVehicleRequestSchema);
-	registry.register('VehicleIdRef', VehicleIdsArraySchema);
 	registry.register('VehicleDriverAssignment', VehicleDriverAssignmentSchema);
 	registry.register('VehicleResponse', VehicleResponseSchema);
+	registry.register('Vehicle', VehicleResponseSchema);
 }
 
 export type Vehicle = {
