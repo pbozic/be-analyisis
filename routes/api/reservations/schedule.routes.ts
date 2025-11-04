@@ -7,7 +7,7 @@ import {
 	UpdateScheduleSchema,
 	UpdateScheduleWithEmployeesSchema,
 	CreateScheduleWithEmployeesSchema,
-} from '../../../types/reservation/Schedule';
+} from '../../../types/reservations/Schedule';
 const router = express.Router();
 
 router.get('/', ScheduleController.getSchedule);

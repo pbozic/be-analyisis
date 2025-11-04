@@ -2,7 +2,7 @@ import express from 'express';
 
 import CustomerController from '../../../controllers/reservation/CustomerController';
 import { validate } from '../../../middleware/zod';
-import { CreateCustomerSchema, UpdateCustomerSchema } from '../../../types/reservation/Customer';
+import { CreateCustomerSchema, UpdateCustomerSchema } from '../../../types/reservations/Customer';
 
 const router = express.Router();
 

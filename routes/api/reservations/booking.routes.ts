@@ -37,7 +37,7 @@ import {
 	UpdateBookingCourseSchema,
 	CreateCourseParticipantSchema,
 	UpdateCourseParticipantSchema,
-} from '../../../types/reservation/Booking.ts';
+} from '../../../types/reservations/Booking.ts';
 
 const router = express.Router();
 

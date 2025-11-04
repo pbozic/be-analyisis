@@ -8,7 +8,7 @@ import {
 	CreateMultipleSchedulesSchema,
 	OverwriteMultipleSchedulesSchema,
 	UpdateMultipleSchedulesSchema,
-} from '../../../types/reservation/Schedule';
+} from '../../../types/reservations/Schedule';
 const router = express.Router();
 
 router.get('/list/:schedule_id', ScheduleSlotController.getScheduleSlotsByScheduleId);

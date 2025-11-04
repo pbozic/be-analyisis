@@ -7,7 +7,7 @@ import {
 	UpdateServiceSchema,
 	CreateServiceWithEmployeesSchema,
 	UpdateServiceWithEmployeesSchema,
-} from '../../../types/reservation/Service';
+} from '../../../types/reservations/Service';
 const router = express.Router();
 router.get('/', ServiceController.getServices);
 router.get('/form-data', ServiceController.getDataForServiceForm);
