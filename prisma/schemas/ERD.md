@@ -5538,6 +5538,7 @@ erDiagram
 }
 "booking_course_time" {
   String booking_course_time_id PK
+  String reservation_module_id FK
   String booking_id FK
   DateTime start_time
   DateTime end_time
@@ -5546,10 +5547,12 @@ erDiagram
 }
 "booking_course_participant" {
   String booking_course_participant_id PK
+  String reservation_module_id FK
+  BOOKING_STATUS status
   String booking_id FK
+  String customer_id FK,UK
   DateTime created_at
   DateTime updated_at
-  String customer_id FK,UK
 }
 "booking_history_log" {
   String booking_history_id PK
@@ -5697,8 +5700,10 @@ erDiagram
 "booking" }o--|| "service" : service
 "booking" }o--o| "customers" : customer
 "booking_course_time" }o--|| "booking" : booking
+"booking_course_time" }o--|| "reservation_module" : reservation_module
 "booking_course_participant" |o--|| "customers" : customer
 "booking_course_participant" }o--|| "booking" : booking
+"booking_course_participant" }o--|| "reservation_module" : reservation_module
 "booking_history_log" }o--|| "booking" : booking
 "notification_template" }o--|| "reservation_module" : reservation_module
 "notification_template_version" }o--|| "notification_template" : template
@@ -5913,6 +5918,7 @@ Time segments for course-type bookings.
 Properties as follows:
 
 - `booking_course_time_id`:
+- `reservation_module_id`:
 - `booking_id`:
 - `start_time`:
 - `end_time`:
@@ -5926,10 +5932,12 @@ Participants linked to course-type bookings.
 Properties as follows:
 
 - `booking_course_participant_id`:
+- `reservation_module_id`:
+- `status`:
 - `booking_id`:
+- `customer_id`:
 - `created_at`:
 - `updated_at`:
-- `customer_id`:
 
 ### `booking_history_log`
 
@@ -7181,6 +7189,7 @@ erDiagram
 }
 "booking_course_time" {
   String booking_course_time_id PK
+  String reservation_module_id FK
   String booking_id FK
   DateTime start_time
   DateTime end_time
@@ -7189,10 +7198,12 @@ erDiagram
 }
 "booking_course_participant" {
   String booking_course_participant_id PK
+  String reservation_module_id FK
+  BOOKING_STATUS status
   String booking_id FK
+  String customer_id FK,UK
   DateTime created_at
   DateTime updated_at
-  String customer_id FK,UK
 }
 "booking" }o--o| "booking" : parent_booking
 "booking" }o--o| "employee" : employee
@@ -7295,6 +7306,7 @@ Time segments for course-type bookings.
 Properties as follows:
 
 - `booking_course_time_id`:
+- `reservation_module_id`:
 - `booking_id`:
 - `start_time`:
 - `end_time`:
@@ -7308,10 +7320,12 @@ Participants linked to course-type bookings.
 Properties as follows:
 
 - `booking_course_participant_id`:
+- `reservation_module_id`:
+- `status`:
 - `booking_id`:
+- `customer_id`:
 - `created_at`:
 - `updated_at`:
-- `customer_id`:
 
 ## Bookings
 
@@ -7366,6 +7380,7 @@ erDiagram
 }
 "booking_course_time" {
   String booking_course_time_id PK
+  String reservation_module_id FK
   String booking_id FK
   DateTime start_time
   DateTime end_time
@@ -7374,10 +7389,12 @@ erDiagram
 }
 "booking_course_participant" {
   String booking_course_participant_id PK
+  String reservation_module_id FK
+  BOOKING_STATUS status
   String booking_id FK
+  String customer_id FK,UK
   DateTime created_at
   DateTime updated_at
-  String customer_id FK,UK
 }
 "booking_history_log" {
   String booking_history_id PK
@@ -7543,6 +7560,7 @@ Time segments for course-type bookings.
 Properties as follows:
 
 - `booking_course_time_id`:
+- `reservation_module_id`:
 - `booking_id`:
 - `start_time`:
 - `end_time`:
@@ -7556,10 +7574,12 @@ Participants linked to course-type bookings.
 Properties as follows:
 
 - `booking_course_participant_id`:
+- `reservation_module_id`:
+- `status`:
 - `booking_id`:
+- `customer_id`:
 - `created_at`:
 - `updated_at`:
-- `customer_id`:
 
 ### `booking_history_log`
 

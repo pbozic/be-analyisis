@@ -15,6 +15,10 @@ import {
 	Booking,
 	UpdateMultipleBookingsInput,
 	BookingsAnalyticsParams,
+	CreateBookingCourseInput,
+	UpdateBookingCourseInput,
+	CreateCourseParticipantInput,
+	UpdateCourseParticipantInput,
 } from '../../types/reservation/Booking.ts';
 import { Employee } from '../../types/reservation/Employee.ts';
 import { findSlots } from '../../lib/bookingHelpers.ts';
@@ -661,7 +665,11 @@ export async function updateBookingStartGroupAdmin(
 					});
 					const updatedBookings = await Promise.all(
 						newBookings.map(async (el) => {
-							const booking = await BookingDao.updateBookingStart(el, el.booking_id, user_id);
+							const booking = await BookingDao.updateBookingStart(
+								el as UpdateBookingInput,
+								el.booking_id,
+								user_id
+							);
 							return booking;
 						})
 					);
@@ -695,7 +703,11 @@ export async function updateBookingStartGroupAdmin(
 					});
 					const updatedBookings = await Promise.all(
 						newBookings.map(async (el) => {
-							const booking = await BookingDao.updateBookingStart(el, el.booking_id, user_id);
+							const booking = await BookingDao.updateBookingStart(
+								el as UpdateBookingInput,
+								el.booking_id,
+								user_id
+							);
 							return booking;
 						})
 					);
@@ -754,7 +766,11 @@ export async function updateBookingStartGroupAdmin(
 					});
 					const updatedBookings = await Promise.all(
 						newBookings.map(async (el) => {
-							const booking = await BookingDao.updateBookingStart(el, el.booking_id, user_id);
+							const booking = await BookingDao.updateBookingStart(
+								el as UpdateBookingInput,
+								el.booking_id,
+								user_id
+							);
 							return booking;
 						})
 					);
@@ -803,7 +819,11 @@ export async function updateBookingStartGroupAdmin(
 					});
 					const updatedBookings = await Promise.all(
 						newBookings.map(async (el) => {
-							const booking = await BookingDao.updateBookingStart(el, el.booking_id, user_id);
+							const booking = await BookingDao.updateBookingStart(
+								el as UpdateBookingInput,
+								el.booking_id,
+								user_id
+							);
 							return booking;
 						})
 					);
@@ -861,14 +881,14 @@ export async function updateBookingStartFirstInGroupAdmin(
 			if (children.length > 0) {
 				const [firstBooking, ...restBookings] = children;
 				const firstBookingData = await BookingDao.updateBookingStart(
-					{ parent_booking_id: firstBooking?.parent_booking_id as string },
+					{ parent_booking_id: firstBooking?.parent_booking_id as string } as UpdateBookingInput,
 					firstBooking?.booking_id as string,
 					user_id
 				);
 				const updatedBookings = await Promise.all(
 					restBookings.map(async (el) => {
 						const booking = await BookingDao.updateBookingParent(
-							{ parent_booking_id: firstBooking?.booking_id as string },
+							{ parent_booking_id: firstBooking?.booking_id as string } as UpdateBookingInput,
 							el.booking_id,
 							user_id
 						);
@@ -1139,6 +1159,189 @@ export async function getBookingsAnalytics(
 	}
 }
 
+/**
+ * POST /reservation/reservations/bookings-courses-res/list
+ * @tag Reservation
+ * @summary List bookings courses for the current reservation module
+ * @operationId listBookingsCoursesByReservationModuleId
+ * @bodyContent {object} application/json
+ * @response 200 - Bookings retrieved
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error retrieving bookings
+ * @prisma_model booking
+ */
+export async function listBookingsCoursesByReservationModuleId(
+	req: ValidatedRequest<ListBookingsParams>,
+	res: Response
+): Promise<void> {
+	try {
+		let reservationModuleId = req.user?.reservation_module_id || null;
+		if (!reservationModuleId) {
+			res.status(400).json({ message: 'Reservation module ID is required' });
+			return;
+		}
+		const params: ListBookingsParams = {
+			...req.body,
+			reservation_module_id: reservationModuleId,
+		};
+		const bookings = await BookingDao.getBookingCoursesByReservationModuleId(params);
+		res.status(200).json(bookings);
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving bookings', error });
+	}
+}
+
+/**
+ * POST /reservation/reservations/bookings-courses/list
+ * @tag Reservation
+ * @summary List bookings courses for the current reservation module
+ * @operationId listBookingsCourses
+ * @bodyContent {object} application/json
+ * @response 200 - Bookings retrieved
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error retrieving bookings
+ * @prisma_model booking
+ */
+export async function listBookingsCourses(req: ValidatedRequest<ListBookingsParams>, res: Response): Promise<void> {
+	try {
+		const params: ListBookingsParams = { ...req.body };
+		const bookings = await BookingDao.getBookingCoursesByReservationModuleId(params);
+		res.status(200).json(bookings);
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving bookings', error });
+	}
+}
+
+/**
+ * GET /reservation/reservations/bookings/:booking_id
+ * @tag Reservation
+ * @summary Get a booking by ID
+ * @operationId getBookingById
+ * @pathParam {string} booking_id
+ * @response 200 - Booking retrieved
+ * @responseContent {object} 200.application/json
+ * @response 404 - Booking not found
+ * @response 500 - Error retrieving booking
+ * @prisma_model booking
+ */
+export async function getBookingCourse(
+	req: ValidatedRequest<null, { booking_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const booking = await BookingDao.getBookingCourseById(req.params.booking_id);
+		if (!booking) {
+			res.status(404).json({ message: 'Booking not found' });
+			return;
+		}
+		res.status(200).json(booking);
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving booking', error });
+	}
+}
+
+/**
+ * POST /reservation/reservations/bookings-course
+ * @tag Reservation
+ * @summary Create a new booking course
+ * @operationId createBookingCourse
+ * @bodyContent {object} application/json
+ * @response 201 - Booking created
+ * @responseContent {object} 201.application/json
+ * @response 500 - Error creating booking
+ * @prisma_model booking
+ * @prisma_model booking_history_log
+ */
+export async function createBookingCourse(
+	req: ValidatedRequest<CreateBookingCourseInput>,
+	res: Response
+): Promise<void> {
+	try {
+		const reservation_module_id = req.user?.reservation_module_id;
+		const bookingInput = {
+			...req.body,
+			reservation_module_id,
+		} as CreateBookingCourseInput;
+		const booking = await BookingDao.createBookingCourse(bookingInput);
+		res.status(201).json(booking);
+	} catch (error) {
+		res.status(500).json({ message: 'Error creating booking', error });
+	}
+}
+
+/** PUT /reservation/reservations/bookings-course/:booking_id
+ * @tag Reservation
+ * @summary Update an existing booking course
+ * @operationId updateBookingCourse
+ * @pathParam {string} booking_id
+ * @bodyContent {object} application/json
+ * @response 200 - Booking updated
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error updating booking
+ * @prisma_model booking
+ * @prisma_model booking_history_log
+ */
+export async function updateBookingCourse(
+	req: ValidatedRequest<UpdateBookingCourseInput, { booking_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const booking = await BookingDao.updateBookingCourse(req.body, req.params.booking_id);
+		res.status(200).json(booking);
+	} catch (error) {
+		res.status(500).json({ message: 'Error updating booking', error });
+	}
+}
+
+/** POST /reservation/reservations/bookings-course-participant
+ * @tag Reservation
+ * @summary Create a new course participant booking
+ * @operationId newBookingCourseParticipant
+ * @bodyContent {object} application/json
+ * @response 201 - Course participant created
+ * @responseContent {object} 201.application/json
+ * @response 500 - Error creating course participant
+ * @prisma_model booking_course_participant
+ */
+export async function newBookingCourseParticipant(
+	req: ValidatedRequest<CreateCourseParticipantInput>,
+	res: Response
+): Promise<void> {
+	try {
+		const reservation_module_id = req.user?.reservation_module_id;
+		const input = {
+			...req.body,
+			reservation_module_id,
+		} as CreateCourseParticipantInput;
+		const participant = await BookingDao.createBookingCourseParticipant(input);
+		res.status(201).json(participant);
+	} catch (error) {
+		res.status(500).json({ message: 'Error creating course participant', error });
+	}
+}
+
+/** PUT /reservation/reservations/bookings-course-participant/cancel
+ * @tag Reservation
+ * @summary Cancel a course participant booking
+ * @operationId cancelBookingCourseParticipant
+ * @bodyContent {object} application/json
+ * @response 200 - Course participant cancelled
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error cancelling course participant
+ * @prisma_model booking_course_participant
+ */
+export async function cancelBookingCourseParticipant(
+	req: ValidatedRequest<UpdateCourseParticipantInput>,
+	res: Response
+): Promise<void> {
+	try {
+		const participant = await BookingDao.cancelBookingCourseParticipant(req.body);
+		res.status(200).json(participant);
+	} catch (error) {
+		res.status(500).json({ message: 'Error cancelling course participant', error });
+	}
+}
+
 export default {
 	listBookings,
 	getBooking,
@@ -1157,4 +1360,11 @@ export default {
 	updateBookingGroupAdmin,
 	getBookingsAnalytics,
 	calcBookings,
+	listBookingsCoursesByReservationModuleId,
+	listBookingsCourses,
+	getBookingCourse,
+	createBookingCourse,
+	updateBookingCourse,
+	newBookingCourseParticipant,
+	cancelBookingCourseParticipant,
 };

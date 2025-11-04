@@ -30,6 +30,7 @@ export const FindBookingSlotsSchema = z.object({
 	date: z.coerce.date(), // accepts string | number | Date → coerces to Date
 	returnFirst: z.boolean().optional().default(false),
 });
+
 export const CreateBookingBaseSchema = z.object({
 	customer_id: z.string().uuid().optional(),
 	first_name: z.string().min(1, 'First name is required').optional(),
@@ -48,10 +49,23 @@ export const CreateBookingBaseSchema = z.object({
 	discount_percent: z.number().int().min(0).optional(),
 	discount_amount: z.number().int().min(0).optional(),
 	price_cents: z.number().int().min(0).optional(),
+	course: z.boolean().optional().default(false),
+	people_allowed: z.number().min(1).optional().default(1),
+	people_booked: z.number().min(0).optional().default(0),
 });
 
 export const CreateBookingSchema = CreateBookingBaseSchema.superRefine((data, ctx) => {
 	addValideBookingSchema(data, ctx);
+});
+
+export const CreateBookingCourseSchema = CreateBookingBaseSchema.omit({ service_ids: true }).extend({
+	service_id: z.string().uuid(),
+	course_time: z.array(
+		z.object({
+			start_time: z.string().datetime(),
+			end_time: z.string().datetime(),
+		})
+	),
 });
 
 export const UpdateBookingBaseSchema = z.object({
@@ -76,10 +90,57 @@ export const UpdateBookingBaseSchema = z.object({
 	discount_amount: z.number().int().min(0).optional().nullable(),
 	keepTimeGaps: z.boolean().optional(),
 	price_cents: z.number().int().min(0).optional(),
+	course: z.boolean().optional().default(false),
+	people_allowed: z.number().min(1).optional().default(1),
+	people_booked: z.number().min(0).optional().default(0),
 });
 
 export const UpdateBookingSchema = UpdateBookingBaseSchema.superRefine((data, ctx) => {
 	addValideBookingSchema(data, ctx);
+});
+
+export const BookingCourseTimeSchema = z.object({
+	reservation_module_id: z.string().uuid(),
+	booking_id: z.string().uuid(),
+	start_time: z.string().datetime(),
+	end_time: z.string().datetime(),
+});
+
+export const UpdateBookingCourseTimeSchema = z.object({
+	booking_course_time_id: z.string().uuid(),
+	reservation_module_id: z.string().uuid(),
+	booking_id: z.string().uuid(),
+	start_time: z.string().datetime().optional(),
+	end_time: z.string().datetime().optional(),
+});
+
+export const UpdateBookingCourseSchema = UpdateBookingBaseSchema.extend({
+	course_time_added: z.array(
+		z.object({
+			start_time: z.string().datetime(),
+			end_time: z.string().datetime(),
+		})
+	),
+	course_time_removed: z.array(
+		z.object({
+			booking_course_time_id: z.string().uuid(),
+			start_time: z.string().datetime(),
+			end_time: z.string().datetime(),
+		})
+	),
+	course_time_changed: z.array(
+		z.object({
+			booking_course_time_id: z.string().uuid(),
+			start_time: z.string().datetime(),
+			end_time: z.string().datetime(),
+		})
+	),
+});
+
+export const DeleteBookingCourseTimeSchema = z.object({
+	booking_course_time_id: z.string().uuid(),
+	booking_id: z.string().uuid(),
+	reservation_module_id: z.string().uuid(),
 });
 
 export const DeleteBookingSchema = z.object({ booking_id: z.string().uuid() });
@@ -136,9 +197,32 @@ export const BookingsAnalyticsSchema = z.object({
 	type: z.enum(['day', 'week', 'month', 'year']).optional().default('day'),
 });
 
+export const CreateCourseParticipantSchema = z
+	.object({
+		customer_id: z.string().uuid().optional(),
+		first_name: z.string().min(1, 'First name is required').optional(),
+		last_name: z.string().min(1, 'Last name is required').optional(),
+		email: z.string().email('Invalid email address').optional(),
+		telephone: z.string().optional(),
+		telephone_code: z.string().optional(),
+		telephone_number: z.string().optional(),
+		reservation_module_id: z.string().uuid(),
+		booking_id: z.string().uuid().optional(),
+	})
+	.superRefine((data, ctx) => {
+		addValideBookingSchema(data, ctx);
+	});
+
+export const UpdateCourseParticipantSchema = z.object({
+	customer_id: z.string().uuid(),
+	reservation_module_id: z.string().uuid(),
+	booking_id: z.string().uuid(),
+});
 // --- TYPES ---
 
 export type BookingHistoryLog = booking_history_log;
+export type BookingCourseTime = booking_course_time;
+export type BookingCourseParticipant = booking_course_participant;
 
 export type CreateBookingInput = z.infer<typeof CreateBookingSchema>;
 export type CreateMultipleBookingsInput = z.infer<typeof CreateMultipleBookingsSchema>;
@@ -154,6 +238,14 @@ export type DeleteBookingInput = z.infer<typeof DeleteBookingSchema>;
 export type ListBookingsParams = z.infer<typeof ListBookingsParamsSchema>;
 export type BookingsAnalyticsParams = z.infer<typeof BookingsAnalyticsSchema>;
 export type AllBookingsForLocationAndEmployeesParams = z.infer<typeof AllBookingsForLocationAndEmployeesSchema>;
+
+export type CreateBookingCourseInput = z.infer<typeof CreateBookingCourseSchema>;
+export type UpdateBookingCourseInput = z.infer<typeof UpdateBookingCourseSchema>;
+export type CreateCourseParticipantInput = z.infer<typeof CreateCourseParticipantSchema>;
+export type UpdateCourseParticipantInput = z.infer<typeof UpdateCourseParticipantSchema>;
+export type BookingCourseTimeInput = z.infer<typeof BookingCourseTimeSchema>;
+export type UpdateBookingCourseTimeInput = z.infer<typeof UpdateBookingCourseTimeSchema>;
+export type DeleteBookingCourseTimeInput = z.infer<typeof DeleteBookingCourseTimeSchema>;
 
 export type Booking = {
 	booking_id: string;
