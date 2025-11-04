@@ -2,8 +2,8 @@ import express from 'express';
 
 import EmployeeController from '../../../controllers/reservation/EmployeeController';
 import { validate } from '../../../middleware/zod';
-import { CreateEmployeeSchema, UpdateEmployeeSchema } from '../../../types/reservation/Employee';
-import { BookingsAnalyticsSchema } from '../../../types/reservation/Booking.ts';
+import { CreateEmployeeSchema, UpdateEmployeeSchema } from '../../../types/reservations/Employee';
+import { BookingsAnalyticsSchema } from '../../../types/reservations/Booking.ts';
 const router = express.Router();
 
 router.get('/', EmployeeController.getEmployees);

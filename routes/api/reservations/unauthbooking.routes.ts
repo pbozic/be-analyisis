@@ -3,7 +3,7 @@ import express from 'express';
 
 import { createBooking, findBookingSlots } from '../../../controllers/reservation/BookingController.ts';
 import { validate } from '../../../middleware/zod';
-import { CreateBookingSchema, FindBookingSlotsSchema } from '../../../types/reservation/Booking.ts';
+import { CreateBookingSchema, FindBookingSlotsSchema } from '../../../types/reservations/Booking.ts';
 import ReservationModuleController from '../../../controllers/reservation/ReservationModuleController.ts';
 import CustomerController from '../../../controllers/reservation/CustomerController.ts';
 const router = express.Router();

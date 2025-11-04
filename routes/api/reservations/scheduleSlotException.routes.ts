@@ -9,7 +9,7 @@ import {
 	CreateOrUpdateExceptionsAndBookingsSchema,
 	CreateScheduleSlotWithExceptionsAndBookingSlotsSchema,
 	UpdateScheduleSlotWithBookingSlotsAndExceptionsSchema,
-} from '../../../types/reservation/Schedule';
+} from '../../../types/reservations/Schedule';
 
 const router = express.Router();
 

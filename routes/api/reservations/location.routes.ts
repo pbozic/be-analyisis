@@ -2,7 +2,7 @@ import express from 'express';
 
 import LocationController from '../../../controllers/reservation/LocationController';
 import { validate } from '../../../middleware/zod';
-import { CreateLocationSchema, UpdateLocationSchema } from '../../../types/reservation/Location';
+import { CreateLocationSchema, UpdateLocationSchema } from '../../../types/reservations/Location';
 
 const router = express.Router();
 router.get('/', LocationController.getLocations);

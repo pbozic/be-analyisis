@@ -11,7 +11,6 @@ import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
 import { FileResponseSchema } from '../files/File';
 import { DriverResponseSchema } from '../drivers/Driver';
 import { BusinessResponseSchema } from '../business/Business';
-import { VehicleResponseSchema } from '../vehicles/Vehicle';
 import { TransactionResponseSchema } from '../payments/Transaction';
 import { TaxiOrderResponseSchema } from '../taxiOrders/TaxiOrder';
 
@@ -56,7 +55,7 @@ export const DocumentResponseSchema = z
 		business_id: z.string().nullable().optional(),
 		business: BusinessResponseSchema.nullable().optional(),
 		vehicle_id: z.string().nullable().optional(),
-		vehicles: VehicleResponseSchema.nullable().optional(),
+		// vehicles: VehicleResponseSchema.nullable().optional(),
 		transaction_id: z.string().nullable().optional(),
 		transactions: TransactionResponseSchema.nullable().optional(),
 		order_id: z.string().nullable().optional(),

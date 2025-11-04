@@ -8,7 +8,7 @@ import {
 	CreateOrUpdateBookingSlotSchema,
 	CreateScheduleSlotWithBookingSlotsSchema,
 	UpdateScheduleSlotWithBookingSlotsSchema,
-} from '../../../types/reservation/Schedule';
+} from '../../../types/reservations/Schedule';
 
 const router = express.Router();
 

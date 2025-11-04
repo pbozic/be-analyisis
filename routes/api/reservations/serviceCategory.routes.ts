@@ -2,7 +2,7 @@ import express from 'express';
 
 import ServiceCategoryController from '../../../controllers/reservation/ServiceCategoryController';
 import { validate } from '../../../middleware/zod';
-import { CreateServiceCategorySchema, UpdateServiceCategorySchema } from '../../../types/reservation/ServiceCategory';
+import { CreateServiceCategorySchema, UpdateServiceCategorySchema } from '../../../types/reservations/ServiceCategory';
 
 const router = express.Router();
 router.get('/', ServiceCategoryController.getServiceCategories);

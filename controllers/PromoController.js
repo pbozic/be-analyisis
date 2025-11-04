@@ -79,7 +79,7 @@ async function createPromoSection(req, res) {
 }
 /**
  *
- * - PATCH /promo/sections/{id}
+ * - PATCH /promo/sections/:id
  * - @tag PromoSection
  * - @summary Update a promo section
  * - @description Updates fields and translations of a promo section by ID.
@@ -152,7 +152,7 @@ async function reorderPromoSections(req, res) {
 }
 /**
  *
- * - DELETE /promo/sections/{id}
+ * - DELETE /promo/sections/:id
  * - @tag PromoSection
  * - @summary Delete a promo section
  * - @description Deletes a promo section by its ID.
@@ -176,7 +176,7 @@ async function deletePromoSection(req, res) {
 }
 /**
  *
- * - GET /promo/sections/{id}
+ * - GET /promo/sections/:id
  * - @tag PromoSection
  * - @summary Get promo section by ID
  * - @description Returns a promo section with translations and buys.
@@ -233,7 +233,7 @@ async function getAllPromoSections(req, res) {
 }
 /**
  *
- * - GET /promo/sections/type/{type}
+ * - GET /promo/sections/type/:type
  * - @tag PromoSection
  * - @summary List promo sections by service type
  * - @description Returns all promo sections filtered by service type.
@@ -297,7 +297,7 @@ async function createPromoAd(req, res) {
 }
 /**
  *
- * - PUT /promo/ads/{id}
+ * - PUT /promo/ads/:id
  * - @tag PromoAd
  * - @summary Update a promo ad
  * - @description Updates a promo ad and resets its relations.
@@ -337,7 +337,7 @@ async function updatePromoAd(req, res) {
 }
 /**
  *
- * - DELETE /promo/ads/{id}
+ * - DELETE /promo/ads/:id
  * - @tag PromoAd
  * - @summary Delete a promo ad
  * - @description Deletes a promo ad and its relations.
@@ -362,7 +362,7 @@ async function deletePromoAd(req, res) {
 }
 /**
  *
- * - GET /promo/ads/{id}
+ * - GET /promo/ads/:id
  * - @tag PromoAd
  * - @summary Get promo ad by ID
  * - @description Returns promo ad with categories and banners.
@@ -413,7 +413,7 @@ async function getAllPromoAds(req, res) {
 }
 /**
  *
- * - GET /promo/ads/type/{type}
+ * - GET /promo/ads/type/:type
  * - @tag PromoAd
  * - @summary List promo ads by service type
  * - @description Returns all promo ads filtered by service type.
@@ -438,7 +438,7 @@ async function getPromoAdsByServiceType(req, res) {
 }
 /**
  *
- * - GET /promo/ads/category/{category}
+ * - GET /promo/ads/category/:category
  * - @tag PromoAd
  * - @summary List promo ads by category
  * - @description Returns all promo ads that have the given category.
@@ -509,7 +509,7 @@ async function createPromoBanner(req, res) {
 }
 /**
  *
- * - PUT /promo/banners/{id}
+ * - PUT /promo/banners/:id
  * - @tag PromoBanner
  * - @summary Update a promo banner
  * - @description Updates a promo banner and optionally creates a new file when imageFileData is provided.
@@ -552,7 +552,7 @@ async function updatePromoBanner(req, res) {
 }
 /**
  *
- * - DELETE /promo/banners/{id}
+ * - DELETE /promo/banners/:id
  * - @tag PromoBanner
  * - @summary Delete a promo banner
  * - @description Deletes a promo banner by ID.
@@ -576,7 +576,7 @@ async function deletePromoBanner(req, res) {
 }
 /**
  *
- * - GET /promo/banners/{id}
+ * - GET /promo/banners/:id
  * - @tag PromoBanner
  * - @summary Get promo banner by ID
  * - @description Returns a promo banner by ID.
@@ -626,7 +626,7 @@ async function getAllPromoBanners(req, res) {
 }
 /**
  *
- * - GET /promo/banners/type/{type}
+ * - GET /promo/banners/type/:type
  * - @tag PromoBanner
  * - @summary List promo banners by type
  * - @description Returns promo banners filtered by type.
@@ -650,7 +650,7 @@ async function getAllPromoBannersByType(req, res) {
 }
 /**
  *
- * - GET /promo/banners/size/{size}
+ * - GET /promo/banners/size/:size
  * - @tag PromoBanner
  * - @summary List promo banners by size
  * - @description Returns promo banners filtered by size.
@@ -674,7 +674,7 @@ async function getAllPromoBannersBySize(req, res) {
 }
 /**
  *
- * - GET /promo/banners/ad/{ad}
+ * - GET /promo/banners/ad/:ad
  * - @tag PromoBanner
  * - @summary List promo banners by ad
  * - @description Returns promo banners filtered by promo ad ID.
@@ -707,16 +707,44 @@ async function getAllPromoBannersByAd(req, res) {
 //         res.status(500).json({ error: error.message });
 //     }
 // }
+/**
+ * GET /promo/banners/serviceType/:serviceType
+ * @tag PromoBanner
+ * @summary List promo banners by service type
+ * @description Returns promo banners filtered by service type.
+ * @operationId getPromoBannersByServiceType
+ * @pathParam {string} serviceType - Service type
+ * @response 200 - List of promo banners by service type
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching promo banners by service type
+ * @prisma_model promo_banners
+ *
+ * ./prisma/schema.prisma
+ */
 async function getPromoBannersByServiceType(req, res) {
 	try {
-		const promoBanners = await PromoDao.getPromoBannersByServiceType(req.params.type);
+		const promoBanners = await PromoDao.getPromoBannersByServiceType(req.params.serviceType);
 		res.json(promoBanners);
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: error.message });
 	}
 }
-
+/**
+ * POST /promo/section_buy/request
+ * @tag PromoSectionBuy
+ * @summary Create payment intent for promo section buys
+ * @description Creates a Stripe PaymentIntent for purchasing multiple promo sections and creates pending promo_sections_buy records.
+ * @operationId createPaymentIntentForPromoBuy
+ * @bodyDescription Promo sections to purchase with duration, activeTier, and activePrice per day
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Created payment intent for promo section buys
+ * @responseContent {object} 200.application/json
+ * @response 400 - Validation error
+ * @response 500 - Error creating promo section buy payment intent
+ * @prisma_model promo_sections_buy
+ */
 export async function createPaymentIntentForPromoBuy(req, res) {
 	try {
 		const { promoSections } = req.body;
@@ -793,7 +821,7 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 }
 
 /**
- * POST /promo-section-buys
+ * POST /promo/section_buy
  * @tag PromoSectionBuy
  * @summary Create promo section buys and payment intent
  * @description Creates pending promo section buy records (unpaid) and a Stripe PaymentIntent for all of them. On successful webhook confirmation the buys become active.
@@ -870,6 +898,23 @@ async function createPromoSectionBuy(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ * PUT /promo/section_buy/:id
+ * @tag PromoSectionBuy
+ * @summary Update a promo section buy
+ * @description Updates a promo section buy by ID.
+ * @operationId updatePromoSectionBuy
+ * @pathParam {string} id - Promo section buy ID
+ * @bodyDescription Fields to update
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Promo section buy updated
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error updating promo section buy
+ * @prisma_model promo_sections_buy
+ *
+ * ./prisma/schema.prisma
+ */
 async function updatePromoSectionBuy(req, res) {
 	try {
 		const promoSectionBuy = await PromoDao.updatePromoSectionBuy(req.params.id, req.body);
@@ -879,6 +924,20 @@ async function updatePromoSectionBuy(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ * DELETE /promo/section_buy/:id
+ * @tag PromoSectionBuy
+ * @summary Delete a promo section buy
+ * @description Deletes a promo section buy by ID.
+ * @operationId deletePromoSectionBuy
+ * @pathParam {string} id - Promo section buy ID
+ * @response 200 - Promo section buy deleted successfully
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error deleting promo section buy
+ * @prisma_model promo_sections_buy
+ *
+ * ./prisma/schema.prisma
+ */
 async function deletePromoSectionBuy(req, res) {
 	try {
 		const promoSectionBuy = await PromoDao.deletePromoSectionBuy(req.params.id);
@@ -888,6 +947,20 @@ async function deletePromoSectionBuy(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ * GET /promo/section_buy/:id
+ * @tag PromoSectionBuy
+ * @summary Get promo section buy by ID
+ * @description Returns a promo section buy by its ID.
+ * @operationId getPromoSectionBuyById
+ * @pathParam {string} id - Promo section buy ID
+ * @response 200 - Found promo section buy
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching promo section buy
+ * @prisma_model promo_sections_buy
+ *
+ * ./prisma/schema.prisma
+ */
 async function getPromoSectionBuyById(req, res) {
 	try {
 		const promoSectionBuy = await PromoDao.getPromoSectionBuyById(req.params.id);
@@ -897,6 +970,19 @@ async function getPromoSectionBuyById(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ * GET /promo/section_buy
+ * @tag PromoSectionBuy
+ * @summary List all promo section buys
+ * @description Returns all promo section buys.
+ * @operationId getAllPromoSectionBuys
+ * @response 200 - List of promo section buys
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching promo section buys
+ * @prisma_model promo_sections_buy
+ *
+ * ./prisma/schema.prisma
+ */
 async function getAllPromoSectionBuys(req, res) {
 	try {
 		const promoSectionBuys = await PromoDao.getAllPromoSectionBuys();
@@ -906,6 +992,20 @@ async function getAllPromoSectionBuys(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ * GET /promo/section_buy/section/:section
+ * @tag PromoSectionBuy
+ * @summary List promo section buys by section
+ * @description Returns all promo section buys filtered by section ID.
+ * @operationId getAllPromoSectionBuysBySection
+ * @pathParam {string} section - Promo section ID
+ * @response 200 - List of promo section buys by section
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching promo section buys by section
+ * @prisma_model promo_sections_buy
+ *
+ * ./prisma/schema.prisma
+ */
 async function getAllPromoSectionBuysBySection(req, res) {
 	try {
 		const promoSectionBuys = await PromoDao.getAllPromoSectionBuysBySection(req.params.section);
@@ -915,6 +1015,20 @@ async function getAllPromoSectionBuysBySection(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ * GET /promo/section_buy/business/:business_id
+ * @tag PromoSectionBuy
+ * @summary List promo section buys by business
+ * @description Returns all promo section buys filtered by business ID.
+ * @operationId getAllPromoSectionBuysByBusiness
+ * @pathParam {string} business_id - Business ID
+ * @response 200 - List of promo section buys by business
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching promo section buys by business
+ * @prisma_model promo_sections_buy
+ *
+ * ./prisma/schema.prisma
+ */
 async function getAllPromoSectionBuysByBusiness(req, res) {
 	try {
 		const promoSectionBuys = await PromoDao.getAllPromoSectionBuysByBusiness(req.params.business_id);
@@ -924,6 +1038,20 @@ async function getAllPromoSectionBuysByBusiness(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ * GET /promo/section_buy/tier/:tier
+ * @tag PromoSectionBuy
+ * @summary List promo section buys by tier
+ * @description Returns all promo section buys filtered by tier.
+ * @operationId getAllPromoSectionBuysByTier
+ * @pathParam {string} tier - Tier
+ * @response 200 - List of promo section buys by tier
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching promo section buys by tier
+ * @prisma_model promo_sections_buy
+ *
+ * ./prisma/schema.prisma
+ */
 async function getAllPromoSectionBuysByTier(req, res) {
 	try {
 		const promoSectionBuys = await PromoDao.getAllPromoSectionBuysByTier(req.params.tier);
@@ -933,6 +1061,20 @@ async function getAllPromoSectionBuysByTier(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ * GET /promo/section_buy/stripeSub/:stripe_subscription_id
+ * @tag PromoSectionBuy
+ * @summary List promo section buys by Stripe subscription ID
+ * @description Returns all promo section buys filtered by Stripe subscription ID.
+ * @operationId getAllPromoSectionBuysByStripeSub
+ * @pathParam {string} stripe_subscription_id - Stripe subscription ID
+ * @response 200 - List of promo section buys by Stripe subscription ID
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error fetching promo section buys by Stripe subscription ID
+ * @prisma_model promo_sections_buy
+ *
+ * ./prisma/schema.prisma
+ */
 async function getAllPromoSectionBuysByStripeSub(req, res) {
 	try {
 		const promoSectionBuys = await PromoDao.getAllPromoSectionBuysByStripeSub(req.params.stripe_subscription_id);
@@ -942,6 +1084,23 @@ async function getAllPromoSectionBuysByStripeSub(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+/**
+ * PUT /promo/section_buy/stripeSub/:id
+ * @tag PromoSectionBuy
+ * @summary Add Stripe subscription ID to promo section buy
+ * @description Adds a Stripe subscription ID to a promo section buy by ID.
+ * @operationId addStripeSubToPromoSectionBuy
+ * @pathParam {string} id - Promo section buy ID
+ * @bodyDescription Stripe subscription ID to add
+ * @bodyContent { "stripe_subscription_id": "sub_12345" } application/json
+ * @bodyRequired
+ * @response 200 - Promo section buy updated with Stripe subscription ID
+ * @responseContent {object} 200.application/json
+ * @response 500 - Error adding Stripe subscription ID to promo section buy
+ * @prisma_model promo_sections_buy
+ *
+ * ./prisma/schema.prisma
+ */
 async function addStripeSubToPromoSectionBuy(req, res) {
 	try {
 		const promoSectionBuy = await PromoDao.addStripeSubToPromoSectionBuy(
