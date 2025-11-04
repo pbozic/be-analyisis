@@ -10,21 +10,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type TaxRate = {
-	tax_rates_id: string;
-	name: string;
-	description?: string | null;
-	country?: string | null;
-	rate: number;
-	active: boolean;
-	valid_from: Date;
-	created_at: Date;
-	updated_at: Date;
-	activated_at?: Date | null;
-	menu_items: MenuItem[];
-	service: Service[];
-};
-
 export const CreateTaxRateSchema = z
 	.object({
 		tax_rates_id: z.string().uuid(),
@@ -67,3 +52,18 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateTaxRate', UpdateTaxRateSchema);
 	registry.register('TaxRateResponse', TaxRateResponseSchema);
 }
+
+export type TaxRate = {
+	tax_rates_id: string;
+	name: string;
+	description?: string | null;
+	country?: string | null;
+	rate: number;
+	active: boolean;
+	valid_from: Date;
+	created_at: Date;
+	updated_at: Date;
+	activated_at?: Date | null;
+	menu_items?: MenuItem[];
+	service?: Service[];
+};

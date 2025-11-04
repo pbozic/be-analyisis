@@ -9,17 +9,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type UserMoneyFlow = {
-	balance_change_id: string;
-	user_id: string;
-	amount: number;
-	stripe_fee: number;
-	type: TRANSACTION_TYPE;
-	payment_method?: PAYMENT_METHOD | null;
-	created_at: Date;
-	user: User;
-};
-
 export const CreateUserMoneyFlowSchema = z
 	.object({
 		balance_change_id: z.string().uuid(),
@@ -56,3 +45,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateUserMoneyFlow', UpdateUserMoneyFlowSchema);
 	registry.register('UserMoneyFlowResponse', UserMoneyFlowResponseSchema);
 }
+
+export type UserMoneyFlow = {
+	balance_change_id: string;
+	user_id: string;
+	amount: number;
+	stripe_fee: number;
+	type: TRANSACTION_TYPE;
+	payment_method?: PAYMENT_METHOD | null;
+	created_at: Date;
+	user?: User;
+};

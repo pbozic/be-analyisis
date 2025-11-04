@@ -10,13 +10,6 @@ import { CategoryResponseSchema } from '../menus/Category';
 
 extendZodWithOpenApi(z);
 
-export type MenuCategoriesCategory = {
-	menu_categories_id: string;
-	categories_id: string;
-	menu_category: MenuCategory;
-	category: Category;
-};
-
 export const CreateMenuCategoriesCategorySchema = z
 	.object({
 		menu_categories_id: z.string().uuid(),
@@ -46,3 +39,10 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateMenuCategoriesCategory', UpdateMenuCategoriesCategorySchema);
 	registry.register('MenuCategoriesCategoryResponse', MenuCategoriesCategoryResponseSchema);
 }
+
+export type MenuCategoriesCategory = {
+	menu_categories_id: string;
+	categories_id: string;
+	menu_category?: MenuCategory;
+	category?: Category;
+};

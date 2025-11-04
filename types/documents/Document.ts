@@ -19,28 +19,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Document = {
-	document_id: string;
-	document_type: DOCUMENT_TYPE;
-	created_at: Date;
-	updated_at: Date;
-	expiration_date?: Date | null;
-	issue_date?: Date | null;
-	additional_info?: unknown | null;
-	public: boolean;
-	files: File[];
-	driver_id?: string | null;
-	drivers?: Driver | null;
-	business_id?: string | null;
-	business?: Business | null;
-	vehicle_id?: string | null;
-	vehicles?: Vehicle | null;
-	transaction_id?: string | null;
-	transactions?: Transaction | null;
-	order_id?: string | null;
-	taxi_order?: TaxiOrder | null;
-};
-
 export const CreateDocumentSchema = z
 	.object({
 		document_id: z.string().uuid(),
@@ -93,3 +71,25 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDocument', UpdateDocumentSchema);
 	registry.register('DocumentResponse', DocumentResponseSchema);
 }
+
+export type Document = {
+	document_id: string;
+	document_type: DOCUMENT_TYPE;
+	created_at: Date;
+	updated_at: Date;
+	expiration_date?: Date | null;
+	issue_date?: Date | null;
+	additional_info?: unknown | null;
+	public: boolean;
+	files?: File[];
+	driver_id?: string | null;
+	drivers?: Driver | null;
+	business_id?: string | null;
+	business?: Business | null;
+	vehicle_id?: string | null;
+	vehicles?: Vehicle | null;
+	transaction_id?: string | null;
+	transactions?: Transaction | null;
+	order_id?: string | null;
+	taxi_order?: TaxiOrder | null;
+};

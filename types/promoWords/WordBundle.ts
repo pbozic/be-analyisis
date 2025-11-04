@@ -8,14 +8,6 @@ import { WordResponseSchema } from './Word';
 
 extendZodWithOpenApi(z);
 
-export type WordBundle = {
-	id: string;
-	name: string;
-	description?: string | null;
-	words: Word[];
-	created_at: Date;
-};
-
 export const CreateWordBundleSchema = z
 	.object({
 		id: z.string().uuid(),
@@ -46,3 +38,11 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateWordBundle', UpdateWordBundleSchema);
 	registry.register('WordBundleResponse', WordBundleResponseSchema);
 }
+
+export type WordBundle = {
+	id: string;
+	name: string;
+	description?: string | null;
+	words?: Word[];
+	created_at: Date;
+};

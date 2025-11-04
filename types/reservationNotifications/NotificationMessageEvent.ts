@@ -20,15 +20,6 @@ export const DeleteNotificationMessageEventSchema = z.object({
 
 export type CreateNotificationMessageEventInput = z.infer<typeof CreateNotificationMessageEventSchema>;
 
-export type NotificationMessageEvent = {
-	notification_message_event_id: string;
-	notification_message_id: string;
-	type: string;
-	provider_raw?: unknown | null;
-	occurred_at: Date;
-	message: NotificationMessage;
-};
-
 export const NotificationMessageEventResponseSchema = z
 	.object({
 		notification_message_event_id: z.string(),
@@ -47,3 +38,12 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateNotificationMessageEvent', UpdateNotificationMessageEventSchema);
 	registry.register('NotificationMessageEventResponse', NotificationMessageEventResponseSchema);
 }
+
+export type NotificationMessageEvent = {
+	notification_message_event_id: string;
+	notification_message_id: string;
+	type: string;
+	provider_raw?: unknown | null;
+	occurred_at: Date;
+	message?: NotificationMessage;
+};

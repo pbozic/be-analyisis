@@ -18,18 +18,6 @@ import { MenuItemResponseSchema } from '../menuItems/MenuItem';
 
 extendZodWithOpenApi(z);
 
-export type Translatable = {
-	translatable_id: string;
-	translations: Translation[];
-	words: Word[];
-	categories: Category[];
-	promo_sections: PromoSection[];
-	menu_categories_names: MenuCategory[];
-	menu_categories_descriptions: MenuCategory[];
-	menu_items_names: MenuItem[];
-	menu_items_descriptions: MenuItem[];
-};
-
 export const CreateTranslatableSchema = z
 	.object({
 		translatable_id: z.string().uuid(),
@@ -62,3 +50,15 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateTranslatable', UpdateTranslatableSchema);
 	registry.register('TranslatableResponse', TranslatableResponseSchema);
 }
+
+export type Translatable = {
+	translatable_id: string;
+	translations?: Translation[];
+	words?: Word[];
+	categories?: Category[];
+	promo_sections?: PromoSection[];
+	menu_categories_names?: MenuCategory[];
+	menu_categories_descriptions?: MenuCategory[];
+	menu_items_names?: MenuItem[];
+	menu_items_descriptions?: MenuItem[];
+};

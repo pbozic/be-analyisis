@@ -11,22 +11,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Reservation = {
-	reservation_id: string;
-	seats: number;
-	date: Date;
-	time: string;
-	datetime: Date;
-	created_at: Date;
-	updated_at: Date;
-	user_id: string;
-	user: User;
-	status: RESERVATION_STATUS;
-	table?: number | null;
-	table_reservation_id: string;
-	table_reservations: TableReservationsModule;
-};
-
 export const CreateReservationSchema = z
 	.object({
 		reservation_id: z.string().uuid(),
@@ -71,3 +55,19 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateReservation', UpdateReservationSchema);
 	registry.register('ReservationResponse', ReservationResponseSchema);
 }
+
+export type Reservation = {
+	reservation_id: string;
+	seats: number;
+	date: Date;
+	time: string;
+	datetime: Date;
+	created_at: Date;
+	updated_at: Date;
+	user_id: string;
+	user?: User;
+	status: RESERVATION_STATUS;
+	table?: number | null;
+	table_reservation_id: string;
+	table_reservations?: TableReservationsModule;
+};

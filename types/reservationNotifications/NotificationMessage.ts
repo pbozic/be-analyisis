@@ -49,30 +49,6 @@ export const DeleteNotificationMessageSchema = z.object({
 export type CreateNotificationMessageInput = z.infer<typeof CreateNotificationMessageSchema>;
 export type UpdateNotificationMessageStatusInput = z.infer<typeof UpdateNotificationMessageStatusSchema>;
 
-export type NotificationMessage = {
-	notification_message_id: string;
-	reservation_module_id: string;
-	notification_event_id: string;
-	channel: NOTIFICATION_CHANNEL;
-	notification_template_id?: string | null;
-	template_version?: number | null;
-	to_address?: string | null;
-	subject?: string | null;
-	body_text?: string | null;
-	body_html?: string | null;
-	variables: unknown;
-	rendered_at: Date;
-	provider_message_id?: string | null;
-	status: MESSAGE_STATUS;
-	error?: string | null;
-	created_at: Date;
-	reservation_module: ReservationModule;
-	event: NotificationEvent;
-	template?: NotificationTemplate | null;
-	version?: NotificationTemplateVersion | null;
-	events: NotificationMessageEvent[];
-};
-
 export const NotificationMessageResponseSchema = z
 	.object({
 		notification_message_id: z.string(),
@@ -106,3 +82,27 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateNotificationMessage', UpdateNotificationMessageSchema);
 	registry.register('NotificationMessageResponse', NotificationMessageResponseSchema);
 }
+
+export type NotificationMessage = {
+	notification_message_id: string;
+	reservation_module_id: string;
+	notification_event_id: string;
+	channel: NOTIFICATION_CHANNEL;
+	notification_template_id?: string | null;
+	template_version?: number | null;
+	to_address?: string | null;
+	subject?: string | null;
+	body_text?: string | null;
+	body_html?: string | null;
+	variables: unknown;
+	rendered_at: Date;
+	provider_message_id?: string | null;
+	status: MESSAGE_STATUS;
+	error?: string | null;
+	created_at: Date;
+	reservation_module?: ReservationModule;
+	event?: NotificationEvent;
+	template?: NotificationTemplate | null;
+	version?: NotificationTemplateVersion | null;
+	events?: NotificationMessageEvent[];
+};

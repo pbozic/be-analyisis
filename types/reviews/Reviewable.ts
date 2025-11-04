@@ -22,18 +22,6 @@ import { FoodDrinksModuleResponseSchema } from '../foodDrinks/FoodDrinksModule';
 
 extendZodWithOpenApi(z);
 
-export type Reviewable = {
-	reviewable_id: string;
-	reviews: Review[];
-	user: User[];
-	driver: Driver[];
-	reservation_module: ReservationModule[];
-	reservation_booking: Booking[];
-	transport_module: TransportModule[];
-	stores_module: StoresModule[];
-	food_drinks_module: FoodDrinksModule[];
-};
-
 export const CreateReviewableSchema = z
 	.object({
 		reviewable_id: z.string().uuid(),
@@ -66,3 +54,15 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateReviewable', UpdateReviewableSchema);
 	registry.register('ReviewableResponse', ReviewableResponseSchema);
 }
+
+export type Reviewable = {
+	reviewable_id: string;
+	reviews?: Review[];
+	user?: User[];
+	driver?: Driver[];
+	reservation_module?: ReservationModule[];
+	reservation_booking?: Booking[];
+	transport_module?: TransportModule[];
+	stores_module?: StoresModule[];
+	food_drinks_module?: FoodDrinksModule[];
+};

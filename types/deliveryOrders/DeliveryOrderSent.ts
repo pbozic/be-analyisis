@@ -10,19 +10,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type DeliveryOrderSent = {
-	delivery_order_sent_id: string;
-	order_id: string;
-	accepted: boolean;
-	location: unknown;
-	timeline: unknown;
-	created_at: Date;
-	updated_at: Date;
-	order?: DeliveryOrder | null;
-	driver_id?: string | null;
-	driver?: Driver | null;
-};
-
 export const CreateDeliveryOrderSentSchema = z
 	.object({
 		delivery_order_sent_id: z.string().uuid(),
@@ -61,3 +48,16 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDeliveryOrderSent', UpdateDeliveryOrderSentSchema);
 	registry.register('DeliveryOrderSentResponse', DeliveryOrderSentResponseSchema);
 }
+
+export type DeliveryOrderSent = {
+	delivery_order_sent_id: string;
+	order_id: string;
+	accepted: boolean;
+	location: unknown;
+	timeline: unknown;
+	created_at: Date;
+	updated_at: Date;
+	order?: DeliveryOrder | null;
+	driver_id?: string | null;
+	driver?: Driver | null;
+};

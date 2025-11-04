@@ -10,14 +10,6 @@ import { CategoryResponseSchema } from '../menus/Category';
 
 extendZodWithOpenApi(z);
 
-export type PromoAdsCategory = {
-	promo_ads_category_id: string;
-	promo_ads_id: string;
-	categories_id: string;
-	promo_ad: PromoAd;
-	category: Category;
-};
-
 export const CreatePromoAdsCategorySchema = z
 	.object({
 		promo_ads_category_id: z.string().uuid(),
@@ -48,3 +40,11 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdatePromoAdsCategory', UpdatePromoAdsCategorySchema);
 	registry.register('PromoAdsCategoryResponse', PromoAdsCategoryResponseSchema);
 }
+
+export type PromoAdsCategory = {
+	promo_ads_category_id: string;
+	promo_ads_id: string;
+	categories_id: string;
+	promo_ad?: PromoAd;
+	category?: Category;
+};

@@ -10,20 +10,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Referral = {
-	referral_id: string;
-	referral_code: string;
-	referrer_user_id: string;
-	referred_user_id: string;
-	conditions_met: boolean;
-	reward_claimed: boolean;
-	created_at: Date;
-	updated_at: Date;
-	referrer: User;
-	referred: User;
-	credits: WalletFund[];
-};
-
 export const CreateReferralSchema = z
 	.object({
 		referral_id: z.string().uuid(),
@@ -63,3 +49,17 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateReferral', UpdateReferralSchema);
 	registry.register('ReferralResponse', ReferralResponseSchema);
 }
+
+export type Referral = {
+	referral_id: string;
+	referral_code: string;
+	referrer_user_id: string;
+	referred_user_id: string;
+	conditions_met: boolean;
+	reward_claimed: boolean;
+	created_at: Date;
+	updated_at: Date;
+	referrer?: User;
+	referred?: User;
+	credits?: WalletFund[];
+};

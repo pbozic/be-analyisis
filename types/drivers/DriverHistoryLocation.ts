@@ -12,20 +12,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type DriverHistoryLocation = {
-	driver_history_location_id: string;
-	driver_id: string;
-	taxi_order_id?: string | null;
-	delivery_order_id?: string | null;
-	status?: string | null;
-	location?: unknown | null;
-	driver?: Driver | null;
-	order?: TaxiOrder | null;
-	delivery_order?: DeliveryOrder | null;
-	created_at: Date;
-	updated_at: Date;
-};
-
 export const CreateDriverHistoryLocationSchema = z
 	.object({
 		driver_history_location_id: z.string().uuid(),
@@ -66,3 +52,17 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDriverHistoryLocation', UpdateDriverHistoryLocationSchema);
 	registry.register('DriverHistoryLocationResponse', DriverHistoryLocationResponseSchema);
 }
+
+export type DriverHistoryLocation = {
+	driver_history_location_id: string;
+	driver_id: string;
+	taxi_order_id?: string | null;
+	delivery_order_id?: string | null;
+	status?: string | null;
+	location?: unknown | null;
+	driver?: Driver | null;
+	order?: TaxiOrder | null;
+	delivery_order?: DeliveryOrder | null;
+	created_at: Date;
+	updated_at: Date;
+};

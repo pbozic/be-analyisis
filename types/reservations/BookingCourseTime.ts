@@ -10,18 +10,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type BookingCourseTime = {
-	booking_course_time_id: string;
-	reservation_module_id: string;
-	booking_id: string;
-	start_time: Date;
-	end_time: Date;
-	created_at: Date;
-	updated_at: Date;
-	booking: Booking;
-	reservation_module: ReservationModule;
-};
-
 export const CreateBookingCourseTimeSchema = z
 	.object({
 		booking_course_time_id: z.string().uuid(),
@@ -58,3 +46,15 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBookingCourseTime', UpdateBookingCourseTimeSchema);
 	registry.register('BookingCourseTimeResponse', BookingCourseTimeResponseSchema);
 }
+
+export type BookingCourseTime = {
+	booking_course_time_id: string;
+	reservation_module_id: string;
+	booking_id: string;
+	start_time: Date;
+	end_time: Date;
+	created_at: Date;
+	updated_at: Date;
+	booking?: Booking;
+	reservation_module?: ReservationModule;
+};

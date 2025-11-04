@@ -59,22 +59,6 @@ export type UpdateNotificationTemplateVersionByCompositeInput = z.infer<
 	typeof UpdateNotificationTemplateVersionByCompositeSchema
 >;
 
-export type NotificationTemplateVersion = {
-	notification_template_version_id: string;
-	notification_template_id: string;
-	version: number;
-	status: TEMPLATE_VERSION_STATUS;
-	subject?: string | null;
-	body_text?: string | null;
-	variables_json_schema: unknown;
-	compiled_artifacts?: unknown | null;
-	created_by_user_id?: string | null;
-	created_at: Date;
-	template: NotificationTemplate;
-	mappings: NotificationMapping[];
-	messages: NotificationMessage[];
-};
-
 export const NotificationTemplateVersionResponseSchema = z
 	.object({
 		notification_template_version_id: z.string(),
@@ -100,3 +84,19 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateNotificationTemplateVersion', UpdateNotificationTemplateVersionSchema);
 	registry.register('NotificationTemplateVersionResponse', NotificationTemplateVersionResponseSchema);
 }
+
+export type NotificationTemplateVersion = {
+	notification_template_version_id: string;
+	notification_template_id: string;
+	version: number;
+	status: TEMPLATE_VERSION_STATUS;
+	subject?: string | null;
+	body_text?: string | null;
+	variables_json_schema: unknown;
+	compiled_artifacts?: unknown | null;
+	created_by_user_id?: string | null;
+	created_at: Date;
+	template?: NotificationTemplate;
+	mappings?: NotificationMapping[];
+	messages?: NotificationMessage[];
+};

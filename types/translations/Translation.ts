@@ -8,17 +8,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Translation = {
-	translations_id: string;
-	translatable_id: string;
-	translatable: Translatable;
-	field?: string | null;
-	language: string;
-	translation: string;
-	created_at: Date;
-	updated_at: Date;
-};
-
 export const CreateTranslationSchema = z
 	.object({
 		translations_id: z.string().uuid(),
@@ -54,3 +43,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateTranslation', UpdateTranslationSchema);
 	registry.register('TranslationResponse', TranslationResponseSchema);
 }
+
+export type Translation = {
+	translations_id: string;
+	translatable_id: string;
+	translatable?: Translatable;
+	field?: string | null;
+	language: string;
+	translation: string;
+	created_at: Date;
+	updated_at: Date;
+};

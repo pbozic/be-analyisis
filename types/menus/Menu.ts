@@ -12,16 +12,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Menu = {
-	menu_id: string;
-	stores_id?: string | null;
-	food_drinks_id?: string | null;
-	stores_module?: StoresModule | null;
-	food_drinks_module?: FoodDrinksModule | null;
-	categories: MenuCategory[];
-	menu_categories_ordered?: unknown | null;
-};
-
 export const CreateMenuSchema = z
 	.object({
 		menu_id: z.string().uuid(),
@@ -55,3 +45,13 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateMenu', UpdateMenuSchema);
 	registry.register('MenuResponse', MenuResponseSchema);
 }
+
+export type Menu = {
+	menu_id: string;
+	stores_id?: string | null;
+	food_drinks_id?: string | null;
+	stores_module?: StoresModule | null;
+	food_drinks_module?: FoodDrinksModule | null;
+	categories?: MenuCategory[];
+	menu_categories_ordered?: unknown | null;
+};

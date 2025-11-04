@@ -19,23 +19,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type BusinessUser = {
-	business_users_id: string;
-	online?: boolean | null;
-	company_role: COMPANY_ROLE;
-	created_at: Date;
-	updated_at: Date;
-	user_id: string;
-	users?: User | null;
-	business_id: string;
-	business?: Business | null;
-	operating_address_id?: string | null;
-	operating_address?: Address | null;
-	allowance?: Allowance | null;
-	taxi_orders: TaxiOrder[];
-	employee?: Employee | null;
-};
-
 export const CreateBusinessUserSchema = z
 	.object({
 		business_users_id: z.string().uuid(),
@@ -78,3 +61,20 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBusinessUser', UpdateBusinessUserSchema);
 	registry.register('BusinessUserResponse', BusinessUserResponseSchema);
 }
+
+export type BusinessUser = {
+	business_users_id: string;
+	online?: boolean | null;
+	company_role: COMPANY_ROLE;
+	created_at: Date;
+	updated_at: Date;
+	user_id: string;
+	users?: User | null;
+	business_id: string;
+	business?: Business | null;
+	operating_address_id?: string | null;
+	operating_address?: Address | null;
+	allowance?: Allowance | null;
+	taxi_orders?: TaxiOrder[];
+	employee?: Employee | null;
+};

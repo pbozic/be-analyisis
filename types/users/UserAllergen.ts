@@ -10,13 +10,6 @@ import { UserResponseSchema } from './User';
 
 extendZodWithOpenApi(z);
 
-export type UserAllergen = {
-	allergen_id: string;
-	user_id: string;
-	allergen: Allergen;
-	user: User;
-};
-
 export const CreateUserAllergenSchema = z
 	.object({
 		allergen_id: z.string().uuid(),
@@ -45,3 +38,10 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateUserAllergen', UpdateUserAllergenSchema);
 	registry.register('UserAllergenResponse', UserAllergenResponseSchema);
 }
+
+export type UserAllergen = {
+	allergen_id: string;
+	user_id: string;
+	allergen?: Allergen;
+	user?: User;
+};

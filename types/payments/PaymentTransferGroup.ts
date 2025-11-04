@@ -11,19 +11,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type PaymentTransferGroup = {
-	payment_transfer_group_id: string;
-	status: TRANSFER_GROUP_STATUS;
-	type: TRANSFER_GROUP_TYPE;
-	amount: number;
-	metadata?: unknown | null;
-	payment_id: string;
-	created_at: Date;
-	updated_at: Date;
-	payment_splits: PaymentSplit[];
-	payment: Payment;
-};
-
 export const CreatePaymentTransferGroupSchema = z
 	.object({
 		payment_transfer_group_id: z.string().uuid(),
@@ -63,3 +50,16 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdatePaymentTransferGroup', UpdatePaymentTransferGroupSchema);
 	registry.register('PaymentTransferGroupResponse', PaymentTransferGroupResponseSchema);
 }
+
+export type PaymentTransferGroup = {
+	payment_transfer_group_id: string;
+	status: TRANSFER_GROUP_STATUS;
+	type: TRANSFER_GROUP_TYPE;
+	amount: number;
+	metadata?: unknown | null;
+	payment_id: string;
+	created_at: Date;
+	updated_at: Date;
+	payment_splits?: PaymentSplit[];
+	payment?: Payment;
+};

@@ -235,18 +235,6 @@ export type UpdateScheduleSlotInput = z.infer<typeof UpdateScheduleSlotSchema>;
 export type UpdateScheduleSlotExceptionInput = z.infer<typeof UpdateScheduleSlotExceptionSchema>;
 export type UpdateBookingSlotSchemaInput = z.infer<typeof UpdateCreateBookingSlotSchema>;
 
-export type Schedule = {
-	schedule_id: string;
-	location_id: string;
-	name: string;
-	color?: string | null;
-	start_date: Date;
-	end_date: Date;
-	location: Location;
-	schedule_employees: ScheduleEmployee[];
-	schedule_slots: ScheduleSlot[];
-};
-
 export const ScheduleResponseSchema = z
 	.object({
 		schedule_id: z.string(),
@@ -268,3 +256,15 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateSchedule', UpdateScheduleSchema);
 	registry.register('ScheduleResponse', ScheduleResponseSchema);
 }
+
+export type Schedule = {
+	schedule_id: string;
+	location_id: string;
+	name: string;
+	color?: string | null;
+	start_date: Date;
+	end_date: Date;
+	location?: Location;
+	schedule_employees?: ScheduleEmployee[];
+	schedule_slots?: ScheduleSlot[];
+};

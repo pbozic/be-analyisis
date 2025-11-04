@@ -27,31 +27,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
 
-export type DailyMealSubscription = {
-	id: string;
-	user_id: string;
-	daily_meals_id: string;
-	delivery_address_id: string;
-	driver_id?: string | null;
-	start_date: Date;
-	end_date?: Date | null;
-	type: SUBSCRIPTION_TYPE;
-	status: SUBSCRIPTION_STATUS;
-	courier_comment?: string | null;
-	created_at: Date;
-	updated_at: Date;
-	user: User;
-	driver?: Driver | null;
-	delivery_address: Address;
-	daily_meals_module: DailyMealsModule;
-	customers: DailyMealSubscriptionCustomer[];
-	days: DailyMealSubscriptionDay[];
-	weekdays: DailyMealSubscriptionWeekday[];
-	daily_meal_instances: DailyMealInstance[];
-	payment?: Payment | null;
-	promo_analytics: PromoAnalytic[];
-};
-
 export const CreateDailyMealSubscriptionSchema = z
 	.object({
 		id: z.string().uuid(),
@@ -107,3 +82,28 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDailyMealSubscription', UpdateDailyMealSubscriptionSchema);
 	registry.register('DailyMealSubscriptionResponse', DailyMealSubscriptionResponseSchema);
 }
+
+export type DailyMealSubscription = {
+	id: string;
+	user_id: string;
+	daily_meals_id: string;
+	delivery_address_id: string;
+	driver_id?: string | null;
+	start_date: Date;
+	end_date?: Date | null;
+	type: SUBSCRIPTION_TYPE;
+	status: SUBSCRIPTION_STATUS;
+	courier_comment?: string | null;
+	created_at: Date;
+	updated_at: Date;
+	user?: User;
+	driver?: Driver | null;
+	delivery_address?: Address;
+	daily_meals_module?: DailyMealsModule;
+	customers?: DailyMealSubscriptionCustomer[];
+	days?: DailyMealSubscriptionDay[];
+	weekdays?: DailyMealSubscriptionWeekday[];
+	daily_meal_instances?: DailyMealInstance[];
+	payment?: Payment | null;
+	promo_analytics?: PromoAnalytic[];
+};

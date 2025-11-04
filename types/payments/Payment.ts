@@ -15,25 +15,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Payment = {
-	payment_id: string;
-	amount: number;
-	credits_amount: number;
-	payment_method: PAYMENT_METHOD;
-	payment_intent_id?: string | null;
-	status: PAYMENT_STATUS;
-	created_at: Date;
-	updated_at: Date;
-	order_type?: string | null;
-	payment_type?: string | null;
-	daily_meal_subscription_id?: string | null;
-	daily_meal_subscription?: DailyMealSubscription | null;
-	user_id: string;
-	user: User;
-	payment_splits: PaymentSplit[];
-	payment_transfer_groups: PaymentTransferGroup[];
-};
-
 export const CreatePaymentSchema = z
 	.object({
 		payment_id: z.string().uuid(),
@@ -82,3 +63,22 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdatePayment', UpdatePaymentSchema);
 	registry.register('PaymentResponse', PaymentResponseSchema);
 }
+
+export type Payment = {
+	payment_id: string;
+	amount: number;
+	credits_amount: number;
+	payment_method: PAYMENT_METHOD;
+	payment_intent_id?: string | null;
+	status: PAYMENT_STATUS;
+	created_at: Date;
+	updated_at: Date;
+	order_type?: string | null;
+	payment_type?: string | null;
+	daily_meal_subscription_id?: string | null;
+	daily_meal_subscription?: DailyMealSubscription | null;
+	user_id: string;
+	user?: User;
+	payment_splits?: PaymentSplit[];
+	payment_transfer_groups?: PaymentTransferGroup[];
+};

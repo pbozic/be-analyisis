@@ -10,25 +10,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type WordBuy = {
-	word_buy_id: string;
-	word_id: string;
-	word: Word;
-	stripe_subscription_id?: string | null;
-	stripe_price_id?: string | null;
-	pending_stripe_price_id?: string | null;
-	price: number;
-	pending_price?: number | null;
-	active_at?: Date | null;
-	expires_at?: Date | null;
-	paid: boolean;
-	business_id: string;
-	business: Business;
-	created_at: Date;
-	updated_at: Date;
-	deleted_at?: Date | null;
-};
-
 export const CreateWordBuySchema = z
 	.object({
 		word_buy_id: z.string().uuid(),
@@ -79,3 +60,22 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateWordBuy', UpdateWordBuySchema);
 	registry.register('WordBuyResponse', WordBuyResponseSchema);
 }
+
+export type WordBuy = {
+	word_buy_id: string;
+	word_id: string;
+	word?: Word;
+	stripe_subscription_id?: string | null;
+	stripe_price_id?: string | null;
+	pending_stripe_price_id?: string | null;
+	price: number;
+	pending_price?: number | null;
+	active_at?: Date | null;
+	expires_at?: Date | null;
+	paid: boolean;
+	business_id: string;
+	business?: Business;
+	created_at: Date;
+	updated_at: Date;
+	deleted_at?: Date | null;
+};

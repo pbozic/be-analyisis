@@ -30,17 +30,6 @@ export const DeleteNotificationProviderCredentialSchema = z.object({
 export type CreateNotificationProviderCredentialInput = z.infer<typeof CreateNotificationProviderCredentialSchema>;
 export type UpdateNotificationProviderCredentialInput = z.infer<typeof UpdateNotificationProviderCredentialSchema>;
 
-export type NotificationProviderCredential = {
-	notification_provider_credential_id: string;
-	reservation_module_id: string;
-	channel: NOTIFICATION_CHANNEL;
-	provider: string;
-	config: unknown;
-	is_default: boolean;
-	created_at: Date;
-	reservation_module: ReservationModule;
-};
-
 export const NotificationProviderCredentialResponseSchema = z
 	.object({
 		notification_provider_credential_id: z.string(),
@@ -61,3 +50,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateNotificationProviderCredential', UpdateNotificationProviderCredentialSchema);
 	registry.register('NotificationProviderCredentialResponse', NotificationProviderCredentialResponseSchema);
 }
+
+export type NotificationProviderCredential = {
+	notification_provider_credential_id: string;
+	reservation_module_id: string;
+	channel: NOTIFICATION_CHANNEL;
+	provider: string;
+	config: unknown;
+	is_default: boolean;
+	created_at: Date;
+	reservation_module?: ReservationModule;
+};

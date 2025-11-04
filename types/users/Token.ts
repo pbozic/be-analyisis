@@ -9,18 +9,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Token = {
-	token_id: string;
-	user_id: string;
-	type: TokenType;
-	token: string;
-	expires_at: Date;
-	created_at: Date;
-	updated_at: Date;
-	active: boolean;
-	users: User;
-};
-
 export const CreateTokenSchema = z
 	.object({
 		token_id: z.string().uuid(),
@@ -58,3 +46,15 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateToken', UpdateTokenSchema);
 	registry.register('TokenResponse', TokenResponseSchema);
 }
+
+export type Token = {
+	token_id: string;
+	user_id: string;
+	type: TokenType;
+	token: string;
+	expires_at: Date;
+	created_at: Date;
+	updated_at: Date;
+	active: boolean;
+	users?: User;
+};

@@ -8,14 +8,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type DailyMealSubscriptionDay = {
-	id: string;
-	subscription_id: string;
-	intended_date: Date;
-	delivery_date: Date;
-	subscription: DailyMealSubscription;
-};
-
 export const CreateDailyMealSubscriptionDaySchema = z
 	.object({
 		id: z.string().uuid(),
@@ -49,3 +41,11 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDailyMealSubscriptionDay', UpdateDailyMealSubscriptionDaySchema);
 	registry.register('DailyMealSubscriptionDayResponse', DailyMealSubscriptionDayResponseSchema);
 }
+
+export type DailyMealSubscriptionDay = {
+	id: string;
+	subscription_id: string;
+	intended_date: Date;
+	delivery_date: Date;
+	subscription?: DailyMealSubscription;
+};

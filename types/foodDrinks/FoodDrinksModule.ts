@@ -26,35 +26,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type FoodDrinksModule = {
-	food_drinks_id: string;
-	business_id: string;
-	enabled: boolean;
-	settings?: unknown | null;
-	created_at: Date;
-	updated_at: Date;
-	reviewable_id?: string | null;
-	reviewable?: Reviewable | null;
-	business: Business;
-	delivery_address_id?: string | null;
-	delivery_address?: Address | null;
-	delivery_orders: DeliveryOrder[];
-	minimum_order: number;
-	menu?: Menu | null;
-	order_lobbies: OrderLobby[];
-	table_reservations_module?: TableReservationsModule | null;
-	seats?: number | null;
-	overwhelmed: boolean;
-	online: boolean;
-	daily_meals_id?: string | null;
-	daily_meals_module?: DailyMealsModule | null;
-	logo_id?: string | null;
-	logo?: File | null;
-	banner_id?: string | null;
-	banner?: File | null;
-	late_events: LateEvent[];
-};
-
 export const CreateFoodDrinksModuleSchema = z
 	.object({
 		food_drinks_id: z.string().uuid(),
@@ -116,3 +87,32 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateFoodDrinksModule', UpdateFoodDrinksModuleSchema);
 	registry.register('FoodDrinksModuleResponse', FoodDrinksModuleResponseSchema);
 }
+
+export type FoodDrinksModule = {
+	food_drinks_id: string;
+	business_id: string;
+	enabled: boolean;
+	settings?: unknown | null;
+	created_at: Date;
+	updated_at: Date;
+	reviewable_id?: string | null;
+	reviewable?: Reviewable | null;
+	business?: Business;
+	delivery_address_id?: string | null;
+	delivery_address?: Address | null;
+	delivery_orders?: DeliveryOrder[];
+	minimum_order: number;
+	menu?: Menu | null;
+	order_lobbies?: OrderLobby[];
+	table_reservations_module?: TableReservationsModule | null;
+	seats?: number | null;
+	overwhelmed: boolean;
+	online: boolean;
+	daily_meals_id?: string | null;
+	daily_meals_module?: DailyMealsModule | null;
+	logo_id?: string | null;
+	logo?: File | null;
+	banner_id?: string | null;
+	banner?: File | null;
+	late_events?: LateEvent[];
+};

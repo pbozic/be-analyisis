@@ -11,19 +11,6 @@ import { TutorialResponseSchema } from './Tutorial';
 
 extendZodWithOpenApi(z);
 
-export type UserTutorial = {
-	user_id: string;
-	tutorial_id: string;
-	epoch: number;
-	status: TUTORIAL_STATUS;
-	versionSeen: number;
-	firstSeenAt?: Date | null;
-	completedAt?: Date | null;
-	dismissedAt?: Date | null;
-	user: User;
-	tutorial: Tutorial;
-};
-
 export const CreateUserTutorialSchema = z
 	.object({
 		user_id: z.string().uuid(),
@@ -64,3 +51,16 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateUserTutorial', UpdateUserTutorialSchema);
 	registry.register('UserTutorialResponse', UserTutorialResponseSchema);
 }
+
+export type UserTutorial = {
+	user_id: string;
+	tutorial_id: string;
+	epoch: number;
+	status: TUTORIAL_STATUS;
+	versionSeen: number;
+	firstSeenAt?: Date | null;
+	completedAt?: Date | null;
+	dismissedAt?: Date | null;
+	user?: User;
+	tutorial?: Tutorial;
+};

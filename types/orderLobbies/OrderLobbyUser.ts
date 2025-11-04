@@ -10,17 +10,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type OrderLobbyUser = {
-	order_lobby_users_id: string;
-	user_id: string;
-	order_lobbies_id: string;
-	limit: number;
-	created_at: Date;
-	updated_at: Date;
-	order_lobbies: OrderLobby;
-	users: User;
-};
-
 export const CreateOrderLobbyUserSchema = z
 	.object({
 		order_lobby_users_id: z.string().uuid(),
@@ -55,3 +44,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateOrderLobbyUser', UpdateOrderLobbyUserSchema);
 	registry.register('OrderLobbyUserResponse', OrderLobbyUserResponseSchema);
 }
+
+export type OrderLobbyUser = {
+	order_lobby_users_id: string;
+	user_id: string;
+	order_lobbies_id: string;
+	limit: number;
+	created_at: Date;
+	updated_at: Date;
+	order_lobbies?: OrderLobby;
+	users?: User;
+};

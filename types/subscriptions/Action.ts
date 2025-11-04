@@ -19,17 +19,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Action = {
-	action_id: string;
-	module: MODULE_TYPE;
-	name: string;
-	action_bundle_actions: ActionBundleAction[];
-	addon_actions: AddonAction[];
-	business_usages: BusinessUsage[];
-	permissions: Permission[];
-	user_permissions: UserPermission[];
-};
-
 export const CreateActionSchema = z
 	.object({
 		action_id: z.string().uuid(),
@@ -63,3 +52,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateAction', UpdateActionSchema);
 	registry.register('ActionResponse', ActionResponseSchema);
 }
+
+export type Action = {
+	action_id: string;
+	module: MODULE_TYPE;
+	name: string;
+	action_bundle_actions?: ActionBundleAction[];
+	addon_actions?: AddonAction[];
+	business_usages?: BusinessUsage[];
+	permissions?: Permission[];
+	user_permissions?: UserPermission[];
+};

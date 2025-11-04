@@ -10,13 +10,6 @@ import { BlogPostResponseSchema } from './BlogPost';
 
 extendZodWithOpenApi(z);
 
-export type BlogTagsBlogPost = {
-	blog_tags_id: string;
-	blog_posts_id: string;
-	blog_tags: BlogTag;
-	blog_posts: BlogPost;
-};
-
 export const CreateBlogTagsBlogPostSchema = z
 	.object({
 		blog_tags_id: z.string().uuid(),
@@ -45,3 +38,10 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBlogTagsBlogPost', UpdateBlogTagsBlogPostSchema);
 	registry.register('BlogTagsBlogPostResponse', BlogTagsBlogPostResponseSchema);
 }
+
+export type BlogTagsBlogPost = {
+	blog_tags_id: string;
+	blog_posts_id: string;
+	blog_tags?: BlogTag;
+	blog_posts?: BlogPost;
+};

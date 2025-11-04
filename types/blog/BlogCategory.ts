@@ -17,13 +17,6 @@ export const UpdateBlogCategorySchema = CreateBlogCategorySchema.partial();
 export type CreateBlogCategoryInput = z.infer<typeof CreateBlogCategorySchema>;
 export type UpdateBlogCategoryInput = z.infer<typeof UpdateBlogCategorySchema>;
 
-export type BlogCategory = {
-	blog_categories_id: string;
-	name: string;
-	description?: string | null;
-	blog_posts: BlogPost[];
-};
-
 export const BlogCategoryResponseSchema = z
 	.object({
 		blog_categories_id: z.string(),
@@ -40,3 +33,10 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBlogCategory', UpdateBlogCategorySchema);
 	registry.register('BlogCategoryResponse', BlogCategoryResponseSchema);
 }
+
+export type BlogCategory = {
+	blog_categories_id: string;
+	name: string;
+	description?: string | null;
+	blog_posts?: BlogPost[];
+};

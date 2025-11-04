@@ -13,24 +13,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Cashback = {
-	cashback_id: string;
-	user_id: string;
-	amount: number;
-	type: CASHBACK_TYPE;
-	source: CASHBACK_SOURCE;
-	status: CASHBACK_STATUS;
-	description?: string | null;
-	earned_at: Date;
-	expires_at?: Date | null;
-	converted_at?: Date | null;
-	taxi_order_id?: string | null;
-	delivery_order_id?: string | null;
-	user: User;
-	taxi_order?: TaxiOrder | null;
-	delivery_order?: DeliveryOrder | null;
-};
-
 export const CreateCashbackSchema = z
 	.object({
 		cashback_id: z.string().uuid(),
@@ -80,3 +62,21 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateCashback', UpdateCashbackSchema);
 	registry.register('CashbackResponse', CashbackResponseSchema);
 }
+
+export type Cashback = {
+	cashback_id: string;
+	user_id: string;
+	amount: number;
+	type: CASHBACK_TYPE;
+	source: CASHBACK_SOURCE;
+	status: CASHBACK_STATUS;
+	description?: string | null;
+	earned_at: Date;
+	expires_at?: Date | null;
+	converted_at?: Date | null;
+	taxi_order_id?: string | null;
+	delivery_order_id?: string | null;
+	user?: User;
+	taxi_order?: TaxiOrder | null;
+	delivery_order?: DeliveryOrder | null;
+};

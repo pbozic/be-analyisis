@@ -9,14 +9,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type BusinessType = {
-	type_id: string;
-	type: string;
-	created_at: Date;
-	updated_at: Date;
-	businesses: BusinessToType[];
-};
-
 export const CreateBusinessTypeSchema = z
 	.object({
 		type_id: z.string().uuid(),
@@ -46,3 +38,11 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBusinessType', UpdateBusinessTypeSchema);
 	registry.register('BusinessTypeResponse', BusinessTypeResponseSchema);
 }
+
+export type BusinessType = {
+	type_id: string;
+	type: string;
+	created_at: Date;
+	updated_at: Date;
+	businesses?: BusinessToType[];
+};

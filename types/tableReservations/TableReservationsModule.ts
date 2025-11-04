@@ -10,13 +10,6 @@ import { ReservationResponseSchema } from './Reservation';
 
 extendZodWithOpenApi(z);
 
-export type TableReservationsModule = {
-	id: string;
-	food_drinks_id: string;
-	food_drinks_module: FoodDrinksModule;
-	reservations: Reservation[];
-};
-
 export const CreateTableReservationsModuleSchema = z
 	.object({
 		id: z.string().uuid(),
@@ -47,3 +40,10 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateTableReservationsModule', UpdateTableReservationsModuleSchema);
 	registry.register('TableReservationsModuleResponse', TableReservationsModuleResponseSchema);
 }
+
+export type TableReservationsModule = {
+	id: string;
+	food_drinks_id: string;
+	food_drinks_module?: FoodDrinksModule;
+	reservations?: Reservation[];
+};

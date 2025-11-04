@@ -10,17 +10,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type MenuItemStockChange = {
-	id: string;
-	menu_item_id: string;
-	quantity: number;
-	reason: string;
-	menu_item: MenuItem;
-	order_id?: string | null;
-	order?: DeliveryOrder | null;
-	created_at: Date;
-};
-
 export const CreateMenuItemStockChangeSchema = z
 	.object({
 		id: z.string().uuid(),
@@ -57,3 +46,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateMenuItemStockChange', UpdateMenuItemStockChangeSchema);
 	registry.register('MenuItemStockChangeResponse', MenuItemStockChangeResponseSchema);
 }
+
+export type MenuItemStockChange = {
+	id: string;
+	menu_item_id: string;
+	quantity: number;
+	reason: string;
+	menu_item?: MenuItem;
+	order_id?: string | null;
+	order?: DeliveryOrder | null;
+	created_at: Date;
+};

@@ -42,20 +42,6 @@ export type AddPriceToDailyMealCategoryInput = z.infer<typeof AddPriceToDailyMea
 // Full DMC Types (from DB + schemas)
 // =======================
 
-export type DailyMealCategory = {
-	daily_meal_category_id: string;
-	daily_meals_id: string;
-	category_id: string;
-	created_at: Date;
-	start_date: Date;
-	active: boolean;
-	category: Category;
-	daily_meals_module: DailyMealsModule;
-	menu_categories: MenuCategory[];
-	daily_meal_subscription_customers: DailyMealSubscriptionCustomer[];
-	daily_meal_category_prices: DailyMealCategoryPrice[];
-};
-
 export const CreateDailyMealCategorySchema = z
 	.object({
 		daily_meal_category_id: z.string().uuid(),
@@ -94,3 +80,17 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDailyMealCategory', UpdateDailyMealCategorySchema);
 	registry.register('DailyMealCategoryResponse', DailyMealCategoryResponseSchema);
 }
+
+export type DailyMealCategory = {
+	daily_meal_category_id: string;
+	daily_meals_id: string;
+	category_id: string;
+	created_at: Date;
+	start_date: Date;
+	active: boolean;
+	category?: Category;
+	daily_meals_module?: DailyMealsModule;
+	menu_categories?: MenuCategory[];
+	daily_meal_subscription_customers?: DailyMealSubscriptionCustomer[];
+	daily_meal_category_prices?: DailyMealCategoryPrice[];
+};

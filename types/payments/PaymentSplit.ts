@@ -11,24 +11,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type PaymentSplit = {
-	payment_split_id: string;
-	status: SPLIT_STATUS;
-	type: SPLIT_TYPE;
-	payment_id: string;
-	destination_type: SPLIT_DESTINATION_TYPE;
-	destination_id?: string | null;
-	payment_transfer_group_id?: string | null;
-	amount_regular: number;
-	amount_credits: number;
-	metadata?: unknown | null;
-	external_id?: string | null;
-	created_at: Date;
-	updated_at: Date;
-	payment: Payment;
-	payment_transfer_group?: PaymentTransferGroup | null;
-};
-
 export const CreatePaymentSplitSchema = z
 	.object({
 		payment_split_id: z.string().uuid(),
@@ -77,3 +59,21 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdatePaymentSplit', UpdatePaymentSplitSchema);
 	registry.register('PaymentSplitResponse', PaymentSplitResponseSchema);
 }
+
+export type PaymentSplit = {
+	payment_split_id: string;
+	status: SPLIT_STATUS;
+	type: SPLIT_TYPE;
+	payment_id: string;
+	destination_type: SPLIT_DESTINATION_TYPE;
+	destination_id?: string | null;
+	payment_transfer_group_id?: string | null;
+	amount_regular: number;
+	amount_credits: number;
+	metadata?: unknown | null;
+	external_id?: string | null;
+	created_at: Date;
+	updated_at: Date;
+	payment?: Payment;
+	payment_transfer_group?: PaymentTransferGroup | null;
+};

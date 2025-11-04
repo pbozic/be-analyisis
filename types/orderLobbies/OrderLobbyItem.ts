@@ -12,23 +12,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type OrderLobbyItem = {
-	order_lobby_items_id: string;
-	order_lobbies_id: string;
-	menu_item_id: string;
-	menu_item_version_id: string;
-	user_id?: string | null;
-	sides: string;
-	extras: string;
-	quantity: number;
-	customer_note?: string | null;
-	created_at: Date;
-	updated_at: Date;
-	menu_items?: MenuItem | null;
-	menu_item_version: MenuItemVersion;
-	order_lobbies: OrderLobby;
-};
-
 export const CreateOrderLobbyItemSchema = z
 	.object({
 		order_lobby_items_id: z.string().uuid(),
@@ -74,3 +57,20 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateOrderLobbyItem', UpdateOrderLobbyItemSchema);
 	registry.register('OrderLobbyItemResponse', OrderLobbyItemResponseSchema);
 }
+
+export type OrderLobbyItem = {
+	order_lobby_items_id: string;
+	order_lobbies_id: string;
+	menu_item_id: string;
+	menu_item_version_id: string;
+	user_id?: string | null;
+	sides: string;
+	extras: string;
+	quantity: number;
+	customer_note?: string | null;
+	created_at: Date;
+	updated_at: Date;
+	menu_items?: MenuItem | null;
+	menu_item_version?: MenuItemVersion;
+	order_lobbies?: OrderLobby;
+};

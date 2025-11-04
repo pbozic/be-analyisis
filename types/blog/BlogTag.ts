@@ -24,13 +24,6 @@ export type CreateBlogTagInput = z.infer<typeof CreateBlogTagSchema>;
 export type UpdateBlogTagInput = z.infer<typeof UpdateBlogTagSchema>;
 export type DeleteBlogTagInput = z.infer<typeof DeleteBlogTagSchema>;
 
-export type BlogTag = {
-	blog_tags_id: string;
-	name: string;
-	description?: string | null;
-	blog_posts: BlogTagsBlogPost[];
-};
-
 export const BlogTagResponseSchema = z
 	.object({
 		blog_tags_id: z.string(),
@@ -47,3 +40,10 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBlogTag', UpdateBlogTagSchema);
 	registry.register('BlogTagResponse', BlogTagResponseSchema);
 }
+
+export type BlogTag = {
+	blog_tags_id: string;
+	name: string;
+	description?: string | null;
+	blog_posts?: BlogTagsBlogPost[];
+};

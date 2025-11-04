@@ -24,20 +24,6 @@ export const UpdatePermissionSchema = CreatePermissionSchema.partial();
 export type CreatePermissionInput = z.infer<typeof CreatePermissionSchema>;
 export type UpdatePermissionInput = z.infer<typeof UpdatePermissionSchema>;
 
-export type Permission = {
-	permission_id: string;
-	action_id?: string | null;
-	name?: string | null;
-	description?: string | null;
-	display_name?: string | null;
-	module: MODULE_TYPE;
-	limit?: number | null;
-	scope: PERMISSION_SCOPE;
-	group?: string | null;
-	roles: RolePermission[];
-	action?: Action | null;
-};
-
 export const PermissionResponseSchema = z
 	.object({
 		permission_id: z.string(),
@@ -61,3 +47,17 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdatePermission', UpdatePermissionSchema);
 	registry.register('PermissionResponse', PermissionResponseSchema);
 }
+
+export type Permission = {
+	permission_id: string;
+	action_id?: string | null;
+	name?: string | null;
+	description?: string | null;
+	display_name?: string | null;
+	module: MODULE_TYPE;
+	limit?: number | null;
+	scope: PERMISSION_SCOPE;
+	group?: string | null;
+	roles?: RolePermission[];
+	action?: Action | null;
+};

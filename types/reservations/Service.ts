@@ -84,31 +84,6 @@ export type UpdateServiceWithEmployeesInput = z.infer<typeof UpdateServiceWithEm
 export type CreateServiceWithLocationsInput = z.infer<typeof CreateServiceWithLocationsSchema>;
 export type UpdateServiceWithLocationsInput = z.infer<typeof UpdateServiceWithLocationsSchema>;
 
-export type Service = {
-	service_id: string;
-	reservation_module_id: string;
-	service_category_id?: string | null;
-	name: unknown;
-	description?: unknown | null;
-	image_url?: string | null;
-	price_cents: number;
-	discount_percent?: number | null;
-	discount_amount?: number | null;
-	duration_minutes: number;
-	available_online: boolean;
-	skd_codes: string;
-	created_at: Date;
-	tax_rate_id?: string | null;
-	course: boolean;
-	people_allowed?: number | null;
-	reservation_module: ReservationModule;
-	service_category?: ServiceCategory | null;
-	assigned_employees: ServiceAssignment[];
-	bookings: Booking[];
-	service_locations: ServiceLocation[];
-	tax_rate?: TaxRate | null;
-};
-
 export const ServiceResponseSchema = z
 	.object({
 		service_id: z.string(),
@@ -143,3 +118,28 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateService', UpdateServiceSchema);
 	registry.register('ServiceResponse', ServiceResponseSchema);
 }
+
+export type Service = {
+	service_id: string;
+	reservation_module_id: string;
+	service_category_id?: string | null;
+	name: unknown;
+	description?: unknown | null;
+	image_url?: string | null;
+	price_cents: number;
+	discount_percent?: number | null;
+	discount_amount?: number | null;
+	duration_minutes: number;
+	available_online: boolean;
+	skd_codes: string;
+	created_at: Date;
+	tax_rate_id?: string | null;
+	course: boolean;
+	people_allowed?: number | null;
+	reservation_module?: ReservationModule;
+	service_category?: ServiceCategory | null;
+	assigned_employees?: ServiceAssignment[];
+	bookings?: Booking[];
+	service_locations?: ServiceLocation[];
+	tax_rate?: TaxRate | null;
+};

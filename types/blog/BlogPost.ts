@@ -94,25 +94,6 @@ export type BlogPostInput = Omit<
 	'blog_posts_id' | 'slug' | 'author_id' | 'created_at' | 'updated_at' | 'author' | 'category'
 >;
 
-export type BlogPost = {
-	blog_posts_id: string;
-	slug: string;
-	title: string;
-	short_content?: string | null;
-	image_file_id?: string | null;
-	image?: File | null;
-	content: unknown;
-	status: BLOG_POST_STATUS;
-	author_id: string;
-	category_id?: string | null;
-	publish_at: Date;
-	created_at: Date;
-	updated_at: Date;
-	author: User;
-	category?: BlogCategory | null;
-	tags: BlogTagsBlogPost[];
-};
-
 export const BlogPostResponseSchema = z
 	.object({
 		blog_posts_id: z.string(),
@@ -141,3 +122,22 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBlogPost', UpdateBlogPostSchema);
 	registry.register('BlogPostResponse', BlogPostResponseSchema);
 }
+
+export type BlogPost = {
+	blog_posts_id: string;
+	slug: string;
+	title: string;
+	short_content?: string | null;
+	image_file_id?: string | null;
+	image?: File | null;
+	content: unknown;
+	status: BLOG_POST_STATUS;
+	author_id: string;
+	category_id?: string | null;
+	publish_at: Date;
+	created_at: Date;
+	updated_at: Date;
+	author?: User;
+	category?: BlogCategory | null;
+	tags?: BlogTagsBlogPost[];
+};

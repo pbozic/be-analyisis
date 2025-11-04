@@ -11,19 +11,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type AccountAction = {
-	account_action_id: string;
-	business_id?: string | null;
-	user_id?: string | null;
-	created_at: Date;
-	action_creator_user_id: string;
-	reason: ACCOUNT_ACTIONS_REASON;
-	action: ACCOUNT_ACTIONS;
-	business?: Business | null;
-	user?: User | null;
-	action_creator?: User | null;
-};
-
 export const CreateAccountActionSchema = z
 	.object({
 		account_action_id: z.string().uuid(),
@@ -62,3 +49,16 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateAccountAction', UpdateAccountActionSchema);
 	registry.register('AccountActionResponse', AccountActionResponseSchema);
 }
+
+export type AccountAction = {
+	account_action_id: string;
+	business_id?: string | null;
+	user_id?: string | null;
+	created_at: Date;
+	action_creator_user_id: string;
+	reason: ACCOUNT_ACTIONS_REASON;
+	action: ACCOUNT_ACTIONS;
+	business?: Business | null;
+	user?: User | null;
+	action_creator?: User | null;
+};

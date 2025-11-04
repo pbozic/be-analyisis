@@ -71,44 +71,6 @@ export const UpdateReservationSettingsSchema = UpdateReservationModuleSchema.pic
 export type UpdateReservationModuleInput = z.infer<typeof UpdateReservationModuleSchema>;
 export type UpdateReservationSettingsInput = z.infer<typeof UpdateReservationSettingsSchema>;
 
-export type ReservationModule = {
-	reservation_module_id: string;
-	public_link_hash?: string | null;
-	business_id: string;
-	action_bundle_id?: string | null;
-	subscription_active_until?: Date | null;
-	business: Business;
-	action_bundle?: ActionBundle | null;
-	subscription_expires_at?: Date | null;
-	stripe_subscription_schedule_id?: string | null;
-	hours_before_reschedule?: number | null;
-	hours_before_cancel?: number | null;
-	publicly_visible: boolean;
-	addons: BusinessAddon[];
-	usages: BusinessUsage[];
-	locations: Location[];
-	services: Service[];
-	employees: Employee[];
-	bookings: Booking[];
-	customers: Customer[];
-	service_categories: ServiceCategory[];
-	user_roles: UserRole[];
-	user_permissions: UserPermission[];
-	booking_course_times: BookingCourseTime[];
-	booking_course_participants: BookingCourseParticipant[];
-	notification_templates: NotificationTemplate[];
-	notification_mappings: NotificationMapping[];
-	notification_preferences: NotificationPreference[];
-	notification_provider_credentials: NotificationProviderCredential[];
-	notification_messages: NotificationMessage[];
-	logo_id?: string | null;
-	logo?: File | null;
-	banner_id?: string | null;
-	banner?: File | null;
-	reviewable_id?: string | null;
-	reviewable?: Reviewable | null;
-};
-
 export const CreateReservationModuleSchema = z
 	.object({
 		reservation_module_id: z.string().uuid(),
@@ -179,3 +141,41 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateReservationModule', UpdateReservationModuleSchema);
 	registry.register('ReservationModuleResponse', ReservationModuleResponseSchema);
 }
+
+export type ReservationModule = {
+	reservation_module_id: string;
+	public_link_hash?: string | null;
+	business_id: string;
+	action_bundle_id?: string | null;
+	subscription_active_until?: Date | null;
+	business?: Business;
+	action_bundle?: ActionBundle | null;
+	subscription_expires_at?: Date | null;
+	stripe_subscription_schedule_id?: string | null;
+	hours_before_reschedule?: number | null;
+	hours_before_cancel?: number | null;
+	publicly_visible: boolean;
+	addons?: BusinessAddon[];
+	usages?: BusinessUsage[];
+	locations?: Location[];
+	services?: Service[];
+	employees?: Employee[];
+	bookings?: Booking[];
+	customers?: Customer[];
+	service_categories?: ServiceCategory[];
+	user_roles?: UserRole[];
+	user_permissions?: UserPermission[];
+	booking_course_times?: BookingCourseTime[];
+	booking_course_participants?: BookingCourseParticipant[];
+	notification_templates?: NotificationTemplate[];
+	notification_mappings?: NotificationMapping[];
+	notification_preferences?: NotificationPreference[];
+	notification_provider_credentials?: NotificationProviderCredential[];
+	notification_messages?: NotificationMessage[];
+	logo_id?: string | null;
+	logo?: File | null;
+	banner_id?: string | null;
+	banner?: File | null;
+	reviewable_id?: string | null;
+	reviewable?: Reviewable | null;
+};

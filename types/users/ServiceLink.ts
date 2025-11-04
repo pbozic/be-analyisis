@@ -9,14 +9,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type ServiceLink = {
-	id: string;
-	name: string;
-	created_at: Date;
-	updated_at: Date;
-	favorited_by: UserFavoriteServiceLink[];
-};
-
 export const CreateServiceLinkSchema = z
 	.object({
 		id: z.string().uuid(),
@@ -46,3 +38,11 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateServiceLink', UpdateServiceLinkSchema);
 	registry.register('ServiceLinkResponse', ServiceLinkResponseSchema);
 }
+
+export type ServiceLink = {
+	id: string;
+	name: string;
+	created_at: Date;
+	updated_at: Date;
+	favorited_by?: UserFavoriteServiceLink[];
+};

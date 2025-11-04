@@ -10,19 +10,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type PromoBanner = {
-	promo_banners_id: string;
-	type: string;
-	size?: string | null;
-	title: string;
-	text: string;
-	promo_section_buy_id?: string | null;
-	file_id: string;
-	files: File;
-	promo_ads_id?: string | null;
-	promo_ads?: PromoAd | null;
-};
-
 export const CreatePromoBannerSchema = z
 	.object({
 		promo_banners_id: z.string().uuid(),
@@ -63,3 +50,16 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdatePromoBanner', UpdatePromoBannerSchema);
 	registry.register('PromoBannerResponse', PromoBannerResponseSchema);
 }
+
+export type PromoBanner = {
+	promo_banners_id: string;
+	type: string;
+	size?: string | null;
+	title: string;
+	text: string;
+	promo_section_buy_id?: string | null;
+	file_id: string;
+	files?: File;
+	promo_ads_id?: string | null;
+	promo_ads?: PromoAd | null;
+};

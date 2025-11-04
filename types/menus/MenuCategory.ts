@@ -23,31 +23,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type MenuCategory = {
-	menu_category_id: string;
-	name_translatable_id: string;
-	names?: Translatable | null;
-	description_translatable_id: string;
-	description?: Translatable | null;
-	categories: string;
-	business_id: string;
-	menu_items: MenuItem[];
-	menu_id?: string | null;
-	menu?: Menu | null;
-	daily_meal_menu_id?: string | null;
-	daily_meal_menu?: DailyMealMenu | null;
-	order?: number | null;
-	price?: number | null;
-	menu_items_ordered?: unknown | null;
-	menu_categories_categories: MenuCategoriesCategory[];
-	menu_order_index?: number | null;
-	daily_meal_category_id?: string | null;
-	daily_meal_category_price_id?: string | null;
-	daily_meal_category?: DailyMealCategory | null;
-	daily_meal_category_price?: DailyMealCategoryPrice | null;
-	daily_meal_instances: DailyMealInstance[];
-};
-
 export const CreateMenuCategorySchema = z
 	.object({
 		menu_category_id: z.string().uuid(),
@@ -105,3 +80,28 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateMenuCategory', UpdateMenuCategorySchema);
 	registry.register('MenuCategoryResponse', MenuCategoryResponseSchema);
 }
+
+export type MenuCategory = {
+	menu_category_id: string;
+	name_translatable_id: string;
+	names?: Translatable | null;
+	description_translatable_id: string;
+	description?: Translatable | null;
+	categories: string;
+	business_id: string;
+	menu_items?: MenuItem[];
+	menu_id?: string | null;
+	menu?: Menu | null;
+	daily_meal_menu_id?: string | null;
+	daily_meal_menu?: DailyMealMenu | null;
+	order?: number | null;
+	price?: number | null;
+	menu_items_ordered?: unknown | null;
+	menu_categories_categories?: MenuCategoriesCategory[];
+	menu_order_index?: number | null;
+	daily_meal_category_id?: string | null;
+	daily_meal_category_price_id?: string | null;
+	daily_meal_category?: DailyMealCategory | null;
+	daily_meal_category_price?: DailyMealCategoryPrice | null;
+	daily_meal_instances?: DailyMealInstance[];
+};

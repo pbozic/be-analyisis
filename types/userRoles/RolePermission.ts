@@ -38,14 +38,6 @@ export const RolePermissionsMatrixBodySchema = z.object({
 });
 export type RolePermissionsMatrixBody = z.infer<typeof RolePermissionsMatrixBodySchema>;
 
-export type RolePermission = {
-	role_permission_id: string;
-	role_id: string;
-	permission_id: string;
-	role: Role;
-	permission: Permission;
-};
-
 export const RolePermissionResponseSchema = z
 	.object({
 		role_permission_id: z.string(),
@@ -63,3 +55,11 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateRolePermission', UpdateRolePermissionSchema);
 	registry.register('RolePermissionResponse', RolePermissionResponseSchema);
 }
+
+export type RolePermission = {
+	role_permission_id: string;
+	role_id: string;
+	permission_id: string;
+	role?: Role;
+	permission?: Permission;
+};

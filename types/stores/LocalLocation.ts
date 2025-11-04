@@ -10,15 +10,6 @@ import { BusinessLocalLocationResponseSchema } from './BusinessLocalLocation';
 
 extendZodWithOpenApi(z);
 
-export type LocalLocation = {
-	local_location_id: string;
-	address_id: string;
-	created_at: Date;
-	updated_at: Date;
-	address: Address;
-	business_local_locations: BusinessLocalLocation[];
-};
-
 export const CreateLocalLocationSchema = z
 	.object({
 		local_location_id: z.string().uuid(),
@@ -49,3 +40,12 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateLocalLocation', UpdateLocalLocationSchema);
 	registry.register('LocalLocationResponse', LocalLocationResponseSchema);
 }
+
+export type LocalLocation = {
+	local_location_id: string;
+	address_id: string;
+	created_at: Date;
+	updated_at: Date;
+	address?: Address;
+	business_local_locations?: BusinessLocalLocation[];
+};

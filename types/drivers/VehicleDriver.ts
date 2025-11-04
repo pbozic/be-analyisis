@@ -10,17 +10,6 @@ import { DriverResponseSchema } from './Driver';
 
 extendZodWithOpenApi(z);
 
-export type VehicleDriver = {
-	vehicle_drivers_id: string;
-	vehicle_id: string;
-	driver_id: string;
-	can_drive: boolean;
-	created_at: Date;
-	updated_at: Date;
-	vehicle: Vehicle;
-	driver: Driver;
-};
-
 export const CreateVehicleDriverSchema = z
 	.object({
 		vehicle_drivers_id: z.string().uuid(),
@@ -55,3 +44,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateVehicleDriver', UpdateVehicleDriverSchema);
 	registry.register('VehicleDriverResponse', VehicleDriverResponseSchema);
 }
+
+export type VehicleDriver = {
+	vehicle_drivers_id: string;
+	vehicle_id: string;
+	driver_id: string;
+	can_drive: boolean;
+	created_at: Date;
+	updated_at: Date;
+	vehicle?: Vehicle;
+	driver?: Driver;
+};

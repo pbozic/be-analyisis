@@ -9,17 +9,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Tutorial = {
-	tutorial_id: string;
-	key: string;
-	title: string;
-	version: number;
-	mandatory: boolean;
-	createdAt: Date;
-	retiredAt?: Date | null;
-	user_tutorials: UserTutorial[];
-};
-
 export const CreateTutorialSchema = z
 	.object({
 		tutorial_id: z.string().uuid(),
@@ -57,3 +46,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateTutorial', UpdateTutorialSchema);
 	registry.register('TutorialResponse', TutorialResponseSchema);
 }
+
+export type Tutorial = {
+	tutorial_id: string;
+	key: string;
+	title: string;
+	version: number;
+	mandatory: boolean;
+	createdAt: Date;
+	retiredAt?: Date | null;
+	user_tutorials?: UserTutorial[];
+};

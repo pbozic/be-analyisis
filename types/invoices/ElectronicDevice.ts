@@ -12,18 +12,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type ElectronicDevice = {
-	business_premise_id: string;
-	electronic_device_id: string;
-	name?: string | null;
-	active: boolean;
-	business_premise: BusinessPremise;
-	invoices: Invoice[];
-	assignments: DeviceAssignment[];
-	created_at: Date;
-	updated_at: Date;
-};
-
 export const CreateElectronicDeviceSchema = z
 	.object({
 		business_premise_id: z.string().uuid(),
@@ -59,3 +47,15 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateElectronicDevice', UpdateElectronicDeviceSchema);
 	registry.register('ElectronicDeviceResponse', ElectronicDeviceResponseSchema);
 }
+
+export type ElectronicDevice = {
+	business_premise_id: string;
+	electronic_device_id: string;
+	name?: string | null;
+	active: boolean;
+	business_premise?: BusinessPremise;
+	invoices?: Invoice[];
+	assignments?: DeviceAssignment[];
+	created_at: Date;
+	updated_at: Date;
+};

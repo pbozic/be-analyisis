@@ -26,22 +26,6 @@ export const UpdateUserPermissionSchema = CreateUserPermissionSchema.partial();
 export type CreateUserPermissionInput = z.infer<typeof CreateUserPermissionSchema>;
 export type UpdateUserPermissionInput = z.infer<typeof UpdateUserPermissionSchema>;
 
-export type UserPermission = {
-	user_permission_id: string;
-	user_id: string;
-	reservation_module_id?: string | null;
-	action_id?: string | null;
-	name?: string | null;
-	display_name?: string | null;
-	module: MODULE_TYPE;
-	limit?: number | null;
-	scope: PERMISSION_SCOPE;
-	is_blocked: boolean;
-	user: User;
-	action?: Action | null;
-	reservation_module?: ReservationModule | null;
-};
-
 export const UserPermissionResponseSchema = z
 	.object({
 		user_permission_id: z.string(),
@@ -67,3 +51,19 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateUserPermission', UpdateUserPermissionSchema);
 	registry.register('UserPermissionResponse', UserPermissionResponseSchema);
 }
+
+export type UserPermission = {
+	user_permission_id: string;
+	user_id: string;
+	reservation_module_id?: string | null;
+	action_id?: string | null;
+	name?: string | null;
+	display_name?: string | null;
+	module: MODULE_TYPE;
+	limit?: number | null;
+	scope: PERMISSION_SCOPE;
+	is_blocked: boolean;
+	user?: User;
+	action?: Action | null;
+	reservation_module?: ReservationModule | null;
+};

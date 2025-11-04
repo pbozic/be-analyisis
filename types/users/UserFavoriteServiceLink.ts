@@ -10,17 +10,6 @@ import { ServiceLinkResponseSchema } from './ServiceLink';
 
 extendZodWithOpenApi(z);
 
-export type UserFavoriteServiceLink = {
-	id: string;
-	user_id: string;
-	service_id: string;
-	created_at: Date;
-	updated_at: Date;
-	order_index: number;
-	users: User;
-	services: ServiceLink;
-};
-
 export const CreateUserFavoriteServiceLinkSchema = z
 	.object({
 		id: z.string().uuid(),
@@ -57,3 +46,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateUserFavoriteServiceLink', UpdateUserFavoriteServiceLinkSchema);
 	registry.register('UserFavoriteServiceLinkResponse', UserFavoriteServiceLinkResponseSchema);
 }
+
+export type UserFavoriteServiceLink = {
+	id: string;
+	user_id: string;
+	service_id: string;
+	created_at: Date;
+	updated_at: Date;
+	order_index: number;
+	users?: User;
+	services?: ServiceLink;
+};

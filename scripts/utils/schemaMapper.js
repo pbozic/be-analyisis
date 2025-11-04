@@ -248,7 +248,9 @@ export function buildModelTypeShape({
 			if (prismaModelType) prismaImports.add(prismaModelType);
 			const itemTs = ts;
 			const typeTs = isArray ? `${itemTs}[]` : itemTs;
-			const relOptional = isArray ? false : isOptional;
+			// All relation object fields are optional in API responses (may not be included)
+			const relOptional = true;
+			// Nullability follows schema (1:1 optional -> nullable, collections are not nullable)
 			const relNullable = isArray ? false : isOptional;
 			fields.push({ name: fieldName, ts: typeTs, optional: relOptional, nullable: relNullable });
 			continue;

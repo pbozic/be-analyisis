@@ -10,18 +10,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
 
-export type GroupUser = {
-	group_user_id: string;
-	parent_user_id: string;
-	child_user_id: string;
-	created_at: Date;
-	updated_at: Date;
-	parent_user: User;
-	child_user: User;
-	allowance?: Allowance | null;
-	enabled: boolean;
-};
-
 export const CreateGroupUserSchema = z
 	.object({
 		group_user_id: z.string().uuid(),
@@ -57,3 +45,15 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateGroupUser', UpdateGroupUserSchema);
 	registry.register('GroupUserResponse', GroupUserResponseSchema);
 }
+
+export type GroupUser = {
+	group_user_id: string;
+	parent_user_id: string;
+	child_user_id: string;
+	created_at: Date;
+	updated_at: Date;
+	parent_user?: User;
+	child_user?: User;
+	allowance?: Allowance | null;
+	enabled: boolean;
+};

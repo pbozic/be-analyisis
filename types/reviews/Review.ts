@@ -14,22 +14,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Review = {
-	review_id: string;
-	reviewable_id: string;
-	author_id: string;
-	rating?: number | null;
-	comment?: string | null;
-	feedback?: unknown | null;
-	created_at: Date;
-	updated_at: Date;
-	reviewable: Reviewable;
-	author: User;
-	delivery_order?: DeliveryOrder | null;
-	taxi_order?: TaxiOrder | null;
-	vehicle_id?: string | null;
-};
-
 export const CreateReviewSchema = z
 	.object({
 		review_id: z.string().uuid(),
@@ -72,3 +56,19 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateReview', UpdateReviewSchema);
 	registry.register('ReviewResponse', ReviewResponseSchema);
 }
+
+export type Review = {
+	review_id: string;
+	reviewable_id: string;
+	author_id: string;
+	rating?: number | null;
+	comment?: string | null;
+	feedback?: unknown | null;
+	created_at: Date;
+	updated_at: Date;
+	reviewable?: Reviewable;
+	author?: User;
+	delivery_order?: DeliveryOrder | null;
+	taxi_order?: TaxiOrder | null;
+	vehicle_id?: string | null;
+};

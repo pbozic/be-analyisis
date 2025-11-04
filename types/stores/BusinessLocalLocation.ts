@@ -12,18 +12,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type BusinessLocalLocation = {
-	business_local_location_id: string;
-	stores_id: string;
-	local_location_id: string;
-	created_at: Date;
-	updated_at: Date;
-	time: Date;
-	local_location: LocalLocation;
-	stores_module: StoresModule;
-	orders: DeliveryOrder[];
-};
-
 export const CreateBusinessLocalLocationSchema = z
 	.object({
 		business_local_location_id: z.string().uuid(),
@@ -60,3 +48,15 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBusinessLocalLocation', UpdateBusinessLocalLocationSchema);
 	registry.register('BusinessLocalLocationResponse', BusinessLocalLocationResponseSchema);
 }
+
+export type BusinessLocalLocation = {
+	business_local_location_id: string;
+	stores_id: string;
+	local_location_id: string;
+	created_at: Date;
+	updated_at: Date;
+	time: Date;
+	local_location?: LocalLocation;
+	stores_module?: StoresModule;
+	orders?: DeliveryOrder[];
+};

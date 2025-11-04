@@ -8,14 +8,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type BookingSlot = {
-	booking_slot_id: string;
-	schedule_slot_id: string;
-	schedule_slot: ScheduleSlot;
-	start_time: Date;
-	end_time: Date;
-};
-
 export const CreateBookingSlotSchema = z
 	.object({
 		booking_slot_id: z.string().uuid(),
@@ -47,3 +39,11 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBookingSlot', UpdateBookingSlotSchema);
 	registry.register('BookingSlotResponse', BookingSlotResponseSchema);
 }
+
+export type BookingSlot = {
+	booking_slot_id: string;
+	schedule_slot_id: string;
+	schedule_slot?: ScheduleSlot;
+	start_time: Date;
+	end_time: Date;
+};

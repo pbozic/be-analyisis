@@ -258,41 +258,6 @@ export type BookingCourseTimeInput = z.infer<typeof BookingCourseTimeSchema>;
 export type UpdateBookingCourseTimeInput = z.infer<typeof UpdateBookingCourseTimeSchema>;
 export type DeleteBookingCourseTimeInput = z.infer<typeof DeleteBookingCourseTimeSchema>;
 
-export type Booking = {
-	booking_id: string;
-	customer_id?: string | null;
-	reservation_module_id: string;
-	location_id?: string | null;
-	status: BOOKING_STATUS;
-	service_id: string;
-	comment?: string | null;
-	created_at: Date;
-	updated_at: Date;
-	price_cents?: number | null;
-	discount_percent?: number | null;
-	discount_amount?: number | null;
-	start_time?: Date | null;
-	end_time?: Date | null;
-	deleted_at?: Date | null;
-	employee_id?: string | null;
-	parent_booking_id?: string | null;
-	parent_booking?: Booking | null;
-	child_bookings: Booking[];
-	reservation_module: ReservationModule;
-	location?: Location | null;
-	employee?: Employee | null;
-	service?: Service | null;
-	customer?: Customer | null;
-	booking_history_log: BookingHistoryLog[];
-	reviewable_id?: string | null;
-	reviewable?: Reviewable | null;
-	course: boolean;
-	people_allowed?: number | null;
-	people_booked?: number | null;
-	booking_course_time: BookingCourseTime[];
-	booking_course_participant: BookingCourseParticipant[];
-};
-
 export const baseBookingResponseSchema = z
 	.object({
 		booking_id: z.string().uuid(),
@@ -349,3 +314,38 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBooking', UpdateBookingSchema);
 	registry.register('BookingResponse', BookingResponseSchema);
 }
+
+export type Booking = {
+	booking_id: string;
+	customer_id?: string | null;
+	reservation_module_id: string;
+	location_id?: string | null;
+	status: BOOKING_STATUS;
+	service_id: string;
+	comment?: string | null;
+	created_at: Date;
+	updated_at: Date;
+	price_cents?: number | null;
+	discount_percent?: number | null;
+	discount_amount?: number | null;
+	start_time?: Date | null;
+	end_time?: Date | null;
+	deleted_at?: Date | null;
+	employee_id?: string | null;
+	parent_booking_id?: string | null;
+	parent_booking?: Booking | null;
+	child_bookings?: Booking[];
+	reservation_module?: ReservationModule;
+	location?: Location | null;
+	employee?: Employee | null;
+	service?: Service | null;
+	customer?: Customer | null;
+	booking_history_log?: BookingHistoryLog[];
+	reviewable_id?: string | null;
+	reviewable?: Reviewable | null;
+	course: boolean;
+	people_allowed?: number | null;
+	people_booked?: number | null;
+	booking_course_time?: BookingCourseTime[];
+	booking_course_participant?: BookingCourseParticipant[];
+};

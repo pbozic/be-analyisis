@@ -28,18 +28,6 @@ export const DeleteNotificationTemplateSchema = z.object({
 export type CreateNotificationTemplateInput = z.infer<typeof CreateNotificationTemplateSchema>;
 export type UpdateNotificationTemplateInput = z.infer<typeof UpdateNotificationTemplateSchema>;
 
-export type NotificationTemplate = {
-	notification_template_id: string;
-	reservation_module_id: string;
-	key: string;
-	name: string;
-	created_at: Date;
-	updated_at: Date;
-	reservation_module: ReservationModule;
-	versions: NotificationTemplateVersion[];
-	messages: NotificationMessage[];
-};
-
 export const NotificationTemplateResponseSchema = z
 	.object({
 		notification_template_id: z.string(),
@@ -61,3 +49,15 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateNotificationTemplate', UpdateNotificationTemplateSchema);
 	registry.register('NotificationTemplateResponse', NotificationTemplateResponseSchema);
 }
+
+export type NotificationTemplate = {
+	notification_template_id: string;
+	reservation_module_id: string;
+	key: string;
+	name: string;
+	created_at: Date;
+	updated_at: Date;
+	reservation_module?: ReservationModule;
+	versions?: NotificationTemplateVersion[];
+	messages?: NotificationMessage[];
+};

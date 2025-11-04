@@ -13,16 +13,6 @@ import { ActionResponseSchema } from './Action';
 
 extendZodWithOpenApi(z);
 
-export type AddonAction = {
-	addon_action_id: string;
-	addon_id: string;
-	action_id: string;
-	module: MODULE_TYPE;
-	limit?: number | null;
-	addon: Addon;
-	action: Action;
-};
-
 export const CreateAddonActionSchema = z
 	.object({
 		addon_action_id: z.string().uuid(),
@@ -57,3 +47,13 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateAddonAction', UpdateAddonActionSchema);
 	registry.register('AddonActionResponse', AddonActionResponseSchema);
 }
+
+export type AddonAction = {
+	addon_action_id: string;
+	addon_id: string;
+	action_id: string;
+	module: MODULE_TYPE;
+	limit?: number | null;
+	addon?: Addon;
+	action?: Action;
+};

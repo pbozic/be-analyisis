@@ -9,18 +9,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type VehicleSpecification = {
-	vehicle_specification_id: string;
-	class: VEHICLE_CLASS;
-	category: VEHICLE_CATEGORY;
-	people: string;
-	start_cost: string;
-	per_kilometre: string;
-	per_minute: string;
-	vehicle_id?: string | null;
-	vehicle?: Vehicle | null;
-};
-
 export const CreateVehicleSpecificationSchema = z
 	.object({
 		vehicle_specification_id: z.string().uuid(),
@@ -61,3 +49,15 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateVehicleSpecification', UpdateVehicleSpecificationSchema);
 	registry.register('VehicleSpecificationResponse', VehicleSpecificationResponseSchema);
 }
+
+export type VehicleSpecification = {
+	vehicle_specification_id: string;
+	class: VEHICLE_CLASS;
+	category: VEHICLE_CATEGORY;
+	people: string;
+	start_cost: string;
+	per_kilometre: string;
+	per_minute: string;
+	vehicle_id?: string | null;
+	vehicle?: Vehicle | null;
+};

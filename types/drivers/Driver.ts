@@ -45,60 +45,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Driver = {
-	driver_id: string;
-	transport_module_id?: string | null;
-	online?: boolean | null;
-	on_order?: boolean | null;
-	working_hours?: unknown | null;
-	ride_requirements?: unknown | null;
-	created_at: Date;
-	updated_at: Date;
-	user_id?: string | null;
-	user?: User | null;
-	vehicles: VehicleDriver[];
-	current_vehicle_id?: string | null;
-	last_used_vehicle_id?: string | null;
-	orders: TaxiOrder[];
-	received_orders: TaxiOrderSent[];
-	delivery_orders: DeliveryOrder[];
-	received_delivery_orders: DeliveryOrderSent[];
-	documents: Document[];
-	location?: unknown | null;
-	delivery_timeline?: unknown | null;
-	last_ping_at: Date;
-	is_inactive?: boolean | null;
-	transfer_requirements?: unknown | null;
-	regions: string;
-	driver_history_locations: DriverHistoryLocation[];
-	handles_taxi_orders?: boolean | null;
-	handles_transfer_orders?: boolean | null;
-	handles_courier_orders?: boolean | null;
-	handles_delivery_orders?: boolean | null;
-	taxi_orders_toggled?: boolean | null;
-	transfer_orders_toggled?: boolean | null;
-	courier_orders_toggled?: boolean | null;
-	delivery_orders_toggled?: boolean | null;
-	partner_cash_balance?: number | null;
-	come_to_work_last_sent_at?: Date | null;
-	driver_municipalities: DriverMunicipality[];
-	current_vehicle?: Vehicle | null;
-	activity_logs: DriverActivityLog[];
-	transport_module?: TransportModule | null;
-	profile_picture_id?: string | null;
-	profile_picture?: File | null;
-	daily_meals: DailyMealsDriver[];
-	delivers_daily_meals?: boolean | null;
-	on_daily_meals?: boolean | null;
-	scheduled_meals_route?: unknown | null;
-	subscriptions: DailyMealSubscription[];
-	vehicle_type?: VEHICLE_TYPE | null;
-	reviewable_id?: string | null;
-	reviewable?: Reviewable | null;
-	late_events: LateEvent[];
-	user_favorite_drivers: UserFavoriteDriver[];
-};
-
 export const CreateDriverSchema = z
 	.object({
 		driver_id: z.string().uuid(),
@@ -203,3 +149,57 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDriver', UpdateDriverSchema);
 	registry.register('DriverResponse', DriverResponseSchema);
 }
+
+export type Driver = {
+	driver_id: string;
+	transport_module_id?: string | null;
+	online?: boolean | null;
+	on_order?: boolean | null;
+	working_hours?: unknown | null;
+	ride_requirements?: unknown | null;
+	created_at: Date;
+	updated_at: Date;
+	user_id?: string | null;
+	user?: User | null;
+	vehicles?: VehicleDriver[];
+	current_vehicle_id?: string | null;
+	last_used_vehicle_id?: string | null;
+	orders?: TaxiOrder[];
+	received_orders?: TaxiOrderSent[];
+	delivery_orders?: DeliveryOrder[];
+	received_delivery_orders?: DeliveryOrderSent[];
+	documents?: Document[];
+	location?: unknown | null;
+	delivery_timeline?: unknown | null;
+	last_ping_at: Date;
+	is_inactive?: boolean | null;
+	transfer_requirements?: unknown | null;
+	regions: string;
+	driver_history_locations?: DriverHistoryLocation[];
+	handles_taxi_orders?: boolean | null;
+	handles_transfer_orders?: boolean | null;
+	handles_courier_orders?: boolean | null;
+	handles_delivery_orders?: boolean | null;
+	taxi_orders_toggled?: boolean | null;
+	transfer_orders_toggled?: boolean | null;
+	courier_orders_toggled?: boolean | null;
+	delivery_orders_toggled?: boolean | null;
+	partner_cash_balance?: number | null;
+	come_to_work_last_sent_at?: Date | null;
+	driver_municipalities?: DriverMunicipality[];
+	current_vehicle?: Vehicle | null;
+	activity_logs?: DriverActivityLog[];
+	transport_module?: TransportModule | null;
+	profile_picture_id?: string | null;
+	profile_picture?: File | null;
+	daily_meals?: DailyMealsDriver[];
+	delivers_daily_meals?: boolean | null;
+	on_daily_meals?: boolean | null;
+	scheduled_meals_route?: unknown | null;
+	subscriptions?: DailyMealSubscription[];
+	vehicle_type?: VEHICLE_TYPE | null;
+	reviewable_id?: string | null;
+	reviewable?: Reviewable | null;
+	late_events?: LateEvent[];
+	user_favorite_drivers?: UserFavoriteDriver[];
+};

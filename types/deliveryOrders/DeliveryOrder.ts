@@ -49,60 +49,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type DeliveryOrder = {
-	order_id: string;
-	user_id?: string | null;
-	route: unknown;
-	pickup_location: unknown;
-	delivery_location: unknown;
-	payment?: unknown | null;
-	estimates?: unknown | null;
-	items: LineItem[];
-	details?: unknown | null;
-	courier_instructions?: string | null;
-	restaurant_message?: string | null;
-	rejection_reason?: string | null;
-	scheduled_at?: Date | null;
-	timeline: unknown;
-	status: DELIVERY_ORDER_STATUS;
-	last_sent_at?: Date | null;
-	created_at: Date;
-	updated_at: Date;
-	customer?: User | null;
-	history: DeliveryOrderSent[];
-	vehicle_id?: string | null;
-	vehicle?: Vehicle | null;
-	driver_id?: string | null;
-	driver?: Driver | null;
-	transport_module_id?: string | null;
-	transport_module?: TransportModule | null;
-	payment_intent_id?: string | null;
-	transactions: Transaction[];
-	find_drivers_attempts?: number | null;
-	is_daily_meal: boolean;
-	wallet_transfer: WalletTransferHistory[];
-	driver_history_locations: DriverHistoryLocation[];
-	cashback: Cashback[];
-	order_lobbies?: OrderLobby | null;
-	allow_credits_usage: boolean;
-	order_number: number;
-	scoring_points: ScoringPoint[];
-	late_events: LateEvent[];
-	stock_movements: MenuItemStockChange[];
-	business_local_location_id?: string | null;
-	business_local_location?: BusinessLocalLocation | null;
-	promo_analytics: PromoAnalytic[];
-	invoice?: Invoice | null;
-	review_id?: string | null;
-	review?: Review | null;
-	stores_id?: string | null;
-	stores_module?: StoresModule | null;
-	food_drinks_id?: string | null;
-	food_drinks_module?: FoodDrinksModule | null;
-	file_id?: string | null;
-	picture_of_delivery?: File | null;
-};
-
 export const CreateDeliveryOrderSchema = z
 	.object({
 		order_id: z.string().uuid(),
@@ -204,3 +150,57 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDeliveryOrder', UpdateDeliveryOrderSchema);
 	registry.register('DeliveryOrderResponse', DeliveryOrderResponseSchema);
 }
+
+export type DeliveryOrder = {
+	order_id: string;
+	user_id?: string | null;
+	route: unknown;
+	pickup_location: unknown;
+	delivery_location: unknown;
+	payment?: unknown | null;
+	estimates?: unknown | null;
+	items?: LineItem[];
+	details?: unknown | null;
+	courier_instructions?: string | null;
+	restaurant_message?: string | null;
+	rejection_reason?: string | null;
+	scheduled_at?: Date | null;
+	timeline: unknown;
+	status: DELIVERY_ORDER_STATUS;
+	last_sent_at?: Date | null;
+	created_at: Date;
+	updated_at: Date;
+	customer?: User | null;
+	history?: DeliveryOrderSent[];
+	vehicle_id?: string | null;
+	vehicle?: Vehicle | null;
+	driver_id?: string | null;
+	driver?: Driver | null;
+	transport_module_id?: string | null;
+	transport_module?: TransportModule | null;
+	payment_intent_id?: string | null;
+	transactions?: Transaction[];
+	find_drivers_attempts?: number | null;
+	is_daily_meal: boolean;
+	wallet_transfer?: WalletTransferHistory[];
+	driver_history_locations?: DriverHistoryLocation[];
+	cashback?: Cashback[];
+	order_lobbies?: OrderLobby | null;
+	allow_credits_usage: boolean;
+	order_number: number;
+	scoring_points?: ScoringPoint[];
+	late_events?: LateEvent[];
+	stock_movements?: MenuItemStockChange[];
+	business_local_location_id?: string | null;
+	business_local_location?: BusinessLocalLocation | null;
+	promo_analytics?: PromoAnalytic[];
+	invoice?: Invoice | null;
+	review_id?: string | null;
+	review?: Review | null;
+	stores_id?: string | null;
+	stores_module?: StoresModule | null;
+	food_drinks_id?: string | null;
+	food_drinks_module?: FoodDrinksModule | null;
+	file_id?: string | null;
+	picture_of_delivery?: File | null;
+};

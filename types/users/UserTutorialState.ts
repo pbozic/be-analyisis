@@ -8,14 +8,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type UserTutorialState = {
-	id: string;
-	user_id: string;
-	epoch: number;
-	updatedAt: Date;
-	user: User;
-};
-
 export const CreateUserTutorialStateSchema = z
 	.object({
 		id: z.string().uuid(),
@@ -47,3 +39,11 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateUserTutorialState', UpdateUserTutorialStateSchema);
 	registry.register('UserTutorialStateResponse', UserTutorialStateResponseSchema);
 }
+
+export type UserTutorialState = {
+	id: string;
+	user_id: string;
+	epoch: number;
+	updatedAt: Date;
+	user?: User;
+};

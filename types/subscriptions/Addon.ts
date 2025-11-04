@@ -12,17 +12,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Addon = {
-	addon_id: string;
-	module: MODULE_TYPE;
-	name: string;
-	price_cents: number;
-	stripe_price_id: string;
-	stripe_product_id: string;
-	actions: AddonAction[];
-	business_addons: BusinessAddon[];
-};
-
 export const CreateAddonSchema = z
 	.object({
 		addon_id: z.string().uuid(),
@@ -59,3 +48,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateAddon', UpdateAddonSchema);
 	registry.register('AddonResponse', AddonResponseSchema);
 }
+
+export type Addon = {
+	addon_id: string;
+	module: MODULE_TYPE;
+	name: string;
+	price_cents: number;
+	stripe_price_id: string;
+	stripe_product_id: string;
+	actions?: AddonAction[];
+	business_addons?: BusinessAddon[];
+};

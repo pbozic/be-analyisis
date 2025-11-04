@@ -18,26 +18,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type LateEvent = {
-	late_events_id: string;
-	stores_id?: string | null;
-	food_drinks_id?: string | null;
-	driver_id: string;
-	user_id: string;
-	delivery_order_id?: string | null;
-	taxi_order_id?: string | null;
-	scoring_points_id?: string | null;
-	seconds: number;
-	created_at: Date;
-	updated_at: Date;
-	stores_module?: StoresModule | null;
-	food_drinks_module?: FoodDrinksModule | null;
-	driver?: Driver | null;
-	delivery_orders?: DeliveryOrder | null;
-	taxi_orders?: TaxiOrder | null;
-	scoring_points?: ScoringPoint | null;
-};
-
 export const CreateLateEventSchema = z
 	.object({
 		late_events_id: z.string().uuid(),
@@ -86,3 +66,23 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateLateEvent', UpdateLateEventSchema);
 	registry.register('LateEventResponse', LateEventResponseSchema);
 }
+
+export type LateEvent = {
+	late_events_id: string;
+	stores_id?: string | null;
+	food_drinks_id?: string | null;
+	driver_id: string;
+	user_id: string;
+	delivery_order_id?: string | null;
+	taxi_order_id?: string | null;
+	scoring_points_id?: string | null;
+	seconds: number;
+	created_at: Date;
+	updated_at: Date;
+	stores_module?: StoresModule | null;
+	food_drinks_module?: FoodDrinksModule | null;
+	driver?: Driver | null;
+	delivery_orders?: DeliveryOrder | null;
+	taxi_orders?: TaxiOrder | null;
+	scoring_points?: ScoringPoint | null;
+};

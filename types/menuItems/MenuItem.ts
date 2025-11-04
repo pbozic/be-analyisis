@@ -25,47 +25,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type MenuItem = {
-	menu_item_id: string;
-	name_translatable_id: string;
-	names?: Translatable | null;
-	description_translatable_id: string;
-	description?: Translatable | null;
-	allergens: AllergensToMenuItem[];
-	spicy_level?: number | null;
-	unit_size?: string | null;
-	price: number;
-	discount?: number | null;
-	sides: string;
-	extras: string;
-	ingredients: unknown;
-	availability: string;
-	business_id: string;
-	menu_category_id?: string | null;
-	daily_date?: Date | null;
-	menu_category?: MenuCategory | null;
-	image_file_id?: string | null;
-	image_file?: File | null;
-	requires_id_check: boolean;
-	is_enabled: boolean;
-	is_copy: boolean;
-	menu_category_order_index?: number | null;
-	order_lobby_items: OrderLobbyItem[];
-	allergens_text?: unknown | null;
-	ingredients_text?: unknown | null;
-	usage_text?: unknown | null;
-	origin_text?: unknown | null;
-	is_weighted: boolean;
-	weight_quantity?: number | null;
-	stock?: number | null;
-	stock_movements: MenuItemStockChange[];
-	line_items: LineItem[];
-	latest_version_id?: string | null;
-	versions: MenuItemVersion[];
-	tax_rates_id?: string | null;
-	tax_rate?: TaxRate | null;
-};
-
 export const CreateMenuItemSchema = z
 	.object({
 		menu_item_id: z.string().uuid(),
@@ -154,3 +113,44 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateMenuItem', UpdateMenuItemSchema);
 	registry.register('MenuItemResponse', MenuItemResponseSchema);
 }
+
+export type MenuItem = {
+	menu_item_id: string;
+	name_translatable_id: string;
+	names?: Translatable | null;
+	description_translatable_id: string;
+	description?: Translatable | null;
+	allergens?: AllergensToMenuItem[];
+	spicy_level?: number | null;
+	unit_size?: string | null;
+	price: number;
+	discount?: number | null;
+	sides: string;
+	extras: string;
+	ingredients: unknown;
+	availability: string;
+	business_id: string;
+	menu_category_id?: string | null;
+	daily_date?: Date | null;
+	menu_category?: MenuCategory | null;
+	image_file_id?: string | null;
+	image_file?: File | null;
+	requires_id_check: boolean;
+	is_enabled: boolean;
+	is_copy: boolean;
+	menu_category_order_index?: number | null;
+	order_lobby_items?: OrderLobbyItem[];
+	allergens_text?: unknown | null;
+	ingredients_text?: unknown | null;
+	usage_text?: unknown | null;
+	origin_text?: unknown | null;
+	is_weighted: boolean;
+	weight_quantity?: number | null;
+	stock?: number | null;
+	stock_movements?: MenuItemStockChange[];
+	line_items?: LineItem[];
+	latest_version_id?: string | null;
+	versions?: MenuItemVersion[];
+	tax_rates_id?: string | null;
+	tax_rate?: TaxRate | null;
+};

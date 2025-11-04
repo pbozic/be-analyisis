@@ -10,14 +10,6 @@ import { LocationResponseSchema } from './Location';
 
 extendZodWithOpenApi(z);
 
-export type ServiceLocation = {
-	service_location_id: string;
-	service_id: string;
-	location_id: string;
-	service: Service;
-	location: Location;
-};
-
 export const CreateServiceLocationSchema = z
 	.object({
 		service_location_id: z.string().uuid(),
@@ -48,3 +40,11 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateServiceLocation', UpdateServiceLocationSchema);
 	registry.register('ServiceLocationResponse', ServiceLocationResponseSchema);
 }
+
+export type ServiceLocation = {
+	service_location_id: string;
+	service_id: string;
+	location_id: string;
+	service?: Service;
+	location?: Location;
+};

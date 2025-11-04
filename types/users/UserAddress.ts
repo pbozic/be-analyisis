@@ -11,16 +11,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type UserAddress = {
-	user_id: string;
-	address_id: string;
-	primary: boolean;
-	details?: unknown | null;
-	type: ADDRESS_TYPE;
-	users: User;
-	address: Address;
-};
-
 export const CreateUserAddressSchema = z
 	.object({
 		user_id: z.string().uuid(),
@@ -55,3 +45,13 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateUserAddress', UpdateUserAddressSchema);
 	registry.register('UserAddressResponse', UserAddressResponseSchema);
 }
+
+export type UserAddress = {
+	user_id: string;
+	address_id: string;
+	primary: boolean;
+	details?: unknown | null;
+	type: ADDRESS_TYPE;
+	users?: User;
+	address?: Address;
+};

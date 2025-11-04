@@ -26,14 +26,6 @@ export const DeleteNotificationMappingSchema = z.object({
 export type CreateNotificationMappingInput = z.infer<typeof CreateNotificationMappingSchema>;
 export type UpdateNotificationMappingInput = z.infer<typeof UpdateNotificationMappingSchema>;
 
-export type NotificationMapping = {
-	notification_mapping_id: string;
-	reservation_module_id: string;
-	notification_event_id: string;
-	notification_template_version_id: string;
-	conditions?: unknown | null;
-};
-
 export const NotificationMappingResponseSchema = z
 	.object({
 		notification_mapping_id: z.string(),
@@ -51,3 +43,11 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateNotificationMapping', UpdateNotificationMappingSchema);
 	registry.register('NotificationMappingResponse', NotificationMappingResponseSchema);
 }
+
+export type NotificationMapping = {
+	notification_mapping_id: string;
+	reservation_module_id: string;
+	notification_event_id: string;
+	notification_template_version_id: string;
+	conditions?: unknown | null;
+};

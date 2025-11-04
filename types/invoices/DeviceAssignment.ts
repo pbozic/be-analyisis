@@ -8,17 +8,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type DeviceAssignment = {
-	device_assignment_id: string;
-	driver_id: string;
-	business_premise_id: string;
-	electronic_device_id: string;
-	valid_from: Date;
-	valid_to?: Date | null;
-	device: ElectronicDevice;
-	created_at: Date;
-};
-
 export const CreateDeviceAssignmentSchema = z
 	.object({
 		device_assignment_id: z.string().uuid(),
@@ -55,3 +44,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDeviceAssignment', UpdateDeviceAssignmentSchema);
 	registry.register('DeviceAssignmentResponse', DeviceAssignmentResponseSchema);
 }
+
+export type DeviceAssignment = {
+	device_assignment_id: string;
+	driver_id: string;
+	business_premise_id: string;
+	electronic_device_id: string;
+	valid_from: Date;
+	valid_to?: Date | null;
+	device?: ElectronicDevice;
+	created_at: Date;
+};

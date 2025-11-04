@@ -13,16 +13,6 @@ import { ActionResponseSchema } from './Action';
 
 extendZodWithOpenApi(z);
 
-export type ActionBundleAction = {
-	action_bundle_action_id: string;
-	action_bundle_id: string;
-	action_id: string;
-	module: MODULE_TYPE;
-	limit?: number | null;
-	action_bundle: ActionBundle;
-	action: Action;
-};
-
 export const CreateActionBundleActionSchema = z
 	.object({
 		action_bundle_action_id: z.string().uuid(),
@@ -58,3 +48,13 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateActionBundleAction', UpdateActionBundleActionSchema);
 	registry.register('ActionBundleActionResponse', ActionBundleActionResponseSchema);
 }
+
+export type ActionBundleAction = {
+	action_bundle_action_id: string;
+	action_bundle_id: string;
+	action_id: string;
+	module: MODULE_TYPE;
+	limit?: number | null;
+	action_bundle?: ActionBundle;
+	action?: Action;
+};

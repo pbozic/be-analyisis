@@ -40,52 +40,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Business = {
-	business_id: string;
-	address_id?: string | null;
-	is_business_unit: boolean;
-	business_group_name?: string | null;
-	name: string;
-	description?: string | null;
-	tax_id: string;
-	registration_id: string;
-	email: string;
-	telephone: string;
-	telephone_code: string;
-	website_url?: string | null;
-	working_hours?: unknown | null;
-	popular: boolean;
-	new: boolean;
-	created_at: Date;
-	updated_at: Date;
-	address?: Address | null;
-	documents: Document[];
-	parent_business_id?: string | null;
-	parent_business?: Business | null;
-	child_businesses: Business[];
-	stripe_account_id?: string | null;
-	stripe_customer_id?: string | null;
-	word_buy_stripe_subscription_id?: string | null;
-	word_buys: WordBuy[];
-	promo_sections: PromoSectionsBuy[];
-	analytics: PromoAnalytic[];
-	first_activated_at?: Date | null;
-	active: boolean;
-	sales_representative_id?: string | null;
-	user_favorite_businesses: UserFavoriteBusiness[];
-	scoring_points: ScoringPoint[];
-	account_actions: AccountAction[];
-	business_money_flows: BusinessMoneyFlow[];
-	roles: Role[];
-	business_users: BusinessUser[];
-	types: BusinessToType[];
-	reservation_module?: ReservationModule | null;
-	transport_module?: TransportModule | null;
-	stores_module?: StoresModule | null;
-	food_drinks_module?: FoodDrinksModule | null;
-	crm_module?: CrmModule | null;
-};
-
 export const CreateBusinessSchema = z
 	.object({
 		business_id: z.string().uuid(),
@@ -187,3 +141,49 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBusiness', UpdateBusinessSchema);
 	registry.register('BusinessResponse', BusinessResponseSchema);
 }
+
+export type Business = {
+	business_id: string;
+	address_id?: string | null;
+	is_business_unit: boolean;
+	business_group_name?: string | null;
+	name: string;
+	description?: string | null;
+	tax_id: string;
+	registration_id: string;
+	email: string;
+	telephone: string;
+	telephone_code: string;
+	website_url?: string | null;
+	working_hours?: unknown | null;
+	popular: boolean;
+	new: boolean;
+	created_at: Date;
+	updated_at: Date;
+	address?: Address | null;
+	documents?: Document[];
+	parent_business_id?: string | null;
+	parent_business?: Business | null;
+	child_businesses?: Business[];
+	stripe_account_id?: string | null;
+	stripe_customer_id?: string | null;
+	word_buy_stripe_subscription_id?: string | null;
+	word_buys?: WordBuy[];
+	promo_sections?: PromoSectionsBuy[];
+	analytics?: PromoAnalytic[];
+	first_activated_at?: Date | null;
+	active: boolean;
+	sales_representative_id?: string | null;
+	user_favorite_businesses?: UserFavoriteBusiness[];
+	scoring_points?: ScoringPoint[];
+	account_actions?: AccountAction[];
+	business_money_flows?: BusinessMoneyFlow[];
+	roles?: Role[];
+	business_users?: BusinessUser[];
+	types?: BusinessToType[];
+	reservation_module?: ReservationModule | null;
+	transport_module?: TransportModule | null;
+	stores_module?: StoresModule | null;
+	food_drinks_module?: FoodDrinksModule | null;
+	crm_module?: CrmModule | null;
+};

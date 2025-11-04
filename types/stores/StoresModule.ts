@@ -24,32 +24,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type StoresModule = {
-	stores_id: string;
-	business_id: string;
-	enabled: boolean;
-	settings?: unknown | null;
-	created_at: Date;
-	updated_at: Date;
-	reviewable_id?: string | null;
-	reviewable?: Reviewable | null;
-	business_local_locations: BusinessLocalLocation[];
-	business: Business;
-	delivery_address_id?: string | null;
-	delivery_address?: Address | null;
-	delivery_orders: DeliveryOrder[];
-	minimum_order: number;
-	menu?: Menu | null;
-	order_lobbies: OrderLobby[];
-	overwhelmed: boolean;
-	online: boolean;
-	logo_id?: string | null;
-	logo?: File | null;
-	banner_id?: string | null;
-	banner?: File | null;
-	late_events: LateEvent[];
-};
-
 export const CreateStoresModuleSchema = z
 	.object({
 		stores_id: z.string().uuid(),
@@ -106,3 +80,29 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateStoresModule', UpdateStoresModuleSchema);
 	registry.register('StoresModuleResponse', StoresModuleResponseSchema);
 }
+
+export type StoresModule = {
+	stores_id: string;
+	business_id: string;
+	enabled: boolean;
+	settings?: unknown | null;
+	created_at: Date;
+	updated_at: Date;
+	reviewable_id?: string | null;
+	reviewable?: Reviewable | null;
+	business_local_locations?: BusinessLocalLocation[];
+	business?: Business;
+	delivery_address_id?: string | null;
+	delivery_address?: Address | null;
+	delivery_orders?: DeliveryOrder[];
+	minimum_order: number;
+	menu?: Menu | null;
+	order_lobbies?: OrderLobby[];
+	overwhelmed: boolean;
+	online: boolean;
+	logo_id?: string | null;
+	logo?: File | null;
+	banner_id?: string | null;
+	banner?: File | null;
+	late_events?: LateEvent[];
+};

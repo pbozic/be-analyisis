@@ -13,22 +13,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Municipality = {
-	municipalities_id: string;
-	name: string;
-	geojson: unknown;
-	requires_license: boolean;
-	gis_sifra?: string | null;
-	eid_obcina?: string | null;
-	feature_id?: string | null;
-	created_at: Date;
-	updated_at: Date;
-	driver_municipalities: DriverMunicipality[];
-	settlements: Settlement[];
-	weather_data: WeatherData[];
-	geom_generated?: unknown | null;
-};
-
 export const CreateMunicipalitySchema = z
 	.object({
 		municipalities_id: z.string().uuid(),
@@ -72,3 +56,19 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateMunicipality', UpdateMunicipalitySchema);
 	registry.register('MunicipalityResponse', MunicipalityResponseSchema);
 }
+
+export type Municipality = {
+	municipalities_id: string;
+	name: string;
+	geojson: unknown;
+	requires_license: boolean;
+	gis_sifra?: string | null;
+	eid_obcina?: string | null;
+	feature_id?: string | null;
+	created_at: Date;
+	updated_at: Date;
+	driver_municipalities?: DriverMunicipality[];
+	settlements?: Settlement[];
+	weather_data?: WeatherData[];
+	geom_generated?: unknown | null;
+};

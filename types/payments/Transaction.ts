@@ -17,24 +17,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Transaction = {
-	transaction_id: string;
-	user_id: string;
-	amount: number;
-	type: TRANSACTION_TYPE;
-	description?: string | null;
-	createdAt: Date;
-	updatedAt: Date;
-	delivery_order_id?: string | null;
-	taxi_order_id?: string | null;
-	wallet_fund_id?: string | null;
-	taxi_order?: TaxiOrder | null;
-	delivery_order?: DeliveryOrder | null;
-	user: User;
-	documents: Document[];
-	wallet_funds?: WalletFund | null;
-};
-
 export const CreateTransactionSchema = z
 	.object({
 		transaction_id: z.string().uuid(),
@@ -82,3 +64,21 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateTransaction', UpdateTransactionSchema);
 	registry.register('TransactionResponse', TransactionResponseSchema);
 }
+
+export type Transaction = {
+	transaction_id: string;
+	user_id: string;
+	amount: number;
+	type: TRANSACTION_TYPE;
+	description?: string | null;
+	createdAt: Date;
+	updatedAt: Date;
+	delivery_order_id?: string | null;
+	taxi_order_id?: string | null;
+	wallet_fund_id?: string | null;
+	taxi_order?: TaxiOrder | null;
+	delivery_order?: DeliveryOrder | null;
+	user?: User;
+	documents?: Document[];
+	wallet_funds?: WalletFund | null;
+};

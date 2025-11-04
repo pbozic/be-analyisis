@@ -10,13 +10,6 @@ import { ServiceResponseSchema } from './Service';
 
 extendZodWithOpenApi(z);
 
-export type ServiceAssignment = {
-	employee_id: string;
-	service_id: string;
-	employee: Employee;
-	service: Service;
-};
-
 export const CreateServiceAssignmentSchema = z
 	.object({
 		employee_id: z.string().uuid(),
@@ -45,3 +38,10 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateServiceAssignment', UpdateServiceAssignmentSchema);
 	registry.register('ServiceAssignmentResponse', ServiceAssignmentResponseSchema);
 }
+
+export type ServiceAssignment = {
+	employee_id: string;
+	service_id: string;
+	employee?: Employee;
+	service?: Service;
+};

@@ -20,22 +20,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type TransportModule = {
-	transport_module_id: string;
-	business_id: string;
-	created_at: Date;
-	updated_at: Date;
-	business: Business;
-	active: boolean;
-	reviewable_id?: string | null;
-	reviewable?: Reviewable | null;
-	taxi_orders: TaxiOrder[];
-	delivery_orders: DeliveryOrder[];
-	drivers: Driver[];
-	vehicles: Vehicle[];
-	business_premises: BusinessPremise[];
-};
-
 export const CreateTransportModuleSchema = z
 	.object({
 		transport_module_id: z.string().uuid(),
@@ -75,3 +59,19 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateTransportModule', UpdateTransportModuleSchema);
 	registry.register('TransportModuleResponse', TransportModuleResponseSchema);
 }
+
+export type TransportModule = {
+	transport_module_id: string;
+	business_id: string;
+	created_at: Date;
+	updated_at: Date;
+	business?: Business;
+	active: boolean;
+	reviewable_id?: string | null;
+	reviewable?: Reviewable | null;
+	taxi_orders?: TaxiOrder[];
+	delivery_orders?: DeliveryOrder[];
+	drivers?: Driver[];
+	vehicles?: Vehicle[];
+	business_premises?: BusinessPremise[];
+};

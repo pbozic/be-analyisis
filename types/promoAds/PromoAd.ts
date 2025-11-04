@@ -14,23 +14,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type PromoAd = {
-	promo_ads_id: string;
-	title: string;
-	text: string;
-	tag: string;
-	service_type: PROMO_SERVICE_TYPES;
-	discount: number;
-	banner: PromoBanner[];
-	categories: PromoAdsCategory[];
-	active: boolean;
-	code?: number | null;
-	created_at: Date;
-	active_at?: Date | null;
-	active_until?: Date | null;
-	promo_analytics: PromoAnalytic[];
-};
-
 export const CreatePromoAdSchema = z
 	.object({
 		promo_ads_id: z.string().uuid(),
@@ -77,3 +60,20 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdatePromoAd', UpdatePromoAdSchema);
 	registry.register('PromoAdResponse', PromoAdResponseSchema);
 }
+
+export type PromoAd = {
+	promo_ads_id: string;
+	title: string;
+	text: string;
+	tag: string;
+	service_type: PROMO_SERVICE_TYPES;
+	discount: number;
+	banner?: PromoBanner[];
+	categories?: PromoAdsCategory[];
+	active: boolean;
+	code?: number | null;
+	created_at: Date;
+	active_at?: Date | null;
+	active_until?: Date | null;
+	promo_analytics?: PromoAnalytic[];
+};

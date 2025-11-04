@@ -22,17 +22,6 @@ export const DeleteNotificationPreferenceSchema = z.object({
 
 export type UpsertNotificationPreferenceInput = z.infer<typeof UpsertNotificationPreferenceSchema>;
 
-export type NotificationPreference = {
-	notification_preference_id: string;
-	reservation_module_id: string;
-	notification_event_id: string;
-	channel: NOTIFICATION_CHANNEL;
-	enabled: boolean;
-	updated_at: Date;
-	reservation_module: ReservationModule;
-	event: NotificationEvent;
-};
-
 export const CreateNotificationPreferenceSchema = z
 	.object({
 		notification_preference_id: z.string().uuid(),
@@ -69,3 +58,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateNotificationPreference', UpdateNotificationPreferenceSchema);
 	registry.register('NotificationPreferenceResponse', NotificationPreferenceResponseSchema);
 }
+
+export type NotificationPreference = {
+	notification_preference_id: string;
+	reservation_module_id: string;
+	notification_event_id: string;
+	channel: NOTIFICATION_CHANNEL;
+	enabled: boolean;
+	updated_at: Date;
+	reservation_module?: ReservationModule;
+	event?: NotificationEvent;
+};

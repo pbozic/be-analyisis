@@ -12,21 +12,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type BookingHistoryLog = {
-	booking_history_id: string;
-	booking_id: string;
-	status: BOOKING_STATUS;
-	comment?: string | null;
-	type?: string | null;
-	title?: string | null;
-	description?: string | null;
-	created_at: Date;
-	updated_at: Date;
-	user_id?: string | null;
-	user?: User | null;
-	booking: Booking;
-};
-
 export const CreateBookingHistoryLogSchema = z
 	.object({
 		booking_history_id: z.string().uuid(),
@@ -69,3 +54,18 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBookingHistoryLog', UpdateBookingHistoryLogSchema);
 	registry.register('BookingHistoryLogResponse', BookingHistoryLogResponseSchema);
 }
+
+export type BookingHistoryLog = {
+	booking_history_id: string;
+	booking_id: string;
+	status: BOOKING_STATUS;
+	comment?: string | null;
+	type?: string | null;
+	title?: string | null;
+	description?: string | null;
+	created_at: Date;
+	updated_at: Date;
+	user_id?: string | null;
+	user?: User | null;
+	booking?: Booking;
+};

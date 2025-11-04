@@ -11,17 +11,6 @@ import { BusinessResponseSchema } from '../business/Business';
 
 extendZodWithOpenApi(z);
 
-export type UserFavoriteBusiness = {
-	user_favorite_businesses_id: string;
-	user_id: string;
-	business_id: string;
-	module: MODULE;
-	created_at: Date;
-	updated_at: Date;
-	users: User;
-	businesses: Business;
-};
-
 export const CreateUserFavoriteBusinessSchema = z
 	.object({
 		user_favorite_businesses_id: z.string().uuid(),
@@ -57,3 +46,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateUserFavoriteBusiness', UpdateUserFavoriteBusinessSchema);
 	registry.register('UserFavoriteBusinessResponse', UserFavoriteBusinessResponseSchema);
 }
+
+export type UserFavoriteBusiness = {
+	user_favorite_businesses_id: string;
+	user_id: string;
+	business_id: string;
+	module: MODULE;
+	created_at: Date;
+	updated_at: Date;
+	users?: User;
+	businesses?: Business;
+};

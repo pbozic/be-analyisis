@@ -12,17 +12,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type MenuItemVersion = {
-	menu_item_version_id: string;
-	menu_item_id: string;
-	version: number;
-	snapshot: unknown;
-	created_at: Date;
-	menu_item: MenuItem;
-	order_lobby_items: OrderLobbyItem[];
-	line_items: LineItem[];
-};
-
 export const CreateMenuItemVersionSchema = z
 	.object({
 		menu_item_version_id: z.string().uuid(),
@@ -57,3 +46,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateMenuItemVersion', UpdateMenuItemVersionSchema);
 	registry.register('MenuItemVersionResponse', MenuItemVersionResponseSchema);
 }
+
+export type MenuItemVersion = {
+	menu_item_version_id: string;
+	menu_item_id: string;
+	version: number;
+	snapshot: unknown;
+	created_at: Date;
+	menu_item?: MenuItem;
+	order_lobby_items?: OrderLobbyItem[];
+	line_items?: LineItem[];
+};

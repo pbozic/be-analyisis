@@ -50,25 +50,6 @@ export const DeleteEmployeeSchema = z.object({ employee_id: z.string().uuid() })
 export type CreateEmployeeInput = z.infer<typeof CreateEmployeeSchema>;
 export type UpdateEmployeeInput = z.infer<typeof UpdateEmployeeSchema>;
 
-export type Employee = {
-	employee_id: string;
-	reservation_module_id: string;
-	reservation_module: ReservationModule;
-	assignments: ServiceAssignment[];
-	schedules: ScheduleEmployee[];
-	bookings: Booking[];
-	first_name?: string | null;
-	last_name?: string | null;
-	email?: string | null;
-	telephone?: string | null;
-	telephone_code?: string | null;
-	business_users_id?: string | null;
-	business_user?: BusinessUser | null;
-	created_at: Date;
-	deleted_at?: Date | null;
-	schedule_slots: ScheduleSlot[];
-};
-
 export const EmployeeResponseSchema = z
 	.object({
 		employee_id: z.string(),
@@ -97,3 +78,22 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateEmployee', UpdateEmployeeSchema);
 	registry.register('EmployeeResponse', EmployeeResponseSchema);
 }
+
+export type Employee = {
+	employee_id: string;
+	reservation_module_id: string;
+	reservation_module?: ReservationModule;
+	assignments?: ServiceAssignment[];
+	schedules?: ScheduleEmployee[];
+	bookings?: Booking[];
+	first_name?: string | null;
+	last_name?: string | null;
+	email?: string | null;
+	telephone?: string | null;
+	telephone_code?: string | null;
+	business_users_id?: string | null;
+	business_user?: BusinessUser | null;
+	created_at: Date;
+	deleted_at?: Date | null;
+	schedule_slots?: ScheduleSlot[];
+};

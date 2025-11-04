@@ -39,15 +39,6 @@ export type CreateUserRoleInput = z.infer<typeof CreateUserRoleSchema>;
 export type UpdateUserRoleInput = z.infer<typeof UpdateUserRoleSchema>;
 export type AssignUserRoleInput = z.infer<typeof AssignUserRoleSchema>;
 
-export type UserRole = {
-	user_id: string;
-	role_id: string;
-	reservation_module_id?: string | null;
-	user: User;
-	role: Role;
-	reservation_module?: ReservationModule | null;
-};
-
 export const UserRoleResponseSchema = z
 	.object({
 		user_id: z.string(),
@@ -66,3 +57,12 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateUserRole', UpdateUserRoleSchema);
 	registry.register('UserRoleResponse', UserRoleResponseSchema);
 }
+
+export type UserRole = {
+	user_id: string;
+	role_id: string;
+	reservation_module_id?: string | null;
+	user?: User;
+	role?: Role;
+	reservation_module?: ReservationModule | null;
+};

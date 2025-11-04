@@ -10,16 +10,6 @@ import { MunicipalityResponseSchema } from './Municipality';
 
 extendZodWithOpenApi(z);
 
-export type DriverMunicipality = {
-	driver_municipalities_id: string;
-	driver_id: string;
-	municipalities_id: string;
-	created_at: Date;
-	updated_at: Date;
-	drivers: Driver;
-	municipalities: Municipality;
-};
-
 export const CreateDriverMunicipalitySchema = z
 	.object({
 		driver_municipalities_id: z.string().uuid(),
@@ -53,3 +43,13 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDriverMunicipality', UpdateDriverMunicipalitySchema);
 	registry.register('DriverMunicipalityResponse', DriverMunicipalityResponseSchema);
 }
+
+export type DriverMunicipality = {
+	driver_municipalities_id: string;
+	driver_id: string;
+	municipalities_id: string;
+	created_at: Date;
+	updated_at: Date;
+	drivers?: Driver;
+	municipalities?: Municipality;
+};

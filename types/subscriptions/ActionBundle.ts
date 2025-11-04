@@ -12,17 +12,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type ActionBundle = {
-	action_bundle_id: string;
-	module: MODULE_TYPE;
-	name: string;
-	price_cents: number;
-	stripe_price_id: string;
-	stripe_product_id: string;
-	actions: ActionBundleAction[];
-	business_modules: ReservationModule[];
-};
-
 export const CreateActionBundleSchema = z
 	.object({
 		action_bundle_id: z.string().uuid(),
@@ -59,3 +48,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateActionBundle', UpdateActionBundleSchema);
 	registry.register('ActionBundleResponse', ActionBundleResponseSchema);
 }
+
+export type ActionBundle = {
+	action_bundle_id: string;
+	module: MODULE_TYPE;
+	name: string;
+	price_cents: number;
+	stripe_price_id: string;
+	stripe_product_id: string;
+	actions?: ActionBundleAction[];
+	business_modules?: ReservationModule[];
+};

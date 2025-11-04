@@ -10,15 +10,6 @@ import { BusinessTypeResponseSchema } from './BusinessType';
 
 extendZodWithOpenApi(z);
 
-export type BusinessToType = {
-	business_id: string;
-	type_id: string;
-	created_at: Date;
-	updated_at: Date;
-	business: Business;
-	business_type: BusinessType;
-};
-
 export const CreateBusinessToTypeSchema = z
 	.object({
 		business_id: z.string().uuid(),
@@ -49,3 +40,12 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBusinessToType', UpdateBusinessToTypeSchema);
 	registry.register('BusinessToTypeResponse', BusinessToTypeResponseSchema);
 }
+
+export type BusinessToType = {
+	business_id: string;
+	type_id: string;
+	created_at: Date;
+	updated_at: Date;
+	business?: Business;
+	business_type?: BusinessType;
+};

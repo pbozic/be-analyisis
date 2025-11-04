@@ -14,23 +14,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type DailyMealSubscriptionCustomer = {
-	id: string;
-	subscription_id: string;
-	daily_meal_category_id: string;
-	daily_meal_category_price_id: string;
-	first_name: string;
-	last_name: string;
-	telephone: string;
-	restaurant_comment?: string | null;
-	created_at: Date;
-	updated_at: Date;
-	subscription: DailyMealSubscription;
-	daily_meal_instances: DailyMealInstance[];
-	daily_meal_categories?: DailyMealCategory | null;
-	daily_meal_category_price: DailyMealCategoryPrice;
-};
-
 export const CreateDailyMealSubscriptionCustomerSchema = z
 	.object({
 		id: z.string().uuid(),
@@ -77,3 +60,20 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDailyMealSubscriptionCustomer', UpdateDailyMealSubscriptionCustomerSchema);
 	registry.register('DailyMealSubscriptionCustomerResponse', DailyMealSubscriptionCustomerResponseSchema);
 }
+
+export type DailyMealSubscriptionCustomer = {
+	id: string;
+	subscription_id: string;
+	daily_meal_category_id: string;
+	daily_meal_category_price_id: string;
+	first_name: string;
+	last_name: string;
+	telephone: string;
+	restaurant_comment?: string | null;
+	created_at: Date;
+	updated_at: Date;
+	subscription?: DailyMealSubscription;
+	daily_meal_instances?: DailyMealInstance[];
+	daily_meal_categories?: DailyMealCategory | null;
+	daily_meal_category_price?: DailyMealCategoryPrice;
+};

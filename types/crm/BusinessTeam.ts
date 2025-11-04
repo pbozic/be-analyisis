@@ -10,17 +10,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: shape). Do not edit manually.
 
-export type BusinessTeam = {
-	business_teams_id: string;
-	team_name: string;
-	crm_module_id: string;
-	limit_per_person: number;
-	created_at: Date;
-	updated_at: Date;
-	users: User[];
-	crm_module: CrmModule;
-};
-
 export const CreateBusinessTeamSchema = z
 	.object({
 		business_teams_id: z.string().uuid(),
@@ -55,3 +44,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateBusinessTeam', UpdateBusinessTeamSchema);
 	registry.register('BusinessTeamResponse', BusinessTeamResponseSchema);
 }
+
+export type BusinessTeam = {
+	business_teams_id: string;
+	team_name: string;
+	crm_module_id: string;
+	limit_per_person: number;
+	created_at: Date;
+	updated_at: Date;
+	users?: User[];
+	crm_module?: CrmModule;
+};

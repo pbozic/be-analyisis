@@ -10,16 +10,6 @@ import { DriverResponseSchema } from '../drivers/Driver';
 
 extendZodWithOpenApi(z);
 
-export type DailyMealsDriver = {
-	id: string;
-	daily_meals_id: string;
-	driver_id: string;
-	created_at: Date;
-	updated_at: Date;
-	daily_meals_module: DailyMealsModule;
-	driver: Driver;
-};
-
 export const CreateDailyMealsDriverSchema = z
 	.object({
 		id: z.string().uuid(),
@@ -52,3 +42,13 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDailyMealsDriver', UpdateDailyMealsDriverSchema);
 	registry.register('DailyMealsDriverResponse', DailyMealsDriverResponseSchema);
 }
+
+export type DailyMealsDriver = {
+	id: string;
+	daily_meals_id: string;
+	driver_id: string;
+	created_at: Date;
+	updated_at: Date;
+	daily_meals_module?: DailyMealsModule;
+	driver?: Driver;
+};

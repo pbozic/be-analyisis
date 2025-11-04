@@ -26,17 +26,6 @@ export const UpdateRoleSchema = CreateRoleSchema.partial();
 export type CreateRoleInput = z.infer<typeof CreateRoleSchema>;
 export type UpdateRoleInput = z.infer<typeof UpdateRoleSchema>;
 
-export type Role = {
-	role_id: string;
-	name: string;
-	module: MODULE_TYPE;
-	business_id?: string | null;
-	permissions: RolePermission[];
-	users: UserRole[];
-	is_admin: boolean;
-	business?: Business | null;
-};
-
 export const RoleResponseSchema = z
 	.object({
 		role_id: z.string(),
@@ -57,3 +46,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateRole', UpdateRoleSchema);
 	registry.register('RoleResponse', RoleResponseSchema);
 }
+
+export type Role = {
+	role_id: string;
+	name: string;
+	module: MODULE_TYPE;
+	business_id?: string | null;
+	permissions?: RolePermission[];
+	users?: UserRole[];
+	is_admin: boolean;
+	business?: Business | null;
+};

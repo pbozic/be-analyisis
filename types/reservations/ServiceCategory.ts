@@ -15,12 +15,6 @@ export const DeleteServiceCategorySchema = z.object({ category_id: z.string().uu
 export type CreateServiceCategoryInput = z.infer<typeof CreateServiceCategorySchema>;
 export type UpdateServiceCategoryInput = z.infer<typeof UpdateServiceCategorySchema>;
 
-export type ServiceCategory = {
-	service_category_id: string;
-	reservation_module_id: string;
-	name: unknown;
-};
-
 export const ServiceCategoryResponseSchema = z
 	.object({
 		service_category_id: z.string(),
@@ -36,3 +30,9 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateServiceCategory', UpdateServiceCategorySchema);
 	registry.register('ServiceCategoryResponse', ServiceCategoryResponseSchema);
 }
+
+export type ServiceCategory = {
+	service_category_id: string;
+	reservation_module_id: string;
+	name: unknown;
+};

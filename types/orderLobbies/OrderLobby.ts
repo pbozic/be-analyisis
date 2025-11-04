@@ -16,27 +16,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type OrderLobby = {
-	order_lobbies_id: string;
-	lobby_name: string;
-	lobby_description: string;
-	active: boolean;
-	delivery_location?: unknown | null;
-	courier_note?: string | null;
-	restaurant_message?: string | null;
-	stores_id: string;
-	food_drinks_id?: string | null;
-	creator_id: string;
-	delivery_orders_id?: string | null;
-	created_at: Date;
-	updated_at: Date;
-	order_lobby_items: OrderLobbyItem[];
-	order_lobby_users: OrderLobbyUser[];
-	delivery_orders?: DeliveryOrder | null;
-	stores_module?: StoresModule | null;
-	food_drinks_module?: FoodDrinksModule | null;
-};
-
 export const CreateOrderLobbySchema = z
 	.object({
 		order_lobbies_id: z.string().uuid(),
@@ -88,3 +67,24 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateOrderLobby', UpdateOrderLobbySchema);
 	registry.register('OrderLobbyResponse', OrderLobbyResponseSchema);
 }
+
+export type OrderLobby = {
+	order_lobbies_id: string;
+	lobby_name: string;
+	lobby_description: string;
+	active: boolean;
+	delivery_location?: unknown | null;
+	courier_note?: string | null;
+	restaurant_message?: string | null;
+	stores_id: string;
+	food_drinks_id?: string | null;
+	creator_id: string;
+	delivery_orders_id?: string | null;
+	created_at: Date;
+	updated_at: Date;
+	order_lobby_items?: OrderLobbyItem[];
+	order_lobby_users?: OrderLobbyUser[];
+	delivery_orders?: DeliveryOrder | null;
+	stores_module?: StoresModule | null;
+	food_drinks_module?: FoodDrinksModule | null;
+};

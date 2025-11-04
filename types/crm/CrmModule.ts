@@ -12,17 +12,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type CrmModule = {
-	crm_module_id: string;
-	business_id: string;
-	purchase_order_limit_amount?: number | null;
-	created_at: Date;
-	updated_at: Date;
-	business: Business;
-	business_clients: BusinessClient[];
-	business_teams: BusinessTeam[];
-};
-
 export const CreateCrmModuleSchema = z
 	.object({
 		crm_module_id: z.string().uuid(),
@@ -56,3 +45,14 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateCrmModule', UpdateCrmModuleSchema);
 	registry.register('CrmModuleResponse', CrmModuleResponseSchema);
 }
+
+export type CrmModule = {
+	crm_module_id: string;
+	business_id: string;
+	purchase_order_limit_amount?: number | null;
+	created_at: Date;
+	updated_at: Date;
+	business?: Business;
+	business_clients?: BusinessClient[];
+	business_teams?: BusinessTeam[];
+};

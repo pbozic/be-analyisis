@@ -28,23 +28,6 @@ export const DeleteCustomerSchema = z.object({ customer_id: z.string().uuid() })
 export type CreateCustomerInput = z.infer<typeof CreateCustomerSchema>;
 export type UpdateCustomerInput = z.infer<typeof UpdateCustomerSchema>;
 
-export type Customer = {
-	customer_id: string;
-	reservation_module_id: string;
-	first_name: string;
-	last_name: string;
-	email?: string | null;
-	telephone?: string | null;
-	created_at: Date;
-	updated_at: Date;
-	code: string;
-	reservation_module: ReservationModule;
-	bookings: Booking[];
-	user_id?: string | null;
-	user?: User | null;
-	booking_course_participants: BookingCourseParticipant[];
-};
-
 export const CustomerResponseSchema = z
 	.object({
 		customer_id: z.string(),
@@ -71,3 +54,20 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateCustomer', UpdateCustomerSchema);
 	registry.register('CustomerResponse', CustomerResponseSchema);
 }
+
+export type Customer = {
+	customer_id: string;
+	reservation_module_id: string;
+	first_name: string;
+	last_name: string;
+	email?: string | null;
+	telephone?: string | null;
+	created_at: Date;
+	updated_at: Date;
+	code: string;
+	reservation_module?: ReservationModule;
+	bookings?: Booking[];
+	user_id?: string | null;
+	user?: User | null;
+	booking_course_participants?: BookingCourseParticipant[];
+};

@@ -22,26 +22,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Address = {
-	address_id: string;
-	address: string;
-	latitude: string;
-	longitude: string;
-	street?: string | null;
-	house_number?: string | null;
-	city?: string | null;
-	country?: string | null;
-	postal?: string | null;
-	users: UserAddress[];
-	businesses: Business[];
-	stores_module: StoresModule[];
-	food_drinks_module: FoodDrinksModule[];
-	business_users: BusinessUser[];
-	daily_meal_subscriptions: DailyMealSubscription[];
-	local_locations?: LocalLocation | null;
-	locations: Location[];
-};
-
 export const CreateAddressSchema = z
 	.object({
 		address_id: z.string().uuid(),
@@ -90,3 +70,23 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateAddress', UpdateAddressSchema);
 	registry.register('AddressResponse', AddressResponseSchema);
 }
+
+export type Address = {
+	address_id: string;
+	address: string;
+	latitude: string;
+	longitude: string;
+	street?: string | null;
+	house_number?: string | null;
+	city?: string | null;
+	country?: string | null;
+	postal?: string | null;
+	users?: UserAddress[];
+	businesses?: Business[];
+	stores_module?: StoresModule[];
+	food_drinks_module?: FoodDrinksModule[];
+	business_users?: BusinessUser[];
+	daily_meal_subscriptions?: DailyMealSubscription[];
+	local_locations?: LocalLocation | null;
+	locations?: Location[];
+};

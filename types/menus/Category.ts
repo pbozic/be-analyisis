@@ -21,28 +21,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Category = {
-	categories_id: string;
-	name: string;
-	description?: string | null;
-	tag: string;
-	icon_file_id?: string | null;
-	icon?: File | null;
-	category_type: CATEGORY_TYPE;
-	menu_categories: MenuCategoriesCategory[];
-	promo_ads_category: PromoAdsCategory[];
-	parent_categories_id?: string | null;
-	parent_category?: Category | null;
-	sub_categories: Category[];
-	translatable_id: string;
-	translatable: Translatable;
-	words: Word[];
-	created_at: Date;
-	updated_at: Date;
-	deleted_at?: Date | null;
-	daily_meal_categories: DailyMealCategory[];
-};
-
 export const CreateCategorySchema = z
 	.object({
 		categories_id: z.string().uuid(),
@@ -107,3 +85,25 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateCategory', UpdateCategorySchema);
 	registry.register('CategoryResponse', CategoryResponseSchema);
 }
+
+export type Category = {
+	categories_id: string;
+	name: string;
+	description?: string | null;
+	tag: string;
+	icon_file_id?: string | null;
+	icon?: File | null;
+	category_type: CATEGORY_TYPE;
+	menu_categories?: MenuCategoriesCategory[];
+	promo_ads_category?: PromoAdsCategory[];
+	parent_categories_id?: string | null;
+	parent_category?: Category | null;
+	sub_categories?: Category[];
+	translatable_id: string;
+	translatable?: Translatable;
+	words?: Word[];
+	created_at: Date;
+	updated_at: Date;
+	deleted_at?: Date | null;
+	daily_meal_categories?: DailyMealCategory[];
+};

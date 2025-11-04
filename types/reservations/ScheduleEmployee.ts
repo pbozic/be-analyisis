@@ -12,15 +12,6 @@ import { ScheduleSlotResponseSchema } from './ScheduleSlot';
 
 extendZodWithOpenApi(z);
 
-export type ScheduleEmployee = {
-	schedule_employee_id: string;
-	schedule_id: string;
-	employee_id: string;
-	schedule: Schedule;
-	employee: Employee;
-	schedule_slots: ScheduleSlot[];
-};
-
 export const CreateScheduleEmployeeSchema = z
 	.object({
 		schedule_employee_id: z.string().uuid(),
@@ -52,3 +43,12 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateScheduleEmployee', UpdateScheduleEmployeeSchema);
 	registry.register('ScheduleEmployeeResponse', ScheduleEmployeeResponseSchema);
 }
+
+export type ScheduleEmployee = {
+	schedule_employee_id: string;
+	schedule_id: string;
+	employee_id: string;
+	schedule?: Schedule;
+	employee?: Employee;
+	schedule_slots?: ScheduleSlot[];
+};

@@ -39,61 +39,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type TaxiOrder = {
-	order_id: string;
-	user_id: string;
-	business_users_id?: string | null;
-	business_clients_id?: string | null;
-	driver_id?: string | null;
-	vehicle_id?: string | null;
-	route: unknown;
-	pickup_location: unknown;
-	delivery_location?: unknown | null;
-	payment?: unknown | null;
-	estimates?: unknown | null;
-	timeline: unknown;
-	preferences?: unknown | null;
-	status: TAXI_ORDER_STATUS;
-	last_sent_at?: Date | null;
-	created_at: Date;
-	updated_at: Date;
-	driver?: Driver | null;
-	vehicle?: Vehicle | null;
-	customer?: User | null;
-	business_users?: BusinessUser | null;
-	business_clients?: BusinessClient | null;
-	history: TaxiOrderSent[];
-	telephone?: string | null;
-	first_name?: string | null;
-	last_name?: string | null;
-	cancellation_reason?: string | null;
-	find_drivers_attempts?: number | null;
-	is_scheduled: boolean;
-	parent_order_id?: string | null;
-	parent_order?: TaxiOrder | null;
-	grouped_orders: TaxiOrder[];
-	type: ORDER_TYPE;
-	subtype: ORDER_SUBTYPE;
-	cargo_documents: Document[];
-	cargo_preferences?: unknown | null;
-	driver_history_locations: DriverHistoryLocation[];
-	wallet_transfer: WalletTransferHistory[];
-	transactions: Transaction[];
-	customer_note?: string | null;
-	parent_user_type?: string | null;
-	creating_user_id?: string | null;
-	cashback: Cashback[];
-	allow_credits_usage: boolean;
-	order_number: number;
-	scoring_points: ScoringPoint[];
-	late_events: LateEvent[];
-	invoice?: Invoice | null;
-	review_id?: string | null;
-	review?: Review | null;
-	transport_module_id?: string | null;
-	transport_module?: TransportModule | null;
-};
-
 export const CreateTaxiOrderSchema = z
 	.object({
 		order_id: z.string().uuid(),
@@ -214,3 +159,58 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateTaxiOrder', UpdateTaxiOrderSchema);
 	registry.register('TaxiOrderResponse', TaxiOrderResponseSchema);
 }
+
+export type TaxiOrder = {
+	order_id: string;
+	user_id: string;
+	business_users_id?: string | null;
+	business_clients_id?: string | null;
+	driver_id?: string | null;
+	vehicle_id?: string | null;
+	route: unknown;
+	pickup_location: unknown;
+	delivery_location?: unknown | null;
+	payment?: unknown | null;
+	estimates?: unknown | null;
+	timeline: unknown;
+	preferences?: unknown | null;
+	status: TAXI_ORDER_STATUS;
+	last_sent_at?: Date | null;
+	created_at: Date;
+	updated_at: Date;
+	driver?: Driver | null;
+	vehicle?: Vehicle | null;
+	customer?: User | null;
+	business_users?: BusinessUser | null;
+	business_clients?: BusinessClient | null;
+	history?: TaxiOrderSent[];
+	telephone?: string | null;
+	first_name?: string | null;
+	last_name?: string | null;
+	cancellation_reason?: string | null;
+	find_drivers_attempts?: number | null;
+	is_scheduled: boolean;
+	parent_order_id?: string | null;
+	parent_order?: TaxiOrder | null;
+	grouped_orders?: TaxiOrder[];
+	type: ORDER_TYPE;
+	subtype: ORDER_SUBTYPE;
+	cargo_documents?: Document[];
+	cargo_preferences?: unknown | null;
+	driver_history_locations?: DriverHistoryLocation[];
+	wallet_transfer?: WalletTransferHistory[];
+	transactions?: Transaction[];
+	customer_note?: string | null;
+	parent_user_type?: string | null;
+	creating_user_id?: string | null;
+	cashback?: Cashback[];
+	allow_credits_usage: boolean;
+	order_number: number;
+	scoring_points?: ScoringPoint[];
+	late_events?: LateEvent[];
+	invoice?: Invoice | null;
+	review_id?: string | null;
+	review?: Review | null;
+	transport_module_id?: string | null;
+	transport_module?: TransportModule | null;
+};

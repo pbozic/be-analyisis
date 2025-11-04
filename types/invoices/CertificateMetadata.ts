@@ -4,19 +4,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type CertificateMetadata = {
-	certificate_metadata_id: string;
-	driver_id: string;
-	subject_dn: string;
-	serial_number: string;
-	sha256_thumbprint: string;
-	valid_from: Date;
-	valid_to: Date;
-	ca_chain_pinned?: string | null;
-	created_at: Date;
-	updated_at: Date;
-};
-
 export const CreateCertificateMetadataSchema = z
 	.object({
 		certificate_metadata_id: z.string().uuid(),
@@ -58,3 +45,16 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateCertificateMetadata', UpdateCertificateMetadataSchema);
 	registry.register('CertificateMetadataResponse', CertificateMetadataResponseSchema);
 }
+
+export type CertificateMetadata = {
+	certificate_metadata_id: string;
+	driver_id: string;
+	subject_dn: string;
+	serial_number: string;
+	sha256_thumbprint: string;
+	valid_from: Date;
+	valid_to: Date;
+	ca_chain_pinned?: string | null;
+	created_at: Date;
+	updated_at: Date;
+};

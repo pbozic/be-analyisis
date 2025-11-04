@@ -17,25 +17,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type ScoringPoint = {
-	scoring_points_id: string;
-	business_id: string;
-	user_id?: string | null;
-	delivery_order_id?: string | null;
-	taxi_order_id?: string | null;
-	points: number;
-	isPenalty: boolean;
-	reason: SCORING_POINTS_REASON;
-	expiration_date?: Date | null;
-	created_at: Date;
-	updated_at: Date;
-	users?: User | null;
-	businesses?: Business | null;
-	delivery_orders?: DeliveryOrder | null;
-	taxi_orders?: TaxiOrder | null;
-	late_events: LateEvent[];
-};
-
 export const CreateScoringPointSchema = z
 	.object({
 		scoring_points_id: z.string().uuid(),
@@ -83,3 +64,22 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateScoringPoint', UpdateScoringPointSchema);
 	registry.register('ScoringPointResponse', ScoringPointResponseSchema);
 }
+
+export type ScoringPoint = {
+	scoring_points_id: string;
+	business_id: string;
+	user_id?: string | null;
+	delivery_order_id?: string | null;
+	taxi_order_id?: string | null;
+	points: number;
+	isPenalty: boolean;
+	reason: SCORING_POINTS_REASON;
+	expiration_date?: Date | null;
+	created_at: Date;
+	updated_at: Date;
+	users?: User | null;
+	businesses?: Business | null;
+	delivery_orders?: DeliveryOrder | null;
+	taxi_orders?: TaxiOrder | null;
+	late_events?: LateEvent[];
+};

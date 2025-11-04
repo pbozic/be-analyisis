@@ -16,21 +16,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Word = {
-	word_id: string;
-	word: string;
-	popularity: number;
-	categories_id?: string | null;
-	category?: Category | null;
-	translatable_id: string;
-	translatable: Translatable;
-	subscriptions: WordBuy[];
-	bundles: WordBundle[];
-	created_at: Date;
-	updated_at: Date;
-	promo_analytics: PromoAnalytic[];
-};
-
 export const CreateWordSchema = z
 	.object({
 		word_id: z.string().uuid(),
@@ -70,3 +55,18 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateWord', UpdateWordSchema);
 	registry.register('WordResponse', WordResponseSchema);
 }
+
+export type Word = {
+	word_id: string;
+	word: string;
+	popularity: number;
+	categories_id?: string | null;
+	category?: Category | null;
+	translatable_id: string;
+	translatable?: Translatable;
+	subscriptions?: WordBuy[];
+	bundles?: WordBundle[];
+	created_at: Date;
+	updated_at: Date;
+	promo_analytics?: PromoAnalytic[];
+};

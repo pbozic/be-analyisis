@@ -25,31 +25,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type Vehicle = {
-	vehicle_id: string;
-	transport_module_id?: string | null;
-	active?: boolean | null;
-	class?: VEHICLE_CLASS | null;
-	category?: VEHICLE_CATEGORY | null;
-	make?: string | null;
-	model?: string | null;
-	color?: string | null;
-	license_plate?: string | null;
-	created_at: Date;
-	updated_at: Date;
-	documents: Document[];
-	drivers: VehicleDriver[];
-	vehicle_specification_id?: string | null;
-	vehicle_specification?: VehicleSpecification | null;
-	taxi_orders: TaxiOrder[];
-	delivery_orders: DeliveryOrder[];
-	current_driver?: Driver | null;
-	business_premise_id?: string | null;
-	business_premise?: BusinessPremise | null;
-	invoices: Invoice[];
-	transport_module?: TransportModule | null;
-};
-
 export const CreateVehicleSchema = z
 	.object({
 		vehicle_id: z.string().uuid(),
@@ -105,3 +80,28 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateVehicle', UpdateVehicleSchema);
 	registry.register('VehicleResponse', VehicleResponseSchema);
 }
+
+export type Vehicle = {
+	vehicle_id: string;
+	transport_module_id?: string | null;
+	active?: boolean | null;
+	class?: VEHICLE_CLASS | null;
+	category?: VEHICLE_CATEGORY | null;
+	make?: string | null;
+	model?: string | null;
+	color?: string | null;
+	license_plate?: string | null;
+	created_at: Date;
+	updated_at: Date;
+	documents?: Document[];
+	drivers?: VehicleDriver[];
+	vehicle_specification_id?: string | null;
+	vehicle_specification?: VehicleSpecification | null;
+	taxi_orders?: TaxiOrder[];
+	delivery_orders?: DeliveryOrder[];
+	current_driver?: Driver | null;
+	business_premise_id?: string | null;
+	business_premise?: BusinessPremise | null;
+	invoices?: Invoice[];
+	transport_module?: TransportModule | null;
+};

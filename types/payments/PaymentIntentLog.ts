@@ -4,12 +4,6 @@ extendZodWithOpenApi(z);
 
 // Auto-generated shape by scripts/generate-dtos.js (mode: map). Do not edit manually.
 
-export type PaymentIntentLog = {
-	payment_intent_logs_id: string;
-	stripe_id: string;
-	created_at: Date;
-};
-
 export const CreatePaymentIntentLogSchema = z
 	.object({
 		payment_intent_logs_id: z.string().uuid(),
@@ -37,3 +31,9 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdatePaymentIntentLog', UpdatePaymentIntentLogSchema);
 	registry.register('PaymentIntentLogResponse', PaymentIntentLogResponseSchema);
 }
+
+export type PaymentIntentLog = {
+	payment_intent_logs_id: string;
+	stripe_id: string;
+	created_at: Date;
+};
