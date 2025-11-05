@@ -232,7 +232,6 @@ erDiagram
 "promo_sections_buy" }o--|| "business" : business
 "word_buy" }o--|| "business" : business
 "promo_analytics" }o--|| "business" : business
-"business" }o--o{ "business_type" : "via business_to_types"
 ```
 
 ### `business`
@@ -1480,12 +1479,6 @@ erDiagram
 "wallet_funds" }o--|| "users" : user
 "drivers" |o--o| "users" : user
 "drivers" |o--o| "files" : profile_picture
-"reviews" }o--o{ "users" : "via reviewable"
-"users" }o--o{ "business" : "via user_favorite_businesses"
-"users" }o--o{ "drivers" : "via user_favorite_drivers"
-"allergens" }o--o{ "users" : "via user_allergens"
-"users" }o--o{ "service_links" : "via user_favorite_service_links"
-"users" }o--o{ "tutorial" : "via user_tutorials"
 ```
 
 ### `tokens`
@@ -2431,7 +2424,6 @@ erDiagram
   DateTime(6) updated_at
 }
 "promo_sections_buy" }o--|| "promo_sections" : promo_section
-"translations" }o--o{ "promo_sections" : "via translatable"
 ```
 
 ### `promo_sections`
@@ -2533,7 +2525,6 @@ erDiagram
 "promo_banners" }o--o| "promo_ads" : promo_ads
 "categories" }o--o| "files" : icon
 "categories" }o--o| "categories" : parent_category
-"promo_ads" }o--o{ "categories" : "via promo_ads_category"
 ```
 
 ### `promo_banners`
@@ -2608,7 +2599,6 @@ erDiagram
   DateTime(6) updated_at
 }
 "word_buy" }o--|| "words" : word
-"translations" }o--o{ "words" : "via translatable"
 ```
 
 ### `words`
@@ -2936,10 +2926,6 @@ erDiagram
 "documents" }o--o| "drivers" : drivers
 "documents" }o--o| "vehicles" : vehicles
 "reviews" }o--|| "users" : author
-"reviews" }o--o{ "drivers" : "via reviewable"
-"daily_meals_module" }o--o{ "drivers" : "via daily_meals_drivers"
-"drivers" }o--o{ "municipalities" : "via driver_municipalities"
-"vehicles" }o--o{ "drivers" : "via vehicle_drivers"
 ```
 
 ### `late_events`
@@ -3122,7 +3108,6 @@ erDiagram
 }
 "blog_posts" }o--|| "users" : author
 "blog_posts" }o--o| "blog_categories" : category
-"blog_tags" }o--o{ "blog_posts" : "via blog_tags_blog_posts"
 ```
 
 ### `blog_tags`
@@ -3436,7 +3421,6 @@ erDiagram
 "line_items" }o--o| "line_items" : parent_extra
 "menu_item_versions" }o--|| "menu_items" : menu_item
 "menu_item_stock_change" }o--|| "menu_items" : menu_item
-"allergens" }o--o{ "menu_items" : "via allergens_to_menu_items"
 ```
 
 ### `allergens`
@@ -3800,7 +3784,6 @@ erDiagram
 "business" }o--o| "business" : parent_business
 "menus" |o--o| "stores_module" : stores_module
 "order_lobbies" }o--|| "stores_module" : stores_module
-"reviews" }o--o{ "stores_module" : "via reviewable"
 ```
 
 ### `stores_module`
@@ -3953,7 +3936,6 @@ erDiagram
 "menus" |o--o| "food_drinks_module" : food_drinks_module
 "table_reservations_module" |o--|| "food_drinks_module" : food_drinks_module
 "order_lobbies" }o--o| "food_drinks_module" : food_drinks_module
-"reviews" }o--o{ "food_drinks_module" : "via reviewable"
 ```
 
 ### `food_drinks_module`
@@ -4532,9 +4514,6 @@ erDiagram
 "menu_categories" }o--o| "daily_meal_categories" : daily_meal_category
 "menu_categories" }o--o| "daily_meal_category_prices" : daily_meal_category_price
 "drivers" |o--o| "users" : user
-"translations" }o--o{ "categories" : "via translatable"
-"translations" }o--o{ "menu_categories" : "via translatable"
-"translations" }o--o{ "menu_items" : "via translatable"
 ```
 
 ### `daily_meals_module`
@@ -4767,10 +4746,6 @@ erDiagram
 "categories" }o--o| "categories" : parent_category
 "menu_categories" }o--o| "menus" : menu
 "menu_items" }o--o| "menu_categories" : menu_category
-"translations" }o--o{ "categories" : "via translatable"
-"translations" }o--o{ "menu_categories" : "via translatable"
-"translations" }o--o{ "menu_items" : "via translatable"
-"menu_categories" }o--o{ "categories" : "via menu_categories_categories"
 ```
 
 ### `categories`
@@ -5717,7 +5692,6 @@ erDiagram
 "notification_message" }o--o| "notification_template_version" : version
 "notification_message_event" }o--|| "notification_message" : message
 "business" }o--o| "business" : parent_business
-"reviews" }o--o{ "reservation_module" : "via reviewable"
 ```
 
 ### `reservation_module`
@@ -6123,8 +6097,6 @@ erDiagram
 }
 "business_addon" }o--|| "addon" : addon
 "business_usage" }o--|| "action" : action
-"action_bundle" }o--o{ "action" : "via action_bundle_action"
-"addon" }o--o{ "action" : "via addon_action"
 ```
 
 ### `action_bundle`
@@ -6370,7 +6342,6 @@ erDiagram
 "drivers" |o--o| "vehicles" : current_vehicle
 "drivers" }o--o| "transport_module" : transport_module
 "vehicles" }o--o| "transport_module" : transport_module
-"reviews" }o--o{ "transport_module" : "via reviewable"
 ```
 
 ### `transport_module`
@@ -6856,8 +6827,6 @@ erDiagram
 "service_category" }o--o| "service_category" : parent
 "service" }o--o| "service_category" : service_category
 "service" }o--o| "tax_rates" : tax_rate
-"service" }o--o{ "location" : "via service_location"
-"employee" }o--o{ "service" : "via service_assignment"
 ```
 
 ### `location`
@@ -6994,9 +6963,6 @@ erDiagram
 "schedule_slot" }o--|| "employee" : employee
 "schedule_slot_exceptions" }o--|| "schedule_slot" : schedule_slot
 "booking_slots" }o--|| "schedule_slot" : schedule_slot
-"schedule" }o--o{ "employee" : "via schedule_employee"
-"schedule" }o--o{ "schedule_slot" : "via schedule_employee"
-"employee" }o--o{ "schedule_slot" : "via schedule_employee"
 ```
 
 ### `location`
@@ -7456,7 +7422,6 @@ erDiagram
 "booking_history_log" }o--|| "booking" : booking
 "business_users" }o--|| "users" : users
 "reviews" }o--|| "users" : author
-"reviews" }o--o{ "booking" : "via reviewable"
 ```
 
 ### `employee`
