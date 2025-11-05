@@ -30,7 +30,9 @@ export const FileUploadSchema = z
 // -----------------------
 // Generic small request schemas
 // -----------------------
-export const IdOnlySchema = z.object({ order_id: z.string().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }) }).openapi('TaxiOrderId');
+export const IdOnlySchema = z
+	.object({ order_id: z.string().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }) })
+	.openapi('TaxiOrderId');
 
 export const IdAndStatusSchema = z
 	.object({
@@ -66,7 +68,8 @@ export const TaxiPreferencesSchema = z
 		repeat_duration: z.array(z.any()).optional(),
 		ride_requirements: z.any().optional(),
 		// allow other preference fields through
-	}).passthrough()
+	})
+	.passthrough()
 	.openapi('TaxiPreferences');
 
 export const TaxiPaymentSchema = z
@@ -103,7 +106,8 @@ export const CreateTaxiOrderSchema = z
 		is_scheduled: z.boolean().optional(),
 		estimates: z.any().optional(),
 		// allow additional order fields without strict typing
-	}).passthrough()
+	})
+	.passthrough()
 	.openapi('CreateTaxiOrder');
 
 export const CreateDispatchOrderSchema = CreateTaxiOrderSchema.openapi('CreateDispatchOrder');
@@ -126,7 +130,9 @@ export const UpdateTaxiOrderPreferencesSchema = z
 export const UpdateRouteSchema = z
 	.object({
 		order_id: z.string().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
-		route: z.array(LocationSchema).openapi({ example: [{ address: 'A', coordinates: { latitude: 46, longitude: 14 } }] }),
+		route: z
+			.array(LocationSchema)
+			.openapi({ example: [{ address: 'A', coordinates: { latitude: 46, longitude: 14 } }] }),
 	})
 	.openapi('UpdateTaxiOrderRoute');
 
@@ -154,7 +160,9 @@ export const UpdateCompleteRouteSchema = z
 export const UpdateTimelineSchema = z
 	.object({
 		order_id: z.string().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
-		timeline: z.array(z.any()).openapi({ example: [{ status: 'ORDER_PHOTO', location: { timestamp: new Date().toISOString() } }] }),
+		timeline: z
+			.array(z.any())
+			.openapi({ example: [{ status: 'ORDER_PHOTO', location: { timestamp: new Date().toISOString() } }] }),
 	})
 	.openapi('UpdateTaxiOrderTimeline');
 

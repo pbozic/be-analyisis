@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, LanguageCode } from '../../schemas/primitives';
+import { UUID, LanguageCode } from '../../primitives';
 
 extendZodWithOpenApi(z);
 

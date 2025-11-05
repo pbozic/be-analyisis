@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { FILE_TYPE } from '@prisma/client';
 
-import { UUID, LanguageCode } from '../../schemas/primitives';
-import { SERVICE_TYPE } from '../../lib/constants';
+import { UUID, LanguageCode } from '../../primitives';
+import { SERVICE_TYPE } from '../../../lib/constants';
 
 extendZodWithOpenApi(z);
 

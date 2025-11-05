@@ -2,24 +2,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { VEHICLE_CATEGORY, VEHICLE_CLASS, DOCUMENT_TYPE, FILE_TYPE } from '@prisma/client';
 
-import type { Document } from '../../types/documents/Document.js';
-import type { TaxiOrder } from '../../types/taxiOrders/TaxiOrder.js';
-import type { DeliveryOrder } from '../../types/deliveryOrders/DeliveryOrder.js';
-import type { Driver } from '../../types/drivers/Driver.js';
-import type { BusinessPremise } from '../../types/invoices/BusinessPremise.js';
-import type { Invoice } from '../../types/invoices/Invoice.js';
-import type { TransportModule } from '../../types/transport/TransportModule.js';
-import type { VehicleDriver } from '../../types/drivers/VehicleDriver.js';
-import { DocumentResponseSchema } from '../../types/documents/Document.js';
-import { VehicleDriverResponseSchema } from '../../types/drivers/VehicleDriver.js';
-import { TaxiOrderResponseSchema } from '../../types/taxiOrders/TaxiOrder.js';
-import { DeliveryOrderResponseSchema } from '../../types/deliveryOrders/DeliveryOrder.js';
-import { DriverResponseSchema } from '../../types/drivers/Driver.js';
-import { BusinessPremiseResponseSchema } from '../../types/invoices/BusinessPremise.js';
-import { InvoiceResponseSchema } from '../../types/invoices/Invoice.js';
-import { TransportModuleResponseSchema } from '../../types/transport/TransportModule.js';
-import { UUID, Timestamp } from '../../schemas/primitives';
-
+import { UUID, Timestamp } from '../../primitives';
 extendZodWithOpenApi(z);
 
 // Base vehicle input (DB-level fields only; no ids/timestamps)
@@ -130,33 +113,6 @@ export const VehicleDriverAssignmentSchema = z
 	.openapi('VehicleDriverAssignment');
 export type VehicleDriverAssignment = z.infer<typeof VehicleDriverAssignmentSchema>;
 
-export const VehicleResponseSchema = z
-	.object({
-		vehicle_id: z.string(),
-		transport_module_id: z.string().nullable().optional(),
-		active: z.boolean().nullable().optional(),
-		class: z.nativeEnum(VEHICLE_CLASS).nullable().optional(),
-		category: z.nativeEnum(VEHICLE_CATEGORY).nullable().optional(),
-		make: z.string().nullable().optional(),
-		model: z.string().nullable().optional(),
-		color: z.string().nullable().optional(),
-		license_plate: z.string().nullable().optional(),
-		created_at: z.string().datetime(),
-		updated_at: z.string().datetime(),
-		documents: z.array(DocumentResponseSchema),
-		drivers: z.array(VehicleDriverResponseSchema),
-		taxi_orders: z.array(TaxiOrderResponseSchema),
-		delivery_orders: z.array(DeliveryOrderResponseSchema),
-		current_driver: DriverResponseSchema.nullable().optional(),
-		business_premise_id: z.string().nullable().optional(),
-		business_premise: BusinessPremiseResponseSchema.nullable().optional(),
-		invoices: z.array(InvoiceResponseSchema),
-		transport_module: TransportModuleResponseSchema.nullable().optional(),
-	})
-	.openapi('VehicleResponse');
-
-export type VehicleResponse = z.infer<typeof VehicleResponseSchema>;
-
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('VehicleEntityBase', VehicleEntityBaseSchema);
 	registry.register('VehicleCreateInput', VehicleCreateInputSchema);
@@ -170,29 +126,4 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateVehicleRequest', CreateVehicleRequestSchema);
 	registry.register('UpdateVehicleRequest', UpdateVehicleRequestSchema);
 	registry.register('VehicleDriverAssignment', VehicleDriverAssignmentSchema);
-	registry.register('VehicleResponse', VehicleResponseSchema);
-	registry.register('Vehicle', VehicleResponseSchema);
 }
-
-export type Vehicle = {
-	vehicle_id: string;
-	transport_module_id?: string | null;
-	active?: boolean | null;
-	class?: VEHICLE_CLASS | null;
-	category?: VEHICLE_CATEGORY | null;
-	make?: string | null;
-	model?: string | null;
-	color?: string | null;
-	license_plate?: string | null;
-	created_at: Date;
-	updated_at: Date;
-	documents?: Document[];
-	drivers?: VehicleDriver[];
-	taxi_orders?: TaxiOrder[];
-	delivery_orders?: DeliveryOrder[];
-	current_driver?: Driver | null;
-	business_premise_id?: string | null;
-	business_premise?: BusinessPremise | null;
-	invoices?: Invoice[];
-	transport_module?: TransportModule | null;
-};
