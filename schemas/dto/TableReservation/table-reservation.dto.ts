@@ -2,29 +2,12 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID, Timestamp } from '../../primitives';
+import { BasicUserDataSchema } from '../common/User.dto.ts';
+import { BusinessRefSchema } from '../common/Business.dto.ts';
 
 extendZodWithOpenApi(z);
 
-// Refs
-export const UserRefSchema = z
-	.object({
-		user_id: UUID,
-		label: z.string().min(1),
-	})
-	.openapi('TableReservationUserRef');
-export type UserRef = z.infer<typeof UserRefSchema>;
-
-export const BusinessRefSchema = z
-	.object({
-		business_id: UUID,
-		name: z.string().nullable().optional(),
-		email: z.string().email().nullable().optional(),
-		telephone: z.string().nullable().optional(),
-		logo: z.string().url().nullable().optional(),
-		banner: z.string().url().nullable().optional(),
-	})
-	.openapi('TableReservationBusinessRef');
-export type BusinessRef = z.infer<typeof BusinessRefSchema>;
+// User relation now reuses common BasicUserDataSchema; BusinessRefSchema is imported from common
 
 // Base schema for reservations
 export const TableReservationBaseSchema = z
@@ -46,34 +29,43 @@ export type TableReservationBase = z.infer<typeof TableReservationBaseSchema>;
 
 // Detail with optional embedded refs
 export const TableReservationDetailSchema = TableReservationBaseSchema.extend({
-	user: UserRefSchema.nullable().optional(),
+	user: BasicUserDataSchema.nullable().optional(),
 	business: BusinessRefSchema.nullable().optional(),
 }).openapi('TableReservationDetail');
 export type TableReservationDetail = z.infer<typeof TableReservationDetailSchema>;
 
 // Mappers
-export function toUserRef(user: unknown | null | undefined): UserRef | null {
+function toBasicUser(user: unknown | null | undefined) {
 	if (!user) return null;
-	const u = user as { user_id: string; first_name?: string | null; last_name?: string | null };
-	const label = [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || u.user_id;
-	return UserRefSchema.parse({ user_id: u.user_id, label });
+	const u = user as {
+		first_name?: string | null;
+		last_name?: string | null;
+		email?: string | null;
+		telephone?: string | null;
+		telephone_code?: string | null;
+		date_of_birth?: string | null;
+	};
+	return BasicUserDataSchema.parse({
+		first_name: u.first_name ?? '',
+		last_name: u.last_name ?? '',
+		email: u.email ?? undefined,
+		telephone: u.telephone ?? undefined,
+		telephone_code: u.telephone_code ?? undefined,
+		date_of_birth: u.date_of_birth ?? undefined,
+	});
 }
 
-export function toBusinessRef(b: unknown | null | undefined): BusinessRef | null {
+export function toBusinessRef(b: unknown | null | undefined) {
 	if (!b) return null;
 	const business = b as {
 		business_id: string;
 		name?: string | null;
-		email?: string | null;
-		telephone?: string | null;
 		logo?: string | null;
 		banner?: string | null;
 	};
 	return BusinessRefSchema.parse({
 		business_id: business.business_id,
 		name: business.name ?? null,
-		email: business.email ?? null,
-		telephone: business.telephone ?? null,
 		logo: business.logo ?? null,
 		banner: business.banner ?? null,
 	});
@@ -109,14 +101,13 @@ export function toTableReservationDetail(row: unknown): TableReservationDetail {
 		table_reservation_id: r.table_reservation_id,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		user: toUserRef(r.user) ?? undefined,
+		user: toBasicUser(r.user) ?? undefined,
 		business: toBusinessRef(r.business) ?? undefined,
 	});
 }
 
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('TableReservationUserRef', UserRefSchema);
-	registry.register('TableReservationBusinessRef', BusinessRefSchema);
+	// BasicUserDataSchema and BusinessRefSchema are registered in common registry
 	registry.register('TableReservationBase', TableReservationBaseSchema);
 	registry.register('TableReservationDetail', TableReservationDetailSchema);
 }

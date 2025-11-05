@@ -2,19 +2,11 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID, Timestamp } from '../../primitives';
+import { BasicUserDataSchema } from '../common/User.dto.ts';
 
 extendZodWithOpenApi(z);
 
-// =======================
-// User Ref (minimal, for embedding)
-// =======================
-export const UserRefSchema = z
-	.object({
-		user_id: UUID,
-		label: z.string().min(1),
-	})
-	.openapi('ReferralUserRef');
-export type UserRef = z.infer<typeof UserRefSchema>;
+// User relation now reuses common BasicUserDataSchema
 
 // =======================
 // Referral DTOs
@@ -42,19 +34,32 @@ export const ReferralRefSchema = z
 export type ReferralRef = z.infer<typeof ReferralRefSchema>;
 
 export const ReferralDetailSchema = ReferralBaseSchema.extend({
-	referrer: UserRefSchema.nullable().optional(),
-	referred: UserRefSchema.nullable().optional(),
+	referrer: BasicUserDataSchema.nullable().optional(),
+	referred: BasicUserDataSchema.nullable().optional(),
 }).openapi('ReferralDetail');
 export type ReferralDetail = z.infer<typeof ReferralDetailSchema>;
 
 // =======================
 // Mappers
 // =======================
-export function toUserRef(user: unknown | null | undefined): UserRef | null {
+function toBasicUser(user: unknown | null | undefined) {
 	if (!user) return null;
-	const u = user as { user_id: string; first_name?: string | null; last_name?: string | null };
-	const label = [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || u.user_id;
-	return UserRefSchema.parse({ user_id: u.user_id, label });
+	const u = user as {
+		first_name?: string | null;
+		last_name?: string | null;
+		email?: string | null;
+		telephone?: string | null;
+		telephone_code?: string | null;
+		date_of_birth?: string | null;
+	};
+	return BasicUserDataSchema.parse({
+		first_name: u.first_name ?? '',
+		last_name: u.last_name ?? '',
+		email: u.email ?? undefined,
+		telephone: u.telephone ?? undefined,
+		telephone_code: u.telephone_code ?? undefined,
+		date_of_birth: u.date_of_birth ?? undefined,
+	});
 }
 
 export function toReferralRef(referral: unknown): ReferralRef {
@@ -86,8 +91,8 @@ export function toReferralDetail(referral: unknown): ReferralDetail {
 		reward_claimed: !!r.reward_claimed,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		referrer: toUserRef(r.referrer),
-		referred: toUserRef(r.referred),
+		referrer: toBasicUser(r.referrer),
+		referred: toBasicUser(r.referred),
 	});
 }
 
@@ -95,7 +100,7 @@ export function toReferralDetail(referral: unknown): ReferralDetail {
 // Registry
 // =======================
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('ReferralUserRef', UserRefSchema);
+	// BasicUserDataSchema is registered in common registry
 	registry.register('ReferralBase', ReferralBaseSchema);
 	registry.register('ReferralRef', ReferralRefSchema);
 	registry.register('ReferralDetail', ReferralDetailSchema);

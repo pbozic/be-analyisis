@@ -3,25 +3,17 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { VEHICLE_CATEGORY, VEHICLE_CLASS, DOCUMENT_TYPE, FILE_TYPE } from '@prisma/client';
 
 import { UUID, Timestamp } from '../../primitives';
+import { BasicUserDataSchema } from '../common/User.dto.ts';
 extendZodWithOpenApi(z);
 
 // =============================
 // Vehicle Response DTOs (DAO)
 // =============================
 
-// Minimal refs for related models (kept local to avoid cycles)
-export const UserRefSchema = z
-	.object({
-		user_id: UUID,
-		label: z.string().min(1),
-	})
-	.openapi('UserRef');
-export type UserRef = z.infer<typeof UserRefSchema>;
-
 export const DriverRefOutSchema = z
 	.object({
 		driver_id: UUID,
-		user: UserRefSchema,
+		user: BasicUserDataSchema,
 	})
 	.openapi('DriverRefOut');
 export type DriverRefOut = z.infer<typeof DriverRefOutSchema>;
@@ -68,18 +60,28 @@ export const VehicleDetailSchema = VehicleBaseSchema.extend({
 export type VehicleDetail = z.infer<typeof VehicleDetailSchema>;
 
 // Mappers from Prisma payloads to DTOs
-export function toUserRef(user: unknown | null | undefined): UserRef | null {
-	if (!user) return null;
-	const u = user as { user_id: string; first_name?: string | null; last_name?: string | null };
-	const label = [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || u.user_id;
-	return UserRefSchema.parse({ user_id: u.user_id, label });
-}
-
 export function toDriverRefOut(driver: unknown | null | undefined): DriverRefOut | null {
 	if (!driver) return null;
-	const d = driver as { driver_id: string; user?: unknown };
-	const userRef = toUserRef(d.user);
-	return DriverRefOutSchema.parse({ driver_id: d.driver_id, user: userRef! });
+	const d = driver as {
+		driver_id: string;
+		user?: {
+			first_name?: string;
+			last_name?: string;
+			email?: string | null;
+			telephone?: string | null;
+			telephone_code?: string | null;
+			date_of_birth?: string | null;
+		};
+	};
+	const basicUser = BasicUserDataSchema.parse({
+		first_name: d.user?.first_name ?? '',
+		last_name: d.user?.last_name ?? '',
+		email: d.user?.email ?? undefined,
+		telephone: d.user?.telephone ?? undefined,
+		telephone_code: d.user?.telephone_code ?? undefined,
+		date_of_birth: d.user?.date_of_birth ?? undefined,
+	});
+	return DriverRefOutSchema.parse({ driver_id: d.driver_id, user: basicUser });
 }
 
 export function toDocumentRef(doc: unknown): DocumentRef {
@@ -265,7 +267,6 @@ export type VehicleDriverAssignment = z.infer<typeof VehicleDriverAssignmentSche
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	// Responses
-	registry.register('UserRef', UserRefSchema);
 	registry.register('DriverRefOut', DriverRefOutSchema);
 	registry.register('DocumentRef', DocumentRefSchema);
 	registry.register('VehicleBase', VehicleBaseSchema);

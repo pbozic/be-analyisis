@@ -6,6 +6,20 @@ import { Email, PhoneNumber } from '../../primitives.js';
 
 extendZodWithOpenApi(z);
 
+// === Business Ref (for relations) ===
+export const BusinessRefSchema = z
+	.object({
+		business_id: z.string().uuid(),
+		name: z.string().nullable().optional(),
+		logo: z.string().url().nullable().optional(),
+		banner: z.string().url().nullable().optional(),
+	})
+	.openapi({
+		title: 'BusinessRef',
+		description: 'Minimal business reference for embedding in relations',
+	});
+export type BusinessRef = z.infer<typeof BusinessRefSchema>;
+
 // === Business Registration Data ===
 export const BusinessRegistrationDataSchema = z
 	.object({
