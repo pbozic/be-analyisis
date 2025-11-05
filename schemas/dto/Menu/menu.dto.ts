@@ -163,3 +163,74 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateMenuItemPrice', UpdateMenuItemPriceSchema);
 	registry.register('CreateMenuItemVersion', CreateMenuItemVersionSchema);
 }
+
+// -----------------------
+// DAO-level input schemas (named exports)
+// -----------------------
+
+export const CreateMenuInputSchema = z
+	.object({
+		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		isDailyMeal: z.boolean().optional().openapi({ example: false }),
+		date: z.string().datetime().optional().openapi({ example: '2025-01-15T00:00:00Z' }),
+	})
+	.openapi('CreateMenuInput');
+export type CreateMenuInput = z.infer<typeof CreateMenuInputSchema>;
+
+export const GetMenuByBusinessIdParamsSchema = z
+	.object({
+		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		isDailyMeal: z.boolean().optional().openapi({ example: false }),
+		startDate: z.string().datetime().optional().openapi({ example: '2025-01-15T00:00:00Z' }),
+	})
+	.openapi('GetMenuByBusinessIdParams');
+export type GetMenuByBusinessIdParams = z.infer<typeof GetMenuByBusinessIdParamsSchema>;
+
+export const DeleteMenuInputSchema = z
+	.object({
+		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+	})
+	.openapi('DeleteMenuInput');
+export type DeleteMenuInput = z.infer<typeof DeleteMenuInputSchema>;
+
+export const SetActiveMenuInputSchema = z
+	.object({
+		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		active: z.boolean().openapi({ example: true }),
+	})
+	.openapi('SetActiveMenuInput');
+export type SetActiveMenuInput = z.infer<typeof SetActiveMenuInputSchema>;
+
+export const UpdateMenuOrderInputSchema = z
+	.object({
+		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		orderedMenuCategoryIds: z.array(z.string().uuid()).openapi({ example: ['aa0e8400-e29b-41d4-a716-446655440000'] }),
+	})
+	.openapi('UpdateMenuOrderInput');
+export type UpdateMenuOrderInput = z.infer<typeof UpdateMenuOrderInputSchema>;
+
+export const GetMenuByDateInputSchema = z
+	.object({
+		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		date: z.string().datetime().openapi({ example: '2025-01-15T00:00:00Z' }),
+	})
+	.openapi('GetMenuByDateInput');
+export type GetMenuByDateInput = z.infer<typeof GetMenuByDateInputSchema>;
+
+export const GetMenuByIdParamsSchema = z
+	.object({
+		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+	})
+	.openapi('GetMenuByIdParams');
+export type GetMenuByIdParams = z.infer<typeof GetMenuByIdParamsSchema>;
+
+// Register DAO-level menu schemas
+export function registerMenuDaoSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateMenuInput', CreateMenuInputSchema);
+	registry.register('GetMenuByBusinessIdParams', GetMenuByBusinessIdParamsSchema);
+	registry.register('DeleteMenuInput', DeleteMenuInputSchema);
+	registry.register('SetActiveMenuInput', SetActiveMenuInputSchema);
+	registry.register('UpdateMenuOrderInput', UpdateMenuOrderInputSchema);
+	registry.register('GetMenuByDateInput', GetMenuByDateInputSchema);
+	registry.register('GetMenuByIdParams', GetMenuByIdParamsSchema);
+}
