@@ -8,12 +8,12 @@ import type { Booking } from './Booking.js';
 import type { BusinessUser } from '../businessUsers/BusinessUser.js';
 import type { ScheduleSlot } from './ScheduleSlot.js';
 import type { ServiceAssignment } from './ServiceAssignment.js';
-import { ReservationModuleResponseSchema } from './ReservationModule';
-import { ServiceAssignmentResponseSchema } from './ServiceAssignment';
-import { ScheduleEmployeeResponseSchema } from './ScheduleEmployee';
-import { BookingResponseSchema } from './Booking';
-import { BusinessUserResponseSchema } from '../businessUsers/BusinessUser';
-import { ScheduleSlotResponseSchema } from './ScheduleSlot';
+import { ReservationModuleResponseBaseSchema } from './ReservationModule';
+import { ServiceAssignmentResponseBaseSchema } from './ServiceAssignment';
+import { ScheduleEmployeeResponseBaseSchema } from './ScheduleEmployee';
+import { BookingResponseBaseSchema } from './Booking';
+import { BusinessUserResponseBaseSchema } from '../businessUsers/BusinessUser';
+import { ScheduleSlotResponseBaseSchema } from './ScheduleSlot';
 
 extendZodWithOpenApi(z);
 
@@ -52,32 +52,37 @@ export const DeleteEmployeeSchema = z.object({ employee_id: z.string().uuid() })
 export type CreateEmployeeInput = z.infer<typeof CreateEmployeeSchema>;
 export type UpdateEmployeeInput = z.infer<typeof UpdateEmployeeSchema>;
 
-export const EmployeeResponseSchema = z
+export const EmployeeResponseBaseSchema = z
 	.object({
 		employee_id: z.string(),
 		reservation_module_id: z.string(),
-		reservation_module: ReservationModuleResponseSchema,
-		assignments: z.array(ServiceAssignmentResponseSchema),
-		schedules: z.array(ScheduleEmployeeResponseSchema),
-		bookings: z.array(BookingResponseSchema),
 		first_name: z.string().nullable().optional(),
 		last_name: z.string().nullable().optional(),
 		email: z.string().nullable().optional(),
 		telephone: z.string().nullable().optional(),
 		telephone_code: z.string().nullable().optional(),
 		business_users_id: z.string().nullable().optional(),
-		business_user: BusinessUserResponseSchema.nullable().optional(),
 		created_at: z.string().datetime(),
 		deleted_at: z.string().datetime().nullable().optional(),
-		schedule_slots: z.array(ScheduleSlotResponseSchema),
 	})
-	.openapi('EmployeeResponse');
+	.openapi('EmployeeResponseBase');
 
+export const EmployeeResponseSchema = EmployeeResponseBaseSchema.extend({
+	reservation_module: ReservationModuleResponseBaseSchema,
+	assignments: z.array(ServiceAssignmentResponseBaseSchema),
+	schedules: z.array(ScheduleEmployeeResponseBaseSchema),
+	bookings: z.array(BookingResponseBaseSchema),
+	business_user: BusinessUserResponseBaseSchema.nullable().optional(),
+	schedule_slots: z.array(ScheduleSlotResponseBaseSchema),
+}).openapi('EmployeeResponse');
+
+export type EmployeeBase = z.infer<typeof EmployeeResponseBaseSchema>;
 export type EmployeeResponse = z.infer<typeof EmployeeResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateEmployee', CreateEmployeeSchema);
 	registry.register('UpdateEmployee', UpdateEmployeeSchema);
+	registry.register('EmployeeResponseBase', EmployeeResponseBaseSchema);
 	registry.register('EmployeeResponse', EmployeeResponseSchema);
 }
 

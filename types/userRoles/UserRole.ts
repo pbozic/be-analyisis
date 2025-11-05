@@ -4,9 +4,9 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { User } from '../users/User.js';
 import type { Role } from './Role.js';
 import type { ReservationModule } from '../reservations/ReservationModule.js';
-import { UserResponseSchema } from '../users/User';
-import { RoleResponseSchema } from './Role';
-import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+import { UserResponseBaseSchema } from '../users/User';
+import { RoleResponseBaseSchema } from './Role';
+import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule';
 
 extendZodWithOpenApi(z);
 
@@ -42,22 +42,27 @@ export type CreateUserRoleInput = z.infer<typeof CreateUserRoleSchema>;
 export type UpdateUserRoleInput = z.infer<typeof UpdateUserRoleSchema>;
 export type AssignUserRoleInput = z.infer<typeof AssignUserRoleSchema>;
 
-export const UserRoleResponseSchema = z
+export const UserRoleResponseBaseSchema = z
 	.object({
 		user_id: z.string(),
 		role_id: z.string(),
 		reservation_module_id: z.string().nullable().optional(),
-		user: UserResponseSchema,
-		role: RoleResponseSchema,
-		reservation_module: ReservationModuleResponseSchema.nullable().optional(),
 	})
-	.openapi('UserRoleResponse');
+	.openapi('UserRoleResponseBase');
 
+export const UserRoleResponseSchema = UserRoleResponseBaseSchema.extend({
+	user: UserResponseBaseSchema,
+	role: RoleResponseBaseSchema,
+	reservation_module: ReservationModuleResponseBaseSchema.nullable().optional(),
+}).openapi('UserRoleResponse');
+
+export type UserRoleBase = z.infer<typeof UserRoleResponseBaseSchema>;
 export type UserRoleResponse = z.infer<typeof UserRoleResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateUserRole', CreateUserRoleSchema);
 	registry.register('UpdateUserRole', UpdateUserRoleSchema);
+	registry.register('UserRoleResponseBase', UserRoleResponseBaseSchema);
 	registry.register('UserRoleResponse', UserRoleResponseSchema);
 }
 

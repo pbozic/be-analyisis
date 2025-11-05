@@ -5,9 +5,9 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { User } from '../users/User.js';
 import type { Action } from '../subscriptions/Action.js';
 import type { ReservationModule } from '../reservations/ReservationModule.js';
-import { UserResponseSchema } from '../users/User';
-import { ActionResponseSchema } from '../subscriptions/Action';
-import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+import { UserResponseBaseSchema } from '../users/User';
+import { ActionResponseBaseSchema } from '../subscriptions/Action';
+import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule';
 
 extendZodWithOpenApi(z);
 
@@ -28,7 +28,7 @@ export const UpdateUserPermissionSchema = CreateUserPermissionSchema.partial().o
 export type CreateUserPermissionInput = z.infer<typeof CreateUserPermissionSchema>;
 export type UpdateUserPermissionInput = z.infer<typeof UpdateUserPermissionSchema>;
 
-export const UserPermissionResponseSchema = z
+export const UserPermissionResponseBaseSchema = z
 	.object({
 		user_permission_id: z.string(),
 		user_id: z.string(),
@@ -40,17 +40,22 @@ export const UserPermissionResponseSchema = z
 		limit: z.number().nullable().optional(),
 		scope: z.nativeEnum(PERMISSION_SCOPE),
 		is_blocked: z.boolean(),
-		user: UserResponseSchema,
-		action: ActionResponseSchema.nullable().optional(),
-		reservation_module: ReservationModuleResponseSchema.nullable().optional(),
 	})
-	.openapi('UserPermissionResponse');
+	.openapi('UserPermissionResponseBase');
 
+export const UserPermissionResponseSchema = UserPermissionResponseBaseSchema.extend({
+	user: UserResponseBaseSchema,
+	action: ActionResponseBaseSchema.nullable().optional(),
+	reservation_module: ReservationModuleResponseBaseSchema.nullable().optional(),
+}).openapi('UserPermissionResponse');
+
+export type UserPermissionBase = z.infer<typeof UserPermissionResponseBaseSchema>;
 export type UserPermissionResponse = z.infer<typeof UserPermissionResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateUserPermission', CreateUserPermissionSchema);
 	registry.register('UpdateUserPermission', UpdateUserPermissionSchema);
+	registry.register('UserPermissionResponseBase', UserPermissionResponseBaseSchema);
 	registry.register('UserPermissionResponse', UserPermissionResponseSchema);
 }
 

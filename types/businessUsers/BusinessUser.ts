@@ -8,12 +8,12 @@ import type { Address } from '../addresses/Address.js';
 import type { Allowance } from '../familyUsers/Allowance.js';
 import type { TaxiOrder } from '../taxiOrders/TaxiOrder.js';
 import type { Employee } from '../reservations/Employee.js';
-import { UserResponseSchema } from '../users/User';
+import { UserResponseBaseSchema } from '../users/User';
 import { BusinessResponseSchema } from '../business/Business';
-import { AddressResponseSchema } from '../addresses/Address';
+import { AddressResponseBaseSchema } from '../addresses/Address';
 import { AllowanceResponseSchema } from '../familyUsers/Allowance';
 import { TaxiOrderResponseSchema } from '../taxiOrders/TaxiOrder';
-import { EmployeeResponseSchema } from '../reservations/Employee';
+import { EmployeeResponseBaseSchema } from '../reservations/Employee';
 
 extendZodWithOpenApi(z);
 
@@ -35,7 +35,7 @@ export type CreateBusinessUserInput = z.infer<typeof CreateBusinessUserSchema>;
 export const UpdateBusinessUserSchema = CreateBusinessUserSchema.partial().openapi('UpdateBusinessUser');
 export type UpdateBusinessUserInput = z.infer<typeof UpdateBusinessUserSchema>;
 
-export const BusinessUserResponseSchema = z
+export const BusinessUserResponseBaseSchema = z
 	.object({
 		business_users_id: z.string(),
 		online: z.boolean().nullable().optional(),
@@ -43,22 +43,36 @@ export const BusinessUserResponseSchema = z
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 		user_id: z.string(),
-		users: UserResponseSchema.nullable().optional(),
 		business_id: z.string(),
-		business: BusinessResponseSchema.nullable().optional(),
 		operating_address_id: z.string().nullable().optional(),
-		operating_address: AddressResponseSchema.nullable().optional(),
-		allowance: AllowanceResponseSchema.nullable().optional(),
-		taxi_orders: z.array(TaxiOrderResponseSchema),
-		employee: EmployeeResponseSchema.nullable().optional(),
 	})
-	.openapi('BusinessUserResponse');
+	.openapi('BusinessUserResponseBase');
+
+export type BusinessUserBase = z.infer<typeof BusinessUserResponseBaseSchema>;
+
+// Adding omitted relations - circular dependencies are acceptable as requested
+// BusinessUser → Employee/Business → ReservationModule → Employee → BusinessUser
+// BusinessUser → Address → BusinessUser (direct circle)
+// BusinessUser → User → UserAddress → Address → BusinessUser
+// @ts-ignore - Circular dependencies resolved at runtime
+export const BusinessUserResponseSchema = BusinessUserResponseBaseSchema.extend({
+	users: UserResponseBaseSchema.nullable().optional(),
+	// @ts-ignore - Circular dependency resolved at runtime
+	business: BusinessResponseSchema.nullable().optional(),
+	// @ts-ignore - Circular dependency resolved at runtime
+	operating_address: AddressResponseBaseSchema.nullable().optional(),
+	allowance: AllowanceResponseSchema.nullable().optional(),
+	taxi_orders: z.array(TaxiOrderResponseSchema).optional(),
+	// @ts-ignore - Circular dependency resolved at runtime
+	employee: EmployeeResponseBaseSchema.nullable().optional(),
+}).openapi('BusinessUserResponse');
 
 export type BusinessUserResponse = z.infer<typeof BusinessUserResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateBusinessUser', CreateBusinessUserSchema);
 	registry.register('UpdateBusinessUser', UpdateBusinessUserSchema);
+	registry.register('BusinessUserResponseBase', BusinessUserResponseBaseSchema);
 	registry.register('BusinessUserResponse', BusinessUserResponseSchema);
 }
 

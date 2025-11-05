@@ -3,8 +3,8 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import type { Role } from './Role.js';
 import type { Permission } from './Permission.js';
-import { RoleResponseSchema } from './Role';
-import { PermissionResponseSchema } from './Permission';
+import { RoleResponseBaseSchema } from './Role';
+import { PermissionResponseBaseSchema } from './Permission';
 
 extendZodWithOpenApi(z);
 
@@ -53,16 +53,20 @@ export const RolePermissionsMatrixBodySchema = z
 
 export type RolePermissionsMatrixBody = z.infer<typeof RolePermissionsMatrixBodySchema>;
 
-export const RolePermissionResponseSchema = z
+export const RolePermissionResponseBaseSchema = z
 	.object({
 		role_permission_id: z.string(),
 		role_id: z.string(),
 		permission_id: z.string(),
-		role: RoleResponseSchema,
-		permission: PermissionResponseSchema,
 	})
-	.openapi('RolePermissionResponse');
+	.openapi('RolePermissionResponseBase');
 
+export const RolePermissionResponseSchema = RolePermissionResponseBaseSchema.extend({
+	role: RoleResponseBaseSchema,
+	permission: PermissionResponseBaseSchema,
+}).openapi('RolePermissionResponse');
+
+export type RolePermissionBase = z.infer<typeof RolePermissionResponseBaseSchema>;
 export type RolePermissionResponse = z.infer<typeof RolePermissionResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
@@ -71,6 +75,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpsertRolePermissionParams', UpsertRolePermissionParamsSchema);
 	registry.register('DeleteRolePermissionParams', DeleteRolePermissionParamsSchema);
 	registry.register('RolePermissionsMatrixBody', RolePermissionsMatrixBodySchema);
+	registry.register('RolePermissionResponseBase', RolePermissionResponseBaseSchema);
 	registry.register('RolePermissionResponse', RolePermissionResponseSchema);
 }
 

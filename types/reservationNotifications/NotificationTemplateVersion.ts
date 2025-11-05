@@ -7,9 +7,9 @@ import type { NotificationMapping } from './NotificationMapping.js';
 import type { NotificationMessage } from './NotificationMessage.js';
 import { JsonObjectSchema } from './_common.js';
 import { TemplateVersionStatusEnum } from './enums.js';
-import { NotificationTemplateResponseSchema } from './NotificationTemplate';
-import { NotificationMappingResponseSchema } from './NotificationMapping';
-import { NotificationMessageResponseSchema } from './NotificationMessage';
+import { NotificationTemplateResponseBaseSchema } from './NotificationTemplate';
+import { NotificationMappingResponseBaseSchema } from './NotificationMapping';
+import { NotificationMessageResponseBaseSchema } from './NotificationMessage';
 
 extendZodWithOpenApi(z);
 
@@ -65,7 +65,7 @@ export type UpdateNotificationTemplateVersionByCompositeInput = z.infer<
 	typeof UpdateNotificationTemplateVersionByCompositeSchema
 >;
 
-export const NotificationTemplateVersionResponseSchema = z
+export const NotificationTemplateVersionResponseBaseSchema = z
 	.object({
 		notification_template_version_id: z.string(),
 		notification_template_id: z.string(),
@@ -77,12 +77,16 @@ export const NotificationTemplateVersionResponseSchema = z
 		compiled_artifacts: z.unknown().nullable().optional(),
 		created_by_user_id: z.string().nullable().optional(),
 		created_at: z.string().datetime(),
-		template: NotificationTemplateResponseSchema,
-		mappings: z.array(NotificationMappingResponseSchema),
-		messages: z.array(NotificationMessageResponseSchema),
 	})
-	.openapi('NotificationTemplateVersionResponse');
+	.openapi('NotificationTemplateVersionResponseBase');
 
+export const NotificationTemplateVersionResponseSchema = NotificationTemplateVersionResponseBaseSchema.extend({
+	template: NotificationTemplateResponseBaseSchema,
+	mappings: z.array(NotificationMappingResponseBaseSchema),
+	messages: z.array(NotificationMessageResponseBaseSchema),
+}).openapi('NotificationTemplateVersionResponse');
+
+export type NotificationTemplateVersionBase = z.infer<typeof NotificationTemplateVersionResponseBaseSchema>;
 export type NotificationTemplateVersionResponse = z.infer<typeof NotificationTemplateVersionResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
@@ -92,6 +96,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 		'UpdateNotificationTemplateVersionByCompositeByComposite',
 		UpdateNotificationTemplateVersionByCompositeSchema
 	);
+	registry.register('NotificationTemplateVersionResponseBase', NotificationTemplateVersionResponseBaseSchema);
 	registry.register('NotificationTemplateVersionResponse', NotificationTemplateVersionResponseSchema);
 }
 

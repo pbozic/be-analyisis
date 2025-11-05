@@ -5,9 +5,9 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { Business } from '../business/Business.js';
 import type { RolePermission } from './RolePermission.js';
 import type { UserRole } from './UserRole.js';
-import { RolePermissionResponseSchema } from './RolePermission';
-import { UserRoleResponseSchema } from './UserRole';
-import { BusinessResponseSchema } from '../business/Business';
+import { RolePermissionResponseBaseSchema } from './RolePermission';
+import { UserRoleResponseBaseSchema } from './UserRole';
+import { BusinessResponseBaseSchema } from '../business/Business';
 
 extendZodWithOpenApi(z);
 
@@ -26,24 +26,29 @@ export const UpdateRoleSchema = CreateRoleSchema.partial().openapi('UpdateRole')
 export type CreateRoleInput = z.infer<typeof CreateRoleSchema>;
 export type UpdateRoleInput = z.infer<typeof UpdateRoleSchema>;
 
-export const RoleResponseSchema = z
+export const RoleResponseBaseSchema = z
 	.object({
 		role_id: z.string(),
 		name: z.string(),
 		module: z.nativeEnum(MODULE_TYPE),
 		business_id: z.string().nullable().optional(),
-		permissions: z.array(RolePermissionResponseSchema),
-		users: z.array(UserRoleResponseSchema),
 		is_admin: z.boolean(),
-		business: BusinessResponseSchema.nullable().optional(),
 	})
-	.openapi('RoleResponse');
+	.openapi('RoleResponseBase');
 
+export const RoleResponseSchema = RoleResponseBaseSchema.extend({
+	permissions: z.array(RolePermissionResponseBaseSchema),
+	users: z.array(UserRoleResponseBaseSchema),
+	business: BusinessResponseBaseSchema.nullable().optional(),
+}).openapi('RoleResponse');
+
+export type RoleBase = z.infer<typeof RoleResponseBaseSchema>;
 export type RoleResponse = z.infer<typeof RoleResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateRole', CreateRoleSchema);
 	registry.register('UpdateRole', UpdateRoleSchema);
+	registry.register('RoleResponseBase', RoleResponseBaseSchema);
 	registry.register('RoleResponse', RoleResponseSchema);
 }
 

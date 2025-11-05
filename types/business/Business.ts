@@ -18,7 +18,7 @@ import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
 import type { CrmModule } from '../crm/CrmModule.js';
 import type { UserFavoriteBusiness } from '../users/UserFavoriteBusiness.js';
 import type { BusinessToType } from './BusinessToType.js';
-import { AddressResponseSchema } from '../addresses/Address';
+import { AddressResponseBaseSchema } from '../addresses/Address';
 import { DocumentResponseSchema } from '../documents/Document';
 import { WordBuyResponseSchema } from '../promoWords/WordBuy';
 import { PromoSectionsBuyResponseSchema } from '../promoSections/PromoSectionsBuy';
@@ -28,9 +28,9 @@ import { ScoringPointResponseSchema } from '../general/ScoringPoint';
 import { AccountActionResponseSchema } from '../general/AccountAction';
 import { BusinessMoneyFlowResponseSchema } from '../payments/BusinessMoneyFlow';
 import { RoleResponseSchema } from '../userRoles/Role';
-import { BusinessUserResponseSchema } from '../businessUsers/BusinessUser';
+import { BusinessUserResponseBaseSchema } from '../businessUsers/BusinessUser';
 import { BusinessToTypeResponseSchema } from './BusinessToType';
-import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule';
 import { TransportModuleResponseSchema } from '../transport/TransportModule';
 import { StoresModuleResponseSchema } from '../stores/StoresModule';
 import { FoodDrinksModuleResponseSchema } from '../foodDrinks/FoodDrinksModule';
@@ -93,7 +93,7 @@ export const baseBusinessResponseSchema = z
 		new: z.boolean(),
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
-		address: AddressResponseSchema.nullable().optional(),
+		address: AddressResponseBaseSchema.nullable().optional(),
 		documents: z.array(DocumentResponseSchema),
 		parent_business_id: z.string().uuid().nullable().optional(),
 		stripe_account_id: z.string().uuid().nullable().optional(),
@@ -110,9 +110,9 @@ export const baseBusinessResponseSchema = z
 		account_actions: z.array(AccountActionResponseSchema),
 		business_money_flows: z.array(BusinessMoneyFlowResponseSchema),
 		roles: z.array(RoleResponseSchema),
-		business_users: z.array(BusinessUserResponseSchema),
+		business_users: z.array(BusinessUserResponseBaseSchema),
 		types: z.array(BusinessToTypeResponseSchema),
-		reservation_module: ReservationModuleResponseSchema.nullable().optional(),
+		reservation_module: ReservationModuleResponseBaseSchema.nullable().optional(),
 		transport_module: TransportModuleResponseSchema.nullable().optional(),
 		stores_module: StoresModuleResponseSchema.nullable().optional(),
 		food_drinks_module: FoodDrinksModuleResponseSchema.nullable().optional(),

@@ -4,7 +4,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { MenuItem } from '../menuItems/MenuItem.js';
 import type { Service } from '../reservations/Service.js';
 import { MenuItemResponseSchema } from '../menuItems/MenuItem';
-import { ServiceResponseSchema } from '../reservations/Service';
+import { ServiceResponseBaseSchema } from '../reservations/Service';
 
 extendZodWithOpenApi(z);
 
@@ -28,7 +28,7 @@ export type CreateTaxRateInput = z.infer<typeof CreateTaxRateSchema>;
 export const UpdateTaxRateSchema = CreateTaxRateSchema.partial().openapi('UpdateTaxRate');
 export type UpdateTaxRateInput = z.infer<typeof UpdateTaxRateSchema>;
 
-export const TaxRateResponseSchema = z
+export const TaxRateResponseBaseSchema = z
 	.object({
 		tax_rates_id: z.string(),
 		name: z.string(),
@@ -40,16 +40,21 @@ export const TaxRateResponseSchema = z
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 		activated_at: z.string().datetime().nullable().optional(),
-		menu_items: z.array(MenuItemResponseSchema),
-		service: z.array(ServiceResponseSchema),
 	})
-	.openapi('TaxRateResponse');
+	.openapi('TaxRateResponseBase');
 
+export const TaxRateResponseSchema = TaxRateResponseBaseSchema.extend({
+	menu_items: z.array(MenuItemResponseSchema),
+	service: z.array(ServiceResponseBaseSchema),
+}).openapi('TaxRateResponse');
+
+export type TaxRateBase = z.infer<typeof TaxRateResponseBaseSchema>;
 export type TaxRateResponse = z.infer<typeof TaxRateResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateTaxRate', CreateTaxRateSchema);
 	registry.register('UpdateTaxRate', UpdateTaxRateSchema);
+	registry.register('TaxRateResponseBase', TaxRateResponseBaseSchema);
 	registry.register('TaxRateResponse', TaxRateResponseSchema);
 }
 

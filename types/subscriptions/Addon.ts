@@ -3,10 +3,9 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { BusinessAddon } from './BusinessAddon.js';
-import type { Action } from './Action.js';
 import type { AddonAction } from './AddonAction.js';
-import { AddonActionResponseSchema } from './AddonAction';
-import { BusinessAddonResponseSchema } from './BusinessAddon';
+import { AddonActionResponseBaseSchema } from './AddonAction';
+import { BusinessAddonResponseBaseSchema } from './BusinessAddon';
 
 extendZodWithOpenApi(z);
 
@@ -28,7 +27,7 @@ export type CreateAddonInput = z.infer<typeof CreateAddonSchema>;
 export const UpdateAddonSchema = CreateAddonSchema.partial().openapi('UpdateAddon');
 export type UpdateAddonInput = z.infer<typeof UpdateAddonSchema>;
 
-export const AddonResponseSchema = z
+export const AddonResponseBaseSchema = z
 	.object({
 		addon_id: z.string(),
 		module: z.nativeEnum(MODULE_TYPE),
@@ -36,16 +35,21 @@ export const AddonResponseSchema = z
 		price_cents: z.number(),
 		stripe_price_id: z.string(),
 		stripe_product_id: z.string(),
-		actions: z.array(AddonActionResponseSchema),
-		business_addons: z.array(BusinessAddonResponseSchema),
 	})
-	.openapi('AddonResponse');
+	.openapi('AddonResponseBase');
 
+export const AddonResponseSchema = AddonResponseBaseSchema.extend({
+	actions: z.array(AddonActionResponseBaseSchema),
+	business_addons: z.array(BusinessAddonResponseBaseSchema),
+}).openapi('AddonResponse');
+
+export type AddonBase = z.infer<typeof AddonResponseBaseSchema>;
 export type AddonResponse = z.infer<typeof AddonResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateAddon', CreateAddonSchema);
 	registry.register('UpdateAddon', UpdateAddonSchema);
+	registry.register('AddonResponseBase', AddonResponseBaseSchema);
 	registry.register('AddonResponse', AddonResponseSchema);
 }
 

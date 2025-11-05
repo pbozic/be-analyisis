@@ -23,26 +23,26 @@ import type { File } from '../files/File.js';
 import type { Reviewable } from '../reviews/Reviewable.js';
 import type { UserRole } from '../userRoles/UserRole.js';
 import { BusinessResponseSchema } from '../business/Business';
-import { ActionBundleResponseSchema } from '../subscriptions/ActionBundle';
-import { BusinessAddonResponseSchema } from '../subscriptions/BusinessAddon';
-import { BusinessUsageResponseSchema } from '../subscriptions/BusinessUsage';
-import { LocationResponseSchema } from './Location';
-import { ServiceResponseSchema } from './Service';
-import { EmployeeResponseSchema } from './Employee';
-import { BookingResponseSchema } from './Booking';
-import { CustomerResponseSchema } from './Customer';
-import { ServiceCategoryResponseSchema } from './ServiceCategory';
-import { UserRoleResponseSchema } from '../userRoles/UserRole';
-import { UserPermissionResponseSchema } from '../userRoles/UserPermission';
-import { BookingCourseTimeResponseSchema } from './BookingCourseTime';
-import { BookingCourseParticipantResponseSchema } from './BookingCourseParticipant';
-import { NotificationTemplateResponseSchema } from '../reservationNotifications/NotificationTemplate';
-import { NotificationMappingResponseSchema } from '../reservationNotifications/NotificationMapping';
-import { NotificationPreferenceResponseSchema } from '../reservationNotifications/NotificationPreference';
-import { NotificationProviderCredentialResponseSchema } from '../reservationNotifications/NotificationProviderCredential';
-import { NotificationMessageResponseSchema } from '../reservationNotifications/NotificationMessage';
-import { FileResponseSchema } from '../files/File';
-import { ReviewableResponseSchema } from '../reviews/Reviewable';
+import { ActionBundleResponseBaseSchema } from '../subscriptions/ActionBundle';
+import { BusinessAddonResponseBaseSchema } from '../subscriptions/BusinessAddon';
+import { BusinessUsageResponseBaseSchema } from '../subscriptions/BusinessUsage';
+import { LocationResponseBaseSchema } from './Location';
+import { ServiceResponseBaseSchema } from './Service';
+import { EmployeeResponseBaseSchema } from './Employee';
+import { BookingResponseBaseSchema } from './Booking';
+import { CustomerResponseBaseSchema } from './Customer';
+import { ServiceCategoryResponseBaseSchema } from './ServiceCategory';
+import { UserRoleResponseBaseSchema } from '../userRoles/UserRole';
+import { UserPermissionResponseBaseSchema } from '../userRoles/UserPermission';
+import { BookingCourseTimeResponseBaseSchema } from './BookingCourseTime';
+import { BookingCourseParticipantResponseBaseSchema } from './BookingCourseParticipant';
+import { NotificationTemplateResponseBaseSchema } from '../reservationNotifications/NotificationTemplate';
+import { NotificationMappingResponseBaseSchema } from '../reservationNotifications/NotificationMapping';
+import { NotificationPreferenceResponseBaseSchema } from '../reservationNotifications/NotificationPreference';
+import { NotificationProviderCredentialResponseBaseSchema } from '../reservationNotifications/NotificationProviderCredential';
+import { NotificationMessageResponseBaseSchema } from '../reservationNotifications/NotificationMessage';
+import { FileResponseBaseSchema } from '../files/File';
+import { ReviewableResponseBaseSchema } from '../reviews/Reviewable';
 
 extendZodWithOpenApi(z);
 
@@ -69,45 +69,48 @@ export type CreateReservationModuleInput = z.infer<typeof CreateReservationModul
 export const UpdateReservationModuleSchema = CreateReservationModuleSchema.partial().openapi('UpdateReservationModule');
 export type UpdateReservationModuleInput = z.infer<typeof UpdateReservationModuleSchema>;
 
-export const ReservationModuleResponseSchema = z
+export const ReservationModuleResponseBaseSchema = z
 	.object({
 		reservation_module_id: z.string(),
 		public_link_hash: z.string().nullable().optional(),
 		business_id: z.string(),
 		action_bundle_id: z.string().nullable().optional(),
 		subscription_active_until: z.string().datetime().nullable().optional(),
-		business: BusinessResponseSchema,
-		action_bundle: ActionBundleResponseSchema.nullable().optional(),
 		subscription_expires_at: z.string().datetime().nullable().optional(),
 		stripe_subscription_schedule_id: z.string().nullable().optional(),
 		hours_before_reschedule: z.number().nullable().optional(),
 		hours_before_cancel: z.number().nullable().optional(),
 		publicly_visible: z.boolean(),
-		addons: z.array(BusinessAddonResponseSchema),
-		usages: z.array(BusinessUsageResponseSchema),
-		locations: z.array(LocationResponseSchema),
-		services: z.array(ServiceResponseSchema),
-		employees: z.array(EmployeeResponseSchema),
-		bookings: z.array(BookingResponseSchema),
-		customers: z.array(CustomerResponseSchema),
-		service_categories: z.array(ServiceCategoryResponseSchema),
-		user_roles: z.array(UserRoleResponseSchema),
-		user_permissions: z.array(UserPermissionResponseSchema),
-		booking_course_times: z.array(BookingCourseTimeResponseSchema),
-		booking_course_participants: z.array(BookingCourseParticipantResponseSchema),
-		notification_templates: z.array(NotificationTemplateResponseSchema),
-		notification_mappings: z.array(NotificationMappingResponseSchema),
-		notification_preferences: z.array(NotificationPreferenceResponseSchema),
-		notification_provider_credentials: z.array(NotificationProviderCredentialResponseSchema),
-		notification_messages: z.array(NotificationMessageResponseSchema),
 		logo_id: z.string().nullable().optional(),
-		logo: FileResponseSchema.nullable().optional(),
 		banner_id: z.string().nullable().optional(),
-		banner: FileResponseSchema.nullable().optional(),
 		reviewable_id: z.string().nullable().optional(),
-		reviewable: ReviewableResponseSchema.nullable().optional(),
 	})
-	.openapi('ReservationModuleResponse');
+	.openapi('ReservationModuleResponseBase');
+
+export const ReservationModuleResponseSchema = ReservationModuleResponseBaseSchema.extend({
+	business: BusinessResponseSchema,
+	action_bundle: ActionBundleResponseBaseSchema.nullable().optional(),
+	addons: z.array(BusinessAddonResponseBaseSchema),
+	usages: z.array(BusinessUsageResponseBaseSchema),
+	locations: z.array(LocationResponseBaseSchema),
+	services: z.array(ServiceResponseBaseSchema),
+	employees: z.array(EmployeeResponseBaseSchema),
+	bookings: z.array(BookingResponseBaseSchema),
+	customers: z.array(CustomerResponseBaseSchema),
+	service_categories: z.array(ServiceCategoryResponseBaseSchema),
+	user_roles: z.array(UserRoleResponseBaseSchema),
+	user_permissions: z.array(UserPermissionResponseBaseSchema),
+	booking_course_times: z.array(BookingCourseTimeResponseBaseSchema),
+	booking_course_participants: z.array(BookingCourseParticipantResponseBaseSchema),
+	notification_templates: z.array(NotificationTemplateResponseBaseSchema),
+	notification_mappings: z.array(NotificationMappingResponseBaseSchema),
+	notification_preferences: z.array(NotificationPreferenceResponseBaseSchema),
+	notification_provider_credentials: z.array(NotificationProviderCredentialResponseBaseSchema),
+	notification_messages: z.array(NotificationMessageResponseBaseSchema),
+	logo: FileResponseBaseSchema.nullable().optional(),
+	banner: FileResponseBaseSchema.nullable().optional(),
+	reviewable: ReviewableResponseBaseSchema.nullable().optional(),
+}).openapi('ReservationModuleResponse');
 
 export const UpdateReservationSettingsSchema = UpdateReservationModuleSchema.pick({
 	hours_before_reschedule: true,
@@ -117,11 +120,13 @@ export const UpdateReservationSettingsSchema = UpdateReservationModuleSchema.pic
 
 export type UpdateReservationSettingsInput = z.infer<typeof UpdateReservationSettingsSchema>;
 
+export type ReservationModuleBase = z.infer<typeof ReservationModuleResponseBaseSchema>;
 export type ReservationModuleResponse = z.infer<typeof ReservationModuleResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateReservationModule', CreateReservationModuleSchema);
 	registry.register('UpdateReservationModule', UpdateReservationModuleSchema);
+	registry.register('ReservationModuleResponseBase', ReservationModuleResponseBaseSchema);
 	registry.register('ReservationModuleResponse', ReservationModuleResponseSchema);
 
 	registry.register('UpdateReservationSettings', UpdateReservationSettingsSchema);

@@ -4,7 +4,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { StoresModule } from './StoresModule.js';
 import type { DeliveryOrder } from '../deliveryOrders/DeliveryOrder.js';
 import type { LocalLocation } from './LocalLocation.js';
-import { LocalLocationResponseSchema } from './LocalLocation';
+import { LocalLocationResponseBaseSchema } from './LocalLocation';
 import { StoresModuleResponseSchema } from './StoresModule';
 import { DeliveryOrderResponseSchema } from '../deliveryOrders/DeliveryOrder';
 
@@ -35,7 +35,7 @@ export const BusinessLocalLocationResponseSchema = z
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 		time: z.string().datetime(),
-		local_location: LocalLocationResponseSchema,
+		local_location: LocalLocationResponseBaseSchema,
 		stores_module: StoresModuleResponseSchema,
 		orders: z.array(DeliveryOrderResponseSchema),
 	})

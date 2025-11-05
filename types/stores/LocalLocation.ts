@@ -5,7 +5,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import type { Address } from '../addresses/Address.js';
 import type { BusinessLocalLocation } from './BusinessLocalLocation.js';
-import { AddressResponseSchema } from '../addresses/Address';
+import { AddressResponseBaseSchema } from '../addresses/Address';
 import { BusinessLocalLocationResponseSchema } from './BusinessLocalLocation';
 
 extendZodWithOpenApi(z);
@@ -22,22 +22,27 @@ export type CreateLocalLocationInput = z.infer<typeof CreateLocalLocationSchema>
 export const UpdateLocalLocationSchema = CreateLocalLocationSchema.partial().openapi('UpdateLocalLocation');
 export type UpdateLocalLocationInput = z.infer<typeof UpdateLocalLocationSchema>;
 
-export const LocalLocationResponseSchema = z
+export const LocalLocationResponseBaseSchema = z
 	.object({
 		local_location_id: z.string(),
 		address_id: z.string(),
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
-		address: AddressResponseSchema,
-		business_local_locations: z.array(BusinessLocalLocationResponseSchema),
 	})
-	.openapi('LocalLocationResponse');
+	.openapi('LocalLocationResponseBase');
 
+export const LocalLocationResponseSchema = LocalLocationResponseBaseSchema.extend({
+	address: AddressResponseBaseSchema,
+	business_local_locations: z.array(BusinessLocalLocationResponseSchema),
+}).openapi('LocalLocationResponse');
+
+export type LocalLocationBase = z.infer<typeof LocalLocationResponseBaseSchema>;
 export type LocalLocationResponse = z.infer<typeof LocalLocationResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateLocalLocation', CreateLocalLocationSchema);
 	registry.register('UpdateLocalLocation', UpdateLocalLocationSchema);
+	registry.register('LocalLocationResponseBase', LocalLocationResponseBaseSchema);
 	registry.register('LocalLocationResponse', LocalLocationResponseSchema);
 }
 

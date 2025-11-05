@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { ScheduleSlot } from './ScheduleSlot.js';
-import { ScheduleSlotResponseSchema } from './ScheduleSlot';
+import { ScheduleSlotResponseBaseSchema } from './ScheduleSlot';
 
 extendZodWithOpenApi(z);
 
@@ -27,7 +27,7 @@ export const UpdateScheduleSlotExceptionSchema =
 	CreateScheduleSlotExceptionSchema.partial().openapi('UpdateScheduleSlotException');
 export type UpdateScheduleSlotExceptionInput = z.infer<typeof UpdateScheduleSlotExceptionSchema>;
 
-export const ScheduleSlotExceptionResponseSchema = z
+export const ScheduleSlotExceptionResponseBaseSchema = z
 	.object({
 		schedule_slot_exception_id: z.string(),
 		schedule_slot_id: z.string(),
@@ -36,15 +36,20 @@ export const ScheduleSlotExceptionResponseSchema = z
 		end_time: z.string().datetime(),
 		reason: z.string().nullable().optional(),
 		type: z.nativeEnum(SCHEDULE_SLOT_EXCEPTION_TYPE),
-		schedule_slot: ScheduleSlotResponseSchema,
 	})
-	.openapi('ScheduleSlotExceptionResponse');
+	.openapi('ScheduleSlotExceptionResponseBase');
 
+export const ScheduleSlotExceptionResponseSchema = ScheduleSlotExceptionResponseBaseSchema.extend({
+	schedule_slot: ScheduleSlotResponseBaseSchema,
+}).openapi('ScheduleSlotExceptionResponse');
+
+export type ScheduleSlotExceptionBase = z.infer<typeof ScheduleSlotExceptionResponseBaseSchema>;
 export type ScheduleSlotExceptionResponse = z.infer<typeof ScheduleSlotExceptionResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateScheduleSlotException', CreateScheduleSlotExceptionSchema);
 	registry.register('UpdateScheduleSlotException', UpdateScheduleSlotExceptionSchema);
+	registry.register('ScheduleSlotExceptionResponseBase', ScheduleSlotExceptionResponseBaseSchema);
 	registry.register('ScheduleSlotExceptionResponse', ScheduleSlotExceptionResponseSchema);
 }
 

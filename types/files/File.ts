@@ -19,7 +19,7 @@ import { CategoryResponseSchema } from '../menus/Category';
 import { BlogPostResponseSchema } from '../blog/BlogPost';
 import { StoresModuleResponseSchema } from '../stores/StoresModule';
 import { FoodDrinksModuleResponseSchema } from '../foodDrinks/FoodDrinksModule';
-import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule';
 import { UserResponseSchema } from '../users/User';
 import { DriverResponseSchema } from '../drivers/Driver';
 import { MenuItemResponseSchema } from '../menuItems/MenuItem';
@@ -51,7 +51,7 @@ export type CreateFileInput = z.infer<typeof CreateFileSchema>;
 export const UpdateFileSchema = CreateFileSchema.partial().openapi('UpdateFile');
 export type UpdateFileInput = z.infer<typeof UpdateFileSchema>;
 
-export const FileResponseSchema = z
+export const FileResponseBaseSchema = z
 	.object({
 		file_id: z.string(),
 		url: z.string().nullable().optional(),
@@ -61,33 +61,38 @@ export const FileResponseSchema = z
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 		document_id: z.string().nullable().optional(),
-		documents: DocumentResponseSchema.nullable().optional(),
-		categories: z.array(CategoryResponseSchema),
-		blog_posts: z.array(BlogPostResponseSchema),
-		store_logo: StoresModuleResponseSchema.nullable().optional(),
-		store_banner: StoresModuleResponseSchema.nullable().optional(),
-		food_drinks_logo: FoodDrinksModuleResponseSchema.nullable().optional(),
-		food_drinks_banner: FoodDrinksModuleResponseSchema.nullable().optional(),
-		reservation_logo: ReservationModuleResponseSchema.nullable().optional(),
-		reservation_banner: ReservationModuleResponseSchema.nullable().optional(),
 		user_id: z.string().nullable().optional(),
-		user: UserResponseSchema.nullable().optional(),
 		driver_id: z.string().nullable().optional(),
-		driver: DriverResponseSchema.nullable().optional(),
-		menu_items: z.array(MenuItemResponseSchema),
 		lost_item_id: z.string().nullable().optional(),
-		lost_item: LostItemResponseSchema.nullable().optional(),
-		promo_banners: z.array(PromoBannerResponseSchema),
 		delivery_order_id: z.string().nullable().optional(),
-		delivery_order: DeliveryOrderResponseSchema.nullable().optional(),
 	})
-	.openapi('FileResponse');
+	.openapi('FileResponseBase');
 
+export const FileResponseSchema = FileResponseBaseSchema.extend({
+	documents: DocumentResponseSchema.nullable().optional(),
+	categories: z.array(CategoryResponseSchema),
+	blog_posts: z.array(BlogPostResponseSchema),
+	store_logo: StoresModuleResponseSchema.nullable().optional(),
+	store_banner: StoresModuleResponseSchema.nullable().optional(),
+	food_drinks_logo: FoodDrinksModuleResponseSchema.nullable().optional(),
+	food_drinks_banner: FoodDrinksModuleResponseSchema.nullable().optional(),
+	reservation_logo: ReservationModuleResponseBaseSchema.nullable().optional(),
+	reservation_banner: ReservationModuleResponseBaseSchema.nullable().optional(),
+	user: UserResponseSchema.nullable().optional(),
+	driver: DriverResponseSchema.nullable().optional(),
+	menu_items: z.array(MenuItemResponseSchema),
+	lost_item: LostItemResponseSchema.nullable().optional(),
+	promo_banners: z.array(PromoBannerResponseSchema),
+	delivery_order: DeliveryOrderResponseSchema.nullable().optional(),
+}).openapi('FileResponse');
+
+export type FileBase = z.infer<typeof FileResponseBaseSchema>;
 export type FileResponse = z.infer<typeof FileResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateFile', CreateFileSchema);
 	registry.register('UpdateFile', UpdateFileSchema);
+	registry.register('FileResponseBase', FileResponseBaseSchema);
 	registry.register('FileResponse', FileResponseSchema);
 }
 

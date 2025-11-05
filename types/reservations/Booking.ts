@@ -13,15 +13,15 @@ import type { Reviewable } from '../reviews/Reviewable.js';
 import type { BookingCourseTime } from './BookingCourseTime.js';
 import type { BookingCourseParticipant } from './BookingCourseParticipant.js';
 import { UpdateCustomerSchema } from './Customer';
-import { ReservationModuleResponseSchema } from './ReservationModule';
-import { LocationResponseSchema } from './Location';
-import { EmployeeResponseSchema } from './Employee';
-import { ServiceResponseSchema } from './Service';
-import { CustomerResponseSchema } from './Customer';
-import { BookingHistoryLogResponseSchema } from './BookingHistoryLog';
+import { ReservationModuleResponseBaseSchema } from './ReservationModule';
+import { LocationResponseBaseSchema } from './Location';
+import { EmployeeResponseBaseSchema } from './Employee';
+import { ServiceResponseBaseSchema } from './Service';
+import { CustomerResponseBaseSchema } from './Customer';
+import { BookingHistoryLogResponseBaseSchema } from './BookingHistoryLog';
 import { ReviewableResponseSchema } from '../reviews/Reviewable';
-import { BookingCourseTimeResponseSchema } from './BookingCourseTime';
-import { BookingCourseParticipantResponseSchema } from './BookingCourseParticipant';
+import { BookingCourseTimeResponseBaseSchema } from './BookingCourseTime';
+import { BookingCourseParticipantResponseBaseSchema } from './BookingCourseParticipant';
 
 extendZodWithOpenApi(z);
 
@@ -282,44 +282,49 @@ export type BookingCourseTimeInput = z.infer<typeof BookingCourseTimeSchema>;
 export type UpdateBookingCourseTimeInput = z.infer<typeof UpdateBookingCourseTimeSchema>;
 export type DeleteBookingCourseTimeInput = z.infer<typeof DeleteBookingCourseTimeSchema>;
 
-export const baseBookingResponseSchema = z.object({
-	booking_id: z.string().uuid(),
-	customer_id: z.string().uuid().nullable().optional(),
-	reservation_module_id: z.string().uuid(),
-	location_id: z.string().uuid().nullable().optional(),
-	status: z.nativeEnum(BOOKING_STATUS),
-	service_id: z.string().uuid(),
-	comment: z.string().nullable().optional(),
-	created_at: z.string().datetime(),
-	updated_at: z.string().datetime(),
-	price_cents: z.number().nullable().optional(),
-	discount_percent: z.number().nullable().optional(),
-	discount_amount: z.number().nullable().optional(),
-	start_time: z.string().datetime().nullable().optional(),
-	end_time: z.string().datetime().nullable().optional(),
-	deleted_at: z.string().datetime().nullable().optional(),
-	employee_id: z.string().uuid().nullable().optional(),
-	parent_booking_id: z.string().uuid().nullable().optional(),
-	reservation_module: ReservationModuleResponseSchema,
-	location: LocationResponseSchema.nullable().optional(),
-	employee: EmployeeResponseSchema.nullable().optional(),
-	service: ServiceResponseSchema.nullable().optional(),
-	customer: CustomerResponseSchema.nullable().optional(),
-	booking_history_log: z.array(BookingHistoryLogResponseSchema),
-	reviewable_id: z.string().uuid().nullable().optional(),
+export const BookingResponseBaseSchema = z
+	.object({
+		booking_id: z.string().uuid(),
+		customer_id: z.string().uuid().nullable().optional(),
+		reservation_module_id: z.string().uuid(),
+		location_id: z.string().uuid().nullable().optional(),
+		status: z.nativeEnum(BOOKING_STATUS),
+		service_id: z.string().uuid(),
+		comment: z.string().nullable().optional(),
+		created_at: z.string().datetime(),
+		updated_at: z.string().datetime(),
+		price_cents: z.number().nullable().optional(),
+		discount_percent: z.number().nullable().optional(),
+		discount_amount: z.number().nullable().optional(),
+		start_time: z.string().datetime().nullable().optional(),
+		end_time: z.string().datetime().nullable().optional(),
+		deleted_at: z.string().datetime().nullable().optional(),
+		employee_id: z.string().uuid().nullable().optional(),
+		parent_booking_id: z.string().uuid().nullable().optional(),
+		reviewable_id: z.string().uuid().nullable().optional(),
+		course: z.boolean(),
+		people_allowed: z.number().nullable().optional(),
+		people_booked: z.number().nullable().optional(),
+	})
+	.openapi('BookingResponseBase');
+
+const baseBookingWithRelations = BookingResponseBaseSchema.extend({
+	reservation_module: ReservationModuleResponseBaseSchema,
+	location: LocationResponseBaseSchema.nullable().optional(),
+	employee: EmployeeResponseBaseSchema.nullable().optional(),
+	service: ServiceResponseBaseSchema.nullable().optional(),
+	customer: CustomerResponseBaseSchema.nullable().optional(),
+	booking_history_log: z.array(BookingHistoryLogResponseBaseSchema),
 	reviewable: ReviewableResponseSchema.nullable().optional(),
-	course: z.boolean(),
-	people_allowed: z.number().nullable().optional(),
-	people_booked: z.number().nullable().optional(),
-	booking_course_time: z.array(BookingCourseTimeResponseSchema),
-	booking_course_participant: z.array(BookingCourseParticipantResponseSchema),
+	booking_course_time: z.array(BookingCourseTimeResponseBaseSchema),
+	booking_course_participant: z.array(BookingCourseParticipantResponseBaseSchema),
 });
 
-type BookingRes = z.infer<typeof baseBookingResponseSchema> & {
+type BookingRes = z.infer<typeof baseBookingWithRelations> & {
 	child_bookings: BookingRes[];
 };
 
-export const BookingResponseSchema: z.ZodType<BookingRes> = baseBookingResponseSchema
+export const BookingResponseSchema: z.ZodType<BookingRes> = baseBookingWithRelations
 	.extend({
 		parent_booking: z
 			.lazy(() => BookingResponseSchema)
@@ -329,11 +334,13 @@ export const BookingResponseSchema: z.ZodType<BookingRes> = baseBookingResponseS
 	})
 	.openapi('BookingResponse');
 
+export type BookingBase = z.infer<typeof BookingResponseBaseSchema>;
 export type BookingResponse = z.infer<typeof BookingResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateBooking', CreateBookingSchema);
 	registry.register('UpdateBooking', UpdateBookingSchema);
+	registry.register('BookingResponseBase', BookingResponseBaseSchema);
 	registry.register('BookingResponse', BookingResponseSchema);
 
 	registry.register('CreateMultipleBookings', CreateMultipleBookingsSchema);

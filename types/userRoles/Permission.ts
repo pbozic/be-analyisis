@@ -4,8 +4,8 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import type { Action } from '../subscriptions/Action.js';
 import type { RolePermission } from './RolePermission.js';
-import { RolePermissionResponseSchema } from './RolePermission';
-import { ActionResponseSchema } from '../subscriptions/Action';
+import { RolePermissionResponseBaseSchema } from './RolePermission';
+import { ActionResponseBaseSchema } from '../subscriptions/Action';
 
 extendZodWithOpenApi(z);
 
@@ -25,7 +25,7 @@ export const UpdatePermissionSchema = CreatePermissionSchema.partial().openapi('
 export type CreatePermissionInput = z.infer<typeof CreatePermissionSchema>;
 export type UpdatePermissionInput = z.infer<typeof UpdatePermissionSchema>;
 
-export const PermissionResponseSchema = z
+export const PermissionResponseBaseSchema = z
 	.object({
 		permission_id: z.string(),
 		action_id: z.string().nullable().optional(),
@@ -36,16 +36,21 @@ export const PermissionResponseSchema = z
 		limit: z.number().nullable().optional(),
 		scope: z.nativeEnum(PERMISSION_SCOPE),
 		group: z.string().nullable().optional(),
-		roles: z.array(RolePermissionResponseSchema),
-		action: ActionResponseSchema.nullable().optional(),
 	})
-	.openapi('PermissionResponse');
+	.openapi('PermissionResponseBase');
 
+export const PermissionResponseSchema = PermissionResponseBaseSchema.extend({
+	roles: z.array(RolePermissionResponseBaseSchema),
+	action: ActionResponseBaseSchema.nullable().optional(),
+}).openapi('PermissionResponse');
+
+export type PermissionBase = z.infer<typeof PermissionResponseBaseSchema>;
 export type PermissionResponse = z.infer<typeof PermissionResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreatePermission', CreatePermissionSchema);
 	registry.register('UpdatePermission', UpdatePermissionSchema);
+	registry.register('PermissionResponseBase', PermissionResponseBaseSchema);
 	registry.register('PermissionResponse', PermissionResponseSchema);
 }
 

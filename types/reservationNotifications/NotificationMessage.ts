@@ -9,11 +9,11 @@ import type { NotificationEvent } from './NotificationEvent.js';
 import type { NotificationTemplate } from './NotificationTemplate.js';
 import type { NotificationTemplateVersion } from './NotificationTemplateVersion.js';
 import type { NotificationMessageEvent } from './NotificationMessageEvent.js';
-import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
-import { NotificationEventResponseSchema } from './NotificationEvent';
-import { NotificationTemplateResponseSchema } from './NotificationTemplate';
-import { NotificationTemplateVersionResponseSchema } from './NotificationTemplateVersion';
-import { NotificationMessageEventResponseSchema } from './NotificationMessageEvent';
+import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule';
+import { NotificationEventResponseBaseSchema } from './NotificationEvent';
+import { NotificationTemplateResponseBaseSchema } from './NotificationTemplate';
+import { NotificationTemplateVersionResponseBaseSchema } from './NotificationTemplateVersion';
+import { NotificationMessageEventResponseBaseSchema } from './NotificationMessageEvent';
 
 extendZodWithOpenApi(z);
 
@@ -55,7 +55,7 @@ export const DeleteNotificationMessageSchema = z
 export type CreateNotificationMessageInput = z.infer<typeof CreateNotificationMessageSchema>;
 export type UpdateNotificationMessageStatusInput = z.infer<typeof UpdateNotificationMessageStatusSchema>;
 
-export const NotificationMessageResponseSchema = z
+export const NotificationMessageResponseBaseSchema = z
 	.object({
 		notification_message_id: z.string(),
 		reservation_module_id: z.string(),
@@ -73,20 +73,25 @@ export const NotificationMessageResponseSchema = z
 		status: z.nativeEnum(MESSAGE_STATUS),
 		error: z.string().nullable().optional(),
 		created_at: z.string().datetime(),
-		reservation_module: ReservationModuleResponseSchema,
-		event: NotificationEventResponseSchema,
-		template: NotificationTemplateResponseSchema.nullable().optional(),
-		version: NotificationTemplateVersionResponseSchema.nullable().optional(),
-		events: z.array(NotificationMessageEventResponseSchema),
 	})
-	.openapi('NotificationMessageResponse');
+	.openapi('NotificationMessageResponseBase');
 
+export const NotificationMessageResponseSchema = NotificationMessageResponseBaseSchema.extend({
+	reservation_module: ReservationModuleResponseBaseSchema,
+	event: NotificationEventResponseBaseSchema,
+	template: NotificationTemplateResponseBaseSchema.nullable().optional(),
+	version: NotificationTemplateVersionResponseBaseSchema.nullable().optional(),
+	events: z.array(NotificationMessageEventResponseBaseSchema),
+}).openapi('NotificationMessageResponse');
+
+export type NotificationMessageBase = z.infer<typeof NotificationMessageResponseBaseSchema>;
 export type NotificationMessageResponse = z.infer<typeof NotificationMessageResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateNotificationMessage', CreateNotificationMessageSchema);
 	registry.register('UpdateNotificationMessage', UpdateNotificationMessageStatusSchema);
 	registry.register('DeleteNotificationMessage', DeleteNotificationMessageSchema);
+	registry.register('NotificationMessageResponseBase', NotificationMessageResponseBaseSchema);
 	registry.register('NotificationMessageResponse', NotificationMessageResponseSchema);
 }
 

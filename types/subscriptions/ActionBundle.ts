@@ -3,10 +3,9 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { ReservationModule } from '../reservations/ReservationModule.js';
-import type { Action } from './Action.js';
 import type { ActionBundleAction } from './ActionBundleAction.js';
-import { ActionBundleActionResponseSchema } from './ActionBundleAction';
-import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+import { ActionBundleActionResponseBaseSchema } from './ActionBundleAction';
+import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule';
 
 extendZodWithOpenApi(z);
 
@@ -28,7 +27,7 @@ export type CreateActionBundleInput = z.infer<typeof CreateActionBundleSchema>;
 export const UpdateActionBundleSchema = CreateActionBundleSchema.partial().openapi('UpdateActionBundle');
 export type UpdateActionBundleInput = z.infer<typeof UpdateActionBundleSchema>;
 
-export const ActionBundleResponseSchema = z
+export const ActionBundleResponseBaseSchema = z
 	.object({
 		action_bundle_id: z.string(),
 		module: z.nativeEnum(MODULE_TYPE),
@@ -36,16 +35,21 @@ export const ActionBundleResponseSchema = z
 		price_cents: z.number(),
 		stripe_price_id: z.string(),
 		stripe_product_id: z.string(),
-		actions: z.array(ActionBundleActionResponseSchema),
-		business_modules: z.array(ReservationModuleResponseSchema),
 	})
-	.openapi('ActionBundleResponse');
+	.openapi('ActionBundleResponseBase');
 
+export const ActionBundleResponseSchema = ActionBundleResponseBaseSchema.extend({
+	actions: z.array(ActionBundleActionResponseBaseSchema),
+	business_modules: z.array(ReservationModuleResponseBaseSchema),
+}).openapi('ActionBundleResponse');
+
+export type ActionBundleBase = z.infer<typeof ActionBundleResponseBaseSchema>;
 export type ActionBundleResponse = z.infer<typeof ActionBundleResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateActionBundle', CreateActionBundleSchema);
 	registry.register('UpdateActionBundle', UpdateActionBundleSchema);
+	registry.register('ActionBundleResponseBase', ActionBundleResponseBaseSchema);
 	registry.register('ActionBundleResponse', ActionBundleResponseSchema);
 }
 

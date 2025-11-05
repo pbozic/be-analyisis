@@ -3,8 +3,8 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import type { Addon } from './Addon.js';
 import type { ReservationModule } from '../reservations/ReservationModule.js';
-import { AddonResponseSchema } from './Addon';
-import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+import { AddonResponseBaseSchema } from './Addon';
+import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule';
 
 extendZodWithOpenApi(z);
 
@@ -26,7 +26,7 @@ export type CreateBusinessAddonInput = z.infer<typeof CreateBusinessAddonSchema>
 export const UpdateBusinessAddonSchema = CreateBusinessAddonSchema.partial().openapi('UpdateBusinessAddon');
 export type UpdateBusinessAddonInput = z.infer<typeof UpdateBusinessAddonSchema>;
 
-export const BusinessAddonResponseSchema = z
+export const BusinessAddonResponseBaseSchema = z
 	.object({
 		business_addon_id: z.string(),
 		addon_id: z.string(),
@@ -34,16 +34,21 @@ export const BusinessAddonResponseSchema = z
 		sms_module_id: z.string().nullable().optional(),
 		ads_module_id: z.string().nullable().optional(),
 		quantity: z.number(),
-		addon: AddonResponseSchema,
-		reservation_module: ReservationModuleResponseSchema.nullable().optional(),
 	})
-	.openapi('BusinessAddonResponse');
+	.openapi('BusinessAddonResponseBase');
 
+export const BusinessAddonResponseSchema = BusinessAddonResponseBaseSchema.extend({
+	addon: AddonResponseBaseSchema,
+	reservation_module: ReservationModuleResponseBaseSchema.nullable().optional(),
+}).openapi('BusinessAddonResponse');
+
+export type BusinessAddonBase = z.infer<typeof BusinessAddonResponseBaseSchema>;
 export type BusinessAddonResponse = z.infer<typeof BusinessAddonResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateBusinessAddon', CreateBusinessAddonSchema);
 	registry.register('UpdateBusinessAddon', UpdateBusinessAddonSchema);
+	registry.register('BusinessAddonResponseBase', BusinessAddonResponseBaseSchema);
 	registry.register('BusinessAddonResponse', BusinessAddonResponseSchema);
 }
 

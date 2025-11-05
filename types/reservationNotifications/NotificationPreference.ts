@@ -5,8 +5,8 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { NotificationChannelEnum } from '../reservationNotifications/enums.js';
 import type { ReservationModule } from '../reservations/ReservationModule.js';
 import type { NotificationEvent } from './NotificationEvent.js';
-import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
-import { NotificationEventResponseSchema } from './NotificationEvent';
+import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule';
+import { NotificationEventResponseBaseSchema } from './NotificationEvent';
 
 extendZodWithOpenApi(z);
 
@@ -42,7 +42,7 @@ export const UpdateNotificationPreferenceSchema =
 	CreateNotificationPreferenceSchema.partial().openapi('UpdateNotificationPreference');
 export type UpdateNotificationPreferenceInput = z.infer<typeof UpdateNotificationPreferenceSchema>;
 
-export const NotificationPreferenceResponseSchema = z
+export const NotificationPreferenceResponseBaseSchema = z
 	.object({
 		notification_preference_id: z.string(),
 		reservation_module_id: z.string(),
@@ -50,17 +50,22 @@ export const NotificationPreferenceResponseSchema = z
 		channel: z.nativeEnum(NOTIFICATION_CHANNEL),
 		enabled: z.boolean(),
 		updated_at: z.string().datetime(),
-		reservation_module: ReservationModuleResponseSchema,
-		event: NotificationEventResponseSchema,
 	})
-	.openapi('NotificationPreferenceResponse');
+	.openapi('NotificationPreferenceResponseBase');
 
+export const NotificationPreferenceResponseSchema = NotificationPreferenceResponseBaseSchema.extend({
+	reservation_module: ReservationModuleResponseBaseSchema,
+	event: NotificationEventResponseBaseSchema,
+}).openapi('NotificationPreferenceResponse');
+
+export type NotificationPreferenceBase = z.infer<typeof NotificationPreferenceResponseBaseSchema>;
 export type NotificationPreferenceResponse = z.infer<typeof NotificationPreferenceResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateNotificationPreference', CreateNotificationPreferenceSchema);
 	registry.register('UpsertNotificationPreference', UpsertNotificationPreferenceSchema);
 	registry.register('UpdateNotificationPreference', UpdateNotificationPreferenceSchema);
+	registry.register('NotificationPreferenceResponseBase', NotificationPreferenceResponseBaseSchema);
 	registry.register('NotificationPreferenceResponse', NotificationPreferenceResponseSchema);
 }
 
