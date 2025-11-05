@@ -6,9 +6,9 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { ScheduleSlot } from './ScheduleSlot.js';
 import type { Location } from './Location.js';
 import type { ScheduleEmployee } from './ScheduleEmployee.js';
-import { LocationResponseSchema } from './Location';
-import { ScheduleEmployeeResponseSchema } from './ScheduleEmployee';
-import { ScheduleSlotResponseSchema } from './ScheduleSlot';
+import { LocationResponseBaseSchema } from './Location';
+import { ScheduleEmployeeResponseBaseSchema } from './ScheduleEmployee';
+import { ScheduleSlotResponseBaseSchema } from './ScheduleSlot';
 
 extendZodWithOpenApi(z);
 
@@ -272,7 +272,7 @@ export type UpdateScheduleSlotInput = z.infer<typeof UpdateScheduleSlotSchema>;
 export type UpdateScheduleSlotExceptionInput = z.infer<typeof UpdateScheduleSlotExceptionSchema>;
 export type UpdateBookingSlotSchemaInput = z.infer<typeof UpdateCreateBookingSlotSchema>;
 
-export const ScheduleResponseSchema = z
+export const ScheduleResponseBaseSchema = z
 	.object({
 		schedule_id: z.string(),
 		location_id: z.string(),
@@ -280,17 +280,22 @@ export const ScheduleResponseSchema = z
 		color: z.string().nullable().optional(),
 		start_date: z.string().datetime(),
 		end_date: z.string().datetime(),
-		location: LocationResponseSchema,
-		schedule_employees: z.array(ScheduleEmployeeResponseSchema),
-		schedule_slots: z.array(ScheduleSlotResponseSchema),
 	})
-	.openapi('ScheduleResponse');
+	.openapi('ScheduleResponseBase');
 
+export const ScheduleResponseSchema = ScheduleResponseBaseSchema.extend({
+	location: LocationResponseBaseSchema,
+	schedule_employees: z.array(ScheduleEmployeeResponseBaseSchema),
+	schedule_slots: z.array(ScheduleSlotResponseBaseSchema),
+}).openapi('ScheduleResponse');
+
+export type ScheduleBase = z.infer<typeof ScheduleResponseBaseSchema>;
 export type ScheduleResponse = z.infer<typeof ScheduleResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateSchedule', CreateScheduleSchema);
 	registry.register('UpdateSchedule', UpdateScheduleSchema);
+	registry.register('ScheduleResponseBase', ScheduleResponseBaseSchema);
 	registry.register('ScheduleResponse', ScheduleResponseSchema);
 
 	registry.register('CreateScheduleEmployee', CreateScheduleEmployeeSchema);

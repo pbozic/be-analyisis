@@ -5,7 +5,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { NotificationChannelEnum } from '../reservationNotifications/enums.js';
 import { JsonObjectSchema } from './_common.js';
 import type { ReservationModule } from '../reservations/ReservationModule.js';
-import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
+import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule';
 
 extendZodWithOpenApi(z);
 
@@ -36,7 +36,7 @@ export const DeleteNotificationProviderCredentialSchema = z
 export type CreateNotificationProviderCredentialInput = z.infer<typeof CreateNotificationProviderCredentialSchema>;
 export type UpdateNotificationProviderCredentialInput = z.infer<typeof UpdateNotificationProviderCredentialSchema>;
 
-export const NotificationProviderCredentialResponseSchema = z
+export const NotificationProviderCredentialResponseBaseSchema = z
 	.object({
 		notification_provider_credential_id: z.string(),
 		reservation_module_id: z.string(),
@@ -45,16 +45,21 @@ export const NotificationProviderCredentialResponseSchema = z
 		config: z.unknown(),
 		is_default: z.boolean(),
 		created_at: z.string().datetime(),
-		reservation_module: ReservationModuleResponseSchema,
 	})
-	.openapi('NotificationProviderCredentialResponse');
+	.openapi('NotificationProviderCredentialResponseBase');
 
+export const NotificationProviderCredentialResponseSchema = NotificationProviderCredentialResponseBaseSchema.extend({
+	reservation_module: ReservationModuleResponseBaseSchema,
+}).openapi('NotificationProviderCredentialResponse');
+
+export type NotificationProviderCredentialBase = z.infer<typeof NotificationProviderCredentialResponseBaseSchema>;
 export type NotificationProviderCredentialResponse = z.infer<typeof NotificationProviderCredentialResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateNotificationProviderCredential', CreateNotificationProviderCredentialSchema);
 	registry.register('UpdateNotificationProviderCredential', UpdateNotificationProviderCredentialSchema);
 	registry.register('DeleteNotificationProviderCredential', DeleteNotificationProviderCredentialSchema);
+	registry.register('NotificationProviderCredentialResponseBase', NotificationProviderCredentialResponseBaseSchema);
 	registry.register('NotificationProviderCredentialResponse', NotificationProviderCredentialResponseSchema);
 }
 

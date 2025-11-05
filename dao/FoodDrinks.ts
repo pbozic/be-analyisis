@@ -1,12 +1,13 @@
 import prisma from '../prisma/prisma.js';
+import { FoodDrinksDetail } from '../schemas/dto/FoodDrinks/food-drinks.dto';
 /**
  * Set food_drinks online status.
  *
  * @param {string} food_drinks_id
  * @param {boolean} online
- * @returns {Promise<FoodDrinks>}
+ * @returns {Promise<FoodDrinksDetail>}
  */
-export async function setFoodDrinksOnline(food_drinks_id: string, online: boolean) {
+export async function setFoodDrinksOnline(food_drinks_id: string, online: boolean): Promise<FoodDrinksDetail> {
 	try {
 		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { online } });
 	} catch (error: unknown) {
@@ -20,9 +21,12 @@ export async function setFoodDrinksOnline(food_drinks_id: string, online: boolea
  *
  * @param {string} food_drinks_id
  * @param {boolean} overwhelmed
- * @returns {Promise<FoodDrinks>}
+ * @returns {Promise<FoodDrinksDetail>}
  */
-export async function setFoodDrinksOverwhelmed(food_drinks_id: string, overwhelmed: boolean) {
+export async function setFoodDrinksOverwhelmed(
+	food_drinks_id: string,
+	overwhelmed: boolean
+): Promise<FoodDrinksDetail> {
 	try {
 		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { overwhelmed } });
 	} catch (error: unknown) {
@@ -35,9 +39,9 @@ export async function setFoodDrinksOverwhelmed(food_drinks_id: string, overwhelm
  * Disable a food_drinks entry.
  *
  * @param {string} food_drinks_id
- * @returns {Promise<FoodDrinks>}
+ * @returns {Promise<FoodDrinksDetail>}
  */
-export async function disableFoodDrinks(food_drinks_id: string) {
+export async function disableFoodDrinks(food_drinks_id: string): Promise<FoodDrinksDetail> {
 	try {
 		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { enabled: false, online: false } });
 	} catch (error: unknown) {
@@ -50,9 +54,9 @@ export async function disableFoodDrinks(food_drinks_id: string) {
  * Enable a food_drinks entry.
  *
  * @param {string} food_drinks_id
- * @returns {Promise<FoodDrinks>}
+ * @returns {Promise<FoodDrinksDetail>}
  */
-export async function enableFoodDrinks(food_drinks_id: string) {
+export async function enableFoodDrinks(food_drinks_id: string): Promise<FoodDrinksDetail> {
 	try {
 		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { enabled: true } });
 	} catch (error: unknown) {

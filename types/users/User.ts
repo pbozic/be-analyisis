@@ -33,20 +33,15 @@ import type { UserMoneyFlow } from '../payments/UserMoneyFlow.js';
 import type { Customer } from '../reservations/Customer.js';
 import type { BookingHistoryLog } from '../reservations/BookingHistoryLog.js';
 import type { UserPermission } from '../userRoles/UserPermission.js';
-import type { Allergen } from '../menuItems/Allergen.js';
-import type { ServiceLink } from './ServiceLink.js';
-import type { Business } from '../business/Business.js';
-import type { Tutorial } from './Tutorial.js';
-import type { Role } from '../userRoles/Role.js';
 import type { UserFavoriteServiceLink } from './UserFavoriteServiceLink.js';
 import type { UserFavoriteDriver } from './UserFavoriteDriver.js';
 import type { UserFavoriteBusiness } from './UserFavoriteBusiness.js';
 import type { UserTutorial } from './UserTutorial.js';
 import type { UserAllergen } from './UserAllergen.js';
 import { UserRoleResponseSchema } from '../userRoles/UserRole';
-import { UserAddressResponseSchema } from './UserAddress';
+import { UserAddressResponseBaseSchema } from './UserAddress';
 import { TokenResponseSchema } from './Token';
-import { BusinessUserResponseSchema } from '../businessUsers/BusinessUser';
+import { BusinessUserResponseBaseSchema } from '../businessUsers/BusinessUser';
 import { DriverResponseSchema } from '../drivers/Driver';
 import { TaxiOrderResponseSchema } from '../taxiOrders/TaxiOrder';
 import { FileResponseSchema } from '../files/File';
@@ -75,8 +70,8 @@ import { PaymentResponseSchema } from '../payments/Payment';
 import { PromoAnalyticResponseSchema } from '../promoAnalytics/PromoAnalytic';
 import { DailyMealSubscriptionResponseSchema } from '../dailymeal/DailyMealSubscription';
 import { UserMoneyFlowResponseSchema } from '../payments/UserMoneyFlow';
-import { CustomerResponseSchema } from '../reservations/Customer';
-import { BookingHistoryLogResponseSchema } from '../reservations/BookingHistoryLog';
+import { CustomerResponseBaseSchema } from '../reservations/Customer';
+import { BookingHistoryLogResponseBaseSchema } from '../reservations/BookingHistoryLog';
 import { UserPermissionResponseSchema } from '../userRoles/UserPermission';
 import { UserAllergenResponseSchema } from './UserAllergen';
 
@@ -137,7 +132,7 @@ export type CreateUserInput = z.infer<typeof CreateUserSchema>;
 export const UpdateUserSchema = CreateUserSchema.partial().openapi('UpdateUser');
 export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
 
-export const UserResponseSchema = z
+export const UserResponseBaseSchema = z
 	.object({
 		user_id: z.string(),
 		first_name: z.string().nullable().optional(),
@@ -150,27 +145,15 @@ export const UserResponseSchema = z
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 		user_role: z.nativeEnum(USER_ROLES),
-		user_roles: z.array(UserRoleResponseSchema),
-		addresses: z.array(UserAddressResponseSchema),
-		tokens: z.array(TokenResponseSchema),
 		phone_verified: z.boolean(),
 		notification_preferences: z.unknown().nullable().optional(),
 		taxi_preferences: z.unknown().nullable().optional(),
-		business_users: z.array(BusinessUserResponseSchema),
-		driver: DriverResponseSchema.nullable().optional(),
-		orders: z.array(TaxiOrderResponseSchema),
 		profile_picture_id: z.string().nullable().optional(),
-		profile_picture: FileResponseSchema.nullable().optional(),
-		delivery_orders: z.array(DeliveryOrderResponseSchema),
 		reviewable_id: z.string().nullable().optional(),
-		reviewable: ReviewableResponseSchema.nullable().optional(),
-		reviews: z.array(ReviewResponseSchema),
 		review_complete: z.boolean(),
 		one_signal_id: z.string().nullable().optional(),
 		stripe_customer_id: z.string().nullable().optional(),
 		wallet_balance: z.number(),
-		transactions: z.array(TransactionResponseSchema),
-		reservations: z.array(ReservationResponseSchema),
 		transfer_preferences: z.unknown().nullable().optional(),
 		allergies_preferences: z.unknown().nullable().optional(),
 		spicy_preferences: z.unknown().nullable().optional(),
@@ -182,56 +165,73 @@ export const UserResponseSchema = z
 		transfer_push_notification_preferences: z.unknown().nullable().optional(),
 		delivery_push_notification_preferences: z.unknown().nullable().optional(),
 		spoken_languages: z.unknown().nullable().optional(),
-		lost_items: z.array(LostItemResponseSchema),
 		daily_meal_day_preferences: z.unknown().nullable().optional(),
 		disabled: z.boolean(),
 		active: z.boolean(),
-		child_users: z.array(GroupUserResponseSchema),
-		parent_user: GroupUserResponseSchema.nullable().optional(),
 		language: z.string().nullable().optional(),
-		wallet_funds: z.array(WalletFundResponseSchema),
 		apple_id: z.string().nullable().optional(),
 		google_id: z.string().nullable().optional(),
 		referral_code: z.string().nullable().optional(),
-		referrals_made: z.array(ReferralResponseSchema),
-		referral: ReferralResponseSchema.nullable().optional(),
-		cashback: z.array(CashbackResponseSchema),
 		activated_at: z.string().datetime().nullable().optional(),
 		deactivated_at: z.string().datetime().nullable().optional(),
 		deactivated: z.boolean(),
 		business_teams_id: z.string().nullable().optional(),
-		business_teams: BusinessTeamResponseSchema.nullable().optional(),
-		order_lobby_users: z.array(OrderLobbyUserResponseSchema),
-		promo_section_buys: z.array(PromoSectionsBuyResponseSchema),
 		allow_marketing_push_notifications: z.boolean().nullable().optional(),
 		allow_ads_personalization: z.boolean().nullable().optional(),
 		allow_newsletter: z.boolean().nullable().optional(),
-		user_favorite_service_links: z.array(UserFavoriteServiceLinkResponseSchema),
-		user_favorite_drivers: z.array(UserFavoriteDriverResponseSchema),
-		user_favorite_businesses: z.array(UserFavoriteBusinessResponseSchema),
-		scoring_points: z.array(ScoringPointResponseSchema),
-		tutorials: z.array(UserTutorialResponseSchema),
-		user_tutorial_state: UserTutorialStateResponseSchema.nullable().optional(),
-		account_actions: z.array(AccountActionResponseSchema),
-		created_account_actions: z.array(AccountActionResponseSchema),
-		blog_posts: z.array(BlogPostResponseSchema),
-		payments: z.array(PaymentResponseSchema),
-		promo_analytics: z.array(PromoAnalyticResponseSchema),
-		daily_meal_subscriptions: z.array(DailyMealSubscriptionResponseSchema),
-		user_money_flows: z.array(UserMoneyFlowResponseSchema),
-		customer: z.array(CustomerResponseSchema),
-		booking_history_log: z.array(BookingHistoryLogResponseSchema),
-		roles: z.array(UserRoleResponseSchema),
-		user_permissions: z.array(UserPermissionResponseSchema),
-		user_allergens: z.array(UserAllergenResponseSchema),
 	})
-	.openapi('UserResponse');
+	.openapi('UserResponseBase');
 
+export const UserResponseSchema = UserResponseBaseSchema.extend({
+	user_roles: z.array(UserRoleResponseSchema),
+	addresses: z.array(UserAddressResponseBaseSchema),
+	tokens: z.array(TokenResponseSchema),
+	business_users: z.array(BusinessUserResponseBaseSchema),
+	driver: DriverResponseSchema.nullable().optional(),
+	orders: z.array(TaxiOrderResponseSchema),
+	profile_picture: FileResponseSchema.nullable().optional(),
+	delivery_orders: z.array(DeliveryOrderResponseSchema),
+	reviewable: ReviewableResponseSchema.nullable().optional(),
+	reviews: z.array(ReviewResponseSchema),
+	transactions: z.array(TransactionResponseSchema),
+	reservations: z.array(ReservationResponseSchema),
+	lost_items: z.array(LostItemResponseSchema),
+	child_users: z.array(GroupUserResponseSchema),
+	parent_user: GroupUserResponseSchema.nullable().optional(),
+	wallet_funds: z.array(WalletFundResponseSchema),
+	referrals_made: z.array(ReferralResponseSchema),
+	referral: ReferralResponseSchema.nullable().optional(),
+	cashback: z.array(CashbackResponseSchema),
+	business_teams: BusinessTeamResponseSchema.nullable().optional(),
+	order_lobby_users: z.array(OrderLobbyUserResponseSchema),
+	promo_section_buys: z.array(PromoSectionsBuyResponseSchema),
+	user_favorite_service_links: z.array(UserFavoriteServiceLinkResponseSchema),
+	user_favorite_drivers: z.array(UserFavoriteDriverResponseSchema),
+	user_favorite_businesses: z.array(UserFavoriteBusinessResponseSchema),
+	scoring_points: z.array(ScoringPointResponseSchema),
+	tutorials: z.array(UserTutorialResponseSchema),
+	user_tutorial_state: UserTutorialStateResponseSchema.nullable().optional(),
+	account_actions: z.array(AccountActionResponseSchema),
+	created_account_actions: z.array(AccountActionResponseSchema),
+	blog_posts: z.array(BlogPostResponseSchema),
+	payments: z.array(PaymentResponseSchema),
+	promo_analytics: z.array(PromoAnalyticResponseSchema),
+	daily_meal_subscriptions: z.array(DailyMealSubscriptionResponseSchema),
+	user_money_flows: z.array(UserMoneyFlowResponseSchema),
+	customer: z.array(CustomerResponseBaseSchema),
+	booking_history_log: z.array(BookingHistoryLogResponseBaseSchema),
+	roles: z.array(UserRoleResponseSchema),
+	user_permissions: z.array(UserPermissionResponseSchema),
+	user_allergens: z.array(UserAllergenResponseSchema),
+}).openapi('UserResponse');
+
+export type UserBase = z.infer<typeof UserResponseBaseSchema>;
 export type UserResponse = z.infer<typeof UserResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateUser', CreateUserSchema);
 	registry.register('UpdateUser', UpdateUserSchema);
+	registry.register('UserResponseBase', UserResponseBaseSchema);
 	registry.register('UserResponse', UserResponseSchema);
 }
 

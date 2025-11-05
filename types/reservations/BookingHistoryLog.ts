@@ -3,10 +3,9 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { User } from '../users/User.js';
-import type { Booking } from '../reservations/Booking.js';
 import type { Booking } from './Booking.js';
-import { UserResponseSchema } from '../users/User';
-import { BookingResponseSchema } from './Booking';
+import { UserResponseBaseSchema } from '../users/User';
+import { BookingResponseBaseSchema } from './Booking';
 
 extendZodWithOpenApi(z);
 
@@ -30,7 +29,7 @@ export type CreateBookingHistoryLogInput = z.infer<typeof CreateBookingHistoryLo
 export const UpdateBookingHistoryLogSchema = CreateBookingHistoryLogSchema.partial().openapi('UpdateBookingHistoryLog');
 export type UpdateBookingHistoryLogInput = z.infer<typeof UpdateBookingHistoryLogSchema>;
 
-export const BookingHistoryLogResponseSchema = z
+export const BookingHistoryLogResponseBaseSchema = z
 	.object({
 		booking_history_id: z.string(),
 		booking_id: z.string(),
@@ -42,16 +41,21 @@ export const BookingHistoryLogResponseSchema = z
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 		user_id: z.string().nullable().optional(),
-		user: UserResponseSchema.nullable().optional(),
-		booking: BookingResponseSchema,
 	})
-	.openapi('BookingHistoryLogResponse');
+	.openapi('BookingHistoryLogResponseBase');
 
+export const BookingHistoryLogResponseSchema = BookingHistoryLogResponseBaseSchema.extend({
+	user: UserResponseBaseSchema.nullable().optional(),
+	booking: BookingResponseBaseSchema,
+}).openapi('BookingHistoryLogResponse');
+
+export type BookingHistoryLogBase = z.infer<typeof BookingHistoryLogResponseBaseSchema>;
 export type BookingHistoryLogResponse = z.infer<typeof BookingHistoryLogResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateBookingHistoryLog', CreateBookingHistoryLogSchema);
 	registry.register('UpdateBookingHistoryLog', UpdateBookingHistoryLogSchema);
+	registry.register('BookingHistoryLogResponseBase', BookingHistoryLogResponseBaseSchema);
 	registry.register('BookingHistoryLogResponse', BookingHistoryLogResponseSchema);
 }
 

@@ -5,9 +5,9 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { Customer } from './Customer.js';
 import type { Booking } from './Booking.js';
 import type { ReservationModule } from './ReservationModule.js';
-import { CustomerResponseSchema } from './Customer';
-import { BookingResponseSchema } from './Booking';
-import { ReservationModuleResponseSchema } from './ReservationModule';
+import { CustomerResponseBaseSchema } from './Customer';
+import { BookingResponseBaseSchema } from './Booking';
+import { ReservationModuleResponseBaseSchema } from './ReservationModule';
 
 extendZodWithOpenApi(z);
 
@@ -30,7 +30,7 @@ export const UpdateBookingCourseParticipantSchema = CreateBookingCourseParticipa
 );
 export type UpdateBookingCourseParticipantInput = z.infer<typeof UpdateBookingCourseParticipantSchema>;
 
-export const BookingCourseParticipantResponseSchema = z
+export const BookingCourseParticipantResponseBaseSchema = z
 	.object({
 		booking_course_participant_id: z.string(),
 		reservation_module_id: z.string(),
@@ -39,17 +39,22 @@ export const BookingCourseParticipantResponseSchema = z
 		customer_id: z.string(),
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
-		customer: CustomerResponseSchema,
-		booking: BookingResponseSchema,
-		reservation_module: ReservationModuleResponseSchema,
 	})
-	.openapi('BookingCourseParticipantResponse');
+	.openapi('BookingCourseParticipantResponseBase');
 
+export const BookingCourseParticipantResponseSchema = BookingCourseParticipantResponseBaseSchema.extend({
+	customer: CustomerResponseBaseSchema,
+	booking: BookingResponseBaseSchema,
+	reservation_module: ReservationModuleResponseBaseSchema,
+}).openapi('BookingCourseParticipantResponse');
+
+export type BookingCourseParticipantBase = z.infer<typeof BookingCourseParticipantResponseBaseSchema>;
 export type BookingCourseParticipantResponse = z.infer<typeof BookingCourseParticipantResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateBookingCourseParticipant', CreateBookingCourseParticipantSchema);
 	registry.register('UpdateBookingCourseParticipant', UpdateBookingCourseParticipantSchema);
+	registry.register('BookingCourseParticipantResponseBase', BookingCourseParticipantResponseBaseSchema);
 	registry.register('BookingCourseParticipantResponse', BookingCourseParticipantResponseSchema);
 }
 

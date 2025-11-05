@@ -4,12 +4,10 @@ import { MODULE_TYPE } from '@prisma/client';
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import type { Addon } from '../subscriptions/Addon.js';
-import type { Action } from '../subscriptions/Action.js';
 import type { Addon } from './Addon.js';
 import type { Action } from './Action.js';
-import { AddonResponseSchema } from './Addon';
-import { ActionResponseSchema } from './Action';
+import { AddonResponseBaseSchema } from './Addon';
+import { ActionResponseBaseSchema } from './Action';
 
 extendZodWithOpenApi(z);
 
@@ -28,23 +26,28 @@ export type CreateAddonActionInput = z.infer<typeof CreateAddonActionSchema>;
 export const UpdateAddonActionSchema = CreateAddonActionSchema.partial().openapi('UpdateAddonAction');
 export type UpdateAddonActionInput = z.infer<typeof UpdateAddonActionSchema>;
 
-export const AddonActionResponseSchema = z
+export const AddonActionResponseBaseSchema = z
 	.object({
 		addon_action_id: z.string(),
 		addon_id: z.string(),
 		action_id: z.string(),
 		module: z.nativeEnum(MODULE_TYPE),
 		limit: z.number().nullable().optional(),
-		addon: AddonResponseSchema,
-		action: ActionResponseSchema,
 	})
-	.openapi('AddonActionResponse');
+	.openapi('AddonActionResponseBase');
 
+export const AddonActionResponseSchema = AddonActionResponseBaseSchema.extend({
+	addon: AddonResponseBaseSchema,
+	action: ActionResponseBaseSchema,
+}).openapi('AddonActionResponse');
+
+export type AddonActionBase = z.infer<typeof AddonActionResponseBaseSchema>;
 export type AddonActionResponse = z.infer<typeof AddonActionResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateAddonAction', CreateAddonActionSchema);
 	registry.register('UpdateAddonAction', UpdateAddonActionSchema);
+	registry.register('AddonActionResponseBase', AddonActionResponseBaseSchema);
 	registry.register('AddonActionResponse', AddonActionResponseSchema);
 }
 

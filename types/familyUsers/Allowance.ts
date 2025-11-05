@@ -4,7 +4,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { GroupUser } from './GroupUser.js';
 import type { BusinessUser } from '../businessUsers/BusinessUser.js';
 import { GroupUserResponseSchema } from './GroupUser';
-import { BusinessUserResponseSchema } from '../businessUsers/BusinessUser';
+import { BusinessUserResponseBaseSchema } from '../businessUsers/BusinessUser';
 
 extendZodWithOpenApi(z);
 
@@ -47,7 +47,7 @@ export const AllowanceResponseSchema = z
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 		user: GroupUserResponseSchema.nullable().optional(),
-		business_user: BusinessUserResponseSchema.nullable().optional(),
+		business_user: BusinessUserResponseBaseSchema.nullable().optional(),
 	})
 	.openapi('AllowanceResponse');
 

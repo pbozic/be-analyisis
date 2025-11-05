@@ -8,12 +8,12 @@ import type { Booking } from './Booking.js';
 import type { TaxRate } from '../general/TaxRate.js';
 import type { ServiceAssignment } from './ServiceAssignment.js';
 import type { ServiceLocation } from './ServiceLocation.js';
-import { ReservationModuleResponseSchema } from './ReservationModule';
-import { ServiceCategoryResponseSchema } from './ServiceCategory';
-import { ServiceAssignmentResponseSchema } from './ServiceAssignment';
-import { BookingResponseSchema } from './Booking';
-import { ServiceLocationResponseSchema } from './ServiceLocation';
-import { TaxRateResponseSchema } from '../general/TaxRate';
+import { ServiceCategoryResponseBaseSchema } from './ServiceCategory';
+import { ServiceAssignmentResponseBaseSchema } from './ServiceAssignment';
+import { BookingResponseBaseSchema } from './Booking';
+import { ServiceLocationResponseBaseSchema } from './ServiceLocation';
+import { TaxRateResponseBaseSchema } from '../general/TaxRate';
+import { ReservationModuleResponseBaseSchema } from './ReservationModule';
 
 extendZodWithOpenApi(z);
 
@@ -94,7 +94,7 @@ export type UpdateServiceWithEmployeesInput = z.infer<typeof UpdateServiceWithEm
 export type CreateServiceWithLocationsInput = z.infer<typeof CreateServiceWithLocationsSchema>;
 export type UpdateServiceWithLocationsInput = z.infer<typeof UpdateServiceWithLocationsSchema>;
 
-export const ServiceResponseSchema = z
+export const ServiceResponseBaseSchema = z
 	.object({
 		service_id: z.string(),
 		reservation_module_id: z.string(),
@@ -112,20 +112,25 @@ export const ServiceResponseSchema = z
 		tax_rate_id: z.string().nullable().optional(),
 		course: z.boolean(),
 		people_allowed: z.number().nullable().optional(),
-		reservation_module: ReservationModuleResponseSchema,
-		service_category: ServiceCategoryResponseSchema.nullable().optional(),
-		assigned_employees: z.array(ServiceAssignmentResponseSchema),
-		bookings: z.array(BookingResponseSchema),
-		service_locations: z.array(ServiceLocationResponseSchema),
-		tax_rate: TaxRateResponseSchema.nullable().optional(),
 	})
 	.openapi('ServiceResponse');
 
+export const ServiceResponseSchema = ServiceResponseBaseSchema.extend({
+	reservation_module: ReservationModuleResponseBaseSchema.nullable().optional(),
+	service_category: ServiceCategoryResponseBaseSchema.nullable().optional(),
+	assigned_employees: z.array(ServiceAssignmentResponseBaseSchema),
+	bookings: z.array(BookingResponseBaseSchema),
+	service_locations: z.array(ServiceLocationResponseBaseSchema),
+	tax_rate: TaxRateResponseBaseSchema.nullable().optional(),
+}).openapi('ServiceResponse');
+
+export type ServiceBase = z.infer<typeof ServiceResponseBaseSchema>;
 export type ServiceResponse = z.infer<typeof ServiceResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateService', CreateServiceSchema);
 	registry.register('UpdateService', UpdateServiceSchema);
+	registry.register('ServiceResponseBase', ServiceResponseBaseSchema);
 	registry.register('ServiceResponse', ServiceResponseSchema);
 
 	registry.register('CreateServiceWithEmployees', CreateServiceWithEmployeesSchema);

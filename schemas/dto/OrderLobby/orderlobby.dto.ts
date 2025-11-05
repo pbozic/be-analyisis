@@ -64,7 +64,9 @@ export const SubmitLobbyRequestSchema = z
 // =======================
 export const SetLobbyUsersWithLimitsRequestSchema = z
 	.object({
-		user_limits_map: z.record(z.number().int().nonnegative()).openapi({ example: { '990e8400-e29b-41d4-a716-446655440000': 2 } }),
+		user_limits_map: z
+			.record(z.number().int().nonnegative())
+			.openapi({ example: { '990e8400-e29b-41d4-a716-446655440000': 2 } }),
 	})
 	.openapi('SetLobbyUsersWithLimitsRequest');
 
@@ -84,7 +86,9 @@ export const OrderLobbyItemInputSchema = z
 
 export const SetUserOrderLobbyItemsRequestSchema = z
 	.object({
-		items: z.array(OrderLobbyItemInputSchema).openapi({ example: [{ menu_item_id: 'bb0e8400-e29b-41d4-a716-446655440000', quantity: 1 }] }),
+		items: z
+			.array(OrderLobbyItemInputSchema)
+			.openapi({ example: [{ menu_item_id: 'bb0e8400-e29b-41d4-a716-446655440000', quantity: 1 }] }),
 	})
 	.openapi('SetUserOrderLobbyItemsRequest');
 

@@ -14,8 +14,8 @@ import type { FoodDrinksModule } from '../foodDrinks/FoodDrinksModule.js';
 import { ReviewResponseSchema } from './Review';
 import { UserResponseSchema } from '../users/User';
 import { DriverResponseSchema } from '../drivers/Driver';
-import { ReservationModuleResponseSchema } from '../reservations/ReservationModule';
-import { BookingResponseSchema } from '../reservations/Booking';
+import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule';
+import { BookingResponseBaseSchema } from '../reservations/Booking';
 import { TransportModuleResponseSchema } from '../transport/TransportModule';
 import { StoresModuleResponseSchema } from '../stores/StoresModule';
 import { FoodDrinksModuleResponseSchema } from '../foodDrinks/FoodDrinksModule';
@@ -33,25 +33,30 @@ export type CreateReviewableInput = z.infer<typeof CreateReviewableSchema>;
 export const UpdateReviewableSchema = CreateReviewableSchema.partial().openapi('UpdateReviewable');
 export type UpdateReviewableInput = z.infer<typeof UpdateReviewableSchema>;
 
-export const ReviewableResponseSchema = z
+export const ReviewableResponseBaseSchema = z
 	.object({
 		reviewable_id: z.string(),
-		reviews: z.array(ReviewResponseSchema),
-		user: z.array(UserResponseSchema),
-		driver: z.array(DriverResponseSchema),
-		reservation_module: z.array(ReservationModuleResponseSchema),
-		reservation_booking: z.array(BookingResponseSchema),
-		transport_module: z.array(TransportModuleResponseSchema),
-		stores_module: z.array(StoresModuleResponseSchema),
-		food_drinks_module: z.array(FoodDrinksModuleResponseSchema),
 	})
-	.openapi('ReviewableResponse');
+	.openapi('ReviewableResponseBase');
 
+export const ReviewableResponseSchema = ReviewableResponseBaseSchema.extend({
+	reviews: z.array(ReviewResponseSchema),
+	user: z.array(UserResponseSchema),
+	driver: z.array(DriverResponseSchema),
+	reservation_module: z.array(ReservationModuleResponseBaseSchema),
+	reservation_booking: z.array(BookingResponseBaseSchema),
+	transport_module: z.array(TransportModuleResponseSchema),
+	stores_module: z.array(StoresModuleResponseSchema),
+	food_drinks_module: z.array(FoodDrinksModuleResponseSchema),
+}).openapi('ReviewableResponse');
+
+export type ReviewableBase = z.infer<typeof ReviewableResponseBaseSchema>;
 export type ReviewableResponse = z.infer<typeof ReviewableResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateReviewable', CreateReviewableSchema);
 	registry.register('UpdateReviewable', UpdateReviewableSchema);
+	registry.register('ReviewableResponseBase', ReviewableResponseBaseSchema);
 	registry.register('ReviewableResponse', ReviewableResponseSchema);
 }
 

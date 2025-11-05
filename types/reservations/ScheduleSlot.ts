@@ -6,11 +6,11 @@ import type { Schedule } from './Schedule.js';
 import type { ScheduleEmployee } from './ScheduleEmployee.js';
 import type { Employee } from './Employee.js';
 import type { ScheduleSlotException } from './ScheduleSlotException.js';
-import { BookingSlotResponseSchema } from './BookingSlot';
-import { ScheduleResponseSchema } from './Schedule';
-import { ScheduleEmployeeResponseSchema } from './ScheduleEmployee';
-import { EmployeeResponseSchema } from './Employee';
-import { ScheduleSlotExceptionResponseSchema } from './ScheduleSlotException';
+import { BookingSlotResponseBaseSchema } from './BookingSlot';
+import { ScheduleResponseBaseSchema } from './Schedule';
+import { ScheduleEmployeeResponseBaseSchema } from './ScheduleEmployee';
+import { EmployeeResponseBaseSchema } from './Employee';
+import { ScheduleSlotExceptionResponseBaseSchema } from './ScheduleSlotException';
 
 extendZodWithOpenApi(z);
 
@@ -33,7 +33,7 @@ export type CreateScheduleSlotInput = z.infer<typeof CreateScheduleSlotSchema>;
 export const UpdateScheduleSlotSchema = CreateScheduleSlotSchema.partial().openapi('UpdateScheduleSlot');
 export type UpdateScheduleSlotInput = z.infer<typeof UpdateScheduleSlotSchema>;
 
-export const ScheduleSlotResponseSchema = z
+export const ScheduleSlotResponseBaseSchema = z
 	.object({
 		schedule_slot_id: z.string(),
 		schedule_id: z.string(),
@@ -42,19 +42,24 @@ export const ScheduleSlotResponseSchema = z
 		date: z.string().datetime(),
 		start_time: z.string().datetime(),
 		end_time: z.string().datetime(),
-		booking_slots: z.array(BookingSlotResponseSchema),
-		schedule: ScheduleResponseSchema,
-		schedule_employee: ScheduleEmployeeResponseSchema,
-		employee: EmployeeResponseSchema,
-		schedule_slot_exceptions: z.array(ScheduleSlotExceptionResponseSchema),
 	})
-	.openapi('ScheduleSlotResponse');
+	.openapi('ScheduleSlotResponseBase');
 
+export const ScheduleSlotResponseSchema = ScheduleSlotResponseBaseSchema.extend({
+	booking_slots: z.array(BookingSlotResponseBaseSchema),
+	schedule: ScheduleResponseBaseSchema,
+	schedule_employee: ScheduleEmployeeResponseBaseSchema,
+	employee: EmployeeResponseBaseSchema,
+	schedule_slot_exceptions: z.array(ScheduleSlotExceptionResponseBaseSchema),
+}).openapi('ScheduleSlotResponse');
+
+export type ScheduleSlotBase = z.infer<typeof ScheduleSlotResponseBaseSchema>;
 export type ScheduleSlotResponse = z.infer<typeof ScheduleSlotResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateScheduleSlot', CreateScheduleSlotSchema);
 	registry.register('UpdateScheduleSlot', UpdateScheduleSlotSchema);
+	registry.register('ScheduleSlotResponseBase', ScheduleSlotResponseBaseSchema);
 	registry.register('ScheduleSlotResponse', ScheduleSlotResponseSchema);
 }
 

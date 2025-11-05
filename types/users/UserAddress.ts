@@ -5,7 +5,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { User } from './User.js';
 import type { Address } from '../addresses/Address.js';
 import { UserResponseSchema } from './User';
-import { AddressResponseSchema } from '../addresses/Address';
+import { AddressResponseBaseSchema } from '../addresses/Address';
 
 extendZodWithOpenApi(z);
 
@@ -26,23 +26,28 @@ export type CreateUserAddressInput = z.infer<typeof CreateUserAddressSchema>;
 export const UpdateUserAddressSchema = CreateUserAddressSchema.partial().openapi('UpdateUserAddress');
 export type UpdateUserAddressInput = z.infer<typeof UpdateUserAddressSchema>;
 
-export const UserAddressResponseSchema = z
+export const UserAddressResponseBaseSchema = z
 	.object({
 		user_id: z.string(),
 		address_id: z.string(),
 		primary: z.boolean(),
 		details: z.unknown().nullable().optional(),
 		type: z.nativeEnum(ADDRESS_TYPE),
-		users: UserResponseSchema,
-		address: AddressResponseSchema,
 	})
-	.openapi('UserAddressResponse');
+	.openapi('UserAddressResponseBase');
 
+export const UserAddressResponseSchema = UserAddressResponseBaseSchema.extend({
+	users: UserResponseSchema,
+	address: AddressResponseBaseSchema,
+}).openapi('UserAddressResponse');
+
+export type UserAddressBase = z.infer<typeof UserAddressResponseBaseSchema>;
 export type UserAddressResponse = z.infer<typeof UserAddressResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateUserAddress', CreateUserAddressSchema);
 	registry.register('UpdateUserAddress', UpdateUserAddressSchema);
+	registry.register('UserAddressResponseBase', UserAddressResponseBaseSchema);
 	registry.register('UserAddressResponse', UserAddressResponseSchema);
 }
 

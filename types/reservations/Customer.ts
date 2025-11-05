@@ -6,10 +6,10 @@ import type { ReservationModule } from './ReservationModule.js';
 import type { Booking } from './Booking.js';
 import type { User } from '../users/User.js';
 import type { BookingCourseParticipant } from './BookingCourseParticipant.js';
-import { ReservationModuleResponseSchema } from './ReservationModule';
-import { BookingResponseSchema } from './Booking';
-import { UserResponseSchema } from '../users/User';
-import { BookingCourseParticipantResponseSchema } from './BookingCourseParticipant';
+import { ReservationModuleResponseBaseSchema } from './ReservationModule';
+import { BookingResponseBaseSchema } from './Booking';
+import { UserResponseBaseSchema } from '../users/User';
+import { BookingCourseParticipantResponseBaseSchema } from './BookingCourseParticipant';
 
 extendZodWithOpenApi(z);
 
@@ -30,7 +30,7 @@ export const DeleteCustomerSchema = z.object({ customer_id: z.string().uuid() })
 export type CreateCustomerInput = z.infer<typeof CreateCustomerSchema>;
 export type UpdateCustomerInput = z.infer<typeof UpdateCustomerSchema>;
 
-export const CustomerResponseSchema = z
+export const CustomerResponseBaseSchema = z
 	.object({
 		customer_id: z.string(),
 		reservation_module_id: z.string(),
@@ -41,19 +41,24 @@ export const CustomerResponseSchema = z
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 		code: z.string(),
-		reservation_module: ReservationModuleResponseSchema,
-		bookings: z.array(BookingResponseSchema),
 		user_id: z.string().nullable().optional(),
-		user: UserResponseSchema.nullable().optional(),
-		booking_course_participants: z.array(BookingCourseParticipantResponseSchema),
 	})
-	.openapi('CustomerResponse');
+	.openapi('CustomerResponseBase');
 
+export const CustomerResponseSchema = CustomerResponseBaseSchema.extend({
+	reservation_module: ReservationModuleResponseBaseSchema,
+	bookings: z.array(BookingResponseBaseSchema),
+	user: UserResponseBaseSchema.nullable().optional(),
+	booking_course_participants: z.array(BookingCourseParticipantResponseBaseSchema),
+}).openapi('CustomerResponse');
+
+export type CustomerBase = z.infer<typeof CustomerResponseBaseSchema>;
 export type CustomerResponse = z.infer<typeof CustomerResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateCustomer', CreateCustomerSchema);
 	registry.register('UpdateCustomer', UpdateCustomerSchema);
+	registry.register('CustomerResponseBase', CustomerResponseBaseSchema);
 	registry.register('CustomerResponse', CustomerResponseSchema);
 }
 

@@ -21,7 +21,7 @@ import type { WalletTransferHistory } from '../wallet/WalletTransferHistory.js';
 import { DriverResponseSchema } from '../drivers/Driver';
 import { VehicleResponseSchema } from '../vehicles/Vehicle';
 import { UserResponseSchema } from '../users/User';
-import { BusinessUserResponseSchema } from '../businessUsers/BusinessUser';
+import { BusinessUserResponseBaseSchema } from '../businessUsers/BusinessUser';
 import { BusinessClientResponseSchema } from '../crm/BusinessClient';
 import { TaxiOrderSentResponseSchema } from './TaxiOrderSent';
 import { DocumentResponseSchema } from '../documents/Document';
@@ -105,7 +105,7 @@ export const baseTaxiOrderResponseSchema = z
 		driver: DriverResponseSchema.nullable().optional(),
 		vehicle: VehicleResponseSchema.nullable().optional(),
 		customer: UserResponseSchema.nullable().optional(),
-		business_users: BusinessUserResponseSchema.nullable().optional(),
+		business_users: BusinessUserResponseBaseSchema.nullable().optional(),
 		business_clients: BusinessClientResponseSchema.nullable().optional(),
 		history: z.array(TaxiOrderSentResponseSchema),
 		telephone: z.string().nullable().optional(),

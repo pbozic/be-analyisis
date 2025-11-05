@@ -6,9 +6,9 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { ScheduleSlot } from './ScheduleSlot.js';
 import type { Schedule } from './Schedule.js';
 import type { Employee } from './Employee.js';
-import { ScheduleResponseSchema } from './Schedule';
-import { EmployeeResponseSchema } from './Employee';
-import { ScheduleSlotResponseSchema } from './ScheduleSlot';
+import { ScheduleResponseBaseSchema } from './Schedule';
+import { EmployeeResponseBaseSchema } from './Employee';
+import { ScheduleSlotResponseBaseSchema } from './ScheduleSlot';
 
 extendZodWithOpenApi(z);
 
@@ -25,22 +25,27 @@ export type CreateScheduleEmployeeInput = z.infer<typeof CreateScheduleEmployeeS
 export const UpdateScheduleEmployeeSchema = CreateScheduleEmployeeSchema.partial().openapi('UpdateScheduleEmployee');
 export type UpdateScheduleEmployeeInput = z.infer<typeof UpdateScheduleEmployeeSchema>;
 
-export const ScheduleEmployeeResponseSchema = z
+export const ScheduleEmployeeResponseBaseSchema = z
 	.object({
 		schedule_employee_id: z.string(),
 		schedule_id: z.string(),
 		employee_id: z.string(),
-		schedule: ScheduleResponseSchema,
-		employee: EmployeeResponseSchema,
-		schedule_slots: z.array(ScheduleSlotResponseSchema),
 	})
-	.openapi('ScheduleEmployeeResponse');
+	.openapi('ScheduleEmployeeResponseBase');
 
+export const ScheduleEmployeeResponseSchema = ScheduleEmployeeResponseBaseSchema.extend({
+	schedule: ScheduleResponseBaseSchema,
+	employee: EmployeeResponseBaseSchema,
+	schedule_slots: z.array(ScheduleSlotResponseBaseSchema),
+}).openapi('ScheduleEmployeeResponse');
+
+export type ScheduleEmployeeBase = z.infer<typeof ScheduleEmployeeResponseBaseSchema>;
 export type ScheduleEmployeeResponse = z.infer<typeof ScheduleEmployeeResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateScheduleEmployee', CreateScheduleEmployeeSchema);
 	registry.register('UpdateScheduleEmployee', UpdateScheduleEmployeeSchema);
+	registry.register('ScheduleEmployeeResponseBase', ScheduleEmployeeResponseBaseSchema);
 	registry.register('ScheduleEmployeeResponse', ScheduleEmployeeResponseSchema);
 }
 

@@ -1,7 +1,7 @@
-
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { DOCUMENT_TYPE } from '@prisma/client';
+
 import { CreateFileDataSchema } from '../Files/file.dto.ts';
 
 extendZodWithOpenApi(z);
@@ -20,7 +20,10 @@ export const CreateDailyMealMenuSchema = z
 	.object({
 		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		date: z.string().datetime().openapi({ example: '2025-01-15T00:00:00Z' }),
-		menu_category: z.any().optional().openapi({ example: { name: { en: 'Lunch' }, price: 5.5 } }),
+		menu_category: z
+			.any()
+			.optional()
+			.openapi({ example: { name: { en: 'Lunch' }, price: 5.5 } }),
 	})
 	.openapi('CreateDailyMealMenu');
 
@@ -30,15 +33,22 @@ export const CreateDailyMealMenuSchema = z
 export const MenuCategoryDataSchema = z
 	.object({
 		name_translatable_id: z.string().uuid().optional(),
-		names: z.record(z.string()).optional().openapi({ example: { en: 'Starters', sl: 'Predjedi' } }),
+		names: z
+			.record(z.string())
+			.optional()
+			.openapi({ example: { en: 'Starters', sl: 'Predjedi' } }),
 		description_translatable_id: z.string().uuid().optional(),
 		description: z.record(z.string()).optional(),
-		categories: z.array(z.string()).optional().openapi({ example: ['salads', 'vegan'] }),
+		categories: z
+			.array(z.string())
+			.optional()
+			.openapi({ example: ['salads', 'vegan'] }),
 		business_id: z.string().uuid().optional(),
 		menu_id: z.string().uuid().optional(),
 		order: z.number().int().optional(),
 		price: z.number().optional(),
-	}).passthrough()
+	})
+	.passthrough()
 	.openapi('MenuCategoryData');
 
 export const CreateMenuCategorySchema = z
@@ -56,7 +66,10 @@ export const CreateMenuCategorySchema = z
 export const MenuItemDataSchema = z
 	.object({
 		name_translatable_id: z.string().uuid().optional(),
-		names: z.record(z.string()).optional().openapi({ example: { en: 'Burger' } }),
+		names: z
+			.record(z.string())
+			.optional()
+			.openapi({ example: { en: 'Burger' } }),
 		description_translatable_id: z.string().uuid().optional(),
 		description: z.record(z.string()).optional(),
 		price: z.number().optional().openapi({ example: 9.99 }),
@@ -76,7 +89,8 @@ export const MenuItemDataSchema = z
 		stock: z.number().optional(),
 		tax_rates_id: z.string().uuid().optional(),
 		// allow arbitrary extra fields used by the app
-	}).passthrough()
+	})
+	.passthrough()
 	.openapi('MenuItemData');
 
 export const CreateMenuItemSchema = z
@@ -86,10 +100,12 @@ export const CreateMenuItemSchema = z
 		data: MenuItemDataSchema,
 		image: z
 			.object({
-				documentData: z.object({
-					document_type: z.nativeEnum(DOCUMENT_TYPE).optional(),
-					public: z.boolean().optional(),
-				}).optional(),
+				documentData: z
+					.object({
+						document_type: z.nativeEnum(DOCUMENT_TYPE).optional(),
+						public: z.boolean().optional(),
+					})
+					.optional(),
 				files: z.array(CreateFileDataSchema).optional(),
 				document_id: z.string().uuid().optional(),
 			})
@@ -146,4 +162,75 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateMenuItemEnabled', UpdateMenuItemEnabledSchema);
 	registry.register('UpdateMenuItemPrice', UpdateMenuItemPriceSchema);
 	registry.register('CreateMenuItemVersion', CreateMenuItemVersionSchema);
+}
+
+// -----------------------
+// DAO-level input schemas (named exports)
+// -----------------------
+
+export const CreateMenuInputSchema = z
+	.object({
+		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		isDailyMeal: z.boolean().optional().openapi({ example: false }),
+		date: z.string().datetime().optional().openapi({ example: '2025-01-15T00:00:00Z' }),
+	})
+	.openapi('CreateMenuInput');
+export type CreateMenuInput = z.infer<typeof CreateMenuInputSchema>;
+
+export const GetMenuByBusinessIdParamsSchema = z
+	.object({
+		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		isDailyMeal: z.boolean().optional().openapi({ example: false }),
+		startDate: z.string().datetime().optional().openapi({ example: '2025-01-15T00:00:00Z' }),
+	})
+	.openapi('GetMenuByBusinessIdParams');
+export type GetMenuByBusinessIdParams = z.infer<typeof GetMenuByBusinessIdParamsSchema>;
+
+export const DeleteMenuInputSchema = z
+	.object({
+		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+	})
+	.openapi('DeleteMenuInput');
+export type DeleteMenuInput = z.infer<typeof DeleteMenuInputSchema>;
+
+export const SetActiveMenuInputSchema = z
+	.object({
+		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		active: z.boolean().openapi({ example: true }),
+	})
+	.openapi('SetActiveMenuInput');
+export type SetActiveMenuInput = z.infer<typeof SetActiveMenuInputSchema>;
+
+export const UpdateMenuOrderInputSchema = z
+	.object({
+		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		orderedMenuCategoryIds: z.array(z.string().uuid()).openapi({ example: ['aa0e8400-e29b-41d4-a716-446655440000'] }),
+	})
+	.openapi('UpdateMenuOrderInput');
+export type UpdateMenuOrderInput = z.infer<typeof UpdateMenuOrderInputSchema>;
+
+export const GetMenuByDateInputSchema = z
+	.object({
+		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		date: z.string().datetime().openapi({ example: '2025-01-15T00:00:00Z' }),
+	})
+	.openapi('GetMenuByDateInput');
+export type GetMenuByDateInput = z.infer<typeof GetMenuByDateInputSchema>;
+
+export const GetMenuByIdParamsSchema = z
+	.object({
+		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+	})
+	.openapi('GetMenuByIdParams');
+export type GetMenuByIdParams = z.infer<typeof GetMenuByIdParamsSchema>;
+
+// Register DAO-level menu schemas
+export function registerMenuDaoSchemas(registry: OpenAPIRegistry) {
+	registry.register('CreateMenuInput', CreateMenuInputSchema);
+	registry.register('GetMenuByBusinessIdParams', GetMenuByBusinessIdParamsSchema);
+	registry.register('DeleteMenuInput', DeleteMenuInputSchema);
+	registry.register('SetActiveMenuInput', SetActiveMenuInputSchema);
+	registry.register('UpdateMenuOrderInput', UpdateMenuOrderInputSchema);
+	registry.register('GetMenuByDateInput', GetMenuByDateInputSchema);
+	registry.register('GetMenuByIdParams', GetMenuByIdParamsSchema);
 }

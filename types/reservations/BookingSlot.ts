@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { ScheduleSlot } from './ScheduleSlot.js';
-import { ScheduleSlotResponseSchema } from './ScheduleSlot';
+import { ScheduleSlotResponseBaseSchema } from './ScheduleSlot';
 
 extendZodWithOpenApi(z);
 
@@ -22,21 +22,26 @@ export type CreateBookingSlotInput = z.infer<typeof CreateBookingSlotSchema>;
 export const UpdateBookingSlotSchema = CreateBookingSlotSchema.partial().openapi('UpdateBookingSlot');
 export type UpdateBookingSlotInput = z.infer<typeof UpdateBookingSlotSchema>;
 
-export const BookingSlotResponseSchema = z
+export const BookingSlotResponseBaseSchema = z
 	.object({
 		booking_slot_id: z.string(),
 		schedule_slot_id: z.string(),
-		schedule_slot: ScheduleSlotResponseSchema,
 		start_time: z.string().datetime(),
 		end_time: z.string().datetime(),
 	})
-	.openapi('BookingSlotResponse');
+	.openapi('BookingSlotResponseBase');
 
+export const BookingSlotResponseSchema = BookingSlotResponseBaseSchema.extend({
+	schedule_slot: ScheduleSlotResponseBaseSchema,
+}).openapi('BookingSlotResponse');
+
+export type BookingSlotBase = z.infer<typeof BookingSlotResponseBaseSchema>;
 export type BookingSlotResponse = z.infer<typeof BookingSlotResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateBookingSlot', CreateBookingSlotSchema);
 	registry.register('UpdateBookingSlot', UpdateBookingSlotSchema);
+	registry.register('BookingSlotResponseBase', BookingSlotResponseBaseSchema);
 	registry.register('BookingSlotResponse', BookingSlotResponseSchema);
 }
 

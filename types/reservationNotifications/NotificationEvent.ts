@@ -4,9 +4,9 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { NotificationMapping } from './NotificationMapping.js';
 import type { NotificationPreference } from './NotificationPreference.js';
 import type { NotificationMessage } from './NotificationMessage.js';
-import { NotificationMappingResponseSchema } from './NotificationMapping';
-import { NotificationPreferenceResponseSchema } from './NotificationPreference';
-import { NotificationMessageResponseSchema } from './NotificationMessage';
+import { NotificationMappingResponseBaseSchema } from './NotificationMapping';
+import { NotificationPreferenceResponseBaseSchema } from './NotificationPreference';
+import { NotificationMessageResponseBaseSchema } from './NotificationMessage';
 
 extendZodWithOpenApi(z);
 
@@ -34,24 +34,29 @@ export const DeleteNotificationEventSchema = z
 export type CreateNotificationEventInput = z.infer<typeof CreateNotificationEventSchema>;
 export type UpdateNotificationEventInput = z.infer<typeof UpdateNotificationEventSchema>;
 
-export const NotificationEventResponseSchema = z
+export const NotificationEventResponseBaseSchema = z
 	.object({
 		notification_event_id: z.string(),
 		key: z.string(),
 		name: z.string(),
 		description: z.string().nullable().optional(),
-		mappings: z.array(NotificationMappingResponseSchema),
-		preferences: z.array(NotificationPreferenceResponseSchema),
-		messages: z.array(NotificationMessageResponseSchema),
 	})
-	.openapi('NotificationEventResponse');
+	.openapi('NotificationEventResponseBase');
 
+export const NotificationEventResponseSchema = NotificationEventResponseBaseSchema.extend({
+	mappings: z.array(NotificationMappingResponseBaseSchema),
+	preferences: z.array(NotificationPreferenceResponseBaseSchema),
+	messages: z.array(NotificationMessageResponseBaseSchema),
+}).openapi('NotificationEventResponse');
+
+export type NotificationEventBase = z.infer<typeof NotificationEventResponseBaseSchema>;
 export type NotificationEventResponse = z.infer<typeof NotificationEventResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateNotificationEvent', CreateNotificationEventSchema);
 	registry.register('UpdateNotificationEvent', UpdateNotificationEventSchema);
 	registry.register('DeleteNotificationEvent', DeleteNotificationEventSchema);
+	registry.register('NotificationEventResponseBase', NotificationEventResponseBaseSchema);
 	registry.register('NotificationEventResponse', NotificationEventResponseSchema);
 }
 

@@ -17,19 +17,25 @@ export const DeleteServiceCategorySchema = z.object({ category_id: z.string().uu
 export type CreateServiceCategoryInput = z.infer<typeof CreateServiceCategorySchema>;
 export type UpdateServiceCategoryInput = z.infer<typeof UpdateServiceCategorySchema>;
 
-export const ServiceCategoryResponseSchema = z
+export const ServiceCategoryResponseBaseSchema = z
 	.object({
 		service_category_id: z.string(),
 		reservation_module_id: z.string(),
 		name: z.unknown(),
+		parent_id: z.string().nullable().optional(),
+		color: z.string().nullable().optional(),
 	})
-	.openapi('ServiceCategoryResponse');
+	.openapi('ServiceCategoryResponseBase');
 
+export const ServiceCategoryResponseSchema = ServiceCategoryResponseBaseSchema.openapi('ServiceCategoryResponse');
+
+export type ServiceCategoryBase = z.infer<typeof ServiceCategoryResponseBaseSchema>;
 export type ServiceCategoryResponse = z.infer<typeof ServiceCategoryResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateServiceCategory', CreateServiceCategorySchema);
 	registry.register('UpdateServiceCategory', UpdateServiceCategorySchema);
+	registry.register('ServiceCategoryResponseBase', ServiceCategoryResponseBaseSchema);
 	registry.register('ServiceCategoryResponse', ServiceCategoryResponseSchema);
 }
 
@@ -37,4 +43,6 @@ export type ServiceCategory = {
 	service_category_id: string;
 	reservation_module_id: string;
 	name: unknown;
+	parent_id?: string | null;
+	color?: string | null;
 };

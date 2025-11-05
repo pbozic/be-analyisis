@@ -7,11 +7,11 @@ import type { Schedule } from './Schedule.js';
 import type { Booking } from './Booking.js';
 import type { Address } from '../addresses/Address.js';
 import type { ServiceLocation } from './ServiceLocation.js';
-import { ReservationModuleResponseSchema } from './ReservationModule';
-import { ScheduleResponseSchema } from './Schedule';
-import { BookingResponseSchema } from './Booking';
-import { AddressResponseSchema } from '../addresses/Address';
-import { ServiceLocationResponseSchema } from './ServiceLocation';
+import { ReservationModuleResponseBaseSchema } from './ReservationModule';
+import { ScheduleResponseBaseSchema } from './Schedule';
+import { BookingResponseBaseSchema } from './Booking';
+import { AddressResponseBaseSchema } from '../addresses/Address';
+import { ServiceLocationResponseBaseSchema } from './ServiceLocation';
 
 extendZodWithOpenApi(z);
 
@@ -38,7 +38,7 @@ export const DeleteLocationSchema = z.object({ location_id: z.string().uuid() })
 export type CreateLocationInput = z.infer<typeof CreateLocationSchema>;
 export type UpdateLocationInput = z.infer<typeof UpdateLocationSchema>;
 
-export const LocationResponseSchema = z
+export const LocationResponseBaseSchema = z
 	.object({
 		location_id: z.string(),
 		reservation_module_id: z.string(),
@@ -49,19 +49,24 @@ export const LocationResponseSchema = z
 		accepts_online: z.boolean(),
 		closed_on_holidays: z.boolean(),
 		working_days: z.unknown(),
-		reservation_module: ReservationModuleResponseSchema,
-		schedules: z.array(ScheduleResponseSchema),
-		bookings: z.array(BookingResponseSchema),
-		address: AddressResponseSchema.nullable().optional(),
-		service_locations: z.array(ServiceLocationResponseSchema),
 	})
-	.openapi('LocationResponse');
+	.openapi('LocationResponseBase');
 
+export const LocationResponseSchema = LocationResponseBaseSchema.extend({
+	reservation_module: ReservationModuleResponseBaseSchema,
+	schedules: z.array(ScheduleResponseBaseSchema),
+	bookings: z.array(BookingResponseBaseSchema),
+	address: AddressResponseBaseSchema.nullable().optional(),
+	service_locations: z.array(ServiceLocationResponseBaseSchema),
+}).openapi('LocationResponse');
+
+export type LocationBase = z.infer<typeof LocationResponseBaseSchema>;
 export type LocationResponse = z.infer<typeof LocationResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateLocation', CreateLocationSchema);
 	registry.register('UpdateLocation', UpdateLocationSchema);
+	registry.register('LocationResponseBase', LocationResponseBaseSchema);
 	registry.register('LocationResponse', LocationResponseSchema);
 }
 

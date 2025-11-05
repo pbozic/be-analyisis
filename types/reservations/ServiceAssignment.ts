@@ -5,8 +5,8 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import type { Employee } from './Employee.js';
 import type { Service } from './Service.js';
-import { EmployeeResponseSchema } from './Employee';
-import { ServiceResponseSchema } from './Service';
+import { EmployeeResponseBaseSchema } from './Employee';
+import { ServiceResponseBaseSchema } from './Service';
 
 extendZodWithOpenApi(z);
 
@@ -22,20 +22,25 @@ export type CreateServiceAssignmentInput = z.infer<typeof CreateServiceAssignmen
 export const UpdateServiceAssignmentSchema = CreateServiceAssignmentSchema.partial().openapi('UpdateServiceAssignment');
 export type UpdateServiceAssignmentInput = z.infer<typeof UpdateServiceAssignmentSchema>;
 
-export const ServiceAssignmentResponseSchema = z
+export const ServiceAssignmentResponseBaseSchema = z
 	.object({
 		employee_id: z.string(),
 		service_id: z.string(),
-		employee: EmployeeResponseSchema,
-		service: ServiceResponseSchema,
 	})
-	.openapi('ServiceAssignmentResponse');
+	.openapi('ServiceAssignmentResponseBase');
 
+export const ServiceAssignmentResponseSchema = ServiceAssignmentResponseBaseSchema.extend({
+	employee: EmployeeResponseBaseSchema,
+	service: ServiceResponseBaseSchema,
+}).openapi('ServiceAssignmentResponse');
+
+export type ServiceAssignmentBase = z.infer<typeof ServiceAssignmentResponseBaseSchema>;
 export type ServiceAssignmentResponse = z.infer<typeof ServiceAssignmentResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateServiceAssignment', CreateServiceAssignmentSchema);
 	registry.register('UpdateServiceAssignment', UpdateServiceAssignmentSchema);
+	registry.register('ServiceAssignmentResponseBase', ServiceAssignmentResponseBaseSchema);
 	registry.register('ServiceAssignmentResponse', ServiceAssignmentResponseSchema);
 }
 
