@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, Timestamp } from '../../primitives';
+import { UUID, Timestamp } from '../../primitives.js';
 import { BasicUserDataSchema } from '../common/User.dto.ts';
 import { BusinessRefSchema } from '../common/Business.dto.ts';
+import { OrderRefSchema } from '../common/Order.dto.ts';
 
 extendZodWithOpenApi(z);
 
@@ -11,18 +12,11 @@ extendZodWithOpenApi(z);
 // Scoring Points DTOs
 // =======================
 
-export const OrderRefSchema = z
-	.object({
-		order_id: UUID,
-		label: z.string().default('order'),
-	})
-	.openapi('ScoringPointsOrderRef');
 export type ScoringPointsOrderRef = z.infer<typeof OrderRefSchema>;
 
 export const LateEventRefSchema = z
 	.object({
 		late_events_id: UUID,
-		label: z.string().default('late_event'),
 	})
 	.openapi('LateEventRef');
 export type LateEventRef = z.infer<typeof LateEventRefSchema>;
@@ -85,14 +79,12 @@ export function toScoringPointsDetail(row: unknown): ScoringPointsDetail {
 			})
 		: undefined;
 	const delivery_order = r.delivery_orders
-		? OrderRefSchema.parse({ order_id: r.delivery_orders.order_id as string, label: 'delivery_order' })
+		? OrderRefSchema.parse({ order_id: r.delivery_orders.order_id as string })
 		: undefined;
-	const taxi_order = r.taxi_orders
-		? OrderRefSchema.parse({ order_id: r.taxi_orders.order_id as string, label: 'taxi_order' })
-		: undefined;
+	const taxi_order = r.taxi_orders ? OrderRefSchema.parse({ order_id: r.taxi_orders.order_id as string }) : undefined;
 	const late_events = Array.isArray(r.late_events)
 		? (r.late_events as Array<{ late_events_id: string }>).map((le) =>
-				LateEventRefSchema.parse({ late_events_id: le.late_events_id, label: 'late_event' })
+				LateEventRefSchema.parse({ late_events_id: le.late_events_id })
 			)
 		: [];
 	return ScoringPointsDetailSchema.parse({
@@ -118,7 +110,6 @@ export function toScoringPointsDetail(row: unknown): ScoringPointsDetail {
 // Registry
 // =======================
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('ScoringPointsOrderRef', OrderRefSchema);
 	registry.register('LateEventRef', LateEventRefSchema);
 	registry.register('ScoringPointsBase', ScoringPointsBaseSchema);
 	registry.register('ScoringPointsDetail', ScoringPointsDetailSchema);

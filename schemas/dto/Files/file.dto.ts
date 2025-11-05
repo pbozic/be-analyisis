@@ -11,7 +11,7 @@ extendZodWithOpenApi(z);
 
 export const CreateFileDataSchema = z
 	.object({
-		file_type: z.nativeEnum(FILE_TYPE).openapi({ example: FILE_TYPE.OTHER }),
+		file_type: z.nativeEnum(FILE_TYPE).openapi({ example: 'IMAGE' }),
 		mime_type: z.string().openapi({ example: 'image/png' }),
 		base64: z.string().openapi({ example: 'iVBORw0KGgoAAAANSUhEUgAA...' }),
 		public: z.boolean().optional().default(false).openapi({ example: false }),
@@ -23,9 +23,11 @@ export const CreateFileDataSchema = z
 	})
 	.openapi('CreateFileData');
 
-export const CreateFileBodySchema = z.object({
-	fileData: CreateFileDataSchema,
-}).openapi('CreateFileBody');
+export const CreateFileBodySchema = z
+	.object({
+		fileData: CreateFileDataSchema,
+	})
+	.openapi('CreateFileBody');
 
 export const UpdateFileBodySchema = z
 	.object({

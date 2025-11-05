@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, Timestamp } from '../../primitives';
+import { UUID, Timestamp } from '../../primitives.js';
 import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.ts';
 import { BasicUserDataSchema } from '../common/User.dto.ts';
 
@@ -14,7 +14,6 @@ extendZodWithOpenApi(z);
 export const DriverRefSchema = z
 	.object({
 		driver_id: UUID,
-		label: z.string().default('driver'),
 	})
 	.openapi('DriverRef');
 export type DriverRef = z.infer<typeof DriverRefSchema>;

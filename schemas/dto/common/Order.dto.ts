@@ -7,6 +7,13 @@ import { UUID } from '../../primitives.js';
 extendZodWithOpenApi(z);
 
 // === Order Item Patterns ===
+// Minimal Order Ref (shared)
+export const OrderRefSchema = z
+	.object({
+		order_id: UUID,
+	})
+	.openapi('OrderRef');
+export type OrderRef = z.infer<typeof OrderRefSchema>;
 
 // Order Item with addons (used in delivery orders, taxi cargo, etc.)
 export const OrderItemSchema = z
@@ -104,6 +111,7 @@ export type OrderLocation = z.infer<typeof OrderLocationSchema>;
 
 // === OpenAPI Registry ===
 export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('OrderRef', OrderRefSchema);
 	registry.register('OrderItem', OrderItemSchema);
 	registry.register('OrderItemWithAddons', OrderItemWithAddonsSchema);
 	registry.register('OrderItemUpdate', OrderItemUpdateSchema);

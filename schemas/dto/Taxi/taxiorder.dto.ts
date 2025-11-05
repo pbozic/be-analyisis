@@ -257,7 +257,6 @@ export type TaxiOrderBase = z.infer<typeof TaxiOrderBaseSchema>;
 export const TaxiOrderRefSchema = z
 	.object({
 		order_id: UUID,
-		label: z.string().default('taxi_order'),
 	})
 	.openapi('TaxiOrderRef');
 export type TaxiOrderRef = z.infer<typeof TaxiOrderRefSchema>;
@@ -301,7 +300,7 @@ type PrismaTaxiOrder = {
 
 export function toTaxiOrderRef(row: unknown): TaxiOrderRef {
 	const r = row as { order_id: string };
-	return TaxiOrderRefSchema.parse({ order_id: r.order_id, label: 'taxi_order' });
+	return TaxiOrderRefSchema.parse({ order_id: r.order_id });
 }
 
 // Local mapper to VehicleBase (normalize timestamps if present)

@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, Timestamp } from '../../primitives';
+import { UUID, Timestamp } from '../../primitives.js';
+import { CategoryRefSchema } from '../Category/category.dto.ts';
 
 extendZodWithOpenApi(z);
 
@@ -34,14 +35,6 @@ export const DailyMealCategoryBaseSchema = z
 	.openapi('DailyMealCategoryBase');
 export type DailyMealCategoryBase = z.infer<typeof DailyMealCategoryBaseSchema>;
 
-export const CategoryRefSchema = z
-	.object({
-		category_id: UUID,
-		name: z.string().nullable().optional(),
-	})
-	.openapi('CategoryRef');
-export type CategoryRef = z.infer<typeof CategoryRefSchema>;
-
 export const DailyMealCategoryDetailSchema = DailyMealCategoryBaseSchema.extend({
 	category: CategoryRefSchema.optional(),
 	daily_meal_category_prices: z.array(DailyMealCategoryPriceBaseSchema).optional().default([]),
@@ -72,7 +65,7 @@ export function toDailyMealCategoryPriceBase(row: unknown): DailyMealCategoryPri
 	});
 }
 
-type CategoryLike = { category_id: string; name?: string | null };
+type CategoryLike = { categories_id: string; name?: string | null; tag?: string; category_type?: string };
 type PrismaDailyMealCategory = {
 	daily_meal_category_id: string;
 	business_id: string;
@@ -91,10 +84,7 @@ export function toDailyMealCategoryDetail(row: unknown): DailyMealCategoryDetail
 		? r.daily_meal_category_prices.map((p: unknown) => toDailyMealCategoryPriceBase(p))
 		: [];
 	const category = r.category
-		? CategoryRefSchema.parse({
-				category_id: (r.category as CategoryLike).category_id,
-				name: (r.category as CategoryLike).name ?? undefined,
-			})
+		? (CategoryRefSchema.parse(r.category) as z.infer<typeof CategoryRefSchema>)
 		: undefined;
 	return DailyMealCategoryDetailSchema.parse({
 		daily_meal_category_id: r.daily_meal_category_id,
@@ -115,6 +105,5 @@ export function toDailyMealCategoryDetail(row: unknown): DailyMealCategoryDetail
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('DailyMealCategoryPriceBase', DailyMealCategoryPriceBaseSchema);
 	registry.register('DailyMealCategoryBase', DailyMealCategoryBaseSchema);
-	registry.register('CategoryRef', CategoryRefSchema);
 	registry.register('DailyMealCategoryDetail', DailyMealCategoryDetailSchema);
 }

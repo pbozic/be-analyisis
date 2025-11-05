@@ -2,20 +2,12 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { CASHBACK_TYPE, CASHBACK_SOURCE, CASHBACK_STATUS } from '@prisma/client';
 
-import { UUID, Timestamp } from '../../primitives';
+import { UUID, Timestamp } from '../../primitives.js';
+import { OrderRefSchema, OrderRef } from '../common/Order.dto.ts';
 
 extendZodWithOpenApi(z);
 
-// =======================
-// Minimal Refs used in relations
-// =======================
-export const OrderRefSchema = z
-	.object({
-		order_id: UUID,
-		label: z.string().min(1),
-	})
-	.openapi('OrderRef');
-export type OrderRef = z.infer<typeof OrderRefSchema>;
+// Using shared common OrderRefSchema
 
 // =======================
 // Cashback DTOs
@@ -41,7 +33,6 @@ export type CashbackBase = z.infer<typeof CashbackBaseSchema>;
 export const CashbackRefSchema = z
 	.object({
 		cashback_id: UUID,
-		label: z.string().min(1),
 	})
 	.openapi('CashbackRef');
 export type CashbackRef = z.infer<typeof CashbackRefSchema>;
@@ -58,15 +49,13 @@ export type CashbackDetail = z.infer<typeof CashbackDetailSchema>;
 // =======================
 export function toOrderRef(order: unknown | null | undefined): OrderRef | null {
 	if (!order) return null;
-	const o = order as { order_id: string; order_number?: number | null };
-	const label = o.order_number ? `#${o.order_number}` : o.order_id;
-	return OrderRefSchema.parse({ order_id: o.order_id, label });
+	const o = order as { order_id: string };
+	return OrderRefSchema.parse({ order_id: o.order_id });
 }
 
 export function toCashbackRef(cashback: unknown): CashbackRef {
-	const c = cashback as { cashback_id: string; type?: CASHBACK_TYPE; amount?: number };
-	const label = `${c.type ?? 'CASHBACK'} ${c.amount ?? ''}`.trim();
-	return CashbackRefSchema.parse({ cashback_id: c.cashback_id, label });
+	const c = cashback as { cashback_id: string };
+	return CashbackRefSchema.parse({ cashback_id: c.cashback_id });
 }
 
 type PrismaCashback = {
@@ -110,7 +99,6 @@ export function toCashbackDetail(cashback: unknown): CashbackDetail {
 // Registry
 // =======================
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('OrderRef', OrderRefSchema);
 	registry.register('CashbackBase', CashbackBaseSchema);
 	registry.register('CashbackRef', CashbackRefSchema);
 	registry.register('CashbackDetail', CashbackDetailSchema);

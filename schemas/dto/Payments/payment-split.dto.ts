@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { PaymentBaseSchema } from './payment.dto.ts';
+import { PaymentRefSchema } from './payment.dto.ts';
 import { UUID, Timestamp } from '../../primitives.js';
 
 extendZodWithOpenApi(z);
@@ -22,11 +22,10 @@ export const PaymentSplitBaseSchema = z
 	.openapi({ title: 'PaymentSplitBase', description: 'Base payment split (no relations)' });
 export type PaymentSplitBase = z.infer<typeof PaymentSplitBaseSchema>;
 
-// === Payment Split Ref ===
+// === Payment Split Ref (minimal identity) ===
 export const PaymentSplitRefSchema = z
 	.object({
 		payment_split_id: UUID,
-		label: z.string().default('payment_split'),
 	})
 	.openapi({ title: 'PaymentSplitRef', description: 'Minimal payment split reference' });
 export type PaymentSplitRef = z.infer<typeof PaymentSplitRefSchema>;
@@ -36,7 +35,7 @@ export type PaymentSplitRef = z.infer<typeof PaymentSplitRefSchema>;
 // =======================
 
 export const PaymentSplitDetailSchema = PaymentSplitBaseSchema.extend({
-	payment: PaymentBaseSchema.optional(),
+	payment: PaymentRefSchema.optional(),
 }).openapi('PaymentSplitDetail');
 export type PaymentSplitDetail = z.infer<typeof PaymentSplitDetailSchema>;
 
@@ -54,11 +53,12 @@ export function toPaymentSplitDetail(row: unknown): PaymentSplitDetail {
 	const r = row as PrismaPaymentSplit;
 	return PaymentSplitDetailSchema.parse({
 		...PaymentSplitBaseSchema.parse(r),
-		payment: r.payment ? PaymentBaseSchema.parse(r.payment) : undefined,
+		payment: r.payment ? PaymentRefSchema.parse(r.payment) : undefined,
 	});
 }
 // === OpenAPI Registry ===
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('PaymentSplitBase', PaymentSplitBaseSchema);
+	registry.register('PaymentSplitRef', PaymentSplitRefSchema);
 	registry.register('PaymentSplitDetail', PaymentSplitDetailSchema);
 }

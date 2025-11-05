@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, Timestamp } from '../../primitives';
-import { PaymentSplitBaseSchema } from './payment-split.dto.ts';
+import { UUID, Timestamp } from '../../primitives.js';
+import { PaymentSplitRefSchema } from './payment-split.dto.ts';
 
 extendZodWithOpenApi(z);
 
@@ -26,8 +26,18 @@ export const PaymentBaseSchema = z
 	.openapi('PaymentBase');
 export type PaymentBase = z.infer<typeof PaymentBaseSchema>;
 
+// =======================
+// Ref Schema - minimal identity for embedding elsewhere
+// =======================
+export const PaymentRefSchema = z
+	.object({
+		payment_id: UUID,
+	})
+	.openapi('PaymentRef');
+export type PaymentRef = z.infer<typeof PaymentRefSchema>;
+
 export const PaymentDetailSchema = PaymentBaseSchema.extend({
-	payment_splits: z.array(PaymentSplitBaseSchema).optional().default([]),
+	payment_splits: z.array(PaymentSplitRefSchema).optional().default([]),
 }).openapi('PaymentDetail');
 export type PaymentDetail = z.infer<typeof PaymentDetailSchema>;
 
@@ -35,7 +45,7 @@ export type PaymentDetail = z.infer<typeof PaymentDetailSchema>;
 // Mappers
 // =======================
 
-type PrismaPaymentSplit = z.input<typeof PaymentSplitBaseSchema>;
+type PrismaPaymentSplitRef = z.input<typeof PaymentSplitRefSchema>;
 type PrismaPayment = {
 	payment_id: string;
 	user_id: string;
@@ -47,7 +57,7 @@ type PrismaPayment = {
 	status?: string | null;
 	created_at?: string | Date | null;
 	updated_at?: string | Date | null;
-	payment_splits?: PrismaPaymentSplit[];
+	payment_splits?: PrismaPaymentSplitRef[];
 };
 
 export function toPaymentDetail(row: unknown): PaymentDetail {
@@ -64,7 +74,7 @@ export function toPaymentDetail(row: unknown): PaymentDetail {
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
 		payment_splits: Array.isArray(r.payment_splits)
-			? r.payment_splits.map((s) => PaymentSplitBaseSchema.parse(s))
+			? r.payment_splits.map((s) => PaymentSplitRefSchema.parse(s))
 			: [],
 	});
 }
@@ -75,5 +85,6 @@ export function toPaymentDetail(row: unknown): PaymentDetail {
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('PaymentBase', PaymentBaseSchema);
+	registry.register('PaymentRef', PaymentRefSchema);
 	registry.register('PaymentDetail', PaymentDetailSchema);
 }

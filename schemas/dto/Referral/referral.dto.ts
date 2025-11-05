@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, Timestamp } from '../../primitives';
+import { UUID, Timestamp } from '../../primitives.js';
 import { BasicUserDataSchema } from '../common/User.dto.ts';
 
 extendZodWithOpenApi(z);
@@ -28,7 +28,6 @@ export type ReferralBase = z.infer<typeof ReferralBaseSchema>;
 export const ReferralRefSchema = z
 	.object({
 		referral_id: UUID,
-		label: z.string().min(1),
 	})
 	.openapi('ReferralRef');
 export type ReferralRef = z.infer<typeof ReferralRefSchema>;
@@ -63,8 +62,8 @@ function toBasicUser(user: unknown | null | undefined) {
 }
 
 export function toReferralRef(referral: unknown): ReferralRef {
-	const r = referral as { referral_id: string; referral_code?: string };
-	return ReferralRefSchema.parse({ referral_id: r.referral_id, label: r.referral_code || r.referral_id });
+	const r = referral as { referral_id: string };
+	return ReferralRefSchema.parse({ referral_id: r.referral_id });
 }
 
 type PrismaReferral = {
