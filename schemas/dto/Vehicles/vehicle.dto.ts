@@ -5,6 +5,156 @@ import { VEHICLE_CATEGORY, VEHICLE_CLASS, DOCUMENT_TYPE, FILE_TYPE } from '@pris
 import { UUID, Timestamp } from '../../primitives';
 extendZodWithOpenApi(z);
 
+// =============================
+// Vehicle Response DTOs (DAO)
+// =============================
+
+// Minimal refs for related models (kept local to avoid cycles)
+export const UserRefSchema = z
+	.object({
+		user_id: UUID,
+		label: z.string().min(1),
+	})
+	.openapi('UserRef');
+export type UserRef = z.infer<typeof UserRefSchema>;
+
+export const DriverRefOutSchema = z
+	.object({
+		driver_id: UUID,
+		user: UserRefSchema,
+	})
+	.openapi('DriverRefOut');
+export type DriverRefOut = z.infer<typeof DriverRefOutSchema>;
+
+export const DocumentRefSchema = z
+	.object({
+		document_id: UUID,
+		label: z.string().min(1),
+	})
+	.openapi('DocumentRef');
+export type DocumentRef = z.infer<typeof DocumentRefSchema>;
+
+export const VehicleBaseSchema = z
+	.object({
+		vehicle_id: UUID,
+		transport_module_id: UUID.nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		class: z.nativeEnum(VEHICLE_CLASS).nullable().optional(),
+		category: z.nativeEnum(VEHICLE_CATEGORY).nullable().optional(),
+		make: z.string().nullable().optional(),
+		model: z.string().nullable().optional(),
+		color: z.string().nullable().optional(),
+		license_plate: z.string().nullable().optional(),
+		business_premise_id: UUID.nullable().optional(),
+		created_at: Timestamp.optional(),
+		updated_at: Timestamp.optional(),
+	})
+	.openapi('VehicleBase');
+export type VehicleBase = z.infer<typeof VehicleBaseSchema>;
+
+export const VehicleRefSchema = z
+	.object({
+		vehicle_id: UUID,
+		label: z.string().min(1),
+	})
+	.openapi('VehicleRef');
+export type VehicleRef = z.infer<typeof VehicleRefSchema>;
+
+export const VehicleDetailSchema = VehicleBaseSchema.extend({
+	current_driver: DriverRefOutSchema.nullable().optional(),
+	drivers: z.array(DriverRefOutSchema).optional().default([]),
+	documents: z.array(DocumentRefSchema).optional().default([]),
+}).openapi('VehicleDetail');
+export type VehicleDetail = z.infer<typeof VehicleDetailSchema>;
+
+// Mappers from Prisma payloads to DTOs
+export function toUserRef(user: unknown | null | undefined): UserRef | null {
+	if (!user) return null;
+	const u = user as { user_id: string; first_name?: string | null; last_name?: string | null };
+	const label = [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || u.user_id;
+	return UserRefSchema.parse({ user_id: u.user_id, label });
+}
+
+export function toDriverRefOut(driver: unknown | null | undefined): DriverRefOut | null {
+	if (!driver) return null;
+	const d = driver as { driver_id: string; user?: unknown };
+	const userRef = toUserRef(d.user);
+	return DriverRefOutSchema.parse({ driver_id: d.driver_id, user: userRef! });
+}
+
+export function toDocumentRef(doc: unknown): DocumentRef {
+	const d = doc as { document_id: string; document_type?: string; documents_type?: string };
+	const label = d.document_type || d.documents_type || 'document';
+	return DocumentRefSchema.parse({ document_id: d.document_id, label });
+}
+
+export function toVehicleRef(vehicle: unknown): VehicleRef {
+	const v = vehicle as {
+		vehicle_id: string;
+		license_plate?: string | null;
+		make?: string | null;
+		model?: string | null;
+	};
+	const makeModel = [v.make, v.model].filter(Boolean).join(' ').trim();
+	const label = v.license_plate || makeModel || v.vehicle_id;
+	return VehicleRefSchema.parse({ vehicle_id: v.vehicle_id, label });
+}
+
+type PrismaVehicle = {
+	vehicle_id: string;
+	transport_module_id?: string | null;
+	active?: boolean | null;
+	class?: VEHICLE_CLASS | null;
+	category?: VEHICLE_CATEGORY | null;
+	make?: string | null;
+	model?: string | null;
+	color?: string | null;
+	license_plate?: string | null;
+	business_premise_id?: string | null;
+	created_at?: string | Date | null;
+	updated_at?: string | Date | null;
+	current_driver?: {
+		driver_id: string;
+		user?: { user_id: string; first_name?: string | null; last_name?: string | null };
+	} | null;
+	drivers?: Array<{
+		driver?: {
+			driver_id: string;
+			user?: { user_id: string; first_name?: string | null; last_name?: string | null };
+		};
+	}>;
+	documents?: Array<{ document_id: string; document_type?: string; documents_type?: string }>;
+};
+
+export function toVehicleDetail(vehicle: unknown): VehicleDetail {
+	const v = vehicle as PrismaVehicle;
+	const currentDriver = v.current_driver ? toDriverRefOut(v.current_driver) : null;
+	const driverRecords = Array.isArray(v.drivers) ? v.drivers : [];
+	const drivers = driverRecords
+		.map((vd) => vd?.driver)
+		.filter(Boolean)
+		.map((d) => toDriverRefOut(d)!) as DriverRefOut[];
+	const documentRecords = Array.isArray(v.documents) ? v.documents : [];
+	const documents = documentRecords.map((d) => toDocumentRef(d));
+	return VehicleDetailSchema.parse({
+		vehicle_id: v.vehicle_id,
+		transport_module_id: v.transport_module_id ?? null,
+		active: v.active ?? null,
+		class: v.class ?? null,
+		category: v.category ?? null,
+		make: v.make ?? null,
+		model: v.model ?? null,
+		color: v.color ?? null,
+		license_plate: v.license_plate ?? null,
+		business_premise_id: v.business_premise_id ?? null,
+		created_at: v.created_at ? new Date(v.created_at as string | Date).toISOString() : undefined,
+		updated_at: v.updated_at ? new Date(v.updated_at as string | Date).toISOString() : undefined,
+		current_driver: currentDriver,
+		drivers,
+		documents,
+	});
+}
+
 // Base vehicle input (DB-level fields only; no ids/timestamps)
 export const VehicleEntityBaseSchema = z
 	.object({
@@ -114,6 +264,13 @@ export const VehicleDriverAssignmentSchema = z
 export type VehicleDriverAssignment = z.infer<typeof VehicleDriverAssignmentSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
+	// Responses
+	registry.register('UserRef', UserRefSchema);
+	registry.register('DriverRefOut', DriverRefOutSchema);
+	registry.register('DocumentRef', DocumentRefSchema);
+	registry.register('VehicleBase', VehicleBaseSchema);
+	registry.register('VehicleRef', VehicleRefSchema);
+	registry.register('VehicleDetail', VehicleDetailSchema);
 	registry.register('VehicleEntityBase', VehicleEntityBaseSchema);
 	registry.register('VehicleCreateInput', VehicleCreateInputSchema);
 	registry.register('VehicleUpdateInput', VehicleUpdateInputSchema);

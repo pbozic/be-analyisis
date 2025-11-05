@@ -1,5 +1,4 @@
-import { promo_analytics } from '@prisma/client';
-
+import { PromoAnalyticsDetail } from '../schemas/dto/PromoAnalytics/promo-analytics.dto.js';
 import prisma from '../prisma/prisma.js';
 /**
  * Get all promo analytics for a specific period.
@@ -7,9 +6,13 @@ import prisma from '../prisma/prisma.js';
  * @param {string} businessId - The ID of the business.
  * @param {Date} start - The start date of the period.
  * @param {Date} end - The end date of the period.
- * @returns {Promise<promo_analytics[]>} - The promo analytics for the specified period.
+ * @returns {Promise<PromoAnalyticsDetail[]>} - The promo analytics for the specified period.
  */
-async function getAllPromoAnalyticsForPeriod(businessId: string, start: Date, end: Date): Promise<promo_analytics[]> {
+async function getAllPromoAnalyticsForPeriod(
+	businessId: string,
+	start: Date,
+	end: Date
+): Promise<PromoAnalyticsDetail[]> {
 	return await prisma.promo_analytics.findMany({
 		where: {
 			business_id: businessId,
@@ -18,7 +21,7 @@ async function getAllPromoAnalyticsForPeriod(businessId: string, start: Date, en
 				lte: end,
 			},
 		},
-		include: { order: true },
+		include: { order: { select: { order_id: true } } },
 	});
 }
 /**
@@ -31,7 +34,7 @@ async function getAllPromoAnalyticsForPeriod(businessId: string, start: Date, en
  * @param {string[]} wordIds - The IDs of the words to filter by.
  * @param {string[]} sectionIds - The IDs of the sections to filter by.
  * @param {string[]} adIds - The IDs of the ads to filter by.
- * @returns {Promise<promo_analytics[]>} - The filtered promo analytics.
+ * @returns {Promise<PromoAnalyticsDetail[]>} - The filtered promo analytics.
  */
 async function getPromoAnalyticsForPeriodByPromoType(
 	businessId: string,
@@ -41,7 +44,7 @@ async function getPromoAnalyticsForPeriodByPromoType(
 	wordIds?: string[],
 	sectionIds?: string[],
 	adIds?: string[]
-): Promise<promo_analytics[]> {
+): Promise<PromoAnalyticsDetail[]> {
 	return await prisma.promo_analytics.findMany({
 		where: {
 			business_id: businessId,
@@ -54,7 +57,7 @@ async function getPromoAnalyticsForPeriodByPromoType(
 			promo_ads_id: Array.isArray(adIds) && adIds.length > 0 ? { in: adIds } : undefined,
 			word_id: Array.isArray(wordIds) && wordIds.length > 0 ? { in: wordIds } : undefined,
 		},
-		include: { order: true },
+		include: { order: { select: { order_id: true } } },
 	});
 }
 export { getPromoAnalyticsForPeriodByPromoType, getAllPromoAnalyticsForPeriod };

@@ -1,13 +1,12 @@
-import type { Prisma } from '@prisma/client';
-
+import { TaxRateInput, TaxRateDetail } from '../schemas/dto/Tax/tax.dto.js';
 import prisma from '../prisma/prisma.js';
 /**
  * Create a new tax rate
  *
- * @param {Prisma.tax_ratesCreateInput} data - The tax rate data.
- * @returns {Promise<object>} The created tax rate.
+ * @param {TaxRateInput} data - The tax rate data.
+ * @returns {Promise<TaxRateDetail>} The created tax rate.
  */
-export async function createTaxRate(data: Prisma.tax_ratesCreateInput) {
+export async function createTaxRate(data: TaxRateInput): Promise<TaxRateDetail> {
 	try {
 		return await prisma.tax_rates.create({
 			data: { ...data },
@@ -20,9 +19,9 @@ export async function createTaxRate(data: Prisma.tax_ratesCreateInput) {
  * Get tax rate by name
  *
  * @param {string} name - The name of the tax rate.
- * @returns {Promise<object>} The tax rate.
+ * @returns {Promise<TaxRateDetail>} The tax rate.
  */
-export async function getTaxByName(name: string) {
+export async function getTaxByName(name: string): Promise<TaxRateDetail | null> {
 	try {
 		return await prisma.tax_rates.findFirst({
 			where: {
@@ -37,9 +36,9 @@ export async function getTaxByName(name: string) {
 /**
  * Get all active tax rates
  *
- * @returns {Promise<object[]>} The list of active tax rates.
+ * @returns {Promise<TaxRateDetail[]>} The list of active tax rates.
  */
-export async function getActiveTaxRates() {
+export async function getActiveTaxRates(): Promise<TaxRateDetail[]> {
 	try {
 		return await prisma.tax_rates.findMany({
 			where: {
@@ -56,9 +55,9 @@ export async function getActiveTaxRates() {
 /**
  * Get all inactive tax rates
  *
- * @returns {Promise<object[]>} The list of inactive tax rates.
+ * @returns {Promise<TaxRateDetail[]>} The list of inactive tax rates.
  */
-export async function getInactiveTaxRates() {
+export async function getInactiveTaxRates(): Promise<TaxRateDetail[]> {
 	try {
 		return await prisma.tax_rates.findMany({
 			where: {

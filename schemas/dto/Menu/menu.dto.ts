@@ -1,7 +1,7 @@
-
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { DOCUMENT_TYPE } from '@prisma/client';
+
 import { CreateFileDataSchema } from '../Files/file.dto.ts';
 
 extendZodWithOpenApi(z);
@@ -20,7 +20,10 @@ export const CreateDailyMealMenuSchema = z
 	.object({
 		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		date: z.string().datetime().openapi({ example: '2025-01-15T00:00:00Z' }),
-		menu_category: z.any().optional().openapi({ example: { name: { en: 'Lunch' }, price: 5.5 } }),
+		menu_category: z
+			.any()
+			.optional()
+			.openapi({ example: { name: { en: 'Lunch' }, price: 5.5 } }),
 	})
 	.openapi('CreateDailyMealMenu');
 
@@ -30,15 +33,22 @@ export const CreateDailyMealMenuSchema = z
 export const MenuCategoryDataSchema = z
 	.object({
 		name_translatable_id: z.string().uuid().optional(),
-		names: z.record(z.string()).optional().openapi({ example: { en: 'Starters', sl: 'Predjedi' } }),
+		names: z
+			.record(z.string())
+			.optional()
+			.openapi({ example: { en: 'Starters', sl: 'Predjedi' } }),
 		description_translatable_id: z.string().uuid().optional(),
 		description: z.record(z.string()).optional(),
-		categories: z.array(z.string()).optional().openapi({ example: ['salads', 'vegan'] }),
+		categories: z
+			.array(z.string())
+			.optional()
+			.openapi({ example: ['salads', 'vegan'] }),
 		business_id: z.string().uuid().optional(),
 		menu_id: z.string().uuid().optional(),
 		order: z.number().int().optional(),
 		price: z.number().optional(),
-	}).passthrough()
+	})
+	.passthrough()
 	.openapi('MenuCategoryData');
 
 export const CreateMenuCategorySchema = z
@@ -56,7 +66,10 @@ export const CreateMenuCategorySchema = z
 export const MenuItemDataSchema = z
 	.object({
 		name_translatable_id: z.string().uuid().optional(),
-		names: z.record(z.string()).optional().openapi({ example: { en: 'Burger' } }),
+		names: z
+			.record(z.string())
+			.optional()
+			.openapi({ example: { en: 'Burger' } }),
 		description_translatable_id: z.string().uuid().optional(),
 		description: z.record(z.string()).optional(),
 		price: z.number().optional().openapi({ example: 9.99 }),
@@ -76,7 +89,8 @@ export const MenuItemDataSchema = z
 		stock: z.number().optional(),
 		tax_rates_id: z.string().uuid().optional(),
 		// allow arbitrary extra fields used by the app
-	}).passthrough()
+	})
+	.passthrough()
 	.openapi('MenuItemData');
 
 export const CreateMenuItemSchema = z
@@ -86,10 +100,12 @@ export const CreateMenuItemSchema = z
 		data: MenuItemDataSchema,
 		image: z
 			.object({
-				documentData: z.object({
-					document_type: z.nativeEnum(DOCUMENT_TYPE).optional(),
-					public: z.boolean().optional(),
-				}).optional(),
+				documentData: z
+					.object({
+						document_type: z.nativeEnum(DOCUMENT_TYPE).optional(),
+						public: z.boolean().optional(),
+					})
+					.optional(),
 				files: z.array(CreateFileDataSchema).optional(),
 				document_id: z.string().uuid().optional(),
 			})
