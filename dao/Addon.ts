@@ -1,15 +1,20 @@
-import type { business, MODULE_TYPE } from '@prisma/client';
+import type { MODULE_TYPE } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-import type { CreateAddonSchema, UpdateAddonSchema } from '../types/subscriptions/Subscription.js';
+import type {
+	CreateAddonRequest,
+	UpdateAddonRequest,
+	AddonResponse,
+	AddonsListResponse,
+} from '../schemas/dto/Addon/index.js';
 
 /**
  * Create a new addon
  *
- * @param {CreateAddonSchema} data
- * @returns {Promise<business>}
+ * @param {CreateAddonRequest} data
+ * @returns {Promise<AddonResponse>}
  */
-export async function createAddon(data: CreateAddonSchema): Promise<business> {
+export async function createAddon(data: CreateAddonRequest): Promise<AddonResponse> {
 	try {
 		return await prisma.addon.create({
 			data: {
@@ -28,10 +33,10 @@ export async function createAddon(data: CreateAddonSchema): Promise<business> {
  * Update an existing addon
  *
  * @param {string} addonId
- * @param {UpdateAddonSchema} data
- * @returns {Promise<business>}
+ * @param {UpdateAddonRequest} data
+ * @returns {Promise<AddonResponse>}
  */
-export async function updateAddon(addonId: string, data: UpdateAddonSchema): Promise<business> {
+export async function updateAddon(addonId: string, data: UpdateAddonRequest): Promise<AddonResponse> {
 	try {
 		return await prisma.addon.update({
 			where: { addon_id: addonId },
@@ -66,9 +71,9 @@ export async function deleteAddon(addonId: string): Promise<void> {
 /**
  * Get all addons
  *
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAllAddons(): Promise<business[]> {
+export async function getAllAddons(): Promise<AddonsListResponse> {
 	try {
 		return await prisma.addon.findMany();
 	} catch (error) {
@@ -80,9 +85,9 @@ export async function getAllAddons(): Promise<business[]> {
  * Get an addon by ID
  *
  * @param {string} addonId
- * @returns {Promise<business | null>}
+ * @returns {Promise<AddonResponse | null>}
  */
-export async function getAddonById(addonId: string): Promise<business | null> {
+export async function getAddonById(addonId: string): Promise<AddonResponse | null> {
 	try {
 		return await prisma.addon.findUnique({
 			where: { addon_id: addonId },
@@ -96,9 +101,9 @@ export async function getAddonById(addonId: string): Promise<business | null> {
  * Get addons by module type
  *
  * @param {MODULE_TYPE} module
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAddonsByModule(module: MODULE_TYPE): Promise<business[]> {
+export async function getAddonsByModule(module: MODULE_TYPE): Promise<AddonsListResponse> {
 	try {
 		return await prisma.addon.findMany({
 			where: { module },
@@ -112,9 +117,9 @@ export async function getAddonsByModule(module: MODULE_TYPE): Promise<business[]
  * Get addons by business ID
  *
  * @param {string} businessId
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAddonsByBusinessId(businessId: string): Promise<business[]> {
+export async function getAddonsByBusinessId(businessId: string): Promise<AddonsListResponse> {
 	try {
 		return await prisma.business_addon.findMany({
 			where: { business_id: businessId },
@@ -129,9 +134,9 @@ export async function getAddonsByBusinessId(businessId: string): Promise<busines
  * Get addons by reservation module ID
  *
  * @param {string} reservationModuleId
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAddonsByReservationModuleId(reservationModuleId: string): Promise<business[]> {
+export async function getAddonsByReservationModuleId(reservationModuleId: string): Promise<AddonsListResponse> {
 	try {
 		return await prisma.business_addon.findMany({
 			where: { reservation_module_id: reservationModuleId },
@@ -145,9 +150,9 @@ export async function getAddonsByReservationModuleId(reservationModuleId: string
 /**
  * Get all addons with their actions
  *
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAllAddonsWithActions(): Promise<business[]> {
+export async function getAllAddonsWithActions(): Promise<AddonsListResponse> {
 	try {
 		return await prisma.addon.findMany({
 			include: {
@@ -168,9 +173,9 @@ export async function getAllAddonsWithActions(): Promise<business[]> {
  * Get an addon with its actions by ID
  *
  * @param {string} addonId
- * @returns {Promise<business | null>}
+ * @returns {Promise<AddonResponse | null>}
  */
-export async function getAddonWithActionsById(addonId: string): Promise<business | null> {
+export async function getAddonWithActionsById(addonId: string): Promise<AddonResponse | null> {
 	try {
 		return await prisma.addon.findUnique({
 			where: { addon_id: addonId },
@@ -192,9 +197,9 @@ export async function getAddonWithActionsById(addonId: string): Promise<business
  * Get addons by business ID with their actions
  *
  * @param {string} businessId
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAddonsByBusinessIdWithActions(businessId: string): Promise<business[]> {
+export async function getAddonsByBusinessIdWithActions(businessId: string): Promise<AddonsListResponse> {
 	try {
 		return await prisma.business_addon.findMany({
 			where: { business_id: businessId },
@@ -216,9 +221,11 @@ export async function getAddonsByBusinessIdWithActions(businessId: string): Prom
  * Get addons by reservation module ID with their actions
  *
  * @param {string} reservationModuleId
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAddonsByReservationModuleIdWithActions(reservationModuleId: string): Promise<business[]> {
+export async function getAddonsByReservationModuleIdWithActions(
+	reservationModuleId: string
+): Promise<AddonsListResponse> {
 	try {
 		return await prisma.business_addon.findMany({
 			where: { reservation_module_id: reservationModuleId },
@@ -238,9 +245,9 @@ export async function getAddonsByReservationModuleIdWithActions(reservationModul
 /**
  * Get all addons with their business usages
  *
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAllAddonsWithUsages(): Promise<business[]> {
+export async function getAllAddonsWithUsages(): Promise<AddonsListResponse> {
 	try {
 		return await prisma.addon.findMany({
 			include: {
@@ -260,9 +267,9 @@ export async function getAllAddonsWithUsages(): Promise<business[]> {
  * Get an addon with its business usages by ID
  *
  * @param {string} addonId
- * @returns {Promise<business | null>}
+ * @returns {Promise<AddonResponse | null>}
  */
-export async function getAddonWithUsagesById(addonId: string): Promise<business | null> {
+export async function getAddonWithUsagesById(addonId: string): Promise<AddonResponse | null> {
 	try {
 		return await prisma.addon.findUnique({
 			where: { addon_id: addonId },
@@ -283,9 +290,9 @@ export async function getAddonWithUsagesById(addonId: string): Promise<business 
  * Get addons by business ID with their usages
  *
  * @param {string} businessId
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAddonsByBusinessIdWithUsages(businessId: string): Promise<business[]> {
+export async function getAddonsByBusinessIdWithUsages(businessId: string): Promise<AddonsListResponse> {
 	try {
 		return await prisma.business_addon.findMany({
 			where: { business_id: businessId },
@@ -303,9 +310,11 @@ export async function getAddonsByBusinessIdWithUsages(businessId: string): Promi
  * Get addons by reservation module ID with their usages
  *
  * @param {string} reservationModuleId
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAddonsByReservationModuleIdWithUsages(reservationModuleId: string): Promise<business[]> {
+export async function getAddonsByReservationModuleIdWithUsages(
+	reservationModuleId: string
+): Promise<AddonsListResponse> {
 	try {
 		return await prisma.business_addon.findMany({
 			where: { reservation_module_id: reservationModuleId },
@@ -322,9 +331,9 @@ export async function getAddonsByReservationModuleIdWithUsages(reservationModule
 /**
  * Get all addons with their actions and usages
  *
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAllAddonsWithActionsAndUsages(): Promise<business[]> {
+export async function getAllAddonsWithActionsAndUsages(): Promise<AddonsListResponse> {
 	try {
 		return await prisma.addon.findMany({
 			include: {
@@ -346,9 +355,9 @@ export async function getAllAddonsWithActionsAndUsages(): Promise<business[]> {
  * Get an addon with its actions and usages by ID
  *
  * @param {string} addonId
- * @returns {Promise<business | null>}
+ * @returns {Promise<AddonResponse | null>}
  */
-export async function getAddonWithActionsAndUsagesById(addonId: string): Promise<business | null> {
+export async function getAddonWithActionsAndUsagesById(addonId: string): Promise<AddonResponse | null> {
 	try {
 		return await prisma.addon.findUnique({
 			where: { addon_id: addonId },
@@ -371,9 +380,9 @@ export async function getAddonWithActionsAndUsagesById(addonId: string): Promise
  * Get addons by business ID with their actions and usages
  *
  * @param {string} businessId
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAddonsByBusinessIdWithActionsAndUsages(businessId: string): Promise<business[]> {
+export async function getAddonsByBusinessIdWithActionsAndUsages(businessId: string): Promise<AddonsListResponse> {
 	try {
 		return await prisma.business_addon.findMany({
 			where: { business_id: businessId },
@@ -396,11 +405,11 @@ export async function getAddonsByBusinessIdWithActionsAndUsages(businessId: stri
  * Get addons by reservation module ID with their actions and usages
  *
  * @param {string} reservationModuleId
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
 export async function getAddonsByReservationModuleIdWithActionsAndUsages(
 	reservationModuleId: string
-): Promise<business[]> {
+): Promise<AddonsListResponse> {
 	try {
 		return await prisma.business_addon.findMany({
 			where: { reservation_module_id: reservationModuleId },
@@ -421,9 +430,9 @@ export async function getAddonsByReservationModuleIdWithActionsAndUsages(
 /**
  * Get all addons with their business usages and actions
  *
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAllAddonsWithUsagesAndActions(): Promise<business[]> {
+export async function getAllAddonsWithUsagesAndActions(): Promise<AddonsListResponse> {
 	try {
 		return await prisma.addon.findMany({
 			include: {
@@ -445,9 +454,9 @@ export async function getAllAddonsWithUsagesAndActions(): Promise<business[]> {
  * Get an addon with its business usages and actions by ID
  *
  * @param {string} addonId
- * @returns {Promise<business | null>}
+ * @returns {Promise<AddonResponse | null>}
  */
-export async function getAddonWithUsagesAndActionsById(addonId: string): Promise<business | null> {
+export async function getAddonWithUsagesAndActionsById(addonId: string): Promise<AddonResponse | null> {
 	try {
 		return await prisma.addon.findUnique({
 			where: { addon_id: addonId },
@@ -470,9 +479,9 @@ export async function getAddonWithUsagesAndActionsById(addonId: string): Promise
  * Get addons by business ID with their usages and actions
  *
  * @param {string} businessId
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAddonsByBusinessIdWithUsagesAndActions(businessId: string): Promise<business[]> {
+export async function getAddonsByBusinessIdWithUsagesAndActions(businessId: string): Promise<AddonsListResponse> {
 	try {
 		return await prisma.business_addon.findMany({
 			where: { business_id: businessId },
@@ -495,11 +504,11 @@ export async function getAddonsByBusinessIdWithUsagesAndActions(businessId: stri
  * Get addons by reservation module ID with their usages and actions
  *
  * @param {string} reservationModuleId
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
 export async function getAddonsByReservationModuleIdWithUsagesAndActions(
 	reservationModuleId: string
-): Promise<business[]> {
+): Promise<AddonsListResponse> {
 	try {
 		return await prisma.business_addon.findMany({
 			where: { reservation_module_id: reservationModuleId },
@@ -520,9 +529,9 @@ export async function getAddonsByReservationModuleIdWithUsagesAndActions(
 /**
  * Get all addons with their actions, usages, and business addons
  *
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAllAddonsWithActionsUsagesAndBusinessAddons(): Promise<business[]> {
+export async function getAllAddonsWithActionsUsagesAndBusinessAddons(): Promise<AddonsListResponse> {
 	try {
 		return await prisma.addon.findMany({
 			include: {
@@ -544,9 +553,9 @@ export async function getAllAddonsWithActionsUsagesAndBusinessAddons(): Promise<
  * Get an addon with its actions, usages, and business addons by ID
  *
  * @param {string} addonId
- * @returns {Promise<business | null>}
+ * @returns {Promise<AddonResponse | null>}
  */
-export async function getAddonWithActionsUsagesAndBusinessAddonsById(addonId: string): Promise<business | null> {
+export async function getAddonWithActionsUsagesAndBusinessAddonsById(addonId: string): Promise<AddonResponse | null> {
 	try {
 		return await prisma.addon.findUnique({
 			where: { addon_id: addonId },
@@ -569,9 +578,11 @@ export async function getAddonWithActionsUsagesAndBusinessAddonsById(addonId: st
  * Get addons by business ID with their actions, usages, and business addons
  *
  * @param {string} businessId
- * @returns {Promise<business[]>}
+ * @returns {Promise<AddonsListResponse>}
  */
-export async function getAddonsByBusinessIdWithActionsUsagesAndBusinessAddons(businessId: string): Promise<business[]> {
+export async function getAddonsByBusinessIdWithActionsUsagesAndBusinessAddons(
+	businessId: string
+): Promise<AddonsListResponse> {
 	try {
 		return await prisma.business_addon.findMany({
 			where: { business_id: businessId },

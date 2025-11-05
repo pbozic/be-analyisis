@@ -1,15 +1,14 @@
 import { MODULE_TYPE } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-import type { CreateActionSchema } from '../types/subscriptions/Subscription.js';
-import type { Action } from '../types/subscriptions/Subscription.js';
+import type { CreateActionRequest, ActionResponse } from '../schemas/dto/Action/index.js';
 /**
  * Create a new action
  *
- * @param {CreateActionSchema} data
- * @returns {Promise<Action>}
+ * @param {CreateActionRequest} data
+ * @returns {Promise<ActionResponse>}
  */
-export async function createAction(data: CreateActionSchema): Promise<Action> {
+export async function createAction(data: CreateActionRequest): Promise<ActionResponse> {
 	try {
 		return await prisma.action.create({
 			data: {
@@ -27,10 +26,10 @@ export async function createAction(data: CreateActionSchema): Promise<Action> {
  * Update an existing action
  *
  * @param {string} actionId
- * @param {CreateActionSchema} data
- * @returns {Promise<Action>}
+ * @param {CreateActionRequest} data
+ * @returns {Promise<ActionResponse>}
  */
-export async function updateAction(actionId: string, data: CreateActionSchema): Promise<Action> {
+export async function updateAction(actionId: string, data: CreateActionRequest): Promise<ActionResponse> {
 	try {
 		return await prisma.action.update({
 			where: { action_id: actionId },
@@ -64,9 +63,9 @@ export async function deleteAction(actionId: string): Promise<void> {
 /**
  * Get all actions
  *
- * @returns {Promise<Action[]>}
+ * @returns {Promise<ActionResponse[]>}
  */
-export async function getAllActions(): Promise<Action[]> {
+export async function getAllActions(): Promise<ActionResponse[]> {
 	try {
 		return await prisma.action.findMany({
 			orderBy: { name: 'asc' },
@@ -81,9 +80,9 @@ export async function getAllActions(): Promise<Action[]> {
  * Get an action by ID
  *
  * @param {string} actionId
- * @returns {Promise<Action | null>}
+ * @returns {Promise<ActionResponse | null>}
  */
-export async function getActionById(actionId: string): Promise<Action | null> {
+export async function getActionById(actionId: string): Promise<ActionResponse | null> {
 	try {
 		return await prisma.action.findUnique({
 			where: { action_id: actionId },
@@ -97,9 +96,9 @@ export async function getActionById(actionId: string): Promise<Action | null> {
  * Get actions by module type
  *
  * @param {MODULE_TYPE} module
- * @returns {Promise<Action[]>}
+ * @returns {Promise<ActionResponse[]>}
  */
-export async function getActionsByModule(module: MODULE_TYPE): Promise<Action[]> {
+export async function getActionsByModule(module: MODULE_TYPE): Promise<ActionResponse[]> {
 	try {
 		return await prisma.action.findMany({
 			where: { module },
@@ -115,9 +114,9 @@ export async function getActionsByModule(module: MODULE_TYPE): Promise<Action[]>
  * Get actions by name
  *
  * @param {string} name
- * @returns {Promise<Action[]>}
+ * @returns {Promise<ActionResponse[]>}
  */
-export async function getActionsByName(name: string): Promise<Action[]> {
+export async function getActionsByName(name: string): Promise<ActionResponse[]> {
 	try {
 		return await prisma.action.findMany({
 			where: {
