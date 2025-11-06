@@ -2,7 +2,7 @@ import { Response } from 'express';
 
 import * as StoresDao from '../dao/Stores.ts';
 import { ValidatedRequest } from '../types/validatedRequest.ts';
-import { StoreOnlineBody, StoreOverwhelmedBody } from '../types/stores/StoreRequests.ts';
+import { StoreOnlineBody, StoreOverwhelmedBody } from '../schemas/dto/Stores/store.dto.ts';
 
 /**
  * PATCH /stores/:stores_id/online

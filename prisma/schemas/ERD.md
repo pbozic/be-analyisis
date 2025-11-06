@@ -4851,8 +4851,6 @@ erDiagram
 "reservations" {
   String reservation_id PK
   Int seats
-  DateTime(6) date
-  String time
   DateTime datetime
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -4929,8 +4927,6 @@ Properties as follows:
 
 - `reservation_id`:
 - `seats`:
-- `date`:
-- `time`:
 - `datetime`:
 - `created_at`:
 - `updated_at`:

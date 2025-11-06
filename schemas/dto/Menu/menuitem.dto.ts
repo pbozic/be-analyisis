@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+
 import { CreateMenuItemSchema, GetMenuItemsByIdsRequestSchema } from './menu.dto.ts';
+import { UUID } from '../../primitives.ts';
 
 extendZodWithOpenApi(z);
 
@@ -90,6 +92,9 @@ export const RemoveMenuItemFromCategoryInputSchema = z
 	.openapi('RemoveMenuItemFromCategoryInput');
 export type RemoveMenuItemFromCategoryInput = z.infer<typeof RemoveMenuItemFromCategoryInputSchema>;
 
+// POST /business/search/menu-items/extras-sides/:business_id body
+export const MenuItemsIdsBodySchema = z.object({ ids: z.array(UUID).min(1) }).openapi('MenuItemsIdsBody');
+
 // Register MenuItem DAO schemas
 export function registerMenuItemDaoSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateMenuItemVersionInput', CreateMenuItemVersionInputSchema);
@@ -104,4 +109,5 @@ export function registerMenuItemDaoSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateMenuItemPriceInput', UpdateMenuItemPriceInputSchema);
 	registry.register('AddMenuItemToCategoryInput', AddMenuItemToCategoryInputSchema);
 	registry.register('RemoveMenuItemFromCategoryInput', RemoveMenuItemFromCategoryInputSchema);
+	registry.register('MenuItemsIdsBody', MenuItemsIdsBodySchema);
 }

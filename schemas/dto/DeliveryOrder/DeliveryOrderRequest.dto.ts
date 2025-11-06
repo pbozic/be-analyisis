@@ -71,23 +71,6 @@ export const StartOrderSchema = z
 export const AcceptDeliveryOrderSchema = z
 	.object({
 		order_id: UUID,
-		user: z.object({
-			delivery_driver: z
-				.object({
-					delivery_driver_id: UUID,
-				})
-				.optional(),
-			driver: z
-				.object({
-					driver_id: UUID,
-				})
-				.optional(),
-			current_vehicle: z
-				.object({
-					vehicle_id: UUID,
-				})
-				.optional(),
-		}),
 	})
 	.openapi({
 		title: 'AcceptDeliveryOrderRequest',
@@ -235,6 +218,20 @@ export const UpdateDeliveryOrderTimelineSchema = z
 	.openapi({
 		title: 'UpdateDeliveryOrderTimelineRequest',
 		description: 'Request body for updating delivery order timeline',
+	});
+
+/**
+ * Used by addToDeliveryOrderTimeline function - POST /delivery/orders/add_to_timeline
+ * Update delivery order timeline
+ */
+export const addToDeliveryOrderTimelineSchema = z
+	.object({
+		order_id: UUID,
+		timeline: TimelineEntrySchema,
+	})
+	.openapi({
+		title: 'addToDeliveryOrderTimelineRequest',
+		description: 'Request body for adding to delivery order timeline',
 	});
 
 // ===== ORDER ITEM UPDATES =====

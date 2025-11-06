@@ -71,12 +71,8 @@ export const CreatePromoSectionRequestSchema = z
 	.openapi('CreatePromoSectionRequest');
 export type CreatePromoSectionRequest = z.infer<typeof CreatePromoSectionRequestSchema>;
 
-export const UpdatePromoSectionRequestSchema = z
-	.object({
-		sectionData: PromoSectionDataSchema.partial(),
-		translations: z.array(TranslationItemSchema).min(1).optional(),
-	})
-	.openapi('UpdatePromoSectionRequest');
+export const UpdatePromoSectionRequestSchema =
+	CreatePromoSectionRequestSchema.partial().openapi('UpdatePromoSectionRequest');
 export type UpdatePromoSectionRequest = z.infer<typeof UpdatePromoSectionRequestSchema>;
 
 export const ReorderPromoSectionsRequestSchema = z
@@ -151,17 +147,13 @@ export const CreatePromoSectionBuyRequestSchema = z
 	.openapi('CreatePromoSectionBuyRequest');
 export type CreatePromoSectionBuyRequest = z.infer<typeof CreatePromoSectionBuyRequestSchema>;
 
-export const UpdatePromoSectionBuyRequestSchema = z
-	.object({
-		tier: z.number().int().min(1).max(3).optional(),
-		duration: z.number().int().min(1).optional(),
-		active_at: z.string().datetime().optional(),
-		expires_at: z.string().datetime().optional(),
-		paid: z.boolean().optional(),
-		stripe_subscription_id: z.string().optional(),
-		payment_intent_id: z.string().optional(),
-	})
-	.openapi('UpdatePromoSectionBuyRequest');
+export const UpdatePromoSectionBuyRequestSchema = CreatePromoSectionBuyRequestSchema.extend({
+	active_at: z.string().datetime().optional(),
+	expires_at: z.string().datetime().optional(),
+	paid: z.boolean().optional(),
+	stripe_subscription_id: z.string().optional(),
+	payment_intent_id: z.string().optional(),
+}).openapi('UpdatePromoSectionBuyRequest');
 export type UpdatePromoSectionBuyRequest = z.infer<typeof UpdatePromoSectionBuyRequestSchema>;
 
 export const AddStripeSubToPromoSectionBuyRequestSchema = z
@@ -189,6 +181,11 @@ export type PromoSectionBuyBase = z.infer<typeof PromoSectionBuyBaseSchema>;
 
 export const PromoSectionBuyDetailSchema = PromoSectionBuyBaseSchema.openapi('PromoSectionBuyDetail');
 export type PromoSectionBuyDetail = z.infer<typeof PromoSectionBuyDetailSchema>;
+
+export const PurchasableQuerySchema = z
+	.object({ purchasable: z.coerce.boolean().optional() })
+	.openapi('PurchasableQuery');
+export type PurchasableQuery = z.infer<typeof PurchasableQuerySchema>;
 
 // ===============
 // Mappers
@@ -280,4 +277,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('AddStripeSubToPromoSectionBuyRequest', AddStripeSubToPromoSectionBuyRequestSchema);
 	registry.register('PromoSectionBuyBase', PromoSectionBuyBaseSchema);
 	registry.register('PromoSectionBuyDetail', PromoSectionBuyDetailSchema);
+
+	registry.register('PurchasableQuery', PurchasableQuerySchema);
 }

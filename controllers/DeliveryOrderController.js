@@ -471,7 +471,9 @@ async function acceptOrderDeliveryOld(req, res) {
  * @prisma_model delivery_orders
  */
 async function acceptOrderDelivery(req, res) {
-	const { order_id, user } = req.body;
+	const { order_id } = req.body;
+	const userId = req.user?.user_id;
+	const user = await UserDao.getUserById(userId);
 	const deliverer_id = user.delivery_driver?.delivery_driver_id ?? user.driver?.driver_id;
 	const isDD = !!user.delivery_driver;
 

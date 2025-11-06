@@ -21,8 +21,6 @@ export const CreateReservationSchema = z
 			business_id: UUID,
 			table_reservation_id: UUID,
 			seats: PositiveInt,
-			date: z.string().datetime(),
-			time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Must be in HH:MM format'),
 			datetime: Timestamp.optional(),
 		}),
 		user_id: UUID,

@@ -10,19 +10,15 @@ import {
 	reviewReservationBooking,
 } from '../../controllers/ReviewsController.js';
 import { validate } from '../../middleware/zod.ts';
-import { ReviewPayloadSchema } from '../../types/reviews/ReviewRequests.ts';
+import { ReviewBodySchema } from '../../schemas/dto/Reviews/review.dto.ts';
 
 const router = Router();
-router.post('/passenger/:user_id', validate(ReviewPayloadSchema, 'body'), reviewPassenger);
-router.post('/driver/:driver_id', validate(ReviewPayloadSchema, 'body'), reviewDriver);
-router.post('/stores/:stores_id', validate(ReviewPayloadSchema, 'body'), reviewStore);
-router.post('/food-drinks/:food_drinks_id', validate(ReviewPayloadSchema, 'body'), reviewFoodDrinks);
-router.post(
-	'/reservation-module/:reservation_module_id',
-	validate(ReviewPayloadSchema, 'body'),
-	reviewReservationModule
-);
-router.post('/transport-module/:transport_module_id', validate(ReviewPayloadSchema, 'body'), reviewTransportModule);
-router.post('/reservation-booking/:booking_id', validate(ReviewPayloadSchema, 'body'), reviewReservationBooking);
+router.post('/passenger/:user_id', validate(ReviewBodySchema, 'body'), reviewPassenger);
+router.post('/driver/:driver_id', validate(ReviewBodySchema, 'body'), reviewDriver);
+router.post('/stores/:stores_id', validate(ReviewBodySchema, 'body'), reviewStore);
+router.post('/food-drinks/:food_drinks_id', validate(ReviewBodySchema, 'body'), reviewFoodDrinks);
+router.post('/reservation-module/:reservation_module_id', validate(ReviewBodySchema, 'body'), reviewReservationModule);
+router.post('/transport-module/:transport_module_id', validate(ReviewBodySchema, 'body'), reviewTransportModule);
+router.post('/reservation-booking/:booking_id', validate(ReviewBodySchema, 'body'), reviewReservationBooking);
 
 export default router;

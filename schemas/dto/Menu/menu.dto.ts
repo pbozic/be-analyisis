@@ -204,7 +204,9 @@ export type SetActiveMenuInput = z.infer<typeof SetActiveMenuInputSchema>;
 export const UpdateMenuOrderInputSchema = z
 	.object({
 		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
-		orderedMenuCategoryIds: z.array(z.string().uuid()).openapi({ example: ['aa0e8400-e29b-41d4-a716-446655440000'] }),
+		orderedMenuCategoryIds: z
+			.array(z.string().uuid())
+			.openapi({ example: ['aa0e8400-e29b-41d4-a716-446655440000'] }),
 	})
 	.openapi('UpdateMenuOrderInput');
 export type UpdateMenuOrderInput = z.infer<typeof UpdateMenuOrderInputSchema>;
@@ -217,12 +219,13 @@ export const GetMenuByDateInputSchema = z
 	.openapi('GetMenuByDateInput');
 export type GetMenuByDateInput = z.infer<typeof GetMenuByDateInputSchema>;
 
-export const GetMenuByIdParamsSchema = z
+// POST /daily/business/:business_id
+export const DailyMenuByBusinessIdBodySchema = z
 	.object({
-		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		start_date: z.string().datetime().openapi({ example: '2025-01-15T00:00:00Z' }),
 	})
-	.openapi('GetMenuByIdParams');
-export type GetMenuByIdParams = z.infer<typeof GetMenuByIdParamsSchema>;
+	.openapi('DailyMenuByBusinessIdBody');
+export type DailyMenuByBusinessIdBody = z.infer<typeof DailyMenuByBusinessIdBodySchema>;
 
 // Register DAO-level menu schemas
 export function registerMenuDaoSchemas(registry: OpenAPIRegistry) {
@@ -232,5 +235,5 @@ export function registerMenuDaoSchemas(registry: OpenAPIRegistry) {
 	registry.register('SetActiveMenuInput', SetActiveMenuInputSchema);
 	registry.register('UpdateMenuOrderInput', UpdateMenuOrderInputSchema);
 	registry.register('GetMenuByDateInput', GetMenuByDateInputSchema);
-	registry.register('GetMenuByIdParams', GetMenuByIdParamsSchema);
+	registry.register('DailyMenuByBusinessIdBody', DailyMenuByBusinessIdBodySchema);
 }

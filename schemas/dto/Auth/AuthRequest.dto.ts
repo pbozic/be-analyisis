@@ -577,6 +577,33 @@ export const AuthenticateRegistrationSessionSchema = z
 		description: 'Request body for authenticating registration session with email and password',
 	});
 
+// =======================
+// Apple Login - POST /auth/login/apple
+// =======================
+export const AppleLoginSchema = z
+	.object({
+		token: z.string().optional(),
+		jwt: z.string().optional(),
+		code: z.string().optional(),
+		state: z.string().optional(),
+	})
+	.openapi({
+		title: 'AppleLoginRequest',
+		description: 'Request body for Apple login with token, jwt, code, or state',
+	});
+
+// =======================
+// Google Login - POST /auth/login/google
+// =======================
+export const GoogleLoginSchema = z
+	.object({
+		token: z.string().min(1),
+	})
+	.openapi({
+		title: 'GoogleLoginRequest',
+		description: 'Request body for Google login with token',
+	});
+
 // Export all types
 export type LoginRequest = z.infer<typeof LoginSchema>;
 export type RegisterUserRequest = z.infer<typeof RegisterUserSchema>;
@@ -591,6 +618,8 @@ export type RegisterReservationBusinessRequest = z.infer<typeof RegisterReservat
 export type CreateScheduledUserRequest = z.infer<typeof CreateScheduledUserSchema>;
 export type UpdateScheduledUserRequest = z.infer<typeof UpdateScheduledUserSchema>;
 export type AuthenticateRegistrationSessionRequest = z.infer<typeof AuthenticateRegistrationSessionSchema>;
+export type AppleLoginRequest = z.infer<typeof AppleLoginSchema>;
+export type GoogleLoginRequest = z.infer<typeof GoogleLoginSchema>;
 
 /**
  * Register all Auth request schemas with the OpenAPI registry
@@ -602,6 +631,8 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('RefreshTokenRequest', RefreshTokenSchema);
 	registry.register('RequestPasswordResetRequest', RequestPasswordResetSchema);
 	registry.register('PasswordResetRequest', PasswordResetSchema);
+	registry.register('AppleLoginRequest', AppleLoginSchema);
+	registry.register('GoogleLoginRequest', GoogleLoginSchema);
 
 	// Business registration schemas
 	registry.register('RegisterTaxiServiceRequest', RegisterTaxiServiceSchema);

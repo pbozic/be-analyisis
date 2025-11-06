@@ -2,7 +2,7 @@ import { Response } from 'express';
 
 import * as ReviewsDao from '../dao/Review.js';
 import { ValidatedRequest } from '../types/validatedRequest.ts';
-import { ReviewPayload } from '../types/reviews/ReviewRequests.ts';
+import type { ReviewBody } from '../schemas/dto/Reviews/review.dto.ts';
 
 /**
  * POST /review/passenger/:user_id
@@ -19,7 +19,7 @@ import { ReviewPayload } from '../types/reviews/ReviewRequests.ts';
  * @prisma_model reviews
  */
 export async function reviewPassenger(
-	req: ValidatedRequest<ReviewPayload, { user_id: string }>,
+	req: ValidatedRequest<ReviewBody, { user_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -54,7 +54,7 @@ export async function reviewPassenger(
  * @prisma_model reviews
  */
 export async function reviewDriver(
-	req: ValidatedRequest<ReviewPayload, { driver_id: string }>,
+	req: ValidatedRequest<ReviewBody, { driver_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -89,7 +89,7 @@ export async function reviewDriver(
  * @prisma_model reviews
  */
 export async function reviewStore(
-	req: ValidatedRequest<ReviewPayload, { stores_id: string }>,
+	req: ValidatedRequest<ReviewBody, { stores_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -124,7 +124,7 @@ export async function reviewStore(
  * @prisma_model reviews
  */
 export async function reviewFoodDrinks(
-	req: ValidatedRequest<ReviewPayload, { food_drinks_id: string }>,
+	req: ValidatedRequest<ReviewBody, { food_drinks_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -159,7 +159,7 @@ export async function reviewFoodDrinks(
  * @prisma_model reviews
  */
 export async function reviewReservationModule(
-	req: ValidatedRequest<ReviewPayload, { reservation_module_id: string }>,
+	req: ValidatedRequest<ReviewBody, { reservation_module_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -198,7 +198,7 @@ export async function reviewReservationModule(
  * @prisma_model reviews
  */
 export async function reviewTransportModule(
-	req: ValidatedRequest<ReviewPayload, { transport_module_id: string }>,
+	req: ValidatedRequest<ReviewBody, { transport_module_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -237,7 +237,7 @@ export async function reviewTransportModule(
  * @prisma_model reviews
  */
 export async function reviewReservationBooking(
-	req: ValidatedRequest<ReviewPayload, { booking_id: string }>,
+	req: ValidatedRequest<ReviewBody, { booking_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
