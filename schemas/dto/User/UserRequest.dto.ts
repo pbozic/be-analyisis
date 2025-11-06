@@ -26,6 +26,20 @@ export const UpdateMeSchema = z
 	});
 
 /**
+ * Used by updateUserLanguage function - POST /auth/language
+ * Update user language schema
+ */
+export const UpdateUserLanguageSchema = z
+	.object({
+		user_id: UUID,
+		language: z.string().length(2),
+	})
+	.openapi({
+		title: 'UpdateUserLanguageRequest',
+		description: 'Request body for updating user language',
+	});
+
+/**
  * Used by updateUserByUserId function - POST /users/me/update_user
  * Update scheduled user schema
  */
@@ -631,6 +645,7 @@ export type UpdateAdsPersonalizationRequest = z.infer<typeof UpdateAdsPersonaliz
 export type UpdateNewsletterRequest = z.infer<typeof UpdateNewsletterSchema>;
 export type InviteFamilyMemberRequest = z.infer<typeof InviteFamilyMemberSchema>;
 export type AcceptFamilyInvitationRequest = z.infer<typeof AcceptFamilyInvitationSchema>;
+export type UpdateUserLanguageRequest = z.infer<typeof UpdateUserLanguageSchema>;
 
 /**
  * Register all User request schemas with the OpenAPI registry
@@ -642,7 +657,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdatePasswordRequest', UpdatePasswordSchema);
 	registry.register('UpdateEmailRequest', UpdateEmailSchema);
 	registry.register('UpdateTelephoneRequest', UpdateTelephoneSchema);
-
+	registry.register('UpdateUserLanguageRequest', UpdateUserLanguageSchema);
 	// Preferences schemas
 	registry.register('UpdateTaxiPreferencesRequest', UpdateTaxiPreferencesSchema);
 	registry.register('UpdateNotificationPreferencesRequest', UpdateNotificationPreferencesSchema);

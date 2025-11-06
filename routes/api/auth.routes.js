@@ -1,22 +1,27 @@
-import fs from 'fs';
-
 import dotenv from 'dotenv';
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
-import axios from 'axios';
-import jwkToPem from 'jwk-to-pem';
 
 import AuthController from '../../controllers/AuthController.js';
-import { loginSchema, registerSchema, refreshSchema, resetPasswordRequestSchema } from '../../joi/authSchemas.js';
 import { generateAccessToken, generateRefreshToken } from '../../lib/jwt.js';
-import prisma from '../../prisma/prisma.js';
-import joi from '../../middleware/joi.js';
-import { updateUserLanguageSchema } from '../../joi/userSchemas.js';
 import UserController from '../../controllers/UserController.js';
 import UserDao from '../../dao/User.js';
 import stripe from '../../lib/stripe.js';
 import authMiddleware from '../../middleware/auth.js';
+import { validate } from '../../middleware/zod.js';
+import {
+	AppleLoginSchema,
+	AuthenticateRegistrationSessionSchema,
+	CreateScheduledUserSchema,
+	GoogleLoginSchema,
+	LoginSchema,
+	RefreshTokenSchema,
+	RegisterUserSchema,
+	RequestPasswordResetSchema,
+	UpdateScheduledUserSchema,
+} from '../../schemas/dto/Auth/AuthRequest.dto.js';
+import { UpdateUserLanguageSchema } from '../../schemas/dto/User/UserRequest.dto.js';
+
 dotenv.config();
 const router = express.Router();
 
@@ -83,205 +88,26 @@ async function getUser(id, res) {
 router.get('/', function (req, res, next) {
 	res.render('index', { title: 'Express' });
 });
-router.patch('/language', joi(updateUserLanguageSchema), UserController.updateUserLanguage);
+router.patch('/language', validate(UpdateUserLanguageSchema), UserController.updateUserLanguage);
 router.get('/telephone_availability/:telephone', AuthController.checkTelephoneAvailability);
 router.get('/email_availability/:email', AuthController.checkEmailAvailability);
 router.get('/scheduled_users', AuthController.getScheduledUsers);
-router.post('/login', joi(loginSchema), AuthController.login);
-router.post('/register', joi(registerSchema), AuthController.register);
-router.post('/create/scheduled_user', AuthController.createScheduledUser);
-router.post('/update/scheduled_user', AuthController.updateScheduledUser);
-router.post('/refresh', joi(refreshSchema), AuthController.refreshToken);
+router.post('/login', validate(LoginSchema), AuthController.login);
+router.post('/register', validate(RegisterUserSchema), AuthController.register);
+router.post('/create/scheduled_user', validate(CreateScheduledUserSchema), AuthController.createScheduledUser);
+router.post('/update/scheduled_user', validate(UpdateScheduledUserSchema), AuthController.updateScheduledUser);
+router.post('/refresh', validate(RefreshTokenSchema), AuthController.refreshToken);
 router.get('/municipalities', AuthController.getMunicipalitiesWithLicenseRequirements);
-router.post('/reset-password', joi(resetPasswordRequestSchema), AuthController.requestPasswordReset);
-router.post('/login/apple', async (req, res) => {
-	const { token, jwt, code, state } = req.body;
-	console.log('Apple login POST', jwt, token);
-	try {
-		let web = false;
-		let decodedToken;
-		if (code) {
-			console.log('Apple login POST web', code);
-			web = true;
-			const tokenResponse = await axios.post(
-				'https://appleid.apple.com/auth/token',
-				new URLSearchParams({
-					client_id: process.env.APPLE_SIGN_IN_CLIENT_ID, // Your Apple Service ID
-					client_secret: generateAppleClientSecret(), // Generated Apple Client Secret
-					code: code,
-					grant_type: 'authorization_code',
-					redirect_uri: process.env.APPLE_REDIRECT_URI,
-				}).toString(),
-				{
-					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				}
-			);
-			const { id_token, access_token } = tokenResponse.data;
-			// Verify the Apple ID token (with web=true)
-			decodedToken = await verifyAppleToken(id_token, true);
-		} else {
-			console.log('Apple login POST app', jwt);
-			decodedToken = await verifyAppleToken(jwt);
-		}
-		// Decode the Apple ID token
-		console.log('Apple Decoded', decodedToken);
-		appleId = token || decodedToken.sub;
-		// Check if the user already exists in the database
-		let user = await prisma.users.findMany({
-			where: { apple_id: appleId },
-		});
-		if (user.length > 0) {
-			user = await getUser(user[0].user_id, res);
-			if (web) {
-				return res.redirect(`${process.env.FRONTEND_URL}/#apple-login?jwt=${user.access_token}`);
-				// If the user exists, generate a JWT token and return it
-			}
-			return res.json(user);
-		}
-		// If the user does not exist, return the auth data (no JWT token)
-		if (!web) {
-			return res.json({
-				message: 'User not found',
-				email: decodedToken.email,
-			});
-		}
-		if (user.length > 0) {
-			// User exists, generate session/token & redirect to frontend
-		}
-		// If user does not exist, return authentication data
-		return res.redirect(`${process.env.FRONTEND_URL}/#register?apple_id=${appleId}&email=${decodedToken.email}`);
-	} catch (error) {
-		console.error('Apple token verification error:', error);
-		if (web) return res.redirect(`${process.env.FRONTEND_URL}/#register?error="apple"`);
-		res.status(500).send('Error during authentication');
-	}
-});
-router.get('/login/apple', async (req, res) => {
-	const { code, state } = req.query;
-	console.log('Apple login web GET', code, state);
-	if (!code) {
-		return res.status(400).json({ error: 'Missing authorization code' });
-	}
-	try {
-		// Exchange authorization code for access token
-		const tokenResponse = await axios.post(
-			'https://appleid.apple.com/auth/token',
-			new URLSearchParams({
-				client_id: process.env.APPLE_SIGN_IN_CLIENT_ID, // Your Apple Service ID
-				client_secret: generateAppleClientSecret(), // Generated Apple Client Secret
-				code: code,
-				grant_type: 'authorization_code',
-				redirect_uri: process.env.APPLE_REDIRECT_URI,
-			}).toString(),
-			{
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			}
-		);
-		const { id_token, access_token } = tokenResponse.data;
-		// Verify the Apple ID token (with web=true)
-		const decodedToken = await verifyAppleToken(id_token, true);
-		console.log('Verified Apple User:', decodedToken);
-		// Check if user exists in DB
-		let user = await prisma.users.findFirst({
-			where: { apple_id: appleId },
-		});
-		if (user) {
-			// User exists, generate session/token & redirect to frontend
-			const jwtToken = generateAccessToken(user[0].user_id); // Your JWT generator function
-			return res.redirect(`${process.env.FRONTEND_URL}/#register?jwt=${jwtToken}`);
-		}
-		// If user does not exist, return authentication data
-		return res.redirect(`${process.env.FRONTEND_URL}/#register?apple_id=${appleId}&email=${email}`);
-	} catch (error) {
-		console.error('Apple authentication error:', error.response?.data || error);
-		return res.redirect(`${process.env.FRONTEND_URL}/#register?error="apple"`);
-	}
-});
-router.post('/login/google', async (req, res) => {
-	const { token } = req.body;
-	try {
-		// Verify the Google ID token
-		const ticket = await client.verifyIdToken({
-			idToken: token,
-			audience: process.env.GOOGLE_CLIENT_ID,
-		});
-		const payload = ticket.getPayload();
-		const googleId = payload.sub;
-		const email = payload.email;
-		const firstName = payload.given_name;
-		const lastName = payload.family_name;
-		// Check if the user already exists in the database
-		let user = await prisma.users.findMany({
-			where: { google_id: googleId },
-		});
-		if (user.length > 0) {
-			// If the user exists, generate a JWT token and return it
-			let usr = await getUser(user[0].user_id, res);
-			res.json(usr);
-			return;
-		}
-		// If the user does not exist, return the auth data (no JWT token)
-		return res.json({
-			message: 'User not found',
-			user: {
-				google_id: googleId,
-				email,
-				first_name: firstName,
-				last_name: lastName,
-			},
-		});
-	} catch (error) {
-		console.error('Error verifying Google token:', error);
-		res.status(500).send('Error during authentication');
-	}
-});
-const verifyAppleToken = async (identityToken, web = false) => {
-	try {
-		// Fetch Apple's public keys
-		const response = await axios.get('https://appleid.apple.com/auth/keys');
-		const applePublicKeys = response.data.keys;
-		// Decode JWT header to get the key ID (kid)
-		const decodedHeader = jwt.decode(identityToken, { complete: true });
-		if (!decodedHeader) throw new Error('Invalid Apple ID token.');
-		const { kid } = decodedHeader.header;
-		// Find the corresponding public key based on the `kid`
-		const applePublicKey = applePublicKeys.find((key) => key.kid === kid);
-		if (!applePublicKey) throw new Error('Apple public key not found.');
-		// Convert the public key to PEM format
-		const pem = jwkToPem(applePublicKey);
-		// Define verification options
-		let verifyOptions = { algorithms: ['RS256'] };
-		if (web) {
-			// Additional verification for web authentication
-			verifyOptions.issuer = 'https://appleid.apple.com'; // Ensure token is from Apple
-			verifyOptions.audience = process.env.APPLE_SIGN_IN_CLIENT_ID; // Your Apple Service/App ID
-		}
-		// Verify the JWT
-		const decoded = jwt.verify(identityToken, pem, verifyOptions);
-		console.log('Decoded Apple token:', decoded);
-		return decoded;
-	} catch (error) {
-		console.error('Error verifying Apple token:', error);
-		throw error;
-	}
-};
-const generateAppleClientSecret = () => {
-	const privateKey = fs.readFileSync(process.env.APPLE_P8_PATH, 'utf8'); // Load from secure storage
-	const teamId = process.env.APPLE_TEAM_ID;
-	const clientId = process.env.APPLE_SIGN_IN_CLIENT_ID;
-	const keyId = process.env.APPLE_KEY_ID;
-	const token = jwt.sign({}, privateKey, {
-		algorithm: 'ES256',
-		expiresIn: '180d', // 180 days expiry
-		audience: 'https://appleid.apple.com',
-		issuer: teamId,
-		subject: clientId,
-		keyid: keyId,
-	});
-	console.log('New APPLE_CLIENT_SECRET:', token);
-	return token;
-};
+router.post('/reset-password', validate(RequestPasswordResetSchema), AuthController.requestPasswordReset);
+router.post('/login/apple', validate(AppleLoginSchema), AuthController.appleLoginPost);
+router.get('/login/apple', AuthController.appleLoginWebGet);
+router.post('/login/google', validate(GoogleLoginSchema), AuthController.googleLogin);
 
-router.post('/authenticate_registration', authMiddleware, AuthController.authenticateRegistrationSession);
+router.post(
+	'/authenticate_registration',
+	authMiddleware,
+	validate(AuthenticateRegistrationSessionSchema),
+	AuthController.authenticateRegistrationSession
+);
 
 export default router;
