@@ -1,10 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import {
-	CreateBlogPostSchema,
-	UpdateBlogPostSchema,
-	SearchBlogPostsSchema,
-} from './blogpost.dto.ts';
+
+import { CreateBlogPostSchema, UpdateBlogPostSchema, SearchBlogPostsSchema } from './blogpost.dto.ts';
 import { CreateBlogCategorySchema, UpdateBlogCategorySchema } from './blogcategory.dto.ts';
 import { CreateBlogTagSchema, UpdateBlogTagSchema, DeleteBlogTagSchema } from './blogtag.dto.ts';
 

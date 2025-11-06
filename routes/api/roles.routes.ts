@@ -3,17 +3,17 @@ import express, { Router } from 'express';
 import PermissionController from '../../controllers/roles/UserPermissionController';
 import RoleController from '../../controllers/roles/RolesController';
 import UserRoleController from '../../controllers/roles/UserRolesController';
-import { validate } from '../../middleware/zod';
-import { CreateUserPermissionSchema, UpdateUserPermissionSchema } from '../../types/userRoles/UserPermission';
-import { CreateRoleSchema, UpdateRoleSchema } from '../../types/userRoles/Role';
-import { CreateUserRoleSchema } from '../../types/userRoles/UserRole';
 import RolePermissionController from '../../controllers/roles/RolePermissionController';
+import { validate } from '../../middleware/zod';
+import { CreateUserPermissionSchema, UpdateUserPermissionSchema } from '../../schemas/dto/UserRoles/userpermission.dto';
+import { CreateRoleSchema, UpdateRoleSchema } from '../../schemas/dto/UserRoles/role.dto';
+import { CreateUserRoleSchema } from '../../schemas/dto/UserRoles/userrole.dto';
 import {
 	GetRolePermissionsParamsSchema,
 	UpsertRolePermissionParamsSchema,
 	DeleteRolePermissionParamsSchema,
 	RolePermissionsMatrixBodySchema,
-} from '../../types/userRoles/RolePermission';
+} from '../../schemas/dto/UserRoles/rolepermission.dto';
 
 const router: Router = express.Router();
 
