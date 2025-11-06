@@ -6,16 +6,6 @@ import { UUID, Timestamp } from '../../primitives';
 extendZodWithOpenApi(z);
 
 // =======================
-// Favorite Drivers Controller Input Schemas
-// =======================
-
-export const AddFavoriteDriverBodySchema = z.object({ driver_id: UUID }).openapi('AddFavoriteDriverBody');
-export type AddFavoriteDriverBody = z.infer<typeof AddFavoriteDriverBodySchema>;
-
-export const RemoveFavoriteDriverParamsSchema = z.object({ driver_id: UUID }).openapi('RemoveFavoriteDriverParams');
-export type RemoveFavoriteDriverParams = z.infer<typeof RemoveFavoriteDriverParamsSchema>;
-
-// =======================
 // Favorite Drivers Response DTOs
 // =======================
 
@@ -64,9 +54,6 @@ export function toFavoriteDriverDetail(row: unknown): FavoriteDriverDetail {
 }
 
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('AddFavoriteDriverBody', AddFavoriteDriverBodySchema);
-	registry.register('RemoveFavoriteDriverParams', RemoveFavoriteDriverParamsSchema);
-
 	registry.register('DriverRef', DriverRefSchema);
 	registry.register('FavoriteDriverBase', FavoriteDriverBaseSchema);
 	registry.register('FavoriteDriverDetail', FavoriteDriverDetailSchema);

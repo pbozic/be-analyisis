@@ -3,6 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID } from '../../../primitives';
 import { ReservationModuleRefSchema } from '../reservation-module/reservation-module.dto.js';
+import { ServiceRefSchema } from '../service/service.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -63,12 +64,24 @@ export const ServiceCategoryResponseSchema = ServiceCategoryBaseSchema.extend({
 	description: 'Complete service category response with related entities',
 });
 
+// ===== DAO RESPONSE SCHEMAS =====
+// DAO response for getServiceCategoryById
+export const ServiceCategoryDAOResponseSchema = ServiceCategoryBaseSchema.extend({
+	services: z.array(ServiceRefSchema).optional(),
+	parent: ServiceCategoryRefSchema.nullable().optional(),
+	children: z.array(ServiceCategoryRefSchema).optional(),
+}).openapi({
+	title: 'ServiceCategoryDAOResponse',
+	description: 'Service category response from DAO with services, parent, and children categories',
+});
+
 // ===== EXPORTED TYPES =====
 export type ServiceCategoryBase = z.infer<typeof ServiceCategoryBaseSchema>;
 export type ServiceCategoryRef = z.infer<typeof ServiceCategoryRefSchema>;
 export type CreateServiceCategoryRequest = z.infer<typeof CreateServiceCategoryRequestSchema>;
 export type UpdateServiceCategoryRequest = z.infer<typeof UpdateServiceCategoryRequestSchema>;
 export type ServiceCategoryResponse = z.infer<typeof ServiceCategoryResponseSchema>;
+export type ServiceCategoryDAOResponse = z.infer<typeof ServiceCategoryDAOResponseSchema>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
@@ -77,4 +90,5 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateServiceCategoryRequest', CreateServiceCategoryRequestSchema);
 	registry.register('UpdateServiceCategoryRequest', UpdateServiceCategoryRequestSchema);
 	registry.register('ServiceCategoryResponse', ServiceCategoryResponseSchema);
+	registry.register('ServiceCategoryDAO', ServiceCategoryDAOResponseSchema);
 }

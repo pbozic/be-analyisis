@@ -14,6 +14,7 @@ import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 export {
 	BookingBaseSchema,
 	BookingRefSchema,
+	BookingWithRelationsSchema,
 	CreateBookingRequestSchema,
 	UpdateBookingRequestSchema,
 	BookingResponseSchema,
@@ -28,6 +29,7 @@ export {
 export {
 	EmployeeBaseSchema,
 	EmployeeRefSchema,
+	EmployeeWithBusinessUserSchema,
 	CreateEmployeeRequestSchema,
 	UpdateEmployeeRequestSchema,
 	EmployeeResponseSchema,
@@ -35,6 +37,7 @@ export {
 export {
 	LocationBaseSchema,
 	LocationRefSchema,
+	LocationWithAddressSchema,
 	CreateLocationRequestSchema,
 	UpdateLocationRequestSchema,
 	LocationResponseSchema,
@@ -42,6 +45,7 @@ export {
 export {
 	ServiceBaseSchema,
 	ServiceRefSchema,
+	ServiceWithCategorySchema,
 	CreateServiceRequestSchema,
 	UpdateServiceRequestSchema,
 	ServiceResponseSchema,
@@ -56,6 +60,7 @@ export {
 export {
 	ReservationModuleBaseSchema,
 	ReservationModuleRefSchema,
+	ReservationModuleWithBusinessSchema,
 	CreateReservationModuleRequestSchema,
 	UpdateReservationModuleRequestSchema,
 	UpdateReservationSettingsRequestSchema,

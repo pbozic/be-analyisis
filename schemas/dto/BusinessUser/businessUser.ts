@@ -32,6 +32,13 @@ export const BusinessUserRefSchema = z.object({
 
 export type BusinessUserRef = z.infer<typeof BusinessUserRefSchema>;
 
+// BusinessUser Detail Schema - for use in other entities (like Employee) with full user details
+export const BusinessUserDetailSchema = BusinessUserBaseSchema.extend({
+	users: UserResponseSchema.optional(),
+});
+
+export type BusinessUserDetail = z.infer<typeof BusinessUserDetailSchema>;
+
 // First declare the base response schema
 export const BusinessUserResponseSchemaBase = BusinessUserBaseSchema.extend({
 	users: UserResponseSchema.optional(),
@@ -83,6 +90,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('BusinessUser', BusinessUserResponseSchema);
 	registry.register('BusinessUserRef', BusinessUserRefSchema);
 	registry.register('BusinessUserBase', BusinessUserBaseSchema);
+	registry.register('BusinessUserDetail', BusinessUserDetailSchema);
 	registry.register('BusinessUserWithBusiness', BusinessUserWithBusinessResponseSchema);
 	registry.register('BusinessUserList', BusinessUserListResponseSchema);
 	registry.register('BusinessUserCreation', BusinessUserCreationResponseSchema);

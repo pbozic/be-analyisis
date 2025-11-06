@@ -1,6 +1,7 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 import * as FavoriteDao from '../dao/UserFavoriteDriver.ts';
+import { ValidatedRequest } from '../types/validatedRequest.ts';
 
 /**
  * POST /users/me/favorite-drivers
@@ -23,11 +24,14 @@ import * as FavoriteDao from '../dao/UserFavoriteDriver.ts';
  * }
  * @prisma_model user_favorite_drivers
  */
-export async function addFavoriteDriver(req: Request, res: Response): Promise<void> {
+export async function addFavoriteDriver(
+	req: ValidatedRequest<unknown, { driver_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		// @ts-ignore auth middleware attaches user
 		const user_id: string = req.user?.user_id;
-		const { driver_id } = req.body as { driver_id: string };
+		const { driver_id } = req.params;
 		if (!user_id) {
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
@@ -55,11 +59,14 @@ export async function addFavoriteDriver(req: Request, res: Response): Promise<vo
  * @responseContent {object} 200.application/json
  * @prisma_model user_favorite_drivers
  */
-export async function removeFavoriteDriver(req: Request, res: Response): Promise<void> {
+export async function removeFavoriteDriver(
+	req: ValidatedRequest<unknown, { driver_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		// @ts-ignore
 		const user_id: string = req.user?.user_id;
-		const { driver_id } = req.params as { driver_id: string };
+		const { driver_id } = req.params;
 		if (!user_id) {
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
@@ -85,7 +92,7 @@ export async function removeFavoriteDriver(req: Request, res: Response): Promise
  * @prisma_model users
  * @prisma_model user_favorite_drivers
  */
-export async function listFavoriteDrivers(req: Request, res: Response): Promise<void> {
+export async function listFavoriteDrivers(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
 		// @ts-ignore
 		const user_id: string = req.user?.user_id;

@@ -4,6 +4,7 @@ import { SCHEDULE_SLOT_EXCEPTION_TYPE } from '@prisma/client';
 
 import { UUID, Timestamp } from '../../../primitives';
 import { LocationRefSchema } from '../location/location.dto.js';
+import { ScheduleEmployeeRefSchema } from '../schedule-employee/schedule-employee.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -34,6 +35,14 @@ export const ScheduleRefSchema = z
 		title: 'ScheduleRef',
 		description: 'Minimal schedule reference for embedding in other entities',
 	});
+
+// ===== DETAIL SCHEMA (full schedule with full relations as returned by DAO) =====
+export const ScheduleDetailSchema = ScheduleBaseSchema.extend({
+	location: LocationRefSchema.nullable().optional(),
+}).openapi({
+	title: 'ScheduleDetail',
+	description: 'Full schedule details returned from DAO functions with location',
+});
 
 // ===== CREATE/UPDATE REQUEST SCHEMAS =====
 export const CreateScheduleRequestSchema = z
@@ -370,12 +379,24 @@ export const ScheduleResponseSchema = ScheduleBaseSchema.extend({
 	description: 'Complete schedule response with related entities',
 });
 
+// ===== DAO RESPONSE SCHEMAS =====
+// DAO response for getSchedulesByLocationId and getScheduleById
+export const ScheduleDAOResponseSchema = ScheduleBaseSchema.extend({
+	location: LocationRefSchema.optional(),
+	schedule_employees: z.array(ScheduleEmployeeRefSchema).optional(),
+}).openapi({
+	title: 'ScheduleDAOResponse',
+	description: 'Schedule response from DAO functions with location and employees',
+});
+
 // ===== EXPORTED TYPES =====
 export type ScheduleBase = z.infer<typeof ScheduleBaseSchema>;
 export type ScheduleRef = z.infer<typeof ScheduleRefSchema>;
+export type ScheduleDetail = z.infer<typeof ScheduleDetailSchema>;
 export type CreateScheduleRequest = z.infer<typeof CreateScheduleRequestSchema>;
 export type UpdateScheduleRequest = z.infer<typeof UpdateScheduleRequestSchema>;
 export type ScheduleResponse = z.infer<typeof ScheduleResponseSchema>;
+export type ScheduleDAOResponse = z.infer<typeof ScheduleDAOResponseSchema>;
 
 export type CreateScheduleEmployee = z.infer<typeof CreateScheduleEmployeeSchema>;
 export type UpdateScheduleEmployee = z.infer<typeof UpdateScheduleEmployeeSchema>;
@@ -424,9 +445,11 @@ export type GetSchedulesWithSlots = z.infer<typeof GetSchedulesWithSlotsSchema>;
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('ScheduleBase', ScheduleBaseSchema);
 	registry.register('ScheduleRef', ScheduleRefSchema);
+	registry.register('ScheduleDetail', ScheduleDetailSchema);
 	registry.register('CreateScheduleRequest', CreateScheduleRequestSchema);
 	registry.register('UpdateScheduleRequest', UpdateScheduleRequestSchema);
 	registry.register('ScheduleResponse', ScheduleResponseSchema);
+	registry.register('ScheduleDAO', ScheduleDAOResponseSchema);
 
 	registry.register('CreateScheduleEmployee', CreateScheduleEmployeeSchema);
 	registry.register('UpdateScheduleEmployee', UpdateScheduleEmployeeSchema);

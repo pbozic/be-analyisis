@@ -3,6 +3,10 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, Timestamp, Email } from '../../../primitives';
 import { ReservationModuleRefSchema } from '../reservation-module/reservation-module.dto.js';
+import { ScheduleSlotRefSchema } from '../schedule-slot/schedule-slot.dto.js';
+import { ScheduleEmployeeRefSchema } from '../schedule-employee/schedule-employee.dto.js';
+import { ScheduleDetailSchema } from '../schedule/schedule.dto.js';
+import { BusinessUserDetailSchema } from '../../Business/index.js';
 
 extendZodWithOpenApi(z);
 
@@ -32,11 +36,28 @@ export const EmployeeRefSchema = z
 		first_name: z.string().nullable().optional().openapi({ example: 'Jane' }),
 		last_name: z.string().nullable().optional().openapi({ example: 'Smith' }),
 		email: Email.nullable().optional(),
+		business_users_id: UUID.nullable().optional(),
 	})
 	.openapi({
 		title: 'EmployeeRef',
 		description: 'Minimal employee reference for embedding in other entities',
 	});
+
+// ===== WITH RELATIONS SCHEMA (extends RefSchema with selected relations) =====
+export const EmployeeWithBusinessUserSchema = EmployeeRefSchema.extend({
+	business_user: BusinessUserDetailSchema.nullable().optional(),
+}).openapi({
+	title: 'EmployeeWithBusinessUser',
+	description: 'Employee reference with business user information',
+});
+
+// ===== DETAIL SCHEMA (full employee info for DAO returns) =====
+export const EmployeeDetailSchema = EmployeeBaseSchema.extend({
+	business_user: BusinessUserDetailSchema.nullable().optional(),
+}).openapi({
+	title: 'EmployeeDetail',
+	description: 'Full employee details returned from DAO functions with business user information',
+});
 
 // ===== CREATE/UPDATE REQUEST SCHEMAS =====
 export const CreateEmployeeRequestSchema = z
@@ -98,20 +119,85 @@ export const EmployeeResponseSchema = EmployeeBaseSchema.extend({
 	description: 'Complete employee response with related entities',
 });
 
+// ===== DAO RESPONSE SCHEMAS =====
+// DAO response for getEmployeesByReservationModuleId
+export const EmployeeDAOResponseSchema = EmployeeBaseSchema.extend({
+	reservation_module: ReservationModuleRefSchema.optional(),
+	business_user: BusinessUserDetailSchema.nullable().optional(),
+}).openapi({
+	title: 'EmployeeDAOResponse',
+	description: 'Employee response from DAO with reservation module and business user',
+});
+
+// DAO response for getEmployeeById and getEmployeeByIdWithSchedules
+export const EmployeeByIdDAOResponseSchema = EmployeeBaseSchema.extend({
+	reservation_module: ReservationModuleRefSchema.optional(),
+	business_user: BusinessUserDetailSchema.nullable().optional(),
+}).openapi({
+	title: 'EmployeeByIdDAOResponse',
+	description: 'Employee response from getEmployeeById with user information',
+});
+
+// DAO response for getEmployeesByReservationModuleIdWithSlots
+export const EmployeeWithSlotsDAOResponseSchema = EmployeeBaseSchema.extend({
+	reservation_module: ReservationModuleRefSchema.optional(),
+	schedule_slots: z
+		.array(
+			ScheduleSlotRefSchema.extend({
+				schedule_employee: ScheduleEmployeeRefSchema.optional(),
+				schedule_slot_exceptions: z.array(z.object({ start_time: Timestamp })).optional(),
+				booking_slots: z.array(z.object({ start_time: Timestamp })).optional(),
+				schedule: ScheduleDetailSchema.optional(),
+			})
+		)
+		.optional(),
+}).openapi({
+	title: 'EmployeeWithSlotsDAOResponse',
+	description: 'Employee response with schedule slots and exceptions',
+});
+
+// DAO response for getScheduleSlotsByEmployeesIdAndDate
+export const EmployeeScheduleSlotsDAOResponseSchema = EmployeeBaseSchema.extend({
+	schedule_slots: z
+		.array(
+			z.object({
+				schedule_slot_id: UUID,
+				schedule_slot_exceptions: z.array(z.object({ start_time: Timestamp })).optional(),
+				booking_slots: z.array(z.object({ start_time: Timestamp })).optional(),
+			})
+		)
+		.optional(),
+}).openapi({
+	title: 'EmployeeScheduleSlotsDAOResponse',
+	description: 'Employee response with schedule slots for date range',
+});
+
 // ===== EXPORTED TYPES =====
 export type EmployeeBase = z.infer<typeof EmployeeBaseSchema>;
 export type EmployeeRef = z.infer<typeof EmployeeRefSchema>;
+export type EmployeeWithBusinessUser = z.infer<typeof EmployeeWithBusinessUserSchema>;
+export type EmployeeDetail = z.infer<typeof EmployeeDetailSchema>;
 export type CreateEmployeeRequest = z.infer<typeof CreateEmployeeRequestSchema>;
 export type UpdateEmployeeRequest = z.infer<typeof UpdateEmployeeRequestSchema>;
 export type DeleteEmployeeRequest = z.infer<typeof DeleteEmployeeRequestSchema>;
 export type EmployeeResponse = z.infer<typeof EmployeeResponseSchema>;
+export type EmployeeDAOResponse = z.infer<typeof EmployeeDAOResponseSchema>;
+export type EmployeeByIdDAOResponse = z.infer<typeof EmployeeByIdDAOResponseSchema>;
+export type EmployeeWithSlotsDAOResponse = z.infer<typeof EmployeeWithSlotsDAOResponseSchema>;
+export type EmployeeScheduleSlotsDAOResponse = z.infer<typeof EmployeeScheduleSlotsDAOResponseSchema>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('EmployeeBase', EmployeeBaseSchema);
 	registry.register('EmployeeRef', EmployeeRefSchema);
+	registry.register('EmployeeWithBusinessUser', EmployeeWithBusinessUserSchema);
+	registry.register('EmployeeDetail', EmployeeDetailSchema);
 	registry.register('CreateEmployeeRequest', CreateEmployeeRequestSchema);
 	registry.register('UpdateEmployeeRequest', UpdateEmployeeRequestSchema);
 	registry.register('DeleteEmployeeRequest', DeleteEmployeeRequestSchema);
 	registry.register('EmployeeResponse', EmployeeResponseSchema);
+	registry.register('EmployeeDAO', EmployeeDAOResponseSchema);
+	registry.register('EmployeeByIdDAO', EmployeeByIdDAOResponseSchema);
+	registry.register('EmployeeWithSlotsDAO', EmployeeWithSlotsDAOResponseSchema);
+	registry.register('EmployeeScheduleSlotsDAO', EmployeeScheduleSlotsDAOResponseSchema);
 }

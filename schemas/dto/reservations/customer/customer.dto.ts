@@ -3,6 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, Timestamp, Email } from '../../../primitives';
 import { ReservationModuleRefSchema } from '../reservation-module/reservation-module.dto.js';
+import { BookingRefSchema } from '../booking/booking.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -38,6 +39,14 @@ export const CustomerRefSchema = z
 		title: 'CustomerRef',
 		description: 'Minimal customer reference for embedding in other entities',
 	});
+
+// ===== DETAIL SCHEMA (full customer info for DAO returns) =====
+export const CustomerDetailSchema = CustomerBaseSchema.omit({
+	reservation_module_id: true,
+}).openapi({
+	title: 'CustomerDetail',
+	description: 'Full customer details returned from DAO functions (without nested module)',
+});
 
 // ===== CREATE/UPDATE REQUEST SCHEMAS =====
 export const CreateCustomerRequestSchema = z
@@ -77,20 +86,61 @@ export const CustomerResponseSchema = CustomerBaseSchema.extend({
 	description: 'Complete customer response with related entities',
 });
 
+// ===== DAO RESPONSE SCHEMAS =====
+// DAO response for getCustomersByReservationModuleId and getCustomerById
+export const CustomerDAOResponseSchema = CustomerBaseSchema.extend({
+	reservation_module: ReservationModuleRefSchema.optional(),
+	bookings: z.array(BookingRefSchema).optional(),
+}).openapi({
+	title: 'CustomerDAOResponse',
+	description: 'Customer response from DAO functions with reservation module and bookings',
+});
+
+// DAO response for getCustomerByCode (with nested business and filtered bookings)
+export const CustomerByCodeDAOResponseSchema = CustomerBaseSchema.extend({
+	reservation_module: ReservationModuleRefSchema.extend({
+		business: z
+			.object({
+				business_id: UUID,
+				address: z.object({ address_id: UUID }).nullable().optional(),
+			})
+			.optional(),
+	}).optional(),
+	bookings: z
+		.array(
+			z.object({
+				booking_id: UUID,
+				service_id: UUID,
+				employee_id: UUID.nullable().optional(),
+				location_id: UUID.nullable().optional(),
+			})
+		)
+		.optional(),
+}).openapi({
+	title: 'CustomerByCodeDAOResponse',
+	description: 'Customer response from getCustomerByCode with nested business and filtered bookings',
+});
+
 // ===== EXPORTED TYPES =====
 export type CustomerBase = z.infer<typeof CustomerBaseSchema>;
 export type CustomerRef = z.infer<typeof CustomerRefSchema>;
+export type CustomerDetail = z.infer<typeof CustomerDetailSchema>;
 export type CreateCustomerRequest = z.infer<typeof CreateCustomerRequestSchema>;
 export type UpdateCustomerRequest = z.infer<typeof UpdateCustomerRequestSchema>;
 export type DeleteCustomerRequest = z.infer<typeof DeleteCustomerRequestSchema>;
 export type CustomerResponse = z.infer<typeof CustomerResponseSchema>;
+export type CustomerDAOResponse = z.infer<typeof CustomerDAOResponseSchema>;
+export type CustomerByCodeDAOResponse = z.infer<typeof CustomerByCodeDAOResponseSchema>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CustomerBase', CustomerBaseSchema);
 	registry.register('CustomerRef', CustomerRefSchema);
+	registry.register('CustomerDetail', CustomerDetailSchema);
 	registry.register('CreateCustomerRequest', CreateCustomerRequestSchema);
 	registry.register('UpdateCustomerRequest', UpdateCustomerRequestSchema);
 	registry.register('DeleteCustomerRequest', DeleteCustomerRequestSchema);
 	registry.register('CustomerResponse', CustomerResponseSchema);
+	registry.register('CustomerDAO', CustomerDAOResponseSchema);
+	registry.register('CustomerByCodeDAO', CustomerByCodeDAOResponseSchema);
 }

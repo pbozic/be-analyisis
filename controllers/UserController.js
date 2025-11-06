@@ -2124,7 +2124,7 @@ async function updateNewsletter(req, res) {
 	}
 }
 /**
- * POST /users/me/request-data
+ * GET /users/me/request-data
  * @tag Users
  * @summary Request my stored data (GDPR)
  * @description Returns a comprehensive snapshot of the current user's stored data across related models.
@@ -3114,7 +3114,6 @@ export { addAddress };
 export { deleteAddress };
 export { editAddress };
 export { setPrimaryAddress };
-export { reviewUser };
 export { oneSignalId };
 export { getPaymentSheetCredentials };
 export { requestToAddFundsToWallet };
@@ -3176,7 +3175,6 @@ export default {
 	deleteAddress,
 	editAddress,
 	setPrimaryAddress,
-	reviewUser,
 	oneSignalId,
 	getPaymentSheetCredentials,
 	requestToAddFundsToWallet,
