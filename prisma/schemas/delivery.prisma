@@ -460,8 +460,6 @@ model table_reservations_module {
 model reservations {
     reservation_id String             @id @default(uuid()) @db.Uuid
     seats          Int
-    date           DateTime           @db.Timestamptz(6)
-    time           String
     datetime       DateTime           @default(now()) @db.Timestamptz(0)
     created_at     DateTime           @default(now()) @db.Timestamptz(6)
     updated_at     DateTime           @default(now()) @updatedAt @db.Timestamptz(6)

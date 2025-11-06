@@ -30,7 +30,7 @@ async function getMenuByBusinessId(req, res) {
 	}
 }
 /**
- * POST /menus/daily/business/:business_id
+ * POST /menus/auth/daily/business/:business_id
  * @tag Menu
  * @summary Get menus by business ID
  * @description Retrieves a list of menus for a specific business.
@@ -917,7 +917,7 @@ const updateDailyMealMenuPrice = async (req, res) => {
 	}
 };
 /**
- * POST /menus/menu-items/ids/:business_id
+ * POST /menus/auth/menu-items/extras-sides/:business_id
  * @tag MenuItem
  * @summary Get menu items by IDs
  * @description Retrieves menu items by list of ids for a business.

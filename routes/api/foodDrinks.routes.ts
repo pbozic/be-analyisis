@@ -5,7 +5,7 @@ import { validate } from '../../middleware/zod.ts';
 import {
 	FoodDrinksOnlineBodySchema,
 	FoodDrinksOverwhelmedBodySchema,
-} from '../../types/foodDrinks/FoodDrinksRequests.ts';
+} from '../../schemas/dto/FoodDrinks/food-drinks.dto.ts';
 
 const router = express.Router();
 
