@@ -32,7 +32,7 @@ import {
 	UpdateBusinessWorkingHoursSchema,
 	UpdateIsBusinessUnitSchema,
 	UpdateParentBusinessIdSchema,
-} from '../../schemas/validation/Business/Business.validation.ts';
+} from '../../schemas/dto/Business/Business.validation.ts';
 import { ListPromoSectionsSchema } from '../../schemas/validation/PromoSection/PromoSection.validation.ts';
 
 const router = express.Router();

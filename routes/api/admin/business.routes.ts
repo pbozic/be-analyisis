@@ -3,7 +3,7 @@ import express from 'express';
 import { validate } from '../../../middleware/zod';
 import { CreateBusinessTypeSchema } from '../../../types/business/BusinessType.ts';
 import BusinessController from '../../../controllers/BusinessController.js';
-import { SetBusinessTypesSchema } from '../../../schemas/validation/Business/Business.validation.ts';
+import { SetBusinessTypesSchema } from '../../../schemas/dto/Business/businessType.ts';
 
 const router = express.Router();
 router.get('/', BusinessController.listBusinesses);
