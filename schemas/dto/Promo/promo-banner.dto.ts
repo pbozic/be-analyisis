@@ -42,12 +42,8 @@ export const CreatePromoBannerRequestSchema = z
 	.openapi('CreatePromoBannerRequest');
 export type CreatePromoBannerRequest = z.infer<typeof CreatePromoBannerRequestSchema>;
 
-export const UpdatePromoBannerRequestSchema = z
-	.object({
-		promoBannerData: PromoBannerDataSchema.partial().optional(),
-		imageFileData: ImageFileDataSchema.optional(),
-	})
-	.openapi('UpdatePromoBannerRequest');
+export const UpdatePromoBannerRequestSchema =
+	CreatePromoBannerRequestSchema.partial().openapi('UpdatePromoBannerRequest');
 export type UpdatePromoBannerRequest = z.infer<typeof UpdatePromoBannerRequestSchema>;
 
 // Responses: Banners

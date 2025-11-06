@@ -11,19 +11,20 @@ import userRoutes from './api/users.routes.js';
 import authRoutes from './api/auth.routes.js';
 import authTaxiRoutes from './api/taxi/auth.routes.js';
 import authDeliveryRoutes from './api/delivery/auth.routes.js';
-import authMerchantRoutes from './api/merchant/auth.routes.js';
-import reservationsMerchantRoutes from './api/merchant/reservations.routes.js';
+import authMerchantRoutes from './api/merchant/auth.routes.ts';
+import reservationsMerchantRoutes from './api/merchant/tableReservations.routes.ts';
 import taxiRoutes from './api/taxi.routes.js';
-import deliveryRoutes from './api/delivery/orders.routes.js';
+import deliveryRoutes from './api/delivery/orders.routes.ts';
 import dailyMealsRoutes from './api/delivery/dailyMeals.routes.js';
 import authBusinessRoutes from './api/business/auth.routes.js';
 import businessRoutes from './api/business.routes.js';
 import driverRoutes from './api/drivers.routes.js';
 // import deliveryDriverRoutes from './api/deliveryDrivers.routes.js';
-import vehicleRoutes from './api/vehicles.routes.js';
+import vehicleRoutes from './api/vehicles.routes.ts';
 import financesRoutes from './api/finances.routes.js';
 import documentsRoutes from './api/documents.routes.js';
 import menusRoutes from './api/menu.routes.js';
+import authMenusRoutes from './api/menu/auth.routes.js';
 import businessUserRoutes from './api/businessUsers.routes.js';
 import businessTeamRoutes from './api/businessTeams.routes.js';
 import businessClientRoutes from './api/businessClients.routes.js';
@@ -31,11 +32,11 @@ import stripeRoutes from './api/stripe.routes.js';
 import lostItemsRoutes from './api/lostItems.routes.js';
 import flagRoutes from './api/flags.routes.js';
 import categoriesRoutes from './api/categories.routes.js';
-import promoRoutes from './api/promo.routes.js';
+import promoRoutes from './api/promo.routes.ts';
 import googleMaps from './api/googleMaps.routes.js';
 import orderLobbyRoutes from './api/orderLobby.routes.js';
-import searchRoutes from './api/search.routes.js';
-import overwatchRoutes from './api/overwatch.routes.js';
+import searchRoutes from './api/search.routes.ts';
+import overwatchRoutes from './api/overwatch.routes.ts';
 import blogRoutes from './api/blog.routes.js';
 import reservationRoutes from './api/reservations/index.routes.js';
 import RolesRoutes from './api/roles.routes.js';
@@ -46,7 +47,6 @@ import { sendNotificationToUser } from '../lib/oneSignal.js';
 import withUserMiddleware from '../middleware/user.js';
 import sessionRoutes from './api/session.routes.js';
 const router = express.Router();
-const authUserRoutes = authRoutes;
 /**
  *    * @module stripe
  *
@@ -153,6 +153,7 @@ router.use('/documents', [authMiddleware], documentsRoutes);
  *
  */
 router.use('/menus', [authMiddleware], menusRoutes);
+router.use('/menus/auth', authMenusRoutes);
 /**
  *    * @module business,general
  *
@@ -339,6 +340,7 @@ router.post('/test/notification', async (req, res) => {
 router.get('/purchase-status/:sessionId', async (req, res) => {
 	try {
 		const sessionId = req.params.session_id;
+		// eslint-disable-next-line no-undef
 		const session = await stripe.checkout.sessions.retrieve(sessionId);
 		res.json({
 			success: session.payment_status === 'paid',

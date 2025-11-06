@@ -2,7 +2,7 @@ import { Response } from 'express';
 
 import * as FoodDrinksDao from '../dao/FoodDrinks.ts';
 import { ValidatedRequest } from '../types/validatedRequest.ts';
-import { FoodDrinksOnlineBody, FoodDrinksOverwhelmedBody } from '../types/foodDrinks/FoodDrinksRequests.ts';
+import { FoodDrinksOnlineBody, FoodDrinksOverwhelmedBody } from '../schemas/dto/FoodDrinks/food-drinks.dto.ts';
 
 /**
  * PATCH /food-drinks/{food_drinks_id}/online

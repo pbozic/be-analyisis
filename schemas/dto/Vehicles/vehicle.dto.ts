@@ -246,14 +246,7 @@ export const CreateVehicleRequestSchema = z
 	.openapi('CreateVehicleRequest');
 export type CreateVehicleRequest = z.infer<typeof CreateVehicleRequestSchema>;
 
-export const UpdateVehicleRequestSchema = z
-	.object({
-		vehicle_id: UUID,
-		vehicle_information: VehicleUpdateInputSchema,
-		drivers: z.array(DriverRefSchema).default([]).nullable().optional(),
-		documents: z.array(VehicleDocumentUpdateSchema).default([]).nullable().optional(),
-	})
-	.openapi('UpdateVehicleRequest');
+export const UpdateVehicleRequestSchema = CreateVehicleRequestSchema.partial().openapi('UpdateVehicleRequest');
 export type UpdateVehicleRequest = z.infer<typeof UpdateVehicleRequestSchema>;
 
 // Shared body for assign/unassign vehicles to a driver

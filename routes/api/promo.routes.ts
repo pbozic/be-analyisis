@@ -1,11 +1,11 @@
 import express from 'express';
 
-import bannerRouter from './promo/banners.routes.js';
-import adRouter from './promo/ads.routes.js';
-import sectionRouter from './promo/sections.routes.js';
-import sectionBuyRouter from './promo/section_buy.routes.js';
-import wordRouter from './promo/words.routes.js';
-import wordBuyRouter from './promo/word_buy.routes.js';
+import bannerRouter from './promo/banners.routes.ts';
+import adRouter from './promo/ads.routes.ts';
+import sectionRouter from './promo/sections.routes.ts';
+import sectionBuyRouter from './promo/section_buy.routes.ts';
+import wordRouter from './promo/words.routes.ts';
+import wordBuyRouter from './promo/word_buy.routes.ts';
 import authMiddleware from '../../middleware/auth.js';
 
 const router = express.Router();

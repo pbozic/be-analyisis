@@ -93,12 +93,7 @@ export const CreateWordBuyRequestSchema = z
 	.openapi('CreateWordBuyRequest');
 export type CreateWordBuyRequest = z.infer<typeof CreateWordBuyRequestSchema>;
 
-export const UpdateWordBuysRequestSchema = z
-	.object({
-		word_buys: z.array(WordBuyItemSchema).min(1),
-		business_id: UUID,
-	})
-	.openapi('UpdateWordBuysRequest');
+export const UpdateWordBuysRequestSchema = CreateWordBuyRequestSchema.openapi('UpdateWordBuysRequest');
 export type UpdateWordBuysRequest = z.infer<typeof UpdateWordBuysRequestSchema>;
 
 export const UpdateSingleWordBuyRequestSchema = z
