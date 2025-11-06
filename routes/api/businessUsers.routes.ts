@@ -1,7 +1,7 @@
 import express from 'express';
 
 import BusinessUsersController from '../../controllers/BusinessUsersController.js';
-import { AddAddressSchema } from '../../schemas/validation/Business/Business.validation.js';
+import { AddAddressSchema } from '../../schemas/dto/Business/Business.validation.ts';
 import { validate } from '../../middleware/zod.js';
 import {
 	AcceptBusinessInvitationSchema,
@@ -10,7 +10,7 @@ import {
 	UpdateAllowanceSchema,
 	UpdateCompanyRoleSchema,
 	UpdateOnlineStatusSchema,
-} from '../../schemas/validation/Business/BusinessUser.validation.js';
+} from '../../schemas/dto/BusinessUser/BusinessUser.validation.ts';
 
 const router = express.Router();
 router.get('/', BusinessUsersController.getAllBusinessUsers);
