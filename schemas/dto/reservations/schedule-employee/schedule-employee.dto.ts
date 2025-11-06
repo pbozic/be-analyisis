@@ -43,7 +43,15 @@ export const CreateScheduleEmployeeRequestSchema = z
 		title: 'CreateScheduleEmployeeRequest',
 		description: 'Request schema for creating a new schedule employee',
 	});
-
+export const UpdateScheduleEmployeeRequestSchema = z
+	.object({
+		schedule_id: UUID.optional(),
+		employee_id: UUID.optional(),
+	})
+	.openapi({
+		title: 'UpdateScheduleEmployeeRequest',
+		description: 'Request schema for updating an existing schedule employee',
+	});
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 export const ScheduleEmployeeResponseSchema = ScheduleEmployeeBaseSchema.extend({
 	schedule: ScheduleRefSchema.optional(),
