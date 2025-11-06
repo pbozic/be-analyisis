@@ -5,6 +5,8 @@ import { UUID } from '../../../primitives';
 import { JsonObjectSchema } from '../_common';
 import { ReservationModuleRefSchema } from '../reservation-module/reservation-module.dto.js';
 import { NotificationEventRefSchema } from '../notification-event/notification-event.dto.js';
+import { NotificationTemplateVersionRefSchema } from '../notification-template-version/notification-template-version.dto.js';
+import { NotificationTemplateRefSchema } from '../notification-template/notification-template.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -68,12 +70,26 @@ export const NotificationMappingResponseSchema = NotificationMappingBaseSchema.e
 	description: 'Complete notification mapping response with related entities',
 });
 
+// ===== DAO RESPONSE SCHEMAS =====
+// DAO response for getLatestTemplateForEvent
+export const NotificationMappingWithTemplateVersionDAOResponseSchema = NotificationMappingBaseSchema.extend({
+	version: NotificationTemplateVersionRefSchema.extend({
+		template: NotificationTemplateRefSchema.optional(),
+	}).optional(),
+}).openapi({
+	title: 'NotificationMappingWithTemplateVersionDAOResponse',
+	description: 'Notification mapping response from DAO with latest template version and template',
+});
+
 // ===== EXPORTED TYPES =====
 export type NotificationMappingBase = z.infer<typeof NotificationMappingBaseSchema>;
 export type NotificationMappingRef = z.infer<typeof NotificationMappingRefSchema>;
 export type CreateNotificationMappingRequest = z.infer<typeof CreateNotificationMappingRequestSchema>;
 export type UpdateNotificationMappingRequest = z.infer<typeof UpdateNotificationMappingRequestSchema>;
 export type NotificationMappingResponse = z.infer<typeof NotificationMappingResponseSchema>;
+export type NotificationMappingWithTemplateVersionDAOResponse = z.infer<
+	typeof NotificationMappingWithTemplateVersionDAOResponseSchema
+>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
@@ -82,4 +98,8 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateNotificationMappingRequest', CreateNotificationMappingRequestSchema);
 	registry.register('UpdateNotificationMappingRequest', UpdateNotificationMappingRequestSchema);
 	registry.register('NotificationMappingResponse', NotificationMappingResponseSchema);
+	registry.register(
+		'NotificationMappingWithTemplateVersionDAO',
+		NotificationMappingWithTemplateVersionDAOResponseSchema
+	);
 }

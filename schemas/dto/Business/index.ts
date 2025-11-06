@@ -19,9 +19,11 @@ export {
 export {
 	BusinessUserBaseSchema,
 	BusinessUserRefSchema,
+	BusinessUserDetailSchema,
 	BusinessUserResponseSchema,
 	type BusinessUserBase,
 	type BusinessUserRef,
+	type BusinessUserDetail,
 	type BusinessUserResponse,
 	registerSchemas as registerBusinessUserSchemas,
 } from '../BusinessUser/businessUser.js';

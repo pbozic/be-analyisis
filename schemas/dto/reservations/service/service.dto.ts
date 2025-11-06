@@ -4,6 +4,8 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { UUID, Timestamp } from '../../../primitives';
 import { ReservationModuleRefSchema } from '../reservation-module/reservation-module.dto.js';
 import { ServiceCategoryRefSchema } from '../service-category/service-category.dto.js';
+import { BookingRefSchema } from '../booking/booking.dto.js';
+import { ServiceAssignmentRefSchema } from '../service-assignment/service-assignment.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -69,6 +71,25 @@ export const ServiceRefSchema = z
 		title: 'ServiceRef',
 		description: 'Minimal service reference for embedding in other entities',
 	});
+
+// ===== REF WITH RELATIONS SCHEMA (extends Ref with service category) =====
+export const ServiceWithCategorySchema = ServiceRefSchema.extend({
+	service_category: ServiceCategoryRefSchema.nullable().optional(),
+}).openapi({
+	title: 'ServiceWithCategory',
+	description: 'Service reference with category for embedding',
+});
+
+// ===== DETAIL SCHEMA (full service with full relations as returned by DAO) =====
+export const ServiceDetailSchema = ServiceBaseSchema.extend({
+	service_category: ServiceCategoryRefSchema.nullable().optional(),
+	bookings: z.array(BookingRefSchema).optional(),
+	assigned_employees: z.array(ServiceAssignmentRefSchema).optional(),
+}).openapi({
+	title: 'ServiceDetail',
+	description:
+		'Full service details returned from DAO functions including category, bookings, and assigned employees',
+});
 
 // ===== CREATE/UPDATE REQUEST SCHEMAS =====
 export const CreateServiceRequestSchema = z
@@ -180,9 +201,18 @@ export const ServiceResponseSchema = ServiceBaseSchema.extend({
 	description: 'Complete service response with related entities',
 });
 
+// ===== DAO RESPONSE SCHEMAS =====
+// DAO response for getServicesByReservationModuleId, getServiceById, getServicesByCategoryId, getServicesByReservationId
+export const ServiceDAOResponseSchema = ServiceDetailSchema.openapi({
+	title: 'ServiceDAOResponse',
+	description: 'Service response from DAO functions with category, bookings, and assigned employees fully populated',
+});
+
 // ===== EXPORTED TYPES =====
 export type ServiceBase = z.infer<typeof ServiceBaseSchema>;
 export type ServiceRef = z.infer<typeof ServiceRefSchema>;
+export type ServiceWithCategory = z.infer<typeof ServiceWithCategorySchema>;
+export type ServiceDetail = z.infer<typeof ServiceDetailSchema>;
 export type CreateServiceRequest = z.infer<typeof CreateServiceRequestSchema>;
 export type UpdateServiceRequest = z.infer<typeof UpdateServiceRequestSchema>;
 export type DeleteServiceRequest = z.infer<typeof DeleteServiceRequestSchema>;
@@ -191,11 +221,14 @@ export type UpdateServiceWithEmployees = z.infer<typeof UpdateServiceWithEmploye
 export type CreateServiceWithLocations = z.infer<typeof CreateServiceWithLocationsSchema>;
 export type UpdateServiceWithLocations = z.infer<typeof UpdateServiceWithLocationsSchema>;
 export type ServiceResponse = z.infer<typeof ServiceResponseSchema>;
+export type ServiceDAOResponse = z.infer<typeof ServiceDAOResponseSchema>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('ServiceBase', ServiceBaseSchema);
 	registry.register('ServiceRef', ServiceRefSchema);
+	registry.register('ServiceWithCategory', ServiceWithCategorySchema);
+	registry.register('ServiceDetail', ServiceDetailSchema);
 	registry.register('CreateServiceRequest', CreateServiceRequestSchema);
 	registry.register('UpdateServiceRequest', UpdateServiceRequestSchema);
 	registry.register('DeleteServiceRequest', DeleteServiceRequestSchema);
@@ -204,4 +237,5 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateServiceWithLocations', CreateServiceWithLocationsSchema);
 	registry.register('UpdateServiceWithLocations', UpdateServiceWithLocationsSchema);
 	registry.register('ServiceResponse', ServiceResponseSchema);
+	registry.register('ServiceDAO', ServiceDAOResponseSchema);
 }

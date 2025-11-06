@@ -4,6 +4,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { UUID, Timestamp } from '../../../primitives';
 import { EmployeeRefSchema } from '../employee/employee.dto.js';
 import { ScheduleRefSchema } from '../schedule/schedule.dto.js';
+import { LocationRefSchema } from '../location/location.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -66,12 +67,34 @@ export const ScheduleSlotResponseSchema = ScheduleSlotBaseSchema.extend({
 	description: 'Complete schedule slot response with related entities',
 });
 
+// ===== DAO RESPONSE SCHEMAS =====
+// DAO response for getScheduleSlotById
+export const ScheduleSlotDAOResponseSchema = ScheduleSlotBaseSchema.extend({
+	booking_slots: z.array(z.unknown()).optional(),
+	schedule_slot_exceptions: z.array(z.unknown()).optional(),
+}).openapi({
+	title: 'ScheduleSlotDAOResponse',
+	description: 'Schedule slot response from DAO with booking slots and exceptions',
+});
+
+// DAO response for getScheduleSlotsByEmployeeIdAndDates
+export const ScheduleSlotWithScheduleDAOResponseSchema = ScheduleSlotBaseSchema.extend({
+	schedule: ScheduleRefSchema.extend({
+		location: LocationRefSchema.optional(),
+	}).optional(),
+}).openapi({
+	title: 'ScheduleSlotWithScheduleDAOResponse',
+	description: 'Schedule slot response from DAO with schedule and location details',
+});
+
 // ===== EXPORTED TYPES =====
 export type ScheduleSlotBase = z.infer<typeof ScheduleSlotBaseSchema>;
 export type ScheduleSlotRef = z.infer<typeof ScheduleSlotRefSchema>;
 export type CreateScheduleSlotRequest = z.infer<typeof CreateScheduleSlotRequestSchema>;
 export type UpdateScheduleSlotRequest = z.infer<typeof UpdateScheduleSlotRequestSchema>;
 export type ScheduleSlotResponse = z.infer<typeof ScheduleSlotResponseSchema>;
+export type ScheduleSlotDAOResponse = z.infer<typeof ScheduleSlotDAOResponseSchema>;
+export type ScheduleSlotWithScheduleDAOResponse = z.infer<typeof ScheduleSlotWithScheduleDAOResponseSchema>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
@@ -80,4 +103,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateScheduleSlotRequest', CreateScheduleSlotRequestSchema);
 	registry.register('UpdateScheduleSlotRequest', UpdateScheduleSlotRequestSchema);
 	registry.register('ScheduleSlotResponse', ScheduleSlotResponseSchema);
+	registry.register('ScheduleSlotDAO', ScheduleSlotDAOResponseSchema);
+	registry.register('ScheduleSlotWithScheduleDAO', ScheduleSlotWithScheduleDAOResponseSchema);
 }

@@ -2,7 +2,10 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID, Timestamp } from '../../../primitives';
-import { BusinessResponseDto } from '../../Business/business.dto.js';
+import { BusinessRefSchema } from '../../Business/index.js';
+import { EmployeeRefSchema } from '../employee/employee.dto.js';
+import { LocationRefSchema } from '../location/location.dto.js';
+import { ServiceRefSchema } from '../service/service.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -60,6 +63,14 @@ export const ReservationModuleRefSchema = z
 		description: 'Minimal reservation module reference for embedding in other entities',
 	});
 
+// ===== WITH RELATIONS SCHEMA (extends RefSchema with selected relations) =====
+export const ReservationModuleWithBusinessSchema = ReservationModuleRefSchema.extend({
+	business: BusinessRefSchema.optional(),
+}).openapi({
+	title: 'ReservationModuleWithBusiness',
+	description: 'Reservation module reference with business information',
+});
+
 // ===== CREATE/UPDATE REQUEST SCHEMAS =====
 export const CreateReservationModuleRequestSchema = z
 	.object({
@@ -105,26 +116,88 @@ export const UpdateReservationSettingsRequestSchema = UpdateReservationModuleReq
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const ReservationModuleResponseSchema = ReservationModuleBaseSchema.extend({
-	business: BusinessResponseDto.optional(),
+	business: BusinessRefSchema.optional(),
 }).openapi({
 	title: 'ReservationModuleResponse',
 	description: 'Complete reservation module response with related entities',
 });
 
+// ===== DAO RESPONSE SCHEMAS =====
+// DAO response for getReservationModuleById
+export const ReservationModuleDAOResponseSchema = ReservationModuleBaseSchema.extend({
+	business: BusinessRefSchema.optional(),
+	locations: z.array(LocationRefSchema).optional(),
+	services: z.array(ServiceRefSchema).optional(),
+	employees: z.array(EmployeeRefSchema).optional(),
+}).openapi({
+	title: 'ReservationModuleDAOResponse',
+	description: 'Reservation module response from DAO with locations, services, and employees',
+});
+
+// DAO response for getReservationModuleByPublicLinkHashOrBusinessId
+export const ReservationModulePublicDAOResponseSchema = ReservationModuleBaseSchema.extend({
+	business: z
+		.object({
+			business_id: UUID,
+			address: z
+				.object({
+					address_id: UUID,
+				})
+				.nullable()
+				.optional(),
+		})
+		.optional(),
+	employees: z
+		.array(
+			z.object({
+				employee_id: UUID,
+				reservation_module_id: UUID,
+				first_name: z.string().nullable().optional(),
+				last_name: z.string().nullable().optional(),
+				email: z.string().nullable().optional(),
+				business_users_id: UUID.nullable().optional(),
+				created_at: Timestamp,
+				deleted_at: Timestamp.nullable().optional(),
+				assignments: z.unknown().optional(),
+				schedules: z.unknown().optional(),
+				bookings: z.unknown().optional(),
+				schedule_slots: z.unknown().optional(),
+			})
+		)
+		.optional(),
+	services: z
+		.array(
+			ServiceRefSchema.extend({
+				assigned_employees: z.array(z.unknown()).optional(),
+			})
+		)
+		.optional(),
+	locations: z.array(LocationRefSchema).optional(),
+}).openapi({
+	title: 'ReservationModulePublicDAOResponse',
+	description: 'Reservation module response from public link with full employee, service, and location details',
+});
+
 // ===== EXPORTED TYPES =====
 export type ReservationModuleBase = z.infer<typeof ReservationModuleBaseSchema>;
 export type ReservationModuleRef = z.infer<typeof ReservationModuleRefSchema>;
+export type ReservationModuleWithBusiness = z.infer<typeof ReservationModuleWithBusinessSchema>;
 export type CreateReservationModuleRequest = z.infer<typeof CreateReservationModuleRequestSchema>;
 export type UpdateReservationModuleRequest = z.infer<typeof UpdateReservationModuleRequestSchema>;
 export type UpdateReservationSettingsRequest = z.infer<typeof UpdateReservationSettingsRequestSchema>;
 export type ReservationModuleResponse = z.infer<typeof ReservationModuleResponseSchema>;
+export type ReservationModuleDAOResponse = z.infer<typeof ReservationModuleDAOResponseSchema>;
+export type ReservationModulePublicDAOResponse = z.infer<typeof ReservationModulePublicDAOResponseSchema>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('ReservationModuleBase', ReservationModuleBaseSchema);
 	registry.register('ReservationModuleRef', ReservationModuleRefSchema);
+	registry.register('ReservationModuleWithBusiness', ReservationModuleWithBusinessSchema);
 	registry.register('CreateReservationModuleRequest', CreateReservationModuleRequestSchema);
 	registry.register('UpdateReservationModuleRequest', UpdateReservationModuleRequestSchema);
 	registry.register('UpdateReservationSettingsRequest', UpdateReservationSettingsRequestSchema);
 	registry.register('ReservationModuleResponse', ReservationModuleResponseSchema);
+	registry.register('ReservationModuleDAO', ReservationModuleDAOResponseSchema);
+	registry.register('ReservationModulePublicDAO', ReservationModulePublicDAOResponseSchema);
 }

@@ -3,6 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID } from '../../../primitives';
 import { ReservationModuleRefSchema } from '../reservation-module/reservation-module.dto.js';
+import { AddressRefSchema } from '../../Address/address.js';
 
 extendZodWithOpenApi(z);
 
@@ -29,6 +30,7 @@ export const LocationBaseSchema = z
 	});
 
 // ===== REF SCHEMA (minimal identity for embedding) =====
+// ===== REF SCHEMA (minimal identity for embedding) =====
 export const LocationRefSchema = z
 	.object({
 		location_id: UUID,
@@ -40,6 +42,23 @@ export const LocationRefSchema = z
 		title: 'LocationRef',
 		description: 'Minimal location reference for embedding in other entities',
 	});
+
+// ===== REF WITH RELATIONS SCHEMA (extends Ref with address) =====
+export const LocationWithAddressSchema = LocationRefSchema.extend({
+	address: AddressRefSchema.nullable().optional(),
+}).openapi({
+	title: 'LocationWithAddress',
+	description: 'Location reference with address details for embedding',
+});
+
+// ===== DETAIL SCHEMA (full location with full relations as returned by DAO) =====
+export const LocationDetailSchema = LocationBaseSchema.extend({
+	reservation_module: ReservationModuleRefSchema.nullable().optional(),
+	address: AddressRefSchema.nullable().optional(),
+}).openapi({
+	title: 'LocationDetail',
+	description: 'Full location details returned from DAO functions including reservation module and address',
+});
 
 // ===== CREATE/UPDATE REQUEST SCHEMAS =====
 export const CreateLocationRequestSchema = z
@@ -89,20 +108,50 @@ export const LocationResponseSchema = LocationBaseSchema.extend({
 	description: 'Complete location response with related entities',
 });
 
+// ===== DAO RESPONSE SCHEMAS =====
+// DAO response for getLocationsByReservationModuleId and getLocationById
+export const LocationDAOResponseSchema = LocationDetailSchema.openapi({
+	title: 'LocationDAOResponse',
+	description: 'Location response from DAO functions with full reservation module and address details',
+});
+
+// DAO response for getLocationsByReservationModuleIdWithSchedules
+export const LocationWithSchedulesDAOResponseSchema = LocationBaseSchema.extend({
+	reservation_module: ReservationModuleRefSchema.optional(),
+	schedules: z
+		.array(
+			z.object({
+				schedule_id: UUID,
+			})
+		)
+		.optional(),
+}).openapi({
+	title: 'LocationWithSchedulesDAOResponse',
+	description: 'Location response from DAO with schedules',
+});
+
 // ===== EXPORTED TYPES =====
 export type LocationBase = z.infer<typeof LocationBaseSchema>;
 export type LocationRef = z.infer<typeof LocationRefSchema>;
+export type LocationWithAddress = z.infer<typeof LocationWithAddressSchema>;
+export type LocationDetail = z.infer<typeof LocationDetailSchema>;
 export type CreateLocationRequest = z.infer<typeof CreateLocationRequestSchema>;
 export type UpdateLocationRequest = z.infer<typeof UpdateLocationRequestSchema>;
 export type DeleteLocationRequest = z.infer<typeof DeleteLocationRequestSchema>;
 export type LocationResponse = z.infer<typeof LocationResponseSchema>;
+export type LocationDAOResponse = z.infer<typeof LocationDAOResponseSchema>;
+export type LocationWithSchedulesDAOResponse = z.infer<typeof LocationWithSchedulesDAOResponseSchema>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('LocationBase', LocationBaseSchema);
 	registry.register('LocationRef', LocationRefSchema);
+	registry.register('LocationWithAddress', LocationWithAddressSchema);
+	registry.register('LocationDetail', LocationDetailSchema);
 	registry.register('CreateLocationRequest', CreateLocationRequestSchema);
 	registry.register('UpdateLocationRequest', UpdateLocationRequestSchema);
 	registry.register('DeleteLocationRequest', DeleteLocationRequestSchema);
 	registry.register('LocationResponse', LocationResponseSchema);
+	registry.register('LocationDAO', LocationDAOResponseSchema);
+	registry.register('LocationWithSchedulesDAO', LocationWithSchedulesDAOResponseSchema);
 }

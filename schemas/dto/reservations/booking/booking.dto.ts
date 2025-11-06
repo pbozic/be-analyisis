@@ -3,11 +3,14 @@ import { BOOKING_STATUS } from '@prisma/client';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID, Timestamp } from '../../../primitives';
-import { CustomerRefSchema } from '../customer/customer.dto.js';
-import { EmployeeRefSchema } from '../employee/employee.dto.js';
+import { CustomerRefSchema, CustomerDetailSchema } from '../customer/customer.dto.js';
+import { EmployeeRefSchema, EmployeeDetailSchema } from '../employee/employee.dto.js';
 import { LocationRefSchema } from '../location/location.dto.js';
 import { ReservationModuleRefSchema } from '../reservation-module/reservation-module.dto.js';
-import { ServiceRefSchema } from '../service/service.dto.js';
+import { ServiceRefSchema, ServiceWithCategorySchema } from '../service/service.dto.js';
+import { BookingHistoryLogRefSchema } from '../booking-history-log/booking-history-log.dto.js';
+import { BookingCourseTimeRefSchema } from '../booking-course-time/booking-course-time.dto.js';
+import { BookingCourseParticipantRefSchema } from '../booking-course-participant/booking-course-participant.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -77,8 +80,19 @@ export const BookingRefSchema = z
 	})
 	.openapi({
 		title: 'BookingRef',
-		description: 'Minimal booking reference for embedding in other entities',
+		description: 'Minimal booking reference for embedding',
 	});
+
+// ===== WITH RELATIONS SCHEMA (extends RefSchema with selected relations from DAO) =====
+export const BookingWithRelationsSchema = BookingRefSchema.extend({
+	customer: CustomerDetailSchema.nullable().optional(),
+	location: LocationRefSchema.nullable().optional(),
+	employee: EmployeeDetailSchema.nullable().optional(),
+	service: ServiceRefSchema.nullable().optional(),
+}).openapi({
+	title: 'BookingWithRelations',
+	description: 'Booking reference with related entities from DAO',
+});
 
 // ===== QUERY/LIST SCHEMAS =====
 export const ListBookingsParamsSchema = z
@@ -386,13 +400,130 @@ export const BookingResponseSchema = BookingBaseSchema.extend({
 	description: 'Complete booking response with related entities',
 });
 
+// ===== DAO RESPONSE SCHEMAS =====
+// These schemas represent what DAO functions return (with included relations)
+export const BookingDAOResponseSchema = BookingBaseSchema.extend({
+	customer: CustomerDetailSchema.nullable().optional(),
+	location: LocationRefSchema.nullable().optional(),
+	employee: EmployeeDetailSchema.nullable().optional(),
+	service: ServiceRefSchema.nullable().optional(),
+	reservation_module: ReservationModuleRefSchema.optional(),
+	booking_history_log: z.array(BookingHistoryLogRefSchema).optional(),
+	history: z.array(BookingHistoryLogRefSchema).optional(),
+}).openapi({
+	title: 'BookingDAOResponse',
+	description: 'Booking response from DAO functions with selected relations and history',
+});
+
+export const BookingWithChildrenDAOResponseSchema = BookingDAOResponseSchema.extend({
+	child_bookings: z
+		.array(
+			BookingBaseSchema.extend({
+				customer: CustomerDetailSchema.nullable().optional(),
+				location: LocationRefSchema.nullable().optional(),
+				service: ServiceRefSchema.nullable().optional(),
+			})
+		)
+		.optional(),
+}).openapi({
+	title: 'BookingWithChildrenDAOResponse',
+	description: 'Booking response from DAO with child bookings included',
+});
+
+// DAO response for getBookingsByEmployeeIdsLocationAndDates
+export const BookingWithEmployeeLocationServiceAndCustomerDAOResponseSchema = BookingBaseSchema.extend({
+	employee: EmployeeDetailSchema.nullable().optional(),
+	location: LocationRefSchema.nullable().optional(),
+	service: ServiceWithCategorySchema.nullable().optional(),
+	customer: CustomerDetailSchema.nullable().optional(),
+	child_bookings: z.array(BookingRefSchema).optional(),
+}).openapi({
+	title: 'BookingWithEmployeeLocationServiceAndCustomerDAOResponse',
+	description: 'Booking response with employee, location, service (with category), customer and child bookings',
+});
+
+// DAO response for getBookingByIdWithChildren (deep nested structure)
+export const BookingWithDeepChildrenDAOResponseSchema = BookingBaseSchema.extend({
+	customer: CustomerDetailSchema.nullable().optional(),
+	location: LocationRefSchema.nullable().optional(),
+	service: ServiceRefSchema.nullable().optional(),
+	employee: EmployeeDetailSchema.nullable().optional(),
+	child_bookings: z
+		.array(
+			BookingBaseSchema.extend({
+				customer: CustomerDetailSchema.nullable().optional(),
+				location: LocationRefSchema.nullable().optional(),
+				service: ServiceRefSchema.nullable().optional(),
+				employee: EmployeeDetailSchema.nullable().optional(),
+			})
+		)
+		.optional(),
+}).openapi({
+	title: 'BookingWithDeepChildrenDAOResponse',
+	description: 'Booking response with deep nested child bookings including full employee details with business_user',
+});
+
+// DAO response for getBookingCourseById
+export const BookingCourseDAOResponseSchema = BookingBaseSchema.extend({
+	booking_course_time: z.array(BookingCourseTimeRefSchema).optional(),
+	booking_course_attendees: z
+		.array(
+			BookingCourseParticipantRefSchema.extend({
+				customer: CustomerDetailSchema.nullable().optional(),
+			})
+		)
+		.optional(),
+	service: ServiceRefSchema.nullable().optional(),
+	location: LocationRefSchema.nullable().optional(),
+	employee: EmployeeDetailSchema.nullable().optional(),
+}).openapi({
+	title: 'BookingCourseDAOResponse',
+	description: 'Course booking response with course times, attendees and related entities',
+});
+
+// DAO response for getBookingCourses
+export const BookingCoursesDAOResponseSchema = BookingBaseSchema.extend({
+	booking_course_time: z.array(BookingCourseTimeRefSchema).optional(),
+	location: LocationRefSchema.nullable().optional(),
+	service: ServiceRefSchema.nullable().optional(),
+	employee: EmployeeDetailSchema.nullable().optional(),
+}).openapi({
+	title: 'BookingCoursesDAOResponse',
+	description: 'Course booking response with course times and related entities',
+});
+
+// DAO response for getBookingsForAnalytics
+export const BookingForAnalyticsDAOResponseSchema = BookingBaseSchema.extend({
+	customer: CustomerDetailSchema.nullable().optional(),
+}).openapi({
+	title: 'BookingForAnalyticsDAOResponse',
+	description: 'Booking response for analytics with customer',
+});
+
+// DAO response for getBookingCoursesByReservationModuleId (similar to getBookingCourses)
+export const BookingCoursesByModuleDAOResponseSchema = BookingCoursesDAOResponseSchema.openapi({
+	title: 'BookingCoursesByModuleDAOResponse',
+	description: 'Course bookings by module response with course times and related entities',
+});
+
 // ===== EXPORTED TYPES =====
 export type BookingBase = z.infer<typeof BookingBaseSchema>;
 export type BookingRef = z.infer<typeof BookingRefSchema>;
+export type BookingWithRelations = z.infer<typeof BookingWithRelationsSchema>;
 export type CreateBookingRequest = z.infer<typeof CreateBookingRequestSchema>;
 export type UpdateBookingRequest = z.infer<typeof UpdateBookingRequestSchema>;
 export type DeleteBookingRequest = z.infer<typeof DeleteBookingRequestSchema>;
 export type BookingResponse = z.infer<typeof BookingResponseSchema>;
+export type BookingDAOResponse = z.infer<typeof BookingDAOResponseSchema>;
+export type BookingWithChildrenDAOResponse = z.infer<typeof BookingWithChildrenDAOResponseSchema>;
+export type BookingWithEmployeeLocationServiceAndCustomerDAOResponse = z.infer<
+	typeof BookingWithEmployeeLocationServiceAndCustomerDAOResponseSchema
+>;
+export type BookingWithDeepChildrenDAOResponse = z.infer<typeof BookingWithDeepChildrenDAOResponseSchema>;
+export type BookingCourseDAOResponse = z.infer<typeof BookingCourseDAOResponseSchema>;
+export type BookingCoursesDAOResponse = z.infer<typeof BookingCoursesDAOResponseSchema>;
+export type BookingForAnalyticsDAOResponse = z.infer<typeof BookingForAnalyticsDAOResponseSchema>;
+export type BookingCoursesByModuleDAOResponse = z.infer<typeof BookingCoursesByModuleDAOResponseSchema>;
 
 // Query/List types
 export type ListBookingsParams = z.infer<typeof ListBookingsParamsSchema>;
@@ -410,27 +541,34 @@ export type UpdateMultipleBookingsRequest = z.infer<typeof UpdateMultipleBooking
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
-	// Base schemas
-	registry.register('BookingBase', BookingBaseSchema);
-	registry.register('BookingRef', BookingRefSchema);
-	registry.register('BookingResponse', BookingResponseSchema);
-
-	// Query/List schemas
+	// Register request schemas
+	registry.register('CreateBooking', CreateBookingRequestSchema);
+	registry.register('UpdateBooking', UpdateBookingRequestSchema);
+	registry.register('DeleteBooking', DeleteBookingRequestSchema);
 	registry.register('ListBookingsParams', ListBookingsParamsSchema);
+	registry.register('CreateMultipleBooking', CreateMultipleBookingsRequestSchema);
+	registry.register('CreateCourseBooking', CreateBookingCourseRequestSchema);
+	registry.register('UpdateCourseBooking', UpdateBookingCourseRequestSchema);
+	registry.register('UpdateMultipleBooking', UpdateMultipleBookingsRequestSchema);
 	registry.register('FindBookingSlots', FindBookingSlotsSchema);
 	registry.register('BookingsAnalytics', BookingsAnalyticsSchema);
 	registry.register('AllBookingsForLocationAndEmployees', AllBookingsForLocationAndEmployeesSchema);
 
-	// Single booking CRUD
-	registry.register('CreateBookingRequest', CreateBookingRequestSchema);
-	registry.register('UpdateBookingRequest', UpdateBookingRequestSchema);
-	registry.register('DeleteBookingRequest', DeleteBookingRequestSchema);
+	// Register response schemas
+	registry.register('BookingRef', BookingRefSchema);
+	registry.register('BookingWithRelations', BookingWithRelationsSchema);
+	registry.register('Booking', BookingResponseSchema);
 
-	// Course booking schemas
-	registry.register('CreateBookingCourseRequest', CreateBookingCourseRequestSchema);
-	registry.register('UpdateBookingCourseRequest', UpdateBookingCourseRequestSchema);
-
-	// Multiple bookings schemas
-	registry.register('CreateMultipleBookingsRequest', CreateMultipleBookingsRequestSchema);
-	registry.register('UpdateMultipleBookingsRequest', UpdateMultipleBookingsRequestSchema);
+	// Register DAO response schemas
+	registry.register('BookingDAO', BookingDAOResponseSchema);
+	registry.register('BookingWithChildrenDAO', BookingWithChildrenDAOResponseSchema);
+	registry.register(
+		'BookingWithEmployeeLocationServiceAndCustomerDAO',
+		BookingWithEmployeeLocationServiceAndCustomerDAOResponseSchema
+	);
+	registry.register('BookingWithDeepChildrenDAO', BookingWithDeepChildrenDAOResponseSchema);
+	registry.register('BookingCourseDAO', BookingCourseDAOResponseSchema);
+	registry.register('BookingCoursesDAO', BookingCoursesDAOResponseSchema);
+	registry.register('BookingForAnalyticsDAO', BookingForAnalyticsDAOResponseSchema);
+	registry.register('BookingCoursesByModuleDAO', BookingCoursesByModuleDAOResponseSchema);
 }
