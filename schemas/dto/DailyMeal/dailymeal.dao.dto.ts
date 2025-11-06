@@ -17,7 +17,9 @@ export const GetDailyMealSubscriptionsByBusinessIdDaoInputSchema = z
 		title: 'GetDailyMealSubscriptionsByBusinessIdDaoInput',
 		description: 'DAO input for getDailyMealSubscriptionsByBusinessId(business_id, args)',
 	});
-export type GetDailyMealSubscriptionsByBusinessIdDaoInput = z.infer<typeof GetDailyMealSubscriptionsByBusinessIdDaoInputSchema>;
+export type GetDailyMealSubscriptionsByBusinessIdDaoInput = z.infer<
+	typeof GetDailyMealSubscriptionsByBusinessIdDaoInputSchema
+>;
 
 export const GetActiveDailyMealSubscriptionsByBusinessIdDaoInputSchema = z
 	.object({
@@ -156,10 +158,19 @@ export const UpdateDailyMealInstanceStatusByIdDaoInputSchema = z
 export type UpdateDailyMealInstanceStatusByIdDaoInput = z.infer<typeof UpdateDailyMealInstanceStatusByIdDaoInputSchema>;
 
 export function registerDailyMealDaoSchemas(registry: OpenAPIRegistry) {
-	registry.register('GetDailyMealSubscriptionsByBusinessIdDaoInput', GetDailyMealSubscriptionsByBusinessIdDaoInputSchema);
-	registry.register('GetActiveDailyMealSubscriptionsByBusinessIdDaoInput', GetActiveDailyMealSubscriptionsByBusinessIdDaoInputSchema);
+	registry.register(
+		'GetDailyMealSubscriptionsByBusinessIdDaoInput',
+		GetDailyMealSubscriptionsByBusinessIdDaoInputSchema
+	);
+	registry.register(
+		'GetActiveDailyMealSubscriptionsByBusinessIdDaoInput',
+		GetActiveDailyMealSubscriptionsByBusinessIdDaoInputSchema
+	);
 	registry.register('GetDailyMealSubscriptionsByUserIdDaoInput', GetDailyMealSubscriptionsByUserIdDaoInputSchema);
-	registry.register('GetTodayDailyMealSubscriptionsByBusinessIdDaoInput', GetTodayDailyMealSubscriptionsByBusinessIdDaoInputSchema);
+	registry.register(
+		'GetTodayDailyMealSubscriptionsByBusinessIdDaoInput',
+		GetTodayDailyMealSubscriptionsByBusinessIdDaoInputSchema
+	);
 	registry.register('GetDailyMealSubscriptionByIdDaoInput', GetDailyMealSubscriptionByIdDaoInputSchema);
 	registry.register('CreateDailyMealSubscriptionDaoInput', CreateDailyMealSubscriptionDaoInputSchema);
 	registry.register('GetSubscriptionByIdDaoInput', GetSubscriptionByIdDaoInputSchema);
