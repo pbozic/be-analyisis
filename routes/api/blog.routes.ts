@@ -2,13 +2,22 @@ import express from 'express';
 
 import BlogController from '../../controllers/BlogController.ts';
 import { validate } from '../../middleware/zod.ts';
-import { CreateBlogPostSchema, UpdateBlogPostSchema, SearchBlogPostsSchema } from '../../types/blog/BlogPost.ts';
-import { CreateBlogCategorySchema, UpdateBlogCategorySchema } from '../../types/blog/BlogCategory.ts';
-import { CreateBlogTagSchema, UpdateBlogTagSchema } from '../../types/blog/BlogTag.ts';
+import {
+	CreateBlogPostSchema,
+	UpdateBlogPostSchema,
+	SearchBlogPostsSchema,
+} from '../../schemas/dto/Blog/blogpost.dto.ts';
+import { CreateBlogCategorySchema, UpdateBlogCategorySchema } from '../../schemas/dto/Blog/blogcategory.dto.ts';
+import { CreateBlogTagSchema, UpdateBlogTagSchema } from '../../schemas/dto/Blog/blogtag.dto.ts';
 import authMiddleware from '../../middleware/auth.js';
 const router = express.Router();
 
-router.post('/upload/url', [authMiddleware], BlogController.createBlogImageByFile);
+router.post(
+	'/upload/url',
+	[authMiddleware],
+	validate(CreateBlogPostSchema.partial()),
+	BlogController.createBlogImageByFile
+);
 
 router.get('/', BlogController.getBlogPosts);
 
