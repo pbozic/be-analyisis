@@ -80,6 +80,20 @@ export { createReview };
 export { getReviewsByUserId };
 // --- New helpers for reviewables on various entities ---
 /**
+ * Get or create a reviewable for a user and return its id.
+ *
+ * @param {string} user_id - User ID.
+ * @returns {Promise<string>} reviewable_id
+ */
+async function ensureUserReviewable(user_id) {
+	const user = await prisma.users.findUnique({ where: { user_id }, select: { reviewable_id: true } });
+	if (user?.reviewable_id) return user.reviewable_id;
+	const created = await prisma.reviewable.create({ data: { user: { connect: { user_id } } } });
+	await prisma.users.update({ where: { user_id }, data: { reviewable_id: created.reviewable_id } });
+	return created.reviewable_id;
+}
+
+/**
  * Get or create a reviewable for a driver and return its id.
  *
  * @param {string} driver_id - Driver ID.
@@ -180,6 +194,26 @@ async function ensureFoodDrinksReviewable(food_drinks_id) {
 }
 
 // --- Public review creators ---
+/**
+ * Create a review for a user; initializes reviewable if missing.
+ *
+ * @param {string} author_id - Author user ID.
+ * @param {string} user_id - User ID.
+ * @param {object} [opts] - Optional fields including rating, comment, feedback.
+ * @returns {Promise<object>} Created review.
+ */
+export async function reviewUser(author_id, user_id, { rating = null, comment = null, feedback = null } = {}) {
+	try {
+		const reviewable_id = await ensureUserReviewable(user_id);
+		return await prisma.reviews.create({
+			data: { author_id, reviewable_id, rating, comment, feedback },
+		});
+	} catch (e) {
+		console.error('Error reviewing user:', e);
+		throw new Error(e);
+	}
+}
+
 /**
  * Create a review for a driver; initializes reviewable if missing.
  *

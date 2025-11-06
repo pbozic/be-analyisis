@@ -149,6 +149,7 @@ model delivery_order_sent {
 /// @summary Daily meals configuration and scheduling.
 /// @namespace DailyMeals
 /// @erd FoodDrinks
+/// @erd Drivers
 ///
 /// Defines daily meal program with categories, drivers and subscriptions.
 model daily_meals_module {

@@ -2,12 +2,9 @@ import { config } from 'dotenv';
 import { PROMO_TYPE, ANALYTICS_TYPE } from '@prisma/client';
 
 import BusinessDao from '../dao/Business.js';
-import ReviewDao from '../dao/Review.js';
 import Constants, { DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
 import stripe from '../lib/stripe.js';
 import UserDao from '../dao/User.js';
-import DriverDao from '../dao/Driver.js';
-import DeliveryDriverDao from '../dao/DeliveryDriver.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import { DELIVERY_ORDER_STATUS, SCORING_POINTS_REASON, ACCOUNT_ACTIONS_REASON } from '../lib/constants.js';
 import { calculateBusinessEarnings, calculateTotalEarnings } from '../lib/helpersLib.js';
@@ -1249,83 +1246,6 @@ async function removeParentBusinessId(req, res) {
 	} catch (e) {
 		console.error('Error removing child business:', e);
 		res.status(400).json({ error: 'Error removing child business from parent', e });
-	}
-}
-/**
- * POST /business/review
- * @tag Business
- * @summary Review a business
- * @description This endpoint is used add a review of business.
- * @operationId reviewBusiness
- * @bodyDescription Content of the review
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Primary address set successfully.
- * @response 400 - Error setting primary address.
- * @prisma_model reviews
- * @prisma_model reviewables
- * @prisma_model users
- * @prisma_model businesses
- */
-async function reviewBusiness(req, res) {
-	try {
-		let business_id = req.body.business_id;
-		// Check if driver_id is present in the request body
-		if (req.body.driver_id) {
-			const business = await DriverDao.getBusinessByDriverId(req.body.driver_id);
-			if (!business) {
-				return res.status(400).json({ error: 'Error retrieving business for the driver' });
-			}
-			business_id = business.business_id;
-		}
-		if (req.body.delivery_driver_id) {
-			const business = await DeliveryDriverDao.getBusinessByDeliveryDriverId(req.body.delivery_driver_id);
-			if (!business) {
-				return res.status(400).json({ error: 'Error retrieving business for the delivery driver' });
-			}
-			business_id = business.business_id;
-		}
-
-		if (!business_id) return res.status(400).json({ error: 'Business ID is required' });
-
-		let business = await BusinessDao.getBusinessById(business_id);
-		if (business.reviewable_id === null) {
-			let reviewable = await ReviewDao.createReviewableBusiness(business.business_id);
-			if (!reviewable) {
-				return res.status(400).json({ error: 'Error creating reviewable business' });
-			}
-			business.reviewable_id = reviewable.reviewable_id;
-		}
-		let review = await ReviewDao.createReview({
-			comment: req.body.comment,
-			rating: req.body.rating,
-			feedback: req.body.feedback,
-			author: {
-				connect: {
-					user_id: req.user.user_id,
-				},
-			},
-			reviewable: {
-				connect: {
-					reviewable_id: business.reviewable_id,
-				},
-			},
-		});
-		if (review) {
-			return res.status(200).json(review);
-		}
-		res.status(400).json({ error: 'Error adding review' });
-	} catch (e) {
-		console.log(e);
-		res.status(400).json({ error: 'Error adding review', e });
-	}
-}
-async function confirmBusinessReview(req, res) {
-	try {
-		res.status(200).json({ message: 'Review confirmed successfully' });
-	} catch (e) {
-		console.log(e);
-		res.status(400).json({ error: 'Error confirming review', e });
 	}
 }
 /**
@@ -3001,8 +2921,6 @@ export { updateBusinessIsPopular };
 export { updateParentBusinessId };
 export { removeParentBusinessId };
 export { deleteBusiness };
-export { reviewBusiness };
-export { confirmBusinessReview };
 export { createPaymentIntent };
 export { manualSortScheduledUsers };
 export { addScheduledUserSortingType };
@@ -3070,8 +2988,6 @@ export default {
 	updateParentBusinessId,
 	removeParentBusinessId,
 	deleteBusiness,
-	reviewBusiness,
-	confirmBusinessReview,
 	createPaymentIntent,
 	manualSortScheduledUsers,
 	addScheduledUserSortingType,

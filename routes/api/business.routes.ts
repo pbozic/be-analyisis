@@ -20,7 +20,6 @@ import {
 	GetBusinessesSchema,
 	ManualSortScheduledUsersSchema,
 	RemoveBusinessFromFavoritesSchema,
-	ReviewBusinessSchema,
 	ToggleTransportModuleSchema,
 	UpdateBusinessEmailSchema,
 	UpdateBusinessGroupNameSchema,
@@ -33,7 +32,6 @@ import {
 	UpdateBusinessWorkingHoursSchema,
 	UpdateIsBusinessUnitSchema,
 	UpdateParentBusinessIdSchema,
-	UpdateRestaurantOverwhelmedSchema,
 } from '../../schemas/validation/Business/Business.validation.ts';
 import { ListPromoSectionsSchema } from '../../schemas/validation/PromoSection/PromoSection.validation.ts';
 
@@ -119,7 +117,7 @@ router.get('/earnings/:business_id/total', BusinessController.getBusinessTotalEa
  *
  */
 // router.post('/register', BusinessController.createNewBusiness);
-router.post('/review', validate(ReviewBusinessSchema), BusinessController.reviewBusiness);
+// router.post('/review', validate(ReviewBusinessSchema), BusinessController.reviewBusiness);
 router.post('/activate', validate(ActivateBusinessSchema), BusinessController.activateBusiness);
 router.post('/deactivate', validate(DeactivateBusinessSchema), BusinessController.deactivateBusiness);
 /**
@@ -172,15 +170,11 @@ router.patch(
 	validate(UpdateBusinessWorkingHoursSchema),
 	BusinessController.updateBusinessWorkingHours
 );
-/**
- *    * @module merchant
- *
- */
-router.patch(
-	'/restaurant-overwhelmed/:business_id',
-	validate(UpdateRestaurantOverwhelmedSchema),
-	BusinessController.updateRestaurantOverwhelmed
-);
+// router.patch(
+// 	'/restaurant-overwhelmed/:business_id',
+// 	validate(UpdateRestaurantOverwhelmedSchema),
+// 	BusinessController.updateRestaurantOverwhelmed
+// );
 router.patch('/new/:business_id', validate(UpdateBusinessIsNewSchema), BusinessController.updateBusinessIsNew);
 router.patch(
 	'/popular/:business_id',

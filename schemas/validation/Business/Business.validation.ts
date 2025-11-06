@@ -31,15 +31,15 @@ export const RemoveBusinessFromFavoritesSchema = z
 	.openapi('RemoveBusinessFromFavorites');
 export type RemoveBusinessFromFavoritesInput = z.infer<typeof AddBusinessToFavoritesSchema>;
 
-export const ReviewBusinessSchema = z.object({
-	business_id: z.string().nullable().optional(),
-	driver_id: z.string().optional(),
-	delivery_driver_id: z.string().optional(),
-	comment: z.string().optional().or(z.literal('')),
-	rating: z.number().optional(),
-	feedback: z.object({}).optional(),
-});
-export type ReviewBusinessInput = z.infer<typeof ReviewBusinessSchema>;
+// export const ReviewBusinessSchema = z.object({
+// 	business_id: z.string().nullable().optional(),
+// 	driver_id: z.string().optional(),
+// 	delivery_driver_id: z.string().optional(),
+// 	comment: z.string().optional().or(z.literal('')),
+// 	rating: z.number().optional(),
+// 	feedback: z.object({}).optional(),
+// });
+// export type ReviewBusinessInput = z.infer<typeof ReviewBusinessSchema>;
 export const ActivateBusinessSchema = z.object({
 	business_id: z.string().nullable().optional(),
 	reason: z.nativeEnum(ACCOUNT_ACTIONS_REASON),
@@ -174,15 +174,12 @@ export const UpdateBusinessWorkingHoursSchema = z
 	.openapi('UpdateBusinessWorkingHours');
 export type UpdateBusinessWorkingHoursInput = z.infer<typeof UpdateBusinessWorkingHoursSchema>;
 
-// =======================
-// Update Restaurant Overwhelmed
-// =======================
-export const UpdateRestaurantOverwhelmedSchema = z
-	.object({
-		restaurant_overwhelmed: z.boolean().openapi({ example: true }),
-	})
-	.openapi('UpdateRestaurantOverwhelmed');
-export type UpdateRestaurantOverwhelmedInput = z.infer<typeof UpdateRestaurantOverwhelmedSchema>;
+// export const UpdateRestaurantOverwhelmedSchema = z
+// 	.object({
+// 		restaurant_overwhelmed: z.boolean().openapi({ example: true }),
+// 	})
+// 	.openapi('UpdateRestaurantOverwhelmed');
+// export type UpdateRestaurantOverwhelmedInput = z.infer<typeof UpdateRestaurantOverwhelmedSchema>;
 
 // =======================
 // Update Business Is New

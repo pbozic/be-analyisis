@@ -5,6 +5,41 @@ import { ValidatedRequest } from '../types/validatedRequest.ts';
 import { ReviewPayload } from '../types/reviews/ReviewRequests.ts';
 
 /**
+ * POST /review/passenger/:user_id
+ * @tag Reviews
+ * @summary Create a review for a passenger
+ * @description Ensures reviewable for passenger and creates a reviews row.
+ * @operationId reviewPassenger
+ * @bodyDescription Review payload
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Review created
+ * @responseContent {object} application/json
+ * @prisma_model reviewable
+ * @prisma_model reviews
+ */
+export async function reviewPassenger(
+	req: ValidatedRequest<ReviewPayload, { user_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		// @ts-ignore
+		const author_id: string = req.user?.user_id;
+		const { user_id } = req.params;
+		if (!author_id) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
+		const { rating, comment, feedback } = req.body;
+		const created = await ReviewsDao.reviewUser(author_id, user_id, { rating, comment, feedback });
+		res.json(created);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	} catch (e: any) {
+		res.status(500).json({ error: e.message });
+	}
+}
+
+/**
  * POST /review/driver/:driver_id
  * @tag Reviews
  * @summary Create a review for a driver
@@ -223,6 +258,7 @@ export async function reviewReservationBooking(
 }
 
 export default {
+	reviewPassenger,
 	reviewDriver,
 	reviewStore,
 	reviewFoodDrinks,

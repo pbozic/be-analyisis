@@ -1147,7 +1147,6 @@ erDiagram
   Json feedback "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
-  String vehicle_id "nullable"
 }
 "service_links" {
   String id PK
@@ -1414,6 +1413,12 @@ erDiagram
   FUNDS_TYPE type
   CREDIT_STATUS status "nullable"
 }
+"allergens" {
+  String allergen_id PK
+  String name
+  String description "nullable"
+  Int code UK
+}
 "drivers" {
   String driver_id PK
   String transport_module_id FK "nullable"
@@ -1529,7 +1534,6 @@ Properties as follows:
 - `feedback`:
 - `created_at`:
 - `updated_at`:
-- `vehicle_id`:
 
 ### `service_links`
 
@@ -2854,7 +2858,6 @@ erDiagram
   Json feedback "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
-  String vehicle_id "nullable"
 }
 "municipalities" {
   String municipalities_id PK
@@ -2864,6 +2867,17 @@ erDiagram
   String gis_sifra "nullable"
   String eid_obcina "nullable"
   String feature_id "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+}
+"daily_meals_module" {
+  String id PK
+  String food_drinks_id FK,UK
+  DAY_OF_WEEK daily_meals_days
+  Json daily_meals_delivery_mapping "nullable"
+  Int maximum_daily_meals_subscribers "nullable"
+  Json daily_users_sorted "nullable"
+  SORTING_TYPE daily_users_sorting_type
   DateTime(6) created_at
   DateTime(6) updated_at
 }
@@ -3771,7 +3785,6 @@ erDiagram
   Json feedback "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
-  String vehicle_id "nullable"
 }
 "menus" {
   String menu_id PK
@@ -3909,7 +3922,6 @@ erDiagram
   Json feedback "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
-  String vehicle_id "nullable"
 }
 "daily_meals_module" {
   String id PK
@@ -5676,7 +5688,6 @@ erDiagram
   Json feedback "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
-  String vehicle_id "nullable"
 }
 "reservation_module" |o--|| "business" : business
 "location" }o--|| "reservation_module" : reservation_module
@@ -6237,7 +6248,6 @@ erDiagram
   Json feedback "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
-  String vehicle_id "nullable"
 }
 "delivery_orders" {
   String order_id PK
@@ -7395,7 +7405,6 @@ erDiagram
   Json feedback "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
-  String vehicle_id "nullable"
 }
 "users" {
   String user_id PK

@@ -5,7 +5,6 @@ import prisma from '../prisma/prisma.js';
 import UserDao from '../dao/User.js';
 import BusinessDao from '../dao/Business.js';
 import TokenDao from '../dao/Token.js';
-import ReviewDao from '../dao/Review.js';
 import AddressDao from '../dao/Address.js';
 import DocumentDao from '../dao/Document.js';
 import FileDao from '../dao/File.js';
@@ -1035,55 +1034,6 @@ async function setPrimaryAddress(req, res) {
 	} catch (e) {
 		console.log(e);
 		res.status(400).json({ error: 'Error setting primary address', e });
-	}
-}
-/**
- * POST /user/review
- * @tag Users
- * @summary Review a user
- * @description This endpoint is used add a review of user.
- * @operationId reviewUser
- * @bodyDescription Content of the review
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Primary address set successfully.
- * @response 400 - Error setting primary address.
- * @prisma_model reviews (see ./prisma/schemas/base.prisma)
- * @prisma_model reviewable (see ./prisma/schemas/base.prisma)
- * @prisma_model users (see ./prisma/schemas/user.prisma)
- */
-async function reviewUser(req, res) {
-	try {
-		let user = await UserDao.getUserById(req.body.user_id);
-		if (!user.reviewable_id) {
-			let reviewable = await ReviewDao.createReviewableUser(user.user_id);
-			if (!reviewable) {
-				return res.status(400).json({ error: 'Error adding review' });
-			}
-			user.reviewable_id = reviewable.reviewable_id;
-		}
-		let review = await ReviewDao.createReview({
-			comment: req.body.comment,
-			rating: req.body.rating,
-			feedback: req.body.feedback,
-			author: {
-				connect: {
-					user_id: req.user.user_id,
-				},
-			},
-			reviewable: {
-				connect: {
-					reviewable_id: user.reviewable_id,
-				},
-			},
-		});
-		if (review) {
-			return res.status(200).json(review);
-		}
-		res.status(400).json({ error: 'Error adding review' });
-	} catch (e) {
-		console.log(e);
-		res.status(400).json({ error: 'Error adding review', e });
 	}
 }
 /**

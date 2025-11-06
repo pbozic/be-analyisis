@@ -410,7 +410,6 @@ model reviews {
 
   delivery_order delivery_orders? @relation("delivery_order_review")
   taxi_order     taxi_orders?     @relation("taxi_order_review")
-  vehicle_id     String?          @db.Uuid
 }
 
 /// @namespace Payments
@@ -1098,6 +1097,7 @@ model tax_rates {
 
 /// @summary Allergen master data.
 /// @namespace MenuItems
+/// @erd Users
 model allergens {
   allergen_id String  @id @default(uuid()) @db.Uuid
   name        String
