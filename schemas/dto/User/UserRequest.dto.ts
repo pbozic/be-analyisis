@@ -110,7 +110,7 @@ export const UpdateTelephoneSchema = z
  */
 export const UpdateTaxiPreferencesSchema = z
 	.object({
-		taxi_preferences: z.record(z.any()),
+		taxi_preferences: z.record(z.any()), // TODO: Define specific structure if available
 	})
 	.openapi({
 		title: 'UpdateTaxiPreferencesRequest',
@@ -175,7 +175,7 @@ export const UpdateDeliveryPushNotificationsSchema = z
  */
 export const UpdateSpicyPreferencesSchema = z
 	.object({
-		spicy_preferences: z.record(z.any()),
+		spicy_preferences: z.record(z.any()), // TODO: Define specific structure if available
 	})
 	.openapi({
 		title: 'UpdateSpicyPreferencesRequest',
@@ -188,7 +188,7 @@ export const UpdateSpicyPreferencesSchema = z
  */
 export const UpdateTransferPreferencesSchema = z
 	.object({
-		transfer_preferences: z.record(z.any()),
+		transfer_preferences: z.record(z.any()), // TODO: Define specific structure if available
 	})
 	.openapi({
 		title: 'UpdateTransferPreferencesRequest',
@@ -201,7 +201,7 @@ export const UpdateTransferPreferencesSchema = z
  */
 export const UpdateRadioPreferencesSchema = z
 	.object({
-		radio_preferences: z.record(z.any()),
+		radio_preferences: z.record(z.any()), // TODO: Define specific structure if available
 	})
 	.openapi({
 		title: 'UpdateRadioPreferencesRequest',
@@ -214,7 +214,7 @@ export const UpdateRadioPreferencesSchema = z
  */
 export const UpdateAllergiesPreferencesSchema = z
 	.object({
-		allergies_preferences: z.record(z.any()),
+		allergies_preferences: z.record(z.any()), // TODO: Define specific structure if available
 	})
 	.openapi({
 		title: 'UpdateAllergiesPreferencesRequest',
@@ -292,7 +292,7 @@ export const AddAddressSchema = z
 		country: z.string().length(2).default('SI'),
 		latitude: z.number().optional(),
 		longitude: z.number().optional(),
-		details: z.record(z.any()).optional(),
+		details: z.record(z.any()).optional(), // TODO: Define specific structure if available
 	})
 	.openapi({
 		title: 'AddAddressRequest',
@@ -303,20 +303,10 @@ export const AddAddressSchema = z
  * Used by editAddress function - PATCH /users/me/address/:address_id
  * Edit address schema
  */
-export const EditAddressSchema = z
-	.object({
-		address: z.string().min(1).optional(),
-		city: z.string().min(1).optional(),
-		postal_code: z.string().min(1).optional(),
-		country: z.string().length(2).optional(),
-		latitude: z.number().optional(),
-		longitude: z.number().optional(),
-		details: z.record(z.any()).optional(),
-	})
-	.openapi({
-		title: 'EditAddressRequest',
-		description: 'Request body for editing an existing user address',
-	});
+export const EditAddressSchema = AddAddressSchema.partial().openapi({
+	title: 'EditAddressRequest',
+	description: 'Request body for editing an existing user address',
+});
 
 // ===== REVIEW REQUESTS =====
 

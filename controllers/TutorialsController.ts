@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 
 import * as TutorialsDao from '../dao/Tutorials.ts';
+import { ValidatedRequest } from '../types/validatedRequest.ts';
+import { SetTutorialStatusBody } from '../schemas/dto/Tutorials/tutorials.dto.ts';
 
 /**
  * GET /users/me/tutorials
@@ -77,15 +79,12 @@ export async function resetTutorials(req: Request, res: Response): Promise<void>
  * @prisma_model tutorial
  * @prisma_model user_tutorials
  */
-export async function setTutorialStatus(req: Request, res: Response): Promise<void> {
+export async function setTutorialStatus(req: ValidatedRequest<SetTutorialStatusBody>, res: Response): Promise<void> {
 	try {
 		// @ts-ignore
 		const user_id: string = req.user?.user_id;
 		const { tutorial_key } = req.params as { tutorial_key: string };
-		const { status, versionSeen } = req.body as {
-			status: 'NOT_SEEN' | 'COMPLETED' | 'DISMISSED';
-			versionSeen?: number;
-		};
+		const { status, versionSeen } = req.body;
 		if (!user_id) {
 			res.status(401).json({ error: 'Unauthorized' });
 			return;

@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 
 import * as FavoriteServicesDao from '../dao/UserFavoriteServiceLinks.ts';
+import { ValidatedRequest } from '../types/validatedRequest.ts';
+import { UpdateFavoriteServicesBody } from '../schemas/dto/FavoriteServices/favorite-services.dto.ts';
 
 /**
  * PATCH /users/me/favorite-services
@@ -18,7 +20,10 @@ import * as FavoriteServicesDao from '../dao/UserFavoriteServiceLinks.ts';
  * @prisma_model users
  * @prisma_model user_favorite_service_links
  */
-export async function updateFavoriteServices(req: Request, res: Response): Promise<void> {
+export async function updateFavoriteServices(
+	req: ValidatedRequest<UpdateFavoriteServicesBody>,
+	res: Response
+): Promise<void> {
 	try {
 		// @ts-ignore
 		const user_id: string = req.user?.user_id;
@@ -26,7 +31,7 @@ export async function updateFavoriteServices(req: Request, res: Response): Promi
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
 		}
-		const { service_ids } = req.body as { service_ids: string[] };
+		const { service_ids } = req.body;
 		if (!Array.isArray(service_ids)) {
 			res.status(400).json({ error: 'service_ids must be an array of strings' });
 			return;

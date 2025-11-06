@@ -7,7 +7,7 @@ import authMiddleware from '../middleware/auth.js';
 import adminMiddleware from '../middleware/admin.js';
 import { SaveObject } from '../lib/s3.js';
 import adminRoutes from './api/admin.routes.js';
-import userRoutes from './api/users.routes.js';
+import userRoutes from './api/users.routes.ts';
 import authRoutes from './api/auth.routes.js';
 import authTaxiRoutes from './api/taxi/auth.routes.js';
 import authDeliveryRoutes from './api/delivery/auth.routes.js';
