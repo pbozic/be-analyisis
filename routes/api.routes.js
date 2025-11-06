@@ -310,33 +310,53 @@ router.use('/reviews', [authMiddleware], async (req, res) => {
 router.get('/test/s3', async (req, res) => {
 	res.json({ message: 'Notification sent' });
 });
-router.post('/test/s3', [authMiddleware], async (req, res) => {
-	let key = req.user.user_id + '/test.png';
-	let data = req.body.data;
-	let mimeType = req.body.mimeType;
-	let owners = {
-		users: ['user2'],
-		businesses: ['business2'],
-	};
-	try {
-		let object = await SaveObject(key, data, mimeType, owners);
-		return res.json(object);
-	} catch (error) {
-		return res.status(500).json({ error: error.message });
+router.post(
+	'/test/s3',
+	[authMiddleware],
+	validate(
+		z.object({
+			data: z.string().min(1, 'Data is required'),
+			mimeType: z.string().min(1, 'MIME type is required'),
+		})
+	),
+	async (req, res) => {
+		let key = req.user.user_id + '/test.png';
+		let data = req.body.data;
+		let mimeType = req.body.mimeType;
+		let owners = {
+			users: ['user2'],
+			businesses: ['business2'],
+		};
+		try {
+			let object = await SaveObject(key, data, mimeType, owners);
+			return res.json(object);
+		} catch (error) {
+			return res.status(500).json({ error: error.message });
+		}
 	}
-});
-router.post('/test/notification', async (req, res) => {
-	const { heading, message, userId } = req.body;
-	if (!heading || !message || !userId) {
-		return res.status(400).json({ error: 'Heading, message, and userId are required.' });
+);
+router.post(
+	'/test/notification',
+	validate(
+		z.object({
+			heading: z.string().min(1, 'Heading is required'),
+			message: z.string().min(1, 'Message is required'),
+			userId: z.string().min(1, 'User ID is required'),
+		})
+	),
+	async (req, res) => {
+		const { heading, message, userId } = req.body;
+		if (!heading || !message || !userId) {
+			return res.status(400).json({ error: 'Heading, message, and userId are required.' });
+		}
+		try {
+			await sendNotificationToUser(heading, message, userId);
+			res.status(200).json({ success: 'Notification sent successfully.' });
+		} catch (error) {
+			res.status(500).json({ error: 'Failed to send notification.', details: error.message });
+		}
 	}
-	try {
-		await sendNotificationToUser(heading, message, userId);
-		res.status(200).json({ success: 'Notification sent successfully.' });
-	} catch (error) {
-		res.status(500).json({ error: 'Failed to send notification.', details: error.message });
-	}
-});
+);
 router.get('/purchase-status/:sessionId', async (req, res) => {
 	try {
 		const sessionId = req.params.session_id;
@@ -361,24 +381,40 @@ router.get('/file/:file_name', (req, res) => {
 		}
 	});
 });
-router.post('/file/:file_name', (req, res) => {
-	let json = req.body.json;
-	fs.writeFile('public/' + req.params.file_name, JSON.stringify(json), (err) => {
-		if (err) {
-			res.status(500).send('Error writing file');
-		} else {
-			res.send('File written');
-		}
-	});
-});
-router.put('/file/:file_name', (req, res) => {
-	let json = req.body.json;
-	fs.writeFile('public/' + req.params.file_name, JSON.stringify(json), (err) => {
-		if (err) {
-			res.status(500).send('Error writing file');
-		} else {
-			res.send('File written');
-		}
-	});
-});
+router.post(
+	'/file/:file_name',
+	validate(
+		z.object({
+			json: z.record(z.any(), 'JSON object is required'),
+		})
+	),
+	(req, res) => {
+		let json = req.body.json;
+		fs.writeFile('public/' + req.params.file_name, JSON.stringify(json), (err) => {
+			if (err) {
+				res.status(500).send('Error writing file');
+			} else {
+				res.send('File written');
+			}
+		});
+	}
+);
+router.put(
+	'/file/:file_name',
+	validate(
+		z.object({
+			json: z.record(z.any(), 'JSON object is required'),
+		})
+	),
+	(req, res) => {
+		let json = req.body.json;
+		fs.writeFile('public/' + req.params.file_name, JSON.stringify(json), (err) => {
+			if (err) {
+				res.status(500).send('Error writing file');
+			} else {
+				res.send('File written');
+			}
+		});
+	}
+);
 export default router;
