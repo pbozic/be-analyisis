@@ -31,8 +31,14 @@ export const CreateCategoryRequestSchema = z
 		categoryData: z.any().openapi({ example: { name: 'drinks', tag: 'drinks' } }),
 		translations: z.array(CategoryTranslationSchema).optional(),
 		subcategories: z.array(z.any()).optional().openapi({ example: [] }),
-		words: z.array(z.string()).optional().openapi({ example: ['cola', 'fizzy'] }),
-		parent_categories_id: z.array(z.string().uuid()).optional().openapi({ example: ['550e8400-e29b-41d4-a716-446655440000'] }),
+		words: z
+			.array(z.string())
+			.optional()
+			.openapi({ example: ['cola', 'fizzy'] }),
+		parent_categories_id: z
+			.array(z.string().uuid())
+			.optional()
+			.openapi({ example: ['550e8400-e29b-41d4-a716-446655440000'] }),
 		iconFileData: CategoryIconFileDataSchema.optional(),
 	})
 	.openapi('CreateCategoryRequest');
@@ -41,7 +47,10 @@ export type CreateCategoryRequest = z.infer<typeof CreateCategoryRequestSchema>;
 
 export const UpdateCategoryRequestSchema = z
 	.object({
-		categoryData: z.any().optional().openapi({ example: { name: 'drinks' } }),
+		categoryData: z
+			.any()
+			.optional()
+			.openapi({ example: { name: 'drinks' } }),
 		translations: z.array(CategoryTranslationSchema).optional(),
 		subcategories: z.array(z.any()).optional(),
 		parent_categories_id: z.array(z.string().uuid()).optional(),

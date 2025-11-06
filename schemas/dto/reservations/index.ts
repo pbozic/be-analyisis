@@ -76,6 +76,7 @@ export {
 	CreateReservationModuleRequestSchema,
 	UpdateReservationModuleRequestSchema,
 	UpdateReservationSettingsRequestSchema,
+	GetBookingDataRequestSchema,
 	ReservationModuleResponseSchema,
 } from './reservation-module/reservation-module.dto';
 

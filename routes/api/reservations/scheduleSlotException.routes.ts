@@ -1,27 +1,29 @@
 import express from 'express';
 
 import ScheduleSlotExceptionController from '../../../controllers/reservation/ScheduleSlotExceptionController';
-import { validate } from '../../../middleware/zod';
+import { validate } from '../../../middleware/zod.js';
 import {
-	CreateScheduleSlotExceptionSchema,
-	UpdateScheduleSlotExceptionSchema,
+	CreateScheduleSlotExceptionRequestSchema,
+	UpdateScheduleSlotExceptionRequestSchema,
+} from '../../../schemas/dto/reservations/schedule-slot-exception/schedule-slot-exception.dto.js';
+import {
 	CreateOrUpdateExceptionsSchema,
 	CreateOrUpdateExceptionsAndBookingsSchema,
 	CreateScheduleSlotWithExceptionsAndBookingSlotsSchema,
 	UpdateScheduleSlotWithBookingSlotsAndExceptionsSchema,
-} from '../../../types/reservations/Schedule';
+} from '../../../schemas/dto/reservations/schedule/schedule.dto.js';
 
 const router = express.Router();
 
 router.get('/list/:schedule_slot_id', ScheduleSlotExceptionController.getScheduleSlotExceptionsBySlotId);
 router.post(
 	'/',
-	validate(CreateScheduleSlotExceptionSchema),
+	validate(CreateScheduleSlotExceptionRequestSchema),
 	ScheduleSlotExceptionController.createScheduleSlotException
 );
 router.put(
 	'/:id',
-	validate(UpdateScheduleSlotExceptionSchema),
+	validate(UpdateScheduleSlotExceptionRequestSchema),
 	ScheduleSlotExceptionController.updateScheduleSlotException
 );
 router.delete('/:id', ScheduleSlotExceptionController.deleteScheduleSlotException);

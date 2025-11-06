@@ -25,19 +25,21 @@ import {
 	newBookingCourseParticipant,
 	cancelBookingCourseParticipant,
 } from '../../../controllers/reservation/BookingController.ts';
-import { validate } from '../../../middleware/zod';
+import { validate } from '../../../middleware/zod.js';
 import {
 	ListBookingsParamsSchema,
-	UpdateBookingSchema,
+	UpdateBookingRequestSchema,
 	AllBookingsForLocationAndEmployeesSchema,
-	CreateMultipleBookingsSchema,
-	UpdateMultipleBookingsSchema,
+	CreateMultipleBookingsRequestSchema,
+	UpdateMultipleBookingsRequestSchema,
 	BookingsAnalyticsSchema,
-	CreateBookingCourseSchema,
-	UpdateBookingCourseSchema,
-	CreateCourseParticipantSchema,
-	UpdateCourseParticipantSchema,
-} from '../../../types/reservations/Booking.ts';
+	CreateBookingCourseRequestSchema,
+	UpdateBookingCourseRequestSchema,
+} from '../../../schemas/dto/reservations/booking/booking.dto.js';
+import {
+	CreateBookingCourseParticipantRequestSchema,
+	UpdateBookingCourseParticipantRequestSchema,
+} from '../../../schemas/dto/reservations/booking-course-participant/booking-course-participant.dto.js';
 
 const router = express.Router();
 
@@ -66,7 +68,7 @@ router.post(
  * Create bookings (admin)
  * POST /bookings/create-booking-admin
  */
-router.post('/bookings/create-booking-admin', [validate(CreateMultipleBookingsSchema)], createBookingAdmin);
+router.post('/bookings/create-booking-admin', [validate(CreateMultipleBookingsRequestSchema)], createBookingAdmin);
 
 /**
  * List locations and employees for bookings
@@ -95,7 +97,7 @@ router.get('/bookings/:booking_id', getBooking);
  */
 router.put(
 	'/bookings/update-booking-start-admin/:booking_id',
-	[validate(UpdateBookingSchema)],
+	[validate(UpdateBookingRequestSchema)],
 	updateBookingStartAdmin
 );
 /**
@@ -104,7 +106,7 @@ router.put(
  */
 router.put(
 	'/bookings/update-booking-start-admin-group/:booking_id',
-	[validate(UpdateBookingSchema)],
+	[validate(UpdateBookingRequestSchema)],
 	updateBookingStartGroupAdmin
 );
 /**
@@ -113,20 +115,20 @@ router.put(
  */
 router.put(
 	'/bookings/update-booking-start-first-group-admin/:booking_id',
-	[validate(UpdateBookingSchema)],
+	[validate(UpdateBookingRequestSchema)],
 	updateBookingStartFirstInGroupAdmin
 );
 /**
  * Bulk update bookings (admin)
  * PUT /bookings/update-bookings-admin
  */
-router.put('/bookings/update-bookings-admin', [validate(UpdateMultipleBookingsSchema)], updateBookingGroupAdmin);
+router.put('/bookings/update-bookings-admin', [validate(UpdateMultipleBookingsRequestSchema)], updateBookingGroupAdmin);
 
 /**
  * Update booking
  * PUT /bookings/:booking_id
  */
-router.put('/bookings/:booking_id', [validate(UpdateBookingSchema)], updateBooking);
+router.put('/bookings/:booking_id', [validate(UpdateBookingRequestSchema)], updateBooking);
 
 /**
  * Delete booking
@@ -166,19 +168,23 @@ router.get('/bookings-course/:booking_id', getBookingCourse);
  * Create a booking course
  * POST /bookings-course
  */
-router.post('/bookings-course', [validate(CreateBookingCourseSchema)], createBookingCourse);
+router.post('/bookings-course', [validate(CreateBookingCourseRequestSchema)], createBookingCourse);
 
 /**
  * Update a booking course
  * PUT /bookings-course/:booking_id
  */
-router.put('/bookings-course/:booking_id', [validate(UpdateBookingCourseSchema)], updateBookingCourse);
+router.put('/bookings-course/:booking_id', [validate(UpdateBookingCourseRequestSchema)], updateBookingCourse);
 
 /**
  * Create a course participant
  * POST /bookings-course-participant
  */
-router.post('/bookings-course-participant', [validate(CreateCourseParticipantSchema)], newBookingCourseParticipant);
+router.post(
+	'/bookings-course-participant',
+	[validate(CreateBookingCourseParticipantRequestSchema)],
+	newBookingCourseParticipant
+);
 
 /**
  * Cancel a course participant
@@ -186,7 +192,7 @@ router.post('/bookings-course-participant', [validate(CreateCourseParticipantSch
  */
 router.put(
 	'/bookings-course-participant/cancel',
-	[validate(UpdateCourseParticipantSchema)],
+	[validate(UpdateBookingCourseParticipantRequestSchema)],
 	cancelBookingCourseParticipant
 );
 

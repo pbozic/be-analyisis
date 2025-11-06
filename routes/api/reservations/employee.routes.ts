@@ -1,9 +1,12 @@
 import express from 'express';
 
 import EmployeeController from '../../../controllers/reservation/EmployeeController';
-import { validate } from '../../../middleware/zod';
-import { CreateEmployeeSchema, UpdateEmployeeSchema } from '../../../types/reservations/Employee';
-import { BookingsAnalyticsSchema } from '../../../types/reservations/Booking.ts';
+import { validate } from '../../../middleware/zod.js';
+import {
+	CreateEmployeeRequestSchema,
+	UpdateEmployeeRequestSchema,
+} from '../../../schemas/dto/reservations/employee/employee.dto.js';
+import { BookingsAnalyticsSchema } from '../../../schemas/dto/reservations/booking/booking.dto.js';
 const router = express.Router();
 
 router.get('/', EmployeeController.getEmployees);
@@ -15,7 +18,7 @@ router.post(
 	EmployeeController.getEmployeeByIdWithSchedules
 );
 router.get('/:employee_id', EmployeeController.getEmployeeById);
-router.post('/', [validate(CreateEmployeeSchema)], EmployeeController.createEmployee);
-router.put('/:employee_id', validate(UpdateEmployeeSchema), EmployeeController.updateEmployee);
+router.post('/', [validate(CreateEmployeeRequestSchema)], EmployeeController.createEmployee);
+router.put('/:employee_id', validate(UpdateEmployeeRequestSchema), EmployeeController.updateEmployee);
 
 export default router;
