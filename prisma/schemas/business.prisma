@@ -67,7 +67,7 @@ model business {
     logo     files?     @relation("business_logo", fields: [logo_id], references: [file_id])
     banner_id String?    @db.Uuid @unique
     banner    files?     @relation("business_banner", fields: [banner_id], references: [file_id])
-
+    created_order_lobbies  order_lobbies[] @relation("business_to_lobby")
     @@index([parent_business_id])
 }
 
