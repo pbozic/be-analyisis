@@ -169,11 +169,6 @@ const getBusinessById = async (business_id) => {
 				transport_module: true,
 				parent_business: true,
 				child_businesses: true,
-				types: {
-					include: {
-						business_type: true,
-					},
-				},
 			},
 		});
 		return {
@@ -187,7 +182,6 @@ const getBusinessById = async (business_id) => {
 				business?.food_drinks_module?.daily_meals_module?.maximum_daily_meals_subscribers,
 			daily_users_sorting_type: business?.food_drinks_module?.daily_meals_module?.daily_users_sorting_type,
 			daily_users_sorted: business?.food_drinks_module?.daily_meals_module?.daily_users_sorted,
-			types: business?.types?.map((t) => t.business_type.type),
 			stores_logo: business?.stores_module?.logo,
 			stores_banner: business?.stores_module?.banner,
 			food_drinks_logo: business?.food_drinks_module?.logo,
@@ -511,7 +505,7 @@ const getTransferBusinessesMainInformation = async () => {
 			},
 		});
 	} catch (error) {
-		console.error(`Error retrieving businesses by type ${type}:`, error);
+		console.error(`Error retrieving transfer businesses`, error);
 		throw new Error(error);
 	}
 };
@@ -530,7 +524,7 @@ const getStoresMainInformation = async () => {
 			},
 		});
 	} catch (error) {
-		console.error(`Error retrieving businesses by type ${type}:`, error);
+		console.error(`Error retrieving stores`, error);
 		throw new Error(error);
 	}
 };
@@ -549,14 +543,14 @@ const getFoodDrinksMainInformation = async () => {
 			},
 		});
 	} catch (error) {
-		console.error(`Error retrieving businesses by type ${type}:`, error);
+		console.error(`Error retrieving food and drinks businesses`, error);
 		throw new Error(error);
 	}
 };
 /**
  * List businesses by type(s) with rich related data, optionally filtered by extra args.
  *
- * @param {BUSINESS_TYPE} type - One or more business types.
+ * @param {'BUSINESS' | 'TRANSPORT' | 'DELIVERY'} type - One or more business types.
  * @param {object} [args={}] - Additional Prisma where/ordering filters.
  * @returns {Promise<object[]>} A promise resolving to matching businesses with related data.
  */
@@ -611,9 +605,9 @@ const getBusinessesByType = async (type, args = {}) => {
 		let whereObject = {
 			...args?.where,
 		};
-		if (type === BUSINESS_TYPE.BUSINESS) whereObject.crm_module_id = { not: null };
-		if (type === BUSINESS_TYPE.TRANSFER) whereObject.transport_module_id = { not: null };
-		if (type === BUSINESS_TYPE.MERCHANT) {
+		if (type === 'BUSINESS') whereObject.crm_module_id = { not: null };
+		if (type === 'TRANSPORT') whereObject.transport_module_id = { not: null };
+		if (type === 'DELIVERY') {
 			whereObject = {
 				...whereObject,
 				OR: [{ stores_module_id: { not: null } }, { food_drinks_module_id: { not: null } }],
@@ -1046,15 +1040,8 @@ const getLocalBusinesses = async () => {
 					not: null,
 				},
 			},
-			include: {
-				types: {
-					include: {
-						business_type: true,
-					},
-				},
-			},
 		});
-		return stores.filter((store) => store.types.some((type) => type.business_type.type === BUSINESS_TYPE.LOCAL));
+		return stores.filter((store) => store.types.some((type) => type === BUSINESS_TYPE.LOCAL));
 	} catch (error) {
 		console.error('Error retrieving local businesses:', error);
 		throw new Error(error);

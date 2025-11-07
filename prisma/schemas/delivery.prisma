@@ -100,8 +100,6 @@ model delivery_orders {
     vehicle                    vehicles?                  @relation(fields: [vehicle_id], references: [vehicle_id])
     driver_id                  String?                    @db.Uuid
     driver                     drivers?                   @relation(fields: [driver_id], references: [driver_id])
-    transport_module_id        String?                    @db.Uuid
-    transport_module           transport_module?          @relation(fields: [transport_module_id], references: [transport_module_id])
     payment_intent_id          String?
     transactions               transactions[]
     find_drivers_attempts      Int?                       @default(0)
@@ -314,7 +312,8 @@ model menu_categories {
     description_translatable_id String                       @db.Uuid
     description                 translatable?                @relation("menu_categories_descriptions_translations", fields: [description_translatable_id], references: [translatable_id], onDelete: Cascade)
     categories                  String[]
-    business_id                 String                       @db.Uuid
+    stores_id                   String?                      @unique @db.Uuid
+    food_drinks_id              String?                      @unique @db.Uuid
     menu_items                  menu_items[]                 @relation("menu_items_in_category")
     menu_id                     String?                      @db.Uuid
     menu                        menus?                       @relation(fields: [menu_id], references: [menu_id], onDelete: Cascade)
@@ -356,7 +355,8 @@ model menu_items {
     extras                      String[] // Replace with options
     ingredients                 Json // Includes allergen and multilingual names
     availability                String[] // Array of availability -> ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
-    business_id                 String                    @db.Uuid
+    stores_id                   String?                   @unique @db.Uuid
+    food_drinks_id              String?                   @unique @db.Uuid
     menu_category_id            String?                   @db.Uuid
     daily_date                  DateTime?                 @db.Timestamptz(6)
     menu_category               menu_categories?          @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id], onDelete: Cascade)

@@ -2,7 +2,6 @@ import BusinessUsersDao from '../dao/BusinessUsers.js';
 import AddressDao from '../dao/Address.js';
 import GroupDao from '../dao/Group.js';
 import UserDao from '../dao/User.js';
-import Constants from '../lib/constants.js';
 import elasticsearch from '../elasticsearch/index.js';
 const { businessIndex } = elasticsearch;
 /**
@@ -263,11 +262,7 @@ async function updateBusinessUserOnlineStatus(req, res) {
 	try {
 		const { business_users_id, online } = req.body;
 		const updatedBusinessUser = await BusinessUsersDao.updateBusinessUserOnlineStatus(business_users_id, online);
-		if (
-			updatedBusinessUser?.business?.type === Constants.BUSINESS_TYPE.MERCHANT ||
-			updatedBusinessUser?.business?.type === Constants.BUSINESS_TYPE.LOCAL ||
-			updatedBusinessUser?.business?.type === Constants.BUSINESS_TYPE.RESTAURANT
-		) {
+		if (updatedBusinessUser?.business?.stores_module_id || updatedBusinessUser?.business?.food_drinks_module_id) {
 			businessIndex(updatedBusinessUser?.business_id);
 		}
 		res.status(200).json(updatedBusinessUser);

@@ -15,7 +15,6 @@ import TaxiOrderDao from '../dao/TaxiOrder.js';
 import PaymentHelpers from '../lib/paymentHelpers.ts';
 import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
 import { handleStockSync } from './DeliveryOrderController.js';
-import { BUSINESS_TYPE } from '../lib/constants.js';
 import prisma from '../prisma/prisma.js';
 import DailyMealDao from '../dao/DailyMealDao.ts';
 import PaymentDao from '../dao/Payment.ts';
@@ -85,7 +84,7 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 					order.order_id,
 					DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL
 				);
-				if (business.types.includes(BUSINESS_TYPE.MERCHANT) || business.types.includes(BUSINESS_TYPE.LOCAL)) {
+				if (order.stores_module_id) {
 					order = await DeliveryOrderDao.updateOrderStatus(
 						order.order_id,
 						DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP

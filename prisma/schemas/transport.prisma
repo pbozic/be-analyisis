@@ -8,14 +8,12 @@ model transport_module {
     created_at          DateTime @default(now()) @db.Timestamptz(6)
     updated_at          DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-    business        business          @relation(fields: [business_id], references: [business_id])
-    active          Boolean           @default(false)
-    reviewable_id   String?           @db.Uuid
-    reviewable      reviewable?       @relation(fields: [reviewable_id], references: [reviewable_id])
-    taxi_orders     taxi_orders[]
-    delivery_orders delivery_orders[]
-    drivers         drivers[]
-    vehicles        vehicles[]
+    business      business    @relation(fields: [business_id], references: [business_id])
+    active        Boolean     @default(false)
+    reviewable_id String?     @db.Uuid
+    reviewable    reviewable? @relation(fields: [reviewable_id], references: [reviewable_id])
+    drivers       drivers[]
+    vehicles      vehicles[]
 
     business_premises business_premise[]
 }
@@ -76,8 +74,6 @@ model taxi_orders {
     invoice                  invoice?
     review_id                String?                    @unique @db.Uuid
     review                   reviews?                   @relation("taxi_order_review", fields: [review_id], references: [review_id])
-    transport_module_id      String?                    @db.Uuid
-    transport_module         transport_module?          @relation(fields: [transport_module_id], references: [transport_module_id])
 }
 
 /// @namespace TaxiOrders

@@ -1012,35 +1012,6 @@ model user_allergens {
   @@id([allergen_id, user_id])
 }
 
-/// @summary Junction table linking user favorite service links.
-/// @namespace Users
-/// @hidden
-model user_favorite_service_links {
-  id          String   @id @default(uuid()) @db.Uuid
-  user_id     String   @db.Uuid
-  service_id  String   @db.Uuid
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
-  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-  order_index Int      @default(0)
-
-  users    users         @relation("user_favorite_services_to_user", fields: [user_id], references: [user_id])
-  services service_links @relation("user_favorite_services_to_service", fields: [service_id], references: [id])
-
-  @@unique(name: "user_typed_favorite_service", [user_id, service_id])
-  @@index([user_id, service_id])
-}
-
-/// @summary Klikni service links (e.g., taxi, courier, stores) that can be favorited by users on home screen.
-/// @namespace Users
-model service_links {
-  id         String   @id @default(uuid()) @db.Uuid
-  name       String   @unique // TODO: seeder
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-
-  favorited_by user_favorite_service_links[] @relation("user_favorite_services_to_service")
-}
-
 /// @summary Tutorials available in the system.
 /// @namespace Users
 model tutorial {
@@ -1464,4 +1435,45 @@ enum MODULE {
   STORES
   FOOD_DRINKS
   RESERVATIONS
+}
+
+enum BUSINESS_TYPE {
+  // TRANSPORT
+  TAXI
+  TRANSFER
+  CARGO
+  DELIVERY
+  // DELIVERY
+  LOCAL
+  RETAIL_STORE
+  RESTAURANT
+  BAR
+  COFFEE_SHOP
+  BAKERY
+  // RESERVATIONS
+  RESERVATION
+  // crm
+  BUSINESS
+}
+
+enum SERVICES {
+  TRANSPORT
+  TAXI
+  TRANSFER
+  CARGO
+
+  DELIVERY
+  DAILY_MEALS
+  STORES
+  FOOD_DRINKS
+  LOCAL
+  RETAIL_STORES
+  RESTAURANTS
+  BARS
+  COFFEE_SHOPS
+  BAKERIES
+
+  RESERVATIONS
+  TABLE_RESERVATIONS
+  RESERVATION_SERVICES
 }

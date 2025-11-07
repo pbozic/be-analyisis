@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 import { PROMO_TYPE, ANALYTICS_TYPE, MODULE } from '@prisma/client';
 
 import BusinessDao from '../dao/Business.js';
-import Constants, { BUSINESS_TYPE, DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
+import Constants, { DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
 import stripe from '../lib/stripe.js';
 import UserDao from '../dao/User.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
@@ -49,11 +49,7 @@ async function activateBusiness(req, res) {
 		}
 		const business = await BusinessDao.activateBusiness(business_id, req.user.user_id, reason);
 		if (business) {
-			if (
-				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
-				business.type === Constants.BUSINESS_TYPE.LOCAL ||
-				business.type === Constants.BUSINESS_TYPE.RESTAURANT
-			) {
+			if (business.stores_module_id || business.food_drinks_module_id) {
 				businessIndex(business.business_id);
 			}
 			res.status(200).json(business);
@@ -90,11 +86,7 @@ async function deactivateBusiness(req, res) {
 		}
 		const business = await BusinessDao.deactivateBusiness(business_id, req.user.user_id, reason);
 		if (business) {
-			if (
-				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
-				business.type === Constants.BUSINESS_TYPE.LOCAL ||
-				business.type === Constants.BUSINESS_TYPE.RESTAURANT
-			) {
+			if (business.stores_module_id || business.food_drinks_module_id) {
 				businessIndex(business.business_id);
 			}
 			res.status(200).json(business);
@@ -122,7 +114,7 @@ async function deactivateBusiness(req, res) {
  */
 async function listBusinesses(req, res) {
 	try {
-		let businesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.BUSINESS);
+		let businesses = await BusinessDao.getBusinessesByType('BUSINESS');
 		if (businesses) {
 			res.status(200).json(businesses);
 		} else {
@@ -222,11 +214,7 @@ async function searchBusinesses(req, res) {
 async function listMerchantBusinesses(req, res) {
 	//TODO: elastic search
 	try {
-		const merchantBusinesses = await BusinessDao.getBusinessesByType([
-			Constants.BUSINESS_TYPE.MERCHANT,
-			Constants.BUSINESS_TYPE.RESTAURANT,
-			Constants.BUSINESS_TYPE.LOCAL,
-		]);
+		const merchantBusinesses = await BusinessDao.getBusinessesByType('DELIVERY');
 		res.status(200).json(merchantBusinesses);
 	} catch (e) {
 		console.error('Error listing merchant businesses:', e);
@@ -402,7 +390,7 @@ async function listTransferBusinessesMainInfo(req, res) {
  */
 async function listTransferBusinesses(req, res) {
 	try {
-		const taxiBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.TRANSFER);
+		const taxiBusinesses = await BusinessDao.getBusinessesByType('TRANSPORT');
 		res.status(200).json(taxiBusinesses);
 	} catch (e) {
 		console.error('Error listing taxi businesses:', e);
@@ -837,11 +825,7 @@ async function getAllBusinessesEarnings(req, res) {
 		return res.status(400).json({ message: 'Missing required parameters' });
 	}
 	try {
-		const businesses = await BusinessDao.getBusinessesByType([
-			Constants.BUSINESS_TYPE.MERCHANT,
-			Constants.BUSINESS_TYPE.LOCAL,
-			Constants.BUSINESS_TYPE.RESTAURANT,
-		]);
+		const businesses = await BusinessDao.getBusinessesByType('DELIVERY');
 		const earningsPromises = businesses.map(async (business) => {
 			const businessDeliveryOrders = await DeliveryOrderDao.getOrders({
 				where: {
@@ -1068,11 +1052,8 @@ async function editBusiness(req, res) {
 			await BusinessDao.updateBusinessWorkingHours(business_id, working_hours);
 		}
 		const updatedBusiness = await BusinessDao.getBusinessById(business_id);
-		if (
-			updatedBusiness.types.includes(BUSINESS_TYPE.MERCHANT) ||
-			updatedBusiness.types.includes(BUSINESS_TYPE.LOCAL)
-		) {
-			businessIndex(updatedBusiness.business_id);
+		if (updatedBusiness.stores_module_id || updatedBusiness.food_drinks_module_id) {
+			businessIndex(business_id);
 		}
 		res.status(200).json(updatedBusiness);
 	} catch (error) {

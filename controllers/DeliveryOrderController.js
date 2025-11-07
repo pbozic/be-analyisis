@@ -1319,8 +1319,7 @@ async function merchantAcceptOrder(req, res) {
 		}
 		order = await DeliveryOrderDao.getOrder(order_id, { include: { business: true } });
 		console.info('got into merchantAcceptOrder', JSON.stringify(order.payment_intent_id));
-		console.log(order.business.type);
-		if (![BUSINESS_TYPE.MERCHANT, BUSINESS_TYPE.LOCAL].includes(order.business.type)) {
+		if (!order.stores_module_id) {
 			const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
 			const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } =
 				await calculateDeliveryOrderPaymentCuts(order);
@@ -1429,7 +1428,7 @@ async function processOrderReady(order_id) {
 	const user = order?.user;
 	console.info('got into processOrderReady', JSON.stringify(order.payment_intent_id));
 
-	if ([BUSINESS_TYPE.MERCHANT, BUSINESS_TYPE.LOCAL].includes(order.business.type)) {
+	if (order.stores_module_id) {
 		const { items, grand_total, discount_total, delivery_cost, total_price, is_student } =
 			await calculateAndVerifyPriceForOrderItems(order);
 		order = await DeliveryOrderDao.updateOrder(order.order_id, {
@@ -1675,7 +1674,7 @@ async function localConfirmMultipleOrdersReady(req, res) {
 		if (!user) {
 			return res.status(404).json({ error: 'User not found' });
 		}
-		if (user.business_users?.[0]?.business?.type !== BUSINESS_TYPE.LOCAL) {
+		if (!user.business_users?.[0]?.business?.types?.includes(BUSINESS_TYPE.LOCAL)) {
 			return res.status(400).json({ error: 'This endpoint is only for LOCAL business type' });
 		}
 

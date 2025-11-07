@@ -57,7 +57,7 @@ model business {
     business_users       business_users[]
     business_teams       business_teams[]
 
-    types              business_to_types[]
+    types              BUSINESS_TYPE[]
     reservation_module reservation_module?
     transport_module   transport_module?
     stores_module      stores_module?
@@ -65,32 +65,6 @@ model business {
     crm_module         crm_module?
 
     @@index([parent_business_id])
-}
-
-/// @summary Junction table linking businesses to their types.
-/// @namespace Business
-/// @hidden
-model business_to_types {
-    business_id String   @db.Uuid
-    type_id     String   @db.Uuid
-    created_at  DateTime @default(now()) @db.Timestamptz(6)
-    updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-
-    business      business      @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
-    business_type business_type @relation(fields: [type_id], references: [type_id], onDelete: Cascade)
-
-    @@id([business_id, type_id])
-    @@index([type_id, business_id])
-}
-
-/// @summary Types of businesses (e.g., Local, Store, Restaurant).
-/// @namespace Business
-model business_type {
-    type_id    String              @id @default(uuid()) @db.Uuid
-    type       String              @unique // TODO: seeder
-    created_at DateTime            @default(now()) @db.Timestamptz(6)
-    updated_at DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
-    businesses business_to_types[]
 }
 
 /// @summary User membership within a business (employees/managers).
