@@ -1,19 +1,21 @@
+import { MODULE } from '@prisma/client';
+
 import prisma from '../prisma/prisma.js';
 /**
  * Add a favorite business for a user.
  *
  * @param {string} user_id
  * @param {string} business_id
- * @param {string} business_type
+ * @param {MODULE} module
  * @returns {Promise<UserFavoriteBusiness>}
  */
-const addFavoriteBusiness = async (user_id, business_id, business_type) => {
+const addFavoriteBusiness = async (user_id, business_id, module) => {
 	try {
 		return await prisma.user_favorite_businesses.create({
 			data: {
 				users: { connect: { user_id: user_id } },
 				businesses: { connect: { business_id: business_id } },
-				business_type,
+				module,
 			},
 		});
 	} catch (error) {

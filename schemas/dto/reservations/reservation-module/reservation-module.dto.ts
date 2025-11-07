@@ -113,6 +113,22 @@ export const UpdateReservationSettingsRequestSchema = UpdateReservationModuleReq
 		description: 'Request schema for updating reservation module settings',
 	});
 
+export const GetBookingDataRequestSchema = z
+	.object({
+		public_link_hash: z.string().optional().openapi({
+			example: 'abc123def456',
+			description: 'Public booking link hash',
+		}),
+		business_id: UUID.optional(),
+	})
+	.refine((data) => data.public_link_hash || data.business_id, {
+		message: 'Either public_link_hash or business_id must be provided',
+	})
+	.openapi({
+		title: 'GetBookingDataRequest',
+		description: 'Request schema for retrieving reservation module booking data',
+	});
+
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const ReservationModuleResponseSchema = ReservationModuleBaseSchema.extend({
@@ -185,6 +201,7 @@ export type ReservationModuleWithBusiness = z.infer<typeof ReservationModuleWith
 export type CreateReservationModuleRequest = z.infer<typeof CreateReservationModuleRequestSchema>;
 export type UpdateReservationModuleRequest = z.infer<typeof UpdateReservationModuleRequestSchema>;
 export type UpdateReservationSettingsRequest = z.infer<typeof UpdateReservationSettingsRequestSchema>;
+export type GetBookingDataRequest = z.infer<typeof GetBookingDataRequestSchema>;
 export type ReservationModuleResponse = z.infer<typeof ReservationModuleResponseSchema>;
 export type ReservationModuleDAOResponse = z.infer<typeof ReservationModuleDAOResponseSchema>;
 export type ReservationModulePublicDAOResponse = z.infer<typeof ReservationModulePublicDAOResponseSchema>;
@@ -197,6 +214,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateReservationModuleRequest', CreateReservationModuleRequestSchema);
 	registry.register('UpdateReservationModuleRequest', UpdateReservationModuleRequestSchema);
 	registry.register('UpdateReservationSettingsRequest', UpdateReservationSettingsRequestSchema);
+	registry.register('GetBookingDataRequest', GetBookingDataRequestSchema);
 	registry.register('ReservationModuleResponse', ReservationModuleResponseSchema);
 	registry.register('ReservationModuleDAO', ReservationModuleDAOResponseSchema);
 	registry.register('ReservationModulePublicDAO', ReservationModulePublicDAOResponseSchema);

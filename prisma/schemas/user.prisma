@@ -8,7 +8,6 @@ enum PERMISSION_SCOPE {
 /// @namespace Users
 /// @erd FamilyUsers
 /// @erd BusinessUsers
-/// @erd CRM
 /// @erd Drivers
 /// @erd TaxiOrders
 /// @erd DeliveryOrders

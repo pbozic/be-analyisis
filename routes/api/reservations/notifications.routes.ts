@@ -4,35 +4,35 @@ import { z } from 'zod';
 
 import AuthoringController from '../../../controllers/reservationNotifications/NotificationAuthoringController';
 import RuntimeController from '../../../controllers/reservationNotifications/NotificationRuntimeController';
-import { validate } from '../../../middleware/zod';
+import { validate } from '../../../middleware/zod.js';
 
-// ---- Schemas (imported from your types) ----
+// ---- Schemas (imported from DTOs) ----
 import {
-	CreateNotificationEventSchema,
-	UpdateNotificationEventSchema,
-} from '../../../types/reservationNotifications/NotificationEvent';
+	CreateNotificationEventRequestSchema,
+	UpdateNotificationEventRequestSchema,
+} from '../../../schemas/dto/reservations/notification-event/notification-event.dto.js';
 import {
-	CreateNotificationTemplateSchema,
-	UpdateNotificationTemplateSchema,
-} from '../../../types/reservationNotifications/NotificationTemplate';
+	CreateNotificationTemplateRequestSchema,
+	UpdateNotificationTemplateRequestSchema,
+} from '../../../schemas/dto/reservations/notification-template/notification-template.dto.js';
 import {
-	CreateNotificationTemplateVersionSchema,
-	UpdateNotificationTemplateVersionByIdSchema,
-} from '../../../types/reservationNotifications/NotificationTemplateVersion';
+	CreateNotificationTemplateVersionRequestSchema,
+	UpdateNotificationTemplateVersionByCompositeRequestSchema,
+} from '../../../schemas/dto/reservations/notification-template-version/notification-template-version.dto.js';
 import {
-	CreateNotificationMappingSchema,
-	UpdateNotificationMappingSchema,
-} from '../../../types/reservationNotifications/NotificationMapping';
-import { UpsertNotificationPreferenceSchema } from '../../../types/reservationNotifications/NotificationPreference';
+	CreateNotificationMappingRequestSchema,
+	UpdateNotificationMappingRequestSchema,
+} from '../../../schemas/dto/reservations/notification-mapping/notification-mapping.dto.js';
+import { UpsertNotificationPreferenceRequestSchema } from '../../../schemas/dto/reservations/notification-preference/notification-preference.dto.js';
 import {
-	CreateNotificationMessageSchema,
-	UpdateNotificationMessageStatusSchema,
-} from '../../../types/reservationNotifications/NotificationMessage';
-import { CreateNotificationMessageEventSchema } from '../../../types/reservationNotifications/NotificationMessageEvent';
+	CreateNotificationMessageRequestSchema,
+	UpdateNotificationMessageStatusRequestSchema,
+} from '../../../schemas/dto/reservations/notification-message/notification-message.dto.js';
+import { CreateNotificationMessageEventRequestSchema } from '../../../schemas/dto/reservations/notification-message-event/notification-message-event.dto.js';
 import {
-	CreateNotificationProviderCredentialSchema,
-	UpdateNotificationProviderCredentialSchema,
-} from '../../../types/reservationNotifications/NotificationProviderCredential';
+	CreateNotificationProviderCredentialRequestSchema,
+	UpdateNotificationProviderCredentialRequestSchema,
+} from '../../../schemas/dto/reservations/notification-provider-credential/notification-provider-credential.dto.js';
 import { MessageStatusEnum } from '../../../types/reservationNotifications/enums';
 
 // ---- Local, route-only schemas ----
@@ -56,20 +56,24 @@ const router = express.Router();
 
 // Events
 router.get('/events', AuthoringController.listNotificationEvents);
-router.post('/events', validate(CreateNotificationEventSchema), AuthoringController.createNotificationEvent);
+router.post('/events', validate(CreateNotificationEventRequestSchema), AuthoringController.createNotificationEvent);
 router.put(
 	'/events/:notification_event_id',
-	validate(UpdateNotificationEventSchema),
+	validate(UpdateNotificationEventRequestSchema),
 	AuthoringController.updateNotificationEvent
 );
 router.delete('/events/:notification_event_id', AuthoringController.deleteNotificationEvent);
 
 // Templates
 router.get('/templates', AuthoringController.listNotificationTemplates);
-router.post('/templates', validate(CreateNotificationTemplateSchema), AuthoringController.createNotificationTemplate);
+router.post(
+	'/templates',
+	validate(CreateNotificationTemplateRequestSchema),
+	AuthoringController.createNotificationTemplate
+);
 router.put(
 	'/templates/:notification_template_id',
-	validate(UpdateNotificationTemplateSchema),
+	validate(UpdateNotificationTemplateRequestSchema),
 	AuthoringController.updateNotificationTemplate
 );
 router.delete('/templates/:notification_template_id', AuthoringController.deleteNotificationTemplate);
@@ -77,22 +81,26 @@ router.delete('/templates/:notification_template_id', AuthoringController.delete
 // Template versions
 router.post(
 	'/templates/:notification_event_id/versions',
-	validate(CreateNotificationTemplateVersionSchema.omit({ notification_event_id: true })), // body excludes path param
+	validate(CreateNotificationTemplateVersionRequestSchema), // TODO: omit path param if needed
 	AuthoringController.createNotificationTemplateVersion
 );
 router.put(
 	'/versions/:notification_template_version_id',
-	validate(UpdateNotificationTemplateVersionByIdSchema.omit({ notification_template_version_id: true })), // body excludes path param
+	validate(UpdateNotificationTemplateVersionByCompositeRequestSchema), // TODO: omit path param if needed
 	AuthoringController.updateNotificationTemplateVersionById
 );
 router.delete('/versions/:notification_template_version_id', AuthoringController.deleteNotificationTemplateVersionById);
 
 // Mappings
 router.get('/mappings', AuthoringController.listNotificationMappings);
-router.post('/mappings', validate(CreateNotificationMappingSchema), AuthoringController.createNotificationMapping);
+router.post(
+	'/mappings',
+	validate(CreateNotificationMappingRequestSchema),
+	AuthoringController.createNotificationMapping
+);
 router.put(
 	'/mappings/:notification_mapping_id',
-	validate(UpdateNotificationMappingSchema),
+	validate(UpdateNotificationMappingRequestSchema),
 	AuthoringController.updateNotificationMapping
 );
 router.post('/mappings/active', validate(ActiveMappingSchema), AuthoringController.upsertActiveNotificationMapping);
@@ -101,7 +109,7 @@ router.get('/events/:notification_event_id/template', AuthoringController.getLat
 router.get('/preferences', AuthoringController.listNotificationPreferences);
 router.put(
 	'/preferences',
-	validate(UpsertNotificationPreferenceSchema),
+	validate(UpsertNotificationPreferenceRequestSchema),
 	AuthoringController.upsertNotificationPreference
 );
 
@@ -116,10 +124,10 @@ router.get('/variables', AuthoringController.listNotificationVariables);
 // Messages
 router.get('/messages/:notification_message_id', RuntimeController.getNotificationMessage);
 router.post('/messages/list', validate(ListMessagesSchema), RuntimeController.listNotificationMessages);
-router.post('/messages', validate(CreateNotificationMessageSchema), RuntimeController.createNotificationMessage);
+router.post('/messages', validate(CreateNotificationMessageRequestSchema), RuntimeController.createNotificationMessage);
 router.put(
 	'/messages/:notification_message_id/status',
-	validate(UpdateNotificationMessageStatusSchema.omit({ notification_message_id: true })), // body excludes path param
+	validate(UpdateNotificationMessageStatusRequestSchema), // TODO: omit path param if needed
 	RuntimeController.updateNotificationMessageStatus
 );
 
@@ -127,7 +135,7 @@ router.put(
 router.get('/messages/:notification_message_id/events', RuntimeController.listNotificationMessageEvents);
 router.post(
 	'/messages/:notification_message_id/events',
-	validate(CreateNotificationMessageEventSchema.omit({ notification_message_id: true })), // body excludes path param
+	validate(CreateNotificationMessageEventRequestSchema), // TODO: omit path param if needed
 	RuntimeController.createNotificationMessageEvent
 );
 
@@ -135,12 +143,12 @@ router.post(
 router.get('/providers', RuntimeController.listNotificationProviderCredentials); // optional channel via query
 router.post(
 	'/providers',
-	validate(CreateNotificationProviderCredentialSchema),
+	validate(CreateNotificationProviderCredentialRequestSchema),
 	RuntimeController.createNotificationProviderCredential
 );
 router.put(
 	'/providers/:notification_provider_credential_id',
-	validate(UpdateNotificationProviderCredentialSchema),
+	validate(UpdateNotificationProviderCredentialRequestSchema),
 	RuntimeController.updateNotificationProviderCredential
 );
 router.delete(

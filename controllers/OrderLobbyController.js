@@ -3,13 +3,11 @@ import OrderLobbyUserDao from '../dao/OrderLobbyUser.js';
 import OrderLobbyItemDao from '../dao/OrderLobbyItem.js';
 import UserDao from '../dao/User.js';
 import BusinessDao from '../dao/Business.js';
-import DocumentDao from '../dao/Document.js';
 import socket from '../socket.js';
 import OneSignal from '../lib/oneSignal.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
 import { CalculateOrderLobbyOrderDetails } from '../lib/deliveryHelpers.js';
 import DeliveryOrderController from './DeliveryOrderController.js';
-import { DOCUMENT_TYPE } from '../lib/constants.js';
 import MenuItemDao from '../dao/MenuItem.js';
 const { UserSockets, io } = socket;
 
@@ -68,7 +66,7 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod, useCredits)
 			};
 		})
 	);
-
+	//TODO: use delivery_address unless order from LOCAL
 	const restaurant = await BusinessDao.getBusinessById(orderLobby.restaurant_id);
 
 	const restaurantAddress = {
@@ -406,10 +404,9 @@ async function getOrderLobbyById(req, res) {
 		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
 		const updatedUsers = await Promise.all(
 			order_lobby.order_lobby_users.map(async (user) => {
-				let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
 				return {
 					...user,
-					profile_picture: profile[0]?.files[0]?.url,
+					profile_picture: user.profile_picture.url,
 				};
 			})
 		);
@@ -452,13 +449,9 @@ async function getActiveOrderLobbiesByBusinessId(req, res) {
 			orderLobbies.map(async (lobby) => {
 				const updatedUsers = await Promise.all(
 					lobby.order_lobby_users.map(async (user) => {
-						let profile = await DocumentDao.getDocumentsForUserByType(
-							user.user_id,
-							DOCUMENT_TYPE.PROFILE_PICTURE
-						);
 						return {
 							...user,
-							profile_picture: profile[0]?.files[0]?.url,
+							profile_picture: user.profile_picture.url,
 						};
 					})
 				);

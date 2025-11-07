@@ -1,17 +1,17 @@
 import express from 'express';
 
 import ServiceController from '../../../controllers/reservation/ServiceController';
-import { validate } from '../../../middleware/zod';
+import { validate } from '../../../middleware/zod.js';
 import {
-	CreateServiceSchema,
-	UpdateServiceSchema,
+	CreateServiceRequestSchema,
+	UpdateServiceRequestSchema,
 	CreateServiceWithEmployeesSchema,
 	UpdateServiceWithEmployeesSchema,
-} from '../../../types/reservations/Service';
+} from '../../../schemas/dto/reservations/service/service.dto.js';
 const router = express.Router();
 router.get('/', ServiceController.getServices);
 router.get('/form-data', ServiceController.getDataForServiceForm);
-router.post('/', validate(CreateServiceSchema), ServiceController.createService);
+router.post('/', validate(CreateServiceRequestSchema), ServiceController.createService);
 router.post(
 	'/service-with-employees',
 	validate(CreateServiceWithEmployeesSchema),
@@ -22,7 +22,7 @@ router.put(
 	validate(UpdateServiceWithEmployeesSchema),
 	ServiceController.updateServiceWithData
 );
-router.put('/:service_id', validate(UpdateServiceSchema), ServiceController.updateService);
+router.put('/:service_id', validate(UpdateServiceRequestSchema), ServiceController.updateService);
 router.delete('/:service_id', ServiceController.deleteService);
 router.get('/:service_id', ServiceController.getServiceById);
 router.post('/:service_id/connect-category/:service_category_id', ServiceController.connectServiceToCategory);

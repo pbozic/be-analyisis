@@ -6,7 +6,6 @@ import UserDao from '../dao/User.js';
 import BusinessDao from '../dao/Business.js';
 import TokenDao from '../dao/Token.js';
 import AddressDao from '../dao/Address.js';
-import DocumentDao from '../dao/Document.js';
 import FileDao from '../dao/File.js';
 import DeliveryDriverDao from '../dao/DeliveryDriver.js';
 import DriverDao from '../dao/Driver.js';
@@ -16,7 +15,6 @@ import SMS from '../lib/SMS.js';
 import stripe from '../lib/stripe.js';
 import S3Helper from '../lib/s3.js';
 import {
-	DOCUMENT_TYPE,
 	TAXI_ORDER_STATUS,
 	DELIVERY_ORDER_STATUS,
 	USER_ROLE,
@@ -143,14 +141,14 @@ async function getUserById(req, res) {
 				},
 				child_users: { include: { child_user: true } },
 				parent_user: { include: { parent_user: true } },
+				profile_picture: true,
 			},
 		});
 		if (user) {
 			delete user['password'];
-			let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
 			user = {
 				...user,
-				profile_picture: profile[0]?.files[0]?.url,
+				profile_picture: user.profile_picture.url,
 			};
 			return res.status(200).json(user);
 		} else {
@@ -256,6 +254,7 @@ async function me(req, res) {
 						operating_address: true,
 					},
 				},
+				profile_picture: true,
 			},
 		});
 		if (user.driver) {
@@ -283,12 +282,11 @@ async function me(req, res) {
 			delete user['password'];
 			// const access_token = generateAccessToken(user);
 			// const refresh_token = generateRefreshToken(user);
-			let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
 			user = {
 				...user,
 				// access_token,
 				// refresh_token,
-				profile_picture: profile[0]?.files[0]?.url,
+				profile_picture: user.profile_picture.url,
 				payment_methods,
 			};
 			return res.status(200).json(user);
@@ -440,23 +438,19 @@ async function updateProfilePicture(req, res) {
 	const userId = req.user.user_id;
 	const { image } = req.body;
 	try {
-		const documents = await DocumentDao.getDocumentsForUserByType(userId, DOCUMENT_TYPE.PROFILE_PICTURE);
-		for (const document of documents) {
-			await DocumentDao.deleteDocument(document.document_id);
-		}
 		// Create new document for profile picture
-		const document = await DocumentDao.createDocument(image.documentData);
 		//console.log("files", image.files)
 		// Add files to the document and upload to S3
 		for (const file of image.files) {
 			let base64 = file.base64;
 			delete file.base64;
-			let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
+			let fileData = await FileDao.createFile(file.file_type, file.mime_type, true);
 			let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-			await S3Helper.SaveObject(key, base64, file.mime_type, { users: [userId] }, fileData, document.public);
+			await S3Helper.SaveObject(key, base64, file.mime_type, { users: [userId] }, fileData, true);
+			await UserDao.updateUser(userId, {
+				profile_picture: { connect: { profile_picture_id: fileData.file_id } },
+			});
 		}
-		// Link new document to user
-		await DocumentDao.linkDocumentToUser(document.document_id, userId);
 		res.status(200).json({ message: 'Profile picture created successfully' });
 	} catch (error) {
 		console.error('Error updating profile picture:', error);

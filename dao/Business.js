@@ -1,8 +1,35 @@
 import prisma from '../prisma/prisma.js';
-import AddressDao from './Address.js';
-import Constants from '../lib/constants.js';
-import { reorderMenusAndCategories } from '../lib/businessHelpers.js';
-import { ACCOUNT_ACTIONS } from '../lib/constants.js';
+import { ACCOUNT_ACTIONS, BUSINESS_TYPE } from '../lib/constants.js';
+
+const menuDefault = {
+	menus: {
+		include: {
+			categories: {
+				orderBy: {
+					menu_order_index: 'asc',
+				},
+				include: {
+					menu_items: {
+						orderBy: {
+							menu_category_order_index: 'asc',
+						},
+						include: {
+							image_file: true,
+							tax_rate: true,
+						},
+					},
+					menu_categories_categories: {
+						include: {
+							category: true,
+						},
+					},
+					daily_meal_category_price: true,
+				},
+			},
+		},
+	},
+};
+
 /**
  * Get a list of businesses with optional query/include arguments.
  *
@@ -28,15 +55,42 @@ const getBusinesses = async (args) => {
 				},
 				parent_business: true,
 				child_businesses: true,
-				daily_meal_drivers: {
-					include: {
-						subscriptions: true,
-					},
-				},
 			},
 		});
 	} catch (error) {
 		console.error('Error retrieving businesses:', error);
+		throw new Error(error);
+	}
+};
+/**
+ * Get businesses that offer daily meals along with their daily meal drivers.
+ *
+ * @returns {Promise<object[]>} A promise resolving to an array of businesses with daily meal drivers.
+ */
+const getDailyMealBusinesses = async () => {
+	try {
+		const businesses = await prisma.business.findMany({
+			where: {
+				daily_meals_id: { not: null },
+			},
+			include: {
+				food_drinks_module: {
+					include: {
+						daily_meals_module: {
+							include: {
+								daily_meal_drivers: true,
+							},
+						},
+					},
+				},
+			},
+		});
+		return businesses.map((business) => ({
+			...business,
+			daily_meal_drivers: business.food_drinks_module.daily_meals_module.daily_meal_drivers,
+		}));
+	} catch (error) {
+		console.error('Error retrieving daily meal businesses:', error);
 		throw new Error(error);
 	}
 };
@@ -48,58 +102,35 @@ const getBusinesses = async (args) => {
  */
 const getBusinessById = async (business_id) => {
 	try {
-		return await prisma.business.findUnique({
+		const business = await prisma.business.findUnique({
 			where: {
 				business_id: business_id,
 			},
 			include: {
 				address: true,
 				delivery_address: true,
-				business_local_locations: {
-					where: {
-						time: {
-							gte: new Date(),
-						},
-					},
+				stores_module: {
 					include: {
-						local_location: {
-							include: {
-								address: true,
+						business_local_locations: {
+							where: {
+								time: {
+									gte: new Date(),
+								},
 							},
-						},
-					},
-					orderBy: {
-						time: 'asc',
-					},
-				},
-				menus: {
-					include: {
-						categories: {
+							include: {
+								local_location: {
+									include: {
+										address: true,
+									},
+								},
+							},
 							orderBy: {
-								menu_order_index: 'asc',
-							},
-							include: {
-								menu_items: {
-									orderBy: {
-										menu_category_order_index: 'asc',
-									},
-									include: {
-										documents: {
-											include: {
-												files: true,
-											},
-										},
-										tax_rate: true,
-									},
-								},
-								menu_categories_categories: {
-									include: {
-										category: true,
-									},
-								},
-								daily_meal_category_price: true,
+								time: 'asc',
 							},
 						},
+						...menuDefault,
+						logo: true,
+						banner: true,
 					},
 				},
 				business_users: {
@@ -107,17 +138,63 @@ const getBusinessById = async (business_id) => {
 						users: true,
 					},
 				},
-				reservations: {
+				reservation_module: {
 					include: {
-						user: true,
+						logo: true,
+						banner: true,
 					},
 				},
-				reservation_module: true,
-				business_clients: true,
+				crm_module: {
+					include: {
+						business_clients: true,
+					},
+				},
+				food_drinks_module: {
+					include: {
+						...menuDefault,
+						table_reservations_module: {
+							include: {
+								reservations: {
+									include: {
+										user: true,
+									},
+								},
+							},
+						},
+						daily_meals_module: true,
+						logo: true,
+						banner: true,
+					},
+				},
+				transport_module: true,
 				parent_business: true,
 				child_businesses: true,
+				types: {
+					include: {
+						business_type: true,
+					},
+				},
 			},
 		});
+		return {
+			...business,
+			business_local_locations: business?.stores_module?.business_local_locations,
+			business_clients: business?.crm_module?.business_clients,
+			reservations: business?.food_drinks_module?.table_reservations_module?.reservations,
+			daily_meals_delivery_mapping:
+				business?.food_drinks_module?.daily_meals_module?.daily_meals_delivery_mapping,
+			maximum_daily_meals_subscribers:
+				business?.food_drinks_module?.daily_meals_module?.maximum_daily_meals_subscribers,
+			daily_users_sorting_type: business?.food_drinks_module?.daily_meals_module?.daily_users_sorting_type,
+			daily_users_sorted: business?.food_drinks_module?.daily_meals_module?.daily_users_sorted,
+			types: business?.types?.map((t) => t.business_type.type),
+			stores_logo: business?.stores_module?.logo,
+			stores_banner: business?.stores_module?.banner,
+			food_drinks_logo: business?.food_drinks_module?.logo,
+			food_drinks_banner: business?.food_drinks_module?.banner,
+			reservations_logo: business?.reservation_module?.logo,
+			reservations_banner: business?.reservation_module?.banner,
+		};
 	} catch (error) {
 		console.error('Error retrieving business:', error);
 		throw new Error(error);
@@ -201,42 +278,46 @@ const getBusinessesForSearchById = async (business_id) => {
 				description: true,
 				telephone: true,
 				working_hours: true,
-				seats: true,
-				minimum_order: true,
-				offers_daily_meals: true,
-				daily_meals_days: true,
-				daily_meals_delivery_mapping: true,
-				maximum_daily_meals_subscribers: true,
-				popular: true,
-				new: true,
-				restaurant_overwhelmed: true,
+				// seats: true,
+				// minimum_order: true,
+				// offers_daily_meals: true,
+				// daily_meals_days: true,
+				// daily_meals_delivery_mapping: true,
+				// maximum_daily_meals_subscribers: true,
+				// popular: true,
+				// new: true,
+				// restaurant_overwhelmed: true,
 				address: true, // Full object
 				delivery_address: true, // Full object
-				business_local_locations: {
-					where: {
-						time: {
-							gte: new Date(),
-						},
-					},
+				stores_module: {
 					include: {
-						local_location: {
+						business_local_locations: {
+							where: {
+								time: {
+									gte: new Date(),
+								},
+							},
 							include: {
-								address: true,
+								local_location: {
+									include: {
+										address: true,
+									},
+								},
+							},
+							orderBy: {
+								time: 'asc',
 							},
 						},
-					},
-					orderBy: {
-						time: 'asc',
+						logo: true,
+						banner: true,
 					},
 				},
-				documents: {
+				food_drinks_module: {
 					include: {
-						files: true, // Full nested objects
-					},
-					where: {
-						document_type: {
-							in: ['BANNER', 'LOGO'],
-						},
+						table_reservations_module: true,
+						daily_meals_module: true,
+						logo: true,
+						banner: true,
 					},
 				},
 				// menus: {
@@ -262,121 +343,16 @@ const getBusinessesForSearchById = async (business_id) => {
 				// }
 			},
 		});
-		return business;
-	} catch (error) {
-		console.error('Error retrieving business for search:', error);
-		throw new Error(error);
-	}
-};
-/**
- * Get a single business by ID optimized for search display (selected fields only).
- *
- * @param {string} business_id - The ID of the business to retrieve.
- * @returns {Promise<object|null>} A promise resolving to the business search record or null if not found.
- */
-const getBusinessForSearchById = async (business_id) => {
-	try {
-		const tomorrow = new Date();
-		tomorrow.setDate(tomorrow.getDate() + 1);
-		let business = await prisma.business.findUnique({
-			where: {
-				business_id: business_id,
-			},
-			select: {
-				// ✅ Select specific fields from the root
-				business_id: true,
-				name: true,
-				active: true,
-				type: true,
-				description: true,
-				telephone: true,
-				working_hours: true,
-				seats: true,
-				minimum_order: true,
-				offers_daily_meals: true,
-				daily_meals_days: true,
-				daily_meals_delivery_mapping: true,
-				maximum_daily_meals_subscribers: true,
-				popular: true,
-				new: true,
-				restaurant_overwhelmed: true,
-				address: true, // Full object
-				delivery_address: true, // Full object
-				business_local_locations: {
-					where: {
-						time: {
-							gte: tomorrow,
-						},
-					},
-					include: {
-						local_location: {
-							include: {
-								address: true,
-							},
-						},
-					},
-					orderBy: {
-						time: 'asc',
-					},
-				},
-				documents: {
-					include: {
-						files: true, // Full nested objects
-					},
-					where: {
-						document_type: {
-							in: ['BANNER', 'LOGO'],
-						},
-					},
-				},
-				menus: {
-					where: {
-						active: true,
-					},
-					include: {
-						categories: {
-							orderBy: {
-								menu_order_index: 'asc',
-							},
-							include: {
-								menu_categories_categories: {
-									include: {
-										category: true,
-									},
-								},
-								menu_items: {
-									orderBy: {
-										menu_category_order_index: 'asc',
-									},
-									include: {
-										documents: {
-											include: {
-												files: true,
-											},
-										},
-										tax_rate: true,
-									},
-									where: {
-										stock: {
-											gt: 0, // Only include items with stock greater than 0
-										},
-										is_enabled: true, // Only include enabled items
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		});
-		// for (let menu of business.menus) {
-		// 	let order = menu.menu_categories_ordered;
-		// 	if (order) {
-		// 		order = order.split(",").map(String);
-		// 		menu.categories = order.map((id) => menu.categories.find((cat) => cat.category_id === id));
-		// 	}
-		// }
-		return business;
+		return {
+			...business,
+			business_local_locations: business?.stores_module?.business_local_locations,
+			reservations: business?.food_drinks_module?.table_reservations_module?.reservations,
+			daily_meals_delivery_mapping:
+				business?.food_drinks_module?.daily_meals_module?.daily_meals_delivery_mapping,
+			maximum_daily_meals_subscribers:
+				business?.food_drinks_module?.daily_meals_module?.maximum_daily_meals_subscribers,
+			daily_meals_days: business?.food_drinks_module?.daily_meals_module?.daily_meals_days,
+		};
 	} catch (error) {
 		console.error('Error retrieving business for search:', error);
 		throw new Error(error);
@@ -521,20 +497,54 @@ const getBusinessesByGroupName = async (search) => {
 	}
 };
 /**
- * List businesses by type(s), returning only main information.
+ * List transfer businesses, returning only main information.
  *
- * @param {string|string[]} type - One or more business types.
  * @returns {Promise<object[]>} A promise resolving to matching businesses.
  */
-const getBusinessesByTypeMainInformation = async (type) => {
-	if (!Array.isArray(type)) {
-		type = [type];
-	}
+const getTransferBusinessesMainInformation = async () => {
 	try {
 		return await prisma.business.findMany({
 			where: {
-				type: {
-					in: type,
+				transport_module_id: {
+					not: null,
+				},
+			},
+		});
+	} catch (error) {
+		console.error(`Error retrieving businesses by type ${type}:`, error);
+		throw new Error(error);
+	}
+};
+/**
+ * List stores, returning only main information.
+ *
+ * @returns {Promise<object[]>} A promise resolving to matching businesses.
+ */
+const getStoresMainInformation = async () => {
+	try {
+		return await prisma.business.findMany({
+			where: {
+				stores_module_id: {
+					not: null,
+				},
+			},
+		});
+	} catch (error) {
+		console.error(`Error retrieving businesses by type ${type}:`, error);
+		throw new Error(error);
+	}
+};
+/**
+ * List food and drinks businesses, returning only main information.
+ *
+ * @returns {Promise<object[]>} A promise resolving to matching businesses.
+ */
+const getFoodDrinksMainInformation = async () => {
+	try {
+		return await prisma.business.findMany({
+			where: {
+				food_drinks_module_id: {
+					not: null,
 				},
 			},
 		});
@@ -546,14 +556,11 @@ const getBusinessesByTypeMainInformation = async (type) => {
 /**
  * List businesses by type(s) with rich related data, optionally filtered by extra args.
  *
- * @param {string|string[]} type - One or more business types.
+ * @param {BUSINESS_TYPE} type - One or more business types.
  * @param {object} [args={}] - Additional Prisma where/ordering filters.
  * @returns {Promise<object[]>} A promise resolving to matching businesses with related data.
  */
 const getBusinessesByType = async (type, args = {}) => {
-	if (!Array.isArray(type)) {
-		type = [type];
-	}
 	try {
 		const includeOptions = {
 			address: true,
@@ -563,45 +570,65 @@ const getBusinessesByType = async (type, args = {}) => {
 					users: true,
 				},
 			},
-			business_clients: true,
+			crm_module: {
+				include: {
+					business_clients: true,
+				},
+			},
 			parent_business: true,
 			child_businesses: true,
-		};
-		if (
-			type.includes(Constants.BUSINESS_TYPE.MERCHANT) ||
-			type.includes(Constants.BUSINESS_TYPE.RESTAURANT) ||
-			type.includes(Constants.BUSINESS_TYPE.LOCAL)
-		) {
-			includeOptions.menus = {
+			stores_module: {
 				include: {
-					categories: {
+					...menuDefault,
+					logo: true,
+					banner: true,
+				},
+			},
+			food_drinks_module: {
+				include: {
+					...menuDefault,
+					table_reservations_module: {
 						include: {
-							menu_items: {
+							reservations: {
 								include: {
-									documents: {
-										include: {
-											files: true,
-										},
-									},
-									tax_rate: true,
+									user: true,
 								},
 							},
 						},
 					},
+					daily_meals_module: true,
+					logo: true,
+					banner: true,
 				},
+			},
+			reservation_module: {
+				include: {
+					logo: true,
+					banner: true,
+				},
+			},
+		};
+		let whereObject = {
+			...args?.where,
+		};
+		if (type === BUSINESS_TYPE.BUSINESS) whereObject.crm_module_id = { not: null };
+		if (type === BUSINESS_TYPE.TRANSFER) whereObject.transport_module_id = { not: null };
+		if (type === BUSINESS_TYPE.MERCHANT) {
+			whereObject = {
+				...whereObject,
+				OR: [{ stores_module_id: { not: null } }, { food_drinks_module_id: { not: null } }],
 			};
 		}
 		const businesses = await prisma.business.findMany({
-			where: {
-				type: {
-					in: type,
-				},
-				...args,
-			},
+			where: whereObject,
 			include: includeOptions,
 		});
 		// Before returning, sort menus, and menu categories if applicable
-		return reorderMenusAndCategories(businesses);
+		// return reorderMenusAndCategories(businesses);
+		return businesses.map((business) => ({
+			...business,
+			business_clients: business?.crm_module?.business_clients,
+		}));
 	} catch (error) {
 		console.error(`Error retrieving businesses by type ${type}:`, error);
 		throw new Error(error);
@@ -642,34 +669,6 @@ const getChildBusinesses = async (parent_business_id) => {
 	}
 };
 /**
- * Retrieve the finance record associated with a business.
- *
- * @param {string} business_id - The business ID.
- * @returns {Promise<object|null>} A promise resolving to the finance record or null if none exists.
- */
-const getFinanceRecordByBusinessId = async (business_id) => {
-	try {
-		const businessWithFinance = await prisma.business.findUnique({
-			where: { business_id },
-			include: {
-				finances: true,
-			},
-		});
-		if (!businessWithFinance) {
-			console.log('Business not found');
-			return null;
-		}
-		if (!businessWithFinance.finances) {
-			console.log('No finance record found for the specified business');
-			return null;
-		}
-		return businessWithFinance.finances;
-	} catch (error) {
-		console.error('Error retrieving finance record by business ID:', error);
-		throw new Error(error);
-	}
-};
-/**
  * Update a business with provided data (certain protected fields are stripped).
  *
  * @param {string} business_id - The business ID to update.
@@ -701,74 +700,6 @@ const updateBusiness = async (business_id, businessD) => {
 		});
 	} catch (error) {
 		console.error('Error updating business:', error);
-		throw new Error(error);
-	}
-};
-/**
- * Update the finances entity linked to a business.
- *
- * @param {string} business_id - The business ID whose finance record should be updated.
- * @param {object} financesData - Fields to update on the finance record.
- * @returns {Promise<object>} A promise resolving to the updated finance record.
- */
-const updateBusinessFinances = async (business_id, financesData) => {
-	try {
-		// First, retrieve the finance record associated with the business
-		const business = await prisma.business.findUnique({
-			where: { business_id },
-			select: { finance_id: true }, // Select only the finance_id
-		});
-		if (!business || !business.finance_id) {
-			throw new Error('No finance record found for the specified business');
-		}
-		// Use the upsert method to handle finance creation or retrieval
-		const updatedFinances = await prisma.finances.update({
-			where: {
-				finance_id: business.finance_id, // Use the finance_id to find the record
-			},
-			data: {
-				...financesData, // Update the existing finance record with new data
-			},
-		});
-		return updatedFinances; // Return the updated finance record
-	} catch (error) {
-		console.error('Error updating business finances:', error);
-		throw new Error(error);
-	}
-};
-/**
- * Update the business type.
- *
- * @param {string} business_id - The business ID.
- * @param {string} type - New business type.
- * @returns {Promise<object>} A promise resolving to the updated business.
- */
-const updateBusinessType = async (business_id, type) => {
-	try {
-		return await prisma.business.update({
-			where: { business_id },
-			data: { type },
-		});
-	} catch (error) {
-		console.error('Error updating business type:', error);
-		throw new Error(error);
-	}
-};
-/**
- * Update whether the business is a business unit.
- *
- * @param {string} business_id - The business ID.
- * @param {boolean} is_business_unit - New flag value.
- * @returns {Promise<object>} A promise resolving to the updated business.
- */
-const updateIsBusinessUnit = async (business_id, is_business_unit) => {
-	try {
-		return await prisma.business.update({
-			where: { business_id },
-			data: { is_business_unit },
-		});
-	} catch (error) {
-		console.error('Error updating is_business_unit:', error);
 		throw new Error(error);
 	}
 };
@@ -846,60 +777,6 @@ const updateBusinessWorkingHours = async (business_id, working_hours) => {
 	}
 };
 /**
- * Update the restaurant_overwhelmed flag for a business.
- *
- * @param {string} business_id - The business ID.
- * @param {boolean} restaurant_overwhelmed - Whether the restaurant is overwhelmed.
- * @returns {Promise<object>} A promise resolving to the updated business.
- */
-const updateRestaurantOverwhelmed = async (business_id, restaurant_overwhelmed) => {
-	try {
-		return await prisma.business.update({
-			where: { business_id },
-			data: { restaurant_overwhelmed },
-		});
-	} catch (error) {
-		console.error('Error updating business overwhelmed:', error);
-		throw new Error(error);
-	}
-};
-/**
- * Update the "new" flag for a business.
- *
- * @param {string} business_id - The business ID.
- * @param {boolean} isNew - Whether the business is new.
- * @returns {Promise<object>} A promise resolving to the updated business.
- */
-const updateBusinessIsNew = async (business_id, isNew) => {
-	try {
-		return await prisma.business.update({
-			where: { business_id },
-			data: { new: isNew }, // Use 'new' property directly since 'new' is a reserved keyword in JavaScript, hence 'isNew' parameter name
-		});
-	} catch (error) {
-		console.error('Error updating business new status:', error);
-		throw new Error(error);
-	}
-};
-/**
- * Update the "popular" flag for a business.
- *
- * @param {string} business_id - The business ID.
- * @param {boolean} popular - Whether the business is popular.
- * @returns {Promise<object>} A promise resolving to the updated business.
- */
-const updateBusinessIsPopular = async (business_id, popular) => {
-	try {
-		return await prisma.business.update({
-			where: { business_id },
-			data: { popular },
-		});
-	} catch (error) {
-		console.error('Error updating business popularity:', error);
-		throw new Error(error);
-	}
-};
-/**
  * Create a new business.
  *
  * @param {object} business - The business data to create.
@@ -933,24 +810,6 @@ const deleteBusiness = async (business_id) => {
 	}
 };
 /**
- * Set the parent business for a business.
- *
- * @param {string} business_id - Child business ID.
- * @param {string} parent_business_id - Parent business ID.
- * @returns {Promise<object>} A promise resolving to the updated business.
- */
-const updateParentBusiness = async (business_id, parent_business_id) => {
-	try {
-		return await prisma.business.update({
-			where: { business_id },
-			data: { parent_business_id },
-		});
-	} catch (error) {
-		console.error('Error updating parent business:', error);
-		throw new Error(error);
-	}
-};
-/**
  * Remove the parent relationship from a business.
  *
  * @param {string} business_id - The business ID.
@@ -968,143 +827,6 @@ const removeParentBusiness = async (business_id) => {
 	}
 };
 /**
- * Add or connect an address to a business (upsert address by unique fields).
- *
- * @param {string} business_id - The business ID.
- * @param {object} addressData - Address fields used for upsert and connect.
- * @returns {Promise<object>} A promise resolving to the updated business.
- */
-const addBusinessAddress = async (business_id, addressData) => {
-	try {
-		// Use the upsert method to handle address creation or retrieval
-		const addressToUse = await prisma.addresses.upsert({
-			where: {
-				uniqueAddressIdentifier: {
-					address: addressData.address,
-					latitude: addressData.latitude,
-					longitude: addressData.longitude,
-				},
-			},
-			update: addressData,
-			create: addressData,
-		});
-		// Update the business with the address
-		return await prisma.business.update({
-			where: { business_id },
-			data: {
-				address: {
-					connect: {
-						address_id: addressToUse.address_id,
-					},
-				},
-			},
-		});
-	} catch (error) {
-		console.error('Error adding business address:', error);
-		throw new Error(error);
-	}
-};
-/**
- * Add or connect a delivery address to a business (upsert address by unique fields).
- *
- * @param {string} business_id - The business ID.
- * @param {object} addressData - Address fields used for upsert and connect.
- * @returns {Promise<object>} A promise resolving to the updated business.
- */
-const addDeliveryAddress = async (business_id, addressData) => {
-	try {
-		// Use the upsert method to handle address creation or retrieval
-		const addressToUse = await prisma.addresses.upsert({
-			where: {
-				uniqueAddressIdentifier: {
-					address: addressData.address,
-					latitude: addressData.latitude,
-					longitude: addressData.longitude,
-				},
-			},
-			update: addressData,
-			create: addressData,
-		});
-		// Update the business with the delivery address
-		return await prisma.business.update({
-			where: { business_id },
-			data: {
-				delivery_address: {
-					connect: {
-						address_id: addressToUse.address_id,
-					},
-				},
-			},
-		});
-	} catch (error) {
-		console.error('Error adding delivery address:', error);
-		throw new Error(error);
-	}
-};
-/**
- * Update a business's main address by creating or using an existing address.
- *
- * @param {string} business_id - The business ID.
- * @param {object} address - Address data to add/connect.
- * @returns {Promise<object>} A promise resolving to the updated business.
- */
-async function updateBusinessAddress(business_id, address) {
-	try {
-		const updatedAddress = await AddressDao.addAddress(address);
-		if (!updatedAddress) {
-			throw new Error('Failed to update or add address');
-		}
-		return await prisma.business.update({
-			where: { business_id },
-			data: { address_id: updatedAddress.address_id },
-		});
-	} catch (error) {
-		console.error('Error updating business address:', error);
-		throw new Error(error);
-	}
-}
-/**
- * Update a business's delivery address by creating or using an existing address.
- *
- * @param {string} business_id - The business ID.
- * @param {object} deliveryAddress - Address data to add/connect as delivery address.
- * @returns {Promise<object>} A promise resolving to the updated business.
- */
-async function updateBusinessDeliveryAddress(business_id, deliveryAddress) {
-	try {
-		const updatedDeliveryAddress = await AddressDao.addAddress(deliveryAddress);
-		if (!updatedDeliveryAddress) {
-			throw new Error('Failed to update or add delivery address');
-		}
-		// Update the business with the new delivery_address_id
-		return await prisma.business.update({
-			where: { business_id },
-			data: { delivery_address_id: updatedDeliveryAddress.address_id },
-		});
-	} catch (error) {
-		console.error('Error updating business delivery address:', error);
-		throw new Error(error);
-	}
-}
-/**
- * Remove the delivery address relationship from a business.
- *
- * @param {string} business_id - The business ID.
- * @returns {Promise<object>} A promise resolving to the updated business.
- */
-const removeBusinessDeliveryAddress = async (business_id) => {
-	try {
-		return await prisma.business.update({
-			where: { business_id },
-			data: { delivery_address_id: null },
-		});
-	} catch (error) {
-		console.error('Error removing business delivery address:', error);
-		throw new Error(error);
-	}
-};
-
-/**
  * Set the scheduled users sorting type for daily meals.
  *
  * @param {string} type - Sorting type identifier.
@@ -1113,10 +835,13 @@ const removeBusinessDeliveryAddress = async (business_id) => {
  */
 const addScheduledUserSortingType = async (type, businessId) => {
 	try {
-		return await prisma.business.update({
-			where: { business_id: businessId },
+		const business = await getBusinessById(businessId);
+		const food_drinks_id = business.food_drinks_module?.food_drinks_id;
+		await prisma.daily_meals_module.update({
+			where: { food_drinks_id },
 			data: { daily_users_sorting_type: type },
 		});
+		return { ...business, daily_users_sorting_type: type };
 	} catch (error) {
 		console.error('Error updating scheduled users sorting type:', error);
 		throw new Error(error);
@@ -1132,10 +857,13 @@ const addScheduledUserSortingType = async (type, businessId) => {
  */
 const manualSortScheduledUsers = async (sorted_users = [], businessId) => {
 	try {
-		return await prisma.business.update({
-			where: { business_id: businessId },
+		const business = await getBusinessById(businessId);
+		const food_drinks_id = business.food_drinks_module?.food_drinks_id;
+		await prisma.daily_meals_module.update({
+			where: { food_drinks_id },
 			data: { daily_users_sorted: [...sorted_users] },
 		});
+		return { ...business, daily_users_sorted: [...sorted_users] };
 	} catch (error) {
 		console.error('Error updating sorted scheduled users:', error);
 		throw new Error(error);
@@ -1253,43 +981,6 @@ async function deactivateBusiness(business_id, action_creator_user_id, reason) {
 	}
 }
 /**
- * Get users scheduled for daily meals for a given business (based on daily_users_sorted).
- *
- * @param {string} businessId - The business ID.
- * @returns {Promise<object[]>} A promise resolving to an array of user records with addresses.
- */
-const getScheduledUsersByBusinessId = async (businessId) => {
-	try {
-		const business = await prisma.business.findUnique({
-			where: {
-				business_id: businessId,
-				offers_daily_meals: true,
-			},
-		});
-		if (!business) {
-			throw new Error('Business not found or does not offer daily meals');
-		}
-		return await prisma.users.findMany({
-			where: {
-				subscribed_to_daily_meals: true,
-				user_id: {
-					in: business.daily_users_sorted || [],
-				},
-			},
-			include: {
-				addresses: {
-					include: {
-						address: true,
-					},
-				},
-			},
-		});
-	} catch (error) {
-		console.error('Error fetching scheduled users:', error);
-		throw error;
-	}
-};
-/**
  * Calculate the remaining purchase order limit amount for the current month.
  *
  * Aggregates this month's taxi orders linked to the business's users/clients and
@@ -1302,7 +993,12 @@ const getPurchaseOrderLimit = async (business_id) => {
 	try {
 		const business = await prisma.business.findUnique({
 			where: { business_id },
-			include: { business_users: true, business_clients: true },
+			include: {
+				business_users: true,
+				crm_module: {
+					business_clients: true,
+				},
+			},
 		});
 		// get all taxi orders for this business (this month) and check if the limit is reached
 		const taxiOrders = await prisma.taxi_orders.findMany({
@@ -1318,7 +1014,7 @@ const getPurchaseOrderLimit = async (business_id) => {
 				OR: [
 					{
 						business_clients_id: {
-							in: business.business_clients.map((client) => client.business_clients_id),
+							in: business.crm_module.business_clients.map((client) => client.business_clients_id),
 						},
 					},
 					{
@@ -1342,7 +1038,30 @@ const getPurchaseOrderLimit = async (business_id) => {
 		throw error;
 	}
 };
-export { getScheduledUsersByBusinessId };
+const getLocalBusinesses = async () => {
+	try {
+		const stores = await prisma.business.findMany({
+			where: {
+				stores_module_id: {
+					not: null,
+				},
+			},
+			include: {
+				types: {
+					include: {
+						business_type: true,
+					},
+				},
+			},
+		});
+		return stores.filter((store) => store.types.some((type) => type.business_type.type === BUSINESS_TYPE.LOCAL));
+	} catch (error) {
+		console.error('Error retrieving local businesses:', error);
+		throw new Error(error);
+	}
+};
+export { getLocalBusinesses };
+export { getDailyMealBusinesses };
 export { getBusinesses };
 export { getBusinessById };
 export { getBusinessByEmail };
@@ -1352,40 +1071,29 @@ export { getBusinessesByNameSearch };
 export { getBusinessesByGroupName };
 export { getChildBusinesses };
 export { getParentBusiness };
-export { getFinanceRecordByBusinessId };
 export { createNewBusiness };
-export { addBusinessAddress };
-export { addDeliveryAddress };
 export { updateBusiness };
 export { deleteBusiness };
-export { updateBusinessAddress };
-export { updateBusinessType };
-export { updateIsBusinessUnit };
 export { updateBusinessGroupName };
 export { updateBusinessEmail };
 export { updateBusinessTelephone };
 export { updateBusinessWorkingHours };
-export { updateRestaurantOverwhelmed };
-export { updateBusinessIsNew };
-export { updateBusinessIsPopular };
-export { updateParentBusiness };
 export { removeParentBusiness };
-export { updateBusinessDeliveryAddress };
-export { removeBusinessDeliveryAddress };
 export { addScheduledUserSortingType };
 export { manualSortScheduledUsers };
-export { getBusinessesByTypeMainInformation };
-export { updateBusinessFinances };
+export { getTransferBusinessesMainInformation };
+export { getStoresMainInformation };
+export { getFoodDrinksMainInformation };
 export { getBusinessStripeByBusinessId };
 export { getStripeIdsForAllBusinesses };
 export { getBusinessesForSearchById };
 export { activateBusiness };
 export { deactivateBusiness };
-export { getBusinessForSearchById };
 export { getBusinessAdminDataById };
 export { getPurchaseOrderLimit };
 export default {
-	getScheduledUsersByBusinessId,
+	getLocalBusinesses,
+	getDailyMealBusinesses,
 	getBusinesses,
 	getBusinessById,
 	getBusinessByEmail,
@@ -1395,36 +1103,24 @@ export default {
 	getBusinessesByGroupName,
 	getChildBusinesses,
 	getParentBusiness,
-	getFinanceRecordByBusinessId,
 	createNewBusiness,
-	addBusinessAddress,
-	addDeliveryAddress,
 	updateBusiness,
 	deleteBusiness,
-	updateBusinessAddress,
-	updateBusinessType,
-	updateIsBusinessUnit,
 	updateBusinessGroupName,
 	updateBusinessEmail,
 	updateBusinessTelephone,
 	updateBusinessWorkingHours,
-	updateRestaurantOverwhelmed,
-	updateBusinessIsNew,
-	updateBusinessIsPopular,
-	updateParentBusiness,
 	removeParentBusiness,
-	updateBusinessDeliveryAddress,
-	removeBusinessDeliveryAddress,
 	addScheduledUserSortingType,
 	manualSortScheduledUsers,
-	getBusinessesByTypeMainInformation,
-	updateBusinessFinances,
+	getTransferBusinessesMainInformation,
+	getStoresMainInformation,
+	getFoodDrinksMainInformation,
 	getBusinessStripeByBusinessId,
 	getStripeIdsForAllBusinesses,
 	getBusinessesForSearchById,
 	activateBusiness,
 	deactivateBusiness,
-	getBusinessForSearchById,
 	getBusinessAdminDataById,
 	getPurchaseOrderLimit,
 };

@@ -21,7 +21,6 @@ import EmailHelper from '../lib/emailSender.js';
 import stripe from '../lib/stripe.js';
 import MenuDao from '../dao/Menu.js';
 import SMSHelper from '../lib/SMS.js';
-import { DOCUMENT_TYPE } from '../lib/constants.js';
 import elasticsearch from '../elasticsearch/index.js';
 import prisma from '../prisma/prisma.js';
 import ReservationModule from '../dao/reservation/ReservationModule.js';
@@ -164,6 +163,7 @@ async function login(req, res) {
 						operating_address: true,
 					},
 				},
+				profile_picture: true,
 			},
 		});
 		if (user.disabled) return res.status(400).json({ error: 'Account is disabled.' });
@@ -179,16 +179,13 @@ async function login(req, res) {
 		const refresh_token = generateRefreshToken({
 			user_id: user.user_id,
 		});
-		let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
 		user = {
 			...user,
 			access_token,
 			refresh_token,
 			payment_methods,
 		};
-		if (profile) {
-			user.profile_picture = profile[0]?.files[0]?.url;
-		}
+		user.profile_picture = user.profile_picture.url;
 		res.status(200).header('Authorization', access_token).json(user);
 	} catch (e) {
 		console.log(e);
@@ -489,6 +486,11 @@ async function registerTaxiService(req, res) {
 			...req.body.business,
 			stripe_customer_id: stripeCustomer.id,
 		});
+		await prisma.transport_module.create({
+			data: {
+				business: { connect: { business_id: business.business_id } },
+			},
+		});
 		// TODO: handle uniqueness here or with joi validation
 		let drivers = [];
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
@@ -519,25 +521,35 @@ async function registerTaxiService(req, res) {
 				// Handle user documents
 				if (driverInfo.user.documents) {
 					for (const doc of driverInfo.user.documents) {
-						const document = await DocumentDao.createDocument(doc.documentData);
-						for (const file of doc.files) {
-							let base64 = file.base64;
-							delete file.base64;
-							let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
-							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							S3Helper.SaveObject(
-								key,
-								base64,
-								file.mime_type,
-								{
-									users: [newUser.user_id],
-									businesses: [business.business_id],
-								},
-								fileData,
-								document.public
-							);
+						if (doc.documentData.document_type === 'PROFILE_PICTURE') {
+							for (const file of doc.files) {
+								let base64 = file.base64;
+								delete file.base64;
+								let fileData = await FileDao.createFile(
+									file.file_type,
+									file.mime_type,
+									file.size,
+									true
+								);
+								let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+								S3Helper.SaveObject(
+									key,
+									base64,
+									file.mime_type,
+									{
+										users: [newUser.user_id],
+										businesses: [business.business_id],
+									},
+									fileData,
+									true
+								);
+								await UserDao.updateUser(newUser.user_id, {
+									profile_picture: {
+										connect: { profile_picture_id: fileData.file_id },
+									},
+								});
+							}
 						}
-						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
 				}
 				const driverData = { ...driverInfo.driver.data, business_id: business.business_id };
@@ -728,6 +740,11 @@ async function registerDeliveryService(req, res) {
 			...req.body.business,
 			stripe_customer_id: stripeCustomer.id,
 		});
+		await prisma.transport_module.create({
+			data: {
+				business: { connect: { business_id: business.business_id } },
+			},
+		});
 		let deliveryDrivers = [];
 		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
 			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
@@ -756,26 +773,39 @@ async function registerDeliveryService(req, res) {
 				// Handle user documents
 				if (deliveryDriverInfo.user?.documents) {
 					for (const doc of deliveryDriverInfo.user.documents) {
-						const document = await DocumentDao.createDocument(doc.documentData);
-						for (const file of doc.files) {
-							let base64 = file.base64;
-							delete file.base64;
-							let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
-							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							S3Helper.SaveObject(
-								key,
-								base64,
-								file.mime_type,
-								{ users: [newUser.user_id], businesses: [business.business_id] },
-								fileData,
-								document.public
-							);
+						if (doc.documentData.document_type === 'PROFILE_PICTURE') {
+							for (const file of doc.files) {
+								let base64 = file.base64;
+								delete file.base64;
+								let fileData = await FileDao.createFile(
+									file.file_type,
+									file.mime_type,
+									file.size,
+									true
+								);
+								let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+								S3Helper.SaveObject(
+									key,
+									base64,
+									file.mime_type,
+									{
+										users: [newUser.user_id],
+										businesses: [business.business_id],
+									},
+									fileData,
+									true
+								);
+								await UserDao.updateUser(newUser.user_id, {
+									profile_picture: {
+										connect: { profile_picture_id: fileData.file_id },
+									},
+								});
+							}
 						}
-						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
 				}
 				const deliveryDriverData = { ...deliveryDriverInfo.driver.data, business_id: business.business_id };
-				const deliveryDriver = await DeliveryDriverDao.createDeliveryDriver(deliveryDriverData, newUser);
+				const deliveryDriver = await DeliveryDriverDao.createDriver(deliveryDriverData, newUser);
 				// Handle delivery driver documents
 				if (deliveryDriverInfo.driver?.documents) {
 					for (const doc of deliveryDriverInfo.driver.documents) {
@@ -794,10 +824,7 @@ async function registerDeliveryService(req, res) {
 								document.public
 							);
 						}
-						await DocumentDao.linkDocumentToDeliveryDriver(
-							document.document_id,
-							deliveryDriver.delivery_driver_id
-						);
+						await DocumentDao.linkDocumentToDriver(document.document_id, deliveryDriver.delivery_driver_id);
 					}
 				}
 				// Handle addresses of the delivery driver
@@ -816,10 +843,7 @@ async function registerDeliveryService(req, res) {
 							...vehicleInfo?.data,
 							business_id: business.business_id,
 						});
-						await VehicleDao.assignVehicleToDeliveryDriver(
-							vehicle.vehicle_id,
-							deliveryDriver.delivery_driver_id
-						);
+						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, deliveryDriver.delivery_driver_id);
 						// Handle vehicle documents
 						if (vehicleInfo.documents) {
 							for (const doc of vehicleInfo.documents) {
@@ -925,10 +949,25 @@ async function registerMerchantService(req, res) {
 			req.body.business.name,
 			req.body.business.telephone
 		);
+		const businessType = req.body.business.type;
+		delete req.body.business.type;
 		const business = await BusinessDao.createNewBusiness({
 			...req.body.business.data,
 			stripe_customer_id: stripeCustomer.id,
 		});
+		if (businessType === 'FOOD_DRINKS') {
+			await prisma.food_drinks_module.create({
+				data: {
+					business: { connect: { business_id: business.business_id } },
+				},
+			});
+		} else if (businessType === 'STORES') {
+			await prisma.stores_module.create({
+				data: {
+					business: { connect: { business_id: business.business_id } },
+				},
+			});
+		}
 		// Ensure at least one business user data is provided & created
 		if (!Array.isArray(req.body.users) || !req.body.users.length) {
 			return res.status(400).json({ error: 'At least one business user must be provided.' });

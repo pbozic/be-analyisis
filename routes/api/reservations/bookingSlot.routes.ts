@@ -1,20 +1,22 @@
 import express from 'express';
 
 import BookingSlotController from '../../../controllers/reservation/BookingSlotController';
-import { validate } from '../../../middleware/zod';
+import { validate } from '../../../middleware/zod.js';
 import {
-	CreateBookingSlotSchema,
-	UpdateCreateBookingSlotSchema,
+	CreateBookingSlotRequestSchema,
+	UpdateBookingSlotRequestSchema,
+} from '../../../schemas/dto/reservations/index.js';
+import {
 	CreateOrUpdateBookingSlotSchema,
 	CreateScheduleSlotWithBookingSlotsSchema,
 	UpdateScheduleSlotWithBookingSlotsSchema,
-} from '../../../types/reservations/Schedule';
+} from '../../../schemas/dto/reservations/schedule/schedule.dto.js';
 
 const router = express.Router();
 
 router.get('/list/:schedule_slot_id', BookingSlotController.getBookingSlotsByScheduleSlotId);
-router.post('/', validate(CreateBookingSlotSchema), BookingSlotController.createBookingSlot);
-router.put('/:id', validate(UpdateCreateBookingSlotSchema), BookingSlotController.updateBookingSlot);
+router.post('/', validate(CreateBookingSlotRequestSchema), BookingSlotController.createBookingSlot);
+router.put('/:id', validate(UpdateBookingSlotRequestSchema), BookingSlotController.updateBookingSlot);
 router.delete('/:id', BookingSlotController.deleteBookingSlot);
 router.get('/:id', BookingSlotController.getBookingSlotById);
 router.post(

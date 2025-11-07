@@ -1,4 +1,5 @@
 import BusinessClientDao from '../dao/BusinessClient.js';
+import prisma from '../prisma/prisma.js';
 /**
  * GET /business-clients
  * @tag BusinessClients
@@ -83,7 +84,19 @@ async function getBusinessClientsByBusinessId(req, res) {
  */
 async function createBusinessClient(req, res) {
 	try {
-		const businessClient = await BusinessClientDao.createBusinessClient(req.body);
+		const business = await BusinessClientDao.getBusinessById(req.body.business_id);
+		if (!business) {
+			return res.status(404).json({ error: 'Business not found' });
+		}
+		if (!business.crm_module_id) {
+			await prisma.crm_module.create({
+				data: { business: { connect: { business_id: business.business_id } } },
+			});
+		}
+		const businessClient = await BusinessClientDao.createBusinessClient({
+			...req.body,
+			crm_module_id: business.crm_module_id,
+		});
 		res.status(201).json(businessClient);
 	} catch (error) {
 		console.error('Error creating a business client:', error);

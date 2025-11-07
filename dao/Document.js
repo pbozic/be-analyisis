@@ -55,25 +55,6 @@ const getDocumentsForBusiness = async (businessId) => {
 	}
 };
 /**
- * Get documents linked to a delivery person.
- *
- * @param {string} deliveryPersonId - Delivery person ID.
- * @returns {Promise<object[]>} Array of documents.
- */
-const getDocumentsForDeliveryPerson = async (deliveryPersonId) => {
-	try {
-		return await prisma.documents.findMany({
-			where: { delivery_person_id: deliveryPersonId },
-			include: {
-				files: true,
-			},
-		});
-	} catch (error) {
-		console.error('Error getting documents for delivery person:', error);
-		return new Error(error);
-	}
-};
-/**
  * Get documents linked to a driver.
  *
  * @param {string} driverId - Driver ID.
@@ -92,25 +73,7 @@ const getDocumentsForDriver = async (driverId) => {
 		return new Error(error);
 	}
 };
-/**
- * Get documents linked to a user.
- *
- * @param {string} userId - User ID.
- * @returns {Promise<object[]>} Array of documents.
- */
-const getDocumentsForUser = async (userId) => {
-	try {
-		return await prisma.documents.findMany({
-			where: { user_id: userId },
-			include: {
-				files: true,
-			},
-		});
-	} catch (error) {
-		console.error('Error getting documents for user:', error);
-		return new Error(error);
-	}
-};
+
 /**
  * Get documents linked to a vehicle.
  *
@@ -146,29 +109,6 @@ const getDocumentsByType = async (documentType) => {
 		});
 	} catch (error) {
 		console.error('Error getting documents by type:', error);
-		return new Error(error);
-	}
-};
-/**
- * Get documents for a user filtered by type.
- *
- * @param {string} userId - User ID.
- * @param {string} documentType - Document type.
- * @returns {Promise<object[]>} Array of documents.
- */
-const getDocumentsForUserByType = async (userId, documentType) => {
-	try {
-		return await prisma.documents.findMany({
-			where: {
-				user_id: userId,
-				document_type: documentType,
-			},
-			include: {
-				files: true,
-			},
-		});
-	} catch (error) {
-		console.error('Error getting documents for user by type:', error);
 		return new Error(error);
 	}
 };
@@ -218,29 +158,7 @@ const getDocumentsForDriverByType = async (driverId, documentType) => {
 		return new Error(error);
 	}
 };
-/**
- * Get documents for a delivery person filtered by type.
- *
- * @param {string} deliveryPersonId - Delivery person ID.
- * @param {string} documentType - Document type.
- * @returns {Promise<object[]>} Array of documents.
- */
-const getDocumentsForDeliveryPersonByType = async (deliveryPersonId, documentType) => {
-	try {
-		return await prisma.documents.findMany({
-			where: {
-				delivery_person_id: deliveryPersonId,
-				document_type: documentType,
-			},
-			include: {
-				files: true,
-			},
-		});
-	} catch (error) {
-		console.error('Error getting documents for delivery person by type:', error);
-		return new Error(error);
-	}
-};
+
 /**
  * Get documents for a vehicle filtered by type.
  *
@@ -262,25 +180,6 @@ const getDocumentsForVehicleByType = async (vehicleId, documentType) => {
 	} catch (error) {
 		console.error('Error getting documents for vehicle by type:', error);
 		return new Error(error);
-	}
-};
-/**
- * Find a single document by type and delivery driver ID.
- *
- * @param {string} documentType - Document type.
- * @param {string} deliveryDriverId - Delivery driver ID.
- * @returns {Promise<object|null>} Document or null.
- */
-const findDocumentByTypeAndDeliveryDriverId = async (documentType, deliveryDriverId) => {
-	try {
-		return await prisma.documents.findFirst({
-			where: {
-				AND: [{ document_type: documentType }, { delivery_driver_id: deliveryDriverId }],
-			},
-		});
-	} catch (error) {
-		console.error('Error finding document by type and delivery driver ID:', error);
-		throw new Error('Unable to find document');
 	}
 };
 /**
@@ -315,17 +214,7 @@ const createDocument = async (documentData, filesData = []) => {
 		delete file.base64;
 		delete file.name;
 	}
-	const publicDocumentTypes = [
-		'PROFILE_PICTURE',
-		'LOGO',
-		'BANNER',
-		'MENU_ITEM_IMAGE',
-		'LOST_ITEM',
-		'DAILY_MEALS_MENU',
-	];
-	if (publicDocumentTypes.includes(documentData.document_type)) {
-		documentData.public = true;
-	}
+	documentData.public = false;
 	try {
 		return await prisma.documents.create({
 			data: {
@@ -428,30 +317,6 @@ const updateDocumentAdditionalInfo = async (documentId, jsonData) => {
 	}
 };
 /**
- * Link a document to a user.
- *
- * @param {string} documentId - Document ID.
- * @param {string} userId - User ID.
- * @returns {Promise<object>} Updated document.
- */
-const linkDocumentToUser = async (documentId, userId) => {
-	try {
-		return await prisma.documents.update({
-			where: { document_id: documentId },
-			data: {
-				user: {
-					connect: {
-						user_id: userId,
-					},
-				},
-			},
-		});
-	} catch (error) {
-		console.error('Error linking document to user:', error);
-		return new Error(error);
-	}
-};
-/**
  * Link a document to a transaction.
  *
  * @param {string} documentId - Document ID.
@@ -500,54 +365,6 @@ const linkDocumentToVehicle = async (documentId, vehicleId) => {
 	}
 };
 /**
- * Link a document to a menu item.
- *
- * @param {string} documentId - Document ID.
- * @param {string} menuItemId - Menu item ID.
- * @returns {Promise<object>} Updated document.
- */
-const linkDocumentToMenuItem = async (documentId, menuItemId) => {
-	try {
-		return await prisma.documents.update({
-			where: { document_id: documentId },
-			data: {
-				menu_items: {
-					connect: {
-						menu_item_id: menuItemId,
-					},
-				},
-			},
-		});
-	} catch (error) {
-		console.error('Error linking menu item image to menu item:', error);
-		return new Error(error);
-	}
-};
-/**
- * Link a document to a lost item.
- *
- * @param {string} documentId - Document ID.
- * @param {string} lostItemId - Lost item ID.
- * @returns {Promise<object>} Updated document.
- */
-const linkDocumentToLostItem = async (documentId, lostItemId) => {
-	try {
-		return await prisma.documents.update({
-			where: { document_id: documentId },
-			data: {
-				lost_items: {
-					connect: {
-						lost_item_id: lostItemId,
-					},
-				},
-			},
-		});
-	} catch (error) {
-		console.error('Error linking lost item document:', error);
-		return new Error(error);
-	}
-};
-/**
  * Link a document to a driver.
  *
  * @param {string} documentId - Document ID.
@@ -592,30 +409,6 @@ const linkDocumentToBusiness = async (documentId, businessId) => {
 		});
 	} catch (error) {
 		console.error('Error linking document to business:', error);
-		return new Error(error);
-	}
-};
-/**
- * Link a document to a delivery driver.
- *
- * @param {string} documentId - Document ID.
- * @param {string} deliveryDriverId - Delivery driver ID.
- * @returns {Promise<object>} Updated document.
- */
-const linkDocumentToDeliveryDriver = async (documentId, deliveryDriverId) => {
-	try {
-		return await prisma.documents.update({
-			where: { document_id: documentId },
-			data: {
-				delivery_driver: {
-					connect: {
-						delivery_driver_id: deliveryDriverId,
-					},
-				},
-			},
-		});
-	} catch (error) {
-		console.error('Error linking document to delivery driver:', error);
 		return new Error(error);
 	}
 };
@@ -785,68 +578,50 @@ const updateDocumentByDocumentId = async (documentId, updateData) => {
 export { createDocument };
 export { getDocuments };
 export { getDocumentById };
-export { getDocumentsForUser };
 export { getDocumentsForBusiness };
-export { getDocumentsForDeliveryPerson };
 export { getDocumentsForDriver };
 export { getDocumentsForVehicle };
 export { getDocumentsByType };
-export { getDocumentsForUserByType };
 export { getDocumentsForBusinessByType };
 export { getDocumentsForDriverByType };
-export { getDocumentsForDeliveryPersonByType };
 export { getDocumentsForVehicleByType };
 export { updateDocumentFiles };
 export { updateDocumentExpirationDate };
 export { updateDocumentIssueDate };
 export { updateDocumentAdditionalInfo };
-export { linkDocumentToUser };
 export { linkDocumentToTransaction };
 export { linkDocumentToVehicle };
 export { linkDocumentToDriver };
-export { linkDocumentToDeliveryDriver };
 export { linkDocumentToBusiness };
 export { deleteDocument };
-export { linkDocumentToMenuItem };
-export { linkDocumentToLostItem };
 export { deleteDocumentsAndFiles };
 export { getLastDocumentByTypeAndBusinessId };
 export { deleteDocumentsAndFilesByDocumentId };
 export { updateDocumentByDocumentId };
-export { findDocumentByTypeAndDeliveryDriverId };
 export { findDocumentByTypeAndDriverId };
 export default {
 	createDocument,
 	getDocuments,
 	getDocumentById,
-	getDocumentsForUser,
 	getDocumentsForBusiness,
-	getDocumentsForDeliveryPerson,
 	getDocumentsForDriver,
 	getDocumentsForVehicle,
 	getDocumentsByType,
-	getDocumentsForUserByType,
 	getDocumentsForBusinessByType,
 	getDocumentsForDriverByType,
-	getDocumentsForDeliveryPersonByType,
 	getDocumentsForVehicleByType,
 	updateDocumentFiles,
 	updateDocumentExpirationDate,
 	updateDocumentIssueDate,
 	updateDocumentAdditionalInfo,
-	linkDocumentToUser,
 	linkDocumentToTransaction,
 	linkDocumentToVehicle,
 	linkDocumentToDriver,
-	linkDocumentToDeliveryDriver,
 	linkDocumentToBusiness,
 	deleteDocument,
-	linkDocumentToMenuItem,
-	linkDocumentToLostItem,
 	deleteDocumentsAndFiles,
 	getLastDocumentByTypeAndBusinessId,
 	deleteDocumentsAndFilesByDocumentId,
 	updateDocumentByDocumentId,
-	findDocumentByTypeAndDeliveryDriverId,
 	findDocumentByTypeAndDriverId,
 };

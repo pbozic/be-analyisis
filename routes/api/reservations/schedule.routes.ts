@@ -1,18 +1,18 @@
 import express from 'express';
 
 import ScheduleController from '../../../controllers/reservation/ScheduleController';
-import { validate } from '../../../middleware/zod';
+import { validate } from '../../../middleware/zod.js';
 import {
-	CreateScheduleSchema,
-	UpdateScheduleSchema,
+	CreateScheduleRequestSchema,
+	UpdateScheduleRequestSchema,
 	UpdateScheduleWithEmployeesSchema,
 	CreateScheduleWithEmployeesSchema,
-} from '../../../types/reservations/Schedule';
+} from '../../../schemas/dto/reservations/schedule/schedule.dto.js';
 const router = express.Router();
 
 router.get('/', ScheduleController.getSchedule);
-router.post('/', [validate(CreateScheduleSchema)], ScheduleController.createSchedule);
-router.put('/:schedule_id', validate(UpdateScheduleSchema), ScheduleController.updateSchedule);
+router.post('/', [validate(CreateScheduleRequestSchema)], ScheduleController.createSchedule);
+router.put('/:schedule_id', validate(UpdateScheduleRequestSchema), ScheduleController.updateSchedule);
 router.put(
 	'/schedule-with-employees/:schedule_id',
 	validate(UpdateScheduleWithEmployeesSchema),

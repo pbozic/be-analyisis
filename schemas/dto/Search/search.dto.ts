@@ -5,12 +5,13 @@ import { UUID } from '../../primitives';
 
 extendZodWithOpenApi(z);
 
-// GET /business/search/:business_id query
+// POST /business/search/:business_id body
 export const SearchBusinessQuerySchema = z
 	.object({
 		ANALYTICS_PARAM_PROMO_WORDS: z.string().optional(),
 		ANALYTICS_PARAM_PROMO_SECTION: z.string().optional(),
 		ANALYTICS_PARAM_PROMO_AD: z.string().optional(),
+		module: z.string().optional(),
 	})
 	.strict()
 	.openapi('SearchBusinessQuery');

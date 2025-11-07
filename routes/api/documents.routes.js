@@ -1,6 +1,6 @@
 import express from 'express';
-import { validate } from '../../middleware/zod.ts';
 
+import { validate } from '../../middleware/zod.ts';
 import DocumentsController from '../../controllers/DocumentsController.js';
 import { deleteDocumentsAndFilesByDocumentId } from '../../controllers/MenuController.js';
 import {
@@ -24,11 +24,6 @@ router.get('/businesses/:businessId', DocumentsController.getDocumentsForBusines
  *    * @module transport
  *
  */
-router.get('/deliveryPersons/:deliveryPersonId', DocumentsController.getDocumentsForDeliveryPerson);
-/**
- *    * @module transport
- *
- */
 router.get('/drivers/:driver_id', DocumentsController.getDocumentsForDriver);
 /**
  *    * @module transport
@@ -43,10 +38,6 @@ router.get('/type/:documentType', DocumentsController.getDocumentsByDocumentType
 router.get('/business/:business_id/type/:document_type', DocumentsController.getDocumentsForBusinessByDocumentType);
 router.get('/user/type/:document_type', DocumentsController.getDocumentsForUserByDocumentType);
 router.get('/drivers/:driverId/type/:documentType', DocumentsController.getDocumentsForDriverByDocumentType);
-router.get(
-	'/deliveryPersons/:deliveryPersonId/type/:documentType',
-	DocumentsController.getDocumentsForDeliveryPersonByDocumentType
-);
 router.get('/vehicles/:vehicleId/type/:documentType', DocumentsController.getDocumentsForVehicleByDocumentType);
 /**
  *    * @module general
@@ -57,7 +48,11 @@ router.post('/create/user/:user_id', validate(CreateDocumentBodySchema), Documen
  *    * @module business
  *
  */
-router.post('/create/business/:business_id', validate(CreateDocumentBodySchema), DocumentsController.createBusinessDocument);
+router.post(
+	'/create/business/:business_id',
+	validate(CreateDocumentBodySchema),
+	DocumentsController.createBusinessDocument
+);
 /**
  *    * @module transport
  *
@@ -67,15 +62,35 @@ router.post('/create/driver/:driver_id', validate(CreateDocumentBodySchema), Doc
  *    * @module transport
  *
  */
-router.post('/create/vehicle/:vehicle_id', validate(CreateDocumentBodySchema), DocumentsController.createVehicleDocument);
+router.post(
+	'/create/vehicle/:vehicle_id',
+	validate(CreateDocumentBodySchema),
+	DocumentsController.createVehicleDocument
+);
 /**
  *    * @module transport
  *
  */
-router.post('/create/delivery_driver/:delivery_driver_id', validate(CreateDocumentBodySchema), DocumentsController.createDeliveryPersonDocument);
-router.patch('/expirationDate', validate(UpdateDocumentExpirationInputSchema), DocumentsController.updateDocumentExpirationDate);
+router.post(
+	'/create/delivery_driver/:delivery_driver_id',
+	validate(CreateDocumentBodySchema),
+	DocumentsController.createDeliveryPersonDocument
+);
+router.patch(
+	'/expirationDate',
+	validate(UpdateDocumentExpirationInputSchema),
+	DocumentsController.updateDocumentExpirationDate
+);
 router.patch('/issueDate', validate(UpdateDocumentIssueInputSchema), DocumentsController.updateDocumentIssueDate);
 router.patch('/files', validate(UpdateDocumentFilesInputSchema), DocumentsController.updateDocumentFiles);
-router.patch('/additionalInfo', validate(UpdateDocumentAdditionalInfoInputSchema), DocumentsController.updateDocumentAdditionalInfo);
-router.delete('/files/:field/:id', validate(DeleteDocumentsAndFilesByFieldInputSchema, 'params'), deleteDocumentsAndFilesByDocumentId);
+router.patch(
+	'/additionalInfo',
+	validate(UpdateDocumentAdditionalInfoInputSchema),
+	DocumentsController.updateDocumentAdditionalInfo
+);
+router.delete(
+	'/files/:field/:id',
+	validate(DeleteDocumentsAndFilesByFieldInputSchema, 'params'),
+	deleteDocumentsAndFilesByDocumentId
+);
 export default router;

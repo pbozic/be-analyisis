@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+
 import { MenuCategoryDataSchema } from './menu.dto.ts';
 
 extendZodWithOpenApi(z);
@@ -72,7 +73,9 @@ export type UpdateMenuCategoryInput = z.infer<typeof UpdateMenuCategoryInputSche
 export const UpdateMenuItemsOrderInputSchema = z
 	.object({
 		menu_category_id: z.string().uuid().openapi({ example: 'bb0e8400-e29b-41d4-a716-446655440000' }),
-		ordered_menu_items_ids: z.array(z.string().uuid()).openapi({ example: ['cc0e8400-e29b-41d4-a716-446655440000'] }),
+		ordered_menu_items_ids: z
+			.array(z.string().uuid())
+			.openapi({ example: ['cc0e8400-e29b-41d4-a716-446655440000'] }),
 	})
 	.openapi('UpdateMenuItemsOrderInput');
 export type UpdateMenuItemsOrderInput = z.infer<typeof UpdateMenuItemsOrderInputSchema>;

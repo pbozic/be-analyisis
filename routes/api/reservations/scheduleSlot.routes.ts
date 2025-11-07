@@ -1,18 +1,20 @@
 import express from 'express';
 
 import ScheduleSlotController from '../../../controllers/reservation/ScheduleSlotController';
-import { validate } from '../../../middleware/zod';
+import { validate } from '../../../middleware/zod.js';
 import {
-	CreateScheduleSlotSchema,
-	UpdateScheduleSlotSchema,
+	CreateScheduleSlotRequestSchema,
+	UpdateScheduleSlotRequestSchema,
+} from '../../../schemas/dto/reservations/schedule-slot/schedule-slot.dto.js';
+import {
 	CreateMultipleSchedulesSchema,
 	OverwriteMultipleSchedulesSchema,
 	UpdateMultipleSchedulesSchema,
-} from '../../../types/reservations/Schedule';
+} from '../../../schemas/dto/reservations/schedule/schedule.dto.js';
 const router = express.Router();
 
 router.get('/list/:schedule_id', ScheduleSlotController.getScheduleSlotsByScheduleId);
-router.post('/', validate(CreateScheduleSlotSchema), ScheduleSlotController.createScheduleSlot);
+router.post('/', validate(CreateScheduleSlotRequestSchema), ScheduleSlotController.createScheduleSlot);
 router.post(
 	'/create-multiple-schedules',
 	[validate(CreateMultipleSchedulesSchema)],
@@ -28,7 +30,7 @@ router.put(
 	validate(UpdateMultipleSchedulesSchema),
 	ScheduleSlotController.updateMultipleSchedules
 );
-router.put('/:id', validate(UpdateScheduleSlotSchema), ScheduleSlotController.updateScheduleSlot);
+router.put('/:id', validate(UpdateScheduleSlotRequestSchema), ScheduleSlotController.updateScheduleSlot);
 router.delete('/:id', ScheduleSlotController.deleteScheduleSlot);
 router.get('/:id', ScheduleSlotController.getScheduleSlotById);
 

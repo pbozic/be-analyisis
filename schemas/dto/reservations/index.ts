@@ -10,7 +10,6 @@
 
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-// Export all schemas and types explicitly (excluding registerSchemas functions)
 export {
 	BookingBaseSchema,
 	BookingRefSchema,
@@ -18,6 +17,16 @@ export {
 	CreateBookingRequestSchema,
 	UpdateBookingRequestSchema,
 	BookingResponseSchema,
+	BookingAnalyticsCardSchema,
+	DailyBookingStatsSchema,
+	BookingsAnalyticsResponseSchema,
+	BookingGroupResponseSchema,
+	BookingGroupUpdateResultSchema,
+	MultipleBookingGroupUpdateResponseSchema,
+	BookingGroupStartUpdateResponseSchema,
+	UpdateBookingGroupResponseSchema,
+	EmployeeWithSlotsSchema,
+	BookingsAndEmployeesWithSlotsResponseSchema,
 } from './booking/booking.dto';
 export {
 	CustomerBaseSchema,
@@ -41,6 +50,7 @@ export {
 	CreateLocationRequestSchema,
 	UpdateLocationRequestSchema,
 	LocationResponseSchema,
+	LocationsAndEmployeesResponseSchema,
 } from './location/location.dto';
 export {
 	ServiceBaseSchema,
@@ -49,6 +59,8 @@ export {
 	CreateServiceRequestSchema,
 	UpdateServiceRequestSchema,
 	ServiceResponseSchema,
+	ServicesEmployeesAndCustomersResponseSchema,
+	ServiceFormDataResponseSchema,
 } from './service/service.dto';
 export {
 	ServiceCategoryBaseSchema,
@@ -64,8 +76,10 @@ export {
 	CreateReservationModuleRequestSchema,
 	UpdateReservationModuleRequestSchema,
 	UpdateReservationSettingsRequestSchema,
+	GetBookingDataRequestSchema,
 	ReservationModuleResponseSchema,
 } from './reservation-module/reservation-module.dto';
+
 export {
 	ScheduleBaseSchema,
 	ScheduleRefSchema,
@@ -93,6 +107,7 @@ export {
 	UpdateScheduleSlotExceptionRequestSchema,
 	ScheduleSlotExceptionResponseSchema,
 } from './schedule-slot-exception/schedule-slot-exception.dto';
+
 export {
 	BookingHistoryLogBaseSchema,
 	BookingHistoryLogRefSchema,
@@ -120,6 +135,7 @@ export {
 	UpdateBookingSlotRequestSchema,
 	BookingSlotResponseSchema,
 } from './booking-slot/booking-slot.dto';
+
 export {
 	ServiceAssignmentBaseSchema,
 	ServiceAssignmentRefSchema,
@@ -132,6 +148,7 @@ export {
 	CreateServiceLocationRequestSchema,
 	ServiceLocationResponseSchema,
 } from './service-location/service-location.dto';
+
 export {
 	NotificationTemplateBaseSchema,
 	NotificationTemplateRefSchema,

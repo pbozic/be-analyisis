@@ -17,7 +17,6 @@ import {
 	findDocumentByTypeAndDriverId,
 	createDocument,
 	linkDocumentToDriver,
-	linkDocumentToUser,
 } from '../dao/Document.js';
 import { updateFileInDocument, addFileToDocument } from '../dao/File.js';
 import FileDao from '../dao/File.js';
