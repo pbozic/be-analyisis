@@ -488,21 +488,25 @@ async function createMenuItem(req, res) {
 	try {
 		let document = null;
 		if (image?.documentData) {
-			document = await DocumentDao.createDocument(image.documentData);
 			if (image?.files?.length) {
 				for (const file of image.files) {
 					let base64 = file.base64;
 					delete file.base64;
-					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
+					let fileData = await FileDao.createFile(file.file_type, file.mime_type, true);
 					if (!image?.document_id) {
 						let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
 						await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, document.public);
 					}
+					data.image_file = {
+						connect: {
+							image_file_id: fileData.file_id,
+						},
+					};
 				}
 			}
 		}
+
 		const menuItem = await MenuItemDao.createMenuItem(category_id, tax_rate_id, data, is_copy);
-		if (document) await DocumentDao.linkDocumentToMenuItem(document.document_id, menuItem.menu_item_id);
 		businessIndex(menuItem.business_id);
 		res.status(201).json(menuItem);
 	} catch (e) {
@@ -630,20 +634,22 @@ async function deleteMenuItem(req, res) {
 async function updateMenuItem(req, res) {
 	const { menu_item_id, data, image } = req.body;
 	try {
-		const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, data);
 		if (image?.files[0].file_type === 'IMAGE') {
-			await DocumentDao.deleteDocumentsAndFiles('menu_item_id', menu_item_id);
-			const document = await DocumentDao.createDocument(image.documentData);
 			for (const file of image.files) {
 				let base64 = file.base64;
 				delete file.base64;
-				let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
+				let fileData = await FileDao.createFile(file.file_type, file.mime_type, true);
 				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-				await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, document.public);
+				await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, true);
+				data.image_file = {
+					connect: {
+						image_file_id: fileData.file_id,
+					},
+				};
 			}
 			//const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, data);
-			await DocumentDao.linkDocumentToMenuItem(document.document_id, menuItem?.menu_item_id);
 		}
+		const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, data);
 		businessIndex(menuItem.business_id);
 		res.status(200).json(menuItem);
 	} catch (e) {

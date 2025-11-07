@@ -1,8 +1,6 @@
 import { config } from 'dotenv';
 
 import DocumentDao from '../dao/Document.js';
-import DeliveryDriverDao from '../dao/DeliveryDriver.js';
-import DriverDao from '../dao/Driver.js';
 config();
 /**
  * GET /documents
@@ -51,28 +49,6 @@ async function getDocumentById(req, res) {
 	}
 }
 /**
- * GET /documents/users/:userId
- * @tag Documents
- * @summary Get documents for a user
- * @description Retrieves all documents associated with a specific user.
- * @operationId getDocumentsForUser
- * @pathParam {string} userId - The ID of the user
- * @response 200 - Successful operation, returns documents
- * @responseContent {object} 200.application/json
- * @response 400 - Error retrieving documents
- * @prisma_model documents
- */
-async function getDocumentsForUser(req, res) {
-	try {
-		const { user_id } = req.params;
-		const documents = await DocumentDao.getDocumentsForUser(user_id);
-		res.status(200).json(documents);
-	} catch (error) {
-		console.error('Error getting documents for user:', error);
-		res.status(400).json({ error: error.message });
-	}
-}
-/**
  * GET /documents/businesses/:businessId
  * @tag Documents
  * @summary Get documents for a business
@@ -91,28 +67,6 @@ async function getDocumentsForBusiness(req, res) {
 		res.status(200).json(documents);
 	} catch (error) {
 		console.error('Error getting documents for business:', error);
-		res.status(400).json({ error: error.message });
-	}
-}
-/**
- * GET /documents/deliveryPersons/:deliveryPersonId
- * @tag Documents
- * @summary Get documents for a delivery person
- * @description Retrieves all documents associated with a specific delivery person.
- * @operationId getDocumentsForDeliveryPerson
- * @pathParam {string} deliveryPersonId - The ID of the delivery person
- * @response 200 - Successful operation, returns documents
- * @responseContent {object} 200.application/json
- * @response 400 - Error retrieving documents
- * @prisma_model documents
- */
-async function getDocumentsForDeliveryPerson(req, res) {
-	try {
-		const { delivery_person_id } = req.params;
-		const documents = await DocumentDao.getDocumentsForDeliveryPerson(delivery_person_id);
-		res.status(200).json(documents);
-	} catch (error) {
-		console.error('Error getting documents for delivery person:', error);
 		res.status(400).json({ error: error.message });
 	}
 }
@@ -206,28 +160,6 @@ async function getDocumentsForBusinessByDocumentType(req, res) {
 	}
 }
 /**
- * GET /documents/user/type/:document_type
- * @tag Documents
- * @summary Get documents for a user by type
- * @description Retrieves documents of a specific type associated with a user.
- * @operationId getDocumentsForUserByDocumentType
- * @pathParam {string} document_type - The type of the documents
- * @response 200 - Successful operation, returns documents
- * @responseContent {object} 200.application/json
- * @response 400 - Error retrieving documents
- * @prisma_model documents
- */
-async function getDocumentsForUserByDocumentType(req, res) {
-	try {
-		const { document_type } = req.params;
-		const documents = await DocumentDao.getDocumentsForUserByType(req.user.user_id, document_type);
-		res.status(200).json(documents);
-	} catch (error) {
-		console.error('Error getting documents for user by type:', error);
-		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
-	}
-}
-/**
  * GET /documents/drivers/:driverId/documents/type/:documentType
  * @tag Documents
  * @summary Get documents for a driver by type
@@ -247,29 +179,6 @@ async function getDocumentsForDriverByDocumentType(req, res) {
 		res.status(200).json(documents);
 	} catch (error) {
 		console.error('Error getting documents for driver by type:', error);
-		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
-	}
-}
-/**
- * GET /documents/deliveryPersons/:deliveryPersonId/documents/type/:documentType
- * @tag Documents
- * @summary Get documents for a delivery person by type
- * @description Retrieves documents of a specific type associated with a delivery person.
- * @operationId getDocumentsForDeliveryPersonByType
- * @pathParam {string} deliveryPersonId - The ID of the delivery person
- * @pathParam {string} documentType - The type of the documents
- * @response 200 - Successful operation, returns documents
- * @responseContent {object} 200.application/json
- * @response 400 - Error retrieving documents
- * @prisma_model documents
- */
-async function getDocumentsForDeliveryPersonByDocumentType(req, res) {
-	try {
-		const { delivery_person_id, document_type } = req.params;
-		const documents = await DocumentDao.getDocumentsForDeliveryPersonByType(delivery_person_id, document_type);
-		res.status(200).json(documents);
-	} catch (error) {
-		console.error('Error getting documents for delivery person by type:', error);
 		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
 	}
 }
@@ -294,35 +203,6 @@ async function getDocumentsForVehicleByDocumentType(req, res) {
 	} catch (error) {
 		console.error('Error getting documents for vehicle by type:', error);
 		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
-	}
-}
-/**
- * POST /documents/create/user/:user_id
- * @tag Documents
- * @summary Create a document for a user
- * @description Creates a new document and links it to a specific user.
- * @operationId createUserDocument
- * @pathParam {string} user_id - The ID of the user
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 201 - Document created and linked successfully
- * @responseContent {object} 201.application/json
- * @response 400 - Error creating or linking the document
- * @prisma_model documents
- * @prisma_model files
- */
-async function createUserDocument(req, res) {
-	try {
-		const { documentData, files } = req.body;
-		const userId = req.params.user_id;
-		const document = await DocumentDao.createDocument(documentData, files);
-		if (!document) {
-			return res.status(400).json({ error: 'Error creating the document' });
-		}
-		await DocumentDao.linkDocumentToUser(document.document_id, userId);
-		res.status(200).json(document);
-	} catch (error) {
-		res.status(400).json({ error: 'Error creating user document or linking the document', detail: error.message });
 	}
 }
 /**
@@ -409,44 +289,6 @@ async function createVehicleDocument(req, res) {
 		console.error('Error creating document for vehicle:', error);
 		res.status(400).json({
 			error: 'Error creating vehicle document or linking the document',
-			detail: error.message,
-		});
-	}
-}
-/**
- * POST /documents/create/delivery_driver/:delivery_driver_id
- * @tag Documents
- * @summary Create a document for a delivery person
- * @description Creates a new document and links it to a specific delivery person.
- * @operationId createDeliveryPersonDocument
- * @pathParam {string} delivery_person_id - The ID of the delivery person
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 201 - Document created and linked successfully
- * @responseContent {object} 201.application/json
- * @response 400 - Error creating or linking the document
- * @prisma_model documents
- * @prisma_model files
- */
-async function createDeliveryPersonDocument(req, res) {
-	try {
-		const { documentData, files } = req.body;
-		const deliveryPersonId = req.params.delivery_driver_id;
-		const document = await DocumentDao.createDocument(documentData, files);
-		if (!document) {
-			return res.status(400).json({ error: 'Error creating the document' });
-		}
-		let driver = await DeliveryDriverDao.getDeliveryDriverById(deliveryPersonId);
-		if (!driver) {
-			driver = await DriverDao.getDriverById(deliveryPersonId);
-			await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
-		} else {
-			await DocumentDao.linkDocumentToDeliveryDriver(document.document_id, driver.delivery_driver_id);
-		}
-		res.status(200).json(document);
-	} catch (error) {
-		res.status(400).json({
-			error: 'Error creating delivery person document or linking the document',
 			detail: error.message,
 		});
 	}
@@ -557,12 +399,10 @@ export { getDocumentById };
 export { getDocumentsForUser };
 export { getDocumentsForVehicle };
 export { getDocumentsForDriver };
-export { getDocumentsForDeliveryPerson };
 export { getDocumentsForBusiness };
 export { getDocumentsByDocumentType };
 export { getDocumentsForBusinessByDocumentType };
 export { getDocumentsForDriverByDocumentType };
-export { getDocumentsForDeliveryPersonByDocumentType };
 export { getDocumentsForVehicleByDocumentType };
 export { getDocumentsForUserByDocumentType };
 export { createUserDocument };
@@ -580,12 +420,10 @@ export default {
 	getDocumentsForUser,
 	getDocumentsForVehicle,
 	getDocumentsForDriver,
-	getDocumentsForDeliveryPerson,
 	getDocumentsForBusiness,
 	getDocumentsByDocumentType,
 	getDocumentsForBusinessByDocumentType,
 	getDocumentsForDriverByDocumentType,
-	getDocumentsForDeliveryPersonByDocumentType,
 	getDocumentsForVehicleByDocumentType,
 	getDocumentsForUserByDocumentType,
 	createUserDocument,

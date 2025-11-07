@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { DOCUMENT_TYPE } from '@prisma/client';
+
 import { CreateFileDataSchema } from '../Files/file.dto.ts';
 import { DocumentCreateSchema as LostItemDocumentCreateSchema } from '../LostItems/lostitem.dto.ts';
 
@@ -128,27 +129,34 @@ export const GetDocumentsByTypeParamsSchema = z
 export type GetDocumentsByTypeParams = z.infer<typeof GetDocumentsByTypeParamsSchema>;
 
 export const GetDocumentsForUserByTypeParamsSchema = z
-	.object({ user_id: z.string().uuid().openapi({ example: '990e8400-e29b-41d4-a716-446655440000' }), document_type: z.nativeEnum(DOCUMENT_TYPE) })
+	.object({
+		user_id: z.string().uuid().openapi({ example: '990e8400-e29b-41d4-a716-446655440000' }),
+		document_type: z.nativeEnum(DOCUMENT_TYPE),
+	})
 	.openapi('GetDocumentsForUserByTypeParams');
 export type GetDocumentsForUserByTypeParams = z.infer<typeof GetDocumentsForUserByTypeParamsSchema>;
 
 export const GetDocumentsForBusinessByTypeParamsSchema = z
-	.object({ business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }), document_type: z.nativeEnum(DOCUMENT_TYPE) })
+	.object({
+		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		document_type: z.nativeEnum(DOCUMENT_TYPE),
+	})
 	.openapi('GetDocumentsForBusinessByTypeParams');
 export type GetDocumentsForBusinessByTypeParams = z.infer<typeof GetDocumentsForBusinessByTypeParamsSchema>;
 
 export const GetDocumentsForDriverByTypeParamsSchema = z
-	.object({ driver_id: z.string().uuid().openapi({ example: 'bb0e8400-e29b-41d4-a716-446655440000' }), document_type: z.nativeEnum(DOCUMENT_TYPE) })
+	.object({
+		driver_id: z.string().uuid().openapi({ example: 'bb0e8400-e29b-41d4-a716-446655440000' }),
+		document_type: z.nativeEnum(DOCUMENT_TYPE),
+	})
 	.openapi('GetDocumentsForDriverByTypeParams');
 export type GetDocumentsForDriverByTypeParams = z.infer<typeof GetDocumentsForDriverByTypeParamsSchema>;
 
-export const GetDocumentsForDeliveryPersonByTypeParamsSchema = z
-	.object({ delivery_driver_id: z.string().uuid().openapi({ example: 'cc0e8400-e29b-41d4-a716-446655440000' }), document_type: z.nativeEnum(DOCUMENT_TYPE) })
-	.openapi('GetDocumentsForDeliveryPersonByTypeParams');
-export type GetDocumentsForDeliveryPersonByTypeParams = z.infer<typeof GetDocumentsForDeliveryPersonByTypeParamsSchema>;
-
 export const GetDocumentsForVehicleByTypeParamsSchema = z
-	.object({ vehicle_id: z.string().uuid().openapi({ example: 'dd0e8400-e29b-41d4-a716-446655440000' }), document_type: z.nativeEnum(DOCUMENT_TYPE) })
+	.object({
+		vehicle_id: z.string().uuid().openapi({ example: 'dd0e8400-e29b-41d4-a716-446655440000' }),
+		document_type: z.nativeEnum(DOCUMENT_TYPE),
+	})
 	.openapi('GetDocumentsForVehicleByTypeParams');
 export type GetDocumentsForVehicleByTypeParams = z.infer<typeof GetDocumentsForVehicleByTypeParamsSchema>;
 
@@ -341,7 +349,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('GetDocumentsForUserByTypeParams', GetDocumentsForUserByTypeParamsSchema);
 	registry.register('GetDocumentsForBusinessByTypeParams', GetDocumentsForBusinessByTypeParamsSchema);
 	registry.register('GetDocumentsForDriverByTypeParams', GetDocumentsForDriverByTypeParamsSchema);
-	registry.register('GetDocumentsForDeliveryPersonByTypeParams', GetDocumentsForDeliveryPersonByTypeParamsSchema);
 	registry.register('GetDocumentsForVehicleByTypeParams', GetDocumentsForVehicleByTypeParamsSchema);
 	registry.register('FindDocumentByTypeAndDeliveryDriverParams', FindDocumentByTypeAndDeliveryDriverParamsSchema);
 	registry.register('FindDocumentByTypeAndDriverParams', FindDocumentByTypeAndDriverParamsSchema);
@@ -368,4 +375,3 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('GetLastDocumentByTypeAndBusinessIdInput', GetLastDocumentByTypeAndBusinessIdInputSchema);
 	registry.register('UpdateDocumentByDocumentIdInput', UpdateDocumentByDocumentIdInputSchema);
 }
-

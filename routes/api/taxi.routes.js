@@ -61,9 +61,21 @@ router.get('/orders/scheduled_orders/user/:user_id', TaxiOrderController.getSche
 router.post('/dispatch-order', validate(CreateDispatchOrderSchema), TaxiOrderController.createDispatchOrder);
 router.post('/order/status', validate(IdAndStatusSchema), TaxiOrderController.updateOrderStatus);
 router.post('/order/route', validate(UpdateRouteSchema), TaxiOrderController.updateTaxiOrderRoute);
-router.post('/order/preferences', validate(UpdateTaxiOrderPreferencesSchema), TaxiOrderController.updateTaxiOrderPreferences);
-router.post('/order/pickup_location', validate(UpdatePickupLocationSchema), TaxiOrderController.updateTaxiOrderPickupLocation);
-router.post('/order/delivery_location', validate(UpdateDeliveryLocationSchema), TaxiOrderController.updateTaxiOrderDeliveryLocation);
+router.post(
+	'/order/preferences',
+	validate(UpdateTaxiOrderPreferencesSchema),
+	TaxiOrderController.updateTaxiOrderPreferences
+);
+router.post(
+	'/order/pickup_location',
+	validate(UpdatePickupLocationSchema),
+	TaxiOrderController.updateTaxiOrderPickupLocation
+);
+router.post(
+	'/order/delivery_location',
+	validate(UpdateDeliveryLocationSchema),
+	TaxiOrderController.updateTaxiOrderDeliveryLocation
+);
 router.post('/order/complete_route', validate(UpdateCompleteRouteSchema), TaxiOrderController.updateCompleteTaxiRoute);
 router.post('/order/accept', validate(IdAndDriverSchema), TaxiOrderController.acceptOrder);
 router.post('/order/complete', validate(IdOnlySchema), TaxiOrderController.completeOrder);
