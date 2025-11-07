@@ -100,6 +100,7 @@ const getAllOrderLobbies = async () => {
 	}
 };
 /**
+ * // TODO: DAO FIX
  * Retrieves all order lobbies for a specific business
  * @param {string} business_id - The ID of the business
  * @returns {Promise<Array>} Array of order lobbies associated with the business

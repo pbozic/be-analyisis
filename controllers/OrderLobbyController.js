@@ -66,6 +66,7 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod, useCredits)
 			};
 		})
 	);
+	//TODO: DAO FIX MARCEL use module id
 	//TODO: use delivery_address unless order from LOCAL
 	const restaurant = await BusinessDao.getBusinessById(orderLobby.restaurant_id);
 
@@ -133,17 +134,19 @@ async function createLobby(req, res) {
 			user_limits_map,
 			lobby_name,
 			lobby_description,
-			business_id,
-			restaurant_id,
+			food_drinks_id,
+			stores_id,
 			restaurant_message,
+			business_id,
 			courier_note,
 			delivery_location,
 		} = req.body;
 		const new_lobby = await OrderLobbyDao.createOrderLobby({
 			lobby_name,
 			lobby_description,
-			business_id: business_id,
-			restaurant_id,
+			food_drinks_id,
+			stores_id,
+			creating_business_id: business_id,
 			creator_id: req.user.user_id,
 			restaurant_message,
 			courier_note: courier_note,

@@ -164,6 +164,8 @@ async function login(req, res) {
 					},
 				},
 				profile_picture: true,
+				user_favorite_drivers: true,
+				user_favorite_service_links: true,
 			},
 		});
 		if (user.disabled) return res.status(400).json({ error: 'Account is disabled.' });
@@ -994,6 +996,47 @@ async function registerMerchantService(req, res) {
 		// Handle business documents
 		if (req.body.business.documents) {
 			for (const doc of req.body.business.documents) {
+				if (doc.documentData.document_type === 'LOGO') {
+					for (const file of doc.files) {
+						let base64 = file.base64;
+						delete file.base64;
+						let fileData = await FileDao.createFile(file.file_type, file.mime_type, file.size, true);
+						let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+						await S3Helper.SaveObject(
+							key,
+							base64,
+							file.mime_type,
+							{ businesses: [business.business_id] },
+							fileData,
+							true
+						);
+						await BusinessDao.updateBusiness(business.business_id, {
+							logo: { connect: { logo_id: fileData.file_id } },
+						});
+					}
+					continue;
+				}
+				if (doc.documentData.document_type === 'BANNER') {
+					for (const file of doc.files) {
+						let base64 = file.base64;
+						delete file.base64;
+						let fileData = await FileDao.createFile(file.file_type, file.mime_type, file.size, true);
+						let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+						await S3Helper.SaveObject(
+							key,
+							base64,
+							file.mime_type,
+							{ businesses: [business.business_id] },
+							fileData,
+							true
+						);
+						await BusinessDao.updateBusiness(business.business_id, {
+							banner: { connect: { banner_id: fileData.file_id } },
+						});
+					}
+					continue;
+				}
+
 				const document = await DocumentDao.createDocument(doc.documentData);
 				for (const file of doc.files) {
 					let base64 = file.base64;
@@ -1213,6 +1256,7 @@ async function registerBusiness(req, res) {
 */
 async function registerReservationBusiness(req, res) {
 	//TODO: What do if MITM attack steals registration token?
+	// TODO: logo and banner images
 	try {
 		let transactionSucceeded = false;
 		let business = null;

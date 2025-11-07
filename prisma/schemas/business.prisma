@@ -63,6 +63,10 @@ model business {
     stores_module      stores_module?
     food_drinks_module food_drinks_module?
     crm_module         crm_module?
+    logo_id  String?    @db.Uuid @unique
+    logo     files?     @relation("business_logo", fields: [logo_id], references: [file_id])
+    banner_id String?    @db.Uuid @unique
+    banner    files?     @relation("business_banner", fields: [banner_id], references: [file_id])
 
     @@index([parent_business_id])
 }

@@ -173,6 +173,8 @@ model files {
   food_drinks_banner food_drinks_module? @relation("food_drinks_banner")
   reservation_logo   reservation_module? @relation("reservations_logo")
   reservation_banner reservation_module? @relation("reservations_banner")
+  business_logo      business?           @relation("business_logo")
+  business_banner    business?           @relation("business_banner")
   user_id            String?             @db.Uuid
   user               users?
   driver_id          String?             @db.Uuid
