@@ -121,6 +121,20 @@ export const primitives = {
 	ErrorResponse,
 };
 
+// === Types for all primitives ===
+export type UUID = z.infer<typeof UUID>;
+export type Email = z.infer<typeof Email>;
+export type URL = z.infer<typeof URL>;
+export type PhoneNumber = z.infer<typeof PhoneNumber>;
+export type LanguageCode = z.infer<typeof LanguageCode>;
+export type Timestamp = z.infer<typeof Timestamp>;
+export type PositiveInt = z.infer<typeof PositiveInt>;
+export type GeoPoint = z.infer<typeof GeoPoint>;
+export type Money = z.infer<typeof Money>;
+export type Address = z.infer<typeof Address>;
+export type PaginationMeta = z.infer<typeof PaginationMeta>;
+export type ErrorResponse = z.infer<typeof ErrorResponse>;
+
 // === Helper for registry registration ===
 export function registerPrimitives(registry: OpenAPIRegistry) {
 	for (const [name, schema] of Object.entries(primitives)) {
