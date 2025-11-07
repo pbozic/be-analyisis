@@ -40,11 +40,11 @@ router.post(
  *
  */
 router.get('/businesses/merchant', BusinessController.listMerchantBusinesses);
-/**
- *    * @module merchant
- *
- */
-router.get('/businesses/merchant/daily-meals', BusinessController.listMerchantBusinessesWithDailyMeals);
+// /**
+//  *    * @module merchant
+//  *
+//  */
+// router.get('/businesses/merchant/daily-meals', BusinessController.listMerchantBusinessesWithDailyMeals);
 /**
  *    * @module merchant
  *

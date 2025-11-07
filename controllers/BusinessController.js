@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 import { PROMO_TYPE, ANALYTICS_TYPE, MODULE } from '@prisma/client';
 
 import BusinessDao from '../dao/Business.js';
-import Constants, { DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
+import Constants, { BUSINESS_TYPE, DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
 import stripe from '../lib/stripe.js';
 import UserDao from '../dao/User.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
@@ -10,7 +10,6 @@ import { DELIVERY_ORDER_STATUS, SCORING_POINTS_REASON, ACCOUNT_ACTIONS_REASON } 
 import { calculateBusinessEarnings, calculateTotalEarnings } from '../lib/helpersLib.js';
 import prisma from '../prisma/prisma.js';
 import EmailHelper from '../lib/emailSender.js';
-import socket from '../socket.js';
 import elasticsearch from '../elasticsearch/index.js';
 import UserFavoriteBusinessDao from '../dao/UserFavoriteBusiness.js';
 import ScoringPointsDao from '../dao/ScoringPoints.js';
@@ -26,7 +25,6 @@ import BusinessTypesDao from '../dao/BusinessTypes.js';
 import InvoicesDao from '../dao/Invoices.js';
 import TransportDao from '../dao/Transport.js';
 config();
-const { UserSockets, io } = socket;
 const { businessIndex, fullSearch } = elasticsearch;
 /**
  * POST /business/activate
@@ -351,36 +349,11 @@ async function listPromoSectionsWithMerchants(req, res) {
 	}
 }
 /**
- * GET /businesses/merchant/daily-meals
- * @tag Business
- * @summary List all merchant businesses offering daily meals
- * @description Retrieves a list of all businesses classified as merchants that offer daily meals.
- * @operationId listMerchantBusinessesWithDailyMeals
- * @response 200 - Successful operation, returns a list of merchant businesses offering daily meals
- * @responseContent {object} 200.application/json
- * @response 400 - Error occurred while obtaining the merchant business list
- * @prisma_model businesses
- */
-async function listMerchantBusinessesWithDailyMeals(req, res) {
-	try {
-		const merchantBusinesses = await BusinessDao.getBusinessesByType(
-			[Constants.BUSINESS_TYPE.MERCHANT, Constants.BUSINESS_TYPE.RESTAURANT, Constants.BUSINESS_TYPE.LOCAL],
-			{
-				offers_daily_meals: true,
-			}
-		);
-		res.status(200).json(merchantBusinesses);
-	} catch (e) {
-		console.error('Error listing merchant businesses with daily meals:', e);
-		res.status(400).json({ error: 'Error listing merchant businesses with daily meals', e });
-	}
-}
-/**
  * GET /businesses/merchant/main
  * @tag Business
  * @summary List all merchant businesses offering daily meals
  * @description Retrieves a list of all businesses classified as merchants that offer daily meals.
- * @operationId listMerchantBusinessesWithDailyMeals
+ * @operationId listMerchantBusinessesMainInfo
  * @response 200 - Successful operation, returns a list of merchant businesses offering daily meals
  * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the merchant business list
@@ -2322,11 +2295,9 @@ async function toggleTransportModule(req, res) {
 		return res.status(500).json({ error: 'Error toggling transport module' });
 	}
 }
-export { getScheduledUsersByBusinessId };
 export { listBusinesses };
 export { listTransferBusinesses };
 export { listMerchantBusinesses };
-export { listMerchantBusinessesWithDailyMeals };
 export { createNewBusiness };
 export { getBusinessById };
 export { getBusinessAdminDataById };
@@ -2372,12 +2343,10 @@ export { getBusinessPromoWordsAnalytics };
 export { confirmBusinessPremise };
 export { toggleTransportModule };
 export default {
-	getScheduledUsersByBusinessId,
 	listBusinesses,
 	removeBusinessPaymentMethod,
 	listTransferBusinesses,
 	listMerchantBusinesses,
-	listMerchantBusinessesWithDailyMeals,
 	createNewBusiness,
 	getBusinessById,
 	getBusinessAdminDataById,
