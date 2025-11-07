@@ -2,6 +2,7 @@ import { BUSINESS_TYPE } from '@prisma/client';
 import AddressDao from '../../dao/Address.js';
 import LocalLocationDao from '../../dao/LocalLocation.js';
 import prisma from '../prisma.js';
+import stores from '../../dao/stores.ts';
 
 interface Location {
 	address: string;
@@ -36,9 +37,14 @@ export default async function seedLocations(locations: Location[], shouldPopulat
 			});
 			const localLocations = await LocalLocationDao.getAllLocalLocations();
 			for (const business of businesses) {
+			const store_id = await stores.getStoresIdByBusinessId(business.business_id);
+			if (!store_id) {
+					console.warn(`No stores_module for business ${business.business_id}, skipping`);
+					continue;
+				}
 				for (const loc of localLocations) {
 					await LocalLocationDao.createBusinessLocalLocation(
-						business.business_id,
+						store_id,
 						loc.local_location_id,
 						new Date().toISOString()
 					);

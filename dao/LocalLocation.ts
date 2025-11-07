@@ -20,13 +20,14 @@ const getAllLocalLocations = async (): Promise<LocalLocationDetail[]> => {
 		throw new Error(`Error fetching all local locations: ${error}`);
 	}
 };
+
 /**
  * Create a new local location with the given address.
  *
  * @param {Address} address
  * @returns {Promise<LocalLocationDetail>} - The created local location.
  */
-const createLocation = async (address: Address): Promise<LocalLocationDetail> => {
+const createLocation = async (address: Address): Promise<LocalLocationDetail> => { 
 	try {
 		const localLocation = await prisma.local_locations.create({
 			data: {
@@ -46,20 +47,20 @@ const createLocation = async (address: Address): Promise<LocalLocationDetail> =>
 /**
  * Create a business local location association.
  *
- * @param {string} businessId
+ * @param {string} storeId
  * @param {string} localLocationId
  * @param {string} time
  * @returns {Promise<BusinessLocalLocationBase>} - The created business local location association.
  */
 const createBusinessLocalLocation = async (
-	businessId: string,
+	storeId: string,
 	localLocationId: string,
 	time: string
 ): Promise<BusinessLocalLocationBase> => {
 	try {
 		const businessLocalLocation = await prisma.business_local_locations.create({
 			data: {
-				business: { connect: { business_id: businessId } },
+				business: { connect: { stores_id: storeId } },
 				local_location: { connect: { local_location_id: localLocationId } },
 				time: new Date(time),
 			},
@@ -92,7 +93,7 @@ const updateBusinessLocalLocation = async (locationId: string, time: Date): Prom
 			},
 			include: {
 				local_location: { include: { address: true } },
-				orders: { select: { order_id: true, details: true, scheduled_at: true } },
+				delivery_orders: { select: { order_id: true, details: true, scheduled_at: true } },
 			},
 		});
 		for (const order of updatedLocation.orders) {

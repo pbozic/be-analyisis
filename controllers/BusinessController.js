@@ -15,6 +15,7 @@ import elasticsearch from '../elasticsearch/index.js';
 import UserFavoriteBusinessDao from '../dao/UserFavoriteBusiness.js';
 import ScoringPointsDao from '../dao/ScoringPoints.js';
 import LocalLocationDao from '../dao/LocalLocation.js';
+import stores from '../dao/stores.ts';
 import { logPromoAnalytics } from '../lib/analytics.ts';
 import { addDays, atStartOfDay, formatDay, getPeriodStartAndEnd, getPreviousPeriod } from '../lib/dateHelpers.js';
 import BusinessUsersDao from '../dao/BusinessUsers.js';
@@ -2097,13 +2098,14 @@ async function createBusinessLocalLocation(req, res) {
 		if (!location?.local_location_id || !location?.time) {
 			return res.status(400).json({ error: 'Missing location' });
 		}
+		const store_id = await stores.getStoresIdByBusinessId(business_id);
 		const newLocation = await LocalLocationDao.createBusinessLocalLocation(
-			business_id,
+			store_id,
 			location.local_location_id,
 			location.time
 		);
-		if (newLocation?.business_id) {
-			businessIndex(newLocation.business_id);
+		if (newLocation?.store_id) {
+			businessIndex(newLocation.store_id);
 		}
 		return res.status(201).json(newLocation);
 	} catch (e) {
