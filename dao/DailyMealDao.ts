@@ -1,12 +1,83 @@
 import { Prisma, SUBSCRIPTION_STATUS, SUBSCRIPTION_TYPE, DAILY_MEAL_INSTANCE_STATUS } from '@prisma/client';
+import { z } from 'zod';
+import { PAYMENT_METHOD } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
-import { DailyMealsCartPersonWithPrice } from '../types/dailymeal/DailyMealSubscription.js';
+//=========== repair from deletion
 
+export const DailyMealsCartPersonSchema = z.object({
+	first_name: z.string(),
+	last_name: z.string(),
+	telephone: z.string(),
+	daily_meal_category_id: z.string().uuid(),
+	restaurant_comment: z.string(),
+});
+
+export const DailyMealsCartSchema = z.object({
+	start_date: z.string().datetime(),
+	end_date: z.string().datetime().nullable().optional(),
+	isRecurring: z.boolean(),
+	daysOfWeek: z.array(z.number().int().min(0).max(6)),
+	dates: z.array(z.string().datetime()),
+	peopleData: z.array(DailyMealsCartPersonSchema),
+	courier_comment: z.string(),
+});
+
+export const DailyMealsSubscriptionRequestSchema = z.object({
+	cart: DailyMealsCartSchema,
+	delivery_location: z.object({
+		address: z.string(),
+		coordinates: z.object({
+			longitude: z.string(),
+			latitude: z.string(),
+		}),
+	}),
+	details: z.object({
+		total_price: z.number(),
+		delivery_cost: z.number(),
+		sub_total_price: z.number(),
+		box_fee: z.number(),
+		business_id: z.string().uuid(),
+	}),
+	payment: z
+		.object({
+			payment_type: z.nativeEnum(PAYMENT_METHOD),
+			payment_method_id: z.string().nullable(),
+			status: z.string().optional(),
+			credit_card: z
+				.object({
+					issuer: z.string(),
+					number: z.string(),
+				})
+				.optional(),
+		})
+		.nullable(),
+	return_url: z.string().optional(),
+	allow_credits_usage: z.boolean(),
+});
+
+export const DailyMealsSubscriptionQuerySchema = z.object({
+	ANALYTICS_PARAM_PROMO_WORDS: z.array(z.string()).optional(),
+	ANALYTICS_PARAM_PROMO_SECTION: z.string().optional(),
+	ANALYTICS_PARAM_PROMO_AD: z.string().optional(),
+});
+
+export const GetUserDailyMealSubscriptionsSchema = z.object({
+	start_date: z.string().datetime().optional(),
+});
+
+export type GetUserDailyMealSubscriptionsrequest = z.infer<typeof GetUserDailyMealSubscriptionsSchema>;
+export type DailyMealsCartPerson = z.infer<typeof DailyMealsCartPersonSchema>;
+export type DailyMealsCartPersonWithPrice = DailyMealsCartPerson & { daily_meal_category_price_id: string };
+export type DailyMealsCart = z.infer<typeof DailyMealsCartSchema>;
+export type DailyMealsSubscriptionRequest = z.infer<typeof DailyMealsSubscriptionRequestSchema>;
+export type DailyMealsSubscriptionQuery = z.infer<typeof DailyMealsSubscriptionQuerySchema>;
+
+//===========
 const defaultIncludeObj = {
 	user: true,
-	business: true,
+	daily_meal_module: true,
 	delivery_address: true,
 	customers: true,
 	days: true,
@@ -33,7 +104,7 @@ const defaultIncludeObj = {
 			intended_date: 'asc',
 		},
 	},
-	delivery_driver: {
+	driver: {
 		include: {
 			user: true,
 		},
@@ -41,39 +112,39 @@ const defaultIncludeObj = {
 };
 
 /**
- * Get active daily meal subscriptions by business_id
- * @param {string} business_id
+ * Get active daily meal subscriptions by daily_meal_module_id
+ * @param {string} daily_meal_module_id
  * @param {Prisma.daily_meal_subscriptionsWhereArgs} args
  * @returns daily_meal_subscriptions[]
  */
-export async function getDailyMealSubscriptionsByBusinessId(
-	business_id: string,
+export async function getDailyMealSubscriptionsByModuleId(
+	daily_meal_module_id: string,
 	args: Prisma.daily_meal_subscriptionsWhereArgs = {}
 ) {
 	return prisma.daily_meal_subscriptions.findMany({
 		where: {
-			business_id,
+			daily_meal_module_id,
 			...args,
 		},
 		include: {
 			...defaultIncludeObj,
-			business: false,
+			daily_meal_module: false,
 		},
 		orderBy: { start_date: 'asc' },
 	});
 }
 
 /**
- * Get active daily meal subscriptions by business_id and optional start_date.
- * @param {string} business_id
+ * Get active daily meal subscriptions by daily_meal_module_id and optional start_date.
+ * @param {string} daily_meal_module_id
  * @param {string} [start_date]
  * @returns {Promise<daily_meal_subscriptions[]>}
  */
-export async function getActiveDailyMealSubscriptionsByBusinessId(business_id: string, start_date?: string) {
+export async function getActiveDailyMealSubscriptionsByModuleId(daily_meal_module_id: string, start_date?: string) {
 	const normalizedDate = start_date ? new Date(new Date(start_date).setUTCHours(0, 0, 0, 0)) : null;
 	return prisma.daily_meal_subscriptions.findMany({
 		where: {
-			business_id,
+			daily_meal_module_id,
 			start_date: normalizedDate ? { gte: normalizedDate } : undefined,
 			status: SUBSCRIPTION_STATUS.ACTIVE,
 		},
@@ -86,7 +157,7 @@ export async function getActiveDailyMealSubscriptionsByBusinessId(business_id: s
 			// 		delivery_date: normalizedDate ? { gte: normalizedDate } : undefined,
 			// 	},
 			// },
-			business: false,
+			daily_meal_module: false,
 		},
 		orderBy: { start_date: 'asc' },
 	});
@@ -108,10 +179,10 @@ export async function getDailyMealSubscriptionsByUserId(user_id: string, start_d
 		},
 		include: {
 			...defaultIncludeObj,
-			business: {
+			daily_meal_module: {
 				select: {
-					business_id: true,
-					business_group_name: true,
+					daily_meal_module_id: true,
+					daily_meal_module_group_name: true,
 					name: true,
 					telephone: true,
 					email: true,
@@ -134,18 +205,18 @@ export async function getDailyMealSubscriptionsByUserId(user_id: string, start_d
 }
 
 /**
- * Get today's daily meal subscriptions by business_id.
- * @param {string} business_id
+ * Get today's daily meal subscriptions by daily_meal_module_id.
+ * @param {string} daily_meal_module_id
  * @returns {Promise<daily_meal_subscriptions[]>}
  */
-export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: string) {
+export async function getTodayDailyMealSubscriptionsByModuleId(daily_meal_module_id: string) {
 	const todayStart = new Date();
 	todayStart.setHours(0, 0, 0, 0);
 	const todayEnd = new Date();
 	todayEnd.setHours(23, 59, 59, 999);
 	return prisma.daily_meal_subscriptions.findMany({
 		where: {
-			business_id,
+			daily_meal_module_id,
 			start_date: { lte: todayEnd },
 			status: SUBSCRIPTION_STATUS.ACTIVE,
 		},
@@ -192,7 +263,7 @@ export async function getDailyMealSubscriptionById(id: string) {
 		where: { id },
 		include: {
 			user: true,
-			business: true,
+			daily_meal_module: true,
 			delivery_address: true,
 			customers: true,
 			days: true,
@@ -206,7 +277,7 @@ export async function getDailyMealSubscriptionById(id: string) {
 /**
  * Create a daily meal subscription.
  * @param {string} user_id
- * @param {string} business_id
+ * @param {string} daily_meal_module_id
  * @param {string} delivery_address_id
  * @param {SUBSCRIPTION_TYPE} type
  * @param {Array<DailyMealsCartPersonWithPrice>} customers
@@ -219,7 +290,7 @@ export async function getDailyMealSubscriptionById(id: string) {
  */
 export async function createDailyMealSubscription(
 	user_id: string,
-	business_id: string,
+	daily_meal_module_id: string,
 	delivery_address_id: string,
 	type: SUBSCRIPTION_TYPE,
 	customers: Array<DailyMealsCartPersonWithPrice>,
@@ -241,8 +312,8 @@ export async function createDailyMealSubscription(
 				user: {
 					connect: { user_id },
 				},
-				business: {
-					connect: { business_id },
+				daily_meal_module: {
+					connect: { daily_meal_module_id },
 				},
 				delivery_address: {
 					connect: { address_id: delivery_address_id },
@@ -341,21 +412,21 @@ export async function updateSubscriptionStatus(
  * Connect subscription with delivery driver.
  *
  * @param {string} id
- * @param {string} delivery_driver_id
+ * @param {string} driver_id
  * @param {Prisma.daily_meal_subscriptionsInclude} [includeObj]
  * @returns {Promise<daily_meal_subscriptions>}
  */
 export async function connectSubscriptionWithDriver(
 	id: string,
-	delivery_driver_id: string,
+	driver_id: string,
 	includeObj?: Prisma.daily_meal_subscriptionsInclude
 ) {
 	return await prisma.daily_meal_subscriptions.update({
 		where: { id },
 		data: {
-			delivery_driver: {
+			driver: {
 				connect: {
-					delivery_driver_id: delivery_driver_id,
+					driver_id: driver_id,
 				},
 			},
 		},
@@ -394,10 +465,10 @@ export async function updateDailyMealInstanceStatusById(instance_id: string, sta
 }
 
 export default {
-	getDailyMealSubscriptionsByBusinessId,
-	getActiveDailyMealSubscriptionsByBusinessId,
+	getDailyMealSubscriptionsByBusinessId: getDailyMealSubscriptionsByModuleId,
+	getActiveDailyMealSubscriptionsByBusinessId: getActiveDailyMealSubscriptionsByModuleId,
 	getDailyMealSubscriptionsByUserId,
-	getTodayDailyMealSubscriptionsByBusinessId,
+	getTodayDailyMealSubscriptionsByBusinessId: getTodayDailyMealSubscriptionsByModuleId,
 	createDailyMealSubscription,
 	getSubscriptionById,
 	updateSubscriptionStatus,
