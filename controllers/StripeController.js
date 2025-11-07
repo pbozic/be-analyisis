@@ -47,7 +47,6 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 				let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
 
 				let business = await BusinessDao.getBusinessById(order.business_id);
-				console.log('Accept business type', business?.type);
 				const restaurant_stripe = business.stripe_account_id;
 				const { PLATFORM_CREDIT_CUT, MERCHANT_CREDIT_CUT } = await calculateDeliveryOrderPaymentCuts(order);
 				if (paymentIntent.metadata?.merchant_cut > 0) {
@@ -86,7 +85,7 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 					order.order_id,
 					DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL
 				);
-				if ([BUSINESS_TYPE.MERCHANT, BUSINESS_TYPE.LOCAL].includes(business?.type)) {
+				if (business.types.includes(BUSINESS_TYPE.MERCHANT) || business.types.includes(BUSINESS_TYPE.LOCAL)) {
 					order = await DeliveryOrderDao.updateOrderStatus(
 						order.order_id,
 						DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP

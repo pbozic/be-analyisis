@@ -41,6 +41,11 @@ export const BusinessToTypesSchema = z.object({
 
 export type BusinessToTypes = z.infer<typeof BusinessToTypesSchema>;
 
+export const SetBusinessTypesSchema = z.object({
+	type_ids: z.array(UUID).min(1),
+});
+export type SetBusinessTypesInput = z.infer<typeof SetBusinessTypesSchema>;
+
 export function registerSchemas(registry: OpenAPIRegistry) {
 	// Register response schemas
 	registry.register('BusinessType', BusinessTypeResponseSchema);

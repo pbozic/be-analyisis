@@ -1,5 +1,5 @@
 import z from 'zod';
-import { ACCOUNT_ACTIONS_REASON } from '@prisma/client';
+import { ACCOUNT_ACTIONS_REASON, MODULE } from '@prisma/client';
 
 import { Email, PhoneNumber, PositiveInt, Timestamp, UUID } from '../../primitives';
 import { CreateAddressSchema } from '../../../types/addresses/Address';
@@ -21,6 +21,7 @@ export type GetBusinessesInput = z.infer<typeof GetBusinessesSchema>;
 export const AddBusinessToFavoritesSchema = z
 	.object({
 		business_id: UUID,
+		module: z.nativeEnum(MODULE),
 	})
 	.openapi('AddBusinessToFavorites');
 export type AddBusinessToFavoritesInput = z.infer<typeof AddBusinessToFavoritesSchema>;

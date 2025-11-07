@@ -11,7 +11,7 @@ import {
 
 const router = express.Router();
 
-router.get('/:business_id', validate(SearchBusinessQuerySchema, 'query'), BusinessController.getBusinessForSearchById);
+router.get('/:business_id', validate(SearchBusinessQuerySchema, 'body'), BusinessController.getBusinessForSearchById);
 router.post(
 	'/sections/merchant',
 	validate(ListPromoSectionsMerchantBodySchema, 'body'),

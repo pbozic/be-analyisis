@@ -1,4 +1,5 @@
 import prisma from '../prisma/prisma.js';
+import { getBusinessById } from './Business.js';
 /**
  * Get all business clients
  * @returns {Promise<Array>} Array of business clients
@@ -42,8 +43,9 @@ const getBusinessClientById = async (businessClientsId) => {
  */
 const getBusinessClientsByBusinessId = async (businessId) => {
 	try {
+		const business = await getBusinessById(businessId);
 		return await prisma.business_clients.findMany({
-			where: { business_id: businessId },
+			where: { crm_module_id: business.crm_module_id },
 			include: {
 				taxi_orders: true,
 			},
@@ -61,14 +63,14 @@ const getBusinessClientsByBusinessId = async (businessId) => {
 const createBusinessClient = async (clientData) => {
 	try {
 		// Normalize telephone fields
-		const { telephone_code, telephone_number } = clientData;
+		const { telephone_code, telephone } = clientData;
 		// Construct the data object
 		const data = {
-			business_id: clientData.business_id,
+			crm_module_id: clientData.crm_module_id,
 			first_name: clientData.first_name,
 			last_name: clientData.last_name,
 			email: clientData.email,
-			telephone: `${telephone_code}${telephone_number}`,
+			telephone,
 			telephone_code,
 			// telephone_number,
 		};

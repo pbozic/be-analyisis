@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { PAYMENT_METHOD } from '@prisma/client';
+import { MODULE, PAYMENT_METHOD } from '@prisma/client';
 
 import { UUID, Timestamp, URL } from '../../primitives.js';
 import {
@@ -40,6 +40,7 @@ export const CreateDeliveryOrderSchema = z
 				})
 				.optional(),
 			is_daily_meal: z.boolean().optional(),
+			module: z.nativeEnum(MODULE),
 		}),
 		return_url: z.string().url().optional(),
 	})

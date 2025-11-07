@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import { PROMO_TYPE, ANALYTICS_TYPE } from '@prisma/client';
+import { PROMO_TYPE, ANALYTICS_TYPE, MODULE } from '@prisma/client';
 
 import BusinessDao from '../dao/Business.js';
 import Constants, { DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
@@ -138,48 +138,6 @@ async function listBusinesses(req, res) {
 	}
 }
 /**
- * POST /businesses/ids
- * @tag Business
- * @summary Get a list of businesses business_ids
- * @description Returns a list of businesses.
- * @operationId getBusinessesByIds
- * @response 200 - successful operation
- * @responseContent {object} 200.application/json
- * @response 400 - Error occurred while obtaining the business list
- * @responseContent {object} 400.application/json The error object
- * @prisma_model businesses
- * @prisma_model documents
- * @prisma_model files
- */
-async function getBusinessesByIds(req, res) {
-	try {
-		const { business_ids } = req.body;
-		console.log('business_ids:,', business_ids);
-		let businesses = await BusinessDao.getBusinessesForSearchById(business_ids);
-		if (businesses) {
-			businesses.forEach((business) => {
-				let logo, banner;
-				for (let d of business.documents) {
-					if (d.document_type === 'LOGO') {
-						logo = d.files[0].url;
-					} else if (d.document_type === 'BANNER') {
-						banner = d.files[0].url;
-					}
-				}
-				business.logo = logo;
-				business.banner = banner;
-			});
-			res.status(200).json(businesses);
-		} else {
-			res.status(400).json({
-				error: 'Error obtaining list of businesses..',
-			});
-		}
-	} catch (e) {
-		res.status(400).json({ error: 'Error obtaining list of businesses..', e: e.message });
-	}
-}
-/**
  * POST /businesses/search
  * @tag Business
  * @summary Get a list of businesses by query, location, categories, radius, etc.
@@ -212,6 +170,7 @@ async function searchBusinesses(req, res) {
 		console.log('esResults', esResults);
 		esResults.results.sort((a, b) => b.score - a.score);
 		let businesses = await BusinessDao.getBusinessesForSearchById(esResults.results.map((b) => b.business_id));
+		//TODO: determine type of module and return data for that specific module
 		let results = {
 			...esResults,
 			results: esResults.results.map((esResult) => {
@@ -361,6 +320,7 @@ async function listPromoSectionsWithMerchants(req, res) {
 			}
 			let providerIds = esResults.results.map((r) => r.business_id);
 			let providers = await BusinessDao.getBusinessesForSearchById(providerIds);
+			//TODO: determine type of module and return data for that specific module
 			let result = [];
 			for (let provider of providers) {
 				let esResult = esResults.results.find((r) => r.business_id === provider.business_id);
@@ -428,12 +388,9 @@ async function listMerchantBusinessesWithDailyMeals(req, res) {
  */
 async function listMerchantBusinessesMainInfo(req, res) {
 	try {
-		const merchantBusinesses = await BusinessDao.getBusinessesByTypeMainInformation([
-			Constants.BUSINESS_TYPE.MERCHANT,
-			Constants.BUSINESS_TYPE.RESTAURANT,
-			Constants.BUSINESS_TYPE.LOCAL,
-		]);
-		res.status(200).json(merchantBusinesses);
+		const stores = await BusinessDao.getStoresMainInformation();
+		const foodDrinks = await BusinessDao.getFoodDrinksMainInformation();
+		res.status(200).json({ stores, foodDrinks });
 	} catch (e) {
 		console.error('Error listing merchant businesses with daily meals:', e);
 		res.status(400).json({ error: 'Error listing merchant businesses with daily meals', e });
@@ -452,9 +409,7 @@ async function listMerchantBusinessesMainInfo(req, res) {
  */
 async function listTransferBusinessesMainInfo(req, res) {
 	try {
-		const transferBusinesses = await BusinessDao.getBusinessesByTypeMainInformation(
-			Constants.BUSINESS_TYPE.TRANSFER
-		);
+		const transferBusinesses = await BusinessDao.getTransferBusinessesMainInformation();
 		res.status(200).json(transferBusinesses);
 	} catch (e) {
 		console.error('Error listing transfer businesses', e);
@@ -539,7 +494,7 @@ async function getBusinessAdminDataById(req, res) {
 	}
 }
 /**
- * GET /business/search/:business_id
+ * POST /business/search/:business_id
  * @tag Business
  * @summary Get a business for search by ID
  * @description Retrieves detailed information about a specific business by its ID.
@@ -558,18 +513,21 @@ async function getBusinessAdminDataById(req, res) {
  */
 async function getBusinessForSearchById(req, res) {
 	try {
-		const { ANALYTICS_PARAM_PROMO_WORDS, ANALYTICS_PARAM_PROMO_SECTION, ANALYTICS_PARAM_PROMO_AD } = req.query;
-		const business = await BusinessDao.getBusinessForSearchById(req.params.business_id);
-		let logo, banner;
-		for (let d of business.documents) {
-			if (d.document_type === 'LOGO') {
-				logo = d.files[0].url;
-			} else if (d.document_type === 'BANNER') {
-				banner = d.files[0].url;
-			}
-		}
-		business.logo = logo;
-		business.banner = banner;
+		const { ANALYTICS_PARAM_PROMO_WORDS, ANALYTICS_PARAM_PROMO_SECTION, ANALYTICS_PARAM_PROMO_AD, module } =
+			req.body;
+		const business = await BusinessDao.getBusinessById(req.params.business_id);
+		business.logo =
+			module === MODULE.STORES
+				? business.stores_logo
+				: module === MODULE.FOOD_DRINKS
+					? business.food_drinks_logo
+					: business.reservations_logo;
+		business.banner =
+			module === MODULE.STORES
+				? business.stores_banner
+				: module === MODULE.FOOD_DRINKS
+					? business.food_drinks_banner
+					: business.reservations_banner;
 		business.menu = business.menus.find((m) => m.isDailyMeal === false);
 		business.dailyMenu = business.menus.find((m) => m.isDailyMeal === true);
 		business.menus = null;
@@ -677,347 +635,6 @@ async function createNewBusiness(req, res) {
 	}
 }
 /**
- * PATCH /business/
- * @tag Business
- * @summary Updates the business details
- * @description This endpoint is used to update the business details.
- * @operationId updateBusiness
- * @pathParam {string} businessId - The ID of the business to update
- * @bodyDescription The data to update for the business.
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Business updated successfully. Returns the updated business details.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating business information.
- * @prisma_model businesses
- */
-async function update(req, res) {
-	console.info('update business', req.body);
-	const business_id = req.business?.business_id || req.body.business_id;
-	try {
-		let business = await BusinessDao.updateBusiness(business_id, req.body);
-		if (business) {
-			if (req.userSocket) req.userSocket.emit('updateBusiness', business);
-			if (
-				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
-				business.type === Constants.BUSINESS_TYPE.LOCAL ||
-				business.type === Constants.BUSINESS_TYPE.RESTAURANT
-			) {
-				businessIndex(business.business_id);
-			}
-			return res.status(200).json(business);
-		}
-		res.status(400).json({ error: 'Error updating business information' });
-	} catch (e) {
-		console.error('Error updating business information:', e);
-		res.status(400).json({ error: 'Error updating business information', e });
-	}
-}
-/**
- * PATCH /business/type
- * @tag Business
- * @summary Updates a business's type
- * @description This endpoint is used to update a business's type.
- * @operationId updateBusinessType
- * @bodyDescription The new type for the business
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Type updated successfully. Returns the updated business details.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating business information.
- * @prisma_model businesses
- */
-async function updateBusinessType(req, res) {
-	try {
-		let business = await BusinessDao.updateBusinessType(req.params.business_id, req.body.type);
-		if (business) {
-			if (
-				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
-				business.type === Constants.BUSINESS_TYPE.LOCAL ||
-				business.type === Constants.BUSINESS_TYPE.RESTAURANT
-			) {
-				businessIndex(business.business_id);
-			}
-			return res.status(200).json(business);
-		}
-		res.status(400).json({ error: 'Error updating business type' });
-	} catch (e) {
-		console.error('Error updating business type:', e);
-		res.status(400).json({ error: 'Error updating business type', e });
-	}
-}
-/**
- * PATCH /business/business-unit
- * @tag Businesses
- * @summary Updates the business unit status
- * @description This endpoint is used to update whether a business is considered a business unit.
- * @operationId updateIsBusinessUnit
- * @bodyDescription The new business unit status
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Business unit status updated successfully. Returns the updated business details.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating business information.
- * @prisma_model businesses
- */
-async function updateIsBusinessUnit(req, res) {
-	try {
-		let business = await BusinessDao.updateIsBusinessUnit(req.params.business_id, req.body.is_business_unit);
-		if (business) {
-			if (
-				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
-				business.type === Constants.BUSINESS_TYPE.LOCAL ||
-				business.type === Constants.BUSINESS_TYPE.RESTAURANT
-			) {
-				businessIndex(business.business_id);
-			}
-			return res.status(200).json(business);
-		}
-		res.status(400).json({ error: 'Error updating business unit status' });
-	} catch (e) {
-		console.error('Error updating business unit status:', e);
-		res.status(400).json({ error: 'Error updating business unit status', e });
-	}
-}
-/**
- * PATCH /business/business-group-name
- * @tag Businesses
- * @summary Updates a business's group name
- * @description This endpoint is used to update a business's group name.
- * @operationId updateBusinessGroupName
- * @bodyDescription The new group name for the business
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Group name updated successfully. Returns the updated business details.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating business information.
- * @prisma_model businesses
- */
-async function updateBusinessGroupName(req, res) {
-	try {
-		let business = await BusinessDao.updateBusinessGroupName(req.params.business_id, req.body.business_group_name);
-		if (business) {
-			if (
-				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
-				business.type === Constants.BUSINESS_TYPE.LOCAL ||
-				business.type === Constants.BUSINESS_TYPE.RESTAURANT
-			) {
-				businessIndex(business.business_id);
-			}
-			return res.status(200).json(business);
-		}
-		res.status(400).json({ error: 'Error updating business group name' });
-	} catch (e) {
-		console.error('Error updating business group name:', e);
-		res.status(400).json({ error: 'Error updating business group name', e });
-	}
-}
-/**
- * PATCH /business/email/
- * @tag Business
- * @summary Updates a business's email
- * @description This endpoint is used to update a business's email address.
- * @operationId updateBusinessEmail
- * @pathParam {string} business_id - The ID of the business to update
- * @bodyDescription The new email for the business
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Email updated successfully. Returns the updated business details.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating business information.
- * @prisma_model businesses
- */
-async function updateBusinessEmail(req, res) {
-	try {
-		let business = await BusinessDao.updateBusinessEmail(req.params.business_id, req.body.email);
-		if (business) {
-			if (
-				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
-				business.type === Constants.BUSINESS_TYPE.LOCAL ||
-				business.type === Constants.BUSINESS_TYPE.RESTAURANT
-			) {
-				businessIndex(business.business_id);
-			}
-			return res.status(200).json(business);
-		}
-		res.status(400).json({ error: 'Error updating business email' });
-	} catch (e) {
-		console.error('Error updating business email:', e);
-		res.status(400).json({ error: 'Error updating business email', e });
-	}
-}
-/**
- * PATCH /business/telephone/
- * @tag Business
- * @summary Updates a business's telephone
- * @description This endpoint is used to update a business's telephone number.
- * @operationId updateBusinessTelephone
- * @pathParam {string} business_id - The ID of the business to update
- * @bodyDescription The new telephone details for the business
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Telephone updated successfully. Returns the updated business details.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating business information.
- * @prisma_model businesses
- */
-async function updateBusinessTelephone(req, res) {
-	try {
-		let business = await BusinessDao.updateBusinessTelephone(
-			req.params.business_id,
-			req.body.telephone,
-			req.body.telephone_code
-			// req.body.telephone_number
-		);
-		if (business) {
-			if (
-				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
-				business.type === Constants.BUSINESS_TYPE.LOCAL ||
-				business.type === Constants.BUSINESS_TYPE.RESTAURANT
-			) {
-				businessIndex(business.business_id);
-			}
-			return res.status(200).json(business);
-		}
-		res.status(400).json({ error: 'Error updating business telephone' });
-	} catch (e) {
-		console.error('Error updating business telephone:', e);
-		res.status(400).json({ error: 'Error updating business telephone', e });
-	}
-}
-/**
- * PATCH /business/workingHours
- * @tag Business
- * @summary Updates a business's working hours
- * @description This endpoint is used to update a business's working hours.
- * @operationId updateBusinessWorkingHours
- * @pathParam {string} business_id - The ID of the business to update
- * @bodyDescription The new working hours for the business
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Working hours updated successfully. Returns the updated business details.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating business information.
- * @prisma_model businesses
- */
-async function updateBusinessWorkingHours(req, res) {
-	try {
-		let business = await BusinessDao.updateBusinessWorkingHours(req.params.business_id, req.body.working_hours);
-		if (business) {
-			if (
-				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
-				business.type === Constants.BUSINESS_TYPE.LOCAL ||
-				business.type === Constants.BUSINESS_TYPE.RESTAURANT
-			) {
-				businessIndex(business.business_id);
-			}
-			return res.status(200).json(business);
-		}
-		res.status(400).json({ error: 'Error updating business working hours' });
-	} catch (e) {
-		console.error('Error updating business working hours:', e);
-		res.status(400).json({ error: 'Error updating business working hours', e });
-	}
-}
-/**
- * PATCH /business/overwhelmed/{business_id}
- * @tag Business
- * @summary Updates the overwhelmed status of a restaurant
- * @description This endpoint is used to update whether a restaurant is considered overwhelmed.
- * @operationId updateRestaurantOverwhelmed
- * @pathParam {string} business_id - The ID of the restaurant to update
- * @bodyDescription The overwhelmed status for the restaurant
- * @bodyContent {object} application/json
- * @response 200 - Overwhelmed status updated successfully. Returns the updated restaurant details.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating restaurant information.
- * @prisma_model businesses
- */
-async function updateRestaurantOverwhelmed(req, res) {
-	try {
-		let business = await BusinessDao.updateRestaurantOverwhelmed(
-			req.params.business_id,
-			req.body.restaurant_overwhelmed
-		);
-		if (business) {
-			businessIndex(business.business_id);
-			return res.status(200).json(business);
-		}
-		res.status(400).json({ error: 'Error updating restaurant overwhelmed' });
-	} catch (e) {
-		console.error('Error updating business restaurant overwhelmed:', e);
-		res.status(400).json({ error: 'Error updating business restaurant overwhelmed', e });
-	}
-}
-/**
- * PATCH /business/new
- * @tag Business
- * @summary Updates the new status of a business
- * @description This endpoint is used to update whether a business is considered new.
- * @operationId updateBusinessIsNew
- * @pathParam {string} business_id - The ID of the business to update
- * @bodyDescription The new status for the business
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - New status updated successfully. Returns the updated business details.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating business information.
- * @prisma_model businesses
- */
-async function updateBusinessIsNew(req, res) {
-	try {
-		let business = await BusinessDao.updateBusinessIsNew(req.params.business_id, req.body.new);
-		if (business) {
-			if (
-				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
-				business.type === Constants.BUSINESS_TYPE.RESTAURANT ||
-				business.type === Constants.BUSINESS_TYPE.LOCAL
-			) {
-				businessIndex(business.business_id);
-			}
-			return res.status(200).json(business);
-		}
-		res.status(400).json({ error: 'Error updating business new status' });
-	} catch (e) {
-		console.error('Error updating business new status:', e);
-		res.status(400).json({ error: 'Error updating business new status', e });
-	}
-}
-/**
- * PATCH /business/popular
- * @tag Business
- * @summary Updates the popularity status of a business
- * @description This endpoint is used to update whether a business is considered popular.
- * @operationId updateBusinessIsPopular
- * @pathParam {string} business_id - The ID of the business to update
- * @bodyDescription The popularity status for the business
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Popularity status updated successfully. Returns the updated business details.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating business information.
- * @prisma_model businesses
- */
-async function updateBusinessIsPopular(req, res) {
-	try {
-		let business = await BusinessDao.updateBusinessIsPopular(req.params.business_id, req.body.popular);
-		if (business) {
-			if (
-				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
-				business.type === Constants.BUSINESS_TYPE.RESTAURANT ||
-				business.type === Constants.BUSINESS_TYPE.LOCAL
-			) {
-				businessIndex(business.business_id);
-			}
-			return res.status(200).json(business);
-		}
-		res.status(400).json({ error: 'Error updating business popularity' });
-	} catch (e) {
-		console.error('Error updating business popularity:', e);
-		res.status(400).json({ error: 'Error updating business popularity', e });
-	}
-}
-/**
  * GET /business/business_group_name
  * @tag Business
  * @summary Search for businesses by business group name
@@ -1065,147 +682,6 @@ async function getBusinessesByNameSearch(req, res) {
 	} catch (e) {
 		console.error('Error searching businesses by name:', e);
 		res.status(400).json({ error: 'Error occurred while searching for businesses by name', e });
-	}
-}
-/**
- * POST /business/address/add
- * @tag Business
- * @summary Add an address to a business
- * @description Adds an address to a specific business.
- * @operationId addBusinessAddress
- * @pathParam {string} business_id - The ID of the business
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Address added successfully
- * @response 400 - Error adding address
- * @prisma_model businesses
- * @prisma_model addresses
- */
-async function addBusinessAddress(req, res) {
-	try {
-		const { business_id } = req.params;
-		const addressData = req.body;
-		const updatedBusiness = await BusinessDao.addBusinessAddress(business_id, addressData);
-		if (
-			updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT ||
-			updatedBusiness.type === Constants.BUSINESS_TYPE.RESTAURANT ||
-			updatedBusiness.type === Constants.BUSINESS_TYPE.LOCAL
-		) {
-			businessIndex(updatedBusiness.business_id);
-		}
-		res.status(200).json(updatedBusiness);
-	} catch (error) {
-		console.error('Error adding business address:', error);
-		res.status(400).json({ error: 'Error adding business address', detail: error.message });
-	}
-}
-/**
- * POST /business/delivery-address/add
- * @tag Business
- * @summary Add a delivery address to a business
- * @description Adds a delivery address to a specific business.
- * @operationId addDeliveryAddress
- * @pathParam {string} business_id - The ID of the business
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Delivery address added successfully
- * @response 400 - Error adding delivery address
- * @prisma_model businesses
- * @prisma_model addresses
- */
-async function addDeliveryAddress(req, res) {
-	try {
-		const { business_id } = req.params;
-		const addressData = req.body;
-		const updatedBusiness = await BusinessDao.addDeliveryAddress(business_id, addressData);
-		if (
-			updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT ||
-			updatedBusiness.type === Constants.BUSINESS_TYPE.RESTAURANT ||
-			updatedBusiness.type === Constants.BUSINESS_TYPE.LOCAL
-		) {
-			businessIndex(updatedBusiness.business_id);
-		}
-		res.status(200).json(updatedBusiness);
-	} catch (error) {
-		console.error('Error adding delivery address:', error);
-		res.status(400).json({ error: 'Error adding delivery address', detail: error.message });
-	}
-}
-/**
- * PATCH /business/parent/update
- * @tag Business
- * @summary Update parent business
- * @description Updates the parent business of a specific business by its ID.
- * @operationId updateParentBusiness
- * @pathParam {string} business_id - The ID of the business to update
- * @bodyDescription The ID of the new parent business
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Parent business updated successfully
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating parent business
- * @prisma_model businesses
- */
-async function updateParentBusinessId(req, res) {
-	try {
-		const updatedBusiness = await BusinessDao.updateParentBusiness(
-			req.params.business_id,
-			req.body.parent_business_id
-		);
-		res.status(200).json(updatedBusiness);
-	} catch (e) {
-		console.error('Error updating parent business:', e);
-		res.status(400).json({ error: 'Error updating parent business', e });
-	}
-}
-/**
- * PATCH /business/address/:business_id
- * @tag Business
- * @summary Updates a business's address
- * @description This endpoint is used to update a business's primary address.
- * @operationId updateBusinessAddress
- * @pathParam {string} business_id - The ID of the business to update
- * @bodyDescription The new address details for the business
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Address updated successfully. Returns the updated business details.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating business address.
- * @prisma_model businesses
- * @prisma_model addresses
- */
-async function updateBusinessAddress(req, res) {
-	try {
-		const business = await BusinessDao.updateBusinessAddress(req.params.business_id, req.body);
-		res.status(200).json(business);
-	} catch (e) {
-		console.error('Error updating business address:', e);
-		res.status(400).json({ error: 'Error updating business address', e });
-	}
-}
-/**
- * PATCH /business/delivery-address/:business_id
- * @tag Business
- * @summary Updates a business's delivery address
- * @description This endpoint is used to update a business's delivery address.
- * @operationId updateBusinessDeliveryAddress
- * @pathParam {string} business_id - The ID of the business to update
- * @bodyDescription The new delivery address details for the business
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Delivery address updated successfully. Returns the updated business details.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating business delivery address.
- * @prisma_model businesses
- * @prisma_model addresses
- */
-async function updateBusinessDeliveryAddress(req, res) {
-	try {
-		const business = await BusinessDao.updateBusinessDeliveryAddress(req.params.business_id, req.body);
-		res.status(200).json(business);
-	} catch (e) {
-		console.error('Error updating business delivery address:', e);
-		res.status(400).json({ error: 'Error updating business delivery address', e });
 	}
 }
 /**
@@ -1289,7 +765,6 @@ async function createPaymentIntent(req, res) {
 async function manualSortScheduledUsers(req, res) {
 	const { sorted_user_ids, business_id } = req.body;
 	const filteredData = sorted_user_ids.filter((item) => item !== null);
-	console.info('sorted_user_ids', sorted_user_ids, filteredData);
 	try {
 		const updatedBusiness = await BusinessDao.manualSortScheduledUsers(filteredData, business_id);
 		res.status(200).json(updatedBusiness);
@@ -1494,6 +969,7 @@ async function getBusinessReviewsById(req, res) {
 		return res.status(400).json({ message: 'Missing required parameter: business_id' });
 	}
 	try {
+		// TODO: fix reviews first, then change this to traverse all modules
 		const business = await BusinessDao.getBusinessById(business_id);
 		if (!business?.reviewable_id) {
 			return res.status(200).json([]);
@@ -1595,54 +1071,33 @@ async function getBusinessReviewsById(req, res) {
  * @prisma_model finances
  */
 async function editBusiness(req, res) {
-	const {
-		business_group_name,
-		email,
-		telephone,
-		address,
-		delivery_address,
-		working_hours,
-		finances,
-		new_business,
-		popular,
-		...otherData
-	} = req.body;
+	const { business_group_name, email, telephone, address, delivery_address, working_hours, ...otherData } = req.body;
 	const business_id = otherData.business_id;
 	try {
 		// Update the business details
-		let updatedBusiness = await BusinessDao.updateBusiness(business_id, otherData);
-		if (finances) {
-			updatedBusiness = await BusinessDao.updateBusinessFinances(business_id, finances);
-		}
+		await BusinessDao.updateBusiness(business_id, otherData);
 		if (address) {
-			updatedBusiness = await BusinessDao.updateBusinessAddress(business_id, address);
+			await BusinessDao.updateBusinessAddress(business_id, address);
 		}
 		if (delivery_address) {
-			updatedBusiness = await BusinessDao.updateBusinessDeliveryAddress(business_id, delivery_address);
+			await BusinessDao.updateBusinessDeliveryAddress(business_id, delivery_address);
 		}
 		if (business_group_name) {
-			updatedBusiness = await BusinessDao.updateBusinessGroupName(business_id, business_group_name);
+			await BusinessDao.updateBusinessGroupName(business_id, business_group_name);
 		}
 		if (email) {
-			updatedBusiness = await BusinessDao.updateBusinessEmail(business_id, email);
+			await BusinessDao.updateBusinessEmail(business_id, email);
 		}
 		if (telephone) {
-			updatedBusiness = await BusinessDao.updateBusinessTelephone(business_id, telephone);
+			await BusinessDao.updateBusinessTelephone(business_id, telephone);
 		}
 		if (working_hours) {
-			updatedBusiness = await BusinessDao.updateBusinessWorkingHours(business_id, working_hours);
+			await BusinessDao.updateBusinessWorkingHours(business_id, working_hours);
 		}
-		if (new_business) {
-			updatedBusiness = await BusinessDao.updateBusinessIsNew(business_id, new_business);
-		}
-		if (popular) {
-			updatedBusiness = await BusinessDao.updateBusinessIsPopular(business_id, popular);
-		}
-		// Return the updated business details
+		const updatedBusiness = await BusinessDao.getBusinessById(business_id);
 		if (
-			updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT ||
-			updatedBusiness.type === Constants.BUSINESS_TYPE.RESTAURANT ||
-			updatedBusiness.type === Constants.BUSINESS_TYPE.LOCAL
+			updatedBusiness.types.includes(BUSINESS_TYPE.MERCHANT) ||
+			updatedBusiness.types.includes(BUSINESS_TYPE.LOCAL)
 		) {
 			businessIndex(updatedBusiness.business_id);
 		}
@@ -1813,7 +1268,7 @@ async function getBusynessFactorsBusinessIdList(req, res) {
  */
 async function addBusinessToFavorites(req, res) {
 	try {
-		const { business_id } = req.body;
+		const { business_id, module } = req.body;
 		const { user_id } = req.user;
 		const business = await BusinessDao.getBusinessById(business_id);
 		if (!business) {
@@ -1823,7 +1278,7 @@ async function addBusinessToFavorites(req, res) {
 		// 	// made as array for future upgrade to array business.types
 		// 	return res.status(400).json({ message: 'Business does not have the given type.' });
 		// }
-		const new_entry = await UserFavoriteBusinessDao.addFavoriteBusiness(user_id, business_id, business.type);
+		const new_entry = await UserFavoriteBusinessDao.addFavoriteBusiness(user_id, business_id, module);
 		res.status(200).json(new_entry);
 	} catch (error) {
 		console.error(error);
@@ -1885,33 +1340,6 @@ async function getFavoriteBusinesses(req, res) {
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: 'Internal Server Error while adding Business to Favorites' });
-	}
-}
-/**
- * GET /daily-meal-users/{business_id}
- * @tag Business
- * @summary List scheduled users for a business
- * @description Retrieves users scheduled for daily meals for the given business.
- * @operationId getScheduledUsersByBusinessId
- * @pathParam {string} business_id - The business ID
- * @response 200 - Users retrieved successfully
- * @responseContent {object} 200.application/json
- * @response 400 - Error retrieving users
- * @prisma_model business
- * @prisma_model users
- * @prisma_model addresses
- */
-async function getScheduledUsersByBusinessId(req, res) {
-	try {
-		const users = await BusinessDao.getScheduledUsersByBusinessId(req.params.business_id);
-		if (users) {
-			return res.status(200).json(users);
-		} else {
-			return res.status(400).json({ error: 'No users found for the given business ID' });
-		}
-	} catch (e) {
-		console.error('Error getting daily meal users by business ID:', e);
-		res.status(400).json({ error: 'Error getting daily meal users by business ID', e });
 	}
 }
 /**
@@ -2105,7 +1533,7 @@ async function createBusinessLocalLocation(req, res) {
 			location.time
 		);
 		if (newLocation?.store_id) {
-			businessIndex(newLocation.store_id);
+			businessIndex(business_id);
 		}
 		return res.status(201).json(newLocation);
 	} catch (e) {
@@ -2899,9 +2327,6 @@ export { listBusinesses };
 export { listTransferBusinesses };
 export { listMerchantBusinesses };
 export { listMerchantBusinessesWithDailyMeals };
-export { addBusinessAddress };
-export { addDeliveryAddress };
-export { update };
 export { createNewBusiness };
 export { getBusinessById };
 export { getBusinessAdminDataById };
@@ -2909,18 +2334,6 @@ export { getParentBusiness };
 export { getChildBusinesses };
 export { getBusinessesByGroupName };
 export { getBusinessesByNameSearch };
-export { updateBusinessAddress };
-export { updateBusinessDeliveryAddress };
-export { updateBusinessType };
-export { updateIsBusinessUnit };
-export { updateBusinessGroupName };
-export { updateBusinessEmail };
-export { updateBusinessTelephone };
-export { updateBusinessWorkingHours };
-export { updateRestaurantOverwhelmed };
-export { updateBusinessIsNew };
-export { updateBusinessIsPopular };
-export { updateParentBusinessId };
 export { removeParentBusinessId };
 export { deleteBusiness };
 export { createPaymentIntent };
@@ -2938,7 +2351,6 @@ export { removeBusinessPaymentMethod };
 export { getBusinessStripeStatusByBusinessId };
 export { generateBusinessStripeByBusinessId };
 export { getBusynessFactorsBusinessIdList };
-export { getBusinessesByIds };
 export { searchBusinesses };
 export { listPromoSectionsWithMerchants };
 export { activateBusiness };
@@ -2966,9 +2378,6 @@ export default {
 	listTransferBusinesses,
 	listMerchantBusinesses,
 	listMerchantBusinessesWithDailyMeals,
-	addBusinessAddress,
-	addDeliveryAddress,
-	update,
 	createNewBusiness,
 	getBusinessById,
 	getBusinessAdminDataById,
@@ -2976,18 +2385,6 @@ export default {
 	getChildBusinesses,
 	getBusinessesByGroupName,
 	getBusinessesByNameSearch,
-	updateBusinessAddress,
-	updateBusinessDeliveryAddress,
-	updateBusinessType,
-	updateIsBusinessUnit,
-	updateBusinessGroupName,
-	updateBusinessEmail,
-	updateBusinessTelephone,
-	updateBusinessWorkingHours,
-	updateRestaurantOverwhelmed,
-	updateBusinessIsNew,
-	updateBusinessIsPopular,
-	updateParentBusinessId,
 	removeParentBusinessId,
 	deleteBusiness,
 	createPaymentIntent,
@@ -3004,7 +2401,6 @@ export default {
 	getBusinessStripeStatusByBusinessId,
 	generateBusinessStripeByBusinessId,
 	getBusynessFactorsBusinessIdList,
-	getBusinessesByIds,
 	searchBusinesses,
 	listPromoSectionsWithMerchants,
 	activateBusiness,

@@ -812,11 +812,7 @@ function assignDeliveryDriver(
 
 export async function createDailyMeals() {
 	try {
-		const businesses = await BusinessDao.getBusinesses({
-			where: {
-				offers_daily_meals: true,
-			},
-		});
+		const businesses = await BusinessDao.getDailyMealBusinesses();
 		if (!businesses) {
 			throw new Error('Businesses not found.');
 		}

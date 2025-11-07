@@ -71,17 +71,17 @@ export async function enableStore(stores_id: string): Promise<StoreDetail> {
  * @throws {Error} on DB error
  */
 export async function getStoresIdByBusinessId(businessId: string): Promise<string | null> {
-    try {
-        const row = await prisma.stores_module.findUnique({
-            where: { business_id: businessId },
-            select: { stores_id: true },
-        });
-        return row?.stores_id ?? null;
-    } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : String(error);
-        console.error('Error fetching stores_id by business_id:', message);
-        throw new Error(message);
-    }
+	try {
+		const row = await prisma.stores_module.findUnique({
+			where: { business_id: businessId },
+			select: { stores_id: true },
+		});
+		return row?.stores_id ?? null;
+	} catch (error: unknown) {
+		const message = error instanceof Error ? error.message : String(error);
+		console.error('Error fetching stores_id by business_id:', message);
+		throw new Error(message);
+	}
 }
 
 export default { setStoreOnline, setStoreOverwhelmed, disableStore, enableStore, getStoresIdByBusinessId };

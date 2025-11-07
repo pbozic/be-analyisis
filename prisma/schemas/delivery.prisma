@@ -27,6 +27,7 @@ model stores_module {
     logo                     files?                     @relation("stores_logo", fields: [logo_id], references: [file_id])
     banner_id                String?                    @unique @db.Uuid
     banner                   files?                     @relation("stores_banner", fields: [banner_id], references: [file_id])
+    working_hours            Json?
 
     late_events late_events[] @relation("late_events_to_stores")
 }
@@ -56,7 +57,6 @@ model food_drinks_module {
     order_lobbies       order_lobbies[]
 
     table_reservations_module table_reservations_module?
-    seats                     Int?
     overwhelmed               Boolean                    @default(false)
     online                    Boolean                    @default(false)
     daily_meals_id            String?                    @db.Uuid
@@ -65,6 +65,7 @@ model food_drinks_module {
     logo                      files?                     @relation("food_drinks_logo", fields: [logo_id], references: [file_id])
     banner_id                 String?                    @unique @db.Uuid
     banner                    files?                     @relation("food_drinks_banner", fields: [banner_id], references: [file_id])
+    working_hours             Json?
 
     late_events late_events[] @relation("late_events_to_food_drinks")
 }
@@ -127,6 +128,7 @@ model delivery_orders {
     food_drinks_module         food_drinks_module?        @relation(fields: [food_drinks_id], references: [food_drinks_id])
     file_id                    String?                    @unique @db.Uuid
     picture_of_delivery        files?                     @relation(fields: [file_id], references: [file_id])
+    table_reservation          reservations?
 }
 
 /// @summary History of delivery order sent to drivers.
@@ -451,6 +453,7 @@ model menu_item_stock_change {
 model table_reservations_module {
     id                 String             @id @default(uuid()) @db.Uuid
     food_drinks_id     String             @unique @db.Uuid
+    seats              Int?
     food_drinks_module food_drinks_module @relation(fields: [food_drinks_id], references: [food_drinks_id])
     reservations       reservations[]
 }
@@ -470,6 +473,8 @@ model reservations {
 
     table_reservation_id String                    @db.Uuid
     table_reservations   table_reservations_module @relation(fields: [table_reservation_id], references: [id])
+    delivery_order_id    String?                   @unique @db.Uuid
+    delivery_order       delivery_orders?          @relation(fields: [delivery_order_id], references: [order_id])
 }
 
 /// @summary Subscription to the daily meals program for a user.

@@ -10,33 +10,22 @@ import {
 import DailyMealController from '../../controllers/DailyMealController.js';
 import {
 	ActivateBusinessSchema,
-	AddAddressSchema,
 	AddBusinessToFavoritesSchema,
 	AddScheduledUserSortingTypeSchema,
 	CreateBusinessLocalLocationSchema,
 	CreateScoringPointsSchema,
 	DeactivateBusinessSchema,
 	GetBusinessAnalyticsSchema,
-	GetBusinessesSchema,
 	ManualSortScheduledUsersSchema,
 	RemoveBusinessFromFavoritesSchema,
 	ToggleTransportModuleSchema,
-	UpdateBusinessEmailSchema,
-	UpdateBusinessGroupNameSchema,
-	UpdateBusinessIsNewSchema,
-	UpdateBusinessIsPopularSchema,
 	UpdateBusinessLocalLocationSchema,
 	UpdateBusinessSchema,
-	UpdateBusinessTelephoneSchema,
-	UpdateBusinessTypeSchema,
-	UpdateBusinessWorkingHoursSchema,
-	UpdateIsBusinessUnitSchema,
-	UpdateParentBusinessIdSchema,
 } from '../../schemas/dto/Business/Business.validation.ts';
 import { ListPromoSectionsSchema } from '../../schemas/validation/PromoSection/PromoSection.validation.ts';
 
 const router = express.Router();
-router.post('/businesses/ids', validate(GetBusinessesSchema), BusinessController.getBusinessesByIds);
+// router.post('/businesses/ids', validate(GetBusinessesSchema), BusinessController.getBusinessesByIds);
 /**
  *    * @module merchant
  *
@@ -125,17 +114,17 @@ router.post('/deactivate', validate(DeactivateBusinessSchema), BusinessControlle
  *
  */
 router.delete('/remove-payment-method/:pm_id', BusinessController.removeBusinessPaymentMethod);
-/**
- *    * @module general
- *
- */
-router.post('/address/add', validate(AddAddressSchema), BusinessController.addBusinessAddress);
-/**
- *    * @module general
- *
- */
-router.post('/delivery-address/add', validate(AddAddressSchema), BusinessController.addDeliveryAddress);
-router.get('/daily-meal-users/:business_id', BusinessController.getScheduledUsersByBusinessId);
+// /**
+//  *    * @module general
+//  *
+//  */
+// router.post('/address/add', validate(AddAddressSchema), BusinessController.addBusinessAddress);
+// /**
+//  *    * @module general
+//  *
+//  */
+// router.post('/delivery-address/add', validate(AddAddressSchema), BusinessController.addDeliveryAddress);
+// router.get('/daily-meal-users/:business_id', BusinessController.getScheduledUsersByBusinessId);
 router.post(
 	'/scheduled_users/sorting',
 	validate(ManualSortScheduledUsersSchema),
@@ -146,53 +135,53 @@ router.post(
 	validate(AddScheduledUserSortingTypeSchema),
 	BusinessController.addScheduledUserSortingType
 );
-router.patch('/', validate(UpdateBusinessSchema), BusinessController.update);
+// router.patch('/', validate(UpdateBusinessSchema), BusinessController.update);
 router.patch('/edit', validate(UpdateBusinessSchema), BusinessController.editBusiness);
-router.patch('/type', validate(UpdateBusinessTypeSchema), BusinessController.updateBusinessType);
-router.patch('/business-unit', validate(UpdateIsBusinessUnitSchema), BusinessController.updateIsBusinessUnit);
-router.patch(
-	'/business-group-name',
-	validate(UpdateBusinessGroupNameSchema),
-	BusinessController.updateBusinessGroupName
-);
-router.patch('/email', validate(UpdateBusinessEmailSchema), BusinessController.updateBusinessEmail);
-/**
- *    * @module general
- *
- */
-router.patch('/telephone', validate(UpdateBusinessTelephoneSchema), BusinessController.updateBusinessTelephone);
-/**
- *    * @module general
- *
- */
-router.patch(
-	'/workingHours',
-	validate(UpdateBusinessWorkingHoursSchema),
-	BusinessController.updateBusinessWorkingHours
-);
+// router.patch('/type', validate(UpdateBusinessTypeSchema), BusinessController.updateBusinessType);
+// router.patch('/business-unit', validate(UpdateIsBusinessUnitSchema), BusinessController.updateIsBusinessUnit);
 // router.patch(
-// 	'/restaurant-overwhelmed/:business_id',
-// 	validate(UpdateRestaurantOverwhelmedSchema),
-// 	BusinessController.updateRestaurantOverwhelmed
+// 	'/business-group-name',
+// 	validate(UpdateBusinessGroupNameSchema),
+// 	BusinessController.updateBusinessGroupName
 // );
-router.patch('/new/:business_id', validate(UpdateBusinessIsNewSchema), BusinessController.updateBusinessIsNew);
-router.patch(
-	'/popular/:business_id',
-	validate(UpdateBusinessIsPopularSchema),
-	BusinessController.updateBusinessIsPopular
-);
-router.patch('/parent/update', validate(UpdateParentBusinessIdSchema), BusinessController.updateParentBusinessId);
-router.patch('/parent/remove', BusinessController.removeParentBusinessId);
-/**
- *    * @module general
- *
- */
-router.patch('/address', validate(AddAddressSchema), BusinessController.updateBusinessAddress);
-/**
- *    * @module general
- *
- */
-router.patch('/delivery-address', validate(AddAddressSchema), BusinessController.updateBusinessDeliveryAddress);
+// router.patch('/email', validate(UpdateBusinessEmailSchema), BusinessController.updateBusinessEmail);
+// /**
+//  *    * @module general
+//  *
+//  */
+// router.patch('/telephone', validate(UpdateBusinessTelephoneSchema), BusinessController.updateBusinessTelephone);
+// /**
+//  *    * @module general
+//  *
+//  */
+// router.patch(
+// 	'/workingHours',
+// 	validate(UpdateBusinessWorkingHoursSchema),
+// 	BusinessController.updateBusinessWorkingHours
+// );
+// // router.patch(
+// // 	'/restaurant-overwhelmed/:business_id',
+// // 	validate(UpdateRestaurantOverwhelmedSchema),
+// // 	BusinessController.updateRestaurantOverwhelmed
+// // );
+// router.patch('/new/:business_id', validate(UpdateBusinessIsNewSchema), BusinessController.updateBusinessIsNew);
+// router.patch(
+// 	'/popular/:business_id',
+// 	validate(UpdateBusinessIsPopularSchema),
+// 	BusinessController.updateBusinessIsPopular
+// );
+// router.patch('/parent/update', validate(UpdateParentBusinessIdSchema), BusinessController.updateParentBusinessId);
+// router.patch('/parent/remove', BusinessController.removeParentBusinessId);
+// /**
+//  *    * @module general
+//  *
+//  */
+// router.patch('/address', validate(AddAddressSchema), BusinessController.updateBusinessAddress);
+// /**
+//  *    * @module general
+//  *
+//  */
+// router.patch('/delivery-address', validate(AddAddressSchema), BusinessController.updateBusinessDeliveryAddress);
 /**
  *    * @module finances
  *

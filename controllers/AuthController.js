@@ -486,6 +486,11 @@ async function registerTaxiService(req, res) {
 			...req.body.business,
 			stripe_customer_id: stripeCustomer.id,
 		});
+		await prisma.transport_module.create({
+			data: {
+				business: { connect: { business_id: business.business_id } },
+			},
+		});
 		// TODO: handle uniqueness here or with joi validation
 		let drivers = [];
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
@@ -735,6 +740,11 @@ async function registerDeliveryService(req, res) {
 			...req.body.business,
 			stripe_customer_id: stripeCustomer.id,
 		});
+		await prisma.transport_module.create({
+			data: {
+				business: { connect: { business_id: business.business_id } },
+			},
+		});
 		let deliveryDrivers = [];
 		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
 			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
@@ -939,10 +949,25 @@ async function registerMerchantService(req, res) {
 			req.body.business.name,
 			req.body.business.telephone
 		);
+		const businessType = req.body.business.type;
+		delete req.body.business.type;
 		const business = await BusinessDao.createNewBusiness({
 			...req.body.business.data,
 			stripe_customer_id: stripeCustomer.id,
 		});
+		if (businessType === 'FOOD_DRINKS') {
+			await prisma.food_drinks_module.create({
+				data: {
+					business: { connect: { business_id: business.business_id } },
+				},
+			});
+		} else if (businessType === 'STORES') {
+			await prisma.stores_module.create({
+				data: {
+					business: { connect: { business_id: business.business_id } },
+				},
+			});
+		}
 		// Ensure at least one business user data is provided & created
 		if (!Array.isArray(req.body.users) || !req.body.users.length) {
 			return res.status(400).json({ error: 'At least one business user must be provided.' });

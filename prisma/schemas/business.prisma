@@ -1,0 +1,184 @@
+/// @summary Business entity representing a merchant/partner account or crm.
+/// @namespace Business
+/// @erd BusinessUsers
+/// @erd CRM
+/// @erd Transport
+/// @erd Delivery
+/// @erd Stores
+/// @erd FoodDrinks
+/// @erd Reservations
+/// @erd Users
+/// @erd Addresses
+/// @erd Files
+///
+/// Core company profile linked to address, documents, analytics, roles and users.
+model business {
+    business_id         String      @id @unique @default(uuid()) @db.Uuid
+    address_id          String?     @db.Uuid
+    is_business_unit    Boolean     @default(false) // TODO: Remove later
+    business_group_name String? // if part of any holding or other business group
+    name                String
+    description         String?
+    tax_id              String
+    registration_id     String
+    email               String      @unique
+    telephone           String
+    telephone_code      String
+    // telephone_number    String
+    website_url         String?
+    working_hours       Json?
+    // TODO: implement this somewhere else
+    // popular             Boolean     @default(true)
+    // new                 Boolean     @default(false)
+    created_at          DateTime    @default(now()) @db.Timestamptz(6)
+    updated_at          DateTime    @default(now()) @updatedAt @db.Timestamptz(6)
+    address             addresses?  @relation(name: "address", fields: [address_id], references: [address_id])
+    documents           documents[]
+    parent_business_id  String?     @db.Uuid
+    parent_business     business?   @relation("parent_business", fields: [parent_business_id], references: [business_id], onDelete: SetNull)
+    child_businesses    business[]  @relation("parent_business")
+
+    stripe_account_id               String?
+    stripe_customer_id              String?
+    word_buy_stripe_subscription_id String?
+    word_buys                       word_buy[]
+    promo_sections                  promo_sections_buy[]
+    analytics                       promo_analytics[]
+    first_activated_at              DateTime?
+    active                          Boolean              @default(false)
+    sales_representative_id         String?
+
+    user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_business")
+    scoring_points           scoring_points[]           @relation("scoring_points_to_business")
+    account_actions          account_actions[]
+
+    business_money_flows business_money_flows[]
+    roles                role[]
+    business_users       business_users[]
+    business_teams       business_teams[]
+
+    types              business_to_types[]
+    reservation_module reservation_module?
+    transport_module   transport_module?
+    stores_module      stores_module?
+    food_drinks_module food_drinks_module?
+    crm_module         crm_module?
+
+    @@index([parent_business_id])
+}
+
+/// @summary Junction table linking businesses to their types.
+/// @namespace Business
+/// @hidden
+model business_to_types {
+    business_id String   @db.Uuid
+    type_id     String   @db.Uuid
+    created_at  DateTime @default(now()) @db.Timestamptz(6)
+    updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    business      business      @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+    business_type business_type @relation(fields: [type_id], references: [type_id], onDelete: Cascade)
+
+    @@id([business_id, type_id])
+    @@index([type_id, business_id])
+}
+
+/// @summary Types of businesses (e.g., Local, Store, Restaurant).
+/// @namespace Business
+model business_type {
+    type_id    String              @id @default(uuid()) @db.Uuid
+    type       String              @unique // TODO: seeder
+    created_at DateTime            @default(now()) @db.Timestamptz(6)
+    updated_at DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
+    businesses business_to_types[]
+}
+
+/// @summary User membership within a business (employees/managers).
+/// @namespace BusinessUsers
+/// @erd Business
+/// @erd TaxiOrders
+/// @erd DeliveryOrders
+/// @erd Bookings
+/// @erd Addresses
+model business_users {
+    business_users_id    String        @id @default(uuid()) @db.Uuid
+    online               Boolean?      @default(false) // TODO: remove?
+    company_role         COMPANY_ROLE  @default(DIRECTOR)
+    created_at           DateTime      @default(now()) @db.Timestamptz(6)
+    updated_at           DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
+    user_id              String        @db.Uuid
+    users                users?        @relation(fields: [user_id], references: [user_id])
+    business_id          String        @db.Uuid
+    business             business?     @relation(fields: [business_id], references: [business_id])
+    operating_address_id String?       @db.Uuid
+    operating_address    addresses?    @relation("business_users_operating_address", fields: [operating_address_id], references: [address_id])
+    allowance            allowances?
+    taxi_orders          taxi_orders[]
+    employee             employee?
+
+    @@unique([user_id, business_id], name: "uniqueBusinessUser")
+    @@index([business_id])
+    @@index([user_id])
+}
+
+/// @summary Internal teams/groups within a business.
+/// @namespace Business
+///
+/// Used to organize users into teams with optional per-person limits for purchases or actions.
+model business_teams {
+    business_teams_id String   @id @default(uuid()) @db.Uuid
+    team_name         String
+    business_id       String   @db.Uuid
+    limit_per_person  Float
+    created_at        DateTime @default(now()) @db.Timestamptz(6)
+    updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    users    users[]  @relation("user_to_business_team")
+    business business @relation(fields: [business_id], references: [business_id])
+
+    @@unique([team_name, business_id], name: "uniqueTeamPerBusiness")
+    @@index([business_id])
+}
+
+// CRM module for non-partnered business accounts
+
+/// @summary CRM module for non-partnered business accounts.
+/// @namespace CRM
+///
+/// Holds configuration for businesses using CRM features without being full platform partners.
+/// Links to client contacts and internal teams.
+model crm_module {
+    crm_module_id               String   @id @default(uuid()) @db.Uuid
+    business_id                 String   @unique @db.Uuid
+    purchase_order_limit_amount Float?
+    created_at                  DateTime @default(now()) @db.Timestamptz(6)
+    updated_at                  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    business         business           @relation(fields: [business_id], references: [business_id])
+    business_clients business_clients[]
+}
+
+/// @summary Client contacts managed by a CRM module.
+/// @namespace CRM
+/// @namespace TaxiOrders
+/// @namespace DeliveryOrders
+///
+/// Represents end customers of a business using CRM. Telephone is unique per CRM module
+/// to avoid duplicate client records within the same business context.
+model business_clients {
+    business_clients_id String     @id @default(uuid()) @db.Uuid
+    created_at          DateTime   @default(now()) @db.Timestamptz(6)
+    updated_at          DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+    crm_module_id       String     @db.Uuid
+    crm_module          crm_module @relation(fields: [crm_module_id], references: [crm_module_id])
+
+    first_name     String?
+    last_name      String?
+    email          String?
+    telephone      String
+    telephone_code String
+    // telephone_number String
+    taxi_orders    taxi_orders[]
+
+    @@unique([telephone, crm_module_id], name: "uniqueBusinessClient")
+}

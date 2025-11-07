@@ -66,7 +66,7 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod, useCredits)
 			};
 		})
 	);
-
+	//TODO: use delivery_address unless order from LOCAL
 	const restaurant = await BusinessDao.getBusinessById(orderLobby.restaurant_id);
 
 	const restaurantAddress = {
