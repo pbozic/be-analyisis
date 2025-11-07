@@ -4,6 +4,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { UUID } from '../../../primitives';
 import { ReservationModuleRefSchema } from '../reservation-module/reservation-module.dto.js';
 import { AddressRefSchema } from '../../Address/address.js';
+import { EmployeeRefSchema } from '../employee/employee.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -130,6 +131,18 @@ export const LocationWithSchedulesDAOResponseSchema = LocationBaseSchema.extend(
 	description: 'Location response from DAO with schedules',
 });
 
+// ===== MULTI-ENTITY RESPONSE SCHEMAS =====
+// Response combining locations and employees (used in location list endpoints)
+export const LocationsAndEmployeesResponseSchema = z
+	.object({
+		locations: z.array(LocationDetailSchema),
+		employees: z.array(EmployeeRefSchema),
+	})
+	.openapi({
+		title: 'LocationsAndEmployeesResponse',
+		description: 'Combined response containing locations with their assigned employees',
+	});
+
 // ===== EXPORTED TYPES =====
 export type LocationBase = z.infer<typeof LocationBaseSchema>;
 export type LocationRef = z.infer<typeof LocationRefSchema>;
@@ -141,6 +154,7 @@ export type DeleteLocationRequest = z.infer<typeof DeleteLocationRequestSchema>;
 export type LocationResponse = z.infer<typeof LocationResponseSchema>;
 export type LocationDAOResponse = z.infer<typeof LocationDAOResponseSchema>;
 export type LocationWithSchedulesDAOResponse = z.infer<typeof LocationWithSchedulesDAOResponseSchema>;
+export type LocationsAndEmployeesResponse = z.infer<typeof LocationsAndEmployeesResponseSchema>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
@@ -154,4 +168,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('LocationResponse', LocationResponseSchema);
 	registry.register('LocationDAO', LocationDAOResponseSchema);
 	registry.register('LocationWithSchedulesDAO', LocationWithSchedulesDAOResponseSchema);
+
+	// Register multi-entity response schemas
+	registry.register('LocationsAndEmployeesResponse', LocationsAndEmployeesResponseSchema);
 }

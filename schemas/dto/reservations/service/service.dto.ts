@@ -6,6 +6,8 @@ import { ReservationModuleRefSchema } from '../reservation-module/reservation-mo
 import { ServiceCategoryRefSchema } from '../service-category/service-category.dto.js';
 import { BookingRefSchema } from '../booking/booking.dto.js';
 import { ServiceAssignmentRefSchema } from '../service-assignment/service-assignment.dto.js';
+import { EmployeeRefSchema } from '../employee/employee.dto.js';
+import { CustomerRefSchema } from '../customer/customer.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -208,6 +210,30 @@ export const ServiceDAOResponseSchema = ServiceDetailSchema.openapi({
 	description: 'Service response from DAO functions with category, bookings, and assigned employees fully populated',
 });
 
+// ===== MULTI-ENTITY RESPONSE SCHEMAS =====
+// Response combining services, employees, and customers (used in service list endpoints)
+export const ServicesEmployeesAndCustomersResponseSchema = z
+	.object({
+		services: z.array(ServiceDetailSchema),
+		employees: z.array(EmployeeRefSchema),
+		customers: z.array(CustomerRefSchema),
+	})
+	.openapi({
+		title: 'ServicesEmployeesAndCustomersResponse',
+		description: 'Combined response containing services with their assigned employees and customers',
+	});
+
+// Response for service form data (used in getServiceFormData endpoint)
+export const ServiceFormDataResponseSchema = z
+	.object({
+		service: ServiceDetailSchema,
+		formData: CreateServiceWithEmployeesSchema,
+	})
+	.openapi({
+		title: 'ServiceFormDataResponse',
+		description: 'Service details with pre-populated form data for editing',
+	});
+
 // ===== EXPORTED TYPES =====
 export type ServiceBase = z.infer<typeof ServiceBaseSchema>;
 export type ServiceRef = z.infer<typeof ServiceRefSchema>;
@@ -222,6 +248,8 @@ export type CreateServiceWithLocations = z.infer<typeof CreateServiceWithLocatio
 export type UpdateServiceWithLocations = z.infer<typeof UpdateServiceWithLocationsSchema>;
 export type ServiceResponse = z.infer<typeof ServiceResponseSchema>;
 export type ServiceDAOResponse = z.infer<typeof ServiceDAOResponseSchema>;
+export type ServicesEmployeesAndCustomersResponse = z.infer<typeof ServicesEmployeesAndCustomersResponseSchema>;
+export type ServiceFormDataResponse = z.infer<typeof ServiceFormDataResponseSchema>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
@@ -238,4 +266,8 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateServiceWithLocations', UpdateServiceWithLocationsSchema);
 	registry.register('ServiceResponse', ServiceResponseSchema);
 	registry.register('ServiceDAO', ServiceDAOResponseSchema);
+
+	// Register multi-entity response schemas
+	registry.register('ServicesEmployeesAndCustomersResponse', ServicesEmployeesAndCustomersResponseSchema);
+	registry.register('ServiceFormDataResponse', ServiceFormDataResponseSchema);
 }

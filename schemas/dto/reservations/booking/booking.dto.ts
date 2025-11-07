@@ -506,6 +506,139 @@ export const BookingCoursesByModuleDAOResponseSchema = BookingCoursesDAOResponse
 	description: 'Course bookings by module response with course times and related entities',
 });
 
+// ===== BOOKING ANALYTICS SCHEMAS =====
+
+export const BookingAnalyticsCardSchema = z
+	.object({
+		noShows: z.number().openapi({ description: 'Number of no-show bookings' }),
+		cancels: z.number().openapi({ description: 'Number of cancelled bookings' }),
+		totalPrice: z.number().openapi({ description: 'Total price from bookings in cents' }),
+		newCustomers: z.number().openapi({ description: 'Number of unique new customers' }),
+		newCustomersBookings: z.number().openapi({ description: 'Total bookings from new customers' }),
+		bookingsCount: z.number().openapi({ description: 'Total number of bookings' }),
+	})
+	.openapi({
+		title: 'BookingAnalyticsCard',
+		description: 'Analytics data for a booking statistics card',
+	});
+
+export type BookingAnalyticsCard = z.infer<typeof BookingAnalyticsCardSchema>;
+
+export const DailyBookingStatsSchema = z
+	.object({
+		date: z.string().openapi({ example: '2025-11-01T00:00:00Z', description: 'Start of period' }),
+		endDate: z.string().openapi({ example: '2025-11-02T00:00:00Z', description: 'End of period' }),
+		bookingsCount: z.number().openapi({ description: 'Number of bookings in period' }),
+		totalPrice: z.number().openapi({ description: 'Total price from bookings' }),
+	})
+	.openapi({
+		title: 'DailyBookingStats',
+		description: 'Daily aggregated booking statistics',
+	});
+
+export type DailyBookingStats = z.infer<typeof DailyBookingStatsSchema>;
+
+export const BookingsAnalyticsResponseSchema = z
+	.object({
+		cards: BookingAnalyticsCardSchema,
+		cardsPrev: BookingAnalyticsCardSchema,
+		sortedBookings: z.array(DailyBookingStatsSchema),
+	})
+	.openapi({
+		title: 'BookingsAnalyticsResponse',
+		description: 'Complete booking analytics with current and previous period comparison',
+	});
+
+export type BookingsAnalyticsResponse = z.infer<typeof BookingsAnalyticsResponseSchema>;
+
+// ===== BOOKING GROUP OPERATION SCHEMAS =====
+
+export const BookingGroupResponseSchema = z
+	.object({
+		parent: BookingResponseSchema,
+		children: z.array(BookingResponseSchema),
+		all: z.array(BookingResponseSchema),
+	})
+	.openapi({
+		title: 'BookingGroupResponse',
+		description: 'Parent booking with all child bookings after group creation',
+	});
+
+export type BookingGroupResponse = z.infer<typeof BookingGroupResponseSchema>;
+
+export const BookingGroupUpdateResultSchema = z
+	.object({
+		parent: BookingResponseSchema.optional(),
+		children: z.array(BookingResponseSchema),
+		all: z.array(BookingResponseSchema),
+	})
+	.openapi({
+		title: 'BookingGroupUpdateResult',
+		description: 'Update result for a single booking group',
+	});
+
+export type BookingGroupUpdateResult = z.infer<typeof BookingGroupUpdateResultSchema>;
+
+export const MultipleBookingGroupUpdateResponseSchema = z
+	.object({
+		result: z.array(BookingGroupUpdateResultSchema),
+	})
+	.openapi({
+		title: 'MultipleBookingGroupUpdateResponse',
+		description: 'Update results for multiple booking groups',
+	});
+
+export type MultipleBookingGroupUpdateResponse = z.infer<typeof MultipleBookingGroupUpdateResponseSchema>;
+
+export const BookingGroupStartUpdateResponseSchema = z
+	.object({
+		booking: BookingResponseSchema,
+		firstBookingData: BookingResponseSchema.optional(),
+		updatedBookings: z.array(BookingResponseSchema).optional(),
+	})
+	.openapi({
+		title: 'BookingGroupStartUpdateResponse',
+		description: 'Updated bookings after group start time change',
+	});
+
+export type BookingGroupStartUpdateResponse = z.infer<typeof BookingGroupStartUpdateResponseSchema>;
+
+export const UpdateBookingGroupResponseSchema = z
+	.object({
+		result: z.array(BookingGroupUpdateResultSchema),
+		deleted: z.array(BookingResponseSchema),
+	})
+	.openapi({
+		title: 'UpdateBookingGroupResponse',
+		description: 'Result of updating multiple booking groups with deletions',
+	});
+
+export type UpdateBookingGroupResponse = z.infer<typeof UpdateBookingGroupResponseSchema>;
+
+// ===== BOOKING WITH EMPLOYEES AND SLOTS SCHEMA =====
+
+export const EmployeeWithSlotsSchema = EmployeeDetailSchema.extend({
+	booking_slots: z.array(BookingResponseSchema).optional(),
+	schedule_slot_exceptions: z.array(BookingResponseSchema).optional(),
+}).openapi({
+	title: 'EmployeeWithSlots',
+	description: 'Employee with business user and booking slots/exceptions',
+});
+
+export type EmployeeWithSlots = z.infer<typeof EmployeeWithSlotsSchema>;
+
+export const BookingsAndEmployeesWithSlotsResponseSchema = z
+	.object({
+		bookings: z.array(BookingResponseSchema),
+		employees: z.array(EmployeeWithSlotsSchema),
+	})
+	.openapi({
+		title: 'BookingsAndEmployeesWithSlotsResponse',
+		description: 'Bookings for location and employees with booking/schedule slots and exceptions',
+	});
+
+export type BookingsAndEmployeesWithSlotsResponse = z.infer<typeof BookingsAndEmployeesWithSlotsResponseSchema>;
+
 // ===== EXPORTED TYPES =====
 export type BookingBase = z.infer<typeof BookingBaseSchema>;
 export type BookingRef = z.infer<typeof BookingRefSchema>;
@@ -571,4 +704,20 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('BookingCoursesDAO', BookingCoursesDAOResponseSchema);
 	registry.register('BookingForAnalyticsDAO', BookingForAnalyticsDAOResponseSchema);
 	registry.register('BookingCoursesByModuleDAO', BookingCoursesByModuleDAOResponseSchema);
+
+	// Register analytics schemas
+	registry.register('BookingAnalyticsCard', BookingAnalyticsCardSchema);
+	registry.register('DailyBookingStats', DailyBookingStatsSchema);
+	registry.register('BookingsAnalyticsResponse', BookingsAnalyticsResponseSchema);
+
+	// Register booking group operation schemas
+	registry.register('BookingGroupResponse', BookingGroupResponseSchema);
+	registry.register('BookingGroupUpdateResult', BookingGroupUpdateResultSchema);
+	registry.register('MultipleBookingGroupUpdateResponse', MultipleBookingGroupUpdateResponseSchema);
+	registry.register('BookingGroupStartUpdateResponse', BookingGroupStartUpdateResponseSchema);
+	registry.register('UpdateBookingGroupResponse', UpdateBookingGroupResponseSchema);
+
+	// Register employee with slots and combined response schemas
+	registry.register('EmployeeWithSlots', EmployeeWithSlotsSchema);
+	registry.register('BookingsAndEmployeesWithSlots', BookingsAndEmployeesWithSlotsResponseSchema);
 }
