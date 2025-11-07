@@ -1,15 +1,19 @@
+import { Prisma } from '@prisma/client';
+import { float } from '@elastic/elasticsearch/lib/api/types.js';
+
 import prisma from '../prisma/prisma.js';
+import { MenuItem, MenuCategory, MenuItemDetail, UpdateMenuItem } from '../schemas/dto/Menu/menu.dto.js';
 /**
  * Create a new version for a menu item and set it as the current version.
  *
  * @param {string} menu_item_id - Menu item ID.
  * @param {number} version - Version number.
  * @param {object} snapshot - Snapshot payload for the version.
- * @returns {Promise<object>} The created version record.
+ * @returns {Promise<MenuItemDataSchema>} The created version record.
  */
-const createMenuItemVersion = async (menu_item_id, version, snapshot) => {
+const createMenuItemVersion = async (menu_item_id: string, version: number, snapshot: object): Promise<MenuItem> => {
 	// Create a transaction to update the menu item version
-	const transaction = await prisma.$transaction(async (prisma) => {
+	const transaction = await prisma.$transaction(async (prisma: Prisma.TransactionClient) => {
 		// Create the new version
 		const newVersion = await prisma.menu_item_versions.create({
 			data: { menu_item_id, version, snapshot },
@@ -17,7 +21,7 @@ const createMenuItemVersion = async (menu_item_id, version, snapshot) => {
 		// Update the menu item to point to the new version
 		await prisma.menu_items.update({
 			where: { menu_item_id },
-			data: { current_version_id: newVersion.menu_item_version_id },
+			data: { latest_version_id: newVersion.menu_item_version_id },
 		});
 		return newVersion;
 	});
@@ -30,11 +34,16 @@ const createMenuItemVersion = async (menu_item_id, version, snapshot) => {
  *
  * @param {string} categoryId - Menu category ID to attach to.
  * @param {string|null} taxRateId - Optional tax rate ID to connect.
- * @param {object} menuItemData - Menu item fields to create.
+ * @param {MenuItem} menuItemData - Menu item fields to create.
  * @param {boolean} is_copy - Whether this item is a copied item.
- * @returns {Promise<object>} The created menu item.
+ * @returns {Promise<MenuItem>} The created menu item.
  */
-const createMenuItem = async (categoryId, taxRateId, menuItemData, is_copy) => {
+const createMenuItem = async (
+	categoryId: string,
+	taxRateId: string | null,
+	menuItemData: MenuItem,
+	is_copy: boolean
+): Promise<MenuItem> => {
 	return await prisma.menu_items.create({
 		data: {
 			menu_category: {
@@ -55,9 +64,12 @@ const createMenuItem = async (categoryId, taxRateId, menuItemData, is_copy) => {
  *
  * @param {string} menu_category_id - Menu category ID.
  * @param {string} menuItemIdToAdd - Menu item ID to add.
- * @returns {Promise<object|undefined>} The updated category or undefined if already present.
+ * @returns {Promise<object|MenuCategory>} The updated category or undefined if already present.
  */
-const addMenuItemIdToOrder = async (menu_category_id, menuItemIdToAdd) => {
+const addMenuItemIdToOrder = async (
+	menu_category_id: string,
+	menuItemIdToAdd: string
+): Promise<MenuCategory | undefined> => {
 	try {
 		const category = await prisma.menu_categories.findUnique({
 			where: { menu_category_id: menu_category_id },
@@ -81,16 +93,19 @@ const addMenuItemIdToOrder = async (menu_category_id, menuItemIdToAdd) => {
  *
  * @param {string} menu_category_id - Menu category ID.
  * @param {string} menuItemIdToRemove - Menu item ID to remove.
- * @returns {Promise<object>} The updated category.
+ * @returns {Promise<MenuCategory>} The updated category.
  */
-const removeMenuItemIdFromOrder = async (menu_category_id, menuItemIdToRemove) => {
+const removeMenuItemIdFromOrder = async (
+	menu_category_id: string,
+	menuItemIdToRemove: string
+): Promise<MenuCategory> => {
 	try {
 		const category = await prisma.menu_categories.findUnique({
 			where: { menu_category_id: menu_category_id },
 			select: { menu_items_ordered: true },
 		});
 		let orderedItems = category.menu_items_ordered ? category.menu_items_ordered : [];
-		orderedItems = orderedItems.filter((id) => id !== menuItemIdToRemove);
+		orderedItems = orderedItems.filter((id: string) => id !== menuItemIdToRemove);
 		return await prisma.menu_categories.update({
 			where: { menu_category_id: menu_category_id },
 			data: { menu_items_ordered: orderedItems },
@@ -104,9 +119,9 @@ const removeMenuItemIdFromOrder = async (menu_category_id, menuItemIdToRemove) =
  * Get menu items by a list of IDs including their categories and categories' categories.
  *
  * @param {string[]} menu_item_ids - List of menu item IDs.
- * @returns {Promise<object[]>} Array of menu items with category context.
+ * @returns {Promise<MenuItemDetail[]>} Array of menu items with category context.
  */
-const getMenuItemsByIds = async (menu_item_ids) => {
+const getMenuItemsByIds = async (menu_item_ids: string[]): Promise<MenuItemDetail[]> => {
 	return await prisma.menu_items.findMany({
 		where: {
 			menu_item_id: {
@@ -131,9 +146,9 @@ const getMenuItemsByIds = async (menu_item_ids) => {
  *
  * @param {string} business_id - Business ID.
  * @param {object} args - Additional where filters or options.
- * @returns {Promise<object[]>} Array of menu items with documents and files.
+ * @returns {Promise<MenuItemDetail[]>} Array of menu items with documents and files.
  */
-const getMenuItemsByBusinessId = async (business_id, args) => {
+const getMenuItemsByBusinessId = async (business_id: string, args: object): Promise<MenuItemDetail[]> => {
 	return await prisma.menu_items.findMany({
 		where: {
 			business_id: business_id,
@@ -153,9 +168,9 @@ const getMenuItemsByBusinessId = async (business_id, args) => {
  * Get menu items by their menu category.
  *
  * @param {string} categoryId - Menu category ID.
- * @returns {Promise<object[]>} Array of menu items.
+ * @returns {Promise<MenuItem[]>} Array of menu items.
  */
-const getMenuItemsByCategoryId = async (categoryId) => {
+const getMenuItemsByCategoryId = async (categoryId: string): Promise<MenuItem[]> => {
 	return await prisma.menu_items.findMany({
 		where: {
 			menu_category_id: categoryId,
@@ -166,9 +181,9 @@ const getMenuItemsByCategoryId = async (categoryId) => {
  * Delete a menu item by ID.
  *
  * @param {string} menuItemId - Menu item ID.
- * @returns {Promise<object>} The deleted menu item.
+ * @returns {Promise<MenuItem>} The deleted menu item.
  */
-const deleteMenuItem = async (menuItemId) => {
+const deleteMenuItem = async (menuItemId: string): Promise<MenuItem> => {
 	return await prisma.menu_items.delete({
 		where: {
 			menu_item_id: menuItemId,
@@ -179,10 +194,10 @@ const deleteMenuItem = async (menuItemId) => {
  * Update a menu item; logs stock changes separately when stock is provided.
  *
  * @param {string} menuItemId - Menu item ID.
- * @param {object} data - Partial fields to update (stock handled specially).
- * @returns {Promise<object>} The updated menu item.
+ * @param {UpdateMenuItem} data - Partial fields to update (stock handled specially).
+ * @returns {Promise<MenuItem>} The updated menu item.
  */
-const updateMenuItem = async (menuItemId, data) => {
+const updateMenuItem = async (menuItemId: string, data: UpdateMenuItem): Promise<MenuItem> => {
 	// exclude stock from the data object if it exists
 	let { stock, ...rest } = data;
 	data = rest;
@@ -216,10 +231,10 @@ const updateMenuItem = async (menuItemId, data) => {
  * Update the price for a menu item.
  *
  * @param {string} menuItemId - Menu item ID.
- * @param {number} price - New price value.
- * @returns {Promise<object>} The updated menu item.
+ * @param {float} price - New price value.
+ * @returns {Promise<MenuItem>} The updated menu item.
  */
-const updateMenuItemPrice = async (menuItemId, price) => {
+const updateMenuItemPrice = async (menuItemId: string, price: float): Promise<MenuItem> => {
 	return await prisma.menu_items.update({
 		where: {
 			menu_item_id: menuItemId,
@@ -234,9 +249,9 @@ const updateMenuItemPrice = async (menuItemId, price) => {
  *
  * @param {string} menu_item_id - Menu item ID.
  * @param {string} menu_category_id - Menu category ID.
- * @returns {Promise<object>} The updated menu item.
+ * @returns {Promise<MenuItem>} The updated menu item.
  */
-const addMenuItemToCategory = async (menu_item_id, menu_category_id) => {
+const addMenuItemToCategory = async (menu_item_id: string, menu_category_id: string): Promise<MenuItem> => {
 	return await prisma.menu_items.update({
 		where: {
 			menu_item_id: menu_item_id,
@@ -252,9 +267,9 @@ const addMenuItemToCategory = async (menu_item_id, menu_category_id) => {
  * Disconnect a menu item from its category.
  *
  * @param {string} menu_item_id - Menu item ID.
- * @returns {Promise<object>} The updated menu item.
+ * @returns {Promise<MenuItem>} The updated menu item.
  */
-const removeMenuItemFromCategory = async (menu_item_id) => {
+const removeMenuItemFromCategory = async (menu_item_id: string): Promise<MenuItem | Error> => {
 	try {
 		return await prisma.menu_items.update({
 			where: {
@@ -264,9 +279,9 @@ const removeMenuItemFromCategory = async (menu_item_id) => {
 				menu_category_id: null,
 			},
 		});
-	} catch (error) {
-		console.error(`Error removing menu item ${menu_item_id} from category:`, error);
-		throw new Error(error);
+	} catch (error: unknown) {
+		const msg = error instanceof Error ? error.message : 'Unknown error';
+		throw new Error(`${msg}`);
 	}
 };
 export { createMenuItem };
