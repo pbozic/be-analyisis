@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { DOCUMENT_TYPE } from '@prisma/client';
 
-import { CreateFileDataSchema } from '../Files/file.dto.ts';
+import { CreateFileDataSchema } from '../Files/file.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -58,6 +58,8 @@ export const CreateMenuCategorySchema = z
 	})
 	.openapi('CreateMenuCategory');
 
+export type MenuCategory = z.infer<typeof MenuCategoryDataSchema>;
+
 // (Menu category response schema removed - only input schemas kept)
 
 // =======================
@@ -93,6 +95,120 @@ export const MenuItemDataSchema = z
 	.passthrough()
 	.openapi('MenuItemData');
 
+export type MenuItem = z.infer<typeof MenuItemDataSchema>;
+
+// =======================
+// MenuItem Ref Schema - minimal identity for embedding
+// =======================
+export const MenuItemRefSchema = z
+	.object({
+		menu_item_id: z.string().uuid().openapi({ example: 'cc0e8400-e29b-41d4-a716-446655440000' }),
+		names: z
+			.record(z.string())
+			.nullable()
+			.optional()
+			.openapi({ example: { en: 'Burger' } }),
+		price: z.number().nullable().optional().openapi({ example: 9.99 }),
+	})
+	.openapi('MenuItemRef');
+
+export type MenuItemRef = z.infer<typeof MenuItemRefSchema>;
+
+// =======================
+// Category Base Schema (from categories table)
+// =======================
+export const CategoryBaseSchema = z
+	.object({
+		categories_id: z.string().uuid(),
+		name: z.string(),
+		description: z.string().nullable().optional(),
+		tag: z.string(),
+		icon_file_id: z.string().uuid().nullable().optional(),
+		icon: z.any().nullable().optional(),
+		category_type: z.string(),
+		parent_categories_id: z.string().uuid().nullable().optional(),
+		parent_category: z.any().nullable().optional(),
+		sub_categories: z.array(z.any()).nullable().optional(),
+		translatable_id: z.string().uuid(),
+		translatable: z.any().nullable().optional(),
+		words: z.array(z.any()).nullable().optional(),
+		created_at: z.string().datetime(),
+		updated_at: z.string().datetime(),
+		deleted_at: z.string().datetime().nullable().optional(),
+		daily_meal_categories: z.array(z.any()).nullable().optional(),
+	})
+	.passthrough()
+	.openapi('CategoryBase');
+
+export type CategoryBase = z.infer<typeof CategoryBaseSchema>;
+
+// =======================
+// MenuCategoryCategory (junction table) Schema
+// =======================
+export const MenuCategoryCategorySchema = z
+	.object({
+		menu_categories_id: z.string().uuid(),
+		categories_id: z.string().uuid(),
+		category: CategoryBaseSchema.nullable().optional(),
+	})
+	.openapi('MenuCategoryCategory');
+
+export type MenuCategoryCategory = z.infer<typeof MenuCategoryCategorySchema>;
+
+// =======================
+// MenuCategory Ref Schema
+// =======================
+export const MenuCategoryRefSchema = z
+	.object({
+		menu_category_id: z.string().uuid(),
+		menu_id: z.string().uuid().optional(),
+		names: z.record(z.string()).nullable().optional(),
+		business_id: z.string().uuid().nullable().optional(),
+		menu_items_ordered: z.array(z.string()).nullable().optional(),
+		menu_categories_categories: z.array(MenuCategoryCategorySchema).nullable().optional(),
+	})
+	.openapi('MenuCategoryRef');
+
+export type MenuCategoryRef = z.infer<typeof MenuCategoryRefSchema>;
+
+// =======================
+// MenuItem Detail Schema - extends Data with relations
+// =======================
+export const MenuItemDetailSchema = MenuItemDataSchema.extend({
+	menu_item_id: z.string().uuid().openapi({ example: 'cc0e8400-e29b-41d4-a716-446655440000' }),
+	created_at: z.string().datetime().optional(),
+	updated_at: z.string().datetime().nullable().optional(),
+	menu_category: MenuCategoryRefSchema.nullable().optional(),
+	documents: z
+		.array(
+			z.object({
+				document_id: z.string().uuid(),
+				files: z
+					.array(
+						z.object({
+							file_id: z.string().uuid(),
+							url: z.string().url(),
+							document_id: z.string().uuid(),
+						})
+					)
+					.optional(),
+			})
+		)
+		.optional(),
+}).openapi('MenuItemDetail');
+
+export type MenuItemDetail = z.infer<typeof MenuItemDetailSchema>;
+
+// =======================
+// MenuItem Response Schemas - for DAO returns
+// =======================
+export const MenuItemResponseSchema = MenuItemDetailSchema.openapi('MenuItemResponse');
+export type MenuItemResponse = z.infer<typeof MenuItemResponseSchema>;
+
+// Array response for multiple menu items
+export const MenuItemsResponseSchema = z.array(MenuItemResponseSchema).openapi('MenuItemsResponse');
+export type MenuItemsResponse = z.infer<typeof MenuItemsResponseSchema>;
+
 export const CreateMenuItemSchema = z
 	.object({
 		category_id: z.string().uuid().openapi({ example: 'aa0e8400-e29b-41d4-a716-446655440000' }),
@@ -114,6 +230,8 @@ export const CreateMenuItemSchema = z
 	})
 	.openapi('CreateMenuItem');
 
+export const UpdateMenuItemSchema = MenuItemDetailSchema.partial();
+export type UpdateMenuItem = z.infer<typeof UpdateMenuItemSchema>;
 // =======================
 // Other small request schemas
 // =======================
@@ -143,6 +261,19 @@ export const CreateMenuItemVersionSchema = z
 	})
 	.openapi('CreateMenuItemVersion');
 
+// Response for MenuItemVersion creation
+export const MenuItemVersionResponseSchema = z
+	.object({
+		menu_item_version_id: z.string().uuid().openapi({ example: 'dd0e8400-e29b-41d4-a716-446655440000' }),
+		menu_item_id: z.string().uuid(),
+		version: z.number().int(),
+		snapshot: z.any(),
+		created_at: z.string().datetime().optional(),
+	})
+	.openapi('MenuItemVersionResponse');
+
+export type MenuItemVersionResponse = z.infer<typeof MenuItemVersionResponseSchema>;
+
 // =======================
 // Responses for Menu
 // =======================
@@ -157,11 +288,19 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('MenuCategoryData', MenuCategoryDataSchema);
 	registry.register('CreateMenuCategory', CreateMenuCategorySchema);
 	registry.register('MenuItemData', MenuItemDataSchema);
+	registry.register('MenuItemRef', MenuItemRefSchema);
+	registry.register('CategoryBase', CategoryBaseSchema);
+	registry.register('MenuCategoryCategory', MenuCategoryCategorySchema);
+	registry.register('MenuCategoryRef', MenuCategoryRefSchema);
+	registry.register('MenuItemDetail', MenuItemDetailSchema);
 	registry.register('CreateMenuItem', CreateMenuItemSchema);
 	registry.register('GetMenuItemsByIdsRequest', GetMenuItemsByIdsRequestSchema);
 	registry.register('UpdateMenuItemEnabled', UpdateMenuItemEnabledSchema);
 	registry.register('UpdateMenuItemPrice', UpdateMenuItemPriceSchema);
 	registry.register('CreateMenuItemVersion', CreateMenuItemVersionSchema);
+	registry.register('MenuItemResponse', MenuItemResponseSchema);
+	registry.register('MenuItemsResponse', MenuItemsResponseSchema);
+	registry.register('MenuItemVersionResponse', MenuItemVersionResponseSchema);
 }
 
 // -----------------------

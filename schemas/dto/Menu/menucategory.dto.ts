@@ -17,6 +17,15 @@ export const CreateMenuCategoryInputSchema = z
 	.openapi('CreateMenuCategoryInput');
 export type CreateMenuCategoryInput = z.infer<typeof CreateMenuCategoryInputSchema>;
 
+// Extended CreateMenuCategoryInput with category_ids for linking categories
+export const CreateMenuCategoryWithCategoriesInputSchema = MenuCategoryDataSchema.extend({
+	category_ids: z
+		.array(z.string().uuid())
+		.optional()
+		.openapi({ example: ['ee0e8400-e29b-41d4-a716-446655440000'] }),
+}).openapi('CreateMenuCategoryWithCategoriesInput');
+export type CreateMenuCategoryWithCategoriesInput = z.infer<typeof CreateMenuCategoryWithCategoriesInputSchema>;
+
 export const CreateDailyMealMenuCategoryInputSchema = z
 	.object({
 		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
@@ -138,6 +147,7 @@ export type UpdateMenuCategoriesWithNewPriceInput = z.infer<typeof UpdateMenuCat
 // Register MenuCategory DAO schemas
 export function registerMenuCategoryDaoSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateMenuCategoryInput', CreateMenuCategoryInputSchema);
+	registry.register('CreateMenuCategoryWithCategoriesInput', CreateMenuCategoryWithCategoriesInputSchema);
 	registry.register('CreateDailyMealMenuCategoryInput', CreateDailyMealMenuCategoryInputSchema);
 	registry.register('AddMenuCategoryIdToOrderInput', AddMenuCategoryIdToOrderInputSchema);
 	registry.register('RemoveMenuCategoryIdFromOrderInput', RemoveMenuCategoryIdFromOrderInputSchema);
