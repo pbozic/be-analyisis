@@ -1,0 +1,745 @@
+import prisma from '../prisma/prisma.js';
+import { CREDIT_STATUS, CASHBACK_STATUS, FUNDS_TYPE, SERVICE_TYPE } from '../lib/constants.js';
+/*
+async function createWalletFunds(user_id, charge_id, amount){
+	try {
+		if(amount<=0){
+			throw new Error("Amount must be greater than 0");
+		}
+
+		// const newWalletFund = await prisma.wallet_funds.create({
+		// 	data: {
+		// 		// user_id: user_id,
+		// 		charge_id: charge_id,
+		// 		amount: amount,
+		// 		user:{connect:{user_id:user_id}},
+		// 		transaction: {
+		// 			create: {
+		// 				user: { connect: { user_id: user_id } },
+		// 				amount: amount/100,
+		// 				type: 'CREDIT',
+		// 				description: 'Added funds to wallet',
+		// 			},
+		// 		},
+		// 	},
+		// 	include: {
+		// 		transactions: true,
+		// 	},
+		// });
+
+
+		const newTransaction = await prisma.transactions.create({
+			data: {
+				user: { connect: { user_id: user_id } },
+				amount: amount/100,
+				type: 'CREDIT',
+				description: 'Added funds to wallet',
+				wallet_funds: {
+					create: {
+						charge_id: charge_id,
+						amount: amount,
+						user:{connect:{user_id:user_id}},
+					},
+				},
+			},
+			include: {
+				wallet_funds: true,
+			},
+		});
+		console.info("created wallet funds: ",newTransaction)
+
+		// const newTransaction = await prisma.transactions.create({
+		// 	data: {
+		// 		user: { connect: { user_id: user_id } },
+		// 		amount: amount,
+		// 		type: 'CREDIT',
+		// 		description: 'Added funds to wallet',
+		// 	},
+		// });
+		// const newWalletFund = await prisma.wallet_funds.create({
+		// 	data: {
+		// 		// user_id: user_id,
+		// 		charge_id: charge_id,
+		// 		amount: amount,
+		// 		user:{connect:{user_id:user_id}},
+		// 		transaction_id: newTransaction.transaction_id
+		// 	},
+		// });
+		// console.log(`Wallet fund created with ID: ${newWalletFund.wallet_funds_id}`);
+
+
+		return newTransaction;
+	} catch (error) {
+		console.error('Error creating wallet fund:', error);
+		throw error; // Rethrow the error for further handling if necessary
+	}
+}
+ */
+
+/**
+ * Create wallet funds entry and associated transaction.
+ *
+ * @param {string} user_id
+ * @param {number} amount_cents
+ * @param {string|null} charge_id
+ * @param {string} transaction_type
+ * @returns {Promise<Transaction>}
+ */
+async function createWalletFunds(user_id, amount_cents, charge_id = null, transaction_type = 'CREDIT') {
+	console.log('createWalletFunds ', user_id, amount_cents);
+	return await prisma.transactions.create({
+		data: {
+			user: { connect: { user_id: user_id } },
+			amount: amount_cents / 100,
+			type: transaction_type,
+			description: 'Added funds to wallet',
+			wallet_funds: {
+				create: {
+					charge_id: charge_id,
+					amount: amount_cents,
+					user: { connect: { user_id: user_id } },
+					type: FUNDS_TYPE.FUNDS,
+				},
+			},
+		},
+	});
+}
+/**
+ * Get available wallet funds for a user by type.
+ *
+ * @param {string} userId
+ * @param {string} funds_type
+ * @returns {Promise<WalletFunds[]>}
+ */
+async function getAvailableWalletFunds(userId, funds_type) {
+	try {
+		const walletFunds = await prisma.wallet_funds.findMany({
+			where: {
+				user_id: userId,
+				reserved_order: null,
+				reserved_daily_meals_subscription: null,
+				type: funds_type,
+			},
+			include: { user: true },
+			orderBy: [{ expires_at: { sort: 'asc', nulls: 'last' } }, { created_at: 'asc' }],
+		});
+		return walletFunds;
+	} catch (error) {
+		console.error('Error retrieving available wallet funds:', error);
+		throw error;
+	}
+}
+/**
+ * Get reserved wallet funds for a user by order and reserve type.
+ *
+ * @param {string} userId
+ * @param {string} order_id
+ * @param {string} reserveType
+ * @returns {Promise<WalletFunds[]>}
+ */
+async function getReservedWalletFunds(userId, order_id, reserveType = 'order') {
+	try {
+		const walletFunds = await prisma.wallet_funds.findMany({
+			where: {
+				user_id: userId,
+				...(reserveType === 'order' ? { reserved_order: order_id } : {}),
+				...(reserveType === 'daily_meals_subscription_payment'
+					? { reserved_daily_meals_subscription: order_id }
+					: {}),
+			},
+			orderBy: {
+				created_at: 'asc',
+			},
+		});
+		return walletFunds;
+	} catch (error) {
+		console.error('Error retrieving reserved wallet funds:', error);
+		throw error;
+	}
+}
+/**
+ * Get all reserved wallet funds.
+ *
+ * @returns {Promise<WalletFunds[]>}
+ */
+async function getAllReservedWalletFunds() {
+	try {
+		const walletFunds = await prisma.wallet_funds.findMany({
+			where: {
+				reserved_order: {
+					not: null,
+				},
+				reserved_daily_meals_subscription: {
+					not: null,
+				},
+			},
+			orderBy: {
+				created_at: 'asc',
+			},
+		});
+		return walletFunds;
+	} catch (error) {
+		console.error('Error retrieving all reserved wallet funds:', error);
+		throw error;
+	}
+}
+/**
+ * Delete wallet funds by ID.
+ *
+ * @param {string} wallet_funds_id
+ */
+async function deleteWalletFunds(wallet_funds_id) {
+	try {
+		await prisma.wallet_funds.delete({
+			where: {
+				wallet_funds_id: wallet_funds_id,
+			},
+		});
+		console.log(`Wallet fund with ID ${wallet_funds_id} has been deleted.`);
+	} catch (error) {
+		console.error(`Error deleting wallet fund with ID ${wallet_funds_id}:`, error);
+		throw error;
+	}
+}
+/**
+ * Subtract funds from wallet funds entry and create associated transaction.
+ *
+ * @param {string} walletFundsId
+ * @param {number} amount
+ * @param {string|null} order_id
+ * @param {string|null} service_type
+ * @returns {Promise<WalletFunds>}
+ */
+async function subtractFunds(walletFundsId, amount, order_id = null, service_type = null) {
+	try {
+		if (amount <= 0) {
+			throw new Error('Subtract amount must be greater than 0');
+		}
+		const walletFund = await prisma.wallet_funds.findUnique({
+			where: {
+				wallet_funds_id: walletFundsId,
+			},
+		});
+		if (!walletFund) {
+			throw new Error('Wallet fund entry not found');
+		}
+		if (walletFund.amount < amount) {
+			// Updated to use amount
+			throw new Error(`Insufficient funds ${walletFund.amount} < ${amount}`);
+		}
+		let updatedWalletFund = await prisma.$transaction(async (tx) => {
+			const updated_WF = await tx.wallet_funds.update({
+				where: {
+					wallet_funds_id: walletFundsId,
+				},
+				data: {
+					amount: walletFund.amount - amount,
+				},
+			});
+			console.info(`subtracted ${amount} from WF:\n${JSON.stringify(walletFund, null, 2)}. `);
+			let order_connect_obj = {};
+			switch (service_type) {
+				case SERVICE_TYPE.TAXI:
+					order_connect_obj = { taxi_order: { connect: { order_id: order_id } } };
+					break;
+				case SERVICE_TYPE.DELIVERY:
+					order_connect_obj = { delivery_order: { connect: { order_id: order_id } } };
+					break;
+			}
+			if (walletFund.reserved_order !== null) {
+				await tx.transactions.create({
+					data: {
+						user: { connect: { user_id: updated_WF.user_id } },
+						amount: -amount / 100,
+						type: 'DEBIT',
+						...order_connect_obj,
+						description: 'Subtracted funds from wallet',
+						wallet_funds: { connect: { wallet_funds_id: updated_WF.wallet_funds_id } },
+					},
+				});
+			}
+			return updated_WF;
+		});
+		if (updatedWalletFund.amount === 0) {
+			updatedWalletFund = await deleteWalletFunds(updatedWalletFund.wallet_funds_id);
+		}
+		return updatedWalletFund;
+	} catch (error) {
+		console.error('Error subtracting funds:', error);
+		throw error;
+	}
+}
+/**
+ * Reserve funds from a wallet funds entry.
+ *
+ * @param {string} walletFundsId
+ * @param {number} reserveAmount
+ * @param {string} orderId
+ * @param {string} reserveType
+ * @returns {Promise<WalletFunds>}
+ */
+async function reserveFunds(walletFundsId, reserveAmount, orderId, reserveType = 'order') {
+	try {
+		if (reserveAmount <= 0) {
+			throw new Error('Reserve amount must be greater than 0');
+		}
+		const walletFund = await prisma.wallet_funds.findUnique({
+			where: {
+				wallet_funds_id: walletFundsId,
+			},
+		});
+		if (!walletFund) {
+			throw new Error('Wallet fund entry not found');
+		}
+		if (walletFund.reserved_order !== null) {
+			throw new Error('Source wallet fund entry already reserved');
+		}
+		if (walletFund.amount < reserveAmount) {
+			throw new Error('Insufficient funds');
+		}
+		// Update the existing wallet fund entry
+		await subtractFunds(walletFund.wallet_funds_id, reserveAmount);
+		// Check if a wallet fund with the same charge_id and reserved_order and type exists
+		//TODO: maybe convert to findUnique?
+		const existingReservedFund = await prisma.wallet_funds.findFirst({
+			where: {
+				user_id: walletFund.user_id,
+				charge_id: walletFund.charge_id,
+				...(reserveType === 'order' ? { reserved_order: orderId } : {}),
+				...(reserveType === 'daily_meals_subscription_payment'
+					? { reserved_daily_meals_subscription: orderId }
+					: {}),
+				reserved_business: orderId,
+				expires_at: walletFund.expires_at,
+				referral_id: walletFund.referral_id,
+				type: walletFund.type,
+			},
+		});
+		if (existingReservedFund) {
+			// If it exists, update the existing entry
+			const updatedFund = await prisma.wallet_funds.update({
+				where: {
+					wallet_funds_id: existingReservedFund.wallet_funds_id,
+				},
+				data: {
+					amount: existingReservedFund.amount + reserveAmount, // Add the amount to the existing fund
+				},
+			});
+			return updatedFund;
+		} else {
+			// If it does not exist, create a new wallet fund entry
+			const newWalletFund = await prisma.wallet_funds.create({
+				data: {
+					user_id: walletFund.user_id,
+					charge_id: walletFund.charge_id,
+					...(reserveType === 'order' ? { reserved_order: orderId } : {}),
+					...(reserveType === 'daily_meals_subscription_payment'
+						? { reserved_daily_meals_subscription: orderId }
+						: {}),
+					expires_at: walletFund.expires_at,
+					referral_id: walletFund.referral_id,
+					type: walletFund.type,
+					amount: reserveAmount,
+				},
+			});
+			return newWalletFund;
+		}
+	} catch (error) {
+		console.error('Error reserving funds:', error);
+		throw error;
+	}
+}
+/**
+ * Release reserved funds back to available wallet funds.
+ *
+ * @param {string} walletFundsId
+ * @param {number} releaseAmount
+ */
+async function releaseFunds(walletFundsId, releaseAmount) {
+	try {
+		if (releaseAmount <= 0) {
+			throw new Error('Release amount must be greater than 0');
+		}
+		const walletFund = await prisma.wallet_funds.findUnique({
+			where: {
+				wallet_funds_id: walletFundsId,
+			},
+		});
+		if (!walletFund) {
+			throw new Error('Wallet fund entry not found');
+		}
+		if (walletFund.reserved_order === null && walletFund.reserved_business === null) {
+			throw new Error('Source wallet fund entry is not reserved');
+		}
+		if (walletFund.amount < releaseAmount) {
+			throw new Error('Insufficient funds');
+		}
+		const released_WF = await prisma.$transaction(async (tx) => {
+			// await tx.users.update({
+			// 	where: { user_id: walletFund.user_id },
+			// 	data: {
+			// 		wallet_balance: {
+			// 			increment: releaseAmount/100,
+			// 		},
+			// 	},
+			// });
+			const amount_after_release = walletFund.amount - releaseAmount;
+			console.log(walletFund.amount, releaseAmount, walletFund.amount - releaseAmount);
+			if (amount_after_release === 0) {
+				await tx.wallet_funds.delete({
+					where: {
+						wallet_funds_id: walletFundsId,
+					},
+				});
+			} else {
+				console.info(
+					'update response:',
+					await tx.wallet_funds.update({
+						where: {
+							wallet_funds_id: walletFundsId,
+						},
+						data: {
+							amount: amount_after_release,
+						},
+					})
+				);
+			}
+			console.info(`released ${releaseAmount} from WF:\n${JSON.stringify(walletFund, null, 2)}. `);
+			// Check if same wallet fund exists
+			const existingFund = await tx.wallet_funds.findFirst({
+				where: {
+					user_id: walletFund.user_id,
+					charge_id: walletFund.charge_id,
+					expires_at: walletFund.expires_at,
+					referral_id: walletFund.referral_id,
+					type: walletFund.type,
+				},
+			});
+			if (existingFund) {
+				// If it exists, update the existing entry
+				const updatedFund = await tx.wallet_funds.update({
+					where: {
+						wallet_funds_id: existingFund.wallet_funds_id,
+					},
+					data: {
+						amount: existingFund.amount + releaseAmount,
+					},
+				});
+				return updatedFund;
+			} else {
+				// If it does not exist, create a new wallet fund entry
+				const newWalletFund = await tx.wallet_funds.create({
+					data: {
+						user_id: walletFund.user_id,
+						charge_id: walletFund.charge_id,
+						expires_at: walletFund.expires_at,
+						referral_id: walletFund.referral_id,
+						type: walletFund.type,
+						amount: releaseAmount,
+					},
+				});
+				return newWalletFund;
+			}
+		});
+	} catch (error) {
+		console.error('Error releasing funds:', error);
+		throw error;
+	}
+}
+/** Get available wallet balance for a user.
+ *
+ * @param {string} userId
+ * @returns {Promise<number>}
+ */
+async function getAvailableWalletBalance(userId) {
+	try {
+		const result = await prisma.wallet_funds.aggregate({
+			where: {
+				user_id: userId,
+				reserved_order: null,
+				reserved_daily_meals_subscription: null,
+				type: FUNDS_TYPE.FUNDS,
+			},
+			_sum: {
+				amount: true,
+			},
+		});
+		return result._sum.amount || 0;
+	} catch (error) {
+		console.error('Error retrieving available wallet balance:', error);
+		throw error;
+	}
+}
+/** Get available wallet balance grouped by type for a user.
+ *
+ * @param {string} userId
+ * @returns {Promise<object>} Key-value pairs of type and balance.
+ */
+async function getAvailableWalletBalanceGroupedByType(userId) {
+	try {
+		const result = await prisma.wallet_funds.groupBy({
+			by: ['type'], // Grouping by 'type'
+			where: {
+				user_id: userId,
+				reserved_order: null,
+				reserved_daily_meals_subscription: null,
+			},
+			_sum: {
+				amount: true,
+			},
+		});
+		// Convert result into a key-value pair object
+		const balances = result.reduce((acc, row) => {
+			acc[row.type] = row._sum.amount || 0; // Store balance by type
+			return acc;
+		}, {});
+		return balances;
+	} catch (error) {
+		console.error('Error retrieving grouped wallet balance:', error);
+		throw error;
+	}
+}
+/**
+ * Create credit wallet funds entry.
+ *
+ * @param {object} data
+ * @returns {Promise<WalletFunds>}
+ */
+const createCredit = async (data) => {
+	try {
+		const expiryDate = new Date();
+		expiryDate.setDate(expiryDate.getDate() + 30);
+		expiryDate.setHours(23, 59, 59, 999);
+		return await prisma.wallet_funds.create({
+			data: {
+				...data,
+				expires_at: expiryDate,
+			},
+		});
+	} catch (error) {
+		console.error('Error creating credit:', error);
+		throw error;
+	}
+};
+/** Convert pending cashbacks to credit wallet funds entry.
+ *
+ * @param {object} data
+ * @param {object[]} pendingCashbacks
+ * @param {Date} expiryDate
+ * @returns {Promise<WalletFunds>}
+ */
+const convertCashbacksToCredit = async (data, pendingCashbacks, expiryDate) => {
+	try {
+		return await prisma.$transaction(async (tx) => {
+			const credit = await tx.wallet_funds.create({
+				data: {
+					...data,
+					type: FUNDS_TYPE.CREDITS_ANY,
+					expires_at: expiryDate,
+				},
+			});
+			await tx.cashback.updateMany({
+				where: {
+					cashback_id: {
+						in: pendingCashbacks.map((cb) => cb.cashback_id),
+					},
+				},
+				data: {
+					status: CASHBACK_STATUS.CONVERTED,
+					converted_at: new Date(),
+				},
+			});
+			return credit;
+		});
+	} catch (error) {
+		console.error('Error converting cashbacks to credit:', error);
+		throw error;
+	}
+};
+/**
+ * Expire outdated credits.
+ *
+ * @returns {Promise<number>} The number of expired credits.
+ */
+const expireOutdatedCredits = async () => {
+	const now = new Date();
+	now.setHours(0, 0, 0, 0);
+	try {
+		return await prisma.wallet_funds.updateMany({
+			where: {
+				status: CREDIT_STATUS.ACTIVE,
+				expires_at: {
+					lt: now,
+				},
+			},
+			data: {
+				status: CREDIT_STATUS.EXPIRED,
+			},
+		});
+	} catch (error) {
+		console.error('Error expiring credits:', error);
+		throw error;
+	}
+};
+/** Find credits expiring in a given number of days.
+ *
+ * @param {number} days
+ * @returns {Promise<WalletFunds[]>}
+ */
+const findCreditsExpiringInDays = async (days) => {
+	try {
+		const endDateStart = new Date();
+		const endDateEnd = new Date();
+		endDateStart.setDate(endDateStart.getDate() + days);
+		endDateStart.setHours(0, 0, 0, 0);
+		endDateEnd.setDate(endDateEnd.getDate() + days);
+		endDateEnd.setHours(23, 59, 59, 999);
+		return prisma.wallet_funds.findMany({
+			where: {
+				status: CREDIT_STATUS.ACTIVE,
+				expires_at: {
+					gte: endDateStart,
+					lte: endDateEnd,
+				},
+			},
+			include: {
+				user: true,
+			},
+		});
+	} catch (error) {
+		console.error('Error finding credits expiring in days:', error);
+		throw error;
+	}
+};
+/**
+ * Get available credits by type for a user.
+ *
+ * @param {string} userId
+ * @param {string} type
+ * @returns {Promise<WalletFunds[]>}
+ */
+const getAvailableCreditsByType = async (userId, type) => {
+	try {
+		return await prisma.wallet_funds.findMany({
+			where: {
+				user_id: userId,
+				type: type,
+				status: CREDIT_STATUS.ACTIVE,
+				reserved_order: null,
+				reserved_daily_meals_subscription: null,
+			},
+		});
+	} catch (error) {
+		console.error('Error retrieving available credits by type:', error);
+		throw error;
+	}
+};
+/** Get available credits for order by type for a user.
+ *
+ * @param {string} userId
+ * @param {string} type
+ * @returns {Promise<WalletFunds[]>}
+ */
+const getAvailableCreditsForOrder = async (userId, type) => {
+	try {
+		return await prisma.wallet_funds.findMany({
+			where: {
+				user_id: userId,
+				type: {
+					in: [type, FUNDS_TYPE.CREDITS_ANY],
+				},
+				status: CREDIT_STATUS.ACTIVE,
+				reserved_order: null,
+				reserved_daily_meals_subscription: null,
+			},
+		});
+	} catch (error) {
+		console.error('Error retrieving available credits for order:', error);
+		throw error;
+	}
+};
+/** Get reserved credits for order by type for a user.
+ *
+ * @param {string} userId
+ * @param {string} orderId
+ * @param {string} reserveType
+ * @returns {Promise<WalletFunds[]>}
+ */
+const getReservedCredits = async (userId, orderId, reserveType = 'order') => {
+	try {
+		return await prisma.wallet_funds.findMany({
+			where: {
+				user_id: userId,
+				NOT: {
+					type: FUNDS_TYPE.FUNDS,
+				},
+				// status: CREDIT_STATUS.ACTIVE,
+				...(reserveType === 'order' ? { reserved_order: orderId } : {}),
+				...(reserveType === 'daily_meals_subscription_payment'
+					? { reserved_daily_meals_subscription: orderId }
+					: {}),
+			},
+		});
+	} catch (error) {
+		console.error('Error retrieving reserved credits:', error);
+		throw error;
+	}
+};
+/** Get expired credits for a user by type.
+ *
+ * @param {string} userId
+ * @param {string} type
+ * @returns {Promise<WalletFunds[]>}
+ */
+const getExpiredCredits = async (userId, type) => {
+	try {
+		return await prisma.wallet_funds.findMany({
+			where: {
+				user_id: userId,
+				type: type,
+				status: CREDIT_STATUS.EXPIRED,
+			},
+		});
+	} catch (error) {
+		console.error('Error retrieving expired credits:', error);
+		throw error;
+	}
+};
+export { createWalletFunds };
+export { getAvailableWalletFunds };
+export { getAvailableWalletBalance };
+export { getAvailableWalletBalanceGroupedByType };
+export { getReservedWalletFunds };
+export { getAllReservedWalletFunds };
+export { deleteWalletFunds };
+export { subtractFunds };
+export { reserveFunds };
+export { releaseFunds };
+export { createCredit };
+export { getAvailableCreditsByType };
+export { getAvailableCreditsForOrder };
+export { getReservedCredits };
+export { getExpiredCredits };
+export { convertCashbacksToCredit };
+export { expireOutdatedCredits };
+export { findCreditsExpiringInDays };
+export default {
+	createWalletFunds,
+	getAvailableWalletFunds,
+	getAvailableWalletBalance,
+	getAvailableWalletBalanceGroupedByType,
+	getReservedWalletFunds,
+	getAllReservedWalletFunds,
+	deleteWalletFunds,
+	subtractFunds,
+	reserveFunds,
+	releaseFunds,
+	createCredit,
+	getAvailableCreditsByType,
+	getAvailableCreditsForOrder,
+	getReservedCredits,
+	getExpiredCredits,
+	convertCashbacksToCredit,
+	expireOutdatedCredits,
+	findCreditsExpiringInDays,
+};
