@@ -10,8 +10,8 @@ import type {
 	BusinessWithDailyMealsResponseDto,
 	BusinessByIdResponse,
 } from '../schemas/dto/Business/index.js';
-import { toBusinessByIdResponse } from '../schemas/dto/Business/index.js';
-import { businessByIdInclude } from '../prisma/includes/business.js';
+import { toBusinessByIdResponse, toGetBusinessResponse } from '../schemas/dto/Business/index.js';
+import { businessByIdInclude, getBusinessesDefualtInclude, BusinessFindManyArgs } from '../prisma/includes/business.js';
 
 type PrismaTransactionClient = Prisma.TransactionClient;
 
@@ -21,28 +21,23 @@ type PrismaTransactionClient = Prisma.TransactionClient;
  * @param {any} args - Additional Prisma query arguments (where, orderBy, include, etc.).
  * @returns {Promise<BusinessResponse[]>} A promise resolving to an array of business records.
  */
-const getBusinesses = async (args?: any): Promise<BusinessResponse[]> => {
+const getBusinesses = async (args?: BusinessFindManyArgs): Promise<BusinessResponse[]> => {
 	try {
-		return (await prisma.business.findMany({
-			...args,
-			include: {
-				address: true,
-				business_users: {
-					include: {
-						users: {
-							include: {
-								child_users: { include: { child_user: true } },
-								parent_user: { include: { parent_user: true } },
-							},
-						},
-					},
-				},
-				parent_business: true,
-				child_businesses: true,
-				...args?.include,
-			},
-		})) as BusinessResponse[];
+		const include = {
+			...getBusinessesDefualtInclude,
+			...(args?.include ?? {}),
+		} as Prisma.businessInclude; // single, contained cast
+
+		const { include: _ignored, ...rest } = args ?? {};
+
+		const rows = await prisma.business.findMany({
+			...rest,
+			include,
+		});
+
+		return rows.map(toGetBusinessResponse);
 	} catch (error) {
+		// centralize logging message, don’t leak internals
 		console.error('Error retrieving businesses:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get businesses');
 	}

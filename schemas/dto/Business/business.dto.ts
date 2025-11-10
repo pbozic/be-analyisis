@@ -11,7 +11,8 @@ import { MenuItemRefSchema, MenuCategoryRefSchema } from '../Menu/menu.dto.js';
 import { AddressRefSchema } from '../Address/index.js';
 import { UserRefSchema } from '../User/index.js';
 import { FileRefSchema } from '../Files/file.dto.js';
-import { BusinessByIdRaw } from '../../../prisma/includes/business.ts';
+import { BusinessByIdPrisma, GetBusinessesPrisma } from '../../../prisma/includes/business.ts';
+
 extendZodWithOpenApi(z);
 
 // TODO: Fix dto after deleting menu from prisma model etc...
@@ -354,8 +355,14 @@ export const BusinessByIdResponseSchema = BusinessResponseDto.extend({
 
 export type BusinessByIdResponse = z.infer<typeof BusinessByIdResponseSchema>;
 
+export function toGetBusinessResponse(row: GetBusinessesPrisma): BusinessWithAllModulesResponseDto {
+	//TODO:
+	//map fields here; for now pretend it's 1:1
+	return row as unknown as BusinessWithAllModulesResponseDto;
+}
+
 // Mapper function from getBusinessById Prisma result
-export function toBusinessByIdResponse(row: BusinessByIdRaw): BusinessByIdResponse {
+export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessByIdResponse {
 	const r = row; // Complex nested structure from getBusinessById
 
 	return BusinessByIdResponseSchema.parse({
