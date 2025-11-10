@@ -466,8 +466,6 @@ erDiagram
   String address_id FK "nullable"
   Boolean is_business_unit
   String business_group_name "nullable"
-  String name
-  String description "nullable"
   String tax_id
   String registration_id
   String email UK
@@ -485,8 +483,7 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
 }
 "delivery_orders" {
   String order_id PK
@@ -619,8 +616,6 @@ erDiagram
 "blog_posts" }o--o| "files" : image
 "blog_posts" }o--|| "users" : author
 "business" }o--o| "business" : parent_business
-"business" |o--o| "files" : logo
-"business" |o--o| "files" : banner
 "delivery_orders" }o--o| "users" : customer
 "delivery_orders" |o--o| "files" : picture_of_delivery
 "categories" }o--o| "files" : icon
@@ -798,8 +793,10 @@ erDiagram
 }
 "scoring_points" {
   String scoring_points_id PK
-  String business_id FK
+  String stores_id FK
+  String food_drinks_id FK
   String user_id FK "nullable"
+  String driver_id FK "nullable"
   String delivery_order_id FK "nullable"
   String taxi_order_id FK "nullable"
   Int points
@@ -924,8 +921,6 @@ erDiagram
   String address_id FK "nullable"
   Boolean is_business_unit
   String business_group_name "nullable"
-  String name
-  String description "nullable"
   String tax_id
   String registration_id
   String email UK
@@ -943,8 +938,7 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
 }
 "drivers" {
   String driver_id PK
@@ -996,8 +990,8 @@ erDiagram
 "user_permission" }o--|| "users" : user
 "group_users" }o--|| "users" : parent_user
 "group_users" |o--|| "users" : child_user
-"scoring_points" }o--o| "users" : users
-"scoring_points" }o--|| "business" : businesses
+"scoring_points" }o--o| "users" : user
+"scoring_points" }o--o| "drivers" : driver
 "account_actions" }o--o| "business" : business
 "account_actions" }o--o| "users" : user
 "account_actions" }o--|| "users" : action_creator
@@ -1010,8 +1004,6 @@ erDiagram
 "wallet_funds" }o--|| "users" : user
 "business" }o--o| "addresses" : address
 "business" }o--o| "business" : parent_business
-"business" |o--o| "files" : logo
-"business" |o--o| "files" : banner
 "drivers" |o--o| "users" : user
 "drivers" |o--o| "files" : profile_picture
 ```
@@ -1087,7 +1079,7 @@ Properties as follows:
 
 End user account with profile, preferences and relations.
 
-Central user entity linking to roles, orders, documents, wallets and analytics.
+Central user entity linking to roles, orders, wallets and analytics.
 
 Properties as follows:
 
@@ -1234,8 +1226,10 @@ Scoring points (rewards/penalties) for users and businesses.
 Properties as follows:
 
 - `scoring_points_id`:
-- `business_id`:
+- `stores_id`:
+- `food_drinks_id`:
 - `user_id`:
+- `driver_id`:
 - `delivery_order_id`:
 - `taxi_order_id`:
 - `points`:
@@ -1320,8 +1314,6 @@ erDiagram
   String address_id FK "nullable"
   Boolean is_business_unit
   String business_group_name "nullable"
-  String name
-  String description "nullable"
   String tax_id
   String registration_id
   String email UK
@@ -1339,8 +1331,7 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
 }
 "business_users" {
   String business_users_id PK
@@ -1356,7 +1347,6 @@ erDiagram
   String stores_id PK
   String business_id FK,UK
   Boolean enabled
-  Json settings "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
@@ -1364,15 +1354,13 @@ erDiagram
   Int minimum_order
   Boolean overwhelmed
   Boolean online
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
   Json working_hours "nullable"
 }
 "food_drinks_module" {
   String food_drinks_id PK
   String business_id FK,UK
   Boolean enabled
-  Json settings "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
@@ -1380,8 +1368,7 @@ erDiagram
   Int minimum_order
   Boolean overwhelmed
   Boolean online
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
   Json working_hours "nullable"
 }
 "local_locations" {
@@ -2283,8 +2270,10 @@ Properties as follows:
 erDiagram
 "scoring_points" {
   String scoring_points_id PK
-  String business_id FK
+  String stores_id FK
+  String food_drinks_id FK
   String user_id FK "nullable"
+  String driver_id FK "nullable"
   String delivery_order_id FK "nullable"
   String taxi_order_id FK "nullable"
   Int points
@@ -2308,8 +2297,6 @@ erDiagram
   String address_id FK "nullable"
   Boolean is_business_unit
   String business_group_name "nullable"
-  String name
-  String description "nullable"
   String tax_id
   String registration_id
   String email UK
@@ -2327,8 +2314,17 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
+  String business_details_id FK,UK "nullable"
+}
+"business_details" {
+  String business_details_id PK
+  String business_id UK
+  String name "nullable"
+  String description "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
 }
 "business_teams" {
   String business_teams_id PK
@@ -2349,8 +2345,7 @@ erDiagram
   Int hours_before_reschedule "nullable"
   Int hours_before_cancel "nullable"
   Boolean publicly_visible
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
   String reviewable_id FK "nullable"
 }
 "documents" {
@@ -2454,16 +2449,15 @@ erDiagram
   String business_id FK
   String operating_address_id FK "nullable"
 }
-"scoring_points" }o--|| "business" : businesses
 "account_actions" }o--o| "business" : business
 "business" }o--o| "addresses" : address
 "business" }o--o| "business" : parent_business
-"business" |o--o| "files" : logo
-"business" |o--o| "files" : banner
+"business" |o--o| "business_details" : business_details
+"business_details" |o--o| "files" : logo
+"business_details" |o--o| "files" : banner
 "business_teams" }o--|| "business" : business
 "reservation_module" |o--|| "business" : business
-"reservation_module" |o--o| "files" : logo
-"reservation_module" |o--o| "files" : banner
+"reservation_module" |o--o| "business_details" : business_details
 "documents" }o--o| "business" : business
 "files" }o--o| "documents" : documents
 "business_money_flows" }o--|| "business" : business
@@ -2481,8 +2475,10 @@ Scoring points (rewards/penalties) for users and businesses.
 Properties as follows:
 
 - `scoring_points_id`:
-- `business_id`:
+- `stores_id`:
+- `food_drinks_id`:
 - `user_id`:
+- `driver_id`:
 - `delivery_order_id`:
 - `taxi_order_id`:
 - `points`:
@@ -2518,8 +2514,6 @@ Properties as follows:
 - `address_id`:
 - `is_business_unit`:
 - `business_group_name`:
-- `name`:
-- `description`:
 - `tax_id`:
 - `registration_id`:
 - `email`:
@@ -2537,8 +2531,24 @@ Properties as follows:
 - `active`:
 - `sales_representative_id`:
 - `types`:
+- `business_details_id`:
+
+### `business_details`
+
+Additional business details like name, description, logo, banner.
+
+Links to files for logo and banner images.
+
+Properties as follows:
+
+- `business_details_id`:
+- `business_id`:
+- `name`:
+- `description`:
 - `logo_id`:
 - `banner_id`:
+- `created_at`:
+- `updated_at`:
 
 ### `business_teams`
 
@@ -2573,8 +2583,7 @@ Properties as follows:
 - `hours_before_reschedule`:
 - `hours_before_cancel`:
 - `publicly_visible`:
-- `logo_id`:
-- `banner_id`:
+- `business_details_id`:
 - `reviewable_id`:
 
 ## Drivers
@@ -2687,6 +2696,7 @@ erDiagram
 "daily_meals_module" {
   String id PK
   String business_id FK,UK
+  String delivery_address_id FK "nullable"
   DAY_OF_WEEK daily_meals_days
   Json daily_meals_delivery_mapping "nullable"
   Int maximum_daily_meals_subscribers "nullable"
@@ -2694,6 +2704,7 @@ erDiagram
   SORTING_TYPE daily_users_sorting_type
   DateTime(6) created_at
   DateTime(6) updated_at
+  String business_details_id FK,UK "nullable"
 }
 "vehicles" {
   String vehicle_id PK
@@ -3415,8 +3426,6 @@ erDiagram
   String address_id FK "nullable"
   Boolean is_business_unit
   String business_group_name "nullable"
-  String name
-  String description "nullable"
   String tax_id
   String registration_id
   String email UK
@@ -3434,8 +3443,7 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
 }
 "users" {
   String user_id PK
@@ -3573,8 +3581,6 @@ erDiagram
   String address_id FK "nullable"
   Boolean is_business_unit
   String business_group_name "nullable"
-  String name
-  String description "nullable"
   String tax_id
   String registration_id
   String email UK
@@ -3592,8 +3598,7 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
 }
 "crm_module" |o--|| "business" : business
 "business_clients" }o--|| "crm_module" : crm_module
@@ -3642,7 +3647,6 @@ erDiagram
   String stores_id PK
   String business_id FK,UK
   Boolean enabled
-  Json settings "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
@@ -3650,8 +3654,7 @@ erDiagram
   Int minimum_order
   Boolean overwhelmed
   Boolean online
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
   Json working_hours "nullable"
 }
 "business_local_locations" {
@@ -3683,8 +3686,6 @@ erDiagram
   String address_id FK "nullable"
   Boolean is_business_unit
   String business_group_name "nullable"
-  String name
-  String description "nullable"
   String tax_id
   String registration_id
   String email UK
@@ -3702,8 +3703,17 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
+  String business_details_id FK,UK "nullable"
+}
+"business_details" {
+  String business_details_id PK
+  String business_id UK
+  String name "nullable"
+  String description "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
 }
 "menus" {
   String menu_id PK
@@ -3728,9 +3738,11 @@ erDiagram
   String creating_business_id FK
 }
 "stores_module" |o--|| "business" : business
+"stores_module" |o--o| "business_details" : business_details
 "business_local_locations" }o--|| "local_locations" : local_location
 "business_local_locations" }o--|| "stores_module" : stores_module
 "business" }o--o| "business" : parent_business
+"business" |o--o| "business_details" : business_details
 "menus" |o--o| "stores_module" : stores_module
 "order_lobbies" }o--|| "business" : creating_business
 ```
@@ -3746,7 +3758,6 @@ Properties as follows:
 - `stores_id`:
 - `business_id`:
 - `enabled`:
-- `settings`:
 - `created_at`:
 - `updated_at`:
 - `reviewable_id`:
@@ -3754,8 +3765,7 @@ Properties as follows:
 - `minimum_order`:
 - `overwhelmed`:
 - `online`:
-- `logo_id`:
-- `banner_id`:
+- `business_details_id`:
 - `working_hours`:
 
 ### `business_local_locations`
@@ -3794,7 +3804,6 @@ erDiagram
   String food_drinks_id PK
   String business_id FK,UK
   Boolean enabled
-  Json settings "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
@@ -3802,8 +3811,7 @@ erDiagram
   Int minimum_order
   Boolean overwhelmed
   Boolean online
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
   Json working_hours "nullable"
 }
 "reviews" {
@@ -3821,8 +3829,6 @@ erDiagram
   String address_id FK "nullable"
   Boolean is_business_unit
   String business_group_name "nullable"
-  String name
-  String description "nullable"
   String tax_id
   String registration_id
   String email UK
@@ -3840,12 +3846,22 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
+  String business_details_id FK,UK "nullable"
+}
+"business_details" {
+  String business_details_id PK
+  String business_id UK
+  String name "nullable"
+  String description "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
 }
 "daily_meals_module" {
   String id PK
   String business_id FK,UK
+  String delivery_address_id FK "nullable"
   DAY_OF_WEEK daily_meals_days
   Json daily_meals_delivery_mapping "nullable"
   Int maximum_daily_meals_subscribers "nullable"
@@ -3853,6 +3869,7 @@ erDiagram
   SORTING_TYPE daily_users_sorting_type
   DateTime(6) created_at
   DateTime(6) updated_at
+  String business_details_id FK,UK "nullable"
 }
 "menus" {
   String menu_id PK
@@ -3864,6 +3881,7 @@ erDiagram
   String id PK
   String business_id FK,UK
   Int seats "nullable"
+  String business_details_id FK,UK "nullable"
 }
 "order_lobbies" {
   String order_lobbies_id PK
@@ -3882,10 +3900,14 @@ erDiagram
   String creating_business_id FK
 }
 "food_drinks_module" |o--|| "business" : business
+"food_drinks_module" |o--o| "business_details" : business_details
 "business" }o--o| "business" : parent_business
+"business" |o--o| "business_details" : business_details
 "daily_meals_module" |o--|| "business" : business
+"daily_meals_module" |o--o| "business_details" : business_details
 "menus" |o--o| "food_drinks_module" : food_drinks_module
 "table_reservations_module" |o--|| "business" : business
+"table_reservations_module" |o--o| "business_details" : business_details
 "order_lobbies" }o--|| "business" : creating_business
 ```
 
@@ -3900,7 +3922,6 @@ Properties as follows:
 - `food_drinks_id`:
 - `business_id`:
 - `enabled`:
-- `settings`:
 - `created_at`:
 - `updated_at`:
 - `reviewable_id`:
@@ -3908,8 +3929,7 @@ Properties as follows:
 - `minimum_order`:
 - `overwhelmed`:
 - `online`:
-- `logo_id`:
-- `banner_id`:
+- `business_details_id`:
 - `working_hours`:
 
 ## DeliveryOrders
@@ -3990,8 +4010,10 @@ erDiagram
 }
 "scoring_points" {
   String scoring_points_id PK
-  String business_id FK
+  String stores_id FK
+  String food_drinks_id FK
   String user_id FK "nullable"
+  String driver_id FK "nullable"
   String delivery_order_id FK "nullable"
   String taxi_order_id FK "nullable"
   Int points
@@ -4142,10 +4164,11 @@ erDiagram
 "transactions" }o--o| "delivery_orders" : delivery_order
 "transactions" }o--|| "users" : user
 "wallet_transfer_history" }o--|| "delivery_orders" : delivery_order
-"scoring_points" }o--o| "users" : users
-"scoring_points" }o--o| "delivery_orders" : delivery_orders
+"scoring_points" }o--o| "users" : user
+"scoring_points" }o--o| "drivers" : driver
+"scoring_points" }o--o| "delivery_orders" : delivery_order
 "late_events" }o--|| "drivers" : driver
-"late_events" }o--o| "delivery_orders" : delivery_orders
+"late_events" }o--o| "delivery_orders" : delivery_order
 "late_events" }o--o| "scoring_points" : scoring_points
 "business_users" }o--|| "users" : users
 "line_items" }o--|| "delivery_orders" : order
@@ -4233,6 +4256,7 @@ erDiagram
 "daily_meals_module" {
   String id PK
   String business_id FK,UK
+  String delivery_address_id FK "nullable"
   DAY_OF_WEEK daily_meals_days
   Json daily_meals_delivery_mapping "nullable"
   Int maximum_daily_meals_subscribers "nullable"
@@ -4240,6 +4264,7 @@ erDiagram
   SORTING_TYPE daily_users_sorting_type
   DateTime(6) created_at
   DateTime(6) updated_at
+  String business_details_id FK,UK "nullable"
 }
 "daily_meal_menus" {
   String daily_meal_menu_id PK
@@ -4443,6 +4468,7 @@ erDiagram
   Boolean allow_newsletter "nullable"
   SERVICES user_favorite_service_links
 }
+"daily_meals_module" }o--o| "addresses" : delivery_address
 "daily_meal_menus" }o--|| "daily_meals_module" : daily_meals_module
 "daily_meal_subscriptions" }o--|| "users" : user
 "daily_meal_subscriptions" }o--o| "drivers" : driver
@@ -4477,6 +4503,7 @@ Properties as follows:
 
 - `id`:
 - `business_id`:
+- `delivery_address_id`:
 - `daily_meals_days`:
 - `daily_meals_delivery_mapping`:
 - `maximum_daily_meals_subscribers`:
@@ -4484,6 +4511,7 @@ Properties as follows:
 - `daily_users_sorting_type`:
 - `created_at`:
 - `updated_at`:
+- `business_details_id`:
 
 ### `daily_meal_menus`
 
@@ -4765,6 +4793,7 @@ erDiagram
   String id PK
   String business_id FK,UK
   Int seats "nullable"
+  String business_details_id FK,UK "nullable"
 }
 "reservations" {
   String reservation_id PK
@@ -4839,6 +4868,7 @@ Properties as follows:
 - `id`:
 - `business_id`:
 - `seats`:
+- `business_details_id`:
 
 ### `reservations`
 
@@ -5348,8 +5378,7 @@ erDiagram
   Int hours_before_reschedule "nullable"
   Int hours_before_cancel "nullable"
   Boolean publicly_visible
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
   String reviewable_id FK "nullable"
 }
 "location" {
@@ -5589,8 +5618,6 @@ erDiagram
   String address_id FK "nullable"
   Boolean is_business_unit
   String business_group_name "nullable"
-  String name
-  String description "nullable"
   String tax_id
   String registration_id
   String email UK
@@ -5608,10 +5635,20 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
+  String business_details_id FK,UK "nullable"
+}
+"business_details" {
+  String business_details_id PK
+  String business_id UK
+  String name "nullable"
+  String description "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
 }
 "reservation_module" |o--|| "business" : business
+"reservation_module" |o--o| "business_details" : business_details
 "location" }o--|| "reservation_module" : reservation_module
 "service_category" }o--o| "service_category" : parent
 "service_category" }o--|| "reservation_module" : reservation_module
@@ -5650,6 +5687,7 @@ erDiagram
 "notification_message" }o--o| "notification_template_version" : version
 "notification_message_event" }o--|| "notification_message" : message
 "business" }o--o| "business" : parent_business
+"business" |o--o| "business_details" : business_details
 ```
 
 ### `reservation_module`
@@ -5670,8 +5708,7 @@ Properties as follows:
 - `hours_before_reschedule`:
 - `hours_before_cancel`:
 - `publicly_visible`:
-- `logo_id`:
-- `banner_id`:
+- `business_details_id`:
 - `reviewable_id`:
 
 ### `location`
@@ -6147,8 +6184,6 @@ erDiagram
   String address_id FK "nullable"
   Boolean is_business_unit
   String business_group_name "nullable"
-  String name
-  String description "nullable"
   String tax_id
   String registration_id
   String email UK
@@ -6166,8 +6201,7 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
 }
 "delivery_orders" {
   String order_id PK
@@ -6396,8 +6430,10 @@ erDiagram
 }
 "scoring_points" {
   String scoring_points_id PK
-  String business_id FK
+  String stores_id FK
+  String food_drinks_id FK
   String user_id FK "nullable"
+  String driver_id FK "nullable"
   String delivery_order_id FK "nullable"
   String taxi_order_id FK "nullable"
   Int points
@@ -6538,10 +6574,11 @@ erDiagram
 "transactions" }o--o| "taxi_orders" : taxi_order
 "transactions" }o--|| "users" : user
 "wallet_transfer_history" }o--|| "taxi_orders" : taxi_order
-"scoring_points" }o--o| "users" : users
-"scoring_points" }o--o| "taxi_orders" : taxi_orders
+"scoring_points" }o--o| "users" : user
+"scoring_points" }o--o| "drivers" : driver
+"scoring_points" }o--o| "taxi_orders" : taxi_order
 "late_events" }o--|| "drivers" : driver
-"late_events" }o--o| "taxi_orders" : taxi_orders
+"late_events" }o--o| "taxi_orders" : taxi_order
 "late_events" }o--o| "scoring_points" : scoring_points
 "business_users" }o--|| "users" : users
 "drivers" |o--o| "users" : user
@@ -7711,8 +7748,6 @@ erDiagram
   String address_id FK "nullable"
   Boolean is_business_unit
   String business_group_name "nullable"
-  String name
-  String description "nullable"
   String tax_id
   String registration_id
   String email UK
@@ -7730,14 +7765,22 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
+  String business_details_id FK,UK "nullable"
+}
+"business_details" {
+  String business_details_id PK
+  String business_id UK
+  String name "nullable"
+  String description "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
 }
 "stores_module" {
   String stores_id PK
   String business_id FK,UK
   Boolean enabled
-  Json settings "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
@@ -7745,15 +7788,13 @@ erDiagram
   Int minimum_order
   Boolean overwhelmed
   Boolean online
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
   Json working_hours "nullable"
 }
 "food_drinks_module" {
   String food_drinks_id PK
   String business_id FK,UK
   Boolean enabled
-  Json settings "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
@@ -7761,12 +7802,14 @@ erDiagram
   Int minimum_order
   Boolean overwhelmed
   Boolean online
-  String logo_id FK,UK "nullable"
-  String banner_id FK,UK "nullable"
+  String business_details_id FK,UK "nullable"
   Json working_hours "nullable"
 }
 "business" }o--o| "business" : parent_business
+"business" |o--o| "business_details" : business_details
 "stores_module" |o--|| "business" : business
+"stores_module" |o--o| "business_details" : business_details
 "food_drinks_module" |o--|| "business" : business
+"food_drinks_module" |o--o| "business_details" : business_details
 ```
 

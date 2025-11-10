@@ -39,6 +39,9 @@ export {
 	registerSchemas as registerBusinessSchemas,
 } from './business.dto.js';
 
+export * from './business.mappers.js';
+// Mappers and validators are available from their specific files. Avoid wildcard re-exports to keep file ownership explicit.
+
 // Legacy exports for backwards compatibility
 export {
 	BusinessBaseSchema,
