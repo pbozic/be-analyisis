@@ -13,6 +13,7 @@ export {
 	CrmModuleRefSchema,
 	MenuRefSchema,
 	DailyMealsRefSchema,
+	BusinessWithDailyMealsResponseDto,
 	type BusinessCreateDto as BusinessCreate,
 	type BusinessResponseDto as BusinessResponse,
 	type BusinessRefSchema as BusinessRef,
@@ -32,6 +33,8 @@ export {
 	type DailyMealsRef,
 	type MenuItemRef,
 	type MenuCategoryRef,
+	type BusinessByIdResponse,
+	toBusinessByIdResponse,
 	registerSchemas as registerBusinessSchemas,
 } from './business.dto.js';
 

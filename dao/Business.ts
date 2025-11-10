@@ -7,39 +7,13 @@ import type {
 	BusinessResponse,
 	BusinessSearchResponse,
 	BusinessAdminResponse,
-	BusinessWithFoodDrinksAndDailyMealsResponseDto,
+	BusinessWithDailyMealsResponseDto,
+	BusinessByIdResponse,
 } from '../schemas/dto/Business/index.js';
+import { toBusinessByIdResponse } from '../schemas/dto/Business/index.js';
+import { businessByIdInclude } from '../prisma/includes/business.js';
 
-export type PrismaTransactionClient = Prisma.TransactionClient;
-
-const menuDefault = {
-	menus: {
-		include: {
-			categories: {
-				orderBy: {
-					menu_order_index: 'asc',
-				},
-				include: {
-					menu_items: {
-						orderBy: {
-							menu_category_order_index: 'asc',
-						},
-						include: {
-							image_file: true,
-							tax_rate: true,
-						},
-					},
-					menu_categories_categories: {
-						include: {
-							category: true,
-						},
-					},
-					daily_meal_category_price: true,
-				},
-			},
-		},
-	},
-};
+type PrismaTransactionClient = Prisma.TransactionClient;
 
 /**
  * Get a list of businesses with optional query/include arguments.
@@ -77,13 +51,15 @@ const getBusinesses = async (args?: any): Promise<BusinessResponse[]> => {
 /**
  * Get businesses that offer daily meals along with their daily meal drivers.
  *
- * @returns {Promise<BusinessWithFoodDrinksAndDailyMealsResponseDto[]>} A promise resolving to an array of businesses with daily meal drivers.
+ * @returns {Promise<BusinessWithDailyMealsResponseDto[]>} A promise resolving to an array of businesses with daily meal drivers.
  */
-const getDailyMealBusinesses = async (): Promise<BusinessWithFoodDrinksAndDailyMealsResponseDto[]> => {
+const getDailyMealBusinesses = async (): Promise<BusinessWithDailyMealsResponseDto[]> => {
 	try {
 		const businesses = await prisma.business.findMany({
 			where: {
-				daily_meals_id: { not: null },
+				daily_meals_module: {
+					isNot: null,
+				},
 			},
 			include: {
 				daily_meals_module: {
@@ -97,7 +73,6 @@ const getDailyMealBusinesses = async (): Promise<BusinessWithFoodDrinksAndDailyM
 		return businesses.map((business: any) => ({
 			...business,
 			daily_meal_drivers: business.daily_meals_module.daily_meal_drivers,
-			delivery_address: business.daily_meals_module.delivery_address,
 		}));
 	} catch (error) {
 		console.error('Error retrieving daily meal businesses:', error);
@@ -109,97 +84,19 @@ const getDailyMealBusinesses = async (): Promise<BusinessWithFoodDrinksAndDailyM
  * Get a single business by its ID with rich related data.
  *
  * @param {string} business_id - The ID of the business to retrieve.
- * @returns {Promise<any | null>} A promise resolving to the business record or null if not found.
+ * @returns {Promise<BusinessByIdResponse | null>} A promise resolving to the business record or null if not found.
  */
-const getBusinessById = async (business_id: string): Promise<any | null> => {
+const getBusinessById = async (business_id: string): Promise<BusinessByIdResponse | null> => {
 	try {
 		const business = await prisma.business.findUnique({
 			where: {
 				business_id: business_id,
 			},
-			include: {
-				address: true,
-				stores_module: {
-					include: {
-						business_local_locations: {
-							where: {
-								time: {
-									gte: new Date(),
-								},
-							},
-							include: {
-								local_location: {
-									include: {
-										address: true,
-									},
-								},
-							},
-							orderBy: {
-								time: 'asc',
-							},
-						},
-						...menuDefault,
-						logo: true,
-						banner: true,
-					},
-				},
-				business_users: {
-					include: {
-						users: true,
-					},
-				},
-				reservation_module: {
-					include: {
-						logo: true,
-						banner: true,
-					},
-				},
-				crm_module: {
-					include: {
-						business_clients: true,
-					},
-				},
-				table_reservations_module: {
-					include: {
-						reservations: {
-							include: {
-								user: true,
-							},
-						},
-					},
-				},
-				daily_meals_module: true,
-				food_drinks_module: {
-					include: {
-						...menuDefault,
-						logo: true,
-						banner: true,
-					},
-				},
-				transport_module: true,
-				parent_business: true,
-				child_businesses: true,
-			},
+			include: businessByIdInclude,
 		});
-
 		if (!business) return null;
 
-		return {
-			...business,
-			business_local_locations: business?.stores_module?.business_local_locations,
-			business_clients: business?.crm_module?.business_clients,
-			reservations: business?.table_reservations_module?.reservations,
-			daily_meals_delivery_mapping: business?.daily_meals_module?.daily_meals_delivery_mapping,
-			maximum_daily_meals_subscribers: business?.daily_meals_module?.maximum_daily_meals_subscribers,
-			daily_users_sorting_type: business?.daily_meals_module?.daily_users_sorting_type,
-			daily_users_sorted: business?.daily_meals_module?.daily_users_sorted,
-			stores_logo: business?.stores_module?.logo,
-			stores_banner: business?.stores_module?.banner,
-			food_drinks_logo: business?.food_drinks_module?.logo,
-			food_drinks_banner: business?.food_drinks_module?.banner,
-			reservations_logo: business?.reservation_module?.logo,
-			reservations_banner: business?.reservation_module?.banner,
-		};
+		return toBusinessByIdResponse(business);
 	} catch (error) {
 		console.error('Error retrieving business:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get business by ID');
@@ -288,29 +185,6 @@ const getBusinessByEmail = async (email: string): Promise<BusinessResponse | nul
 	} catch (error) {
 		console.error('Error retrieving business by email:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get business by email');
-	}
-};
-
-/**
- * Find a business by telephone.
- *
- * @param {string} telephone - The telephone to search for.
- * @returns {Promise<BusinessResponse | null>} A promise resolving to the business record or null if not found.
- */
-const getBusinessByTelephone = async (telephone: string): Promise<BusinessResponse | null> => {
-	try {
-		return (await prisma.business.findFirst({
-			where: {
-				telephone: telephone,
-			},
-			include: {
-				address: true,
-				business_users: true,
-			},
-		})) as BusinessResponse | null;
-	} catch (error) {
-		console.error('Error retrieving business by telephone:', error);
-		throw new Error(error instanceof Error ? error.message : 'Failed to get business by telephone');
 	}
 };
 
@@ -718,6 +592,9 @@ const removeParentBusiness = async (business_id: string): Promise<BusinessRespon
 const addScheduledUserSortingType = async (type: string, businessId: string): Promise<any> => {
 	try {
 		const business = await getBusinessById(businessId);
+		if (!business) {
+			throw new Error('Business not found');
+		}
 		const food_drinks_id = business.food_drinks_module?.food_drinks_id;
 		await prisma.daily_meals_module.update({
 			where: { food_drinks_id },
@@ -740,6 +617,9 @@ const addScheduledUserSortingType = async (type: string, businessId: string): Pr
 const manualSortScheduledUsers = async (sorted_users: string[] = [], businessId: string): Promise<any> => {
 	try {
 		const business = await getBusinessById(businessId);
+		if (!business) {
+			throw new Error('Business not found');
+		}
 		const food_drinks_id = business.food_drinks_module?.food_drinks_id;
 		await prisma.daily_meals_module.update({
 			where: { food_drinks_id },
@@ -830,7 +710,7 @@ const activateBusiness = async (
 					business: { connect: { business_id } },
 					action_creator: { connect: { user_id: action_creator_user_id } },
 					reason: reason as ACCOUNT_ACTIONS_REASON,
-					action: ACCOUNT_ACTIONS.UNSUSPEND,
+					action: ACCOUNT_ACTIONS.UNSUSPEND as ACCOUNT_ACTIONS,
 				},
 			});
 			return updatedBusiness;
@@ -865,7 +745,7 @@ const deactivateBusiness = async (
 					business: { connect: { business_id } },
 					action_creator: { connect: { user_id: action_creator_user_id } },
 					reason: reason as ACCOUNT_ACTIONS_REASON,
-					action: ACCOUNT_ACTIONS.SUSPEND,
+					action: ACCOUNT_ACTIONS.SUSPEND as ACCOUNT_ACTIONS,
 				},
 			});
 			return updatedBusiness;
@@ -1009,7 +889,6 @@ export { getBusinessById };
 export { getBusinessAdminDataById };
 export { getBusinessesForSearchById };
 export { getBusinessByEmail };
-export { getBusinessByTelephone };
 export { getBusinessesByNameSearch };
 export { getBusinessesByGroupName };
 export { getTransferBusinessesMainInformation };
@@ -1043,7 +922,6 @@ export default {
 	getBusinessAdminDataById,
 	getBusinessesForSearchById,
 	getBusinessByEmail,
-	getBusinessByTelephone,
 	getBusinessesByNameSearch,
 	getBusinessesByGroupName,
 	getTransferBusinessesMainInformation,
