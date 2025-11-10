@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { OpenAPIRegistry, extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 
-// Import existing module DTOs
 import { TransportModuleRefSchema } from '../Transport/transport.dto.js';
 import { FoodDrinksModuleRefSchema } from '../FoodDrinks/food-drinks.dto.js';
 import { StoresModuleRefSchema } from '../Stores/store.dto.js';
@@ -22,8 +21,8 @@ export const BusinessCreateDto = z
 		address_id: z.string().uuid().nullable().optional().openapi({ example: null }),
 		is_business_unit: z.boolean().optional().default(false).openapi({ example: false }),
 		business_group_name: z.string().nullable().optional().openapi({ example: 'Acme Holdings' }),
-		name: z.string().min(1).openapi({ example: 'Klikni d.o.o.' }),
-		description: z.string().nullable().optional().openapi({ example: 'Local delivery and taxi services' }),
+		// 'name' and 'description' moved to `business_details` model in Prisma.
+		// They are intentionally omitted here from the base create DTO.
 		tax_id: z.string().openapi({ example: 'HR12345678901' }),
 		registration_id: z.string().openapi({ example: '567890' }),
 		email: z.string().email().openapi({ example: 'info@klikni-web.eu' }),
@@ -40,8 +39,7 @@ export const BusinessCreateDto = z
 					tuesday: { open: '08:00', close: '20:00' },
 				},
 			}),
-		popular: z.boolean().optional().default(true).openapi({ example: true }),
-		new: z.boolean().optional().default(false).openapi({ example: false }),
+		// UI-only flags (e.g. 'popular'/'new') are intentionally omitted from the persisted DTOs.
 		parent_business_id: z.string().uuid().nullable().optional().openapi({ example: null }),
 		stripe_account_id: z.string().nullable().optional().openapi({ example: null }),
 		stripe_customer_id: z.string().nullable().optional().openapi({ example: null }),
@@ -55,8 +53,7 @@ export const BusinessCreateDto = z
 			address_id: null,
 			is_business_unit: false,
 			business_group_name: 'Acme Holdings',
-			name: 'Klikni d.o.o.',
-			description: 'Local delivery and taxi services',
+			// name/description are stored in `business_details` and omitted here
 			tax_id: 'HR12345678901',
 			registration_id: '567890',
 			email: 'info@klikni-web.eu',
@@ -67,8 +64,7 @@ export const BusinessCreateDto = z
 				monday: { open: '08:00', close: '20:00' },
 				tuesday: { open: '08:00', close: '20:00' },
 			},
-			popular: true,
-			new: false,
+			// Note: 'popular'/'new' flags are not persisted in the Prisma schema and therefore omitted here.
 			parent_business_id: null,
 			stripe_account_id: null,
 			stripe_customer_id: null,
@@ -90,12 +86,11 @@ export const BusinessResponseDto = BusinessCreateDto.extend({
 	stores_id: UUID.nullable().optional(),
 }).openapi({
 	example: {
-		business_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+		business_id: '3Afa85f64-5717-4562-b3fc-2c963f66afa6',
 		address_id: null,
 		is_business_unit: false,
 		business_group_name: 'Acme Holdings',
-		name: 'Klikni d.o.o.',
-		description: 'Local delivery and taxi services',
+		// name/description live on business_details in Prisma; omitted here.
 		tax_id: 'HR12345678901',
 		registration_id: '567890',
 		email: 'info@klikni-web.eu',
@@ -106,8 +101,6 @@ export const BusinessResponseDto = BusinessCreateDto.extend({
 			monday: { open: '08:00', close: '20:00' },
 			tuesday: { open: '08:00', close: '20:00' },
 		},
-		popular: true,
-		new: false,
 		parent_business_id: null,
 		stripe_account_id: null,
 		stripe_customer_id: null,
