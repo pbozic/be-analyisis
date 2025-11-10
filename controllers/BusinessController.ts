@@ -26,13 +26,13 @@ import InvoicesDao from '../dao/Invoices.js';
 import TransportDao from '../dao/Transport.js';
 import { ValidatedRequest, AuthenticatedRequest } from '../types/validatedRequest.ts';
 import {
-	ActivateBusinessInput,
-	DeactivateBusinessInput,
-	BusinessIdParamsInput,
-	GetBusinessForSearchInput,
-	ParentBusinessIdParamsInput,
-	CreateBusinessInput,
-} from '../schemas/dto/Business/Business.validation.ts';
+    ActivateBusinessInput,
+    DeactivateBusinessInput,
+    BusinessIdParamsInput,
+    GetBusinessForSearchInput,
+    ParentBusinessIdParamsInput,
+    CreateBusinessInput,
+} from '../schemas/dto/Business/business.validators.js';
 config();
 const { businessIndex, fullSearch } = elasticsearch;
 /**
