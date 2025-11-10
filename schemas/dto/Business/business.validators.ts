@@ -251,8 +251,8 @@ export const CreateBusinessSchema = z
   .openapi('CreateBusiness');
 export type CreateBusinessInput = z.infer<typeof CreateBusinessSchema>;
 
-// Re-export legacy validation file for compatibility
-export * from './Business.validation.js';
+// Legacy wrapper removed: this file is now the authoritative source for Business validators.
+// Any legacy code should be moved here and imports updated to point to this file.
 
 // Register common validator schemas for OpenAPI
 export function registerSchemas(registry: OpenAPIRegistry) {
