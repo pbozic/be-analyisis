@@ -1,36 +1,36 @@
+import type { PrismaClient } from '@prisma/client';
+
 import prisma from '../prisma/prisma.js';
+import type { CreateOrderLobby, OrderLobbyResponse } from '../schemas/dto/OrderLobby/index.js';
+
 const cropped_user_columns = {
 	first_name: true,
 	last_name: true,
 	user_id: true,
 };
+
 /**
  * Creates a new order lobby
- * @param {Object} data - The order lobby data
- * @param {string} data.lobby_name - Name of the lobby
- * @param {string} data.lobby_description - Description of the lobby
- * @param {string} data.creating_business_id - ID of the associated business
- * @param {string} data.stores_id- ID of the associated restaurant
- * @param {string} data.food_and_drinks_id - ID of the associated restaurant
- * @param {string} data.creator_id - ID of the user who created the lobby
- * @returns {Promise<Object>} Created order lobby
+ * @param {Partial<CreateOrderLobby>} data - The order lobby data
+ * @returns {Promise<OrderLobbyResponse>} Created order lobby
  */
-const createOrderLobby = async (data) => {
+const createOrderLobby = async (data: Partial<CreateOrderLobby>): Promise<OrderLobbyResponse> => {
 	try {
 		return await prisma.order_lobbies.create({
 			data,
 		});
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error creating order lobby:', error);
 		throw error;
 	}
 };
+
 /**
  * Retrieves an order lobby by its ID
  * @param {string} orderLobbiesId - The ID of the order lobby
- * @returns {Promise<Object>} Order lobby with its items and users
+ * @returns {Promise<OrderLobbyResponse|null>} Order lobby with its items and users
  */
-const getOrderLobbyById = async (orderLobbiesId) => {
+const getOrderLobbyById = async (orderLobbiesId: string): Promise<OrderLobbyResponse | null> => {
 	try {
 		return await prisma.order_lobbies.findUnique({
 			where: { order_lobbies_id: orderLobbiesId },
@@ -58,16 +58,17 @@ const getOrderLobbyById = async (orderLobbiesId) => {
 				},
 			},
 		});
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting order lobby by ID:', error);
 		throw error;
 	}
 };
+
 /**
  * Retrieves all order lobbies
- * @returns {Promise<Array>} Array of all order lobbies with their items, users, and delivery orders
+ * @returns {Promise<OrderLobbyResponse[]>} Array of all order lobbies with their items, users, and delivery orders
  */
-const getAllOrderLobbies = async () => {
+const getAllOrderLobbies = async (): Promise<OrderLobbyResponse[]> => {
 	try {
 		return await prisma.order_lobbies.findMany({
 			include: {
@@ -95,23 +96,24 @@ const getAllOrderLobbies = async () => {
 				delivery_orders: true,
 			},
 		});
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting all order lobbies:', error);
 		throw error;
 	}
 };
+
 /**
  * Retrieves all order lobbies for a specific business
  * @param {string} creating_business_id - The ID of the business that created creating lobby
- * @returns {Promise<Array>} Array of order lobbies associated with the business
+ * @returns {Promise<OrderLobbyResponse[]>} Array of order lobbies associated with the business
  */
-const getOrderLobbiesForBusiness = async (creating_business_id) => {
+const getOrderLobbiesForBusiness = async (creating_business_id: string): Promise<OrderLobbyResponse[]> => {
 	try {
 		return await prisma.order_lobbies.findMany({
+			where: {
+				creating_business_id: creating_business_id,
+			},
 			include: {
-				where: {
-					creating_business_id: creating_business_id,
-				},
 				order_lobby_items: {
 					include: {
 						menu_items: {
@@ -136,17 +138,18 @@ const getOrderLobbiesForBusiness = async (creating_business_id) => {
 				delivery_orders: true,
 			},
 		});
-	} catch (error) {
-		console.error('Error getting all order lobbies:', error);
+	} catch (error: any) {
+		console.error('Error getting order lobbies for business:', error);
 		throw error;
 	}
 };
+
 /**
  * Retrieves active order lobbies for a specific user
  * @param {string} userId - The ID of the user
- * @returns {Promise<Array>} Array of active order lobbies the user is part of
+ * @returns {Promise<OrderLobbyResponse[]>} Array of active order lobbies the user is part of
  */
-const getActiveOrderLobbiesByUserID = async (userId) => {
+const getActiveOrderLobbiesByUserID = async (userId: string): Promise<OrderLobbyResponse[]> => {
 	try {
 		return await prisma.order_lobbies.findMany({
 			where: {
@@ -181,56 +184,62 @@ const getActiveOrderLobbiesByUserID = async (userId) => {
 				},
 			},
 		});
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting active order lobbies by user ID:', error);
 		throw error;
 	}
 };
+
 /**
  * Updates an order lobby
  * @param {string} orderLobbiesId - The ID of the order lobby to update
- * @param {Object} data - The update data
- * @returns {Promise<Object>} Updated order lobby
+ * @param {Partial<CreateOrderLobby>} data - The update data
+ * @returns {Promise<OrderLobbyResponse>} Updated order lobby
  */
-const updateOrderLobby = async (orderLobbiesId, data) => {
+const updateOrderLobby = async (
+	orderLobbiesId: string,
+	data: Partial<CreateOrderLobby>
+): Promise<OrderLobbyResponse> => {
 	try {
 		return await prisma.order_lobbies.update({
 			where: { order_lobbies_id: orderLobbiesId },
 			data,
 		});
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error updating order lobby:', error);
 		throw error;
 	}
 };
+
 /**
  * Sets the active status of an order lobby
  * @param {string} orderLobbiesId - The ID of the order lobby
  * @param {boolean} active - The active status to set
- * @returns {Promise<Object>} Updated order lobby
+ * @returns {Promise<OrderLobbyResponse>} Updated order lobby
  */
-const setOrderLobbyActive = async (orderLobbiesId, active) => {
+const setOrderLobbyActive = async (orderLobbiesId: string, active: boolean): Promise<OrderLobbyResponse> => {
 	try {
 		return await prisma.order_lobbies.update({
 			where: { order_lobbies_id: orderLobbiesId },
 			data: { active },
 		});
-	} catch (error) {
-		console.error('Error deactivating order lobby:', error);
+	} catch (error: any) {
+		console.error('Error setting order lobby active status:', error);
 		throw error;
 	}
 };
+
 /**
  * Deletes an order lobby
  * @param {string} orderLobbiesId - The ID of the order lobby to delete
- * @returns {Promise<Object>} Deleted order lobby
+ * @returns {Promise<OrderLobbyResponse>} Deleted order lobby
  */
-const deleteOrderLobby = async (orderLobbiesId) => {
+const deleteOrderLobby = async (orderLobbiesId: string): Promise<OrderLobbyResponse> => {
 	try {
 		return await prisma.order_lobbies.delete({
 			where: { order_lobbies_id: orderLobbiesId },
 		});
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error deleting order lobby:', error);
 		throw error;
 	}
@@ -240,10 +249,13 @@ const deleteOrderLobby = async (orderLobbiesId) => {
  * Replace users in an order lobby with a new set and limits in a transaction.
  *
  * @param {string} orderLobbiesId - Order lobby ID.
- * @param {object} users - Map of user_id to limit.
- * @returns {Promise<object>} Updated order lobby with users and basic user fields.
+ * @param {Record<string, number | null>} users - Map of user_id to limit.
+ * @returns {Promise<OrderLobbyResponse | null>} Updated order lobby with users and basic user fields.
  */
-const editUsersInOrderLobby = async (orderLobbiesId, users) => {
+const editUsersInOrderLobby = async (
+	orderLobbiesId: string,
+	users: Record<string, number | null>
+): Promise<OrderLobbyResponse | null> => {
 	try {
 		const orderLobby = await prisma.order_lobbies.findUnique({
 			where: { order_lobbies_id: orderLobbiesId },
@@ -256,7 +268,7 @@ const editUsersInOrderLobby = async (orderLobbiesId, users) => {
 			throw new Error('Order lobby not found');
 		}
 
-		return await prisma.$transaction(async (tx) => {
+		return await prisma.$transaction(async (tx: PrismaClient) => {
 			// Delete all existing users from the order lobby
 			await tx.order_lobby_users.deleteMany({
 				where: { order_lobbies_id: orderLobbiesId },
@@ -288,7 +300,7 @@ const editUsersInOrderLobby = async (orderLobbiesId, users) => {
 				},
 			});
 		});
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error editing users in order lobby:', error);
 		throw error;
 	}
@@ -298,9 +310,9 @@ const editUsersInOrderLobby = async (orderLobbiesId, users) => {
  * Get all active order lobbies for a business including items and users.
  *
  * @param {string} creating_business_id - Business ID.
- * @returns {Promise<object[]>} Active order lobbies.
+ * @returns {Promise<OrderLobbyResponse[]>} Active order lobbies.
  */
-const getAllActiveOrderLobbiesByBusinessId = async (creating_business_id) => {
+const getAllActiveOrderLobbiesByBusinessId = async (creating_business_id: string): Promise<OrderLobbyResponse[]> => {
 	try {
 		return await prisma.order_lobbies.findMany({
 			where: {
@@ -331,7 +343,7 @@ const getAllActiveOrderLobbiesByBusinessId = async (creating_business_id) => {
 				},
 			},
 		});
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting all active order lobbies by business ID:', error);
 		throw error;
 	}
@@ -341,9 +353,9 @@ const getAllActiveOrderLobbiesByBusinessId = async (creating_business_id) => {
  * Get active order lobbies that a user participates in including items and users.
  *
  * @param {string} userId - User ID.
- * @returns {Promise<object[]>} Order lobbies.
+ * @returns {Promise<OrderLobbyResponse[]>} Order lobbies.
  */
-const getOrderLobbiesByUserId = async (userId) => {
+const getOrderLobbiesByUserId = async (userId: string): Promise<OrderLobbyResponse[]> => {
 	try {
 		return await prisma.order_lobbies.findMany({
 			where: {
@@ -372,7 +384,7 @@ const getOrderLobbiesByUserId = async (userId) => {
 				order_lobby_users: true,
 			},
 		});
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting order lobbies by user ID:', error);
 		throw error;
 	}

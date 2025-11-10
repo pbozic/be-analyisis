@@ -1,12 +1,14 @@
 import prisma from '../prisma/prisma.js';
+import type { CreateLostItemInput, UpdateLostItemInput, LostItem as LostItemDTO } from '../types/lostItems/LostItem.js';
+
 /**
  * Report a found item; creates lost_items row and connects reporting user.
  *
- * @param {object} foundItemData - Payload for the lost item (title, description, etc.).
- * @param {object} user - User object containing user_id.
- * @returns {Promise<object>} Created lost item.
+ * @param {CreateLostItemInput} foundItemData - Payload for the lost item (title, description, etc.).
+ * @param {{ user_id: string }} user - User object containing user_id.
+ * @returns {Promise<LostItemDTO>} Created lost item.
  */
-const reportFoundItem = async (foundItemData, user) => {
+const reportFoundItem = async (foundItemData: CreateLostItemInput, user: { user_id: string }): Promise<LostItemDTO> => {
 	try {
 		return await prisma.lost_items.create({
 			data: {
@@ -21,33 +23,30 @@ const reportFoundItem = async (foundItemData, user) => {
 		throw new Error('Error adding found item');
 	}
 };
+
 /**
  * Delete a lost item by ID.
  *
  * @param {string} lost_item_id - Lost item ID.
- * @returns {Promise<object>} Deleted lost item.
+ * @returns {Promise<LostItemDTO>} Deleted lost item.
  */
-const deleteFoundItem = async (lost_item_id) => {
+const deleteFoundItem = async (lost_item_id: string): Promise<LostItemDTO> => {
 	try {
-		// Disconnect the user from the lost item
-		// await prisma.lost_items.update({
-		// 	where: { lost_item_id },
-		// 	data: { user: { disconnect: true } }
-		// });
 		return await prisma.lost_items.delete({
 			where: { lost_item_id },
 		});
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error deleting found item:', error);
-		throw new Error(error);
+		throw new Error(error?.message || 'Error deleting found item');
 	}
 };
+
 /**
  * Get all lost items including documents and files, and the reporting user.
  *
- * @returns {Promise<object[]>} Lost items with related data.
+ * @returns {Promise<LostItemDTO[]>} Lost items with related data.
  */
-const getLostItems = async () => {
+const getLostItems = async (): Promise<LostItemDTO[]> => {
 	try {
 		return await prisma.lost_items.findMany({
 			include: {
@@ -64,14 +63,15 @@ const getLostItems = async () => {
 		throw new Error('Could not retrieve lost items');
 	}
 };
+
 /**
  * Update a lost item by ID.
  *
  * @param {string} lost_item_id - Lost item ID.
- * @param {object} updateData - Fields to update.
- * @returns {Promise<object>} Updated lost item.
+ * @param {UpdateLostItemInput} updateData - Fields to update.
+ * @returns {Promise<LostItemDTO>} Updated lost item.
  */
-const updateLostItem = async (lost_item_id, updateData) => {
+const updateLostItem = async (lost_item_id: string, updateData: UpdateLostItemInput): Promise<LostItemDTO> => {
 	try {
 		return await prisma.lost_items.update({
 			where: { lost_item_id },
@@ -82,6 +82,7 @@ const updateLostItem = async (lost_item_id, updateData) => {
 		throw new Error('Error updating lost item');
 	}
 };
+
 export { reportFoundItem };
 export { deleteFoundItem };
 export { getLostItems };

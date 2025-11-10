@@ -296,6 +296,34 @@ export const MenuItemVersionResponseSchema = z
 export type MenuItemVersionResponse = z.infer<typeof MenuItemVersionResponseSchema>;
 
 // =======================
+// DailyMealMenu schemas (for getMenuByDate DAO)
+// =======================
+
+// Category shape used specifically for daily meal menu responses.
+// Reuses MenuCategoryRefSchema and augments it with relations included by the DAO.
+export const DailyMealMenuCategorySchema = MenuCategoryRefSchema.extend({
+	menu_items: MenuItemsResponseSchema.optional(),
+	menu_categories_categories: z.array(MenuCategoryCategorySchema).optional(),
+}).openapi('DailyMealMenuCategory');
+
+export type DailyMealMenuCategory = z.infer<typeof DailyMealMenuCategorySchema>;
+
+// Daily meal menu base/detail schema - matches prisma.daily_meal_menus.findFirst with included categories,
+// where categories include menu_items (with tax_rate) and menu_categories_categories (with category).
+export const DailyMealMenuBaseSchema = z
+	.object({
+		daily_meal_menu_id: z.string().uuid().openapi({ example: 'a10e8400-e29b-41d4-a716-446655440000' }),
+		daily_meals_module_id: z.string().uuid().openapi({ example: 'b20e8400-e29b-41d4-a716-446655440000' }),
+		date: z.string().datetime().nullable().optional().openapi({ example: '2025-01-15T00:00:00Z' }),
+		created_at: z.string().datetime().optional(),
+		updated_at: z.string().datetime().optional(),
+		categories: z.array(DailyMealMenuCategorySchema).optional(),
+	})
+	.openapi('DailyMealMenuBase');
+
+export type DailyMealMenuBase = z.infer<typeof DailyMealMenuBaseSchema>;
+
+// =======================
 // Responses for Menu
 // =======================
 // (Menu response schemas removed - only input schemas kept)
@@ -324,6 +352,8 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('MenuItemResponse', MenuItemResponseSchema);
 	registry.register('MenuItemsResponse', MenuItemsResponseSchema);
 	registry.register('MenuItemVersionResponse', MenuItemVersionResponseSchema);
+	registry.register('DailyMealMenuCategory', DailyMealMenuCategorySchema);
+	registry.register('DailyMealMenuBase', DailyMealMenuBaseSchema);
 }
 
 // -----------------------
@@ -334,7 +364,6 @@ export const CreateMenuInputSchema = z
 	.object({
 		food_drinks_id: z.string().uuid().optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
 		stores_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
-		isDailyMeal: z.boolean().optional().openapi({ example: false }),
 		date: z.string().datetime().optional().openapi({ example: '2025-01-15T00:00:00Z' }),
 	})
 	.openapi('CreateMenuInput');
@@ -344,7 +373,6 @@ export const GetMenuByBusinessIdParamsSchema = z
 	.object({
 		food_drinks_id: z.string().uuid().optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
 		stores_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
-		isDailyMeal: z.boolean().optional().openapi({ example: false }),
 		startDate: z.string().datetime().optional().openapi({ example: '2025-01-15T00:00:00Z' }),
 	})
 	.openapi('GetMenuByBusinessIdParams');
