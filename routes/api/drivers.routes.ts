@@ -10,7 +10,7 @@ import {
 	UpdateDriverOnlineStatusSchema,
 	ToggleDriverOrdersSchema,
 	SetCurrentVehicleSchema,
-	UpdateDriverDailyMealBusinessSchema,
+	UpdateDriverDailyMealBusinessesSchema,
 	UnlinkDriverFromBusinessSchema,
 	CreateDriverSchema,
 	HandleSosAlertSchema,
@@ -68,8 +68,8 @@ router.patch('/location', validate(UpdateDriverLocationSchema), DriverController
 router.patch('/online', validate(UpdateDriverOnlineStatusSchema), DriverController.updateDriverOnlineStatus);
 router.patch(
 	'/assign/:driver_id',
-	validate(UpdateDriverDailyMealBusinessSchema),
-	DriverController.updateDriverDailyMealBusiness
+	validate(UpdateDriverDailyMealBusinessesSchema),
+	DriverController.updateDriverDailyMealBusinesses
 );
 router.patch('/:driver_id/toggle_orders', validate(ToggleDriverOrdersSchema), DriverController.toggleDriverOrders);
 router.patch('/:driver_id/set_current_vehicle', validate(SetCurrentVehicleSchema), DriverController.setCurrentVehicle);

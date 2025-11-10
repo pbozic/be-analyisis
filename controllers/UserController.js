@@ -7,7 +7,6 @@ import BusinessDao from '../dao/Business.js';
 import TokenDao from '../dao/Token.js';
 import AddressDao from '../dao/Address.js';
 import FileDao from '../dao/File.js';
-import DeliveryDriverDao from '../dao/DeliveryDriver.js';
 import DriverDao from '../dao/Driver.js';
 import WalletFundsDao from '../dao/WalletFunds.js';
 import ReferralDao from '../dao/Referrals.js';
@@ -1207,17 +1206,11 @@ async function ping(req, res) {
 		return res.status(400).json({ error: 'Error obtaining user information' });
 	}
 	if (user.driver) {
-		let driver = await DriverDao.updateDriver(user.driver.driver_id, {
+		await DriverDao.updateDriver(user.driver.driver_id, {
 			last_ping_at: new Date(),
 			is_inactive: false,
 		});
 		return res.status(200).json({ message: 'Driver is online' });
-	} else if (user.delivery_driver) {
-		let delliveryDriver = await DeliveryDriverDao.updateDeliveryDriver(user.delivery_driver.delivery_driver_id, {
-			last_ping_at: new Date(),
-			is_inactive: false,
-		});
-		return res.status(200).json({ message: 'Delivery driver is online' });
 	} else {
 		return res.status(400).json({ error: 'User is not a driver' });
 	}

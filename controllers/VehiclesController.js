@@ -261,12 +261,6 @@ async function createVehicle(req, res) {
 				for (const d of req.body.drivers) {
 					await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, d.driver_id);
 				}
-				// 	TODO: maybe assign to all drivers of business if none selected
-				// } else {
-				// 	const drivers = await DriverDao.getDrivers({ where: { business_id: vehicle.business_id } });
-				// 	for (const d of drivers) {
-				// 		await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, d.driver_id)
-				// 	}
 			}
 			if (req.body.documents) {
 				for (const doc of req.body.documents) {

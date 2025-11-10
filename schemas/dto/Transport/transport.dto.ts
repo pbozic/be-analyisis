@@ -8,6 +8,7 @@ extendZodWithOpenApi(z);
 export const TransportModuleBaseSchema = z
 	.object({
 		transport_module_id: UUID,
+		business_id: UUID,
 		enabled: z.boolean().optional(),
 		created_at: Timestamp.optional(),
 		updated_at: Timestamp.optional(),

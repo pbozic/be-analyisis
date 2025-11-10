@@ -49,7 +49,6 @@ model business {
     sales_representative_id         String?
 
     user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_business")
-    scoring_points           scoring_points[]           @relation("scoring_points_to_business")
     account_actions          account_actions[]
 
     business_money_flows business_money_flows[]
@@ -57,19 +56,28 @@ model business {
     business_users       business_users[]
     business_teams       business_teams[]
 
-    types              BUSINESS_TYPE[]
-    reservation_module reservation_module?
-    transport_module   transport_module?
-    stores_module      stores_module?
-    food_drinks_module food_drinks_module?
-    daily_meals_module daily_meals_module?
+    types                     BUSINESS_TYPE[]
+    reservation_module_id     String?                    @db.Uuid
+    reservation_module        reservation_module?
+    transport_module_id       String?                    @db.Uuid
+    transport_module          transport_module?
+    stores_id                 String?                    @db.Uuid
+    stores_module             stores_module?
+    food_drinks_id            String?                    @db.Uuid
+    food_drinks_module        food_drinks_module?
+    crm_module_id             String?                    @db.Uuid
+    crm_module                crm_module?
+    daily_meals_module_id     String?                    @db.Uuid
+    daily_meals_module        daily_meals_module?
+    table_reservations_id     String?                    @db.Uuid
     table_reservations_module table_reservations_module?
-    crm_module         crm_module?
-    logo_id  String?    @db.Uuid @unique
-    logo     files?     @relation("business_logo", fields: [logo_id], references: [file_id])
-    banner_id String?    @db.Uuid @unique
-    banner    files?     @relation("business_banner", fields: [banner_id], references: [file_id])
-    created_order_lobbies  order_lobbies[] @relation("business_to_lobby")
+
+    logo_id               String?         @unique @db.Uuid
+    logo                  files?          @relation("business_logo", fields: [logo_id], references: [file_id])
+    banner_id             String?         @unique @db.Uuid
+    banner                files?          @relation("business_banner", fields: [banner_id], references: [file_id])
+    created_order_lobbies order_lobbies[] @relation("business_to_lobby")
+
     @@index([parent_business_id])
 }
 

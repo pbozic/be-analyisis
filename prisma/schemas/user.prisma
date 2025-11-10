@@ -23,7 +23,7 @@ enum PERMISSION_SCOPE {
 /// @erd Bookings
 /// @erd Files
 ///
-/// Central user entity linking to roles, orders, documents, wallets and analytics.
+/// Central user entity linking to roles, orders, wallets and analytics.
 model users {
   user_id                                String                     @id @unique @default(uuid()) @db.Uuid
   first_name                             String?

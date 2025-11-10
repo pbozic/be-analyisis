@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client';
+import { ACCOUNT_ACTIONS, ACCOUNT_ACTIONS_REASON, Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-import { ACCOUNT_ACTIONS, BUSINESS_TYPE } from '../lib/constants.js';
+import { BUSINESS_TYPE } from '../lib/constants.js';
 import type {
 	BusinessBase,
 	BusinessResponse,
@@ -53,7 +53,6 @@ const getBusinesses = async (args?: any): Promise<BusinessResponse[]> => {
 			...args,
 			include: {
 				address: true,
-				delivery_address: true,
 				business_users: {
 					include: {
 						users: {
@@ -87,20 +86,18 @@ const getDailyMealBusinesses = async (): Promise<BusinessWithFoodDrinksAndDailyM
 				daily_meals_id: { not: null },
 			},
 			include: {
-				food_drinks_module: {
+				daily_meals_module: {
 					include: {
-						daily_meals_module: {
-							include: {
-								daily_meal_drivers: true,
-							},
-						},
+						daily_meal_drivers: true,
+						delivery_address: true,
 					},
 				},
 			},
 		});
 		return businesses.map((business: any) => ({
 			...business,
-			daily_meal_drivers: business.food_drinks_module.daily_meals_module.daily_meal_drivers,
+			daily_meal_drivers: business.daily_meals_module.daily_meal_drivers,
+			delivery_address: business.daily_meals_module.delivery_address,
 		}));
 	} catch (error) {
 		console.error('Error retrieving daily meal businesses:', error);
@@ -122,7 +119,6 @@ const getBusinessById = async (business_id: string): Promise<any | null> => {
 			},
 			include: {
 				address: true,
-				delivery_address: true,
 				stores_module: {
 					include: {
 						business_local_locations: {
@@ -163,19 +159,19 @@ const getBusinessById = async (business_id: string): Promise<any | null> => {
 						business_clients: true,
 					},
 				},
+				table_reservations_module: {
+					include: {
+						reservations: {
+							include: {
+								user: true,
+							},
+						},
+					},
+				},
+				daily_meals_module: true,
 				food_drinks_module: {
 					include: {
 						...menuDefault,
-						table_reservations_module: {
-							include: {
-								reservations: {
-									include: {
-										user: true,
-									},
-								},
-							},
-						},
-						daily_meals_module: true,
 						logo: true,
 						banner: true,
 					},
@@ -192,13 +188,11 @@ const getBusinessById = async (business_id: string): Promise<any | null> => {
 			...business,
 			business_local_locations: business?.stores_module?.business_local_locations,
 			business_clients: business?.crm_module?.business_clients,
-			reservations: business?.food_drinks_module?.table_reservations_module?.reservations,
-			daily_meals_delivery_mapping:
-				business?.food_drinks_module?.daily_meals_module?.daily_meals_delivery_mapping,
-			maximum_daily_meals_subscribers:
-				business?.food_drinks_module?.daily_meals_module?.maximum_daily_meals_subscribers,
-			daily_users_sorting_type: business?.food_drinks_module?.daily_meals_module?.daily_users_sorting_type,
-			daily_users_sorted: business?.food_drinks_module?.daily_meals_module?.daily_users_sorted,
+			reservations: business?.table_reservations_module?.reservations,
+			daily_meals_delivery_mapping: business?.daily_meals_module?.daily_meals_delivery_mapping,
+			maximum_daily_meals_subscribers: business?.daily_meals_module?.maximum_daily_meals_subscribers,
+			daily_users_sorting_type: business?.daily_meals_module?.daily_users_sorting_type,
+			daily_users_sorted: business?.daily_meals_module?.daily_users_sorted,
 			stores_logo: business?.stores_module?.logo,
 			stores_banner: business?.stores_module?.banner,
 			food_drinks_logo: business?.food_drinks_module?.logo,
@@ -226,7 +220,6 @@ const getBusinessAdminDataById = async (business_id: string): Promise<BusinessAd
 			},
 			include: {
 				address: true,
-				delivery_address: true,
 				business_users: {
 					include: {
 						users: true,
@@ -266,17 +259,7 @@ const getBusinessesForSearchById = async (business_id: string): Promise<Business
 				active: true,
 				popular: true,
 				new: true,
-				address: {
-					select: {
-						address_id: true,
-						street: true,
-						city: true,
-						postal_code: true,
-						country: true,
-						latitude: true,
-						longitude: true,
-					},
-				},
+				address: true,
 			},
 		})) as BusinessSearchResponse | null;
 	} catch (error) {
@@ -299,7 +282,6 @@ const getBusinessByEmail = async (email: string): Promise<BusinessResponse | nul
 			},
 			include: {
 				address: true,
-				delivery_address: true,
 				business_users: true,
 			},
 		})) as BusinessResponse | null;
@@ -323,7 +305,6 @@ const getBusinessByTelephone = async (telephone: string): Promise<BusinessRespon
 			},
 			include: {
 				address: true,
-				delivery_address: true,
 				business_users: true,
 			},
 		})) as BusinessResponse | null;
@@ -358,17 +339,7 @@ const getBusinessesByNameSearch = async (search: string): Promise<BusinessSearch
 				active: true,
 				popular: true,
 				new: true,
-				address: {
-					select: {
-						address_id: true,
-						street: true,
-						city: true,
-						postal_code: true,
-						country: true,
-						latitude: true,
-						longitude: true,
-					},
-				},
+				address: true,
 			},
 		})) as BusinessSearchResponse[];
 	} catch (error) {
@@ -394,7 +365,6 @@ const getBusinessesByGroupName = async (search: string): Promise<BusinessRespons
 			},
 			include: {
 				address: true,
-				delivery_address: true,
 				business_users: true,
 			},
 		})) as BusinessResponse[];
@@ -494,7 +464,6 @@ const getBusinessesByType = async (type: string, args: any = {}): Promise<Busine
 			},
 			include: {
 				address: true,
-				delivery_address: true,
 				business_users: {
 					include: {
 						users: true,
@@ -574,9 +543,9 @@ const updateBusiness = async (business_id: string, businessData: Partial<Busines
 	try {
 		// Remove fields that shouldn't be updated directly
 		const updateData = { ...businessData };
-		delete (updateData as any).business_id;
-		delete (updateData as any).created_at;
-		delete (updateData as any).updated_at;
+		delete updateData.business_id;
+		delete updateData.created_at;
+		delete updateData.updated_at;
 
 		return (await prisma.business.update({
 			where: { business_id },
@@ -687,9 +656,9 @@ const createNewBusiness = async (business: Partial<BusinessBase>, tx: any = pris
 	try {
 		// Remove fields that shouldn't be set on creation
 		const createData = { ...business };
-		delete (createData as any).business_id;
-		delete (createData as any).created_at;
-		delete (createData as any).updated_at;
+		delete createData.business_id;
+		delete createData.created_at;
+		delete createData.updated_at;
 
 		return (await tx.business.create({
 			data: createData,
@@ -860,7 +829,7 @@ const activateBusiness = async (
 				data: {
 					business: { connect: { business_id } },
 					action_creator: { connect: { user_id: action_creator_user_id } },
-					reason: reason,
+					reason: reason as ACCOUNT_ACTIONS_REASON,
 					action: ACCOUNT_ACTIONS.UNSUSPEND,
 				},
 			});
@@ -895,7 +864,7 @@ const deactivateBusiness = async (
 				data: {
 					business: { connect: { business_id } },
 					action_creator: { connect: { user_id: action_creator_user_id } },
-					reason: reason,
+					reason: reason as ACCOUNT_ACTIONS_REASON,
 					action: ACCOUNT_ACTIONS.SUSPEND,
 				},
 			});

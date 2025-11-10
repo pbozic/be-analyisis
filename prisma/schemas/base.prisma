@@ -221,6 +221,7 @@ model addresses {
   businesses               business[]                 @relation(name: "address")
   stores_module            stores_module[]            @relation(name: "delivery_address")
   food_drinks_module       food_drinks_module[]       @relation(name: "delivery_address")
+  daily_meals_module       daily_meals_module[]
   business_users           business_users[]           @relation("business_users_operating_address")
   daily_meal_subscriptions daily_meal_subscriptions[]
   local_locations          local_locations?
@@ -678,8 +679,10 @@ model user_favorite_drivers {
 /// @erd DeliveryOrders
 model scoring_points {
   scoring_points_id String                @id @default(uuid()) @db.Uuid
-  business_id       String                @db.Uuid
+  stores_id         String                @db.Uuid
+  food_drinks_id    String                @db.Uuid
   user_id           String?               @db.Uuid
+  driver_id         String?               @db.Uuid
   delivery_order_id String?               @db.Uuid
   taxi_order_id     String?               @db.Uuid
   points            Int
@@ -690,11 +693,13 @@ model scoring_points {
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-  users           users?           @relation("scoring_points_to_user", fields: [user_id], references: [user_id])
-  businesses      business?        @relation("scoring_points_to_business", fields: [business_id], references: [business_id])
-  delivery_orders delivery_orders? @relation("scoring_points_to_delivery_order", fields: [delivery_order_id], references: [order_id])
-  taxi_orders     taxi_orders?     @relation("scoring_points_to_taxi_order", fields: [taxi_order_id], references: [order_id])
-  late_events     late_events[]    @relation("late_events_to_scoring_points")
+  user               users?              @relation("scoring_points_to_user", fields: [user_id], references: [user_id])
+  driver             drivers?            @relation("scoring_points_to_driver", fields: [driver_id], references: [driver_id])
+  stores_module      stores_module?      @relation("scoring_points_to_store", fields: [stores_id], references: [stores_id])
+  food_drinks_module food_drinks_module? @relation("scoring_points_to_food_drinks", fields: [food_drinks_id], references: [food_drinks_id])
+  delivery_orders    delivery_orders?    @relation("scoring_points_to_delivery_order", fields: [delivery_order_id], references: [order_id])
+  taxi_orders        taxi_orders?        @relation("scoring_points_to_taxi_order", fields: [taxi_order_id], references: [order_id])
+  late_events        late_events[]       @relation("late_events_to_scoring_points")
 }
 
 /// @summary Recorded late events for orders impacting scoring.

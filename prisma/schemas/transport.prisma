@@ -219,6 +219,7 @@ model drivers {
     vehicle_type          VEHICLE_TYPE?
     reviewable_id         String?                    @db.Uuid
     reviewable            reviewable?                @relation(fields: [reviewable_id], references: [reviewable_id])
+    scoring_points        scoring_points[]           @relation("scoring_points_to_driver")
     late_events           late_events[]              @relation("late_events_to_driver")
     user_favorite_drivers user_favorite_drivers[]
 }

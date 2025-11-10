@@ -4,6 +4,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { UUID, Timestamp } from '../../primitives.js';
 import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.ts';
 import { BasicUserDataSchema } from '../common/User.dto.ts';
+import { TransportModuleBase } from '../Transport/transport.dto.ts';
 
 extendZodWithOpenApi(z);
 
@@ -64,12 +65,14 @@ type PrismaDriver = {
 	handles_taxi_orders?: boolean;
 	handles_transfer_orders?: boolean;
 	handles_delivery_orders?: boolean;
+	handles_cargo_orders?: boolean;
 	taxi_orders_toggled?: boolean;
 	transfer_orders_toggled?: boolean;
 	delivery_orders_toggled?: boolean;
+	cargo_orders_toggled?: boolean;
 	business_id?: string | null;
 	transport_module_id?: string | null;
-	daily_meal_business_id?: string | null;
+	transport_module?: TransportModuleBase | null;
 	last_used_vehicle_id?: string | null;
 	created_at?: string | Date | null;
 	updated_at?: string | Date | null;
@@ -127,12 +130,13 @@ export function toDriverDetail(row: unknown): DriverDetail {
 		handles_taxi_orders: r.handles_taxi_orders ?? undefined,
 		handles_transfer_orders: r.handles_transfer_orders ?? undefined,
 		handles_delivery_orders: r.handles_delivery_orders ?? undefined,
+		handles_cargo_orders: r.handles_cargo_orders ?? undefined,
 		taxi_orders_toggled: r.taxi_orders_toggled ?? undefined,
 		transfer_orders_toggled: r.transfer_orders_toggled ?? undefined,
 		delivery_orders_toggled: r.delivery_orders_toggled ?? undefined,
-		business_id: r.business_id ?? null,
+		cargo_orders_toggled: r.cargo_orders_toggled ?? undefined,
+		business_id: r.transport_module?.business_id ?? null,
 		transport_module_id: r.transport_module_id ?? null,
-		daily_meal_business_id: r.daily_meal_business_id ?? null,
 		last_used_vehicle_id: r.last_used_vehicle_id ?? null,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,

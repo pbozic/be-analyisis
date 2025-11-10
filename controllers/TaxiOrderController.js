@@ -1722,20 +1722,20 @@ async function updateOrderStatus(req, res) {
 		let driver_id = order?.driver?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
 		let driver = await DriverDao.getDriverById(driver_id);
-		if (order.status === TAXI_ORDER_STATUS.TAXI_DRIVING && order.transport_module_id === null) {
-			await prisma.taxi_orders.update({
-				where: {
-					order_id: order.order_id,
-				},
-				data: {
-					transport_module: {
-						connect: {
-							transport_module_id: driver.transport_module_id,
-						},
-					},
-				},
-			});
-		}
+		// if (order.status === TAXI_ORDER_STATUS.TAXI_DRIVING && order.transport_module_id === null) {
+		// 	await prisma.taxi_orders.update({
+		// 		where: {
+		// 			order_id: order.order_id,
+		// 		},
+		// 		data: {
+		// 			transport_module: {
+		// 				connect: {
+		// 					transport_module_id: driver.transport_module_id,
+		// 				},
+		// 			},
+		// 		},
+		// 	});
+		// }
 		if (order.is_scheduled && !driver.on_order) {
 			await prisma.drivers.update({
 				where: {

@@ -278,7 +278,7 @@ async function startDailyMeals(req, res) {
 			}
 		};
 		const business = await BusinessDao.getBusinessById(deliveryDriver.daily_meal_business_id);
-		const providerLocation = convertAddressToLocation(business.delivery_address);
+		const providerLocation = convertAddressToLocation(business.daily_meals_module.delivery_address);
 		let sortedOrders = [];
 		if (business.daily_users_sorting_type === 'MANUAL') {
 			// Manual sorting based on provider.daily_users_sorted
@@ -419,7 +419,7 @@ async function acceptOrderDeliveryOld(req, res) {
 				.status(400)
 				.json({ error: 'Order is already accepted.', errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
 		}
-		const vehicle = deliverer.current_vehicle || deliverer.vehicles[0];
+		const vehicle = deliverer.current_vehicle;
 		order = await DeliveryOrderDao.acceptOrderDelivery(order, deliverer_id, vehicle?.vehicle_id);
 		order = await DeliveryOrderDao.getOrder(order.order_id, {
 			include: {
@@ -515,7 +515,7 @@ async function acceptOrderDelivery(req, res) {
 		const order2 = await DeliveryOrderDao.acceptOrderDeliveryWithRawLock(
 			order_id,
 			deliverer_id,
-			user.current_vehicle?.vehicle_id,
+			deliverer.current_vehicle?.vehicle_id,
 			isDD
 		);
 		let newOrder = await DeliveryOrderDao.getOrder(order2.order_id, {
