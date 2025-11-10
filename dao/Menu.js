@@ -20,6 +20,32 @@ const createMenu = async (business_id, isDailyMeal = false, date) => {
 	});
 };
 /**
+ * Create a new menu for a store.
+ *
+ * @param {string} module_id - The store's module ID to create the menu for.
+ * @returns {Promise<object>} The created menu record.
+ */
+const createStoreMenu = async (module_id) => {
+	return await prisma.menus.create({
+		data: {
+			stores_id: module_id,
+		},
+	});
+};
+/**
+ * Create a new menu for a food and drinks business.
+ *
+ * @param {string} module_id - The food and drinks business' module ID to create the menu for.
+ * @returns {Promise<object>} The created menu record.
+ */
+const createFoodDrinksMenu = async (module_id) => {
+	return await prisma.menus.create({
+		data: {
+			food_drinks_id: module_id,
+		},
+	});
+};
+/**
  * List active menus for a business, optionally filtering daily meal menus by start date.
  *
  * @param {string} business_id - The business ID.
@@ -239,6 +265,8 @@ const getMenuById = async (menu_id) => {
 };
 export { getMenuById };
 export { createMenu };
+export { createStoreMenu };
+export { createFoodDrinksMenu };
 export { getMenuByBusinessId };
 export { deleteMenu };
 export { setActiveMenu };
@@ -247,6 +275,8 @@ export { getMenuByDate };
 export default {
 	getMenuById,
 	createMenu,
+	createStoreMenu,
+	createFoodDrinksMenu,
 	getMenuByBusinessId,
 	deleteMenu,
 	setActiveMenu,

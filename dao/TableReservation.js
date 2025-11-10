@@ -1,5 +1,4 @@
 import prisma from '../prisma/prisma.js';
-import { DOCUMENT_TYPE } from '../lib/constants.js';
 /**
  * Get reservations with optional args and includes for business and user.
  *
@@ -7,26 +6,26 @@ import { DOCUMENT_TYPE } from '../lib/constants.js';
  * @returns {Promise<object[]>} Reservations.
  */
 const getReservations = async (args) => {
-    try {
-        return await prisma.reservations.findMany({
-            ...args,
-            include: {
-                table_reservations: {
-                    include: {
-                        food_drinks_module: {
-                            include: {
-                                business: true,
-                            },
-                        },
-                    },
-                },
-                user: true,
-            },
-        });
-    } catch (error) {
-        console.error('Error retrieving reservations:', error);
-        throw new Error(error);
-    }
+	try {
+		return await prisma.reservations.findMany({
+			...args,
+			include: {
+				table_reservations: {
+					include: {
+						food_drinks_module: {
+							include: {
+								business: true,
+							},
+						},
+					},
+				},
+				user: true,
+			},
+		});
+	} catch (error) {
+		console.error('Error retrieving reservations:', error);
+		throw new Error(error);
+	}
 };
 /**
  * Get the next upcoming or in-progress reservation for a user (not completed/rejected), excluding older than 2 hours.
@@ -38,7 +37,7 @@ async function getReservationIfNotCompleted(user_id) {
 	try {
 		const now = new Date();
 		const twoHoursBeforeNow = new Date(now.getTime() - 2 * 60 * 60 * 1000);
-		const reservation = await prisma.reservations.findFirst({
+		let reservation = await prisma.reservations.findFirst({
 			orderBy: [
 				{
 					datetime: 'asc',
@@ -55,52 +54,32 @@ async function getReservationIfNotCompleted(user_id) {
 			},
 			include: {
 				table_reservations: {
-                    include: {
-                        food_drinks_module: {
-                            include: {
-                                business: {
-                                    select: {
-                                        business_id: true,
-                                        name: true,
-                                        email: true,
-                                        telephone: true,
-                                        address: true,
-                                        documents: {
-                                            where: {
-                                                document_type: { in: [DOCUMENT_TYPE.LOGO, DOCUMENT_TYPE.BANNER] },
-                                            },
-                                            include: {
-                                                files: true,
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
+					include: {
+						food_drinks_module: {
+							include: {
+								business: {
+									select: {
+										business_id: true,
+										name: true,
+										email: true,
+										telephone: true,
+										delivery_address: true,
+									},
+								},
+								banner: true,
+								logo: true,
+							},
+						},
+					},
+				},
 			},
 		});
 		if (reservation) {
 			const nestedBusiness = reservation?.table_reservations?.food_drinks_module;
-			let logo = null;
-			let banner = null;
-			if (Array.isArray(nestedBusiness?.business?.documents)) {
-				for (let d of nestedBusiness?.business?.documents) {
-					if (d.document_type === 'LOGO') {
-						logo = d.files[0].url;
-					} else if (d.document_type === 'BANNER') {
-						banner = d.files[0].url;
-					}
-				}
-			}
-			nestedBusiness?.logo = logo;
-			nestedBusiness?.banner = banner;
-			delete nestedBusiness?.business?.documents;
-			return reservation;
-		} else {
-			return null;
+			reservation.business = nestedBusiness?.business;
+			delete nestedBusiness?.business;
 		}
+		return reservation;
 	} catch (e) {
 		console.error('Error fetching reservation:', e);
 		throw new Error(e.message);
@@ -119,17 +98,17 @@ const getReservationById = async (reservation_id) => {
 				reservation_id: reservation_id,
 			},
 			include: {
-                table_reservations: {
-                    include: {
-                        food_drinks_module: {
-                            include: {
-                                business: true,
-                            },
-                        },
-                    },
-                },
-                user: true,
-            },
+				table_reservations: {
+					include: {
+						food_drinks_module: {
+							include: {
+								business: true,
+							},
+						},
+					},
+				},
+				user: true,
+			},
 		});
 	} catch (error) {
 		console.error('Error retrieving reservation:', error);
@@ -155,30 +134,24 @@ const createReservation = async (reservationData, business_id) => {
 		const reservation = await prisma.reservations.create({
 			data: {
 				...reservationData,
-				table_reservation_id: reservationModuleId
+				table_reservation_id: reservationModuleId,
 			},
 			include: {
 				table_reservations: {
-                    include: {
-                        food_drinks_module: {
-							 include: {
+					include: {
+						food_drinks_module: {
+							include: {
 								business: {
 									select: {
 										business_id: true,
 										name: true,
 										email: true,
 										telephone: true,
-										address: true,
-										documents: {
-											where: {
-												document_type: { in: [DOCUMENT_TYPE.LOGO, DOCUMENT_TYPE.BANNER] },
-											},
-											include: {
-												files: true,
-											},
-										},
+										delivery_address: true,
 									},
 								},
+								banner: true,
+								logo: true,
 							},
 						},
 					},
@@ -187,25 +160,10 @@ const createReservation = async (reservationData, business_id) => {
 		});
 		if (reservation) {
 			const nestedBusiness = reservation?.table_reservations?.food_drinks_module;
-			let logo = null;
-			let banner = null;
-			if (Array.isArray(nestedBusiness?.business?.documents)) {
-				// Check if documents is an array before iterating
-				for (let d of nestedBusiness?.business?.documents) {
-					if (d.document_type === 'LOGO') {
-						logo = d.files[0].url;
-					} else if (d.document_type === 'BANNER') {
-						banner = d.files[0].url;
-					}
-				}
-			}
-			nestedBusiness?.logo = logo;
-			nestedBusiness?.banner = banner;
-			delete nestedBusiness?.business?.documents;
-			return reservation;
-		} else {
-			return null;
+			reservation.business = nestedBusiness?.business;
+			delete nestedBusiness?.business;
 		}
+		return reservation;
 	} catch (error) {
 		console.error('Error creating reservation:', error);
 		throw new Error(error);

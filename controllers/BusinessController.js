@@ -2155,40 +2155,6 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 }
 
 /**
- * POST /business/admin/business-types
- * @tag BusinessTypes
- * @summary Create a new business type
- * @description Creates a new business_type row.
- * @operationId createBusinessType
- * @bodyDescription The business type to create
- * @bodyContent {
- *   "type": "RESTAURANT"
- * } application/json
- * @bodyRequired
- * @prisma_model business_type
- * @response 200 - Business type created successfully
- * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
- *   "type_id": "uuid",
- *   "type": "RESTAURANT"
- * }
- * @response 500 - Error creating business type
- */
-export async function createBusinessType(req, res) {
-	try {
-		const { type } = req.body;
-		if (!type) {
-			res.status(400).json({ error: 'type is required' });
-			return;
-		}
-		const created = await BusinessTypesDao.createBusinessType(type);
-		res.json(created);
-	} catch (e) {
-		res.status(500).json({ error: e.message });
-	}
-}
-
-/**
  * PUT /business/admin/:business_id/types
  * @tag BusinessTypes
  * @summary Replace all business types for a business
@@ -2370,7 +2336,6 @@ export default {
 	getBusinessPromoSectionsAnalytics,
 	getBusinessPromoWordsAnalytics,
 	setBusinessTypesForBusiness,
-	createBusinessType,
 	confirmBusinessPremise,
 	toggleTransportModule,
 };
