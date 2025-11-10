@@ -35,6 +35,7 @@ export {
 	type MenuCategoryRef,
 	type BusinessByIdResponse,
 	toBusinessByIdResponse,
+	toGetBusinessResponse,
 	registerSchemas as registerBusinessSchemas,
 } from './business.dto.js';
 

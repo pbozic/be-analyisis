@@ -4,15 +4,15 @@ import prisma from '../prisma/prisma.js';
 import { BUSINESS_TYPE } from '../lib/constants.js';
 import type {
 	BusinessBase,
-	BusinessResponse,
+	BusinessResponseDto,
 	BusinessSearchResponse,
 	BusinessAdminResponse,
 	BusinessWithDailyMealsResponseDto,
-	BusinessByIdResponse,
+	BusinessWithAllModulesResponseDto,
 } from '../schemas/dto/Business/index.js';
 import { UUID } from '../schemas/primitives.js';
 import { toBusinessByIdResponse, toGetBusinessResponse } from '../schemas/dto/Business/index.js';
-import { businessByIdInclude, getBusinessesDefualtInclude, BusinessFindManyArgs } from '../prisma/includes/business.js';
+import { businessByIdInclude, getBusinessesInclude, BusinessFindManyArgs } from '../prisma/includes/business.js';
 
 type PrismaTransactionClient = Prisma.TransactionClient;
 
@@ -22,10 +22,10 @@ type PrismaTransactionClient = Prisma.TransactionClient;
  * @param {any} args - Additional Prisma query arguments (where, orderBy, include, etc.).
  * @returns {Promise<BusinessResponse[]>} A promise resolving to an array of business records.
  */
-const getBusinesses = async (args?: BusinessFindManyArgs): Promise<BusinessResponse[]> => {
+const getBusinesses = async (args?: BusinessFindManyArgs): Promise<BusinessResponseDto[]> => {
 	try {
 		const include = {
-			...getBusinessesDefualtInclude,
+			...getBusinessesInclude,
 			...(args?.include ?? {}),
 		} as Prisma.businessInclude; // single, contained cast
 
@@ -79,9 +79,9 @@ const getDailyMealBusinesses = async (): Promise<BusinessWithDailyMealsResponseD
  * Get a single business by its ID with rich related data.
  *
  * @param {string} business_id - The ID of the business to retrieve.
- * @returns {Promise<BusinessByIdResponse | null>} A promise resolving to the business record or null if not found.
+ * @returns {Promise<BusinessWithAllModulesResponseDto | null>} A promise resolving to the business record or null if not found.
  */
-const getBusinessById = async (business_id: string): Promise<BusinessByIdResponse | null> => {
+const getBusinessById = async (business_id: string): Promise<BusinessWithAllModulesResponseDto | null> => {
 	try {
 		const business = await prisma.business.findUnique({
 			where: {
@@ -133,9 +133,9 @@ const getBusinessAdminDataById = async (business_id: string): Promise<BusinessAd
  * Get a business by ID for search purposes with minimal data.
  *
  * @param {string} business_id - The ID of the business to retrieve.
- * @returns {Promise<BusinessSearchResponse | null>} A promise resolving to the search business record or null if not found.
+ * @returns {Promise<BusinessSearchResponse[] | []>} A promise resolving to the search business record or null if not found.
  */
-const getBusinessesForSearchById = async (business_id: string): Promise<BusinessSearchResponse | null> => {
+const getBusinessesForSearchById = async (business_id: string): Promise<BusinessSearchResponse[] | []> => {
 	try {
 		return (await prisma.business.findUnique({
 			where: {
@@ -153,7 +153,7 @@ const getBusinessesForSearchById = async (business_id: string): Promise<Business
 				new: true,
 				address: true,
 			},
-		})) as BusinessSearchResponse | null;
+		})) as BusinessSearchResponse[] | [];
 	} catch (error) {
 		console.error('Error retrieving business for search:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get business for search');
@@ -164,9 +164,9 @@ const getBusinessesForSearchById = async (business_id: string): Promise<Business
  * Find a business by email.
  *
  * @param {string} email - The email to search for.
- * @returns {Promise<BusinessResponse | null>} A promise resolving to the business record or null if not found.
+ * @returns {Promise<BusinessResponseDto | null>} A promise resolving to the business record or null if not found.
  */
-const getBusinessByEmail = async (email: string): Promise<BusinessResponse | null> => {
+const getBusinessByEmail = async (email: string): Promise<BusinessResponseDto | null> => {
 	try {
 		return (await prisma.business.findFirst({
 			where: {
@@ -176,7 +176,7 @@ const getBusinessByEmail = async (email: string): Promise<BusinessResponse | nul
 				address: true,
 				business_users: true,
 			},
-		})) as BusinessResponse | null;
+		})) as BusinessResponseDto | null;
 	} catch (error) {
 		console.error('Error retrieving business by email:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get business by email');
@@ -221,9 +221,9 @@ const getBusinessesByNameSearch = async (search: string): Promise<BusinessSearch
  * Search businesses by group name.
  *
  * @param {string} search - The search term.
- * @returns {Promise<BusinessResponse[]>} A promise resolving to matching businesses.
+ * @returns {Promise<BusinessResponseDto[]>} A promise resolving to matching businesses.
  */
-const getBusinessesByGroupName = async (search: string): Promise<BusinessResponse[]> => {
+const getBusinessesByGroupName = async (search: string): Promise<BusinessResponseDto[]> => {
 	try {
 		return (await prisma.business.findMany({
 			where: {
@@ -236,7 +236,7 @@ const getBusinessesByGroupName = async (search: string): Promise<BusinessRespons
 				address: true,
 				business_users: true,
 			},
-		})) as BusinessResponse[];
+		})) as BusinessResponseDto[];
 	} catch (error) {
 		console.error('Error searching businesses by group name:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to search businesses by group name');
@@ -248,7 +248,7 @@ const getBusinessesByGroupName = async (search: string): Promise<BusinessRespons
  *
  * @returns {Promise<BusinessResponse[]>} A promise resolving to transfer businesses.
  */
-const getTransferBusinessesMainInformation = async (): Promise<BusinessResponse[]> => {
+const getTransferBusinessesMainInformation = async (): Promise<BusinessResponseDto[]> => {
 	try {
 		return (await prisma.business.findMany({
 			where: {
@@ -257,7 +257,7 @@ const getTransferBusinessesMainInformation = async (): Promise<BusinessResponse[
 			include: {
 				address: true,
 			},
-		})) as BusinessResponse[];
+		})) as BusinessResponseDto[];
 	} catch (error) {
 		console.error('Error retrieving transfer businesses:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get transfer businesses');
@@ -269,7 +269,7 @@ const getTransferBusinessesMainInformation = async (): Promise<BusinessResponse[
  *
  * @returns {Promise<BusinessResponse[]>} A promise resolving to store businesses.
  */
-const getStoresMainInformation = async (): Promise<BusinessResponse[]> => {
+const getStoresMainInformation = async (): Promise<BusinessResponseDto[]> => {
 	try {
 		return (await prisma.business.findMany({
 			where: {
@@ -278,7 +278,7 @@ const getStoresMainInformation = async (): Promise<BusinessResponse[]> => {
 			include: {
 				address: true,
 			},
-		})) as BusinessResponse[];
+		})) as BusinessResponseDto[];
 	} catch (error) {
 		console.error('Error retrieving stores:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get stores');
@@ -290,7 +290,7 @@ const getStoresMainInformation = async (): Promise<BusinessResponse[]> => {
  *
  * @returns {Promise<BusinessResponse[]>} A promise resolving to food & drinks businesses.
  */
-const getFoodDrinksMainInformation = async (): Promise<BusinessResponse[]> => {
+const getFoodDrinksMainInformation = async (): Promise<BusinessResponseDto[]> => {
 	try {
 		return (await prisma.business.findMany({
 			where: {
@@ -299,7 +299,7 @@ const getFoodDrinksMainInformation = async (): Promise<BusinessResponse[]> => {
 			include: {
 				address: true,
 			},
-		})) as BusinessResponse[];
+		})) as BusinessResponseDto[];
 	} catch (error) {
 		console.error('Error retrieving food & drinks businesses:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get food & drinks businesses');
@@ -311,9 +311,9 @@ const getFoodDrinksMainInformation = async (): Promise<BusinessResponse[]> => {
  *
  * @param {string} type - The business type.
  * @param {any} args - Additional Prisma query arguments.
- * @returns {Promise<BusinessResponse[]>} A promise resolving to businesses of the specified type.
+ * @returns {Promise<BusinessResponseDto[]>} A promise resolving to businesses of the specified type.
  */
-const getBusinessesByType = async (type: string, args: any = {}): Promise<BusinessResponse[]> => {
+const getBusinessesByType = async (type: string, args: any = {}): Promise<BusinessResponseDto[]> => {
 	try {
 		const typeMapping: Record<string, any> = {
 			MERCHANT: { food_drinks_module: { isNot: null } },
@@ -343,7 +343,7 @@ const getBusinessesByType = async (type: string, args: any = {}): Promise<Busine
 				...args.include,
 			},
 			...args,
-		})) as BusinessResponse[];
+		})) as BusinessResponseDto[];
 	} catch (error) {
 		console.error('Error retrieving businesses by type:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get businesses by type');
@@ -354,9 +354,9 @@ const getBusinessesByType = async (type: string, args: any = {}): Promise<Busine
  * Get parent business information.
  *
  * @param {string} business_id - The ID of the business whose parent to retrieve.
- * @returns {Promise<BusinessResponse | null>} A promise resolving to the parent business or null if none.
+ * @returns {Promise<BusinessResponseDto | null>} A promise resolving to the parent business or null if none.
  */
-const getParentBusiness = async (business_id: string): Promise<BusinessResponse | null> => {
+const getParentBusiness = async (business_id: string): Promise<BusinessResponseDto | null> => {
 	try {
 		const business = await prisma.business.findUnique({
 			where: { business_id },
@@ -371,7 +371,7 @@ const getParentBusiness = async (business_id: string): Promise<BusinessResponse 
 				address: true,
 				business_users: true,
 			},
-		})) as BusinessResponse | null;
+		})) as BusinessResponseDto | null;
 	} catch (error) {
 		console.error('Error retrieving parent business:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get parent business');
@@ -382,9 +382,9 @@ const getParentBusiness = async (business_id: string): Promise<BusinessResponse 
  * Get child businesses of a parent business.
  *
  * @param {string} parent_business_id - The ID of the parent business.
- * @returns {Promise<BusinessResponse[]>} A promise resolving to child businesses.
+ * @returns {Promise<BusinessResponseDto[]>} A promise resolving to child businesses.
  */
-const getChildBusinesses = async (parent_business_id: string): Promise<BusinessResponse[]> => {
+const getChildBusinesses = async (parent_business_id: string): Promise<BusinessResponseDto[]> => {
 	try {
 		return (await prisma.business.findMany({
 			where: {
@@ -394,7 +394,7 @@ const getChildBusinesses = async (parent_business_id: string): Promise<BusinessR
 				address: true,
 				business_users: true,
 			},
-		})) as BusinessResponse[];
+		})) as BusinessResponseDto[];
 	} catch (error) {
 		console.error('Error retrieving child businesses:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get child businesses');
@@ -406,9 +406,12 @@ const getChildBusinesses = async (parent_business_id: string): Promise<BusinessR
  *
  * @param {string} business_id - The ID of the business to update.
  * @param {Partial<BusinessBase>} businessData - The business data to update.
- * @returns {Promise<BusinessResponse>} A promise resolving to the updated business.
+ * @returns {Promise<BusinessResponseDto>} A promise resolving to the updated business.
  */
-const updateBusiness = async (business_id: string, businessData: Partial<BusinessBase>): Promise<BusinessResponse> => {
+const updateBusiness = async (
+	business_id: string,
+	businessData: Partial<BusinessBase>
+): Promise<BusinessResponseDto> => {
 	try {
 		// Remove fields that shouldn't be updated directly
 		const updateData = { ...businessData };
@@ -423,7 +426,7 @@ const updateBusiness = async (business_id: string, businessData: Partial<Busines
 				address: true,
 				business_users: true,
 			},
-		})) as BusinessResponse;
+		})) as BusinessResponseDto;
 	} catch (error) {
 		console.error('Error updating business:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update business');
@@ -435,14 +438,17 @@ const updateBusiness = async (business_id: string, businessData: Partial<Busines
  *
  * @param {string} business_id - The ID of the business to update.
  * @param {string} business_group_name - The new group name.
- * @returns {Promise<BusinessResponse>} A promise resolving to the updated business.
+ * @returns {Promise<BusinessResponseDto>} A promise resolving to the updated business.
  */
-const updateBusinessGroupName = async (business_id: string, business_group_name: string): Promise<BusinessResponse> => {
+const updateBusinessGroupName = async (
+	business_id: string,
+	business_group_name: string
+): Promise<BusinessResponseDto> => {
 	try {
 		return (await prisma.business.update({
 			where: { business_id },
 			data: { business_group_name },
-		})) as BusinessResponse;
+		})) as BusinessResponseDto;
 	} catch (error) {
 		console.error('Error updating business group name:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update business group name');
@@ -454,14 +460,14 @@ const updateBusinessGroupName = async (business_id: string, business_group_name:
  *
  * @param {string} business_id - The ID of the business to update.
  * @param {string} email - The new email.
- * @returns {Promise<BusinessResponse>} A promise resolving to the updated business.
+ * @returns {Promise<BusinessResponseDto>} A promise resolving to the updated business.
  */
-const updateBusinessEmail = async (business_id: string, email: string): Promise<BusinessResponse> => {
+const updateBusinessEmail = async (business_id: string, email: string): Promise<BusinessResponseDto> => {
 	try {
 		return (await prisma.business.update({
 			where: { business_id },
 			data: { email },
-		})) as BusinessResponse;
+		})) as BusinessResponseDto;
 	} catch (error) {
 		console.error('Error updating business email:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update business email');
@@ -474,18 +480,18 @@ const updateBusinessEmail = async (business_id: string, email: string): Promise<
  * @param {string} business_id - The ID of the business to update.
  * @param {string} telephone - The new telephone.
  * @param {string} telephone_code - The new telephone code.
- * @returns {Promise<BusinessResponse>} A promise resolving to the updated business.
+ * @returns {Promise<BusinessResponseDto>} A promise resolving to the updated business.
  */
 const updateBusinessTelephone = async (
 	business_id: string,
 	telephone: string,
 	telephone_code: string
-): Promise<BusinessResponse> => {
+): Promise<BusinessResponseDto> => {
 	try {
 		return (await prisma.business.update({
 			where: { business_id },
 			data: { telephone, telephone_code },
-		})) as BusinessResponse;
+		})) as BusinessResponseDto;
 	} catch (error) {
 		console.error('Error updating business telephone:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update business telephone');
@@ -497,17 +503,17 @@ const updateBusinessTelephone = async (
  *
  * @param {string} business_id - The ID of the business to update.
  * @param {Record<string, any>} working_hours - The new working hours.
- * @returns {Promise<BusinessResponse>} A promise resolving to the updated business.
+ * @returns {Promise<BusinessResponseDto>} A promise resolving to the updated business.
  */
 const updateBusinessWorkingHours = async (
 	business_id: string,
 	working_hours: Record<string, any>
-): Promise<BusinessResponse> => {
+): Promise<BusinessResponseDto> => {
 	try {
 		return (await prisma.business.update({
 			where: { business_id },
 			data: { working_hours },
-		})) as BusinessResponse;
+		})) as BusinessResponseDto;
 	} catch (error) {
 		console.error('Error updating business working hours:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update business working hours');
@@ -519,9 +525,9 @@ const updateBusinessWorkingHours = async (
  *
  * @param {Partial<BusinessBase>} business - The business data.
  * @param {any} tx - Transaction client (optional).
- * @returns {Promise<BusinessResponse>} A promise resolving to the created business.
+ * @returns {Promise<BusinessResponseDto>} A promise resolving to the created business.
  */
-const createNewBusiness = async (business: Partial<BusinessBase>, tx: any = prisma): Promise<BusinessResponse> => {
+const createNewBusiness = async (business: Partial<BusinessBase>, tx: any = prisma): Promise<BusinessResponseDto> => {
 	try {
 		// Remove fields that shouldn't be set on creation
 		const createData = { ...business };
@@ -535,7 +541,7 @@ const createNewBusiness = async (business: Partial<BusinessBase>, tx: any = pris
 				address: true,
 				business_users: true,
 			},
-		})) as BusinessResponse;
+		})) as BusinessResponseDto;
 	} catch (error) {
 		console.error('Error creating new business:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to create new business');
@@ -546,13 +552,13 @@ const createNewBusiness = async (business: Partial<BusinessBase>, tx: any = pris
  * Delete a business by ID.
  *
  * @param {string} business_id - The business ID to delete.
- * @returns {Promise<BusinessResponse>} A promise resolving to the deleted business.
+ * @returns {Promise<BusinessResponseDto>} A promise resolving to the deleted business.
  */
-const deleteBusiness = async (business_id: string): Promise<BusinessResponse> => {
+const deleteBusiness = async (business_id: string): Promise<BusinessResponseDto> => {
 	try {
 		return (await prisma.business.delete({
 			where: { business_id },
-		})) as BusinessResponse;
+		})) as BusinessResponseDto;
 	} catch (error) {
 		console.error('Error deleting business:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to delete business');
@@ -563,14 +569,14 @@ const deleteBusiness = async (business_id: string): Promise<BusinessResponse> =>
  * Remove the parent relationship from a business.
  *
  * @param {string} business_id - The business ID.
- * @returns {Promise<BusinessResponse>} A promise resolving to the updated business.
+ * @returns {Promise<BusinessResponseDto>} A promise resolving to the updated business.
  */
-const removeParentBusiness = async (business_id: string): Promise<BusinessResponse> => {
+const removeParentBusiness = async (business_id: string): Promise<BusinessResponseDto> => {
 	try {
 		return (await prisma.business.update({
 			where: { business_id: business_id },
 			data: { parent_business_id: null },
-		})) as BusinessResponse;
+		})) as BusinessResponseDto;
 	} catch (error) {
 		console.error('Error removing child business:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to remove parent business');
@@ -679,13 +685,13 @@ const getStripeIdsForAllBusinesses = async (): Promise<
  * @param {string} business_id - The business ID to activate.
  * @param {string} action_creator_user_id - The user ID performing the action.
  * @param {string} reason - Reason for activation change.
- * @returns {Promise<BusinessResponse>} A promise resolving to the updated business.
+ * @returns {Promise<BusinessResponseDto>} A promise resolving to the updated business.
  */
 const activateBusiness = async (
 	business_id: string,
 	action_creator_user_id: string,
 	reason: string
-): Promise<BusinessResponse> => {
+): Promise<BusinessResponseDto> => {
 	try {
 		return (await prisma.$transaction(async (tx: PrismaTransactionClient) => {
 			const business = await tx.business.findUnique({
@@ -709,7 +715,7 @@ const activateBusiness = async (
 				},
 			});
 			return updatedBusiness;
-		})) as BusinessResponse;
+		})) as BusinessResponseDto;
 	} catch (error) {
 		console.error('Error activating business:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to activate business');
@@ -722,13 +728,13 @@ const activateBusiness = async (
  * @param {string} business_id - The business ID to deactivate.
  * @param {string} action_creator_user_id - The user ID performing the action.
  * @param {string} reason - Reason for deactivation.
- * @returns {Promise<BusinessResponse>} A promise resolving to the updated business.
+ * @returns {Promise<BusinessResponseDto>} A promise resolving to the updated business.
  */
 const deactivateBusiness = async (
 	business_id: string,
 	action_creator_user_id: string,
 	reason: string
-): Promise<BusinessResponse> => {
+): Promise<BusinessResponseDto> => {
 	try {
 		return (await prisma.$transaction(async (tx: PrismaTransactionClient) => {
 			const updatedBusiness = await tx.business.update({
@@ -744,7 +750,7 @@ const deactivateBusiness = async (
 				},
 			});
 			return updatedBusiness;
-		})) as BusinessResponse;
+		})) as BusinessResponseDto;
 	} catch (error) {
 		console.error('Error deactivating business:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to deactivate business');
@@ -827,9 +833,9 @@ const getPurchaseOrderLimit = async (business_id: string): Promise<number> => {
 /**
  * Get local businesses (stores with LOCAL business type).
  *
- * @returns {Promise<BusinessResponse[]>} A promise resolving to local businesses.
+ * @returns {Promise<BusinessResponseDto[]>} A promise resolving to local businesses.
  */
-const getLocalBusinesses = async (): Promise<BusinessResponse[]> => {
+const getLocalBusinesses = async (): Promise<BusinessResponseDto[]> => {
 	try {
 		const stores = await prisma.business.findMany({
 			where: {
@@ -845,7 +851,7 @@ const getLocalBusinesses = async (): Promise<BusinessResponse[]> => {
 
 		return stores.filter((store: any) =>
 			store.types?.some((type: string) => type === BUSINESS_TYPE.LOCAL)
-		) as BusinessResponse[];
+		) as BusinessResponseDto[];
 	} catch (error) {
 		console.error('Error retrieving local businesses:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get local businesses');

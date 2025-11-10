@@ -121,9 +121,10 @@ to the bottom of the dto file registering all the schemas defined in that file.
 13. for functions that use filters or pagination create dto types for those inputs in schemas/dto
 14. you can check prisma/includes to see how we type prisma returns in the dao functions and then use them in mapper,
 15. also create mappers in schemas/dto/<model>/<model>Mapper.ts to convert from prisma types to dto types using the dto types defined in schemas/dto/<model>/<model>.ts and prisma/includes/<model>Include.ts for prisma return types
+16. dont use any
 
 
-## When asked to convert controller to typescript please follow these rules:
+## When asked to convert controller or its functions to typescript please follow these rules:
 1. Always import dto types from schemas/dto/... and ignore types/
 2. use ValidatedRequest as in BlogController.ts for request validation
 3. use AuthenticatedRequest from types/validatedRequest.ts for authenticated requests without any validation, check the routes that call the function to see if they are validated/authenticated
@@ -132,7 +133,5 @@ to the bottom of the dto file registering all the schemas defined in that file.
 6. do not delete the original .js
 7. export single functions inline with export async function functionName() { ... }
 8. at the end export default { functionName, functionName2, ... }
-<<<<<<< HEAD
 9. if we use req.params also use ValidatedRequest with params, again check blogcontroller.ts for example
-=======
->>>>>>> df648d95 (fix: copilot instructions for daos and controllers)
+10. don use any

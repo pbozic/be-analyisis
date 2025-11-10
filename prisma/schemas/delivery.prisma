@@ -21,10 +21,8 @@ model stores_module {
     menu                     menus?
     overwhelmed              Boolean                    @default(false)
     online                   Boolean                    @default(false)
-    logo_id                  String?                    @unique @db.Uuid
-    logo                     files?                     @relation("stores_logo", fields: [logo_id], references: [file_id])
-    banner_id                String?                    @unique @db.Uuid
-    banner                   files?                     @relation("stores_banner", fields: [banner_id], references: [file_id])
+    business_details_id String?  @db.Uuid @unique
+    business_details    business_details? @relation("stores_business_details", fields: [business_details_id], references: [business_details_id])
     working_hours            Json?
 
     scoring_points scoring_points[] @relation("scoring_points_to_store")
@@ -55,10 +53,8 @@ model food_drinks_module {
 
     overwhelmed   Boolean @default(false)
     online        Boolean @default(false)
-    logo_id       String? @unique @db.Uuid
-    logo          files?  @relation("food_drinks_logo", fields: [logo_id], references: [file_id])
-    banner_id     String? @unique @db.Uuid
-    banner        files?  @relation("food_drinks_banner", fields: [banner_id], references: [file_id])
+    business_details_id String?  @db.Uuid @unique
+    business_details    business_details? @relation("food_drinks_business_details", fields: [business_details_id], references: [business_details_id])
     working_hours Json?
 
     scoring_points scoring_points[] @relation("scoring_points_to_food_drinks")
@@ -165,6 +161,8 @@ model daily_meals_module {
     daily_meal_drivers       daily_meals_drivers[]
     daily_meal_categories    daily_meal_categories[]
     daily_meal_subscriptions daily_meal_subscriptions[]
+    business_details_id String?  @db.Uuid @unique
+    business_details    business_details? @relation("daily_meals_business_details", fields: [business_details_id], references: [business_details_id])
 }
 
 /// @summary Drivers assigned to daily meals deliveries.
@@ -453,6 +451,8 @@ model table_reservations_module {
     seats        Int?
     business     business       @relation(fields: [business_id], references: [business_id])
     reservations reservations[]
+    business_details_id String?  @db.Uuid @unique
+    business_details    business_details? @relation("table_reservations_business_details", fields: [business_details_id], references: [business_details_id])
 }
 
 /// @summary Table/restaurant reservation for a food_drinks venue.

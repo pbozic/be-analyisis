@@ -11,7 +11,8 @@ import { MenuItemRefSchema, MenuCategoryRefSchema } from '../Menu/menu.dto.js';
 import { AddressRefSchema } from '../Address/index.js';
 import { UserRefSchema } from '../User/index.js';
 import { FileRefSchema } from '../Files/file.dto.js';
-import { BusinessByIdRaw } from '../../../prisma/includes/business.ts';
+import { BusinessByIdPrisma, GetBusinessesPrisma } from '../../../prisma/includes/business.ts';
+import { UUID } from '../../primitives.ts';
 extendZodWithOpenApi(z);
 
 // TODO: Fix dto after deleting menu from prisma model etc...
@@ -81,9 +82,13 @@ export const BusinessCreateDto = z
 
 // Full response schema including DB-managed fields
 export const BusinessResponseDto = BusinessCreateDto.extend({
-	business_id: z.string().uuid().openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
+	business_id: UUID,
 	created_at: z.string().datetime().openapi({ example: '2025-01-01T12:00:00.000Z' }),
 	updated_at: z.string().datetime().openapi({ example: '2025-01-10T12:00:00.000Z' }),
+	food_drinks_id: UUID.nullable().optional(),
+	transport_module_id: UUID.nullable().optional(),
+	reservation_module_id: UUID.nullable().optional(),
+	stores_id: UUID.nullable().optional(),
 }).openapi({
 	example: {
 		business_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
@@ -353,9 +358,11 @@ export const BusinessByIdResponseSchema = BusinessResponseDto.extend({
 }).openapi('BusinessByIdResponse');
 
 export type BusinessByIdResponse = z.infer<typeof BusinessByIdResponseSchema>;
-
+export function toGetBusinessResponse(row: GetBusinessesPrisma): BusinessWithAllModulesResponseDto {
+	return row as unknown as BusinessWithAllModulesResponseDto;
+}
 // Mapper function from getBusinessById Prisma result
-export function toBusinessByIdResponse(row: BusinessByIdRaw): BusinessByIdResponse {
+export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAllModulesResponseDto {
 	const r = row; // Complex nested structure from getBusinessById
 
 	return BusinessByIdResponseSchema.parse({

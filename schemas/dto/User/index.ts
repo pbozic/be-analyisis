@@ -16,6 +16,7 @@ export {
 	type UserDetailResponse,
 	type UserWithTransactionsResponse,
 	type UserListResponse,
+	type UserWithFavouritesResponse,
 	registerSchemas as registerUserSchemas,
 } from './user.js';
 

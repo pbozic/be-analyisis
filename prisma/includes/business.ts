@@ -1,6 +1,30 @@
 import { Prisma } from '@prisma/client';
 
 import { menuDefault } from './menu.ts';
+export const getBusinessesInclude = {
+	address: true,
+	delivery_address: true,
+	business_users: {
+		include: {
+			users: {
+				include: {
+					child_users: { include: { child_user: true } },
+					parent_user: { include: { parent_user: true } },
+				},
+			},
+		},
+	},
+	parent_business: true,
+	child_businesses: true,
+} as const;
+
+export type BusinessFindManyArgs = Omit<Prisma.businessFindManyArgs, 'select' | 'include'> & {
+	include?: Partial<Prisma.businessInclude>;
+};
+
+export type GetBusinessesPrisma = Prisma.businessGetPayload<{
+	include: typeof getBusinessesInclude;
+}>;
 
 export const businessByIdInclude = Prisma.validator<Prisma.businessInclude>()({
 	address: true,
@@ -34,6 +58,8 @@ export const businessByIdInclude = Prisma.validator<Prisma.businessInclude>()({
 					user: true,
 				},
 			},
+			logo: true,
+			banner: true,
 		},
 	},
 	transport_module: true,
@@ -44,6 +70,6 @@ export const businessByIdInclude = Prisma.validator<Prisma.businessInclude>()({
 });
 
 // 3) Derive the runtime-accurate payload type (scalars + relations)
-export type BusinessByIdRaw = Prisma.businessGetPayload<{
+export type BusinessByIdPrisma = Prisma.businessGetPayload<{
 	include: typeof businessByIdInclude;
 }>;

@@ -86,6 +86,18 @@ export const UserWithTransactionsResponseSchema = UserResponseSchema.extend({
 	transactions: z.array(TransactionRefSchema).nullable(),
 });
 
+export const UserWithFavouritesResponseSchema = UserResponseSchema.extend({
+	user_favorite_businesses: z
+		.array(
+			z.object({
+				business_id: UUID,
+				name: z.string(),
+				logo_url: z.string().nullable(),
+			})
+		)
+		.nullable(),
+});
+export type UserWithFavouritesResponse = z.infer<typeof UserWithFavouritesResponseSchema>;
 // User List Response - for paginated/bulk endpoints
 export const UserListResponseSchema = z.object({
 	data: z.array(UserResponseSchema),
