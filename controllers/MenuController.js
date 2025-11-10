@@ -9,7 +9,9 @@ import TaxDao from '../dao/Tax.js';
 import S3Helper from '../lib/s3.js';
 import { linkDocumentToBusiness } from '../dao/Document.js';
 import elasticsearch from '../elasticsearch/index.js';
+import Business from '../dao/Business.js';
 import { getModuleIdByBusinessId } from '../dao/Business.js';
+
 const { businessIndex } = elasticsearch;
 /**
  * GET /menus/business/:business_id
@@ -331,7 +333,14 @@ async function getMenuCategoriesByMenuId(req, res) {
  */
 async function getMenuCategoriesByBusinessId(req, res) {
 	try {
-		const categories = await MenuCategoryDao.getMenuCategoriesByBusinessId(req.params.business_id);
+		const type = req.params.type;
+		const business = await Business.getBusinessStoreAndFoodDrinksModulesById(req.params.business_id);
+		const data = {
+			food_drinks_id: MODULE.FOOD_AND_DRINKS === type ? business.food_drinks_module?.food_drinks_id : null,
+			stores_id: MODULE.STORES === type ? business.stores_module?.stores_id : null,
+		};
+
+		const categories = await MenuCategoryDao.getMenuCategoriesByBusinessId(data);
 		res.status(200).json(categories);
 	} catch (e) {
 		console.error('Error obtaining menu categories:', e);
@@ -352,7 +361,13 @@ async function getMenuCategoriesByBusinessId(req, res) {
  */
 async function getMenuItemsByBusinessId(req, res) {
 	try {
-		const items = await MenuItemDao.getMenuItemsByBusinessId(req.params.business_id, {
+		const type = req.params.type;
+		const business = await Business.getBusinessStoreAndFoodDrinksModulesById(req.params.business_id);
+		const data = {
+			food_drinks_id: MODULE.FOOD_AND_DRINKS === type ? business.food_drinks_module?.food_drinks_id : null,
+			stores_id: MODULE.STORES === type ? business.stores_module?.stores_id : null,
+		};
+		const items = await MenuItemDao.getMenuItemsByBusinessId(data, {
 			is_copy: false,
 		});
 		res.status(200).json(items);
@@ -854,13 +869,18 @@ const deleteDocumentsAndFilesByDocumentId = async (req, res) => {
  * @prisma_model menu_items
  */
 const getMenuItemsByDate = async (req, res) => {
-	const { business_id, date } = req.params;
+	const { business_id, date, type } = req.params;
 	try {
 		const startOfDay = new Date(date);
 		startOfDay.setHours(0, 0, 0, 0);
 		const endOfDay = new Date(date);
 		endOfDay.setHours(23, 59, 59, 999);
-		const items = await MenuItemDao.getMenuItemsByBusinessId(business_id, {
+		const business = await Business.getBusinessStoreAndFoodDrinksModulesById(business_id);
+		const data = {
+			food_drinks_id: MODULE.FOOD_AND_DRINKS === type ? business.food_drinks_module?.food_drinks_id : null,
+			stores_id: MODULE.STORES === type ? business.stores_module?.stores_id : null,
+		};
+		const items = await MenuItemDao.getMenuItemsByBusinessId(data, {
 			daily_date: {
 				gte: startOfDay.toISOString(),
 				lte: endOfDay.toISOString(),

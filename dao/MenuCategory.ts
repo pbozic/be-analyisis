@@ -1,13 +1,21 @@
 import prisma from '../prisma/prisma.js';
 import type { CreateMenuCategoryWithCategoriesInput } from '../schemas/dto/Menu/menucategory.dto.js';
-import type { MenuCategoryRef, MenuItemDetail, MenuCategoryCategory } from '../schemas/dto/Menu/menu.dto.js';
+import type {
+	MenuCategoryRef,
+	MenuItemDetail,
+	MenuCategoryCategory,
+	MenuBase,
+	MenuCategory,
+} from '../schemas/dto/Menu/menu.dto.js';
+import type { DailyMealCategoryPriceBase } from '../schemas/dto/DailyMealCategory/daily-meal-category.dto.js';
 
 // MenuCategory Detail Response - extends Ref with full relations
 export interface MenuCategoryDetail extends MenuCategoryRef {
 	menu_category_id: string;
 	menu_id: string;
-	names?: Record<string, unknown> | null;
-	business_id?: string | null;
+	names?: Record<string, string> | null | undefined;
+	food_drinks_id?: string | null;
+	stores_id?: string | null;
 	menu_order_index?: number | null;
 	menu_items_ordered?: string[] | null;
 	daily_meal_category_price_id?: string | null;
@@ -159,7 +167,7 @@ export const createDailyMealMenuCategory = async (
  * @param menuCategoryIdToAdd - Menu category ID to add.
  * @returns Updated menu.
  */
-export const addMenuCategoryIdToOrder = async (menu_id: string, menuCategoryIdToAdd: string): Promise<any> => {
+export const addMenuCategoryIdToOrder = async (menu_id: string, menuCategoryIdToAdd: string): Promise<MenuBase> => {
 	const menu = await prisma.menus.findUnique({
 		where: { menu_id },
 	});
@@ -186,7 +194,10 @@ export const addMenuCategoryIdToOrder = async (menu_id: string, menuCategoryIdTo
  * @param menuCategoryIdToRemove - Menu category ID to remove.
  * @returns Updated menu.
  */
-export const removeMenuCategoryIdFromOrder = async (menu_id: string, menuCategoryIdToRemove: string): Promise<any> => {
+export const removeMenuCategoryIdFromOrder = async (
+	menu_id: string,
+	menuCategoryIdToRemove: string
+): Promise<MenuBase> => {
 	const menu = await prisma.menus.findUnique({
 		where: { menu_id },
 	});
@@ -250,13 +261,21 @@ export const getMenuCategoriesByMenuId = async (menu_id: string): Promise<MenuCa
 /**
  * Get menu categories by business ID.
  *
- * @param business_id - Business ID.
+ * @param food_drinks_id - Food or drinks module ID.
+ * @param stores_id - Stores module ID.
  * @returns Array of menu categories.
  */
-export const getMenuCategoriesByBusinessId = async (business_id: string): Promise<MenuCategoryDetail[]> => {
+export const getMenuCategoriesByBusinessId = async (data: {
+	food_drinks_id: string;
+	stores_id: string;
+}): Promise<MenuCategoryDetail[]> => {
+	const { food_drinks_id, stores_id } = data;
 	try {
 		return await prisma.menu_categories.findMany({
-			where: { business_id },
+			where: {
+				...(stores_id ? { stores_id } : {}),
+				...(food_drinks_id ? { food_drinks_id } : {}),
+			},
 			orderBy: {
 				menu_order_index: 'asc',
 			},
@@ -331,7 +350,7 @@ export const deleteMenuCategory = async (menu_category_id: string): Promise<Menu
  * @param data - Data to update.
  * @returns Updated menu category.
  */
-export const updateMenuCategory = async (menu_category_id: string, data: any): Promise<MenuCategoryDetail> => {
+export const updateMenuCategory = async (menu_category_id: string, data: MenuCategory): Promise<MenuCategoryDetail> => {
 	try {
 		return await prisma.menu_categories.update({
 			where: { menu_category_id },
@@ -407,7 +426,7 @@ export const updateMenuItemsOrder = async (
  * @param menu_category_id - Menu category ID.
  * @returns Updated menu.
  */
-export const addCategoryToMenu = async (menu_id: string, menu_category_id: string): Promise<any> => {
+export const addCategoryToMenu = async (menu_id: string, menu_category_id: string): Promise<MenuBase> => {
 	try {
 		return await addMenuCategoryIdToOrder(menu_id, menu_category_id);
 	} catch (error) {
@@ -438,7 +457,10 @@ export const removeCategoryFromMenu = async (menu_id: string, category_id: strin
  * @param category_id - Category ID.
  * @returns Created relationship.
  */
-export const addCategoryToMenuCategory = async (menu_category_id: string, category_id: string): Promise<any> => {
+export const addCategoryToMenuCategory = async (
+	menu_category_id: string,
+	category_id: string
+): Promise<MenuCategoryCategory> => {
 	try {
 		return await prisma.menu_categories_categories.create({
 			data: {
@@ -463,7 +485,10 @@ export const addCategoryToMenuCategory = async (menu_category_id: string, catego
  * @param category_id - Category ID.
  * @returns Deleted relationship.
  */
-export const removeCategoryFromMenuCategory = async (menu_category_id: string, category_id: string): Promise<any> => {
+export const removeCategoryFromMenuCategory = async (
+	menu_category_id: string,
+	category_id: string
+): Promise<MenuCategoryCategory> => {
 	try {
 		return await prisma.menu_categories_categories.deleteMany({
 			where: {
@@ -484,7 +509,10 @@ export const removeCategoryFromMenuCategory = async (menu_category_id: string, c
  * @param price - New price.
  * @returns Updated daily meal category price.
  */
-export const updateDailyMealMenuPrice = async (menu_category_id: string, price: number): Promise<any> => {
+export const updateDailyMealMenuPrice = async (
+	menu_category_id: string,
+	price: number
+): Promise<DailyMealCategoryPriceBase[]> => {
 	try {
 		return await prisma.daily_meal_category_prices.updateMany({
 			where: { menu_category_id },
@@ -546,7 +574,7 @@ export const updateMenuCategoriesWithNewPrice = async (
 	dailyMealCategoryId: string,
 	priceId: string,
 	validFrom: Date
-): Promise<any> => {
+): Promise<MenuCategory[]> => {
 	try {
 		return await prisma.menu_categories.updateMany({
 			where: {

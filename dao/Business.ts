@@ -1008,6 +1008,32 @@ const getLocalBusinesses = async (): Promise<BusinessResponse[]> => {
 	}
 };
 
+/**
+ * Get a single business by its ID with rich related data.
+ *
+ * @param {string} business_id - The ID of the business to retrieve.
+ * @returns {Promise<any | null>} A promise resolving to the business record or null if not found.
+ */
+const getBusinessStoreAndFoodDrinksModulesById = async (business_id: string): Promise<any | null> => {
+	try {
+		const business = await prisma.business.findUnique({
+			where: {
+				business_id: business_id,
+			},
+			include: {
+				stores_module: true,
+				food_drinks_module: true,
+			},
+		});
+
+		if (!business) return null;
+		return business;
+	} catch (error) {
+		console.error('Error retrieving business:', error);
+		throw new Error(error instanceof Error ? error.message : 'Failed to get business by ID');
+	}
+};
+
 export { getBusinesses };
 export { getDailyMealBusinesses };
 export { getBusinessById };
@@ -1039,6 +1065,7 @@ export { activateBusiness };
 export { deactivateBusiness };
 export { getPurchaseOrderLimit };
 export { getLocalBusinesses };
+export { getBusinessStoreAndFoodDrinksModulesById };
 
 export default {
 	getBusinesses,
@@ -1072,4 +1099,5 @@ export default {
 	deactivateBusiness,
 	getPurchaseOrderLimit,
 	getLocalBusinesses,
+	getBusinessStoreAndFoodDrinksModulesById,
 };

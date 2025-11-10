@@ -7,18 +7,36 @@ import { CreateFileDataSchema } from '../Files/file.dto.js';
 extendZodWithOpenApi(z);
 
 // =======================
+// Menu Base Schema
+// =======================
+export const MenuBaseSchema = z
+	.object({
+		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		stores_id: z.string().uuid().nullable().optional(),
+		food_drinks_id: z.string().uuid().nullable().optional(),
+		menu_categories_ordered: z.any().nullable().optional(),
+		created_at: z.string().datetime().optional(),
+		updated_at: z.string().datetime().optional(),
+	})
+	.openapi('MenuBase');
+
+export type MenuBase = z.infer<typeof MenuBaseSchema>;
+
+// =======================
 // Menu create/update schemas
 // =======================
 export const CreateMenuSchema = z
 	.object({
-		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		food_drinks_id: z.string().uuid().optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
+		stores_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		is_daily_meals: z.boolean().optional().default(false).openapi({ example: false }),
 	})
 	.openapi('CreateMenu');
 
 export const CreateDailyMealMenuSchema = z
 	.object({
-		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		food_drinks_id: z.string().uuid().optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
+		stores_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		date: z.string().datetime().openapi({ example: '2025-01-15T00:00:00Z' }),
 		menu_category: z
 			.any()
@@ -43,7 +61,8 @@ export const MenuCategoryDataSchema = z
 			.array(z.string())
 			.optional()
 			.openapi({ example: ['salads', 'vegan'] }),
-		business_id: z.string().uuid().optional(),
+		food_drinks_id: z.string().uuid().optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
+		stores_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		menu_id: z.string().uuid().optional(),
 		order: z.number().int().optional(),
 		price: z.number().optional(),
@@ -80,7 +99,8 @@ export const MenuItemDataSchema = z
 		extras: z.array(z.string()).optional(),
 		ingredients: z.any().optional(),
 		availability: z.array(z.string()).optional(),
-		business_id: z.string().uuid().optional(),
+		food_drinks_id: z.string().uuid().optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
+		stores_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		menu_category_id: z.string().uuid().optional(),
 		daily_date: z.string().datetime().optional(),
 		requires_id_check: z.boolean().optional(),
@@ -163,7 +183,8 @@ export const MenuCategoryRefSchema = z
 		menu_category_id: z.string().uuid(),
 		menu_id: z.string().uuid().optional(),
 		names: z.record(z.string()).nullable().optional(),
-		business_id: z.string().uuid().nullable().optional(),
+		food_drinks_id: z.string().uuid().nullable().optional(),
+		stores_id: z.string().uuid().nullable().optional(),
 		menu_items_ordered: z.array(z.string()).nullable().optional(),
 		menu_categories_categories: z.array(MenuCategoryCategorySchema).nullable().optional(),
 	})
@@ -283,6 +304,7 @@ export type MenuItemVersionResponse = z.infer<typeof MenuItemVersionResponseSche
 // Register schemas
 // =======================
 export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('MenuBase', MenuBaseSchema);
 	registry.register('CreateMenu', CreateMenuSchema);
 	registry.register('CreateDailyMealMenu', CreateDailyMealMenuSchema);
 	registry.register('MenuCategoryData', MenuCategoryDataSchema);
@@ -294,6 +316,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('MenuCategoryRef', MenuCategoryRefSchema);
 	registry.register('MenuItemDetail', MenuItemDetailSchema);
 	registry.register('CreateMenuItem', CreateMenuItemSchema);
+	registry.register('UpdateMenuItem', UpdateMenuItemSchema);
 	registry.register('GetMenuItemsByIdsRequest', GetMenuItemsByIdsRequestSchema);
 	registry.register('UpdateMenuItemEnabled', UpdateMenuItemEnabledSchema);
 	registry.register('UpdateMenuItemPrice', UpdateMenuItemPriceSchema);
@@ -309,7 +332,8 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 
 export const CreateMenuInputSchema = z
 	.object({
-		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		food_drinks_id: z.string().uuid().optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
+		stores_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		isDailyMeal: z.boolean().optional().openapi({ example: false }),
 		date: z.string().datetime().optional().openapi({ example: '2025-01-15T00:00:00Z' }),
 	})
@@ -318,7 +342,8 @@ export type CreateMenuInput = z.infer<typeof CreateMenuInputSchema>;
 
 export const GetMenuByBusinessIdParamsSchema = z
 	.object({
-		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		food_drinks_id: z.string().uuid().optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
+		stores_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		isDailyMeal: z.boolean().optional().openapi({ example: false }),
 		startDate: z.string().datetime().optional().openapi({ example: '2025-01-15T00:00:00Z' }),
 	})
@@ -352,7 +377,8 @@ export type UpdateMenuOrderInput = z.infer<typeof UpdateMenuOrderInputSchema>;
 
 export const GetMenuByDateInputSchema = z
 	.object({
-		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		food_drinks_id: z.string().uuid().optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
+		stores_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		date: z.string().datetime().openapi({ example: '2025-01-15T00:00:00Z' }),
 	})
 	.openapi('GetMenuByDateInput');
