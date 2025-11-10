@@ -26,7 +26,13 @@ export const StoreBaseSchema = z
 	})
 	.openapi('StoreBase');
 export type StoreBase = z.infer<typeof StoreBaseSchema>;
-
+export const StoresModuleRefSchema = StoreBaseSchema.pick({
+	stores_id: true,
+	enabled: true,
+	online: true,
+	overwhelmed: true,
+}).openapi('StoresModuleRef');
+export type StoresModuleRef = z.infer<typeof StoresModuleRefSchema>;
 export const StoreDetailSchema = StoreBaseSchema.openapi('StoreDetail');
 export type StoreDetail = z.infer<typeof StoreDetailSchema>;
 

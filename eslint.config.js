@@ -47,6 +47,7 @@ export default [
 			'no-unused-vars': 'warn',
 			'no-undef': 'warn',
 			'no-async-promise-executor': 'warn',
+			'@typescript-eslint/no-explicit-any': 'off',
 			// no TS rules here
 		},
 	},
@@ -89,6 +90,7 @@ export default [
 					'newlines-between': 'always',
 				},
 			],
+			'@typescript-eslint/no-explicit-any': 'off',
 		},
 	},
 ];

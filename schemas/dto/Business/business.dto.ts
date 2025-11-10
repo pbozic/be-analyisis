@@ -1,6 +1,13 @@
 import { z } from 'zod';
 import { OpenAPIRegistry, extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 
+// Import existing module DTOs
+import { TransportModuleRefSchema } from '../Transport/transport.dto.js';
+import { FoodDrinksModuleRefSchema } from '../FoodDrinks/food-drinks.dto.js';
+import { StoresModuleRefSchema } from '../Stores/store.dto.js';
+import { ReservationModuleRefSchema } from '../reservations/reservation-module/reservation-module.dto.js';
+import { MenuItemRefSchema, MenuCategoryRefSchema } from '../Menu/menu.dto.js';
+
 extendZodWithOpenApi(z);
 
 // TODO: Fix dto after deleting menu from prisma model etc...
@@ -105,12 +112,163 @@ export const BusinessResponseDto = BusinessCreateDto.extend({
 	},
 });
 
+// CRM Module Ref (simplified from BusinessClient)
+export const CrmModuleRefSchema = z
+	.object({
+		crm_module_id: z.string().uuid(),
+		purchase_order_limit_amount: z.number().nullable().optional(),
+		client_count: z.number().int().optional(),
+	})
+	.openapi('CrmModuleRef');
+
+// Menu Ref (simplified)
+export const MenuRefSchema = z
+	.object({
+		menu_id: z.string().uuid(),
+		is_active: z.boolean().optional(),
+		is_daily_meals: z.boolean().optional(),
+		created_at: z.string().datetime().optional(),
+	})
+	.openapi('MenuRef');
+
+// Daily Meals subscription ref (simplified)
+export const DailyMealsRefSchema = z
+	.object({
+		subscription_count: z.number().int().optional(),
+		active_subscriptions: z.number().int().optional(),
+	})
+	.openapi('DailyMealsRef');
+
+// =======================
+// Business Response with Individual Modules
+// =======================
+
+// Business with Transport Module
+export const BusinessWithTransportResponseDto = BusinessResponseDto.extend({
+	transport_module: TransportModuleRefSchema.nullable().optional(),
+}).openapi('BusinessWithTransportResponse');
+
+// Business with Food & Drinks Module
+export const BusinessWithFoodDrinksResponseDto = BusinessResponseDto.extend({
+	food_drinks_module: FoodDrinksModuleRefSchema.nullable().optional(),
+	menus: z.array(MenuRefSchema).optional(),
+	menu_items: z.array(MenuItemRefSchema).optional(),
+	menu_categories: z.array(MenuCategoryRefSchema).optional(),
+}).openapi('BusinessWithFoodDrinksResponse');
+
+// Business with Food & Drinks Module + Daily Meals
+export const BusinessWithFoodDrinksAndDailyMealsResponseDto = BusinessResponseDto.extend({
+	food_drinks_module: FoodDrinksModuleRefSchema.extend({
+		daily_meals_module: DailyMealsRefSchema.nullable().optional(),
+	})
+		.nullable()
+		.optional(),
+	menus: z.array(MenuRefSchema).optional(),
+	menu_items: z.array(MenuItemRefSchema).optional(),
+	menu_categories: z.array(MenuCategoryRefSchema).optional(),
+}).openapi('BusinessWithFoodDrinksAndDailyMealsResponse');
+
+// Business with Stores Module
+export const BusinessWithStoresResponseDto = BusinessResponseDto.extend({
+	stores_module: StoresModuleRefSchema.nullable().optional(),
+}).openapi('BusinessWithStoresResponse');
+
+// Business with Reservation Module
+export const BusinessWithReservationResponseDto = BusinessResponseDto.extend({
+	reservation_module: ReservationModuleRefSchema.nullable().optional(),
+}).openapi('BusinessWithReservationResponse');
+
+// Business with CRM Module
+export const BusinessWithCrmResponseDto = BusinessResponseDto.extend({
+	crm_module: CrmModuleRefSchema.nullable().optional(),
+}).openapi('BusinessWithCrmResponse');
+
+// =======================
+// Business Response with All Modules
+// =======================
+
+// Business with all modules connected
+export const BusinessWithAllModulesResponseDto = BusinessResponseDto.extend({
+	transport_module: TransportModuleRefSchema.nullable().optional(),
+	food_drinks_module: FoodDrinksModuleRefSchema.nullable().optional(),
+	stores_module: StoresModuleRefSchema.nullable().optional(),
+	reservation_module: ReservationModuleRefSchema.nullable().optional(),
+	crm_module: CrmModuleRefSchema.nullable().optional(),
+	menus: z.array(MenuRefSchema).optional(),
+	menu_items: z.array(MenuItemRefSchema).optional(),
+	menu_categories: z.array(MenuCategoryRefSchema).optional(),
+	daily_meals: DailyMealsRefSchema.nullable().optional(),
+}).openapi('BusinessWithAllModulesResponse');
+
+// =======================
+// Business Ref Schema - minimal identity for embedding elsewhere
+// =======================
+
+export const BusinessRefSchema = z
+	.object({
+		business_id: z.string().uuid().openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
+		name: z.string().openapi({ example: 'Klikni d.o.o.' }),
+		email: z.string().email().optional().openapi({ example: 'info@klikni-web.eu' }),
+		active: z.boolean().optional().openapi({ example: true }),
+		logo_id: z.string().uuid().nullable().optional(),
+		banner_id: z.string().uuid().nullable().optional(),
+	})
+	.openapi('BusinessRef');
+
 // exported TS types
 export type BusinessCreateDto = z.infer<typeof BusinessCreateDto>;
 export type BusinessResponseDto = z.infer<typeof BusinessResponseDto>;
+export type BusinessRefSchema = z.infer<typeof BusinessRefSchema>;
+
+// Module response types
+export type BusinessWithTransportResponseDto = z.infer<typeof BusinessWithTransportResponseDto>;
+export type BusinessWithFoodDrinksResponseDto = z.infer<typeof BusinessWithFoodDrinksResponseDto>;
+export type BusinessWithFoodDrinksAndDailyMealsResponseDto = z.infer<
+	typeof BusinessWithFoodDrinksAndDailyMealsResponseDto
+>;
+export type BusinessWithStoresResponseDto = z.infer<typeof BusinessWithStoresResponseDto>;
+export type BusinessWithReservationResponseDto = z.infer<typeof BusinessWithReservationResponseDto>;
+export type BusinessWithCrmResponseDto = z.infer<typeof BusinessWithCrmResponseDto>;
+export type BusinessWithAllModulesResponseDto = z.infer<typeof BusinessWithAllModulesResponseDto>;
+
+// Module ref types
+export type TransportModuleRef = z.infer<typeof TransportModuleRefSchema>;
+export type FoodDrinksModuleRef = z.infer<typeof FoodDrinksModuleRefSchema>;
+export type StoresModuleRef = z.infer<typeof StoresModuleRefSchema>;
+export type ReservationModuleRef = z.infer<typeof ReservationModuleRefSchema>;
+export type CrmModuleRef = z.infer<typeof CrmModuleRefSchema>;
+export type MenuRef = z.infer<typeof MenuRefSchema>;
+export type DailyMealsRef = z.infer<typeof DailyMealsRefSchema>;
+
+// Re-export existing module types
+export type { MenuItemRef } from '../Menu/menu.dto.js';
+export type { MenuCategoryRef } from '../Menu/menu.dto.js';
 
 export function registerSchemas(registry: OpenAPIRegistry) {
-	// Register request schemas
+	// Register base business schemas
 	registry.register('BusinessCreate', BusinessCreateDto);
 	registry.register('BusinessResponse', BusinessResponseDto);
+	registry.register('BusinessRef', BusinessRefSchema);
+
+	// Register module ref schemas
+	registry.register('TransportModuleRef', TransportModuleRefSchema);
+	registry.register('FoodDrinksModuleRef', FoodDrinksModuleRefSchema);
+	registry.register('StoresModuleRef', StoresModuleRefSchema);
+	registry.register('ReservationModuleRef', ReservationModuleRefSchema);
+	registry.register('CrmModuleRef', CrmModuleRefSchema);
+	registry.register('MenuRef', MenuRefSchema);
+	registry.register('DailyMealsRef', DailyMealsRefSchema);
+
+	// Note: MenuItemRef and MenuCategoryRef are registered in Menu/menu.dto.ts
+
+	// Register business with individual modules
+	registry.register('BusinessWithTransportResponse', BusinessWithTransportResponseDto);
+	registry.register('BusinessWithFoodDrinksResponse', BusinessWithFoodDrinksResponseDto);
+	registry.register('BusinessWithFoodDrinksAndDailyMealsResponse', BusinessWithFoodDrinksAndDailyMealsResponseDto);
+	registry.register('BusinessWithStoresResponse', BusinessWithStoresResponseDto);
+	registry.register('BusinessWithReservationResponse', BusinessWithReservationResponseDto);
+	registry.register('BusinessWithCrmResponse', BusinessWithCrmResponseDto);
+
+	// Register business with all modules
+	registry.register('BusinessWithAllModulesResponse', BusinessWithAllModulesResponseDto);
 }

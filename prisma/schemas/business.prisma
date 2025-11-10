@@ -62,6 +62,8 @@ model business {
     transport_module   transport_module?
     stores_module      stores_module?
     food_drinks_module food_drinks_module?
+    daily_meals_module daily_meals_module?
+    table_reservations_module table_reservations_module?
     crm_module         crm_module?
     logo_id  String?    @db.Uuid @unique
     logo     files?     @relation("business_logo", fields: [logo_id], references: [file_id])
