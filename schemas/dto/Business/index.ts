@@ -34,13 +34,11 @@ export {
 	type MenuItemRef,
 	type MenuCategoryRef,
 	type BusinessByIdResponse,
-	toBusinessByIdResponse,
-	toGetBusinessResponse,
 	registerSchemas as registerBusinessSchemas,
 } from './business.dto.js';
 
-export * from './business.mappers.js';
-// Mappers and validators are available from their specific files. Avoid wildcard re-exports to keep file ownership explicit.
+// Note: mappers are implemented in `business.mappers.ts` and should be imported directly
+// where needed to avoid large transitive re-exports.
 
 // Legacy exports for backwards compatibility
 export {
