@@ -93,6 +93,7 @@ model business_details {
     stores_module       stores_module?    @relation("stores_business_details")
     daily_meals_module  daily_meals_module? @relation("daily_meals_business_details")
     table_reservations_module table_reservations_module? @relation("table_reservations_business_details")
+    reservation_module  reservation_module? @relation("reservation_module_business_details")
 }
 /// @summary User membership within a business (employees/managers).
 /// @namespace BusinessUsers
