@@ -1325,23 +1325,15 @@ async function createScoringPointsHandler(req, res) {
 		if (!user_id) {
 			return res.status(401).json({ error: 'User not authenticated' });
 		}
-		const user_with_drivers = await UserDao.getUserById(user_id, {
-			include: { driver: true, delivery_driver: true },
-		});
-		const business_id =
-			user_with_drivers?.driver?.business_id || user_with_drivers?.delivery_driver?.business_id || null;
-		if (!business_id) {
-			return res.status(400).json({ error: 'Business ID is required' });
-		}
-		const scoringPoint = await ScoringPointsDao.createScoringPoints(
-			business_id,
-			user_id,
+		const user_with_driver = await UserDao.getUserById(user_id);
+		const scoringPoint = await ScoringPointsDao.createScoringPoints({
+			driver_id: user_with_driver.driver_id || null,
 			delivery_order_id,
 			taxi_order_id,
 			points,
-			true,
-			reason
-		);
+			isPenalty: true,
+			reason,
+		});
 		return res.status(201).json(scoringPoint);
 	} catch (error) {
 		console.error('Error in createScoringPointsHandler:', error);

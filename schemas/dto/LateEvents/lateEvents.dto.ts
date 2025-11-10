@@ -3,7 +3,8 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, Timestamp } from '../../primitives.js';
 import { UserRefSchema } from '../User/user.js';
-import { BusinessRefSchema } from '../Business/business.js';
+import { StoreBaseSchema } from '../Stores/store.dto.js';
+import { FoodDrinksBaseSchema } from '../FoodDrinks/food-drinks.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -16,7 +17,6 @@ export const LateEventsBaseSchema = z
 		stores_id: UUID.nullable(),
 		food_drinks_id: UUID.nullable(),
 		driver_id: UUID,
-		user_id: UUID,
 		business_id: UUID.nullable(), // From DAO connects to business
 		delivery_order_id: UUID.nullable(),
 		taxi_order_id: UUID.nullable(),
@@ -101,7 +101,8 @@ export type ScoringPointsRef = z.infer<typeof ScoringPointsRefSchema>;
 // LateEvents Response Schema - Base with embedded refs
 export const LateEventsResponseSchema = LateEventsBaseSchema.extend({
 	user: UserRefSchema.optional(),
-	business: BusinessRefSchema.optional(),
+	stores_module: StoreBaseSchema.optional(),
+	food_drinks_module: FoodDrinksBaseSchema.optional(),
 	driver: DriverRefSchema.optional(),
 	delivery_order: OrderRefSchema.optional(),
 	taxi_order: OrderRefSchema.optional(),
@@ -118,9 +119,7 @@ export type LateEventsResponse = z.infer<typeof LateEventsResponseSchema>;
 // Create LateEvents Schema - for createLateEvent function
 export const CreateLateEventsSchema = z
 	.object({
-		business_id: UUID,
-		user_id: UUID,
-		driver_id: UUID,
+		driver_id: UUID.nullable().optional(),
 		delivery_order_id: UUID.nullable().optional(),
 		taxi_order_id: UUID.nullable().optional(),
 		seconds: z.number().int().nonnegative().describe('Delay in seconds'),
@@ -159,18 +158,6 @@ export const UpdateLateEventsSchema = z
 export type UpdateLateEvents = z.infer<typeof UpdateLateEventsSchema>;
 
 // ===== QUERY SCHEMAS =====
-
-// Get Late Events by User Query - for getLateEventsByUserId function
-export const GetLateEventsByUserQuerySchema = z
-	.object({
-		user_id: UUID,
-	})
-	.openapi({
-		title: 'GetLateEventsByUserQuery',
-		description: 'Query parameters for getting late events by user ID',
-	});
-
-export type GetLateEventsByUserQuery = z.infer<typeof GetLateEventsByUserQuerySchema>;
 
 // Get Late Events by Business Query - for getLateEventsByBusinessId function
 export const GetLateEventsByBusinessQuerySchema = z
@@ -278,7 +265,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('BulkCreateLateEvents', BulkCreateLateEventsSchema);
 
 	// Register query schemas
-	registry.register('GetLateEventsByUserQuery', GetLateEventsByUserQuerySchema);
 	registry.register('GetLateEventsByBusinessQuery', GetLateEventsByBusinessQuerySchema);
 	registry.register('GetLateEventByIdQuery', GetLateEventByIdQuerySchema);
 

@@ -57,19 +57,12 @@ model business {
     business_teams       business_teams[]
 
     types                     BUSINESS_TYPE[]
-    reservation_module_id     String?                    @db.Uuid
     reservation_module        reservation_module?
-    transport_module_id       String?                    @db.Uuid
     transport_module          transport_module?
-    stores_id                 String?                    @db.Uuid
     stores_module             stores_module?
-    food_drinks_id            String?                    @db.Uuid
     food_drinks_module        food_drinks_module?
-    crm_module_id             String?                    @db.Uuid
     crm_module                crm_module?
-    daily_meals_module_id     String?                    @db.Uuid
     daily_meals_module        daily_meals_module?
-    table_reservations_id     String?                    @db.Uuid
     table_reservations_module table_reservations_module?
 
     logo_id               String?         @unique @db.Uuid

@@ -385,9 +385,19 @@ export function toBusinessByIdResponse(row: BusinessByIdRaw): BusinessByIdRespon
 
 		// Module relationships
 		transport_module: r.transport_module,
+		transport_module_id: r.transport_module?.transport_module_id,
 		food_drinks_module: r.food_drinks_module,
+		food_drinks_module_id: r.food_drinks_module?.food_drinks_module_id,
 		stores_module: r.stores_module,
+		stores_module_id: r.stores_module?.stores_module_id,
 		reservation_module: r.reservation_module,
+		reservation_module_id: r.reservation_module?.reservation_module_id,
+		table_reservations_module: r.table_reservations_module,
+		table_reservations_module_id: r.table_reservations_module?.id,
+		daily_meals_module: r.daily_meals_module,
+		daily_meals_module_id: r.daily_meals_module?.id,
+		crm_module: r.crm_module,
+		crm_module_id: r.crm_module?.crm_module_id,
 
 		// Address and User relationships
 		business_users: r.business_users,

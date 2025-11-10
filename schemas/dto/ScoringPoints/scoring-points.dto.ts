@@ -47,64 +47,36 @@ export const ScoringPointsDetailSchema = ScoringPointsBaseSchema.extend({
 export type ScoringPointsDetail = z.infer<typeof ScoringPointsDetailSchema>;
 
 // =======================
-// Mappers
+// Requests
 // =======================
-type BusinessLike = { business_id: string; name?: string | null };
-type OrderLike = { order_id: string };
-type LateEventLike = { late_events_id: string };
-type PrismaScoringPoints = {
-	scoring_points_id: string;
-	business_id: string;
-	user_id?: string | null;
-	delivery_order_id?: string | null;
-	taxi_order_id?: string | null;
-	points: number;
-	isPenalty: boolean;
-	reason?: string | null;
-	created_at?: string | Date | null;
-	updated_at?: string | Date | null;
-	users?: unknown | null;
-	businesses?: BusinessLike | null;
-	delivery_orders?: OrderLike | null;
-	taxi_orders?: OrderLike | null;
-	late_events?: LateEventLike[] | null;
-};
+export const CreateScoringPointsSchema = z
+	.object({
+		stores_id: UUID.optional(),
+		food_drinks_id: UUID.optional(),
+		driver_id: UUID.optional(),
+		user_id: UUID.optional(),
+		delivery_order_id: UUID.nullable().optional(),
+		taxi_order_id: UUID.nullable().optional(),
+		points: z.number().int(),
+		isPenalty: z.boolean(),
+		reason: z.string().nullable().optional(),
+	})
+	.openapi('CreateScoringPoints');
+export type CreateScoringPoints = z.infer<typeof CreateScoringPointsSchema>;
 
-export function toScoringPointsDetail(row: unknown): ScoringPointsDetail {
-	const r = row as PrismaScoringPoints;
-	const business = r.businesses
-		? BusinessRefSchema.parse({
-				business_id: r.businesses.business_id as string,
-				name: r.businesses.name ?? undefined,
+export const UpdateScoringPointsSchema = z
+	.object({
+		scoring_points_id: UUID,
+		data: z
+			.object({
+				points: z.number().int().optional(),
+				isPenalty: z.boolean().optional(),
+				reason: z.string().nullable().optional(),
 			})
-		: undefined;
-	const delivery_order = r.delivery_orders
-		? OrderRefSchema.parse({ order_id: r.delivery_orders.order_id as string })
-		: undefined;
-	const taxi_order = r.taxi_orders ? OrderRefSchema.parse({ order_id: r.taxi_orders.order_id as string }) : undefined;
-	const late_events = Array.isArray(r.late_events)
-		? (r.late_events as Array<{ late_events_id: string }>).map((le) =>
-				LateEventRefSchema.parse({ late_events_id: le.late_events_id })
-			)
-		: [];
-	return ScoringPointsDetailSchema.parse({
-		scoring_points_id: r.scoring_points_id,
-		business_id: r.business_id,
-		user_id: r.user_id ?? null,
-		delivery_order_id: r.delivery_order_id ?? null,
-		taxi_order_id: r.taxi_order_id ?? null,
-		points: r.points,
-		isPenalty: r.isPenalty,
-		reason: r.reason ?? null,
-		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
-		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		user: (r as { users?: unknown | null }).users ?? null,
-		business,
-		delivery_order,
-		taxi_order,
-		late_events,
-	});
-}
+			.optional(),
+	})
+	.openapi('UpdateScoringPoints');
+export type UpdateScoringPoints = z.infer<typeof UpdateScoringPointsSchema>;
 
 // =======================
 // Registry
@@ -113,4 +85,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('LateEventRef', LateEventRefSchema);
 	registry.register('ScoringPointsBase', ScoringPointsBaseSchema);
 	registry.register('ScoringPointsDetail', ScoringPointsDetailSchema);
+	registry.register('CreateScoringPoints', CreateScoringPointsSchema);
+	registry.register('UpdateScoringPoints', UpdateScoringPointsSchema);
 }
