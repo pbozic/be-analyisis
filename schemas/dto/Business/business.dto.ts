@@ -207,6 +207,37 @@ export const BusinessWithAllModulesResponseDto = BusinessResponseDto.extend({
 	daily_meals: DailyMealsRefSchema.nullable().optional(),
 }).openapi('BusinessWithAllModulesResponse');
 
+// Business with Address and Business Users (common include used in many DAO functions)
+export const BusinessWithAddressAndUsersResponseDto = BusinessResponseDto.extend({
+	address: AddressRefSchema.nullable().optional(),
+	delivery_address: AddressRefSchema.nullable().optional(),
+	business_users: z
+		.array(
+			z.object({
+				users: UserRefSchema.optional(),
+			})
+		)
+		.optional(),
+	parent_business: BusinessRefSchema.nullable().optional(),
+	child_businesses: z.array(BusinessRefSchema).optional(),
+}).openapi('BusinessWithAddressAndUsersResponse');
+
+// Business matching the `getBusinessesInclude` shape returned by DAO.getBusinesses
+export const BusinessWithIncludesResponseDto = BusinessResponseDto.extend({
+	// includes from getBusinessesInclude
+	address: AddressRefSchema.nullable().optional(),
+	delivery_address: AddressRefSchema.nullable().optional(),
+	business_users: z
+		.array(
+			z.object({
+				users: UserRefSchema.optional(),
+			})
+		)
+		.optional(),
+	parent_business: BusinessRefSchema.nullable().optional(),
+	child_businesses: z.array(BusinessRefSchema).optional(),
+}).openapi('BusinessWithIncludesResponse');
+
 // =======================
 // Business Ref Schema - minimal identity for embedding elsewhere
 // =======================
@@ -379,6 +410,10 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('BusinessWithStoresResponse', BusinessWithStoresResponseDto);
 	registry.register('BusinessWithReservationResponse', BusinessWithReservationResponseDto);
 	registry.register('BusinessWithCrmResponse', BusinessWithCrmResponseDto);
+
+	// Register extra DAO-shaped responses
+	registry.register('BusinessWithAddressAndUsersResponse', BusinessWithAddressAndUsersResponseDto);
+	registry.register('BusinessWithIncludesResponse', BusinessWithIncludesResponseDto);
 
 	// Register business with all modules
 	registry.register('BusinessWithAllModulesResponse', BusinessWithAllModulesResponseDto);

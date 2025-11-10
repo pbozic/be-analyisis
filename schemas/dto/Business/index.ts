@@ -14,6 +14,8 @@ export {
 	MenuRefSchema,
 	DailyMealsRefSchema,
 	BusinessWithDailyMealsResponseDto,
+	BusinessWithAddressAndUsersResponseDto,
+	BusinessWithIncludesResponseDto,
 	type BusinessCreateDto as BusinessCreate,
 	type BusinessResponseDto as BusinessResponse,
 	type BusinessRefSchema as BusinessRef,
