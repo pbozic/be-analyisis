@@ -12,6 +12,7 @@ import type {
 } from '../schemas/dto/Business/index.js';
 import { UUID } from '../schemas/primitives.js';
 import { toBusinessByIdResponse, toGetBusinessResponse } from '../schemas/dto/Business/index.js';
+import { parseBusinessWithDailyMeals } from '../schemas/dto/Business/business.mappers.js';
 import { businessByIdInclude, getBusinessesInclude, BusinessFindManyArgs } from '../prisma/includes/business.js';
 
 type PrismaTransactionClient = Prisma.TransactionClient;
@@ -65,10 +66,7 @@ const getDailyMealBusinesses = async (): Promise<BusinessWithDailyMealsResponseD
 				},
 			},
 		});
-		return businesses.map((business: any) => ({
-			...business,
-			daily_meal_drivers: business.daily_meals_module.daily_meal_drivers,
-		}));
+		return businesses.map((business: any) => parseBusinessWithDailyMeals(business));
 	} catch (error) {
 		console.error('Error retrieving daily meal businesses:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get daily meal businesses');
@@ -400,6 +398,10 @@ const getChildBusinesses = async (parent_business_id: string): Promise<BusinessR
 		throw new Error(error instanceof Error ? error.message : 'Failed to get child businesses');
 	}
 };
+
+// Re-export include shapes and types for external mappers/controllers that need to build queries
+export { businessByIdInclude, getBusinessesInclude };
+export type { BusinessFindManyArgs };
 
 /**
  * Update a business with new data.
