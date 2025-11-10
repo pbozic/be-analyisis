@@ -11,8 +11,7 @@ import type {
 	BusinessWithAllModulesResponseDto,
 } from '../schemas/dto/Business/index.js';
 import { UUID } from '../schemas/primitives.js';
-import { toBusinessByIdResponse, toGetBusinessResponse } from '../schemas/dto/Business/index.js';
-import { parseBusinessWithDailyMeals } from '../schemas/dto/Business/business.mappers.js';
+import { toBusinessByIdResponse, toGetBusinessResponse, parseBusinessWithDailyMeals } from '../schemas/dto/Business/business.mappers.js';
 import { businessByIdInclude, getBusinessesInclude, BusinessFindManyArgs } from '../prisma/includes/business.js';
 
 type PrismaTransactionClient = Prisma.TransactionClient;
