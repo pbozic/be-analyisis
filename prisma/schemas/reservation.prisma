@@ -46,7 +46,8 @@ model reservation_module {
   notification_provider_credentials notification_provider_credential[]
   notification_messages             notification_message[]
   business_details_id String?  @db.Uuid @unique
-  business_details    business_details? @relation("reservation_module_business_details", fields: [business
+  business_details    business_details? @relation("reservation_module_business_details", fields: [business_details_id], references: [business_details_id])
+
   reviewable_id String?     @db.Uuid
   reviewable    reviewable? @relation(fields: [reviewable_id], references: [reviewable_id])
 }
