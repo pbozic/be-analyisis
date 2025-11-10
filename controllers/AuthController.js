@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
 import { BUSINESS_TYPE, COMPANY_ROLE } from '@prisma/client';
+import axios from 'axios';
 
 import UserDao from '../dao/User.js';
 import { generateAccessToken, generateRefreshToken } from '../lib/jwt.js';
@@ -432,7 +433,7 @@ async function passwordReset(req, res) {
  * POST /auth/taxi/register
  * @tag Auth
  * @summary Register a new taxi service
- * @description Creates a new business, multiple taxi, vehicles, and optionally finances and documents, and links them together.
+ * @description If the business already exists, attaches/initializes the Transport module on it and adds drivers/vehicles; otherwise creates the business first, then adds the module and entities.
  * @operationId registerTaxiService
  * @bodyContent {object} application/json
  * @bodyRequired
@@ -444,26 +445,24 @@ async function passwordReset(req, res) {
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  * @prisma_model vehicle_drivers (see ./prisma/schemas/transport.prisma)
  * @prisma_model vehicles (see ./prisma/schemas/transport.prisma)
+ * @prisma_model transport_module (see ./prisma/schemas/transport.prisma)
  * @prisma_model addresses (see ./prisma/schemas/base.prisma)
  * @prisma_model documents (see ./prisma/schemas/base.prisma)
  * @prisma_model files (see ./prisma/schemas/base.prisma)
  * @prisma_model user_roles (see ./prisma/schemas/user.prisma)
  */
 async function registerTaxiService(req, res) {
-	//TODO: Update business creation by linking to transport_module
 	fs.writeFileSync('taxi-service.json', JSON.stringify(req.body, null, 2));
 	try {
+		let business = null;
 		if (req.body.business) {
-			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.email);
-			if (existingBusinessEmail) {
-				console.error('Business with this email already exists.');
-				return res.status(400).json({ error: 'Business with this email already exists.' });
+			const b = req.body.business;
+			if (b.business_id) {
+				business = await BusinessDao.getBusinessById(b.business_id);
+				if (!business) return res.status(400).json({ error: 'Unknown business_id' });
+			} else {
+				business = (await BusinessDao.getBusinessByEmail(b.email)) || null;
 			}
-			//const existingBusinessPhone = await BusinessDao.getBusinessByTelephone(req.body.business.telephone_number);
-			//if (existingBusinessPhone) {
-			//	console.error('Business with this phone number already exists.');
-			//	return res.status(400).json({ error: 'Business with this phone number already exists.' });
-			//}
 		}
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
 			for (const driverInfo of req.body.drivers) {
@@ -479,20 +478,33 @@ async function registerTaxiService(req, res) {
 				}
 			}
 		}
-		let stripeCustomer = await stripe.createCustomer(
-			req.body.business.email,
-			req.body.business.name,
-			req.body.business.telephone
-		);
-		const business = await BusinessDao.createNewBusiness({
-			...req.body.business,
-			stripe_customer_id: stripeCustomer.id,
+		if (!business) {
+			const stripeCustomer = await stripe.createCustomer(
+				req.body.business.email,
+				req.body.business.name,
+				req.body.business.telephone
+			);
+			business = await BusinessDao.createNewBusiness({
+				...req.body.business,
+				stripe_customer_id: stripeCustomer.id,
+			});
+		} else if (!business.stripe_customer_id) {
+			const stripeCustomer = await stripe.createCustomer(business.email, business.name, business.telephone);
+			await BusinessDao.updateBusiness(business.business_id, { stripe_customer_id: stripeCustomer.id });
+			business.stripe_customer_id = stripeCustomer.id;
+		}
+
+		// Create transport module only if it does not exist
+		const existingTransport = await prisma.transport_module.findFirst({
+			where: { business_id: business.business_id },
 		});
-		await prisma.transport_module.create({
-			data: {
-				business: { connect: { business_id: business.business_id } },
-			},
-		});
+		if (!existingTransport) {
+			await prisma.transport_module.create({
+				data: {
+					business: { connect: { business_id: business.business_id } },
+				},
+			});
+		}
 		// TODO: handle uniqueness here or with joi validation
 		let drivers = [];
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
@@ -520,40 +532,40 @@ async function registerTaxiService(req, res) {
 				];
 				const result = await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 				console.log('User roles linked:', result);
-				// Handle user documents
-				if (driverInfo.user.documents) {
-					for (const doc of driverInfo.user.documents) {
-						if (doc.documentData.document_type === 'PROFILE_PICTURE') {
-							for (const file of doc.files) {
-								let base64 = file.base64;
-								delete file.base64;
-								let fileData = await FileDao.createFile(
-									file.file_type,
-									file.mime_type,
-									file.size,
-									true
-								);
-								let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-								S3Helper.SaveObject(
-									key,
-									base64,
-									file.mime_type,
-									{
-										users: [newUser.user_id],
-										businesses: [business.business_id],
-									},
-									fileData,
-									true
-								);
-								await UserDao.updateUser(newUser.user_id, {
-									profile_picture: {
-										connect: { profile_picture_id: fileData.file_id },
-									},
-								});
-							}
-						}
-					}
-				}
+				// // Handle user documents
+				// if (driverInfo.user.documents) {
+				// 	for (const doc of driverInfo.user.documents) {
+				// 		if (doc.documentData.document_type === 'PROFILE_PICTURE') {
+				// 			for (const file of doc.files) {
+				// 				let base64 = file.base64;
+				// 				delete file.base64;
+				// 				let fileData = await FileDao.createFile(
+				// 					file.file_type,
+				// 					file.mime_type,
+				// 					file.size,
+				// 					true
+				// 				);
+				// 				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+				// 				S3Helper.SaveObject(
+				// 					key,
+				// 					base64,
+				// 					file.mime_type,
+				// 					{
+				// 						users: [newUser.user_id],
+				// 						businesses: [business.business_id],
+				// 					},
+				// 					fileData,
+				// 					true
+				// 				);
+				// 				await UserDao.updateUser(newUser.user_id, {
+				// 					profile_picture: {
+				// 						connect: { profile_picture_id: fileData.file_id },
+				// 					},
+				// 				});
+				// 			}
+				// 		}
+				// 	}
+				// }
 				const driverData = { ...driverInfo.driver.data, business_id: business.business_id };
 				const driver = await DriverDao.createNewDriver(driverData, newUser);
 				const regions = driverInfo.driver.regions || [];
@@ -653,20 +665,19 @@ async function registerTaxiService(req, res) {
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
 		}
-		let stripeAccount = await stripe.createAccount(business);
-		await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripeAccount.id });
-		let accountLink = await stripe.getAccountLinks(stripeAccount.id, business.business_id);
-		// send email to business user with account link
+		// Ensure Stripe connect account exists and send onboarding link
+		let accountLink = null;
+		if (!business.stripe_account_id) {
+			const stripeAccount = await stripe.createAccount(business);
+			await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripeAccount.id });
+			business.stripe_account_id = stripeAccount.id;
+		}
+		accountLink = await stripe.getAccountLinks(business.stripe_account_id, business.business_id);
 		EmailHelper.sendEmailTemplate('Stripe Onboarding', 'stripeOnboarding', business.email, {
 			name: business.name,
 			title: 'Stripe Onboarding',
 			onboardLink: accountLink.url,
 		});
-		/*let finances = {};
-		if (req.body.finances) {
-			finances = await FinancesDao.addFinances(req.body.finances);
-			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-		}*/
 		let businessAddress = {};
 		if (req.body.addresses) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
@@ -677,7 +688,6 @@ async function registerTaxiService(req, res) {
 			drivers,
 			vehicles,
 			businessAddress,
-			// accountLink
 		});
 	} catch (error) {
 		console.error('Error registering taxi service:', error);
@@ -688,7 +698,7 @@ async function registerTaxiService(req, res) {
  * POST /auth/delivery/register
  * @tag Auth
  * @summary Register a new delivery service
- * @description Creates a new business, multiple delivery drivers, vehicles, and optionally finances and documents, and links them together.
+ * @description If the business already exists, attaches/initializes the Transport module and adds delivery drivers/vehicles; otherwise creates the business first, then the module and entities.
  * @operationId registerDeliveryService
  * @bodyContent {object} application/json
  * @bodyRequired
@@ -699,25 +709,23 @@ async function registerTaxiService(req, res) {
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  * @prisma_model delivery_drivers (see ./prisma/schema.prisma)
  * @prisma_model vehicles (see ./prisma/schemas/transport.prisma)
+ * @prisma_model transport_module (see ./prisma/schemas/transport.prisma)
  * @prisma_model addresses (see ./prisma/schemas/base.prisma)
  * @prisma_model documents (see ./prisma/schemas/base.prisma)
  * @prisma_model files (see ./prisma/schemas/base.prisma)
  * @prisma_model user_roles (see ./prisma/schemas/user.prisma)
  */
 async function registerDeliveryService(req, res) {
-	//TODO: Update business creation by linking to transport_module
 	try {
+		let business = null;
 		if (req.body.business) {
-			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.email);
-			if (existingBusinessEmail) {
-				console.error('Business with this email already exists.');
-				return res.status(400).json({ error: 'Business with this email already exists.' });
+			const b = req.body.business;
+			if (b.business_id) {
+				business = await BusinessDao.getBusinessById(b.business_id);
+				if (!business) return res.status(400).json({ error: 'Unknown business_id' });
+			} else {
+				business = (await BusinessDao.getBusinessByEmail(b.email)) || null;
 			}
-			//const existingBusinessPhone = await BusinessDao.getBusinessByTelephone(req.body.business.telephone_number);
-			//if (existingBusinessPhone) {
-			//	console.error('Business with this phone number already exists.');
-			//	return res.status(400).json({ error: 'Business with this phone number already exists.' });
-			//}
 		}
 		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
 			for (const driverInfo of req.body.deliveryDrivers) {
@@ -733,20 +741,32 @@ async function registerDeliveryService(req, res) {
 				}
 			}
 		}
-		let stripeCustomer = await stripe.createCustomer(
-			req.body.business.email,
-			req.body.business.name,
-			req.body.business.telephone
-		);
-		const business = await BusinessDao.createNewBusiness({
-			...req.body.business,
-			stripe_customer_id: stripeCustomer.id,
+		if (!business) {
+			const stripeCustomer = await stripe.createCustomer(
+				req.body.business.email,
+				req.body.business.name,
+				req.body.business.telephone
+			);
+			business = await BusinessDao.createNewBusiness({
+				...req.body.business,
+				stripe_customer_id: stripeCustomer.id,
+			});
+		} else if (!business.stripe_customer_id) {
+			const stripeCustomer = await stripe.createCustomer(business.email, business.name, business.telephone);
+			await BusinessDao.updateBusiness(business.business_id, { stripe_customer_id: stripeCustomer.id });
+			business.stripe_customer_id = stripeCustomer.id;
+		}
+		// Create transport module only if it does not exist
+		const existingTransport = await prisma.transport_module.findFirst({
+			where: { business_id: business.business_id },
 		});
-		await prisma.transport_module.create({
-			data: {
-				business: { connect: { business_id: business.business_id } },
-			},
-		});
+		if (!existingTransport) {
+			await prisma.transport_module.create({
+				data: {
+					business: { connect: { business_id: business.business_id } },
+				},
+			});
+		}
 		let deliveryDrivers = [];
 		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
 			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
@@ -772,40 +792,40 @@ async function registerDeliveryService(req, res) {
 					{ role: deliveryDriverInfo.user.data.user_role || 'DELIVERY_DRIVER', primary: true },
 				];
 				await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
-				// Handle user documents
-				if (deliveryDriverInfo.user?.documents) {
-					for (const doc of deliveryDriverInfo.user.documents) {
-						if (doc.documentData.document_type === 'PROFILE_PICTURE') {
-							for (const file of doc.files) {
-								let base64 = file.base64;
-								delete file.base64;
-								let fileData = await FileDao.createFile(
-									file.file_type,
-									file.mime_type,
-									file.size,
-									true
-								);
-								let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-								S3Helper.SaveObject(
-									key,
-									base64,
-									file.mime_type,
-									{
-										users: [newUser.user_id],
-										businesses: [business.business_id],
-									},
-									fileData,
-									true
-								);
-								await UserDao.updateUser(newUser.user_id, {
-									profile_picture: {
-										connect: { profile_picture_id: fileData.file_id },
-									},
-								});
-							}
-						}
-					}
-				}
+				// // Handle user documents
+				// if (deliveryDriverInfo.user?.documents) {
+				// 	for (const doc of deliveryDriverInfo.user.documents) {
+				// 		if (doc.documentData.document_type === 'PROFILE_PICTURE') {
+				// 			for (const file of doc.files) {
+				// 				let base64 = file.base64;
+				// 				delete file.base64;
+				// 				let fileData = await FileDao.createFile(
+				// 					file.file_type,
+				// 					file.mime_type,
+				// 					file.size,
+				// 					true
+				// 				);
+				// 				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+				// 				S3Helper.SaveObject(
+				// 					key,
+				// 					base64,
+				// 					file.mime_type,
+				// 					{
+				// 						users: [newUser.user_id],
+				// 						businesses: [business.business_id],
+				// 					},
+				// 					fileData,
+				// 					true
+				// 				);
+				// 				await UserDao.updateUser(newUser.user_id, {
+				// 					profile_picture: {
+				// 						connect: { profile_picture_id: fileData.file_id },
+				// 					},
+				// 				});
+				// 			}
+				// 		}
+				// 	}
+				// }
 				const deliveryDriverData = { ...deliveryDriverInfo.driver.data, business_id: business.business_id };
 				const deliveryDriver = await DeliveryDriverDao.createDriver(deliveryDriverData, newUser);
 				// Handle delivery driver documents
@@ -877,15 +897,24 @@ async function registerDeliveryService(req, res) {
 				deliveryDrivers.push({ deliveryDriver, vehicles, addresses });
 			}
 		}
-		/*let finances = {};
-		if (req.body.finances) {
-			finances = await FinancesDao.addFinances(req.body.finances);
-			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-		}*/
 		let businessAddress = {};
 		if (req.body.addresses) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
 		}
+		// Ensure Stripe connect account exists and send onboarding link
+		let accountLink = null;
+		if (!business.stripe_account_id) {
+			const stripeAccount = await stripe.createAccount(business);
+			await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripeAccount.id });
+			business.stripe_account_id = stripeAccount.id;
+		}
+		accountLink = await stripe.getAccountLinks(business.stripe_account_id, business.business_id);
+		EmailHelper.sendEmailTemplate('Stripe Onboarding', 'stripeOnboarding', business.email, {
+			name: business.name,
+			title: 'Stripe Onboarding',
+			onboardLink: accountLink.url,
+		});
+
 		res.status(201).json({
 			message: 'Delivery service business registered successfully',
 			business,
@@ -901,7 +930,7 @@ async function registerDeliveryService(req, res) {
  * POST /auth/merchant/register
  * @tag Auth
  * @summary Register a new merchant service
- * @description Creates a new business, optionally business users, finances, and documents, and links them together.
+ * @description If the business already exists, attaches/initializes either the Stores or Food & Drinks module based on type; otherwise creates the business then the module. Adds business users and documents.
  * @operationId registerMerchantService
  * @bodyContent {object} application/json
  * @bodyRequired
@@ -915,22 +944,20 @@ async function registerDeliveryService(req, res) {
  * @prisma_model documents (see ./prisma/schemas/base.prisma)
  * @prisma_model files (see ./prisma/schemas/base.prisma)
  * @prisma_model menus (see ./prisma/schemas/delivery.prisma)
+ * @prisma_model stores_module (see ./prisma/schemas/delivery.prisma)
+ * @prisma_model food_drinks_module (see ./prisma/schemas/delivery.prisma)
  */
 async function registerMerchantService(req, res) {
-	//TODO: Update business creation by linking to stores_module/food_drinks_module
 	try {
-		// fs.writeFileSync("merchant-req.json", null, JSON.stringify(req.body, null, 2), 'utf8')
+		let business = null;
 		if (req.body.business) {
-			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.data.email);
-			if (existingBusinessEmail) {
-				console.error('Business with this email already exists.');
-				return res.status(400).json({ error: 'Business with this email already exists.' });
+			const b = req.body.business;
+			if (b.data.business_id) {
+				business = await BusinessDao.getBusinessById(b.data.business_id);
+				if (!business) return res.status(400).json({ error: 'Unknown business_id' });
+			} else if (b.data.email) {
+				business = await BusinessDao.getBusinessByEmail(b.data.email);
 			}
-			//const existingBusinessPhone = await BusinessDao.getBusinessByTelephone(req.body.business.telephone_number);
-			//if (existingBusinessPhone) {
-			//	console.error('Business with this phone number already exists.');
-			//	return res.status(400).json({ error: 'Business with this phone number already exists.' });
-			//}
 		}
 		if (Array.isArray(req.body.users) && req.body.users.length) {
 			for (const driverInfo of req.body.users) {
@@ -946,29 +973,41 @@ async function registerMerchantService(req, res) {
 				}
 			}
 		}
-		let stripeCustomer = await stripe.createCustomer(
-			req.body.business.email,
-			req.body.business.name,
-			req.body.business.telephone
-		);
 		const businessType = req.body.business.type;
 		delete req.body.business.type;
-		const business = await BusinessDao.createNewBusiness({
-			...req.body.business.data,
-			stripe_customer_id: stripeCustomer.id,
-		});
+		if (!business) {
+			const stripeCustomer = await stripe.createCustomer(
+				req.body.business.email,
+				req.body.business.name,
+				req.body.business.telephone
+			);
+			business = await BusinessDao.createNewBusiness({
+				...req.body.business.data,
+				stripe_customer_id: stripeCustomer.id,
+			});
+		} else if (!business.stripe_customer_id) {
+			const stripeCustomer = await stripe.createCustomer(business.email, business.name, business.telephone);
+			await BusinessDao.updateBusiness(business.business_id, { stripe_customer_id: stripeCustomer.id });
+			business.stripe_customer_id = stripeCustomer.id;
+		}
 		if (businessType === 'FOOD_DRINKS') {
-			await prisma.food_drinks_module.create({
-				data: {
-					business: { connect: { business_id: business.business_id } },
-				},
+			const existingFd = await prisma.food_drinks_module.findFirst({
+				where: { business_id: business.business_id },
 			});
+			if (!existingFd) {
+				await prisma.food_drinks_module.create({
+					data: { business: { connect: { business_id: business.business_id } } },
+				});
+			}
 		} else if (businessType === 'STORES') {
-			await prisma.stores_module.create({
-				data: {
-					business: { connect: { business_id: business.business_id } },
-				},
+			const existingStore = await prisma.stores_module.findFirst({
+				where: { business_id: business.business_id },
 			});
+			if (!existingStore) {
+				await prisma.stores_module.create({
+					data: { business: { connect: { business_id: business.business_id } } },
+				});
+			}
 		}
 		// Ensure at least one business user data is provided & created
 		if (!Array.isArray(req.body.users) || !req.body.users.length) {
@@ -1055,20 +1094,19 @@ async function registerMerchantService(req, res) {
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
 		}
-		let stripeAccount = await stripe.createAccount(business);
-		await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripeAccount.id });
-		let accountLink = await stripe.getAccountLinks(stripeAccount.id, business.business_id);
+		let accountLink = null;
+		if (!business.stripe_account_id) {
+			const stripeAccount = await stripe.createAccount(business);
+			await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripeAccount.id });
+			business.stripe_account_id = stripeAccount.id;
+		}
+		accountLink = await stripe.getAccountLinks(business.stripe_account_id, business.business_id);
 		// send email to business user with account link
 		EmailHelper.sendEmailTemplate('Stripe Onboarding', 'stripeOnboarding', business.email, {
 			name: business.name,
 			title: 'Stripe Onboarding',
 			onboardLink: accountLink.url,
 		});
-		// let finances = {};
-		// if (req.body.finances) {
-		// 	finances = await FinancesDao.addFinances(req.body.finances);
-		// 	await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-		// }
 		let businessAddress = {};
 		if (req.body.addresses && req.body.addresses.business) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
@@ -1077,8 +1115,11 @@ async function registerMerchantService(req, res) {
 		if (req.body.addresses && req.body.addresses.delivery) {
 			deliveryAddress = await BusinessDao.addDeliveryAddress(business.business_id, req.body.addresses.delivery);
 		}
-		const menu = await MenuDao.createMenu(business.business_id);
-		console.log('ACCOUNT STRIPE ONBOARDING LINK', accountLink.url);
+		if (businessType === 'STORES') {
+			await MenuDao.createStoreMenu(business.stores_id);
+		} else {
+			await MenuDao.createFoodDrinksMenu(business.food_drinks_id);
+		}
 		businessIndex(business.business_id);
 		res.status(201).json({
 			message: 'Merchant service business registered successfully',
@@ -1086,7 +1127,6 @@ async function registerMerchantService(req, res) {
 			businessUsers,
 			businessAddress,
 			deliveryAddress,
-			menu,
 		});
 	} catch (error) {
 		console.error('Error registering merchant service:', error);
@@ -1112,7 +1152,6 @@ async function registerMerchantService(req, res) {
  * @prisma_model files (see ./prisma/schemas/base.prisma)
  */
 async function registerBusiness(req, res) {
-	//TODO: Update business creation by linking to crm_module
 	try {
 		if (req.body.business) {
 			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.data.email);
@@ -1193,11 +1232,6 @@ async function registerBusiness(req, res) {
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
 		}
-		// let finances = {};
-		// if (req.body.finances) {
-		// 	finances = await FinancesDao.addFinances(req.body.finances);
-		// 	await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-		// }
 		let businessAddress = {};
 		if (req.body.addresses && req.body.addresses.business) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
@@ -1577,6 +1611,7 @@ async function registerReservationBusiness(req, res) {
 			}
 		}
 		await bootstrapModuleNotifications(reservationModule.reservation_module_id, null, adminUser.user_id);
+		//businessIndex(business.business_id); <- uncomment once we have ES setup for reservation module
 		res.status(201).json({
 			message: 'Business registered successfully',
 			business,
