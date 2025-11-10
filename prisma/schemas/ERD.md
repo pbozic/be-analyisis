@@ -485,13 +485,6 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String reservation_module_id "nullable"
-  String transport_module_id "nullable"
-  String stores_id "nullable"
-  String food_drinks_id "nullable"
-  String crm_module_id "nullable"
-  String daily_meals_module_id "nullable"
-  String table_reservations_id "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
 }
@@ -805,10 +798,8 @@ erDiagram
 }
 "scoring_points" {
   String scoring_points_id PK
-  String stores_id FK
-  String food_drinks_id FK
+  String business_id FK
   String user_id FK "nullable"
-  String driver_id FK "nullable"
   String delivery_order_id FK "nullable"
   String taxi_order_id FK "nullable"
   Int points
@@ -952,13 +943,6 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String reservation_module_id "nullable"
-  String transport_module_id "nullable"
-  String stores_id "nullable"
-  String food_drinks_id "nullable"
-  String crm_module_id "nullable"
-  String daily_meals_module_id "nullable"
-  String table_reservations_id "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
 }
@@ -1012,8 +996,8 @@ erDiagram
 "user_permission" }o--|| "users" : user
 "group_users" }o--|| "users" : parent_user
 "group_users" |o--|| "users" : child_user
-"scoring_points" }o--o| "users" : user
-"scoring_points" }o--o| "drivers" : driver
+"scoring_points" }o--o| "users" : users
+"scoring_points" }o--|| "business" : businesses
 "account_actions" }o--o| "business" : business
 "account_actions" }o--o| "users" : user
 "account_actions" }o--|| "users" : action_creator
@@ -1030,11 +1014,6 @@ erDiagram
 "business" |o--o| "files" : banner
 "drivers" |o--o| "users" : user
 "drivers" |o--o| "files" : profile_picture
-"reviews" }o--o{ "users" : "via reviewable"
-"users" }o--o{ "business" : "via user_favorite_businesses"
-"users" }o--o{ "drivers" : "via user_favorite_drivers"
-"allergens" }o--o{ "users" : "via user_allergens"
-"users" }o--o{ "tutorial" : "via user_tutorials"
 ```
 
 ### `tokens`
@@ -1108,7 +1087,7 @@ Properties as follows:
 
 End user account with profile, preferences and relations.
 
-Central user entity linking to roles, orders, wallets and analytics.
+Central user entity linking to roles, orders, documents, wallets and analytics.
 
 Properties as follows:
 
@@ -1255,10 +1234,8 @@ Scoring points (rewards/penalties) for users and businesses.
 Properties as follows:
 
 - `scoring_points_id`:
-- `stores_id`:
-- `food_drinks_id`:
+- `business_id`:
 - `user_id`:
-- `driver_id`:
 - `delivery_order_id`:
 - `taxi_order_id`:
 - `points`:
@@ -1362,13 +1339,6 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String reservation_module_id "nullable"
-  String transport_module_id "nullable"
-  String stores_id "nullable"
-  String food_drinks_id "nullable"
-  String crm_module_id "nullable"
-  String daily_meals_module_id "nullable"
-  String table_reservations_id "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
 }
@@ -1386,6 +1356,7 @@ erDiagram
   String stores_id PK
   String business_id FK,UK
   Boolean enabled
+  Json settings "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
@@ -1401,6 +1372,7 @@ erDiagram
   String food_drinks_id PK
   String business_id FK,UK
   Boolean enabled
+  Json settings "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
@@ -1980,7 +1952,6 @@ erDiagram
   DateTime(6) updated_at
 }
 "promo_sections_buy" }o--|| "promo_sections" : promo_section
-"translations" }o--o{ "promo_sections" : "via translatable"
 ```
 
 ### `promo_sections`
@@ -2082,7 +2053,6 @@ erDiagram
 "promo_banners" }o--o| "promo_ads" : promo_ads
 "categories" }o--o| "files" : icon
 "categories" }o--o| "categories" : parent_category
-"promo_ads" }o--o{ "categories" : "via promo_ads_category"
 ```
 
 ### `promo_banners`
@@ -2157,7 +2127,6 @@ erDiagram
   DateTime(6) updated_at
 }
 "word_buy" }o--|| "words" : word
-"translations" }o--o{ "words" : "via translatable"
 ```
 
 ### `words`
@@ -2314,10 +2283,8 @@ Properties as follows:
 erDiagram
 "scoring_points" {
   String scoring_points_id PK
-  String stores_id FK
-  String food_drinks_id FK
+  String business_id FK
   String user_id FK "nullable"
-  String driver_id FK "nullable"
   String delivery_order_id FK "nullable"
   String taxi_order_id FK "nullable"
   Int points
@@ -2360,13 +2327,6 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String reservation_module_id "nullable"
-  String transport_module_id "nullable"
-  String stores_id "nullable"
-  String food_drinks_id "nullable"
-  String crm_module_id "nullable"
-  String daily_meals_module_id "nullable"
-  String table_reservations_id "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
 }
@@ -2494,6 +2454,7 @@ erDiagram
   String business_id FK
   String operating_address_id FK "nullable"
 }
+"scoring_points" }o--|| "business" : businesses
 "account_actions" }o--o| "business" : business
 "business" }o--o| "addresses" : address
 "business" }o--o| "business" : parent_business
@@ -2520,10 +2481,8 @@ Scoring points (rewards/penalties) for users and businesses.
 Properties as follows:
 
 - `scoring_points_id`:
-- `stores_id`:
-- `food_drinks_id`:
+- `business_id`:
 - `user_id`:
-- `driver_id`:
 - `delivery_order_id`:
 - `taxi_order_id`:
 - `points`:
@@ -2578,13 +2537,6 @@ Properties as follows:
 - `active`:
 - `sales_representative_id`:
 - `types`:
-- `reservation_module_id`:
-- `transport_module_id`:
-- `stores_id`:
-- `food_drinks_id`:
-- `crm_module_id`:
-- `daily_meals_module_id`:
-- `table_reservations_id`:
 - `logo_id`:
 - `banner_id`:
 
@@ -2735,7 +2687,6 @@ erDiagram
 "daily_meals_module" {
   String id PK
   String business_id FK,UK
-  String delivery_address_id FK "nullable"
   DAY_OF_WEEK daily_meals_days
   Json daily_meals_delivery_mapping "nullable"
   Int maximum_daily_meals_subscribers "nullable"
@@ -2814,10 +2765,6 @@ erDiagram
 "documents" }o--o| "drivers" : drivers
 "documents" }o--o| "vehicles" : vehicles
 "reviews" }o--|| "users" : author
-"reviews" }o--o{ "drivers" : "via reviewable"
-"daily_meals_module" }o--o{ "drivers" : "via daily_meals_drivers"
-"drivers" }o--o{ "municipalities" : "via driver_municipalities"
-"vehicles" }o--o{ "drivers" : "via vehicle_drivers"
 ```
 
 ### `late_events`
@@ -3001,7 +2948,6 @@ erDiagram
 }
 "blog_posts" }o--|| "users" : author
 "blog_posts" }o--o| "blog_categories" : category
-"blog_tags" }o--o{ "blog_posts" : "via blog_tags_blog_posts"
 ```
 
 ### `blog_tags`
@@ -3316,7 +3262,6 @@ erDiagram
 "line_items" }o--o| "line_items" : parent_extra
 "menu_item_versions" }o--|| "menu_items" : menu_item
 "menu_item_stock_change" }o--|| "menu_items" : menu_item
-"allergens" }o--o{ "menu_items" : "via allergens_to_menu_items"
 ```
 
 ### `allergens`
@@ -3489,13 +3434,6 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String reservation_module_id "nullable"
-  String transport_module_id "nullable"
-  String stores_id "nullable"
-  String food_drinks_id "nullable"
-  String crm_module_id "nullable"
-  String daily_meals_module_id "nullable"
-  String table_reservations_id "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
 }
@@ -3654,13 +3592,6 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String reservation_module_id "nullable"
-  String transport_module_id "nullable"
-  String stores_id "nullable"
-  String food_drinks_id "nullable"
-  String crm_module_id "nullable"
-  String daily_meals_module_id "nullable"
-  String table_reservations_id "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
 }
@@ -3711,6 +3642,7 @@ erDiagram
   String stores_id PK
   String business_id FK,UK
   Boolean enabled
+  Json settings "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
@@ -3770,13 +3702,6 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String reservation_module_id "nullable"
-  String transport_module_id "nullable"
-  String stores_id "nullable"
-  String food_drinks_id "nullable"
-  String crm_module_id "nullable"
-  String daily_meals_module_id "nullable"
-  String table_reservations_id "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
 }
@@ -3808,7 +3733,6 @@ erDiagram
 "business" }o--o| "business" : parent_business
 "menus" |o--o| "stores_module" : stores_module
 "order_lobbies" }o--|| "business" : creating_business
-"reviews" }o--o{ "stores_module" : "via reviewable"
 ```
 
 ### `stores_module`
@@ -3822,6 +3746,7 @@ Properties as follows:
 - `stores_id`:
 - `business_id`:
 - `enabled`:
+- `settings`:
 - `created_at`:
 - `updated_at`:
 - `reviewable_id`:
@@ -3869,6 +3794,7 @@ erDiagram
   String food_drinks_id PK
   String business_id FK,UK
   Boolean enabled
+  Json settings "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
@@ -3914,20 +3840,12 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String reservation_module_id "nullable"
-  String transport_module_id "nullable"
-  String stores_id "nullable"
-  String food_drinks_id "nullable"
-  String crm_module_id "nullable"
-  String daily_meals_module_id "nullable"
-  String table_reservations_id "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
 }
 "daily_meals_module" {
   String id PK
   String business_id FK,UK
-  String delivery_address_id FK "nullable"
   DAY_OF_WEEK daily_meals_days
   Json daily_meals_delivery_mapping "nullable"
   Int maximum_daily_meals_subscribers "nullable"
@@ -3969,7 +3887,6 @@ erDiagram
 "menus" |o--o| "food_drinks_module" : food_drinks_module
 "table_reservations_module" |o--|| "business" : business
 "order_lobbies" }o--|| "business" : creating_business
-"reviews" }o--o{ "food_drinks_module" : "via reviewable"
 ```
 
 ### `food_drinks_module`
@@ -3983,6 +3900,7 @@ Properties as follows:
 - `food_drinks_id`:
 - `business_id`:
 - `enabled`:
+- `settings`:
 - `created_at`:
 - `updated_at`:
 - `reviewable_id`:
@@ -4072,10 +3990,8 @@ erDiagram
 }
 "scoring_points" {
   String scoring_points_id PK
-  String stores_id FK
-  String food_drinks_id FK
+  String business_id FK
   String user_id FK "nullable"
-  String driver_id FK "nullable"
   String delivery_order_id FK "nullable"
   String taxi_order_id FK "nullable"
   Int points
@@ -4226,8 +4142,7 @@ erDiagram
 "transactions" }o--o| "delivery_orders" : delivery_order
 "transactions" }o--|| "users" : user
 "wallet_transfer_history" }o--|| "delivery_orders" : delivery_order
-"scoring_points" }o--o| "users" : user
-"scoring_points" }o--o| "drivers" : driver
+"scoring_points" }o--o| "users" : users
 "scoring_points" }o--o| "delivery_orders" : delivery_orders
 "late_events" }o--|| "drivers" : driver
 "late_events" }o--o| "delivery_orders" : delivery_orders
@@ -4318,7 +4233,6 @@ erDiagram
 "daily_meals_module" {
   String id PK
   String business_id FK,UK
-  String delivery_address_id FK "nullable"
   DAY_OF_WEEK daily_meals_days
   Json daily_meals_delivery_mapping "nullable"
   Int maximum_daily_meals_subscribers "nullable"
@@ -4529,7 +4443,6 @@ erDiagram
   Boolean allow_newsletter "nullable"
   SERVICES user_favorite_service_links
 }
-"daily_meals_module" }o--o| "addresses" : delivery_address
 "daily_meal_menus" }o--|| "daily_meals_module" : daily_meals_module
 "daily_meal_subscriptions" }o--|| "users" : user
 "daily_meal_subscriptions" }o--o| "drivers" : driver
@@ -4552,9 +4465,6 @@ erDiagram
 "menu_categories" }o--o| "daily_meal_categories" : daily_meal_category
 "menu_categories" }o--o| "daily_meal_category_prices" : daily_meal_category_price
 "drivers" |o--o| "users" : user
-"translations" }o--o{ "categories" : "via translatable"
-"translations" }o--o{ "menu_categories" : "via translatable"
-"translations" }o--o{ "menu_items" : "via translatable"
 ```
 
 ### `daily_meals_module`
@@ -4567,7 +4477,6 @@ Properties as follows:
 
 - `id`:
 - `business_id`:
-- `delivery_address_id`:
 - `daily_meals_days`:
 - `daily_meals_delivery_mapping`:
 - `maximum_daily_meals_subscribers`:
@@ -4790,10 +4699,6 @@ erDiagram
 "categories" }o--o| "categories" : parent_category
 "menu_categories" }o--o| "menus" : menu
 "menu_items" }o--o| "menu_categories" : menu_category
-"translations" }o--o{ "categories" : "via translatable"
-"translations" }o--o{ "menu_categories" : "via translatable"
-"translations" }o--o{ "menu_items" : "via translatable"
-"menu_categories" }o--o{ "categories" : "via menu_categories_categories"
 ```
 
 ### `categories`
@@ -5703,13 +5608,6 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String reservation_module_id "nullable"
-  String transport_module_id "nullable"
-  String stores_id "nullable"
-  String food_drinks_id "nullable"
-  String crm_module_id "nullable"
-  String daily_meals_module_id "nullable"
-  String table_reservations_id "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
 }
@@ -5752,7 +5650,6 @@ erDiagram
 "notification_message" }o--o| "notification_template_version" : version
 "notification_message_event" }o--|| "notification_message" : message
 "business" }o--o| "business" : parent_business
-"reviews" }o--o{ "reservation_module" : "via reviewable"
 ```
 
 ### `reservation_module`
@@ -6158,8 +6055,6 @@ erDiagram
 }
 "business_addon" }o--|| "addon" : addon
 "business_usage" }o--|| "action" : action
-"action_bundle" }o--o{ "action" : "via action_bundle_action"
-"addon" }o--o{ "action" : "via addon_action"
 ```
 
 ### `action_bundle`
@@ -6271,13 +6166,6 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String reservation_module_id "nullable"
-  String transport_module_id "nullable"
-  String stores_id "nullable"
-  String food_drinks_id "nullable"
-  String crm_module_id "nullable"
-  String daily_meals_module_id "nullable"
-  String table_reservations_id "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
 }
@@ -6408,7 +6296,6 @@ erDiagram
 "drivers" |o--o| "vehicles" : current_vehicle
 "drivers" }o--o| "transport_module" : transport_module
 "vehicles" }o--o| "transport_module" : transport_module
-"reviews" }o--o{ "transport_module" : "via reviewable"
 ```
 
 ### `transport_module`
@@ -6509,10 +6396,8 @@ erDiagram
 }
 "scoring_points" {
   String scoring_points_id PK
-  String stores_id FK
-  String food_drinks_id FK
+  String business_id FK
   String user_id FK "nullable"
-  String driver_id FK "nullable"
   String delivery_order_id FK "nullable"
   String taxi_order_id FK "nullable"
   Int points
@@ -6653,8 +6538,7 @@ erDiagram
 "transactions" }o--o| "taxi_orders" : taxi_order
 "transactions" }o--|| "users" : user
 "wallet_transfer_history" }o--|| "taxi_orders" : taxi_order
-"scoring_points" }o--o| "users" : user
-"scoring_points" }o--o| "drivers" : driver
+"scoring_points" }o--o| "users" : users
 "scoring_points" }o--o| "taxi_orders" : taxi_orders
 "late_events" }o--|| "drivers" : driver
 "late_events" }o--o| "taxi_orders" : taxi_orders
@@ -6896,8 +6780,6 @@ erDiagram
 "service_category" }o--o| "service_category" : parent
 "service" }o--o| "service_category" : service_category
 "service" }o--o| "tax_rates" : tax_rate
-"service" }o--o{ "location" : "via service_location"
-"employee" }o--o{ "service" : "via service_assignment"
 ```
 
 ### `location`
@@ -7034,9 +6916,6 @@ erDiagram
 "schedule_slot" }o--|| "employee" : employee
 "schedule_slot_exceptions" }o--|| "schedule_slot" : schedule_slot
 "booking_slots" }o--|| "schedule_slot" : schedule_slot
-"schedule" }o--o{ "employee" : "via schedule_employee"
-"schedule" }o--o{ "schedule_slot" : "via schedule_employee"
-"employee" }o--o{ "schedule_slot" : "via schedule_employee"
 ```
 
 ### `location`
@@ -7496,7 +7375,6 @@ erDiagram
 "booking_history_log" }o--|| "booking" : booking
 "reviews" }o--|| "users" : author
 "business_users" }o--|| "users" : users
-"reviews" }o--o{ "booking" : "via reviewable"
 ```
 
 ### `employee`
@@ -7852,13 +7730,6 @@ erDiagram
   Boolean active
   String sales_representative_id "nullable"
   BUSINESS_TYPE types
-  String reservation_module_id "nullable"
-  String transport_module_id "nullable"
-  String stores_id "nullable"
-  String food_drinks_id "nullable"
-  String crm_module_id "nullable"
-  String daily_meals_module_id "nullable"
-  String table_reservations_id "nullable"
   String logo_id FK,UK "nullable"
   String banner_id FK,UK "nullable"
 }
@@ -7866,6 +7737,7 @@ erDiagram
   String stores_id PK
   String business_id FK,UK
   Boolean enabled
+  Json settings "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
@@ -7881,6 +7753,7 @@ erDiagram
   String food_drinks_id PK
   String business_id FK,UK
   Boolean enabled
+  Json settings "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"

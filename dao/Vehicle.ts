@@ -1,10 +1,6 @@
 import prisma from '../prisma/prisma.js';
-import type {
-    VehicleBase
-} from '../schemas/dto/Vehicles/vehicle.dto.js';
-import {
-    DriverRef
-} from '../schemas/dto/Drivers/index.js';
+import type { VehicleBase } from '../schemas/dto/Vehicles/vehicle.dto.js';
+import { DriverRef } from '../schemas/dto/Drivers/index.js';
 
 // Vehicle interfaces using proper DTOs
 export interface VehicleDetail extends VehicleBase {
@@ -314,10 +310,7 @@ export const createVehicle = async (data: CreateVehicleData): Promise<VehicleDet
  * @param data - Update data.
  * @returns Updated vehicle.
  */
-export const updateVehicle = async (
-	vehicle_id: string,
-	data: UpdateVehicleData
-): Promise<VehicleDetail | null> => {
+export const updateVehicle = async (vehicle_id: string, data: UpdateVehicleData): Promise<VehicleDetail | null> => {
 	try {
 		return await prisma.vehicles.update({
 			where: { vehicle_id },

@@ -99,30 +99,6 @@ export const CreateOrderLobbyItemSchema = z
 	});
 
 export type CreateOrderLobbyItem = z.infer<typeof CreateOrderLobbyItemSchema>;
-
-// Update OrderLobbyItem Schema - for updateOrderLobbyItem function
-export const UpdateOrderLobbyItemSchema = z
-	.object({
-		order_lobby_items_id: UUID,
-		data: z
-			.object({
-				sides: z.array(UUID).optional(),
-				extras: z.array(UUID).optional(),
-				quantity: z.number().int().positive().optional(),
-				customer_note: z.string().nullable().optional(),
-			})
-			.openapi({
-				title: 'UpdateOrderLobbyItemData',
-				description: 'Fields that can be updated in order lobby item',
-			}),
-	})
-	.openapi({
-		title: 'UpdateOrderLobbyItem',
-		description: 'Schema for updating order lobby item',
-	});
-
-export type UpdateOrderLobbyItem = z.infer<typeof UpdateOrderLobbyItemSchema>;
-
 // Update OrderLobbyItem Quantity Schema - for updateOrderLobbyItemQuantity function
 export const UpdateOrderLobbyItemQuantitySchema = z
 	.object({
@@ -137,18 +113,6 @@ export const UpdateOrderLobbyItemQuantitySchema = z
 export type UpdateOrderLobbyItemQuantity = z.infer<typeof UpdateOrderLobbyItemQuantitySchema>;
 
 // ===== QUERY SCHEMAS =====
-
-// Get OrderLobbyItems by Lobby ID Query - for getOrderLobbyItemsByLobbyId function
-export const GetOrderLobbyItemsByLobbyIdQuerySchema = z
-	.object({
-		order_lobbies_id: UUID,
-	})
-	.openapi({
-		title: 'GetOrderLobbyItemsByLobbyIdQuery',
-		description: 'Query parameters for getting order lobby items by lobby ID',
-	});
-
-export type GetOrderLobbyItemsByLobbyIdQuery = z.infer<typeof GetOrderLobbyItemsByLobbyIdQuerySchema>;
 
 // Get OrderLobbyItems by Lobby and User ID Query - for getOrderLobbyItemsByLobbyAndUserId function
 export const GetOrderLobbyItemsByLobbyAndUserIdQuerySchema = z
@@ -174,20 +138,6 @@ export const DeleteOrderLobbyItemSchema = z
 	});
 
 export type DeleteOrderLobbyItem = z.infer<typeof DeleteOrderLobbyItemSchema>;
-
-// Delete OrderLobbyItems for User in Lobby Schema - for deleteOrderLobbyItemsForUserInLobby function
-export const DeleteOrderLobbyItemsForUserInLobbySchema = z
-	.object({
-		user_id: UUID,
-		order_lobbies_id: UUID,
-	})
-	.openapi({
-		title: 'DeleteOrderLobbyItemsForUserInLobby',
-		description: 'Schema for deleting all order lobby items for a user in a specific lobby',
-	});
-
-export type DeleteOrderLobbyItemsForUserInLobby = z.infer<typeof DeleteOrderLobbyItemsForUserInLobbySchema>;
-
 // ===== LIST RESPONSE SCHEMAS =====
 
 // OrderLobbyItems List Response - for paginated/bulk endpoints
@@ -264,13 +214,10 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 
 	// Register request schemas
 	registry.register('CreateOrderLobbyItem', CreateOrderLobbyItemSchema);
-	registry.register('UpdateOrderLobbyItem', UpdateOrderLobbyItemSchema);
 	registry.register('UpdateOrderLobbyItemQuantity', UpdateOrderLobbyItemQuantitySchema);
 	registry.register('DeleteOrderLobbyItem', DeleteOrderLobbyItemSchema);
-	registry.register('DeleteOrderLobbyItemsForUserInLobby', DeleteOrderLobbyItemsForUserInLobbySchema);
 
 	// Register query schemas
-	registry.register('GetOrderLobbyItemsByLobbyIdQuery', GetOrderLobbyItemsByLobbyIdQuerySchema);
 	registry.register('GetOrderLobbyItemsByLobbyAndUserIdQuery', GetOrderLobbyItemsByLobbyAndUserIdQuerySchema);
 
 	// Register response schemas

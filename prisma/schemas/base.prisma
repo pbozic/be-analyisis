@@ -697,8 +697,8 @@ model scoring_points {
   driver             drivers?            @relation("scoring_points_to_driver", fields: [driver_id], references: [driver_id])
   stores_module      stores_module?      @relation("scoring_points_to_store", fields: [stores_id], references: [stores_id])
   food_drinks_module food_drinks_module? @relation("scoring_points_to_food_drinks", fields: [food_drinks_id], references: [food_drinks_id])
-  delivery_orders    delivery_orders?    @relation("scoring_points_to_delivery_order", fields: [delivery_order_id], references: [order_id])
-  taxi_orders        taxi_orders?        @relation("scoring_points_to_taxi_order", fields: [taxi_order_id], references: [order_id])
+  delivery_order     delivery_orders?    @relation("scoring_points_to_delivery_order", fields: [delivery_order_id], references: [order_id])
+  taxi_order         taxi_orders?        @relation("scoring_points_to_taxi_order", fields: [taxi_order_id], references: [order_id])
   late_events        late_events[]       @relation("late_events_to_scoring_points")
 }
 
@@ -723,8 +723,8 @@ model late_events {
   stores_module      stores_module?      @relation("late_events_to_stores", fields: [stores_id], references: [stores_id])
   food_drinks_module food_drinks_module? @relation("late_events_to_food_drinks", fields: [food_drinks_id], references: [food_drinks_id])
   driver             drivers?            @relation("late_events_to_driver", fields: [driver_id], references: [driver_id])
-  delivery_orders    delivery_orders?    @relation("late_events_to_delivery_order", fields: [delivery_order_id], references: [order_id])
-  taxi_orders        taxi_orders?        @relation("late_events_to_taxi_order", fields: [taxi_order_id], references: [order_id])
+  delivery_order     delivery_orders?    @relation("late_events_to_delivery_order", fields: [delivery_order_id], references: [order_id])
+  taxi_order         taxi_orders?        @relation("late_events_to_taxi_order", fields: [taxi_order_id], references: [order_id])
   scoring_points     scoring_points?     @relation("late_events_to_scoring_points", fields: [scoring_points_id], references: [scoring_points_id])
 }
 
@@ -1442,6 +1442,9 @@ enum MODULE {
   STORES
   FOOD_DRINKS
   RESERVATIONS
+  TRANSPORT
+  DAILY_MEALS
+  TABLE_RESERVATION
 }
 
 enum BUSINESS_TYPE {
