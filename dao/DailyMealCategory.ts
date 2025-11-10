@@ -1,15 +1,16 @@
 import type { daily_meal_categories, daily_meal_category_prices, Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
+import { UUID } from '../schemas/primitives.js';
 /**
  * Get daily meal category by id.
  *
- * @param {string} daily_meal_category_id
+ * @param {UUID} daily_meal_category_id
  * @param {Prisma.daily_meal_categoriesInclude} [includeObj]
  * @returns {Promise<Prisma.daily_meal_categoriesGetPayload<{ include: Prisma.daily_meal_categoriesInclude }>>}
  */
 export async function getDailyMealCategoryById(
-	daily_meal_category_id: string,
+	daily_meal_category_id: UUID,
 	includeObj?: Prisma.daily_meal_categoriesInclude
 ): Promise<Prisma.daily_meal_categoriesGetPayload<{ include: Prisma.daily_meal_categoriesInclude }>> {
 	return await prisma.daily_meal_categories.findUnique({
@@ -20,8 +21,8 @@ export async function getDailyMealCategoryById(
 /**
  * Create daily meal category with initial price.
  *
- * @param {string} daily_meals_module_id
- * @param {string} category_id
+ * @param {UUID} daily_meals_module_id
+ * @param {UUID} category_id
  * @param {number} price
  * @param {Date} start_date
  * @returns {Promise<Prisma.daily_meal_categoriesGetPayload>}
@@ -32,8 +33,8 @@ export async function createDailyMealCategoryWithPrice({
 	price,
 	start_date,
 }: {
-	daily_meals_module_id: string;
-	category_id: string;
+	daily_meals_module_id: UUID;
+	category_id: UUID;
 	price: number;
 	start_date: Date;
 }) {
@@ -59,11 +60,11 @@ export async function createDailyMealCategoryWithPrice({
 /**
  * Get daily meal categories for a daily_meals_module.
  *
- * @param {string} daily_meals_module_id
+ * @param {UUID} daily_meals_module_id
  * @param {boolean} detailed
  * @returns {Promise<Prisma.daily_meal_categoriesGetPayload[]>}
  */
-export async function getDailyMealCategoriesByModuleId(daily_meals_module_id: string, detailed: boolean = false) {
+export async function getDailyMealCategoriesByModuleId(daily_meals_module_id: UUID, detailed: boolean = false) {
 	return await prisma.daily_meal_categories.findMany({
 		where: { daily_meals_module_id },
 		include: {
@@ -78,10 +79,10 @@ export async function getDailyMealCategoriesByModuleId(daily_meals_module_id: st
 /**
  * Get active daily meal categories for a daily_meals_module.
  *
- * @param {string} daily_meals_module_id
+ * @param {UUID} daily_meals_module_id
  * @returns {Promise<Prisma.daily_meal_categoriesGetPayload[]>}
  */
-export async function getActiveDailyMealCategoriesByModuleId(daily_meals_module_id: string) {
+export async function getActiveDailyMealCategoriesByModuleId(daily_meals_module_id: UUID) {
 	return await prisma.daily_meal_categories.findMany({
 		where: { daily_meals_module_id, active: true },
 		include: {
@@ -95,7 +96,7 @@ export async function getActiveDailyMealCategoriesByModuleId(daily_meals_module_
 }
 /**
  * Add price to daily meal category.
- * @param {string} daily_meal_category_id
+ * @param {UUID} daily_meal_category_id
  * @param {number} price
  * @param {Date} valid_from
  * @returns {Promise<Prisma.daily_meal_category_pricesGetPayload>}
@@ -105,7 +106,7 @@ export async function addPriceToDailyMealCategory({
 	price,
 	valid_from,
 }: {
-	daily_meal_category_id: string;
+	daily_meal_category_id: UUID;
 	price: number;
 	valid_from: Date;
 }) {
@@ -120,10 +121,10 @@ export async function addPriceToDailyMealCategory({
 /**
  * Deactivate daily meal category.
  *
- * @param {string} daily_meal_category_id
+ * @param {UUID} daily_meal_category_id
  * @returns {Promise<Prisma.daily_meal_categoriesGetPayload>}
  */
-export async function deactivateDailyMealCategory(daily_meal_category_id: string) {
+export async function deactivateDailyMealCategory(daily_meal_category_id: UUID) {
 	return prisma.daily_meal_categories.update({
 		where: { daily_meal_category_id },
 		data: { active: false },
@@ -132,10 +133,10 @@ export async function deactivateDailyMealCategory(daily_meal_category_id: string
 /**
  * Activate daily meal category.
  *
- * @param {string} daily_meal_category_id
+ * @param {UUID} daily_meal_category_id
  * @returns {Promise<Prisma.daily_meal_categoriesGetPayload>}
  */
-export async function activateDailyMealCategory(daily_meal_category_id: string) {
+export async function activateDailyMealCategory(daily_meal_category_id: UUID) {
 	return prisma.daily_meal_categories.update({
 		where: { daily_meal_category_id },
 		data: { active: true },
