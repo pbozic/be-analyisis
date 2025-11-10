@@ -38,7 +38,7 @@ export const DailyMealsSubscriptionRequestSchema = z.object({
 		delivery_cost: z.number(),
 		sub_total_price: z.number(),
 		box_fee: z.number(),
-		business_id: z.string().uuid(),
+		daily_meals_module_id: z.string().uuid(),
 	}),
 	payment: z
 		.object({
@@ -114,12 +114,12 @@ const defaultIncludeObj = {
 /**
  * Get active daily meal subscriptions by daily_meal_module_id
  * @param {string} daily_meal_module_id
- * @param {Prisma.daily_meal_subscriptionsWhereArgs} args
+ * @param {Prisma.daily_meal_subscriptionsWhereInput} args
  * @returns daily_meal_subscriptions[]
  */
 export async function getDailyMealSubscriptionsByModuleId(
 	daily_meal_module_id: string,
-	args: Prisma.daily_meal_subscriptionsWhereArgs = {}
+	args: Prisma.daily_meal_subscriptionsWhereInput = {}
 ) {
 	return prisma.daily_meal_subscriptions.findMany({
 		where: {

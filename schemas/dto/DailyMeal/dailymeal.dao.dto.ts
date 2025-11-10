@@ -10,7 +10,7 @@ import { UUID, Timestamp } from '../../primitives.js';
 
 export const GetDailyMealSubscriptionsByBusinessIdDaoInputSchema = z
 	.object({
-		business_id: UUID.openapi({ example: '00000000-0000-0000-0000-000000000000' }),
+		business_id: UUID,
 		args: z.any().optional(),
 	})
 	.openapi({
@@ -23,7 +23,7 @@ export type GetDailyMealSubscriptionsByBusinessIdDaoInput = z.infer<
 
 export const GetActiveDailyMealSubscriptionsByBusinessIdDaoInputSchema = z
 	.object({
-		business_id: UUID.openapi({ example: '00000000-0000-0000-0000-000000000000' }),
+		business_id: UUID,
 		start_date: Timestamp.optional().openapi({ example: '2025-01-01T00:00:00.000Z' }),
 	})
 	.openapi({
@@ -36,7 +36,7 @@ export type GetActiveDailyMealSubscriptionsByBusinessIdDaoInput = z.infer<
 
 export const GetDailyMealSubscriptionsByUserIdDaoInputSchema = z
 	.object({
-		user_id: UUID.openapi({ example: '00000000-0000-0000-0000-000000000000' }),
+		user_id: UUID,
 		start_date: Timestamp.optional().openapi({ example: '2025-01-01T00:00:00.000Z' }),
 	})
 	.openapi({
@@ -47,7 +47,7 @@ export type GetDailyMealSubscriptionsByUserIdDaoInput = z.infer<typeof GetDailyM
 
 export const GetTodayDailyMealSubscriptionsByBusinessIdDaoInputSchema = z
 	.object({
-		business_id: UUID.openapi({ example: '00000000-0000-0000-0000-000000000000' }),
+		business_id: UUID,
 	})
 	.openapi({
 		title: 'GetTodayDailyMealSubscriptionsByBusinessIdDaoInput',
@@ -59,7 +59,7 @@ export type GetTodayDailyMealSubscriptionsByBusinessIdDaoInput = z.infer<
 
 export const GetDailyMealSubscriptionByIdDaoInputSchema = z
 	.object({
-		id: UUID.openapi({ example: '00000000-0000-0000-0000-000000000000' }),
+		id: UUID,
 	})
 	.openapi({
 		title: 'GetDailyMealSubscriptionByIdDaoInput',
@@ -69,12 +69,12 @@ export type GetDailyMealSubscriptionByIdDaoInput = z.infer<typeof GetDailyMealSu
 
 export const CreateDailyMealSubscriptionDaoInputSchema = z
 	.object({
-		user_id: UUID.openapi({ example: '00000000-0000-0000-0000-000000000000' }),
-		business_id: UUID.openapi({ example: '00000000-0000-0000-0000-000000000000' }),
-		delivery_address_id: UUID.openapi({ example: '00000000-0000-0000-0000-000000000000' }),
+		user_id: UUID,
+		business_id: UUID,
+		delivery_address_id: UUID,
 		type: z.string().min(1),
 		customers: z.array(z.any()),
-		start_date: Timestamp.openapi({ example: '2025-01-01T00:00:00.000Z' }),
+		start_date: Timestamp,
 		end_date: Timestamp.nullable().optional().openapi({ example: '2025-02-01T00:00:00.000Z' }),
 		days: z
 			.array(
@@ -102,7 +102,7 @@ export type CreateDailyMealSubscriptionDaoInput = z.infer<typeof CreateDailyMeal
 
 export const GetSubscriptionByIdDaoInputSchema = z
 	.object({
-		id: UUID.openapi({ example: '00000000-0000-0000-0000-000000000000' }),
+		id: UUID,
 		includeObj: z.any().optional(),
 	})
 	.openapi({
@@ -113,7 +113,7 @@ export type GetSubscriptionByIdDaoInput = z.infer<typeof GetSubscriptionByIdDaoI
 
 export const UpdateSubscriptionStatusDaoInputSchema = z
 	.object({
-		id: UUID.openapi({ example: '00000000-0000-0000-0000-000000000000' }),
+		id: UUID,
 		status: z.string().min(1),
 		includeObj: z.any().optional(),
 	})
@@ -125,8 +125,8 @@ export type UpdateSubscriptionStatusDaoInput = z.infer<typeof UpdateSubscription
 
 export const ConnectSubscriptionWithDriverDaoInputSchema = z
 	.object({
-		id: UUID.openapi({ example: '00000000-0000-0000-0000-000000000000' }),
-		delivery_driver_id: UUID.openapi({ example: '00000000-0000-0000-0000-000000000000' }),
+		id: UUID,
+		delivery_driver_id: UUID,
 		includeObj: z.any().optional(),
 	})
 	.openapi({
@@ -148,7 +148,7 @@ export type UpdateDailyMealInstancesDaoInput = z.infer<typeof UpdateDailyMealIns
 
 export const UpdateDailyMealInstanceStatusByIdDaoInputSchema = z
 	.object({
-		instance_id: UUID.openapi({ example: '00000000-0000-0000-0000-000000000000' }),
+		instance_id: UUID,
 		status: z.string().min(1),
 	})
 	.openapi({

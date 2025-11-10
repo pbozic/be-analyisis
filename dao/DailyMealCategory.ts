@@ -20,26 +20,26 @@ export async function getDailyMealCategoryById(
 /**
  * Create daily meal category with initial price.
  *
- * @param {string} business_id
+ * @param {string} daily_meals_module_id
  * @param {string} category_id
  * @param {number} price
  * @param {Date} start_date
  * @returns {Promise<Prisma.daily_meal_categoriesGetPayload>}
  */
 export async function createDailyMealCategoryWithPrice({
-	business_id,
+	daily_meals_module_id,
 	category_id,
 	price,
 	start_date,
 }: {
-	business_id: string;
+	daily_meals_module_id: string;
 	category_id: string;
 	price: number;
 	start_date: Date;
 }) {
 	const dmc = await prisma.daily_meal_categories.create({
 		data: {
-			business_id,
+			daily_meals_module_id,
 			category_id,
 			start_date,
 			daily_meal_category_prices: {
@@ -57,15 +57,15 @@ export async function createDailyMealCategoryWithPrice({
 	return dmc;
 }
 /**
- * Get daily meal categories for a business.
+ * Get daily meal categories for a daily_meals_module.
  *
- * @param {string} business_id
+ * @param {string} daily_meals_module_id
  * @param {boolean} detailed
  * @returns {Promise<Prisma.daily_meal_categoriesGetPayload[]>}
  */
-export async function getDailyMealCategoriesForBusiness(business_id: string, detailed: boolean = false) {
+export async function getDailyMealCategoriesByModuleId(daily_meals_module_id: string, detailed: boolean = false) {
 	return await prisma.daily_meal_categories.findMany({
-		where: { business_id },
+		where: { daily_meals_module_id },
 		include: {
 			category: true,
 			daily_meal_category_prices: {
@@ -76,14 +76,14 @@ export async function getDailyMealCategoriesForBusiness(business_id: string, det
 	});
 }
 /**
- * Get active daily meal categories for a business.
+ * Get active daily meal categories for a daily_meals_module.
  *
- * @param {string} business_id
+ * @param {string} daily_meals_module_id
  * @returns {Promise<Prisma.daily_meal_categoriesGetPayload[]>}
  */
-export async function getActiveDailyMealCategoriesForBusiness(business_id: string) {
+export async function getActiveDailyMealCategoriesByModuleId(daily_meals_module_id: string) {
 	return await prisma.daily_meal_categories.findMany({
-		where: { business_id, active: true },
+		where: { daily_meals_module_id, active: true },
 		include: {
 			category: true,
 			daily_meal_category_prices: {
@@ -166,8 +166,8 @@ export default {
 	getDailyMealCategoryPriceForDate,
 	getDailyMealCategoryById,
 	createDailyMealCategoryWithPrice,
-	getActiveDailyMealCategoriesForBusiness,
-	getDailyMealCategoriesForBusiness,
+	getActiveDailyMealCategoriesForBusiness: getActiveDailyMealCategoriesByModuleId,
+	getDailyMealCategoriesForBusiness: getDailyMealCategoriesByModuleId,
 	addPriceToDailyMealCategory,
 	deactivateDailyMealCategory,
 	activateDailyMealCategory,
