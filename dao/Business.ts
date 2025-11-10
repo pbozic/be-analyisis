@@ -60,7 +60,6 @@ const getDailyMealBusinesses = async (): Promise<BusinessWithDailyMealsResponseD
 				daily_meals_module: {
 					include: {
 						daily_meal_drivers: true,
-						delivery_address: true,
 					},
 				},
 			},

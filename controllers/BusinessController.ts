@@ -15,14 +15,13 @@ import elasticsearch from '../elasticsearch/index.js';
 import UserFavoriteBusinessDao from '../dao/UserFavoriteBusiness.js';
 import ScoringPointsDao from '../dao/ScoringPoints.js';
 import LocalLocationDao from '../dao/LocalLocation.js';
-import stores from '../dao/stores.ts';
+import stores from '../dao/Stores.ts';
 import { logPromoAnalytics } from '../lib/analytics.ts';
 import { addDays, atStartOfDay, formatDay, getPeriodStartAndEnd, getPreviousPeriod } from '../lib/dateHelpers.js';
 import BusinessUsersDao from '../dao/BusinessUsers.js';
 import PromoAnalyticsDao from '../dao/PromoAnalytics.js';
 import PromoDao from '../dao/Promo.js';
 import WordDao from '../dao/Word.js';
-import BusinessTypesDao from '../dao/BusinessTypes.js';
 import InvoicesDao from '../dao/Invoices.js';
 import TransportDao from '../dao/Transport.js';
 
@@ -181,7 +180,7 @@ export async function searchBusinesses(req: AuthenticatedRequest, res: Response)
 			req.body.radius,
 			req.body.filterOperator,
 			req.body.isDailyMealSearch,
-			null,
+			undefined,
 			req.body.page,
 			req.body.pageSize || 10,
 			[],
@@ -189,9 +188,8 @@ export async function searchBusinesses(req: AuthenticatedRequest, res: Response)
 		);
 		console.log('esResults', esResults);
 		esResults.results.sort((a: any, b: any) => b.score - a.score);
-		const businesses: any[] = await BusinessDao.getBusinessesForSearchById(
-			esResults.results.map((b: any) => b.business_id)
-		);
+		const businessesResult = await BusinessDao.getBusinessesForSearchById(esResults.results.map((b: any) => b.business_id));
+		const businesses = Array.isArray(businessesResult) ? businessesResult : [];
 		//TODO: determine type of module and return data for that specific module
 		const results = {
 			...esResults,

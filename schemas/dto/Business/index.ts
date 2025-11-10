@@ -35,7 +35,10 @@ export {
 	type MenuCategoryRef,
 	type BusinessByIdResponse,
 	toBusinessByIdResponse,
+<<<<<<< HEAD
 	toGetBusinessResponse,
+=======
+>>>>>>> b95eb419 (fix: business dao typescript)
 	registerSchemas as registerBusinessSchemas,
 } from './business.dto.js';
 

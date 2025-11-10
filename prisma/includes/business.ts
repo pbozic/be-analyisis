@@ -1,29 +1,6 @@
 import { Prisma } from '@prisma/client';
 
 import { menuDefault } from './menu.ts';
-export const getBusinessesDefualtInclude = Prisma.validator<Prisma.businessInclude>()({
-	address: true,
-	business_users: {
-		include: {
-			users: {
-				include: {
-					child_users: { include: { child_user: true } },
-					parent_user: { include: { parent_user: true } },
-				},
-			},
-		},
-	},
-	parent_business: true,
-	child_businesses: true,
-});
-
-// 2) Keep args simple. Ban `select`, allow partial `include`.
-export type BusinessFindManyArgs = Omit<Prisma.businessFindManyArgs, 'select' | 'include'> & {
-	include?: Partial<Prisma.businessInclude>;
-};
-export type GetBusinessesPrisma = Prisma.businessGetPayload<{
-	include: typeof getBusinessesDefualtInclude;
-}>;
 
 export const businessByIdInclude = Prisma.validator<Prisma.businessInclude>()({
 	address: true,
@@ -67,6 +44,6 @@ export const businessByIdInclude = Prisma.validator<Prisma.businessInclude>()({
 });
 
 // 3) Derive the runtime-accurate payload type (scalars + relations)
-export type BusinessByIdPrisma = Prisma.businessGetPayload<{
+export type BusinessByIdRaw = Prisma.businessGetPayload<{
 	include: typeof businessByIdInclude;
 }>;
