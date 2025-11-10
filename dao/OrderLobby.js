@@ -9,8 +9,9 @@ const cropped_user_columns = {
  * @param {Object} data - The order lobby data
  * @param {string} data.lobby_name - Name of the lobby
  * @param {string} data.lobby_description - Description of the lobby
- * @param {string} data.business_id - ID of the associated business
- * @param {string} data.restaurant_id - ID of the associated restaurant
+ * @param {string} data.creating_business_id - ID of the associated business
+ * @param {string} data.stores_id- ID of the associated restaurant
+ * @param {string} data.food_and_drinks_id - ID of the associated restaurant
  * @param {string} data.creator_id - ID of the user who created the lobby
  * @returns {Promise<Object>} Created order lobby
  */
@@ -100,18 +101,17 @@ const getAllOrderLobbies = async () => {
 	}
 };
 /**
- * // TODO: DAO FIX
  * Retrieves all order lobbies for a specific business
- * @param {string} business_id - The ID of the business
+ * @param {string} creating_business_id - The ID of the business that created creating lobby
  * @returns {Promise<Array>} Array of order lobbies associated with the business
  */
-const getOrderLobbiesForBusiness = async (business_id) => {
+const getOrderLobbiesForBusiness = async (creating_business_id) => {
 	try {
 		return await prisma.order_lobbies.findMany({
-			where: {
-				business_id: business_id,
-			},
 			include: {
+				where: {
+					creating_business_id: creating_business_id,
+				},
 				order_lobby_items: {
 					include: {
 						menu_items: {
@@ -297,15 +297,15 @@ const editUsersInOrderLobby = async (orderLobbiesId, users) => {
 /**
  * Get all active order lobbies for a business including items and users.
  *
- * @param {string} businessId - Business ID.
+ * @param {string} creating_business_id - Business ID.
  * @returns {Promise<object[]>} Active order lobbies.
  */
-const getAllActiveOrderLobbiesByBusinessId = async (businessId) => {
+const getAllActiveOrderLobbiesByBusinessId = async (creating_business_id) => {
 	try {
 		return await prisma.order_lobbies.findMany({
 			where: {
-				business_id: businessId,
 				active: true,
+				creating_business_id: creating_business_id,
 			},
 			include: {
 				order_lobby_items: {
