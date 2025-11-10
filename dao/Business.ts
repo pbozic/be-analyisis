@@ -1,4 +1,4 @@
-import { ACCOUNT_ACTIONS, ACCOUNT_ACTIONS_REASON, Prisma } from '@prisma/client';
+import { ACCOUNT_ACTIONS, ACCOUNT_ACTIONS_REASON, Prisma, MODULE } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import { BUSINESS_TYPE } from '../lib/constants.js';
@@ -10,6 +10,7 @@ import type {
 	BusinessWithDailyMealsResponseDto,
 	BusinessByIdResponse,
 } from '../schemas/dto/Business/index.js';
+import { UUID } from '../schemas/primitives.js';
 import { toBusinessByIdResponse, toGetBusinessResponse } from '../schemas/dto/Business/index.js';
 import { businessByIdInclude, getBusinessesDefualtInclude, BusinessFindManyArgs } from '../prisma/includes/business.js';
 
@@ -876,6 +877,79 @@ const getBusinessStoreAndFoodDrinksModulesById = async (business_id: string): Pr
 		throw new Error(error instanceof Error ? error.message : 'Failed to get business by ID');
 	}
 };
+/**
+ * Resolve a module entry for a business and return the selected module payload.
+ *
+ * @param {string} business_id - Business UUID to lookup.
+ * @param {MODULE} module - MODULE enum value indicating which module to resolve
+ *                          (e.g. MODULE.STORES, MODULE.FOOD_DRINKS, MODULE.RESERVATIONS, etc.).
+ * @returns {Promise<any|null>} Promise resolving to the selected nested module object (as returned by Prisma)
+ *                             or null if the business/module is not found.
+ */
+const getModuleIdByBusinessId = async (business_id: UUID, module: MODULE) => {
+	try {
+		let moduleCondition;
+		if (module === MODULE.STORES) {
+			moduleCondition = {
+				store_module: {
+					select: {
+						stores_id: true,
+					},
+				},
+			};
+		} else if (module === MODULE.FOOD_DRINKS) {
+			moduleCondition = {
+				food_drinks_module: {
+					select: {
+						food_drinks_module_id: true,
+					},
+				},
+			};
+		} else if (module === MODULE.RESERVATIONS) {
+			moduleCondition = {
+				reservation_module: {
+					select: {
+						reservation_module_id: true,
+					},
+				},
+			};
+		} else if (module === MODULE.TRANSPORT) {
+			moduleCondition = {
+				transport_module: {
+					select: {
+						transport_module_id: true,
+					},
+				},
+			};
+		} else if (module === MODULE.DAILY_MEALS) {
+			moduleCondition = {
+				daily_meals_module: {
+					select: {
+						id: true,
+					},
+				},
+			};
+		} else if (module === MODULE.TABLE_RESERVATION) {
+			moduleCondition = {
+				table_reservation_module: {
+					select: {
+						id: true,
+					},
+				},
+			};
+		}
+
+		return await prisma.business.findFirst({
+			where: {
+				business_id: business_id,
+			},
+			select: moduleCondition,
+		});
+	} catch (error) {
+		console.error('Error getting module ID by business ID:', error);
+		throw new Error(error instanceof Error ? error.message : 'Failed to get module ID by business ID');
+	}
+};
 
 export { getBusinesses };
 export { getDailyMealBusinesses };
@@ -908,6 +982,7 @@ export { deactivateBusiness };
 export { getPurchaseOrderLimit };
 export { getLocalBusinesses };
 export { getBusinessStoreAndFoodDrinksModulesById };
+export { getModuleIdByBusinessId };
 
 export default {
 	getBusinesses,
@@ -941,4 +1016,5 @@ export default {
 	getPurchaseOrderLimit,
 	getLocalBusinesses,
 	getBusinessStoreAndFoodDrinksModulesById,
+	getModuleIdByBusinessId,
 };

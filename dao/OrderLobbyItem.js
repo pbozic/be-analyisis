@@ -33,24 +33,6 @@ const createOrderLobbyItem = async (order_lobby_item_data) => {
 	}
 };
 /**
- * Update an order lobby item by id.
- *
- * @param {string} order_lobby_items_id - Order lobby item ID.
- * @param {object} order_lobby_items - Fields to update.
- * @returns {Promise<object>} Updated item.
- */
-const updateOrderLobbyItem = async (order_lobby_items_id, order_lobby_items) => {
-	try {
-		return await prisma.order_lobby_items.update({
-			where: { order_lobby_items_id },
-			data: order_lobby_items,
-		});
-	} catch (error) {
-		console.error('Error updating order lobby item:', error);
-		throw error;
-	}
-};
-/**
  * Update the quantity of an order lobby item.
  *
  * @param {string} order_lobby_items_id - Order lobby item ID.
@@ -65,22 +47,6 @@ const updateOrderLobbyItemQuantity = async (order_lobby_items_id, quantity) => {
 		});
 	} catch (error) {
 		console.error('Error updating order lobby item quantity:', error);
-		throw error;
-	}
-};
-/**
- * Get order lobby items by lobby id.
- *
- * @param {string} order_lobbies_id - Order lobby ID.
- * @returns {Promise<object[]>} Items.
- */
-const getOrderLobbyItemsByLobbyId = async (order_lobbies_id) => {
-	try {
-		return await prisma.order_lobby_items.findMany({
-			where: { order_lobbies_id },
-		});
-	} catch (error) {
-		console.error('Error retrieving order lobby items by lobby ID:', error);
 		throw error;
 	}
 };
@@ -126,33 +92,15 @@ const deleteOrderLobbyItem = async (order_lobby_items_id) => {
  * @param {string} order_lobbies_id - The ID of the order lobby
  * @returns {Promise<Object>} Result of the delete operation
  */
-const deleteOrderLobbyItemsForUserInLobby = async (user_id, order_lobbies_id) => {
-	try {
-		return await prisma.order_lobby_items.deleteMany({
-			where: {
-				AND: [{ user_id }, { order_lobbies_id }],
-			},
-		});
-	} catch (error) {
-		console.error('Error deleting order lobby items:', error);
-		throw error;
-	}
-};
 export { createOrderLobbyItem };
-export { updateOrderLobbyItem };
 export { updateOrderLobbyItemQuantity };
-export { getOrderLobbyItemsByLobbyId };
 export { getOrderLobbyItemsByLobbyAndUserId };
 export { deleteOrderLobbyItem };
 export { areItemsEqual };
-export { deleteOrderLobbyItemsForUserInLobby };
 export default {
 	createOrderLobbyItem,
-	updateOrderLobbyItem,
 	updateOrderLobbyItemQuantity,
-	getOrderLobbyItemsByLobbyId,
 	getOrderLobbyItemsByLobbyAndUserId,
 	deleteOrderLobbyItem,
 	areItemsEqual,
-	deleteOrderLobbyItemsForUserInLobby,
 };

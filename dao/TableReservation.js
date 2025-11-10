@@ -1,4 +1,5 @@
 import prisma from '../prisma/prisma.js';
+import { DOCUMENT_TYPE } from '../lib/constants.js';
 /**
  * Get reservations with optional args and includes for business and user.
  *
@@ -12,11 +13,7 @@ const getReservations = async (args) => {
 			include: {
 				table_reservations: {
 					include: {
-						food_drinks_module: {
-							include: {
-								business: true,
-							},
-						},
+						business: true,
 					},
 				},
 				user: true,
@@ -37,7 +34,7 @@ async function getReservationIfNotCompleted(user_id) {
 	try {
 		const now = new Date();
 		const twoHoursBeforeNow = new Date(now.getTime() - 2 * 60 * 60 * 1000);
-		let reservation = await prisma.reservations.findFirst({
+		const reservation = await prisma.reservations.findFirst({
 			orderBy: [
 				{
 					datetime: 'asc',
@@ -55,19 +52,21 @@ async function getReservationIfNotCompleted(user_id) {
 			include: {
 				table_reservations: {
 					include: {
-						food_drinks_module: {
-							include: {
-								business: {
-									select: {
-										business_id: true,
-										name: true,
-										email: true,
-										telephone: true,
-										delivery_address: true,
+						business: {
+							select: {
+								business_id: true,
+								name: true,
+								email: true,
+								telephone: true,
+								address: true,
+								documents: {
+									where: {
+										document_type: { in: [DOCUMENT_TYPE.LOGO, DOCUMENT_TYPE.BANNER] },
+									},
+									include: {
+										files: true,
 									},
 								},
-								banner: true,
-								logo: true,
 							},
 						},
 					},
@@ -75,11 +74,26 @@ async function getReservationIfNotCompleted(user_id) {
 			},
 		});
 		if (reservation) {
-			const nestedBusiness = reservation?.table_reservations?.food_drinks_module;
-			reservation.business = nestedBusiness?.business;
-			delete nestedBusiness?.business;
+			const nestedBusiness = reservation.table_reservations?.business;
+
+			let logo = null;
+			let banner = null;
+
+			if (nestedBusiness && Array.isArray(nestedBusiness?.documents)) {
+				for (let d of nestedBusiness.documents) {
+					if (d.document_type === 'LOGO') {
+						logo = d.files[0].url;
+					} else if (d.document_type === 'BANNER') {
+						banner = d.files[0].url;
+					}
+				}
+			}
+			nestedBusiness?.logo = logo;
+			nestedBusiness?.banner = banner;
+			return reservation;
+		} else {
+			return null;
 		}
-		return reservation;
 	} catch (e) {
 		console.error('Error fetching reservation:', e);
 		throw new Error(e.message);
@@ -100,11 +114,7 @@ const getReservationById = async (reservation_id) => {
 			include: {
 				table_reservations: {
 					include: {
-						food_drinks_module: {
-							include: {
-								business: true,
-							},
-						},
+						business: true,
 					},
 				},
 				user: true,
@@ -115,43 +125,56 @@ const getReservationById = async (reservation_id) => {
 		throw new Error(error);
 	}
 };
+
+/**
+ * Resolve the table_reservations_module id for a business.
+ *
+ * @param {string} business_id - Business UUID to look up.
+ * @returns {Promise<string|null>} The table_reservations_module.id if found, otherwise null.
+ */
+const getReservationIdbyBusinessId = async (business_id) => {
+	try {
+		const reservation = await prisma.table_reservations_module.findFirst({
+			where: { business_id },
+			select: { id: true },
+		});
+		return reservation ? reservation.reservation_id : null;
+	} catch (error) {
+		console.error('Error retrieving reservation ID by business ID:', error);
+		throw new Error(error);
+	}
+};
+
 /**
  * Create a reservation and include business documents; flattens logo/banner URLs.
  *
  * @param {object} reservationData - Reservation payload.
  * @returns {Promise<object|null>} Created reservation with flattened business images, or null.
  */
-const createReservation = async (reservationData, business_id) => {
+const createReservation = async (reservationData) => {
 	try {
-		const reservationModuleId = await prisma.table_reservations_module.findFirst({
-			where: {
-				business_id: business_id,
-			},
-			select: {
-				id: true,
-			},
-		});
 		const reservation = await prisma.reservations.create({
 			data: {
 				...reservationData,
-				table_reservation_id: reservationModuleId,
 			},
 			include: {
 				table_reservations: {
 					include: {
-						food_drinks_module: {
-							include: {
-								business: {
-									select: {
-										business_id: true,
-										name: true,
-										email: true,
-										telephone: true,
-										delivery_address: true,
+						business: {
+							select: {
+								business_id: true,
+								name: true,
+								email: true,
+								telephone: true,
+								address: true,
+								documents: {
+									where: {
+										document_type: { in: [DOCUMENT_TYPE.LOGO, DOCUMENT_TYPE.BANNER] },
+									},
+									include: {
+										files: true,
 									},
 								},
-								banner: true,
-								logo: true,
 							},
 						},
 					},
@@ -159,11 +182,25 @@ const createReservation = async (reservationData, business_id) => {
 			},
 		});
 		if (reservation) {
-			const nestedBusiness = reservation?.table_reservations?.food_drinks_module;
-			reservation.business = nestedBusiness?.business;
-			delete nestedBusiness?.business;
+			const nestedBusiness = reservation.table_reservations?.business;
+			let logo = null;
+			let banner = null;
+			if (nestedBusiness && Array.isArray(nestedBusiness.documents)) {
+				// Check if documents is an array before iterating
+				for (let d of nestedBusiness.documents) {
+					if (d.document_type === 'LOGO') {
+						logo = d.files[0].url;
+					} else if (d.document_type === 'BANNER') {
+						banner = d.files[0].url;
+					}
+				}
+			}
+			nestedBusiness?.logo = logo;
+			nestedBusiness?.banner = banner;
+			return reservation;
+		} else {
+			return null;
 		}
-		return reservation;
 	} catch (error) {
 		console.error('Error creating reservation:', error);
 		throw new Error(error);
@@ -238,6 +275,7 @@ export { updateReservationStatus };
 export { deleteReservation };
 export { addTableNumber };
 export { getReservationIfNotCompleted };
+export { getReservationIdbyBusinessId };
 export default {
 	getReservations,
 	getReservationById,
@@ -246,4 +284,5 @@ export default {
 	deleteReservation,
 	addTableNumber,
 	getReservationIfNotCompleted,
+	getReservationIdbyBusinessId,
 };
