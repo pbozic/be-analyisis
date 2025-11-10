@@ -7,18 +7,26 @@ import { DOCUMENT_TYPE } from '../lib/constants.js';
  * @returns {Promise<object[]>} Reservations.
  */
 const getReservations = async (args) => {
-	try {
-		return await prisma.reservations.findMany({
-			...args,
-			include: {
-				business: true,
-				user: true,
-			},
-		});
-	} catch (error) {
-		console.error('Error retrieving reservations:', error);
-		throw new Error(error);
-	}
+    try {
+        return await prisma.reservations.findMany({
+            ...args,
+            include: {
+                table_reservations: {
+                    include: {
+                        food_drinks_module: {
+                            include: {
+                                business: true,
+                            },
+                        },
+                    },
+                },
+                user: true,
+            },
+        });
+    } catch (error) {
+        console.error('Error retrieving reservations:', error);
+        throw new Error(error);
+    }
 };
 /**
  * Get the next upcoming or in-progress reservation for a user (not completed/rejected), excluding older than 2 hours.
@@ -46,30 +54,39 @@ async function getReservationIfNotCompleted(user_id) {
 				},
 			},
 			include: {
-				business: {
-					select: {
-						business_id: true,
-						name: true,
-						email: true,
-						telephone: true,
-						address: true,
-						documents: {
-							where: {
-								document_type: { in: [DOCUMENT_TYPE.LOGO, DOCUMENT_TYPE.BANNER] },
-							},
-							include: {
-								files: true,
-							},
-						},
-					},
-				},
+				table_reservations: {
+                    include: {
+                        food_drinks_module: {
+                            include: {
+                                business: {
+                                    select: {
+                                        business_id: true,
+                                        name: true,
+                                        email: true,
+                                        telephone: true,
+                                        address: true,
+                                        documents: {
+                                            where: {
+                                                document_type: { in: [DOCUMENT_TYPE.LOGO, DOCUMENT_TYPE.BANNER] },
+                                            },
+                                            include: {
+                                                files: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
 			},
 		});
 		if (reservation) {
+			const nestedBusiness = reservation?.table_reservations?.food_drinks_module;
 			let logo = null;
 			let banner = null;
-			if (Array.isArray(reservation?.business?.documents)) {
-				for (let d of reservation.business.documents) {
+			if (Array.isArray(nestedBusiness?.business?.documents)) {
+				for (let d of nestedBusiness?.business?.documents) {
 					if (d.document_type === 'LOGO') {
 						logo = d.files[0].url;
 					} else if (d.document_type === 'BANNER') {
@@ -77,9 +94,9 @@ async function getReservationIfNotCompleted(user_id) {
 					}
 				}
 			}
-			reservation.business.logo = logo;
-			reservation.business.banner = banner;
-			delete reservation.business.documents;
+			nestedBusiness?.logo = logo;
+			nestedBusiness?.banner = banner;
+			delete nestedBusiness?.business?.documents;
 			return reservation;
 		} else {
 			return null;
@@ -102,9 +119,17 @@ const getReservationById = async (reservation_id) => {
 				reservation_id: reservation_id,
 			},
 			include: {
-				business: true,
-				user: true,
-			},
+                table_reservations: {
+                    include: {
+                        food_drinks_module: {
+                            include: {
+                                business: true,
+                            },
+                        },
+                    },
+                },
+                user: true,
+            },
 		});
 	} catch (error) {
 		console.error('Error retrieving reservation:', error);
@@ -117,24 +142,43 @@ const getReservationById = async (reservation_id) => {
  * @param {object} reservationData - Reservation payload.
  * @returns {Promise<object|null>} Created reservation with flattened business images, or null.
  */
-const createReservation = async (reservationData) => {
+const createReservation = async (reservationData, business_id) => {
 	try {
+		const reservationModuleId = await prisma.table_reservations_module.findFirst({
+			where: {
+				business_id: business_id,
+			},
+			select: {
+				id: true,
+			},
+		});
 		const reservation = await prisma.reservations.create({
-			data: reservationData,
+			data: {
+				...reservationData,
+				table_reservation_id: reservationModuleId
+			},
 			include: {
-				business: {
-					select: {
-						business_id: true,
-						name: true,
-						email: true,
-						telephone: true,
-						address: true,
-						documents: {
-							where: {
-								document_type: { in: [DOCUMENT_TYPE.LOGO, DOCUMENT_TYPE.BANNER] },
-							},
-							include: {
-								files: true,
+				table_reservations: {
+                    include: {
+                        food_drinks_module: {
+							 include: {
+								business: {
+									select: {
+										business_id: true,
+										name: true,
+										email: true,
+										telephone: true,
+										address: true,
+										documents: {
+											where: {
+												document_type: { in: [DOCUMENT_TYPE.LOGO, DOCUMENT_TYPE.BANNER] },
+											},
+											include: {
+												files: true,
+											},
+										},
+									},
+								},
 							},
 						},
 					},
@@ -142,11 +186,12 @@ const createReservation = async (reservationData) => {
 			},
 		});
 		if (reservation) {
+			const nestedBusiness = reservation?.table_reservations?.food_drinks_module;
 			let logo = null;
 			let banner = null;
-			if (Array.isArray(reservation?.business?.documents)) {
+			if (Array.isArray(nestedBusiness?.business?.documents)) {
 				// Check if documents is an array before iterating
-				for (let d of reservation.business.documents) {
+				for (let d of nestedBusiness?.business?.documents) {
 					if (d.document_type === 'LOGO') {
 						logo = d.files[0].url;
 					} else if (d.document_type === 'BANNER') {
@@ -154,9 +199,9 @@ const createReservation = async (reservationData) => {
 					}
 				}
 			}
-			reservation.business.logo = logo;
-			reservation.business.banner = banner;
-			delete reservation.business.documents;
+			nestedBusiness?.logo = logo;
+			nestedBusiness?.banner = banner;
+			delete nestedBusiness?.business?.documents;
 			return reservation;
 		} else {
 			return null;
