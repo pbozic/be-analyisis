@@ -1,3 +1,5 @@
+import { MODULE } from '@prisma/client';
+
 import MenuDao from '../dao/Menu.js';
 import MenuCategoryDao from '../dao/MenuCategory.js';
 import MenuItemDao from '../dao/MenuItem.js';
@@ -7,6 +9,7 @@ import TaxDao from '../dao/Tax.js';
 import S3Helper from '../lib/s3.js';
 import { linkDocumentToBusiness } from '../dao/Document.js';
 import elasticsearch from '../elasticsearch/index.js';
+import { getModuleIdByBusinessId } from '../dao/Business.js';
 const { businessIndex } = elasticsearch;
 /**
  * GET /menus/business/:business_id
@@ -50,31 +53,31 @@ async function getDailyMenuByBusinessId(req, res) {
 		res.status(400).json({ error: 'Error obtaining menus', e });
 	}
 }
-/**
- * POST /menus
- * @tag Menu
- * @summary Create a new menu
- * @description Creates a new menu for a business.
- * @operationId createMenu
- * @bodyDescription The menu details to create
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 201 - Menu created successfully
- * @responseContent {object} 201.application/json
- * @response 400 - Error creating new menu
- * @prisma_model menus
- */
-async function createMenu(req, res) {
-	const { business_id, is_daily_meals } = req.body;
-	try {
-		const menu = await MenuDao.createMenu(business_id, is_daily_meals);
-		businessIndex(business_id);
-		res.status(201).json(menu);
-	} catch (e) {
-		console.error('Error creating menu:', e);
-		res.status(400).json({ error: 'Error creating menu', e });
-	}
-}
+// /**
+//  * POST /menus
+//  * @tag Menu
+//  * @summary Create a new menu
+//  * @description Creates a new menu for a business.
+//  * @operationId createMenu
+//  * @bodyDescription The menu details to create
+//  * @bodyContent {object} application/json
+//  * @bodyRequired
+//  * @response 201 - Menu created successfully
+//  * @responseContent {object} 201.application/json
+//  * @response 400 - Error creating new menu
+//  * @prisma_model menus
+//  */
+// async function createMenu(req, res) {
+// 	const { business_id, is_daily_meals } = req.body;
+// 	try {
+// 		const menu = await MenuDao.createMenu(business_id, is_daily_meals);
+// 		businessIndex(business_id);
+// 		res.status(201).json(menu);
+// 	} catch (e) {
+// 		console.error('Error creating menu:', e);
+// 		res.status(400).json({ error: 'Error creating menu', e });
+// 	}
+// }
 /**
  * POST /menus/daily-meal
  * @tag Menu
@@ -93,8 +96,9 @@ async function createMenu(req, res) {
 async function createDailyMealMenu(req, res) {
 	const { business_id, date, menu_category } = req.body;
 	try {
-		const menu = await MenuDao.createMenu(business_id, true, date);
-		const menuCategory = await MenuCategoryDao.createMenuCategory(menu.menu_id, menu_category);
+		const dailyMealsModuleId = getModuleIdByBusinessId(business_id, MODULE.DAILY_MEALS);
+		const menu = await MenuDao.createDailyMealsMenu(dailyMealsModuleId, date);
+		const menuCategory = await MenuCategoryDao.createMenuCategory(menu.daily_meal_menu_id, menu_category, true);
 		businessIndex(business_id);
 		res.status(200).json({ menu: menu, menuCategory: menuCategory });
 	} catch (e) {
@@ -1015,7 +1019,7 @@ export { updateDailyMealMenuPrice };
 export { getMenuItemsByDate };
 export { getMenuByDate };
 export { getMenuByBusinessId };
-export { createMenu };
+//export { createMenu };
 export { updateMenuOrder };
 export { updateMenuItemsOrder };
 export { deleteMenu };
@@ -1052,7 +1056,7 @@ export default {
 	getMenuItemsByDate,
 	getMenuByDate,
 	getMenuByBusinessId,
-	createMenu,
+	//createMenu,
 	updateMenuOrder,
 	updateMenuItemsOrder,
 	deleteMenu,

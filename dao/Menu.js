@@ -1,6 +1,26 @@
 import moment from 'moment';
 
 import prisma from '../prisma/prisma.js';
+
+// /**
+//  * Create a new menu for a business.
+//  *
+//  * @param {string} business_id - The business ID to create the menu for.
+//  * @param {boolean} [isDailyMeal=false] - Whether the menu is a daily meal menu.
+//  * @param {string|Date|null} [date] - Optional date for daily meal menus.
+//  * @returns {Promise<object>} The created menu record.
+//  */
+// const createMenu = async (business_id, isDailyMeal = false, date) => {
+// 	return await prisma.menus.create({
+// 		data: {
+// 			business_id: business_id,
+// 			active: true, // Assuming we want to create it as active by default
+// 			isDailyMeal: isDailyMeal,
+// 			date: date ? date : null,
+// 		},
+// 	});
+// };
+
 /**
  * Create a new menu for a business.
  *
@@ -9,16 +29,15 @@ import prisma from '../prisma/prisma.js';
  * @param {string|Date|null} [date] - Optional date for daily meal menus.
  * @returns {Promise<object>} The created menu record.
  */
-const createMenu = async (business_id, isDailyMeal = false, date) => {
-	return await prisma.menus.create({
+const createDailyMealsMenu = async (dailyMealsModuleId, date) => {
+	return await prisma.daily_meal_menus.create({
 		data: {
-			business_id: business_id,
-			active: true, // Assuming we want to create it as active by default
-			isDailyMeal: isDailyMeal,
+			daily_meals_module_id: dailyMealsModuleId,
 			date: date ? date : null,
 		},
 	});
 };
+
 /**
  * Create a new menu for a store.
  *
@@ -51,9 +70,11 @@ const createFoodDrinksMenu = async (module_id) => {
  * @param {string} business_id - The business ID.
  * @param {boolean} [isDailyMeal=false] - Whether to fetch daily meal menus.
  * @param {Date|null} [startDate=null] - Start date for filtering daily meal menus.
+ * @param {string} module_id - Module id for which it will fetch menu.
+ * @param {STORES|FOOD_DRINKS} moduleType - Module type for which it will fetch menu.
  * @returns {Promise<object[]>} Array of menu records with categories and items.
  */
-const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate = null) => {
+const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate = null, module_id, moduleType) => {
 	let extraWhereArgs = {};
 	if (isDailyMeal) {
 		if (!startDate) {
@@ -65,6 +86,18 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 			},
 		};
 	}
+
+	if (moduleType == 'STORES') {
+		extraWhereArgs = {
+			stores_id: module_id,
+		};
+	}
+	if (moduleType == 'FOOD_DRINKS') {
+		extraWhereArgs = {
+			food_drinks_id: module_id,
+		};
+	}
+
 	const menus = await prisma.menus.findMany({
 		where: {
 			business_id: business_id,
@@ -196,6 +229,24 @@ const updateMenuOrder = async (menu_id, orderedMenuCategoryIds) => {
 	});
 };
 /**
+ * Get daily meals module id by business id.
+ *
+ * @param {string} business_id - Business ID.
+ * @returns {Promise<object|null>} The menu record or null if not found.
+ */
+const getDailyMealsModuleIdByBusinessId = async (business_id) => {
+	return await prisma.business.findUnique({
+		where: {
+			business_id: business_id,
+		},
+		include: {
+			daily_meals_module: {
+				id: true,
+			},
+		},
+	});
+};
+/**
  * Get a daily meal menu for a business by date (same day match).
  *
  * @param {string} business_id - Business ID.
@@ -203,14 +254,15 @@ const updateMenuOrder = async (menu_id, orderedMenuCategoryIds) => {
  * @returns {Promise<object|null>} The menu record or null if not found.
  */
 const getMenuByDate = async (business_id, date) => {
+	const dailyMealsModuleId = getDailyMealsModuleIdByBusinessId(business_id);
+	if (!dailyMealsModuleId) throw Error(`Business with id: ${business_id} doesn't have daily meals module!`);
 	const startOfDay = new Date(date);
 	startOfDay.setHours(0, 0, 0, 0);
 	const endOfDay = new Date(date);
 	endOfDay.setHours(23, 59, 59, 999);
-	return await prisma.menus.findFirst({
+	return await prisma.daily_meal_menus.findFirst({
 		where: {
-			business_id: business_id,
-			isDailyMeal: true,
+			daily_meals_module_id: dailyMealsModuleId,
 			date: {
 				gte: startOfDay.toISOString(),
 				lte: endOfDay.toISOString(),
@@ -264,7 +316,8 @@ const getMenuById = async (menu_id) => {
 	});
 };
 export { getMenuById };
-export { createMenu };
+//export { createMenu };
+export { createDailyMealsMenu };
 export { createStoreMenu };
 export { createFoodDrinksMenu };
 export { getMenuByBusinessId };
@@ -274,7 +327,8 @@ export { updateMenuOrder };
 export { getMenuByDate };
 export default {
 	getMenuById,
-	createMenu,
+	//createMenu,
+	createDailyMealsMenu,
 	createStoreMenu,
 	createFoodDrinksMenu,
 	getMenuByBusinessId,
