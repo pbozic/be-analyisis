@@ -238,6 +238,22 @@ export const BusinessWithIncludesResponseDto = BusinessResponseDto.extend({
 	child_businesses: z.array(BusinessRefSchema).optional(),
 }).openapi('BusinessWithIncludesResponse');
 
+// Business Search Response (matches DAO select used in search endpoints)
+export const BusinessSearchResponseDto = z
+	.object({
+		business_id: z.string().uuid(),
+		name: z.string().optional(),
+		description: z.string().nullable().optional(),
+		email: z.string().email().optional(),
+		telephone: z.string().optional(),
+		website_url: z.string().url().nullable().optional(),
+		active: z.boolean().optional(),
+		popular: z.boolean().optional(),
+		new: z.boolean().optional(),
+		address: AddressRefSchema.nullable().optional(),
+	})
+	.openapi('BusinessSearchResponse');
+
 // =======================
 // Business Ref Schema - minimal identity for embedding elsewhere
 // =======================

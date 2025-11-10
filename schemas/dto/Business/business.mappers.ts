@@ -1,4 +1,11 @@
-import { BusinessResponseDto, BusinessByIdResponseSchema } from './business.dto.js';
+import {
+	BusinessResponseDto,
+	BusinessByIdResponseSchema,
+	BusinessWithIncludesResponseDto,
+	BusinessWithAddressAndUsersResponseDto,
+	BusinessSearchResponseDto,
+} from './business.dto.js';
+import { BusinessAdminResponseSchema } from './business.js';
 import type { BusinessWithAllModulesResponseDto, BusinessResponseDto as BusinessResponseType } from './business.dto.js';
 import type { GetBusinessesPrisma, BusinessByIdPrisma } from '../../../prisma/includes/business.ts';
 import { BusinessWithDailyMealsResponseDto } from './business.dto.js';
@@ -35,6 +42,107 @@ export function toGetBusinessResponse(row: GetBusinessesPrisma): BusinessRespons
 		reservation_module_id: r.reservation_module_id ?? null,
 		stores_id: r.stores_id ?? null,
 	});
+}
+
+// Map GetBusinessesPrisma payload to the BusinessWithIncludesResponseDto (keeps included relations)
+export function toBusinessWithIncludesResponse(row: GetBusinessesPrisma) {
+	const r: any = row;
+	return BusinessWithIncludesResponseDto.parse({
+		business_id: r.business_id,
+		name: r.business_details?.name ?? r.name,
+		description: r.business_details?.description ?? r.description,
+		tax_id: r.tax_id,
+		registration_id: r.registration_id,
+		email: r.email,
+		telephone: r.telephone,
+		telephone_code: r.telephone_code,
+		website_url: r.website_url,
+		working_hours: r.working_hours,
+		is_business_unit: r.is_business_unit,
+		business_group_name: r.business_group_name,
+		parent_business_id: r.parent_business_id,
+		stripe_account_id: r.stripe_account_id,
+		stripe_customer_id: r.stripe_customer_id,
+		word_buy_stripe_subscription_id: r.word_buy_stripe_subscription_id,
+		first_activated_at: r.first_activated_at ? new Date(r.first_activated_at).toISOString() : undefined,
+		active: r.active,
+		sales_representative_id: r.sales_representative_id,
+		address_id: r.address_id,
+		created_at: r.created_at ? new Date(r.created_at).toISOString() : undefined,
+		updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
+		food_drinks_id: r.food_drinks_id ?? null,
+		transport_module_id: r.transport_module_id ?? null,
+		reservation_module_id: r.reservation_module_id ?? null,
+		stores_id: r.stores_id ?? null,
+		// includes
+		address: r.address,
+		delivery_address: r.delivery_address,
+		business_users: r.business_users,
+		parent_business: r.parent_business,
+		child_businesses: r.child_businesses,
+	});
+}
+
+// Map a payload that includes address & business_users to the matching DTO
+export function toBusinessWithAddressAndUsersResponse(row: any) {
+	const r: any = row;
+	return BusinessWithAddressAndUsersResponseDto.parse({
+		business_id: r.business_id,
+		name: r.business_details?.name ?? r.name,
+		description: r.business_details?.description ?? r.description,
+		tax_id: r.tax_id,
+		registration_id: r.registration_id,
+		email: r.email,
+		telephone: r.telephone,
+		telephone_code: r.telephone_code,
+		website_url: r.website_url,
+		working_hours: r.working_hours,
+		is_business_unit: r.is_business_unit,
+		business_group_name: r.business_group_name,
+		parent_business_id: r.parent_business_id,
+		stripe_account_id: r.stripe_account_id,
+		stripe_customer_id: r.stripe_customer_id,
+		word_buy_stripe_subscription_id: r.word_buy_stripe_subscription_id,
+		first_activated_at: r.first_activated_at ? new Date(r.first_activated_at).toISOString() : undefined,
+		active: r.active,
+		sales_representative_id: r.sales_representative_id,
+		address_id: r.address_id,
+		created_at: r.created_at ? new Date(r.created_at).toISOString() : undefined,
+		updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
+		food_drinks_id: r.food_drinks_id ?? null,
+		transport_module_id: r.transport_module_id ?? null,
+		reservation_module_id: r.reservation_module_id ?? null,
+		stores_id: r.stores_id ?? null,
+		address: r.address,
+		delivery_address: r.delivery_address,
+		business_users: r.business_users,
+		parent_business: r.parent_business,
+		child_businesses: r.child_businesses,
+	});
+}
+
+// Map a select-based search payload into BusinessSearchResponseDto
+export function toBusinessSearchResponse(row: any) {
+	const r: any = row;
+	return BusinessSearchResponseDto.parse({
+		business_id: r.business_id,
+		name: r.name,
+		description: r.description,
+		email: r.email,
+		telephone: r.telephone,
+		website_url: r.website_url,
+		active: r.active,
+		popular: r.popular,
+		new: r.new,
+		address: r.address,
+	});
+}
+
+// Map admin-focused payloads to BusinessAdminResponseSchema
+export function toBusinessAdminResponse(row: any) {
+	const r: any = row;
+	// Reuse legacy schema for admin response validation
+	return BusinessAdminResponseSchema.parse(r);
 }
 
 // Map a rich BusinessByIdPrisma payload to the BusinessByIdResponse schema
