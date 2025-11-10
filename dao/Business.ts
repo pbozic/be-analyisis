@@ -248,14 +248,16 @@ const getBusinessesByGroupName = async (search: string): Promise<BusinessRespons
  */
 const getTransferBusinessesMainInformation = async (): Promise<BusinessResponseDto[]> => {
 	try {
-		return (await prisma.business.findMany({
+		const rows = await prisma.business.findMany({
 			where: {
 				transport_module: { isNot: null },
 			},
 			include: {
 				address: true,
 			},
-		})) as BusinessResponseDto[];
+		});
+		// Validate/shape results through the Business mapper
+		return rows.map(toGetBusinessResponse);
 	} catch (error) {
 		console.error('Error retrieving transfer businesses:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get transfer businesses');
