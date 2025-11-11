@@ -187,8 +187,8 @@ export async function findSlots({
 						start: current.toDate(),
 						end: end.toDate(),
 						schedule_slot_id: slot.schedule_slot_id,
-						location: slot.schedule.location as unknown as Location,
-						employee: slot.employee as unknown as Employee,
+						location: slot.schedule.location as Location,
+						employee: slot.employee as Employee,
 					};
 
 					if (returnFirstDay) return slotData; // first for this day

@@ -2,6 +2,8 @@ import prisma from '../prisma/prisma.js';
 import { UpdateUserAddress } from '../schemas/dto/UserAddress/userAddress.dto.js';
 import { UUID } from '../schemas/primitives.js';
 import { CreateAddressInput } from '../types/addresses/Address.js';
+import { toUserAddressResponse } from '../schemas/dto/UserAddress/userAddress.mappers.js';
+import type { UserAddressDefaultPrisma } from '../prisma/includes/userAddress.js';
 
 /**
  * Add a user address link. Checks if the address exists first, and creates it if it doesn't.
@@ -47,7 +49,7 @@ async function addUserAddress(userId: UUID, addressData: CreateAddressInput, det
 		const isPrimary = existingUserAddresses.length === 0;
 
 		// Create the user_address link
-		return await prisma.user_address.create({
+		const created = await prisma.user_address.create({
 			data: {
 				user_id: userId,
 				address_id: addressId,
@@ -56,6 +58,8 @@ async function addUserAddress(userId: UUID, addressData: CreateAddressInput, det
 				type,
 			},
 		});
+
+		return toUserAddressResponse(created as UserAddressDefaultPrisma);
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : String(error));
 	}
@@ -70,7 +74,7 @@ async function addUserAddress(userId: UUID, addressData: CreateAddressInput, det
  */
 async function deleteUserAddress(userId: UUID, addressId: UUID) {
 	try {
-		return await prisma.user_address.delete({
+		const deleted = await prisma.user_address.delete({
 			where: {
 				user_id_address_id: {
 					user_id: userId,
@@ -78,6 +82,8 @@ async function deleteUserAddress(userId: UUID, addressId: UUID) {
 				},
 			},
 		});
+
+		return toUserAddressResponse(deleted as UserAddressDefaultPrisma);
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : String(error));
 	}
@@ -107,7 +113,7 @@ async function editUserAddress(userId: UUID, addressId: UUID, updateData: Update
 				currentAddress.longitude === updateData.address.longitude
 			) {
 				// If the address matches, only update the user_address fields
-				return await prisma.user_address.update({
+				const updated = await prisma.user_address.update({
 					where: {
 						user_id_address_id: {
 							user_id: userId,
@@ -119,6 +125,8 @@ async function editUserAddress(userId: UUID, addressId: UUID, updateData: Update
 						type: updateData.type,
 					},
 				});
+
+				return toUserAddressResponse(updated as UserAddressDefaultPrisma);
 			} else {
 				// If the address does not match, check if the new address already exists
 				const existingAddress = await prisma.addresses.findUnique({
@@ -145,7 +153,7 @@ async function editUserAddress(userId: UUID, addressId: UUID, updateData: Update
 				}
 
 				// Update the user_address to point to the new address
-				return await prisma.user_address.update({
+				const updated = await prisma.user_address.update({
 					where: {
 						user_id_address_id: {
 							user_id: userId,
@@ -158,11 +166,13 @@ async function editUserAddress(userId: UUID, addressId: UUID, updateData: Update
 						type: updateData.type,
 					},
 				});
+
+				return toUserAddressResponse(updated as UserAddressDefaultPrisma);
 			}
 		}
 
 		// If no address data is updated, just update the user_address fields
-		return await prisma.user_address.update({
+		const updated = await prisma.user_address.update({
 			where: {
 				user_id_address_id: {
 					user_id: userId,
@@ -174,6 +184,8 @@ async function editUserAddress(userId: UUID, addressId: UUID, updateData: Update
 				type: updateData.type,
 			},
 		});
+
+		return toUserAddressResponse(updated as UserAddressDefaultPrisma);
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : String(error));
 	}

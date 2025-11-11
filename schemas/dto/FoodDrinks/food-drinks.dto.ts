@@ -47,19 +47,21 @@ export const FoodDrinksDetailSchema = FoodDrinksBaseSchema.openapi('FoodDrinksDe
 export type FoodDrinksDetail = z.infer<typeof FoodDrinksDetailSchema>;
 
 // Mapper from Prisma payload
+import type { FoodDrinksWithIncludesPrisma } from '../../../prisma/includes/foodDrinks.js';
+
 export type PrismaFoodDrinks = {
 	food_drinks_id: string;
-	business_id?: string;
-	enabled?: boolean;
-	online?: boolean;
-	overwhelmed?: boolean;
+	business_id?: string | null;
+	enabled?: boolean | null;
+	online?: boolean | null;
+	overwhelmed?: boolean | null;
 	seats?: number | null;
 	minimum_order?: number | null;
 	created_at?: string | Date | null;
 	updated_at?: string | Date | null;
 };
 
-export function toFoodDrinksDetail(row: unknown): FoodDrinksDetail {
+export function toFoodDrinksDetail(row: FoodDrinksWithIncludesPrisma | unknown): FoodDrinksDetail {
 	const r = row as PrismaFoodDrinks;
 	return FoodDrinksDetailSchema.parse({
 		food_drinks_id: r.food_drinks_id,

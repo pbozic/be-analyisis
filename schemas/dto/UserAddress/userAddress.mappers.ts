@@ -1,0 +1,20 @@
+import { UserAddressResponseSchema } from '../../../types/users/UserAddress.js';
+import type { UserAddressResponse } from '../../../types/users/UserAddress.js';
+import type { UserAddressDefaultPrisma } from '../../../prisma/includes/userAddress.js';
+
+export function toUserAddressResponse(row: UserAddressDefaultPrisma): UserAddressResponse {
+    const dto = {
+        user_id: row.user_id,
+        address_id: row.address_id,
+        primary: row.primary,
+        details: row.details,
+        type: row.type,
+        // relations may be included by DAO callers; keep them as-is if present
+        users: (row as any).users,
+        address: (row as any).address,
+    };
+
+    return UserAddressResponseSchema.parse(dto);
+}
+
+export default { toUserAddressResponse };

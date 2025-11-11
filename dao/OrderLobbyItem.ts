@@ -4,6 +4,10 @@ import type {
 	OrderLobbyItemResponse,
 	CreateOrderLobbyItem,
 } from '../schemas/dto/OrderLobby/index.js';
+import { toOrderLobbyItemResponse, toOrderLobbyItemList } from '../schemas/dto/OrderLobby/orderLobbyItem.mappers.js';
+
+// safe include for menu_items to avoid documents include which may not exist on this Prisma client
+const menuItemInclude = { menu_items: { include: { tax_rate: true, image_file: true } } } as const;
 
 /**
  * Compare two order lobby items for equality of menu_item_id, customer_note, extras and sides (order-insensitive arrays).
@@ -38,7 +42,9 @@ const createOrderLobbyItem = async (
 	order_lobby_item_data: Partial<CreateOrderLobbyItem>
 ): Promise<OrderLobbyItemResponse> => {
 	try {
-		return await prisma.order_lobby_items.create({ data: order_lobby_item_data });
+		const created = await prisma.order_lobby_items.create({ data: order_lobby_item_data });
+		// Map created row to DTO (no extra includes needed)
+		return toOrderLobbyItemResponse(created as unknown);
 	} catch (error: any) {
 		console.error('Error creating order lobby item:', error);
 		throw error;
@@ -58,10 +64,8 @@ const updateOrderLobbyItemQuantity = async (
 	quantity: number
 ): Promise<OrderLobbyItemResponse> => {
 	try {
-		return await prisma.order_lobby_items.update({
-			where: { order_lobby_items_id },
-			data: { quantity },
-		});
+		const updated = await prisma.order_lobby_items.update({ where: { order_lobby_items_id }, data: { quantity } });
+		return toOrderLobbyItemResponse(updated as unknown);
 	} catch (error: any) {
 		console.error('Error updating order lobby item quantity:', error);
 		throw error;
@@ -80,20 +84,11 @@ const getOrderLobbyItemsByLobbyAndUserId = async (
 	user_id: string
 ): Promise<OrderLobbyItemResponse[]> => {
 	try {
-		return await prisma.order_lobby_items.findMany({
-			where: {
-				order_lobbies_id,
-				user_id,
-			},
-			include: {
-				menu_items: {
-					include: {
-						documents: { include: { files: true } },
-						tax_rate: true,
-					},
-				},
-			},
+		const rows = await prisma.order_lobby_items.findMany({
+			where: { order_lobbies_id, user_id },
+			include: menuItemInclude,
 		});
+		return toOrderLobbyItemList(rows as unknown[]);
 	} catch (error: any) {
 		console.error('Error retrieving order lobby items by lobby and user ID:', error);
 		throw error;
@@ -108,9 +103,8 @@ const getOrderLobbyItemsByLobbyAndUserId = async (
  */
 const deleteOrderLobbyItem = async (order_lobby_items_id: string): Promise<OrderLobbyItemResponse> => {
 	try {
-		return await prisma.order_lobby_items.delete({
-			where: { order_lobby_items_id },
-		});
+		const deleted = await prisma.order_lobby_items.delete({ where: { order_lobby_items_id } });
+		return toOrderLobbyItemResponse(deleted as unknown);
 	} catch (error: any) {
 		console.error('Error deleting order lobby item:', error);
 		throw error;

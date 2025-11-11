@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma';
 import { OrderLobbyUserResponse } from '../schemas/dto/OrderLobby/orderLobbyUser.dto';
+import { toOrderLobbyUserResponse, toOrderLobbyUserList } from '../schemas/dto/OrderLobby/orderLobbyUser.mappers.js';
 
 const cropped_user_columns = {
 	first_name: true,
@@ -21,22 +22,15 @@ async function createOrderLobbyUser(
 	order_lobbies_id: string,
 	limit: number
 ): Promise<OrderLobbyUserResponse> {
-	return await prisma.order_lobby_users.create({
+	const created = await prisma.order_lobby_users.create({
 		data: {
 			limit,
-			users: {
-				connect: { user_id },
-			},
-			order_lobbies: {
-				connect: { order_lobbies_id },
-			},
+			users: { connect: { user_id } },
+			order_lobbies: { connect: { order_lobbies_id } },
 		},
-		include: {
-			users: {
-				select: cropped_user_columns,
-			},
-		},
+		include: { users: { select: cropped_user_columns } },
 	});
+	return toOrderLobbyUserResponse(created as unknown);
 }
 
 /**
@@ -45,14 +39,8 @@ async function createOrderLobbyUser(
  * @returns List of users in the order lobby
  */
 async function getOrderLobbyUsersInOrderLobby(order_lobbies_id: string): Promise<OrderLobbyUserResponse[]> {
-	return await prisma.order_lobby_users.findMany({
-		where: { order_lobbies_id },
-		include: {
-			users: {
-				select: cropped_user_columns,
-			},
-		},
-	});
+	const rows = await prisma.order_lobby_users.findMany({ where: { order_lobbies_id }, include: { users: { select: cropped_user_columns } } });
+	return toOrderLobbyUserList(rows as unknown[]);
 }
 
 /**
@@ -65,15 +53,8 @@ async function updateOrderLobbyUserLimit(
 	order_lobby_users_id: string,
 	newLimit: number
 ): Promise<OrderLobbyUserResponse> {
-	return await prisma.order_lobby_users.update({
-		where: { order_lobby_users_id },
-		data: { limit: newLimit },
-		include: {
-			users: {
-				select: cropped_user_columns,
-			},
-		},
-	});
+	const updated = await prisma.order_lobby_users.update({ where: { order_lobby_users_id }, data: { limit: newLimit }, include: { users: { select: cropped_user_columns } } });
+	return toOrderLobbyUserResponse(updated as unknown);
 }
 
 /**
@@ -106,10 +87,8 @@ async function deleteOrderLobbyUserWithItems(
 			},
 		});
 		// Delete the order lobby user
-		const deletedUser = await tx.order_lobby_users.delete({
-			where: { order_lobby_users_id },
-		});
-		return deletedUser;
+		const deletedUser = await tx.order_lobby_users.delete({ where: { order_lobby_users_id } });
+		return toOrderLobbyUserResponse(deletedUser as unknown);
 	});
 }
 

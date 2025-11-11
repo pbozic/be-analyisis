@@ -2,6 +2,8 @@ import type { daily_meal_categories, daily_meal_category_prices, Prisma } from '
 
 import prisma from '../prisma/prisma.js';
 import { UUID } from '../schemas/primitives.js';
+import type { DailyMealCategoryWithPricesPrisma } from '../prisma/includes/dailyMealCategory.js';
+import { toDailyMealCategoryResponse, toDailyMealCategoryList } from '../schemas/dto/DailyMealCategory/dailyMealCategory.mappers.js';
 /**
  * Get daily meal category by id.
  *
@@ -13,10 +15,17 @@ export async function getDailyMealCategoryById(
 	daily_meal_category_id: UUID,
 	includeObj?: Prisma.daily_meal_categoriesInclude
 ): Promise<Prisma.daily_meal_categoriesGetPayload<{ include: Prisma.daily_meal_categoriesInclude }>> {
-	return await prisma.daily_meal_categories.findUnique({
+	const row = await prisma.daily_meal_categories.findUnique({
 		where: { daily_meal_category_id },
 		include: includeObj,
 	});
+	if (!row) return row as any;
+	try {
+		return toDailyMealCategoryResponse(row as DailyMealCategoryWithPricesPrisma) as any;
+	} catch (e) {
+		// If parsing fails, return raw row to avoid changing runtime behaviour
+		return row as any;
+	}
 }
 /**
  * Create daily meal category with initial price.
@@ -55,7 +64,12 @@ export async function createDailyMealCategoryWithPrice({
 			daily_meal_category_prices: true,
 		},
 	});
-	return dmc;
+
+	try {
+		return toDailyMealCategoryResponse(dmc as DailyMealCategoryWithPricesPrisma) as any;
+	} catch (e) {
+		return dmc as any;
+	}
 }
 /**
  * Get daily meal categories for a daily_meals_module.
@@ -65,7 +79,7 @@ export async function createDailyMealCategoryWithPrice({
  * @returns {Promise<Prisma.daily_meal_categoriesGetPayload[]>}
  */
 export async function getDailyMealCategoriesByModuleId(daily_meals_module_id: UUID, detailed: boolean = false) {
-	return await prisma.daily_meal_categories.findMany({
+	const rows = await prisma.daily_meal_categories.findMany({
 		where: { daily_meals_module_id },
 		include: {
 			category: true,
@@ -75,6 +89,12 @@ export async function getDailyMealCategoriesByModuleId(daily_meals_module_id: UU
 			},
 		},
 	});
+
+	try {
+		return toDailyMealCategoryList(rows as DailyMealCategoryWithPricesPrisma[]);
+	} catch (e) {
+		return rows as any;
+	}
 }
 /**
  * Get active daily meal categories for a daily_meals_module.
@@ -83,7 +103,7 @@ export async function getDailyMealCategoriesByModuleId(daily_meals_module_id: UU
  * @returns {Promise<Prisma.daily_meal_categoriesGetPayload[]>}
  */
 export async function getActiveDailyMealCategoriesByModuleId(daily_meals_module_id: UUID) {
-	return await prisma.daily_meal_categories.findMany({
+	const rows = await prisma.daily_meal_categories.findMany({
 		where: { daily_meals_module_id, active: true },
 		include: {
 			category: true,
@@ -93,6 +113,12 @@ export async function getActiveDailyMealCategoriesByModuleId(daily_meals_module_
 			},
 		},
 	});
+
+	try {
+		return toDailyMealCategoryList(rows as DailyMealCategoryWithPricesPrisma[]);
+	} catch (e) {
+		return rows as any;
+	}
 }
 /**
  * Add price to daily meal category.
@@ -125,10 +151,16 @@ export async function addPriceToDailyMealCategory({
  * @returns {Promise<Prisma.daily_meal_categoriesGetPayload>}
  */
 export async function deactivateDailyMealCategory(daily_meal_category_id: UUID) {
-	return prisma.daily_meal_categories.update({
+	const row = await prisma.daily_meal_categories.update({
 		where: { daily_meal_category_id },
 		data: { active: false },
 	});
+
+	try {
+		return toDailyMealCategoryResponse(row as DailyMealCategoryWithPricesPrisma) as any;
+	} catch (e) {
+		return row as any;
+	}
 }
 /**
  * Activate daily meal category.
@@ -137,10 +169,16 @@ export async function deactivateDailyMealCategory(daily_meal_category_id: UUID) 
  * @returns {Promise<Prisma.daily_meal_categoriesGetPayload>}
  */
 export async function activateDailyMealCategory(daily_meal_category_id: UUID) {
-	return prisma.daily_meal_categories.update({
+	const row = await prisma.daily_meal_categories.update({
 		where: { daily_meal_category_id },
 		data: { active: true },
 	});
+
+	try {
+		return toDailyMealCategoryResponse(row as DailyMealCategoryWithPricesPrisma) as any;
+	} catch (e) {
+		return row as any;
+	}
 }
 
 /**

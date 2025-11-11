@@ -10,7 +10,7 @@ import { MenuItemRefSchema, MenuCategoryRefSchema } from '../Menu/menu.dto.js';
 import { AddressRefSchema } from '../Address/index.js';
 import { UserRefSchema } from '../User/index.js';
 import { FileRefSchema } from '../Files/file.dto.js';
-import { UUID } from '../../primitives.ts';
+import { UUID } from '../../primitives';
 extendZodWithOpenApi(z);
 
 // TODO: Fix dto after deleting menu from prisma model etc...
@@ -78,12 +78,25 @@ export const BusinessCreateDto = z
 // Full response schema including DB-managed fields
 export const BusinessResponseDto = BusinessCreateDto.extend({
 	business_id: UUID,
+	// Keep business metadata inside `business_details` to match Prisma's normalized model.
+	// We intentionally avoid flattening name/description to the root.
+	business_details: z
+		.object({
+			name: z.string().optional(),
+			description: z.string().nullable().optional(),
+			// Optional file refs (IDs) — these fields are present on business_details in many setups.
+			logo_id: z.string().uuid().nullable().optional(),
+			banner_id: z.string().uuid().nullable().optional(),
+		})
+		.nullable()
+		.optional(),
 	created_at: z.string().datetime().openapi({ example: '2025-01-01T12:00:00.000Z' }),
 	updated_at: z.string().datetime().openapi({ example: '2025-01-10T12:00:00.000Z' }),
 	food_drinks_id: UUID.nullable().optional(),
 	transport_module_id: UUID.nullable().optional(),
 	reservation_module_id: UUID.nullable().optional(),
 	stores_id: UUID.nullable().optional(),
+	crm_module_id: UUID.nullable().optional(),
 }).openapi({
 	example: {
 		business_id: '3Afa85f64-5717-4562-b3fc-2c963f66afa6',
@@ -207,6 +220,19 @@ export const BusinessWithAllModulesResponseDto = BusinessResponseDto.extend({
 	daily_meals: DailyMealsRefSchema.nullable().optional(),
 }).openapi('BusinessWithAllModulesResponse');
 
+// Business Ref Schema - minimal identity for embedding elsewhere
+
+export const BusinessRefSchema = z
+	.object({
+		business_id: z.string().uuid().openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
+		name: z.string().openapi({ example: 'Klikni d.o.o.' }),
+		email: z.string().email().optional().openapi({ example: 'info@klikni-web.eu' }),
+		active: z.boolean().optional().openapi({ example: true }),
+		logo_id: z.string().uuid().nullable().optional(),
+		banner_id: z.string().uuid().nullable().optional(),
+	})
+	.openapi('BusinessRef');
+
 // Business with Address and Business Users (common include used in many DAO functions)
 export const BusinessWithAddressAndUsersResponseDto = BusinessResponseDto.extend({
 	address: AddressRefSchema.nullable().optional(),
@@ -253,21 +279,6 @@ export const BusinessSearchResponseDto = z
 		address: AddressRefSchema.nullable().optional(),
 	})
 	.openapi('BusinessSearchResponse');
-
-// =======================
-// Business Ref Schema - minimal identity for embedding elsewhere
-// =======================
-
-export const BusinessRefSchema = z
-	.object({
-		business_id: z.string().uuid().openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
-		name: z.string().openapi({ example: 'Klikni d.o.o.' }),
-		email: z.string().email().optional().openapi({ example: 'info@klikni-web.eu' }),
-		active: z.boolean().optional().openapi({ example: true }),
-		logo_id: z.string().uuid().nullable().optional(),
-		banner_id: z.string().uuid().nullable().optional(),
-	})
-	.openapi('BusinessRef');
 
 // exported TS types
 export type BusinessCreateDto = z.infer<typeof BusinessCreateDto>;

@@ -1,8 +1,14 @@
 import prisma from '../prisma/prisma.js';
 import type {
-    BusinessTeamResponse,
-    BusinessTeamWithUsersResponse
+	BusinessTeamResponse,
+	BusinessTeamWithUsersResponse,
 } from '../schemas/dto/BusinessTeam/index.js';
+import {
+	toBusinessTeamResponse,
+	toBusinessTeamWithUsersResponse,
+	toBusinessTeamList,
+} from '../schemas/dto/BusinessTeam/businessTeam.mappers.js';
+import type { BusinessTeamWithUsersPrisma, BusinessTeamDefaultPrisma } from '../prisma/includes/businessTeam.js';
 
 const cropped_user_columns = {
 	first_name: true,
@@ -17,9 +23,9 @@ const cropped_user_columns = {
  */
 export async function createBusinessTeam(data: Record<string, any>): Promise<BusinessTeamResponse> {
 	try {
-		return await prisma.business_teams.create({
-			data,
-		});
+		const row = await prisma.business_teams.create({ data });
+
+		return toBusinessTeamResponse(row as BusinessTeamDefaultPrisma);
 	} catch (error) {
 		console.error('Error creating business team:', error);
 		throw error;
@@ -36,17 +42,13 @@ export async function updateBusinessTeam(data: Record<string, any> & { business_
 		if (!data.business_teams_id) {
 			throw new Error('business_teams_id is required for update');
 		}
-		return await prisma.business_teams.update({
-			where: {
-				business_teams_id: data.business_teams_id,
-			},
+		const row = await prisma.business_teams.update({
+			where: { business_teams_id: data.business_teams_id },
 			data,
-			include: {
-				users: {
-					select: cropped_user_columns,
-				},
-			},
+			include: { users: { select: cropped_user_columns } },
 		});
+
+		return toBusinessTeamWithUsersResponse(row as BusinessTeamWithUsersPrisma);
 	} catch (error) {
 		console.error('Error updating business team:', error);
 		throw error;
@@ -85,19 +87,13 @@ export async function addUserToTeam(business_teams_id: string, user_id: string):
 		}
 
 		// Connect user to business team using Prisma's connect
-		return await prisma.business_teams.update({
+		const row = await prisma.business_teams.update({
 			where: { business_teams_id },
-			data: {
-				users: {
-					connect: { user_id },
-				},
-			},
-			include: {
-				users: {
-					select: cropped_user_columns,
-				},
-			},
+			data: { users: { connect: { user_id } } },
+			include: { users: { select: cropped_user_columns } },
 		});
+
+		return toBusinessTeamWithUsersResponse(row as BusinessTeamWithUsersPrisma);
 	} catch (error) {
 		console.error('Error adding user to business team:', error);
 		throw error;
@@ -126,19 +122,13 @@ export async function removeUserFromTeam(user_id: string): Promise<BusinessTeamW
 		}
 
 		// Disconnect user from business team using Prisma's disconnect
-		return await prisma.business_teams.update({
+		const row = await prisma.business_teams.update({
 			where: { business_teams_id: user.business_teams_id },
-			data: {
-				users: {
-					disconnect: { user_id },
-				},
-			},
-			include: {
-				users: {
-					select: cropped_user_columns,
-				},
-			},
+			data: { users: { disconnect: { user_id } } },
+			include: { users: { select: cropped_user_columns } },
 		});
+
+		return toBusinessTeamWithUsersResponse(row as BusinessTeamWithUsersPrisma);
 	} catch (error) {
 		console.error('Error removing user from business team:', error);
 		throw error;
@@ -195,19 +185,13 @@ export async function moveUserToTeam(user_id: string, new_team_id: string): Prom
 			}
 
 			// Connect to new team
-			return await tx.business_teams.update({
+			const row = await tx.business_teams.update({
 				where: { business_teams_id: new_team_id },
-				data: {
-					users: {
-						connect: { user_id },
-					},
-				},
-				include: {
-					users: {
-						select: cropped_user_columns,
-					},
-				},
+				data: { users: { connect: { user_id } } },
+				include: { users: { select: cropped_user_columns } },
 			});
+
+			return toBusinessTeamWithUsersResponse(row as BusinessTeamWithUsersPrisma);
 		});
 	} catch (error) {
 		console.error('Error moving user to new team:', error);
@@ -226,16 +210,12 @@ export async function getBusinessTeamById(business_teams_id: string): Promise<Bu
 			throw new Error('business_teams_id is required');
 		}
 
-		return await prisma.business_teams.findUnique({
-			where: {
-				business_teams_id: business_teams_id,
-			},
-			include: {
-				users: {
-					select: cropped_user_columns,
-				},
-			},
+		const row = await prisma.business_teams.findUnique({
+			where: { business_teams_id: business_teams_id },
+			include: { users: { select: cropped_user_columns } },
 		});
+
+		return row ? toBusinessTeamWithUsersResponse(row as BusinessTeamWithUsersPrisma) : null;
 	} catch (error) {
 		console.error('Error fetching business team by ID:', error);
 		throw error;
@@ -253,16 +233,12 @@ export async function getBusinessTeamsForBusinessId(business_id: string): Promis
 			throw new Error('business_id is required');
 		}
 
-		return await prisma.business_teams.findMany({
-			where: {
-				business_id: business_id,
-			},
-			include: {
-				users: {
-					select: cropped_user_columns,
-				},
-			},
+		const rows = await prisma.business_teams.findMany({
+			where: { business_id: business_id },
+			include: { users: { select: cropped_user_columns } },
 		});
+
+		return toBusinessTeamList(rows as BusinessTeamWithUsersPrisma[]);
 	} catch (error) {
 		console.error('Error fetching business teams for business:', error);
 		throw error;
@@ -280,11 +256,9 @@ export async function deleteBusinessTeam(business_teams_id: string): Promise<Bus
 			throw new Error('business_teams_id is required');
 		}
 
-		return await prisma.business_teams.delete({
-			where: {
-				business_teams_id: business_teams_id,
-			},
-		});
+		const row = await prisma.business_teams.delete({ where: { business_teams_id: business_teams_id } });
+
+		return toBusinessTeamResponse(row as BusinessTeamDefaultPrisma);
 	} catch (error) {
 		console.error('Error deleting business team:', error);
 		throw error;

@@ -1,9 +1,14 @@
 import { Prisma } from '@prisma/client';
 
-import { menuDefault } from './menu.ts';
-export const getBusinessesInclude = {
+import { menuDefault } from './menu';
+export const getBusinessesInclude = Prisma.validator<Prisma.businessInclude>()({
 	address: true,
-	delivery_address: true,
+	business_details: {
+				include: {
+					logo: true,
+					banner: true,
+				},
+			},
 	business_users: {
 		include: {
 			users: {
@@ -16,7 +21,7 @@ export const getBusinessesInclude = {
 	},
 	parent_business: true,
 	child_businesses: true,
-} as const;
+} as const);
 
 export type BusinessFindManyArgs = Omit<Prisma.businessFindManyArgs, 'select' | 'include'> & {
 	include?: Partial<Prisma.businessInclude>;
@@ -27,6 +32,12 @@ export type GetBusinessesPrisma = Prisma.businessGetPayload<{
 }>;
 
 export const businessByIdInclude = Prisma.validator<Prisma.businessInclude>()({
+    business_details: {
+				include: {
+					logo: true,
+					banner: true,
+				},
+			},
 	address: true,
 	stores_module: {
 		include: {
@@ -36,18 +47,31 @@ export const businessByIdInclude = Prisma.validator<Prisma.businessInclude>()({
 				orderBy: { time: 'asc' },
 			},
 			...menuDefault,
-			logo: true,
-			banner: true,
+			business_details: {
+				include: {
+					logo: true,
+					banner: true,
+				},
+			},
 		},
 	},
 	business_users: { include: { users: true } },
-	reservation_module: { include: { logo: true, banner: true } },
+	reservation_module: { include: {business_details: {
+				include: {
+					logo: true,
+					banner: true,
+				},
+			}, } },
 	crm_module: { include: { business_clients: true } },
 	food_drinks_module: {
 		include: {
 			...menuDefault,
-			logo: true,
-			banner: true,
+			business_details: {
+				include: {
+					logo: true,
+					banner: true,
+				},
+			},
 		},
 	},
 	daily_meals_module: true,
@@ -58,16 +82,70 @@ export const businessByIdInclude = Prisma.validator<Prisma.businessInclude>()({
 					user: true,
 				},
 			},
-			logo: true,
-			banner: true,
+			business_details: {
+				include: {
+					logo: true,
+					banner: true,
+				},
+			},
 		},
 	},
 	transport_module: true,
 	parent_business: true,
 	child_businesses: true,
-	logo: true,
-	banner: true,
 });
+
+// Common include: address + business_users (with nested users)
+export const addressAndUsersInclude = Prisma.validator<Prisma.businessInclude>()({
+	address: true,
+	business_details: true,
+	business_users: {
+		include: {
+			users: true,
+		},
+	},
+} as const);
+
+export const addressInclude = Prisma.validator<Prisma.businessInclude>()({ address: true, business_details: true } as const);
+
+
+// Admin include used by getBusinessAdminDataById
+export const adminInclude = {
+	address: true,
+	business_details: true,
+	business_users: { include: { users: true } },
+	words: true,
+	promo: true,
+	parent_business: true,
+	child_businesses: true,
+} as const;
+
+// Select shape used for search endpoints
+export const businessSearchSelect = Prisma.validator<Prisma.businessSelect>()({
+	business_id: true,
+	business_details: { select: { name: true, description: true } },
+	email: true,
+	telephone: true,
+	website_url: true,
+	active: true,
+	address: true,
+} as const);
+
+export type BusinessWithAddressAndUsersPrisma = Prisma.businessGetPayload<{
+	include: typeof addressAndUsersInclude;
+}>;
+
+export type BusinessWithAddressPrisma = Prisma.businessGetPayload<{
+	include: typeof addressInclude;
+}>;
+
+export type BusinessAdminPrisma = Prisma.businessGetPayload<{
+	include: typeof adminInclude;
+}>;
+
+export type BusinessSearchSelectPrisma = Prisma.businessGetPayload<{
+	select: typeof businessSearchSelect;
+}>;
 
 // 3) Derive the runtime-accurate payload type (scalars + relations)
 export type BusinessByIdPrisma = Prisma.businessGetPayload<{

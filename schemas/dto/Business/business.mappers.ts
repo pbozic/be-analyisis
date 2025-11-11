@@ -1,158 +1,174 @@
 import {
-	BusinessResponseDto,
-	BusinessByIdResponseSchema,
-	BusinessWithIncludesResponseDto,
-	BusinessWithAddressAndUsersResponseDto,
-	BusinessSearchResponseDto,
+    BusinessResponseDto,
+    BusinessByIdResponseSchema,
+    BusinessWithIncludesResponseDto,
+    BusinessWithAddressAndUsersResponseDto,
+    BusinessSearchResponseDto,
 } from './business.dto.js';
 import { BusinessAdminResponseSchema } from './business.js';
 import type { BusinessWithAllModulesResponseDto, BusinessResponseDto as BusinessResponseType } from './business.dto.js';
-import type { GetBusinessesPrisma, BusinessByIdPrisma } from '../../../prisma/includes/business.ts';
+import type {
+    GetBusinessesPrisma,
+    BusinessByIdPrisma,
+    BusinessWithAddressAndUsersPrisma,
+    BusinessSearchSelectPrisma,
+    BusinessAdminPrisma,
+} from '../../../prisma/includes/business.ts';
 import { BusinessWithDailyMealsResponseDto } from './business.dto.js';
 import type { BusinessWithDailyMealsResponseDto as BusinessWithDailyMealsResponseType } from './business.dto.js';
 
 // Map a lightweight GetBusinessesPrisma payload to the public BusinessResponseDto
 export function toGetBusinessResponse(row: GetBusinessesPrisma): BusinessResponseType {
-	const r = row as any;
+	const r = row as GetBusinessesPrisma;
+	const asRec = r as Record<string, any>;
+
+	const businessDetails = asRec.business_details ?? { name: asRec.name ?? null, description: asRec.description ?? null };
+
 	return BusinessResponseDto.parse({
 		business_id: r.business_id,
-		name: r.business_details?.name ?? r.name,
-		description: r.business_details?.description ?? r.description,
-		tax_id: r.tax_id,
-		registration_id: r.registration_id,
-		email: r.email,
-		telephone: r.telephone,
-		telephone_code: r.telephone_code,
-		website_url: r.website_url,
-		working_hours: r.working_hours,
-		is_business_unit: r.is_business_unit,
-		business_group_name: r.business_group_name,
-		parent_business_id: r.parent_business_id,
-		stripe_account_id: r.stripe_account_id,
-		stripe_customer_id: r.stripe_customer_id,
-		word_buy_stripe_subscription_id: r.word_buy_stripe_subscription_id,
-		first_activated_at: r.first_activated_at ? new Date(r.first_activated_at).toISOString() : undefined,
-		active: r.active,
-		sales_representative_id: r.sales_representative_id,
-		address_id: r.address_id,
-		created_at: r.created_at ? new Date(r.created_at).toISOString() : undefined,
-		updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
-		food_drinks_id: r.food_drinks_id ?? null,
-		transport_module_id: r.transport_module_id ?? null,
-		reservation_module_id: r.reservation_module_id ?? null,
-		stores_id: r.stores_id ?? null,
+		business_details: businessDetails,
+		tax_id: asRec.tax_id ?? null,
+		registration_id: asRec.registration_id ?? null,
+		email: asRec.email ?? null,
+		telephone: asRec.telephone ?? null,
+		telephone_code: asRec.telephone_code ?? null,
+		website_url: asRec.website_url ?? null,
+		working_hours: asRec.working_hours ?? null,
+		is_business_unit: asRec.is_business_unit ?? null,
+		business_group_name: asRec.business_group_name ?? null,
+		parent_business_id: asRec.parent_business_id ?? null,
+		stripe_account_id: asRec.stripe_account_id ?? null,
+		stripe_customer_id: asRec.stripe_customer_id ?? null,
+		word_buy_stripe_subscription_id: asRec.word_buy_stripe_subscription_id ?? null,
+		first_activated_at: asRec.first_activated_at ? new Date(asRec.first_activated_at).toISOString() : undefined,
+		active: asRec.active ?? null,
+		sales_representative_id: asRec.sales_representative_id ?? null,
+		address_id: asRec.address_id ?? null,
+		created_at: asRec.created_at ? new Date(asRec.created_at).toISOString() : undefined,
+		updated_at: asRec.updated_at ? new Date(asRec.updated_at).toISOString() : undefined,
+		food_drinks_id: asRec.food_drinks_id ?? null,
+		transport_module_id: asRec.transport_module_id ?? null,
+		reservation_module_id: asRec.reservation_module_id ?? null,
+		stores_id: asRec.stores_id ?? null,
 	});
 }
 
 // Map GetBusinessesPrisma payload to the BusinessWithIncludesResponseDto (keeps included relations)
 export function toBusinessWithIncludesResponse(row: GetBusinessesPrisma) {
-	const r: any = row;
+	const r = row as GetBusinessesPrisma;
+	const asRec = r as Record<string, any>;
+
+	const businessDetails = asRec.business_details ?? { name: asRec.name ?? null, description: asRec.description ?? null };
+
 	return BusinessWithIncludesResponseDto.parse({
 		business_id: r.business_id,
-		name: r.business_details?.name ?? r.name,
-		description: r.business_details?.description ?? r.description,
-		tax_id: r.tax_id,
-		registration_id: r.registration_id,
-		email: r.email,
-		telephone: r.telephone,
-		telephone_code: r.telephone_code,
-		website_url: r.website_url,
-		working_hours: r.working_hours,
-		is_business_unit: r.is_business_unit,
-		business_group_name: r.business_group_name,
-		parent_business_id: r.parent_business_id,
-		stripe_account_id: r.stripe_account_id,
-		stripe_customer_id: r.stripe_customer_id,
-		word_buy_stripe_subscription_id: r.word_buy_stripe_subscription_id,
-		first_activated_at: r.first_activated_at ? new Date(r.first_activated_at).toISOString() : undefined,
-		active: r.active,
-		sales_representative_id: r.sales_representative_id,
-		address_id: r.address_id,
-		created_at: r.created_at ? new Date(r.created_at).toISOString() : undefined,
-		updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
-		food_drinks_id: r.food_drinks_id ?? null,
-		transport_module_id: r.transport_module_id ?? null,
-		reservation_module_id: r.reservation_module_id ?? null,
-		stores_id: r.stores_id ?? null,
+		business_details: businessDetails,
+		tax_id: asRec.tax_id ?? null,
+		registration_id: asRec.registration_id ?? null,
+		email: asRec.email ?? null,
+		telephone: asRec.telephone ?? null,
+		telephone_code: asRec.telephone_code ?? null,
+		website_url: asRec.website_url ?? null,
+		working_hours: asRec.working_hours ?? null,
+		is_business_unit: asRec.is_business_unit ?? null,
+		business_group_name: asRec.business_group_name ?? null,
+		parent_business_id: asRec.parent_business_id ?? null,
+		stripe_account_id: asRec.stripe_account_id ?? null,
+		stripe_customer_id: asRec.stripe_customer_id ?? null,
+		word_buy_stripe_subscription_id: asRec.word_buy_stripe_subscription_id ?? null,
+		first_activated_at: asRec.first_activated_at ? new Date(asRec.first_activated_at).toISOString() : undefined,
+		active: asRec.active ?? null,
+		sales_representative_id: asRec.sales_representative_id ?? null,
+		address_id: asRec.address_id ?? null,
+		created_at: asRec.created_at ? new Date(asRec.created_at).toISOString() : undefined,
+		updated_at: asRec.updated_at ? new Date(asRec.updated_at).toISOString() : undefined,
+		food_drinks_id: asRec.food_drinks_id ?? null,
+		transport_module_id: asRec.transport_module_id ?? null,
+		reservation_module_id: asRec.reservation_module_id ?? null,
+		stores_id: asRec.stores_id ?? null,
 		// includes
-		address: r.address,
-		delivery_address: r.delivery_address,
-		business_users: r.business_users,
-		parent_business: r.parent_business,
-		child_businesses: r.child_businesses,
+		address: asRec.address,
+		delivery_address: asRec.delivery_address,
+		business_users: asRec.business_users,
+		parent_business: asRec.parent_business,
+		child_businesses: asRec.child_businesses,
 	});
 }
 
 // Map a payload that includes address & business_users to the matching DTO
-export function toBusinessWithAddressAndUsersResponse(row: any) {
-	const r: any = row;
+export function toBusinessWithAddressAndUsersResponse(row: BusinessWithAddressAndUsersPrisma) {
+	const r = row as BusinessWithAddressAndUsersPrisma;
+	const asRec = r as Record<string, any>;
+
+
 	return BusinessWithAddressAndUsersResponseDto.parse({
 		business_id: r.business_id,
-		name: r.business_details?.name ?? r.name,
-		description: r.business_details?.description ?? r.description,
-		tax_id: r.tax_id,
-		registration_id: r.registration_id,
-		email: r.email,
-		telephone: r.telephone,
-		telephone_code: r.telephone_code,
-		website_url: r.website_url,
-		working_hours: r.working_hours,
-		is_business_unit: r.is_business_unit,
-		business_group_name: r.business_group_name,
-		parent_business_id: r.parent_business_id,
-		stripe_account_id: r.stripe_account_id,
-		stripe_customer_id: r.stripe_customer_id,
-		word_buy_stripe_subscription_id: r.word_buy_stripe_subscription_id,
-		first_activated_at: r.first_activated_at ? new Date(r.first_activated_at).toISOString() : undefined,
-		active: r.active,
-		sales_representative_id: r.sales_representative_id,
-		address_id: r.address_id,
-		created_at: r.created_at ? new Date(r.created_at).toISOString() : undefined,
-		updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
-		food_drinks_id: r.food_drinks_id ?? null,
-		transport_module_id: r.transport_module_id ?? null,
-		reservation_module_id: r.reservation_module_id ?? null,
-		stores_id: r.stores_id ?? null,
-		address: r.address,
-		delivery_address: r.delivery_address,
-		business_users: r.business_users,
-		parent_business: r.parent_business,
-		child_businesses: r.child_businesses,
+		business_details: asRec.business_details ?? { name: asRec.name ?? null, description: asRec.description ?? null },
+		tax_id: asRec.tax_id ?? null,
+		registration_id: asRec.registration_id ?? null,
+		email: asRec.email ?? null,
+		telephone: asRec.telephone ?? null,
+		telephone_code: asRec.telephone_code ?? null,
+		website_url: asRec.website_url ?? null,
+		working_hours: asRec.working_hours ?? null,
+		is_business_unit: asRec.is_business_unit ?? null,
+		business_group_name: asRec.business_group_name ?? null,
+		parent_business_id: asRec.parent_business_id ?? null,
+		stripe_account_id: asRec.stripe_account_id ?? null,
+		stripe_customer_id: asRec.stripe_customer_id ?? null,
+		word_buy_stripe_subscription_id: asRec.word_buy_stripe_subscription_id ?? null,
+		first_activated_at: asRec.first_activated_at ? new Date(asRec.first_activated_at).toISOString() : undefined,
+		active: asRec.active ?? null,
+		sales_representative_id: asRec.sales_representative_id ?? null,
+		address_id: asRec.address_id ?? null,
+		created_at: asRec.created_at ? new Date(asRec.created_at).toISOString() : undefined,
+		updated_at: asRec.updated_at ? new Date(asRec.updated_at).toISOString() : undefined,
+		food_drinks_id: asRec.food_drinks_id ?? null,
+		transport_module_id: asRec.transport_module_id ?? null,
+		reservation_module_id: asRec.reservation_module_id ?? null,
+		stores_id: asRec.stores_id ?? null,
+		address: asRec.address,
+		delivery_address: asRec.delivery_address,
+		business_users: asRec.business_users,
+		parent_business: asRec.parent_business,
+		child_businesses: asRec.child_businesses,
 	});
 }
 
 // Map a select-based search payload into BusinessSearchResponseDto
-export function toBusinessSearchResponse(row: any) {
-	const r: any = row;
+export function toBusinessSearchResponse(row: BusinessSearchSelectPrisma) {
+	const r = row as BusinessSearchSelectPrisma;
+	const asRec = r as Record<string, any>;
+
 	return BusinessSearchResponseDto.parse({
 		business_id: r.business_id,
-		name: r.name,
-		description: r.description,
-		email: r.email,
-		telephone: r.telephone,
-		website_url: r.website_url,
-		active: r.active,
-		popular: r.popular,
-		new: r.new,
-		address: r.address,
+		business_details: asRec.business_details ?? { name: asRec.name ?? null, description: asRec.description ?? null },
+		email: asRec.email ?? null,
+		telephone: asRec.telephone ?? null,
+		website_url: asRec.website_url ?? null,
+		active: asRec.active ?? null,
+		popular: asRec.popular ?? null,
+		new: asRec.new ?? null,
+		address: asRec.address ?? null,
 	});
 }
 
 // Map admin-focused payloads to BusinessAdminResponseSchema
-export function toBusinessAdminResponse(row: any) {
-	const r: any = row;
+export function toBusinessAdminResponse(row: BusinessAdminPrisma) {
 	// Reuse legacy schema for admin response validation
-	return BusinessAdminResponseSchema.parse(r);
+	return BusinessAdminResponseSchema.parse(row);
 }
 
 // Map a rich BusinessByIdPrisma payload to the BusinessByIdResponse schema
 export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAllModulesResponseDto {
-	const r = row as any;
+	const r = row as BusinessByIdPrisma;
+	const asRec = r as Record<string, any>;
+	const businessDetails = asRec.business_details ?? { name: asRec.name ?? null, description: asRec.description ?? null };
+
 	return BusinessByIdResponseSchema.parse({
 		// Base business fields
 		business_id: r.business_id,
-		name: r.business_details?.name ?? r.name,
-		description: r.business_details?.description ?? r.description,
+		business_details: businessDetails,
 		tax_id: r.tax_id,
 		registration_id: r.registration_id,
 		email: r.email,
@@ -177,9 +193,11 @@ export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAll
 		transport_module: r.transport_module,
 		transport_module_id: r.transport_module?.transport_module_id,
 		food_drinks_module: r.food_drinks_module,
-		food_drinks_module_id: r.food_drinks_module?.food_drinks_module_id,
+		food_drinks_module_id:
+			(asRec.food_drinks_module && (asRec.food_drinks_module.food_drinks_module_id ?? asRec.food_drinks_module.food_drinks_id)) ?? asRec.food_drinks_id ?? null,
 		stores_module: r.stores_module,
-		stores_module_id: r.stores_module?.stores_module_id,
+		stores_module_id:
+			(asRec.stores_module && (asRec.stores_module.stores_module_id ?? asRec.stores_module.stores_id)) ?? asRec.stores_id ?? null,
 		reservation_module: r.reservation_module,
 		reservation_module_id: r.reservation_module?.reservation_module_id,
 		table_reservations_module: r.table_reservations_module,
@@ -220,11 +238,12 @@ export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAll
 }
 
 // Mapper that validates businesses with daily meals module
-export function parseBusinessWithDailyMeals(business: any): BusinessWithDailyMealsResponseType {
+export function parseBusinessWithDailyMeals(business: BusinessByIdPrisma): BusinessWithDailyMealsResponseType {
 	// Build DTO shape expected by the schema
+	const asRec = business as Record<string, any>;
 	const dto = {
-		...business,
-		daily_meal_drivers: business?.daily_meals_module?.daily_meal_drivers ?? [],
+		...asRec,
+		daily_meal_drivers: asRec.daily_meals_module?.daily_meal_drivers ?? [],
 	};
 	return BusinessWithDailyMealsResponseDto.parse(dto);
 }
