@@ -1,13 +1,17 @@
 import prisma from '../../prisma/prisma';
-import type { CreateBookingSlotInput, UpdateBookingSlotSchemaInput } from '../../types/reservations/Schedule';
-import { BookingSlot } from '../../types/reservations/BookingSlot';
+import type {
+	CreateBookingSlotRequest,
+	UpdateBookingSlotRequest,
+	BookingSlotResponse,
+} from '../../schemas/dto/reservations/booking-slot/booking-slot.dto';
+// Note: keeping conversions inline per request (no shared mapper file)
 /**
  * Retrieves all booking slots for a given schedule slot ID.
  * @param {string} scheduleSlotId - The schedule slot ID.
- * @returns {Promise<BookingSlot[]>} A promise that resolves to an array of booking slot records.
+ * @returns {Promise<BookingSlotResponse[]>} A promise that resolves to an array of booking slot responses.
  * @throws {Error} If there is an error retrieving the booking slots.
  */
-export async function getBookingSlotsByScheduleSlotId(scheduleSlotId: string): Promise<BookingSlot[]> {
+export async function getBookingSlotsByScheduleSlotId(scheduleSlotId: string): Promise<BookingSlotResponse[]> {
 	try {
 		const records = await prisma.booking_slots.findMany({
 			where: { schedule_slot_id: scheduleSlotId },
@@ -20,11 +24,11 @@ export async function getBookingSlotsByScheduleSlotId(scheduleSlotId: string): P
 
 /**
  * Creates a new booking slot.
- * @param {CreateBookingSlotInput} data - The data for the new booking slot.
- * @returns {Promise<BookingSlot>} A promise that resolves to the created booking slot record.
+ * @param {CreateBookingSlotRequest} data - The data for the new booking slot.
+ * @returns {Promise<BookingSlotResponse>} A promise that resolves to the created booking slot response.
  * @throws {Error} If there is an error creating the booking slot.
  */
-export async function createBookingSlot(data: CreateBookingSlotInput): Promise<BookingSlot> {
+export async function createBookingSlot(data: CreateBookingSlotRequest): Promise<BookingSlotResponse> {
 	try {
 		const record = await prisma.booking_slots.create({
 			data: {
@@ -42,11 +46,11 @@ export async function createBookingSlot(data: CreateBookingSlotInput): Promise<B
 /**
  * Updates an existing booking slot.
  * @param {string} id - The ID of the booking slot to update.
- * @param {UpdateBookingSlotSchemaInput} data - The data to update.
- * @returns {Promise<BookingSlot>} A promise that resolves to the updated record.
+ * @param {UpdateBookingSlotRequest} data - The data to update.
+ * @returns {Promise<BookingSlotResponse>} A promise that resolves to the updated booking slot response.
  * @throws {Error} If there is an error updating the booking slot.
  */
-export async function updateBookingSlot(id: string, data: UpdateBookingSlotSchemaInput): Promise<BookingSlot> {
+export async function updateBookingSlot(id: string, data: UpdateBookingSlotRequest): Promise<BookingSlotResponse> {
 	try {
 		const record = await prisma.booking_slots.update({
 			where: { booking_slot_id: id },
@@ -81,10 +85,10 @@ export async function deleteBookingSlot(id: string): Promise<void> {
 /**
  * Retrieves a booking slot by ID.
  * @param {string} id - The ID of the booking slot.
- * @returns {Promise<BookingSlot | null>} A promise that resolves to the booking slot record or null.
+ * @returns {Promise<BookingSlotResponse | null>} A promise that resolves to the booking slot response or null.
  * @throws {Error} If there is an error retrieving the booking slot.
  */
-export async function getBookingSlotById(id: string): Promise<BookingSlot | null> {
+export async function getBookingSlotById(id: string): Promise<BookingSlotResponse | null> {
 	try {
 		const record = await prisma.booking_slots.findUnique({
 			where: { booking_slot_id: id },

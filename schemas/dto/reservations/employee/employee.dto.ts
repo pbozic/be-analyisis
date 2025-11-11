@@ -7,6 +7,8 @@ import { ScheduleSlotRefSchema } from '../schedule-slot/schedule-slot.dto.js';
 import { ScheduleEmployeeRefSchema } from '../schedule-employee/schedule-employee.dto.js';
 import { ScheduleDetailSchema } from '../schedule/schedule.dto.js';
 import { BusinessUserDetailSchema } from '../../Business/index.js';
+import { BookingSlotBaseSchema } from '../booking-slot/booking-slot.dto.js';
+import { ScheduleSlotExceptionBaseSchema } from '../schedule-slot-exception/schedule-slot-exception.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -162,8 +164,8 @@ export const EmployeeScheduleSlotsDAOResponseSchema = EmployeeBaseSchema.extend(
 		.array(
 			z.object({
 				schedule_slot_id: UUID,
-				schedule_slot_exceptions: z.array(z.object({ start_time: Timestamp })).optional(),
-				booking_slots: z.array(z.object({ start_time: Timestamp })).optional(),
+				schedule_slot_exceptions: z.array(ScheduleSlotExceptionBaseSchema).optional(),
+				booking_slots: z.array(BookingSlotBaseSchema).optional(),
 			})
 		)
 		.optional(),
@@ -185,6 +187,11 @@ export type EmployeeDAOResponse = z.infer<typeof EmployeeDAOResponseSchema>;
 export type EmployeeByIdDAOResponse = z.infer<typeof EmployeeByIdDAOResponseSchema>;
 export type EmployeeWithSlotsDAOResponse = z.infer<typeof EmployeeWithSlotsDAOResponseSchema>;
 export type EmployeeScheduleSlotsDAOResponse = z.infer<typeof EmployeeScheduleSlotsDAOResponseSchema>;
+
+// ===== NESTED TYPES (extracted from EmployeeScheduleSlotsDAOResponse) =====
+export type ScheduleSlotWithBookingsAndExceptions = NonNullable<
+	EmployeeScheduleSlotsDAOResponse['schedule_slots']
+>[number];
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {

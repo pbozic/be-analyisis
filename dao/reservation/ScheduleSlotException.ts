@@ -1,17 +1,17 @@
 import prisma from '../../prisma/prisma';
 import type {
-	CreateScheduleSlotExceptionInput,
-	UpdateScheduleSlotExceptionInput,
-} from '../../types/reservations/Schedule.ts';
-import { ScheduleSlotException } from '../../types/reservations/ScheduleSlotException.ts';
+	CreateScheduleSlotExceptionRequest,
+	UpdateScheduleSlotExceptionRequest,
+	ScheduleSlotExceptionResponse,
+} from '../../schemas/dto/reservations/schedule-slot-exception/schedule-slot-exception.dto.js';
 
 /**
  * Retrieves all exceptions for a given schedule slot ID.
  * @param {string} scheduleSlotId - The schedule slot ID.
- * @returns {Promise<ScheduleSlotException[]>} A promise that resolves to an array of exception records.
+ * @returns {Promise<ScheduleSlotExceptionResponse[]>} A promise that resolves to an array of exception records.
  * @throws {Error} If there is an error retrieving the exceptions.
  */
-export async function getExceptionsByScheduleSlotId(scheduleSlotId: string): Promise<ScheduleSlotException[]> {
+export async function getExceptionsByScheduleSlotId(scheduleSlotId: string): Promise<ScheduleSlotExceptionResponse[]> {
 	try {
 		const records = await prisma.schedule_slot_exceptions.findMany({
 			where: { schedule_slot_id: scheduleSlotId },
@@ -24,13 +24,13 @@ export async function getExceptionsByScheduleSlotId(scheduleSlotId: string): Pro
 
 /**
  * Creates a new schedule slot exception.
- * @param {CreateScheduleSlotExceptionInput} data - The data for the new exception.
- * @returns {Promise<ScheduleSlotException>} A promise that resolves to the created exception record.
+ * @param {CreateScheduleSlotExceptionRequest} data - The data for the new exception.
+ * @returns {Promise<ScheduleSlotExceptionResponse>} A promise that resolves to the created exception record.
  * @throws {Error} If there is an error creating the exception.
  */
 export async function createScheduleSlotException(
-	data: CreateScheduleSlotExceptionInput
-): Promise<ScheduleSlotException> {
+	data: CreateScheduleSlotExceptionRequest
+): Promise<ScheduleSlotExceptionResponse> {
 	try {
 		const record = await prisma.schedule_slot_exceptions.create({
 			data: {
@@ -51,14 +51,14 @@ export async function createScheduleSlotException(
 /**
  * Updates an existing schedule slot exception.
  * @param {string} id - The ID of the exception to update.
- * @param {UpdateScheduleSlotExceptionInput} data - The data to update the exception with.
- * @returns {Promise<ScheduleSlotException>} A promise that resolves to the updated exception.
+ * @param {UpdateScheduleSlotExceptionRequest} data - The data to update the exception with.
+ * @returns {Promise<ScheduleSlotExceptionResponse>} A promise that resolves to the updated exception.
  * @throws {Error} If there is an error updating the exception.
  */
 export async function updateScheduleSlotException(
 	id: string,
-	data: UpdateScheduleSlotExceptionInput
-): Promise<ScheduleSlotException> {
+	data: UpdateScheduleSlotExceptionRequest
+): Promise<ScheduleSlotExceptionResponse> {
 	try {
 		const record = await prisma.schedule_slot_exceptions.update({
 			where: { schedule_slot_exception_id: id },
@@ -96,10 +96,10 @@ export async function deleteScheduleSlotException(id: string): Promise<void> {
 /**
  * Retrieves a schedule slot exception by ID.
  * @param {string} id - The ID of the exception.
- * @returns {Promise<ScheduleSlotException | null>} A promise that resolves to the exception record or null.
+ * @returns {Promise<ScheduleSlotExceptionResponse | null>} A promise that resolves to the exception record or null.
  * @throws {Error} If there is an error retrieving the exception.
  */
-export async function getScheduleSlotExceptionById(id: string): Promise<ScheduleSlotException | null> {
+export async function getScheduleSlotExceptionById(id: string): Promise<ScheduleSlotExceptionResponse | null> {
 	try {
 		const record = await prisma.schedule_slot_exceptions.findUnique({
 			where: { schedule_slot_exception_id: id },

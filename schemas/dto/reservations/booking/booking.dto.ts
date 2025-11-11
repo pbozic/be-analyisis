@@ -206,6 +206,19 @@ export const CreateBookingRequestSchema = z
 		description: 'Request schema for creating a new booking',
 	});
 
+// ===== SINGLE BOOKING REQUEST SCHEMA =====
+// Used for individual booking creation within a group (created from array)
+export const CreateBookingSingleRequestSchema = CreateBookingRequestSchema.omit({ service_ids: true })
+	.extend({
+		service_id: UUID,
+		parent_booking_id: UUID.optional(),
+	})
+	.openapi({
+		title: 'CreateBookingSingleRequest',
+		description:
+			'Request schema for creating a single booking (with service_id instead of service_ids, used for group bookings)',
+	});
+
 export const UpdateBookingRequestSchema = z
 	.object({
 		booking_id: UUID.optional(),
@@ -644,6 +657,7 @@ export type BookingBase = z.infer<typeof BookingBaseSchema>;
 export type BookingRef = z.infer<typeof BookingRefSchema>;
 export type BookingWithRelations = z.infer<typeof BookingWithRelationsSchema>;
 export type CreateBookingRequest = z.infer<typeof CreateBookingRequestSchema>;
+export type CreateBookingSingleRequest = z.infer<typeof CreateBookingSingleRequestSchema>;
 export type UpdateBookingRequest = z.infer<typeof UpdateBookingRequestSchema>;
 export type DeleteBookingRequest = z.infer<typeof DeleteBookingRequestSchema>;
 export type BookingResponse = z.infer<typeof BookingResponseSchema>;
@@ -676,6 +690,7 @@ export type UpdateMultipleBookingsRequest = z.infer<typeof UpdateMultipleBooking
 export function registerSchemas(registry: OpenAPIRegistry) {
 	// Register request schemas
 	registry.register('CreateBooking', CreateBookingRequestSchema);
+	registry.register('CreateSingleBooking', CreateBookingSingleRequestSchema);
 	registry.register('UpdateBooking', UpdateBookingRequestSchema);
 	registry.register('DeleteBooking', DeleteBookingRequestSchema);
 	registry.register('ListBookingsParams', ListBookingsParamsSchema);

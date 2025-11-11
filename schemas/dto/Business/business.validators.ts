@@ -64,6 +64,45 @@ export const AddScheduledUserSortingTypeSchema = z
 	.openapi('AddScheduledUserSortingType');
 export type AddScheduledUserSortingTypeInput = z.infer<typeof AddScheduledUserSortingTypeSchema>;
 
+// =======================
+// Get Business Earnings - GET /business/earnings/:business_id
+// =======================
+export const GetBusinessEarningsParamsSchema = z
+	.object({
+		business_id: UUID,
+	})
+	.openapi('GetBusinessEarningsParams');
+export type GetBusinessEarningsParamsInput = z.infer<typeof GetBusinessEarningsParamsSchema>;
+
+export const GetBusinessEarningsQuerySchema = z
+	.object({
+		start_date: z.string().min(1),
+		end_date: z.string().min(1),
+	})
+	.openapi('GetBusinessEarningsQuery');
+export type GetBusinessEarningsQueryInput = z.infer<typeof GetBusinessEarningsQuerySchema>;
+
+// =======================
+// Get All Businesses Earnings - GET /business/earnings/all
+// =======================
+export const GetAllBusinessesEarningsQuerySchema = z
+	.object({
+		start_date: z.string().min(1),
+		end_date: z.string().min(1),
+	})
+	.openapi('GetAllBusinessesEarningsQuery');
+export type GetAllBusinessesEarningsQueryInput = z.infer<typeof GetAllBusinessesEarningsQuerySchema>;
+
+// =======================
+// Get Business Total Earnings - GET /business/earnings/:business_id/total
+// =======================
+export const GetBusinessTotalEarningsParamsSchema = z
+	.object({
+		business_id: UUID,
+	})
+	.openapi('GetBusinessTotalEarningsParams');
+export type GetBusinessTotalEarningsParamsInput = z.infer<typeof GetBusinessTotalEarningsParamsSchema>;
+
 export const UpdateBusinessSchema = UpdateBusinessSchemaType.omit({ tax_id: true, registration_id: true });
 export type UpdateBusinessInput = z.infer<typeof UpdateBusinessSchema>;
 
@@ -251,24 +290,73 @@ export const CreateBusinessSchema = z
 	.openapi('CreateBusiness');
 export type CreateBusinessInput = z.infer<typeof CreateBusinessSchema>;
 
-// Legacy wrapper removed: this file is now the authoritative source for Business validators.
-// Any legacy code should be moved here and imports updated to point to this file.
+// =======================
+// Search Businesses by Name - GET /businesses/search?search=
+// =======================
+export const SearchBusinessesByNameSchema = z
+	.object({
+		search: z.string().min(1),
+	})
+	.openapi('SearchBusinessesByName');
+export type SearchBusinessesByNameInput = z.infer<typeof SearchBusinessesByNameSchema>;
 
-// Register common validator schemas for OpenAPI
+// =======================
+// Search Businesses by Group Name - GET /business/business_group_name/:search
+// =======================
+export const SearchBusinessesByGroupNameParamsSchema = z
+	.object({
+		search: z.string().min(1),
+	})
+	.openapi('SearchBusinessesByGroupNameParams');
+export type SearchBusinessesByGroupNameParamsInput = z.infer<typeof SearchBusinessesByGroupNameParamsSchema>;
+
+// =======================
+// Create Payment Intent - POST /business/paymentIntent
+// =======================
+export const CreatePaymentIntentSchema = z
+	.object({
+		amount: z.number().positive(),
+		payment_method: z.string(),
+		user_id: UUID,
+	})
+	.openapi('CreatePaymentIntent');
+export type CreatePaymentIntentInput = z.infer<typeof CreatePaymentIntentSchema>;
+
 export function registerSchemas(registry: OpenAPIRegistry) {
-	// Register schemas defined in this file
-	if (CreateBusinessSchema) registry.register('CreateBusiness', CreateBusinessSchema);
-	if (UpdateBusinessSchema) registry.register('UpdateBusiness', UpdateBusinessSchema);
-	if (BusinessIdParamsSchema) registry.register('BusinessIdParams', BusinessIdParamsSchema);
-	if (SetBusinessTypesSchema) registry.register('SetBusinessTypes', SetBusinessTypesSchema);
-	if (GetBusinessesSchema) registry.register('GetBusinesses', GetBusinessesSchema);
+	// Register request schemas
+	registry.register('CreateBusiness', CreateBusinessSchema);
+	registry.register('UpdateBusiness', UpdateBusinessSchema);
+	registry.register('SearchBusinessesByName', SearchBusinessesByNameSchema);
+	registry.register('CreatePaymentIntent', CreatePaymentIntentSchema);
+	registry.register('SetBusinessTypes', SetBusinessTypesSchema);
+	registry.register('GetBusinesses', GetBusinessesSchema);
+	registry.register('AddBusinessToFavorites', AddBusinessToFavoritesSchema);
+	registry.register('RemoveBusinessFromFavorites', RemoveBusinessFromFavoritesSchema);
+	registry.register('ManualSortScheduledUsers', ManualSortScheduledUsersSchema);
+	registry.register('AddScheduledUserSortingType', AddScheduledUserSortingTypeSchema);
+	registry.register('GetBusinessEarningsParams', GetBusinessEarningsParamsSchema);
+	registry.register('GetBusinessEarningsQuery', GetBusinessEarningsQuerySchema);
+	registry.register('GetAllBusinessesEarningsQuery', GetAllBusinessesEarningsQuerySchema);
+	registry.register('GetBusinessTotalEarningsParams', GetBusinessTotalEarningsParamsSchema);
+	registry.register('UpdateBusinessType', UpdateBusinessTypeSchema);
+	registry.register('UpdateIsBusinessUnit', UpdateIsBusinessUnitSchema);
+	registry.register('UpdateBusinessGroupName', UpdateBusinessGroupNameSchema);
+	registry.register('UpdateBusinessEmail', UpdateBusinessEmailSchema);
+	registry.register('UpdateBusinessTelephone', UpdateBusinessTelephoneSchema);
+	registry.register('UpdateBusinessWorkingHours', UpdateBusinessWorkingHoursSchema);
+	registry.register('UpdateBusinessIsNew', UpdateBusinessIsNewSchema);
+	registry.register('UpdateBusinessIsPopular', UpdateBusinessIsPopularSchema);
+	registry.register('UpdateParentBusinessId', UpdateParentBusinessIdSchema);
+	registry.register('CreateScoringPoints', CreateScoringPointsSchema);
+	registry.register('CreateBusinessLocalLocation', CreateBusinessLocalLocationSchema);
+	registry.register('UpdateBusinessLocalLocation', UpdateBusinessLocalLocationSchema);
+	registry.register('GetBusinessOverallAnalytics', GetBusinessAnalyticsSchema);
+	registry.register('ToggleTransportModule', ToggleTransportModuleSchema);
+	registry.register('GetBusinessForSearch', GetBusinessForSearchSchema);
+	registry.register('CreatePaymentIntent', CreatePaymentIntentSchema);
 
-	// Also register any schemas exported from the legacy file for full coverage
-
-	const bv = require('./Business.validation.js');
-	if (bv?.CreateBusinessSchema) registry.register('CreateBusiness', bv.CreateBusinessSchema);
-	if (bv?.UpdateBusinessSchema) registry.register('UpdateBusiness', bv.UpdateBusinessSchema);
-	if (bv?.BusinessIdParamsSchema) registry.register('BusinessIdParams', bv.BusinessIdParamsSchema);
-	if (bv?.SetBusinessTypesSchema) registry.register('SetBusinessTypes', bv.SetBusinessTypesSchema);
-	if (bv?.GetBusinessesSchema) registry.register('GetBusinesses', bv.GetBusinessesSchema);
+	// Register parameter schemas
+	registry.register('BusinessIdParams', BusinessIdParamsSchema);
+	registry.register('ParentBusinessIdParams', ParentBusinessIdParamsSchema);
+	registry.register('SearchBusinessesByGroupNameParams', SearchBusinessesByGroupNameParamsSchema);
 }

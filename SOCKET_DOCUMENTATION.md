@@ -311,7 +311,7 @@ Used by SocketStore for persistence and cluster coordination:
 - `screens/TaxiRide.js` — Join order rooms for active/selected orders
 - `screens/SetLocationViaMapTransfer.js` — Join order rooms for active/selected orders
 - `screens/ReceiptDelivery.js` — Joins delivery order room to show live updates
-- `screens/TableReservation.js` — Joins `reservation_<id>` on create
+- `screens/TableReservation.ts` — Joins `reservation_<id>` on create
 - `screens/BookingTaxi.js` — Booking flows that join order/reservation rooms
 - `screens/BookingTransfer.js` — Booking flows that join order/reservation rooms
 
@@ -726,7 +726,7 @@ List compiled from `socket/SocketProvider.js`:
 - `screens/TaxiRide.js` — Join order rooms for active/selected orders
 - `screens/SetLocationViaMapTransfer.js` — Join order rooms for active/selected orders
 - `screens/ReceiptDelivery.js` — Joins delivery order room to show live updates
-- `screens/TableReservation.js` — Joins reservation room on create
+- `screens/TableReservation.ts` — Joins reservation room on create
 - `screens/BookingTaxi.js` — Booking flows that join order/reservation rooms
 - `screens/BookingTransfer.js` — Booking flows that join order/reservation rooms
 
