@@ -30,6 +30,13 @@ export const bookingWithCourseDetails = Prisma.validator<Prisma.bookingInclude>(
 	},
 } as const);
 
+export const bookingCoursesSimple = Prisma.validator<Prisma.bookingInclude>()({
+	employee: { include: employeeBase },
+	service: true,
+	location: true,
+	booking_course_time: { orderBy: { start_time: 'asc' } },
+} as const);
+
 // ===== PRISMA PAYLOAD TYPES =====
 
 export type BookingBasePrisma = Prisma.bookingGetPayload<{
@@ -42,4 +49,8 @@ export type BookingWithHistoryPrisma = Prisma.bookingGetPayload<{
 
 export type BookingWithCourseDetailsPrisma = Prisma.bookingGetPayload<{
 	include: typeof bookingWithCourseDetails;
+}>;
+
+export type BookingCoursesSimplePrisma = Prisma.bookingGetPayload<{
+	include: typeof bookingCoursesSimple;
 }>;

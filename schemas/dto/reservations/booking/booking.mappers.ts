@@ -1,12 +1,20 @@
-import type { BookingDAOResponse, BookingCourseDAOResponse, BookingForAnalyticsDAOResponse } from './booking.dto';
+import type {
+	BookingDAOResponse,
+	BookingCourseDAOResponse,
+	BookingForAnalyticsDAOResponse,
+	BookingCoursesDAOResponse,
+} from './booking.dto';
 import {
 	BookingDAOResponseSchema,
 	BookingCourseDAOResponseSchema,
 	BookingForAnalyticsDAOResponseSchema,
+	BookingCoursesDAOResponseSchema,
 } from './booking.dto';
 import type {
+	BookingBasePrisma,
 	BookingWithHistoryPrisma,
 	BookingWithCourseDetailsPrisma,
+	BookingCoursesSimplePrisma,
 } from '../../../../prisma/includes/reservation/booking';
 
 function toIso(d: unknown): string | undefined {
@@ -87,7 +95,6 @@ function mapServiceRef(service: any) {
 }
 
 // Helper to map booking history log (BookingHistoryLogRefSchema)
-// Prisma field: booking_history_id, DTO expects: booking_history_id
 function mapBookingHistoryLogRef(log: any) {
 	return {
 		booking_history_id: log.booking_history_id,
@@ -120,9 +127,80 @@ function mapBookingCourseParticipantWithCustomer(participant: any) {
 }
 
 /**
- * Map Prisma booking to BookingDAOResponse (with history)
+ * Map Prisma booking to BookingDAOResponse (base fields only, no includes)
+ * Use this when the booking was created/updated without includes
  */
-export function toBookingDAOResponse(row: BookingWithHistoryPrisma): BookingDAOResponse {
+export function toBookingDAOResponseBase(row: any): BookingDAOResponse {
+	const r = row;
+
+	const dto: BookingDAOResponse = {
+		booking_id: r.booking_id,
+		customer_id: r.customer_id ?? null,
+		reservation_module_id: r.reservation_module_id,
+		location_id: r.location_id ?? null,
+		status: r.status,
+		service_id: r.service_id,
+		comment: r.comment ?? null,
+		created_at: toIso(r.created_at) ?? '',
+		updated_at: toIso(r.updated_at) ?? '',
+		price_cents: r.price_cents ?? null,
+		discount_percent: r.discount_percent ?? null,
+		discount_amount: r.discount_amount ?? null,
+		start_time: toIso(r.start_time) ?? null,
+		end_time: toIso(r.end_time) ?? null,
+		deleted_at: toIso(r.deleted_at) ?? null,
+		employee_id: r.employee_id ?? null,
+		parent_booking_id: r.parent_booking_id ?? null,
+		reviewable_id: r.reviewable_id ?? null,
+		course: r.course,
+		people_allowed: r.people_allowed ?? null,
+		people_booked: r.people_booked ?? null,
+	};
+
+	return BookingDAOResponseSchema.parse(dto);
+}
+
+/**
+ * Map Prisma booking to BookingDAOResponse (with includes)
+ */
+export function toBookingDAOResponse(row: BookingBasePrisma): BookingDAOResponse {
+	const r = row;
+
+	const dto: BookingDAOResponse = {
+		booking_id: r.booking_id,
+		customer_id: r.customer_id ?? null,
+		reservation_module_id: r.reservation_module_id,
+		location_id: r.location_id ?? null,
+		status: r.status,
+		service_id: r.service_id,
+		comment: r.comment ?? null,
+		created_at: toIso(r.created_at) ?? '',
+		updated_at: toIso(r.updated_at) ?? '',
+		price_cents: r.price_cents ?? null,
+		discount_percent: r.discount_percent ?? null,
+		discount_amount: r.discount_amount ?? null,
+		start_time: toIso(r.start_time) ?? null,
+		end_time: toIso(r.end_time) ?? null,
+		deleted_at: toIso(r.deleted_at) ?? null,
+		employee_id: r.employee_id ?? null,
+		parent_booking_id: r.parent_booking_id ?? null,
+		reviewable_id: r.reviewable_id ?? null,
+		course: r.course,
+		people_allowed: r.people_allowed ?? null,
+		people_booked: r.people_booked ?? null,
+		customer: mapCustomerDetail(r.customer),
+		location: mapLocationRef(r.location),
+		employee: mapEmployeeDetail(r.employee),
+		service: mapServiceRef(r.service),
+	};
+
+	return BookingDAOResponseSchema.parse(dto);
+}
+
+/**
+ * Map Prisma booking with history to BookingDAOResponse (for getBookingById with history)
+ */
+export function toBookingDAOResponseWithHistory(row: BookingWithHistoryPrisma): BookingDAOResponse {
 	const r = row;
 
 	const dto: BookingDAOResponse = {
@@ -159,7 +237,7 @@ export function toBookingDAOResponse(row: BookingWithHistoryPrisma): BookingDAOR
 }
 
 /**
- * Map Prisma booking to BookingCourseDAOResponse
+ * Map Prisma booking course result to BookingCourseDAOResponse
  * Used by getBookingCourseById
  */
 export function toBookingCourseDAOResponse(row: BookingWithCourseDetailsPrisma): BookingCourseDAOResponse {
@@ -235,7 +313,7 @@ export function toBookingForAnalyticsDAOResponse(row: any): BookingForAnalyticsD
 /**
  * Map list of bookings to BookingDAOResponse array
  */
-export function toBookingDAOList(rows: BookingWithHistoryPrisma[]): BookingDAOResponse[] {
+export function toBookingDAOList(rows: BookingBasePrisma[]): BookingDAOResponse[] {
 	return rows.map(toBookingDAOResponse);
 }
 
@@ -253,11 +331,59 @@ export function toBookingForAnalyticsDAOList(rows: any[]): BookingForAnalyticsDA
 	return rows.map(toBookingForAnalyticsDAOResponse);
 }
 
+/**
+ * Map Prisma booking to BookingCoursesDAOResponse (simple course response without participants)
+ * Used by getBookingCourses and getBookingCoursesByReservationModuleId
+ */
+export function toBookingCoursesDAOResponse(row: BookingCoursesSimplePrisma): BookingCoursesDAOResponse {
+	const r = row;
+
+	const dto: BookingCoursesDAOResponse = {
+		booking_id: r.booking_id,
+		customer_id: r.customer_id ?? null,
+		reservation_module_id: r.reservation_module_id,
+		location_id: r.location_id ?? null,
+		status: r.status,
+		service_id: r.service_id,
+		comment: r.comment ?? null,
+		created_at: toIso(r.created_at) ?? '',
+		updated_at: toIso(r.updated_at) ?? '',
+		price_cents: r.price_cents ?? null,
+		discount_percent: r.discount_percent ?? null,
+		discount_amount: r.discount_amount ?? null,
+		start_time: toIso(r.start_time) ?? null,
+		end_time: toIso(r.end_time) ?? null,
+		deleted_at: toIso(r.deleted_at) ?? null,
+		employee_id: r.employee_id ?? null,
+		parent_booking_id: r.parent_booking_id ?? null,
+		reviewable_id: r.reviewable_id ?? null,
+		course: r.course,
+		people_allowed: r.people_allowed ?? null,
+		people_booked: r.people_booked ?? null,
+		booking_course_time: r.booking_course_time?.map(mapBookingCourseTimeRef),
+		service: mapServiceRef(r.service),
+		location: mapLocationRef(r.location),
+		employee: mapEmployeeDetail(r.employee),
+	};
+
+	return BookingCoursesDAOResponseSchema.parse(dto);
+}
+
+/**
+ * Map list of bookings to BookingCoursesDAOResponse array
+ */
+export function toBookingCoursesDAOList(rows: BookingCoursesSimplePrisma[]): BookingCoursesDAOResponse[] {
+	return rows.map(toBookingCoursesDAOResponse);
+}
+
 export default {
+	toBookingDAOResponseBase,
 	toBookingDAOResponse,
 	toBookingCourseDAOResponse,
 	toBookingForAnalyticsDAOResponse,
+	toBookingCoursesDAOResponse,
 	toBookingDAOList,
 	toBookingCourseDAOList,
 	toBookingForAnalyticsDAOList,
+	toBookingCoursesDAOList,
 };
