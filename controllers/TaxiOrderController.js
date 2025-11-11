@@ -1668,13 +1668,11 @@ async function completeOrder(req, res) {
 						expiryDate.setDate(expiryDate.getDate() + 30);
 						expiryDate.setHours(23, 59, 59, 999);
 						if (wheels > 0) {
-							await WalletFundsDao.convertCashbacksToCredit(
-								{
-									user: { connect: { user_id: orderingUser.user_id } },
-									amount: Math.floor(wheels / CREDITS.CASHBACK_CONVERSION_TAXI) * 100,
-								},
-								pendingCashbacks
-							);
+							await WalletFundsDao.convertCashbacksToCredit({
+								user_id: orderingUser.user_id,
+								amount: Math.floor(wheels / CREDITS.CASHBACK_CONVERSION_TAXI) * 100,
+								pending_cashback_ids: pendingCashbacks.map((cb) => cb.cashback_id),
+							});
 						}
 					}
 				}

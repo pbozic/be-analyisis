@@ -1928,10 +1928,10 @@ async function claimReward(req, res) {
 		expiryDate.setHours(23, 59, 59, 999);
 		await WalletFundsDao.createCredit({
 			expires_at: expiryDate,
-			user: { connect: { user_id: req.user.user_id } },
+			user_id: req.user.user_id,
 			amount: CREDITS.REFERRAL,
 			type: FUNDS_TYPE.CREDITS_ANY, // we add taxi credits on referral
-			referral: { connect: { referral_id: referral_id } },
+			referral_id: referral_id,
 		});
 		const referral = await ReferralDao.updateReferralRewardClaimed(referral_id, true);
 		if (!referral) {

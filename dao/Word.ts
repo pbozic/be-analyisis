@@ -2,57 +2,50 @@ import prisma from '../prisma/prisma.js';
 import { client as stripe } from '../lib/stripe.js';
 import BusinessUserDao from './BusinessUsers.js';
 import BusinessDao from './Business.js';
+import {
+	TranslationItem,
+	WordDetail,
+	WordBase,
+	WordBuyItem,
+	UpdateSingleWordBuyRequest,
+	WordBuyItemDetail,
+	CreateWordBuySubscriptionResponse,
+	UpdateUserSubscriptionResponse,
+} from '../schemas/dto/Word/word.dto.js';
+
 /**
  * Create a new word with its translations.
  *
- * @param {object} word
+ * @param {string} word
  * @param {string} category_id
- * @param {object[]} translations
- * @returns {Promise<object>} Newly created word with translations.
+ * @param {TranslationItem[]} translations
+ * @returns {Promise<WordDetail>} Newly created word with translations.
  */
-async function createWord(word, category_id, translations) {
+async function createWord(word: string, category_id: string, translations: TranslationItem[]): Promise<WordDetail> {
 	// Create a new translatable record
-	let translatable = await prisma.translatable.create({
-		data: {},
-	});
+	let translatable = await prisma.translatable.create({ data: {} });
 	// Create the word with its relationships
-	let new_word = await prisma.words.create({
+	let new_word: WordDetail = await prisma.words.create({
 		data: {
 			word: word,
 			popularity: 0,
-			category: {
-				connect: {
-					categories_id: category_id,
-				},
-			},
-			translatable: {
-				connect: {
-					translatable_id: translatable.translatable_id,
-				},
-			},
+			category: { connect: { categories_id: category_id } },
+			translatable: { connect: { translatable_id: translatable.translatable_id } },
 		},
-		include: {
-			translatable: true,
-			category: true,
-		},
+		include: { translatable: true, category: true },
 	});
 	// Create translations
-	let translats = [];
+	let translats: TranslationItem[] = [];
 	for (let translation of translations) {
 		let trans = await prisma.translations.create({
 			data: {
 				translation: translation.translation,
 				language: translation.language,
-				translatable: {
-					connect: {
-						translatable_id: translatable.translatable_id,
-					},
-				},
+				translatable: { connect: { translatable_id: translatable.translatable_id } },
 			},
 		});
 		translats.push(trans);
 	}
-	// Attach translations to the response
 	new_word.translations = translats;
 	return new_word;
 }
@@ -60,65 +53,39 @@ async function createWord(word, category_id, translations) {
  * Update an existing word and its translations.
  *
  * @param {string} id
- * @param {object} word
+ * @param {string} word
  * @param {string} categories_id
- * @param {object[]} translations
- * @returns {Promise<object>} Updated word with translations.
+ * @param {TranslationItem[]} translations
+ * @returns {Promise<WordDetail>} Updated word with translations.
  */
-async function updateWord(id, word, categories_id, translations) {
-	// First get the existing word to access its translatable_id
-	const existingWord = await prisma.words.findUnique({
-		where: {
-			word_id: id,
-		},
-		include: {
-			translatable: true,
-		},
+async function updateWord(
+	id: string,
+	word: string,
+	categories_id: string,
+	translations: TranslationItem[]
+): Promise<WordDetail> {
+	const existingWord: WordBase = await prisma.words.findUnique({
+		where: { word_id: id },
+		include: { translatable: true },
 	});
-	if (!existingWord) {
-		throw new Error('Word not found');
-	}
-	// Update the word
-	const updatedWord = await prisma.words.update({
-		where: {
-			word_id: id,
-		},
+	if (!existingWord) throw new Error('Word not found');
+	const updatedWord: WordDetail = await prisma.words.update({
+		where: { word_id: id },
 		data: {
 			word,
-			...(categories_id
-				? {
-						category: {
-							connect: {
-								categories_id: categories_id,
-							},
-						},
-					}
-				: {}),
+			...(categories_id ? { category: { connect: { categories_id: categories_id } } } : {}),
 		},
-		include: {
-			category: true,
-			translatable: true,
-		},
+		include: { category: true, translatable: true },
 	});
 	if (translations && translations.length > 0) {
-		// Delete existing translations
-		await prisma.translations.deleteMany({
-			where: {
-				translatable_id: existingWord.translatable_id,
-			},
-		});
-		// Create new translations
-		let translats = [];
+		await prisma.translations.deleteMany({ where: { translatable_id: existingWord.translatable_id } });
+		let translats: TranslationItem[] = [];
 		for (let translation of translations) {
 			let trans = await prisma.translations.create({
 				data: {
 					translation: translation.translation,
 					language: translation.language,
-					translatable: {
-						connect: {
-							translatable_id: existingWord.translatable_id,
-						},
-					},
+					translatable: { connect: { translatable_id: existingWord.translatable_id } },
 				},
 			});
 			translats.push(trans);
@@ -131,39 +98,27 @@ async function updateWord(id, word, categories_id, translations) {
  * Delete a word by id.
  *
  * @param {string} id
- * @returns {Promise<object>} Deleted word.
+ * @returns {Promise<unknown>} Deleted word.
  */
-async function deleteWord(id) {
-	return await prisma.words.delete({
-		where: {
-			word_id: id,
-		},
-	});
+async function deleteWord(id: string): Promise<unknown> {
+	return await prisma.words.delete({ where: { word_id: id } });
 }
 /**
  * Get a word by id.
  *
  * @param {string} id
- * @returns {Promise<object>} Found word.
+ * @returns {Promise<WordDetail>} Found word.
  */
-async function getWordById(id) {
+async function getWordById(id: string): Promise<WordDetail> {
 	try {
-		let word = await prisma.words.findUnique({
-			where: {
-				word_id: id,
-			},
+		let word: any = await prisma.words.findUnique({
+			where: { word_id: id },
 			include: {
-				translatable: {
-					include: {
-						translations: true,
-					},
-				},
+				translatable: { include: { translations: true } },
 				category: true,
 			},
 		});
-		if (!word) {
-			throw new Error('Word not found');
-		}
+		if (!word) throw new Error('Word not found');
 		word.translations = word.translatable.translations;
 		delete word.translatable;
 		return word;
@@ -175,19 +130,12 @@ async function getWordById(id) {
 /**
  * Get all words with their translations and categories.
  *
- * @returns {Promise<object[]>} List of words with translations and categories.
+ * @returns {Promise<WordDetail[]>} List of words with translations and categories.
  */
-async function getAllWords() {
+async function getAllWords(): Promise<WordDetail[]> {
 	try {
-		let words = await prisma.words.findMany({
-			include: {
-				translatable: {
-					include: {
-						translations: true,
-					},
-				},
-				category: true,
-			},
+		let words: any[] = await prisma.words.findMany({
+			include: { translatable: { include: { translations: true } }, category: true },
 		});
 		for (let word of words) {
 			word.translations = word.translatable.translations;
@@ -202,33 +150,23 @@ async function getAllWords() {
 /** Get all words by category.
  *
  * @param {string} category
- * @returns {Promise<object[]>} List of words in the category.
+ * @returns {Promise<WordBase[]>} List of words in the category.
  */
-async function getAllWordsByCategory(category) {
+async function getAllWordsByCategory(category: string): Promise<WordBase[]> {
 	return await prisma.words.findMany({
-		where: {
-			category: {
-				category_id: category,
-			},
-		},
+		where: { category: { category_id: category } },
 	});
 }
 /**
  * Remove category from a word.
  *
  * @param {string} id
- * @returns {Promise<object>} Updated word.
+ * @returns {Promise<WordBase>} Updated word.
  */
-async function removeCategoryFromWord(id) {
+async function removeCategoryFromWord(id: string): Promise<WordBase> {
 	return await prisma.words.update({
-		where: {
-			word_id: id,
-		},
-		data: {
-			category: {
-				disconnect: true,
-			},
-		},
+		where: { word_id: id },
+		data: { category: { disconnect: true } },
 	});
 }
 /**
@@ -236,47 +174,39 @@ async function removeCategoryFromWord(id) {
  *
  * @param {string} id
  * @param {string} category
- * @returns {Promise<object>} Updated word.
+ * @returns {Promise<WordBase>} Updated word.
  */
-async function addCategoryToWord(id, category) {
-	// if word already has a category then remove it
+async function addCategoryToWord(id: string, category: string): Promise<WordBase> {
 	const word = await getWordById(id);
 	if (word.category) {
 		await removeCategoryFromWord(id);
 	}
 	return await prisma.words.update({
-		where: {
-			word_id: id,
-		},
-		data: {
-			category: {
-				connect: {
-					category_id: category,
-				},
-			},
-		},
+		where: { word_id: id },
+		data: { category: { connect: { category_id: category } } },
 	});
 }
+
+// =======================
+// Word Buy
+// =======================
+
 /**
  * Create a word buy entry.
  *
  * @param {object} args
- * @returns {Promise<object>} Created word buy.
+ * @returns {Promise<WordBuyItem>} Created word buy.
  */
-async function createWordBuy(args) {
+async function createWordBuy(args: {
+	word_id: string;
+	business_id: string;
+	price: number;
+	stripe_subscription_id?: string | null;
+}): Promise<WordBuyItem> {
 	return await prisma.word_buy.create({
 		data: {
-			word_buy_id: args.word_buyer_id,
-			word: {
-				connect: {
-					word_id: args.word,
-				},
-			},
-			business: {
-				connect: {
-					business_id: args.business_id,
-				},
-			},
+			word: { connect: { word_id: args.word_id } },
+			business: { connect: { business_id: args.business_id } },
 			price: args.price,
 			stripe_subscription_id: args.stripe_subscription_id || null,
 		},
@@ -289,61 +219,62 @@ async function createWordBuy(args) {
  * @param {string} business_id
  * @returns {Promise<object>} Update result.
  */
-export async function updateUserSubscription(userId, business_id) {
+export async function updateUserSubscription(
+	userId: string,
+	business_id?: string
+): Promise<UpdateUserSubscriptionResponse> {
 	try {
 		const businessUser = await BusinessUserDao.getBusinessUserByUserId(userId);
-		const business = await BusinessDao.getBusinessById(business_id || businessUser?.business_id);
+		const business = await BusinessDao.getBusinessById(business_id || (businessUser as any)?.business_id);
 		if (!business) throw new Error('Business not found');
-		if (!business.stripe_customer_id) throw new Error('User does not have a Stripe customer ID');
+		if (!(business as any).stripe_customer_id) throw new Error('User does not have a Stripe customer ID');
 
-		const wordBuys = await getActiveWordBuysByBusiness(business.business_id);
+		const wordBuys = await getActiveWordBuysByBusiness((business as any).business_id);
 
 		// No active word buys → cancel sub if exists
 		if (!wordBuys || wordBuys.length === 0) {
-			if (business.word_buy_stripe_subscription_id) {
-				await stripe.subscriptions.update(business.word_buy_stripe_subscription_id, {
+			if ((business as any).word_buy_stripe_subscription_id) {
+				await stripe.subscriptions.update((business as any).word_buy_stripe_subscription_id, {
 					cancel_at_period_end: true,
 				});
-				// await stripe.subscriptions.del(business.word_buy_stripe_subscription_id);
 				await prisma.business.update({
-					where: { business_id: business.business_id },
+					where: { business_id: (business as any).business_id },
 					data: { word_buy_stripe_subscription_id: null },
 				});
 				await prisma.word_buy.updateMany({
-					where: { business_id: business.business_id },
+					where: { business_id: (business as any).business_id },
 					data: { stripe_subscription_id: null },
 				});
 			}
-			return { success: true, message: 'No active word buys' };
+			return { success: true, subscriptionId: '', paymentRequired: false, clientSecret: null };
 		}
 
 		// Build items, detect ups/downs
-		const subscriptionItems = [];
-		const nextPhaseItems = [];
+		const subscriptionItems: Array<{ price: string; quantity: number }> = [];
+		const nextPhaseItems: Array<{ price: string; quantity: number }> = [];
 		let hasUpgrades = false;
 
-		for (const wb of wordBuys) {
-			const newAmount = Math.round(wb.price * 100);
-			let currentPrice = null;
+		for (const wb of wordBuys as any[]) {
+			const newAmount = Math.round((wb as any).price * 100);
+			let currentPrice: any = null;
 
-			if (wb.stripe_price_id) {
+			if ((wb as any).stripe_price_id) {
 				try {
-					currentPrice = await stripe.prices.retrieve(wb.stripe_price_id);
+					currentPrice = await stripe.prices.retrieve((wb as any).stripe_price_id);
 				} catch {
-					currentPrice = null; // stale / missing price id
+					currentPrice = null;
 				}
 			}
 
-			// Helper to create a price with idempotency (avoid dupes on retries)
-			const createPrice = async (amount) => {
-				const idemKey = `wb_${wb.word_buy_id}_${amount}`;
+			const createPrice = async (amount: number) => {
+				const idemKey = `wb_${(wb as any).word_buy_id}_${amount}`;
 				return stripe.prices.create(
 					{
 						unit_amount: amount,
 						currency: 'eur',
 						recurring: { interval: 'month' },
-						product_data: { name: `Klikni Word: ${wb.word.word}` },
-						metadata: { word_buy_id: wb.word_buy_id },
+						product_data: { name: `Klikni Word: ${(wb as any).word.word}` },
+						metadata: { word_buy_id: (wb as any).word_buy_id },
 					},
 					{ idempotencyKey: idemKey }
 				);
@@ -351,16 +282,14 @@ export async function updateUserSubscription(userId, business_id) {
 
 			const currentUnit = currentPrice?.unit_amount ?? null;
 
-			// unchanged, upgrade (immediate), or downgrade (next cycle)
 			if (currentUnit === null || currentUnit !== newAmount) {
 				if (currentUnit === null || newAmount > currentUnit) {
-					// UPGRADE: create new price and swap now (proration)
 					const newPrice = await createPrice(newAmount);
 					await prisma.word_buy.update({
-						where: { word_buy_id: wb.word_buy_id },
+						where: { word_buy_id: (wb as any).word_buy_id },
 						data: {
 							stripe_price_id: newPrice.id,
-							price: wb.price,
+							price: (wb as any).price,
 							pending_price: null,
 							pending_stripe_price_id: null,
 						},
@@ -368,45 +297,37 @@ export async function updateUserSubscription(userId, business_id) {
 					subscriptionItems.push({ price: newPrice.id, quantity: 1 });
 					hasUpgrades = true;
 				} else {
-					// DOWNGRADE: create lower price, keep current for now, switch next period
 					const downgradePrice = await createPrice(newAmount);
 					await prisma.word_buy.update({
-						where: { word_buy_id: wb.word_buy_id },
-						data: {
-							pending_price: wb.price,
-							pending_stripe_price_id: downgradePrice.id,
-						},
+						where: { word_buy_id: (wb as any).word_buy_id },
+						data: { pending_price: (wb as any).price, pending_stripe_price_id: downgradePrice.id },
 					});
-
 					if (currentPrice?.id) {
 						subscriptionItems.push({ price: currentPrice.id, quantity: 1 });
 					} else {
-						// fall back to downgrade price if current is missing
 						subscriptionItems.push({ price: downgradePrice.id, quantity: 1 });
 					}
 					nextPhaseItems.push({ price: downgradePrice.id, quantity: 1 });
 				}
 			} else {
-				// unchanged
 				subscriptionItems.push({ price: currentPrice.id, quantity: 1 });
 			}
 		}
-		console.log(subscriptionItems, nextPhaseItems, hasUpgrades);
-		let subscription;
-		let clientSecret = null;
+
+		let subscription: any;
+		let clientSecret: string | null = null;
 		let paymentRequired = false;
 
-		// EXISTING SUBSCRIPTION
-		if (business.word_buy_stripe_subscription_id) {
-			const currentSub = await stripe.subscriptions.retrieve(business.word_buy_stripe_subscription_id, {
-				expand: ['latest_invoice.payment_intent', 'items.data.price'],
-			});
+		if ((business as any).word_buy_stripe_subscription_id) {
+			const currentSub: any = await stripe.subscriptions.retrieve(
+				(business as any).word_buy_stripe_subscription_id,
+				{ expand: ['latest_invoice.payment_intent', 'items.data.price'] }
+			);
 
 			if (nextPhaseItems.length > 0) {
-				// Downgrades → schedule next cycle, no proration now
 				await stripe.subscriptionSchedules.create({
-					customer: business.stripe_customer_id,
-					start_date: Math.floor(Date.now() / 1000), // now
+					customer: (business as any).stripe_customer_id,
+					start_date: Math.floor(Date.now() / 1000),
 					end_behavior: 'release',
 					phases: [
 						{
@@ -415,20 +336,13 @@ export async function updateUserSubscription(userId, business_id) {
 							end_date: currentSub.current_period_end,
 							proration_behavior: 'none',
 						},
-						{
-							items: nextPhaseItems,
-							proration_behavior: 'none',
-						},
+						{ items: nextPhaseItems, proration_behavior: 'none' },
 					],
-					metadata: {
-						business_id: business.business_id,
-						word_buy_schedule: 'true',
-					},
+					metadata: { business_id: (business as any).business_id, word_buy_schedule: 'true' },
 				});
-				subscription = currentSub; // items switch at boundary via schedule
+				subscription = currentSub;
 			} else {
-				// Only upgrades / no changes → apply now
-				const deleteOps = currentSub.items.data.map((i) => ({ id: i.id, deleted: true }));
+				const deleteOps = currentSub.items.data.map((i: any) => ({ id: i.id, deleted: true }));
 				const updated = await stripe.subscriptions.update(currentSub.id, {
 					items: [...deleteOps, ...subscriptionItems],
 					proration_behavior: hasUpgrades ? 'create_prorations' : 'none',
@@ -436,27 +350,22 @@ export async function updateUserSubscription(userId, business_id) {
 				});
 				subscription = updated;
 
-				// Handle invoice only if we caused prorations (upgrades)
 				if (hasUpgrades && subscription.latest_invoice?.id) {
-					let invoice = await stripe.invoices.retrieve(subscription.latest_invoice.id, {
+					let invoice: any = await stripe.invoices.retrieve(subscription.latest_invoice.id, {
 						expand: ['payment_intent'],
 					});
-
-					// Finalize only if still draft — fixes your error
 					if (invoice.status === 'draft') {
 						invoice = await stripe.invoices.finalizeInvoice(invoice.id, { expand: ['payment_intent'] });
 					}
-
 					if (invoice.status === 'open') {
-						const pi = invoice.payment_intent || null;
-
+						const pi: any = invoice.payment_intent || null;
 						if (pi && (pi.status === 'requires_action' || pi.status === 'requires_payment_method')) {
 							paymentRequired = true;
 							clientSecret = pi.client_secret || null;
 						} else if (invoice.collection_method === 'charge_automatically') {
 							try {
 								await stripe.invoices.pay(invoice.id);
-							} catch (e) {
+							} catch (e: any) {
 								const epi = e?.raw?.payment_intent;
 								if (
 									epi &&
@@ -474,47 +383,39 @@ export async function updateUserSubscription(userId, business_id) {
 				}
 			}
 		} else {
-			// NEW SUBSCRIPTION
 			subscription = await stripe.subscriptions.create({
-				customer: business.stripe_customer_id,
+				customer: (business as any).stripe_customer_id,
 				items: subscriptionItems,
 				payment_behavior: 'default_incomplete',
 				collection_method: 'charge_automatically',
-				// billing_cycle_anchor: 'now',
 				proration_behavior: 'none',
 				expand: ['latest_invoice.payment_intent'],
-				metadata: { business_id: business.business_id, type: 'word_buys' },
+				metadata: { business_id: (business as any).business_id, type: 'word_buys' },
 			});
 
 			await prisma.business.update({
-				where: { business_id: business.business_id },
+				where: { business_id: (business as any).business_id },
 				data: { word_buy_stripe_subscription_id: subscription.id },
 			});
 
-			const pi = subscription.latest_invoice?.payment_intent;
+			const pi: any = subscription.latest_invoice?.payment_intent;
 			if (pi && (pi.status === 'requires_action' || pi.status === 'requires_payment_method')) {
 				paymentRequired = true;
 				clientSecret = pi.client_secret || null;
 			}
 		}
 
-		// Persist subscription id on word_buys
 		await prisma.word_buy.updateMany({
 			where: {
-				business_id: business.business_id,
+				business_id: (business as any).business_id,
 				deleted_at: null,
 				OR: [{ expires_at: null }, { expires_at: { gt: new Date() } }],
 			},
 			data: { stripe_subscription_id: subscription.id },
 		});
 
-		return {
-			success: true,
-			subscriptionId: subscription.id,
-			paymentRequired,
-			clientSecret,
-		};
-	} catch (err) {
+		return { success: true, subscriptionId: subscription.id, paymentRequired, clientSecret };
+	} catch (err: any) {
 		console.error('❌ updateUserSubscription failed:', err);
 		return { success: false, error: err?.message || 'Unknown error' };
 	}
@@ -522,22 +423,22 @@ export async function updateUserSubscription(userId, business_id) {
 /**
  * Create word buy subscription for a set of words.
  *
- * @param {object[]} words
+ * @param {WordBuyItem[]} words
  * @param {string} business_id
  * @param {string} userId
  * @returns {Promise<object>} Subscription result.
  */
-export async function createWordBuySubscription(words, business_id, userId) {
+export async function createWordBuySubscription(
+	words: WordBuyItem[],
+	business_id: string,
+	userId: string
+): Promise<CreateWordBuySubscriptionResponse> {
 	try {
-		// 1) Load business & verify Stripe customer
-		const business = await prisma.business.findUnique({
-			where: { business_id },
-		});
-		if (!business?.stripe_customer_id) {
+		const business = await prisma.business.findUnique({ where: { business_id } });
+		if (!(business as any)?.stripe_customer_id) {
 			throw new Error('Business has no Stripe customer on file');
 		}
 
-		// 2) Create word_buy entries
 		const now = new Date();
 		const wordBuys = await Promise.all(
 			words.map(async ({ word_id, price }) => {
@@ -546,10 +447,13 @@ export async function createWordBuySubscription(words, business_id, userId) {
 						where: { word_id, business_id, deleted_at: null },
 						orderBy: { created_at: 'desc' },
 					});
-					const subId = last?.stripe_subscription_id || business.word_buy_stripe_subscription_id || null;
-					if (last && (!last.expires_at || last.expires_at > now)) {
+					const subId =
+						(last as any)?.stripe_subscription_id ||
+						(business as any).word_buy_stripe_subscription_id ||
+						null;
+					if (last && (!(last as any).expires_at || (last as any).expires_at > now)) {
 						await prisma.word_buy.update({
-							where: { word_buy_id: last.word_buy_id },
+							where: { word_buy_id: (last as any).word_buy_id },
 							data: { expires_at: now, stripe_subscription_id: null },
 						});
 					}
@@ -568,29 +472,28 @@ export async function createWordBuySubscription(words, business_id, userId) {
 			})
 		);
 
-		// 3) Check if existing subscription
 		let reusedSubscription = false;
-		let result;
+		let result: UpdateUserSubscriptionResponse;
 
-		if (business.word_buy_stripe_subscription_id) {
+		if ((business as any).word_buy_stripe_subscription_id) {
 			console.log('🔁 Existing subscription found. Updating...');
 			reusedSubscription = true;
 			result = await updateUserSubscription(userId, business_id);
 		} else {
-			// 4) No subscription, create new one
 			result = await updateUserSubscription(userId, business_id);
 		}
 
-		if (result?.subscriptionId) console.log('✅ Subscription active/updated:', result.subscriptionId);
+		if ((result as any)?.subscriptionId)
+			console.log('✅ Subscription active/updated:', (result as any).subscriptionId);
 
 		return {
-			wordBuyIds: wordBuys.map((wb) => wb.word_buy_id),
-			subscriptionId: result.subscriptionId,
-			clientSecret: result.clientSecret,
-			paymentRequired: result.paymentRequired,
+			wordBuyIds: wordBuys.map((wb: any) => wb.word_buy_id),
+			subscriptionId: (result as any).subscriptionId,
+			clientSecret: (result as any).clientSecret,
+			paymentRequired: (result as any).paymentRequired,
 			reusedSubscription,
 		};
-	} catch (err) {
+	} catch (err: any) {
 		console.error('❌ createWordBuySubscription error:', err);
 		throw new Error(err.message);
 	}
@@ -600,29 +503,19 @@ export async function createWordBuySubscription(words, business_id, userId) {
  *
  * @param {string} id
  * @param {string} stripe_subscription_id
- * @returns {Promise<object>} Updated word buy.
+ * @returns {Promise<WordBuyItem>} Updated word buy.
  */
-async function addStripeSubToWordBuy(id, stripe_subscription_id) {
-	return await prisma.word_buy.update({
-		where: {
-			word_buy_id: id,
-		},
-		data: {
-			stripe_subscription_id: stripe_subscription_id,
-		},
-	});
+async function addStripeSubToWordBuy(id: string, stripe_subscription_id: string): Promise<WordBuyItem> {
+	return await prisma.word_buy.update({ where: { word_buy_id: id }, data: { stripe_subscription_id } });
 }
 /** Get a word buy by id.
  *
  * @param {string} id
- * @returns {Promise<object>} Found word buy.
+ * @returns {Promise<WordBuyItemDetail | null>} Found word buy.
  */
-async function getWordBuyById(id) {
-	const wb = await prisma.word_buy.findUnique({
-		where: {
-			word_buy_id: id,
-		},
-	});
+async function getWordBuyById(id: string): Promise<WordBuyItemDetail | null> {
+	const wb = await prisma.word_buy.findUnique({ where: { word_buy_id: id } });
+	if (!wb) return null;
 	wb.translations = wb.translatable.translations;
 	delete wb.translatable;
 	return wb;
@@ -630,13 +523,15 @@ async function getWordBuyById(id) {
 /**
  * Get all word buys.
  *
- * @returns {Promise<object[]>} Found word buys.
+ * @returns {Promise<WordBuyItemDetail[]>} Found word buys.
  */
-async function getAllWordBuys() {
+async function getAllWordBuys(): Promise<WordBuyItemDetail[]> {
 	const wbs = await prisma.word_buy.findMany();
 	for (let wb of wbs) {
-		wb.word.translations = wb.word.translatable.translations;
-		delete wb.word.translatable;
+		if (wb.word?.translatable?.translations) {
+			wb.word.translations = wb.word.translatable.translations;
+			delete wb.word.translatable;
+		}
 	}
 	return wbs;
 }
@@ -644,19 +539,15 @@ async function getAllWordBuys() {
  * Get all word buys by word.
  *
  * @param {string} word
- * @returns {Promise<object[]>} Found word buys.
+ * @returns {Promise<WordBuyItemDetail[]>} Found word buys.
  */
-async function getAllWordBuysByWord(word) {
-	const wbs = await prisma.word_buy.findMany({
-		where: {
-			word: {
-				word_id: word,
-			},
-		},
-	});
+async function getAllWordBuysByWord(word: string): Promise<WordBuyItemDetail[]> {
+	const wbs: WordBuyItemDetail[] = await prisma.word_buy.findMany({ where: { word: { word_id: word } } });
 	for (let wb of wbs) {
-		wb.word.translations = wb.word.translatable.translations;
-		delete wb.word.translatable;
+		if (wb.word?.translatable?.translations) {
+			wb.word.translations = wb.word.translatable.translations;
+			delete wb.word.translatable;
+		}
 	}
 	return wbs;
 }
@@ -664,31 +555,20 @@ async function getAllWordBuysByWord(word) {
  *
  * @param {string} business
  * @param {object} whereObj
- * @returns {Promise<object[]>} Found word buys.
+ * @returns {Promise<WordBuyItemDetail[]>} Found word buys.
  */
-async function getAllWordBuysByBusiness(business, whereObj = {}) {
-	const wbs = await prisma.word_buy.findMany({
-		where: {
-			business: {
-				business_id: business,
-			},
-			...whereObj,
-		},
+async function getAllWordBuysByBusiness(business: string, whereObj: any = {}): Promise<WordBuyItemDetail[]> {
+	const wbs: WordBuyItemDetail[] = await prisma.word_buy.findMany({
+		where: { business: { business_id: business }, ...whereObj },
 		include: {
-			word: {
-				include: {
-					translatable: {
-						include: {
-							translations: true,
-						},
-					},
-				},
-			},
+			word: { include: { translatable: { include: { translations: true } } } },
 		},
 	});
 	for (let wb of wbs) {
-		wb.word.translations = wb.word.translatable.translations;
-		delete wb.word.translatable;
+		if (wb.word?.translatable?.translations) {
+			wb.word.translations = wb.word.translatable.translations;
+			delete wb.word.translatable;
+		}
 	}
 	return wbs;
 }
@@ -696,67 +576,47 @@ async function getAllWordBuysByBusiness(business, whereObj = {}) {
  * Get active word buys by business.
  *
  * @param {string} business
- * @returns {Promise<object[]>} Found word buys.
+ * @returns {Promise<WordBuyItemDetail[]>} Found word buys.
  */
-async function getActiveWordBuysByBusiness(business) {
+async function getActiveWordBuysByBusiness(business: string): Promise<WordBuyItemDetail[]> {
 	const now = new Date();
-	const wbs = await prisma.word_buy.findMany({
+	const wbs: WordBuyItemDetail[] = await prisma.word_buy.findMany({
 		where: {
-			business: {
-				business_id: business,
-			},
+			business: { business_id: business },
 			deleted_at: null,
 			OR: [{ expires_at: null }, { expires_at: { gt: now } }],
 		},
 		include: {
-			word: {
-				include: {
-					translatable: {
-						include: {
-							translations: true,
-						},
-					},
-				},
-			},
+			word: { include: { translatable: { include: { translations: true } } } },
 		},
 	});
 	for (let wb of wbs) {
-		wb.word.translations = wb.word.translatable.translations;
-		delete wb.word.translatable;
+		if (wb.word?.translatable?.translations) {
+			wb.word.translations = wb.word.translatable.translations;
+			delete wb.word.translatable;
+		}
 	}
 	return wbs;
 }
 /** Delete a word buy (soft delete).
  *
  * @param {string} word_buy_id
- * @returns {Promise<object>} Updated word buy.
+ * @returns {Promise<WordBuyItem>} Updated word buy.
  */
-async function deleteWordBuy(word_buy_id) {
+async function deleteWordBuy(word_buy_id: string): Promise<WordBuyItem> {
 	return await prisma.word_buy.update({
-		where: {
-			word_buy_id: word_buy_id,
-		},
-		data: {
-			stripe_subscription_id: null,
-			deleted_at: new Date(),
-		},
+		where: { word_buy_id: word_buy_id },
+		data: { stripe_subscription_id: null, deleted_at: new Date() },
 	});
 }
 /** Update a word buy.
  *
  * @param {string} id
- * @param {object} data
- * @returns {Promise<object>} Updated word buy.
+ * @param {UpdateSingleWordBuyRequest} data
+ * @returns {Promise<WordBuyItem>} Updated word buy.
  */
-async function updateWordBuy(id, data) {
-	return await prisma.word_buy.update({
-		where: {
-			word_buy_id: id,
-		},
-		data: {
-			...data,
-		},
-	});
+async function updateWordBuy(id: string, data: UpdateSingleWordBuyRequest): Promise<WordBuyItem> {
+	return await prisma.word_buy.update({ where: { word_buy_id: id }, data: { ...data } });
 }
 
 export { createWord };
@@ -776,6 +636,7 @@ export { removeCategoryFromWord };
 export { addCategoryToWord };
 export { deleteWordBuy };
 export { updateWordBuy };
+
 export default {
 	createWord,
 	updateWord,

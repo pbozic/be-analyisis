@@ -837,17 +837,12 @@ async function completeOrder(req, res) {
 							description: `Cashback remainder after conversion to credit`,
 						});
 					}
-					const expiryDate = new Date();
-					expiryDate.setDate(expiryDate.getDate() + 30);
-					expiryDate.setHours(23, 59, 59, 999);
 					if (baskets > 0) {
-						await WalletFundsDao.convertCashbacksToCredit(
-							{
-								user: { connect: { user_id: order.user_id } },
-								amount: Math.floor(baskets / CREDITS.CASHBACK_CONVERSION_DELIVERY) * 100,
-							},
-							pendingCashbacks
-						);
+						await WalletFundsDao.convertCashbacksToCredit({
+							user_id: order.user_id,
+							amount: Math.floor(baskets / CREDITS.CASHBACK_CONVERSION_DELIVERY) * 100,
+							pending_cashback_ids: pendingCashbacks.map((cb) => cb.cashback_id),
+						});
 					}
 				}
 			}
