@@ -13,6 +13,7 @@ import type {
 	BusinessWithAddressAndUsersPrisma,
 	BusinessSearchSelectPrisma,
 	BusinessAdminPrisma,
+	BusinessWithAddressPrisma,
 } from '../../../prisma/includes/business.ts';
 import { BusinessWithDailyMealsResponseDto } from './business.dto.js';
 import type { BusinessWithDailyMealsResponseDto as BusinessWithDailyMealsResponseType } from './business.dto.js';
@@ -25,6 +26,8 @@ export function toGetBusinessResponse(row: GetBusinessesPrisma): BusinessRespons
 	const businessDetails = asRec.business_details ?? {
 		name: asRec.name ?? null,
 		description: asRec.description ?? null,
+		logo: asRec.logo?.url ?? null,
+		banner: asRec.banner?.url ?? null,
 	};
 
 	return BusinessResponseDto.parse({
@@ -64,6 +67,8 @@ export function toBusinessWithIncludesResponse(row: GetBusinessesPrisma) {
 	const businessDetails = asRec.business_details ?? {
 		name: asRec.name ?? null,
 		description: asRec.description ?? null,
+		logo: asRec.logo?.url ?? null,
+		banner: asRec.banner?.url ?? null,
 	};
 
 	return BusinessWithIncludesResponseDto.parse({
@@ -229,10 +234,6 @@ export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAll
 		// Address and User relationships
 		business_users: r.business_users,
 
-		// File relationships
-		logo: r.logo,
-		banner: r.banner,
-
 		// Computed/flattened fields
 		business_local_locations: r.stores_module?.business_local_locations,
 		business_clients: r.crm_module?.business_clients,
@@ -245,14 +246,14 @@ export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAll
 		daily_users_sorted: r.daily_meals_module?.daily_users_sorted,
 
 		// Module-specific logos (flattened)
-		stores_logo: r.stores_module?.logo,
-		food_drinks_logo: r.food_drinks_module?.logo,
-		reservations_logo: r.reservation_module?.logo,
+		stores_logo: r.stores_module?.business_details?.logo?.url,
+		food_drinks_logo: r.food_drinks_module?.business_details?.logo?.url,
+		reservations_logo: r.reservation_module?.business_details?.logo?.url,
 
 		// Module-specific banners (flattened)
-		stores_banner: r.stores_module?.banner,
-		food_drinks_banner: r.food_drinks_module?.banner,
-		reservations_banner: r.reservation_module?.banner,
+		stores_banner: r.stores_module?.business_details?.banner?.url,
+		food_drinks_banner: r.food_drinks_module?.business_details?.banner?.url,
+		reservations_banner: r.reservation_module?.business_details?.banner?.url,
 	});
 }
 
@@ -265,4 +266,84 @@ export function parseBusinessWithDailyMeals(business: BusinessByIdPrisma): Busin
 		daily_meal_drivers: asRec.daily_meals_module?.daily_meal_drivers ?? [],
 	};
 	return BusinessWithDailyMealsResponseDto.parse(dto);
+}
+
+// Map business with addressInclude (address + business_details) to BusinessResponseDto
+export function toBusinessWithAddressResponse(row: BusinessWithAddressPrisma): BusinessResponseType {
+	const r = row as BusinessWithAddressPrisma;
+	const asRec = r as Record<string, any>;
+
+	const businessDetails = asRec.business_details ?? {
+		name: asRec.name ?? null,
+		description: asRec.description ?? null,
+		logo: asRec.logo?.url ?? null,
+		banner: asRec.banner?.url ?? null,
+	};
+
+	return BusinessResponseDto.parse({
+		business_id: r.business_id,
+		business_details: businessDetails,
+		tax_id: asRec.tax_id ?? null,
+		registration_id: asRec.registration_id ?? null,
+		email: asRec.email ?? null,
+		telephone: asRec.telephone ?? null,
+		telephone_code: asRec.telephone_code ?? null,
+		website_url: asRec.website_url ?? null,
+		working_hours: asRec.working_hours ?? null,
+		is_business_unit: asRec.is_business_unit ?? null,
+		business_group_name: asRec.business_group_name ?? null,
+		parent_business_id: asRec.parent_business_id ?? null,
+		stripe_account_id: asRec.stripe_account_id ?? null,
+		stripe_customer_id: asRec.stripe_customer_id ?? null,
+		word_buy_stripe_subscription_id: asRec.word_buy_stripe_subscription_id ?? null,
+		first_activated_at: asRec.first_activated_at ? new Date(asRec.first_activated_at).toISOString() : undefined,
+		active: asRec.active ?? null,
+		sales_representative_id: asRec.sales_representative_id ?? null,
+		address_id: asRec.address_id ?? null,
+		created_at: asRec.created_at ? new Date(asRec.created_at).toISOString() : undefined,
+		updated_at: asRec.updated_at ? new Date(asRec.updated_at).toISOString() : undefined,
+		food_drinks_id: asRec.food_drinks_id ?? null,
+		transport_module_id: asRec.transport_module_id ?? null,
+		reservation_module_id: asRec.reservation_module_id ?? null,
+		stores_id: asRec.stores_id ?? null,
+	});
+}
+
+// Map business with minimal includes (address + business_details + business_users) to BusinessResponseDto
+export function toBusinessMinimalResponse(row: any): BusinessResponseType {
+	const r = row;
+	const asRec = r as Record<string, any>;
+
+	const businessDetails = asRec.business_details ?? {
+		name: asRec.name ?? null,
+		description: asRec.description ?? null,
+	};
+
+	return BusinessResponseDto.parse({
+		business_id: r.business_id,
+		business_details: businessDetails,
+		tax_id: asRec.tax_id ?? null,
+		registration_id: asRec.registration_id ?? null,
+		email: asRec.email ?? null,
+		telephone: asRec.telephone ?? null,
+		telephone_code: asRec.telephone_code ?? null,
+		website_url: asRec.website_url ?? null,
+		working_hours: asRec.working_hours ?? null,
+		is_business_unit: asRec.is_business_unit ?? null,
+		business_group_name: asRec.business_group_name ?? null,
+		parent_business_id: asRec.parent_business_id ?? null,
+		stripe_account_id: asRec.stripe_account_id ?? null,
+		stripe_customer_id: asRec.stripe_customer_id ?? null,
+		word_buy_stripe_subscription_id: asRec.word_buy_stripe_subscription_id ?? null,
+		first_activated_at: asRec.first_activated_at ? new Date(asRec.first_activated_at).toISOString() : undefined,
+		active: asRec.active ?? null,
+		sales_representative_id: asRec.sales_representative_id ?? null,
+		address_id: asRec.address_id ?? null,
+		created_at: asRec.created_at ? new Date(asRec.created_at).toISOString() : undefined,
+		updated_at: asRec.updated_at ? new Date(asRec.updated_at).toISOString() : undefined,
+		food_drinks_id: asRec.food_drinks_id ?? null,
+		transport_module_id: asRec.transport_module_id ?? null,
+		reservation_module_id: asRec.reservation_module_id ?? null,
+		stores_id: asRec.stores_id ?? null,
+	});
 }
