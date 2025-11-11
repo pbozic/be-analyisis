@@ -6,6 +6,11 @@ import {
 	UserTutorialState,
 	UserTutorialBase,
 } from '../schemas/dto/Tutorials/tutorials.dto.js';
+import {
+	toTutorialDetail,
+	toUserTutorialState,
+	toUserTutorialBase,
+} from '../schemas/dto/Tutorials/tutorials.mappers.js';
 import prisma from '../prisma/prisma.js';
 /**
  * Get or create tutorial state for a user
@@ -18,7 +23,7 @@ export async function getOrCreateState(user_id: string): Promise<UserTutorialSta
 	if (!state) {
 		state = await prisma.user_tutorial_state.create({ data: { user_id } });
 	}
-	return state;
+	return toUserTutorialState(state);
 }
 /**
  * List tutorials with user's status
@@ -31,19 +36,28 @@ export async function listTutorialsWithStatus(user_id: string): Promise<Tutorial
 	const epoch = state.epoch;
 	// Fetch all tutorials and left join user_tutorials by current epoch
 	const tutorials: TutorialBase[] = await prisma.tutorial.findMany({ orderBy: { createdAt: 'asc' } });
-	const links: UserTutorialBase[] = await prisma.user_tutorials.findMany({
-		where: { user_id, epoch },
-	});
+	const links: UserTutorialBase[] = await prisma.user_tutorials.findMany({ where: { user_id, epoch } });
 	const byTutorial: Record<string, UserTutorialBase> = {};
 	for (const l of links) byTutorial[l.tutorial_id] = l;
-	return tutorials.map((t: TutorialBase) => ({
-		...t,
-		status: byTutorial[t.tutorial_id]?.status || 'NOT_SEEN',
-		versionSeen: byTutorial[t.tutorial_id]?.versionSeen || 0,
-		firstSeenAt: byTutorial[t.tutorial_id]?.firstSeenAt || null,
-		completedAt: byTutorial[t.tutorial_id]?.completedAt || null,
-		dismissedAt: byTutorial[t.tutorial_id]?.dismissedAt || null,
-	})) as TutorialDetail[];
+
+	return tutorials.map((t: TutorialBase) => {
+		const link = byTutorial[t.tutorial_id];
+		const combined = {
+			tutorial_id: t.tutorial_id,
+			key: t.key,
+			title: t.title,
+			version: t.version,
+			mandatory: t.mandatory,
+			createdAt: t.createdAt,
+			retiredAt: t.retiredAt,
+			status: link?.status,
+			versionSeen: link?.versionSeen,
+			firstSeenAt: link?.firstSeenAt,
+			completedAt: link?.completedAt,
+			dismissedAt: link?.dismissedAt,
+		};
+		return toTutorialDetail(combined);
+	});
 }
 /**
  * Set tutorial status for a user
@@ -65,7 +79,7 @@ export async function setTutorialStatus(
 	const tutorial = await prisma.tutorial.findUnique({ where: { key: tutorial_key } });
 	if (!tutorial) throw new Error('Tutorial not found');
 	const now = new Date();
-	return prisma.user_tutorials.upsert({
+	const res = await prisma.user_tutorials.upsert({
 		where: { user_id_tutorial_id_epoch: { user_id, tutorial_id: tutorial.tutorial_id, epoch } },
 		create: {
 			user_id,
@@ -85,6 +99,8 @@ export async function setTutorialStatus(
 			dismissedAt: status === 'DISMISSED' ? now : null,
 		},
 	});
+
+	return toUserTutorialBase(res);
 }
 /**
  * Increment tutorial epoch for a user
@@ -94,10 +110,8 @@ export async function setTutorialStatus(
  */
 export async function incrementEpoch(user_id: string): Promise<UserTutorialState> {
 	const state = await getOrCreateState(user_id);
-	return prisma.user_tutorial_state.update({
-		where: { user_id },
-		data: { epoch: state.epoch + 1 },
-	});
+	const updated = await prisma.user_tutorial_state.update({ where: { user_id }, data: { epoch: state.epoch + 1 } });
+	return toUserTutorialState(updated);
 }
 
 export default { getOrCreateState, listTutorialsWithStatus, setTutorialStatus, incrementEpoch };

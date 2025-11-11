@@ -1265,11 +1265,11 @@ async function removeBusinessFromFavorites(req, res) {
 		if (!favorited_entry) {
 			return res.status(400).json({ message: 'Business not favorited for given type.' });
 		}
-		const removed_entry = await UserFavoriteBusinessDao.removeFavoriteBusiness(user_favorite_businesses_id);
-		res.status(200).json(removed_entry);
+		await UserFavoriteBusinessDao.removeFavoriteBusiness(user_favorite_businesses_id);
+		res.status(200).json({ message: 'Favorite business removed successfully.' });
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ message: 'Internal Server Error while adding Business to Favorites' });
+		res.status(500).json({ message: 'Internal Server Error while removing Business from Favorites' });
 	}
 }
 /**

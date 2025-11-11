@@ -18,7 +18,7 @@ export const createJob = (
 		driver_id?: string | null;
 		request_url?: string | null;
 		message_id: string;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 		request_payload?: any;
 		request_token?: string | null;
 	}

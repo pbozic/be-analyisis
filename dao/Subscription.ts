@@ -1,24 +1,29 @@
-import type { action_bundle, business } from '@prisma/client';
-
 import prisma from '../prisma/prisma.js';
 import type { CreateSubscriptionSchema, UpdateSubscriptionSchema } from '../types/subscriptions/Subscription.js';
+import subscriptionInclude, { SubscriptionWithIncludesPrisma } from '../prisma/includes/subscriptions.js';
+import { toSubscriptionResponse, toSubscriptionsList } from '../schemas/dto/Subscription/subscription.mappers.js';
+import type { SubscriptionResponse } from '../schemas/dto/Subscription/subscription.dto.js';
 
 /**
  * Create a new subscription
  *
  * @param {CreateSubscriptionSchema} data
- * @returns {Promise<business>}
+ * @returns {Promise<SubscriptionResponse>}
  */
-export async function createSubscription(data: CreateSubscriptionSchema): Promise<business> {
+export async function createSubscription(data: CreateSubscriptionSchema): Promise<SubscriptionResponse> {
 	try {
-		return await prisma.action_bundle.create({
+		const created = await prisma.action_bundle.create({
 			data: {
 				module: data.module,
 				name: data.name,
 				price_cents: data.price_cents,
 				stripe_price_id: data.stripe_price_id,
+				stripe_product_id: data.stripe_product_id ?? undefined,
 			},
+			include: subscriptionInclude,
 		});
+
+		return toSubscriptionResponse(created as SubscriptionWithIncludesPrisma);
 	} catch (error) {
 		console.error('Error creating subscription:', error);
 		throw new Error('Failed to create subscription');
@@ -30,19 +35,26 @@ export async function createSubscription(data: CreateSubscriptionSchema): Promis
  *
  * @param {string} subscriptionId
  * @param {UpdateSubscriptionSchema} data
- * @returns {Promise<business>}
+ * @returns {Promise<SubscriptionResponse>}
  */
-export async function updateSubscription(subscriptionId: string, data: UpdateSubscriptionSchema): Promise<business> {
+export async function updateSubscription(
+	subscriptionId: string,
+	data: UpdateSubscriptionSchema
+): Promise<SubscriptionResponse> {
 	try {
-		return await prisma.action_bundle.update({
+		const updated = await prisma.action_bundle.update({
 			where: { subscription_id: subscriptionId },
 			data: {
 				module: data.module,
 				name: data.name,
 				price_cents: data.price_cents,
 				stripe_price_id: data.stripe_price_id,
+				stripe_product_id: data.stripe_product_id ?? undefined,
 			},
+			include: subscriptionInclude,
 		});
+
+		return toSubscriptionResponse(updated as SubscriptionWithIncludesPrisma);
 	} catch (error) {
 		console.error('Error updating subscription:', error);
 		throw new Error('Failed to update subscription');
@@ -57,9 +69,7 @@ export async function updateSubscription(subscriptionId: string, data: UpdateSub
  */
 export async function deleteSubscription(subscriptionId: string): Promise<void> {
 	try {
-		await prisma.action_bundle.delete({
-			where: { subscription_id: subscriptionId },
-		});
+		await prisma.action_bundle.delete({ where: { subscription_id: subscriptionId } });
 	} catch (error) {
 		console.error('Error deleting subscription:', error);
 		throw new Error('Failed to delete subscription');
@@ -70,13 +80,15 @@ export async function deleteSubscription(subscriptionId: string): Promise<void> 
  * Get a subscription by ID
  *
  * @param {string} subscriptionId
- * @returns {Promise<business | null>}
+ * @returns {Promise<SubscriptionResponse | null>}
  */
-export async function getSubscriptionById(subscriptionId: string): Promise<action_bundle | null> {
+export async function getSubscriptionById(subscriptionId: string): Promise<SubscriptionResponse | null> {
 	try {
-		return await prisma.action_bundle.findUnique({
+		const row = await prisma.action_bundle.findUnique({
 			where: { subscription_id: subscriptionId },
+			include: subscriptionInclude,
 		});
+		return row ? toSubscriptionResponse(row as SubscriptionWithIncludesPrisma) : null;
 	} catch (error) {
 		console.error('Error fetching subscription:', error);
 		throw new Error('Failed to fetch subscription');
@@ -87,13 +99,12 @@ export async function getSubscriptionById(subscriptionId: string): Promise<actio
  * Get a subscription by Name
  *
  * @param {string} name
- * @returns {Promise<business | null>}
+ * @returns {Promise<SubscriptionResponse | null>}
  */
-export async function getSubscriptionByName(name: string): Promise<action_bundle | null> {
+export async function getSubscriptionByName(name: string): Promise<SubscriptionResponse | null> {
 	try {
-		return await prisma.action_bundle.findUnique({
-			where: { name },
-		});
+		const row = await prisma.action_bundle.findUnique({ where: { name }, include: subscriptionInclude });
+		return row ? toSubscriptionResponse(row as SubscriptionWithIncludesPrisma) : null;
 	} catch (error) {
 		console.error('Error fetching subscription:', error);
 		throw new Error('Failed to fetch subscription');
@@ -103,11 +114,12 @@ export async function getSubscriptionByName(name: string): Promise<action_bundle
 /**
  * List all subscriptions
  *
- * @returns {Promise<business[]>}
+ * @returns {Promise<SubscriptionResponse[]>}
  */
-export async function listSubscriptions(): Promise<business[]> {
+export async function listSubscriptions(): Promise<SubscriptionResponse[]> {
 	try {
-		return await prisma.action_bundle.findMany();
+		const rows = await prisma.action_bundle.findMany({ include: subscriptionInclude });
+		return toSubscriptionsList(rows as SubscriptionWithIncludesPrisma[]);
 	} catch (error) {
 		console.error('Error listing subscriptions:', error);
 		throw new Error('Failed to list subscriptions');
@@ -117,13 +129,12 @@ export async function listSubscriptions(): Promise<business[]> {
 /**
  * List all subscriptions by Module
  *
- * @returns {Promise<business[]>}
+ * @returns {Promise<SubscriptionResponse[]>}
  */
-export async function listSubscriptionsByModule(module: string): Promise<business[]> {
+export async function listSubscriptionsByModule(module: string): Promise<SubscriptionResponse[]> {
 	try {
-		return await prisma.action_bundle.findMany({
-			where: { module },
-		});
+		const rows = await prisma.action_bundle.findMany({ where: { module }, include: subscriptionInclude });
+		return toSubscriptionsList(rows as SubscriptionWithIncludesPrisma[]);
 	} catch (error) {
 		console.error('Error listing subscriptions:', error);
 		throw new Error('Failed to list subscriptions');

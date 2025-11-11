@@ -38,7 +38,6 @@ export async function updateFavoriteServices(
 		}
 		const updatedFavs = await FavoriteServicesDao.updateFavoriteServices(user_id, service_ids);
 		res.json(updatedFavs);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -68,7 +67,6 @@ export async function listFavoriteServices(req: Request, res: Response): Promise
 		}
 		const favs = await FavoriteServicesDao.listFavoriteServices(user_id);
 		res.json(favs);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}

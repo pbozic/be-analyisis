@@ -1,9 +1,7 @@
 import prisma from '../prisma/prisma.js';
 import type { UserRef } from '../schemas/dto/User/index.js';
 import type { BusinessRef } from '../schemas/dto/Business/index.js';
-import type {
-	VehicleBase
-} from '../schemas/dto/Vehicles/vehicle.dto.js';
+import type { VehicleBase } from '../schemas/dto/Vehicles/vehicle.dto.js';
 
 // Use proper DTO interfaces
 export interface DeliveryDriverBase {
@@ -78,7 +76,7 @@ export async function getDeliveryDrivers(): Promise<DeliveryDriverDetail[]> {
 			daily_meal_business: true,
 		},
 	});
-	
+
 	return drivers.map(toDeliveryDriverDetail);
 }
 
@@ -95,7 +93,7 @@ export async function getOnlineDeliveryDrivers(): Promise<DeliveryDriverDetail[]
 			daily_meal_business: true,
 		},
 	});
-	
+
 	return drivers.map(toDeliveryDriverDetail);
 }
 
@@ -104,9 +102,9 @@ export async function getOnlineDeliveryDrivers(): Promise<DeliveryDriverDetail[]
  */
 export async function getAvailableDeliveryDrivers(): Promise<DeliveryDriverDetail[]> {
 	const drivers = await prisma.delivery_drivers.findMany({
-		where: { 
+		where: {
 			online: true,
-			on_order: false 
+			on_order: false,
 		},
 		include: {
 			user: true,
@@ -115,7 +113,7 @@ export async function getAvailableDeliveryDrivers(): Promise<DeliveryDriverDetai
 			daily_meal_business: true,
 		},
 	});
-	
+
 	return drivers.map(toDeliveryDriverDetail);
 }
 
@@ -132,7 +130,7 @@ export async function getDeliveryDriversWithDailyMeals(): Promise<DeliveryDriver
 			daily_meal_business: true,
 		},
 	});
-	
+
 	return drivers.map(toDeliveryDriverDetail);
 }
 
@@ -149,7 +147,7 @@ export async function getDeliveryDriverById(delivery_driver_id: string): Promise
 			daily_meal_business: true,
 		},
 	});
-	
+
 	return driver ? toDeliveryDriverDetail(driver) : null;
 }
 
@@ -166,7 +164,7 @@ export async function getDeliveryDriverByUserId(user_id: string): Promise<Delive
 			daily_meal_business: true,
 		},
 	});
-	
+
 	return driver ? toDeliveryDriverDetail(driver) : null;
 }
 
@@ -178,7 +176,7 @@ export async function getDeliveryDriverLocation(delivery_driver_id: string): Pro
 		where: { delivery_driver_id },
 		select: { location: true },
 	});
-	
+
 	return driver?.location as Record<string, unknown> | null;
 }
 
@@ -190,7 +188,7 @@ export async function getDeliveryDriverLocation(delivery_driver_id: string): Pro
  * Update delivery driver data
  */
 export async function updateDeliveryDriver(
-	delivery_driver_id: string, 
+	delivery_driver_id: string,
 	data: Partial<DeliveryDriverBase>
 ): Promise<DeliveryDriverDetail> {
 	// Convert timestamps if they exist
@@ -215,7 +213,7 @@ export async function updateDeliveryDriver(
 			daily_meal_business: true,
 		},
 	});
-	
+
 	return toDeliveryDriverDetail(driver);
 }
 
@@ -223,12 +221,12 @@ export async function updateDeliveryDriver(
  * Update delivery driver location
  */
 export async function updateDeliveryDriverLocation(
-	delivery_driver_id: string, 
+	delivery_driver_id: string,
 	location: Record<string, unknown>
 ): Promise<DeliveryDriverDetail> {
 	const driver = await prisma.delivery_drivers.update({
 		where: { delivery_driver_id },
-		data: { 
+		data: {
 			location,
 			last_ping_at: new Date(),
 		},
@@ -239,7 +237,7 @@ export async function updateDeliveryDriverLocation(
 			daily_meal_business: true,
 		},
 	});
-	
+
 	return toDeliveryDriverDetail(driver);
 }
 
@@ -247,12 +245,12 @@ export async function updateDeliveryDriverLocation(
  * Update delivery driver online status
  */
 export async function updateDeliveryDriverOnlineStatus(
-	delivery_driver_id: string, 
+	delivery_driver_id: string,
 	online: boolean
 ): Promise<DeliveryDriverDetail> {
 	const driver = await prisma.delivery_drivers.update({
 		where: { delivery_driver_id },
-		data: { 
+		data: {
 			online,
 			last_ping_at: new Date(),
 		},
@@ -263,7 +261,7 @@ export async function updateDeliveryDriverOnlineStatus(
 			daily_meal_business: true,
 		},
 	});
-	
+
 	return toDeliveryDriverDetail(driver);
 }
 
@@ -294,7 +292,7 @@ export async function createDeliveryDriver(data: {
 			daily_meal_business: true,
 		},
 	});
-	
+
 	return toDeliveryDriverDetail(driver);
 }
 
@@ -311,7 +309,7 @@ export async function getDeliveryDriverEarnings(
 	endDate?: Date
 ): Promise<Array<Record<string, unknown>>> {
 	const whereClause: any = { delivery_driver_id };
-	
+
 	if (startDate || endDate) {
 		whereClause.created_at = {};
 		if (startDate) whereClause.created_at.gte = startDate;
@@ -332,7 +330,7 @@ export async function getDeliveryDriverEarnings(
 		GROUP BY DATE(do.created_at)
 		ORDER BY DATE(do.created_at) DESC
 	`;
-	
+
 	return earnings as Array<Record<string, unknown>>;
 }
 
@@ -344,7 +342,7 @@ export async function getAllDeliveryDriversEarnings(
 	endDate?: Date
 ): Promise<Array<Record<string, unknown>>> {
 	const whereClause: any = {};
-	
+
 	if (startDate || endDate) {
 		whereClause.created_at = {};
 		if (startDate) whereClause.created_at.gte = startDate;
@@ -368,7 +366,7 @@ export async function getAllDeliveryDriversEarnings(
 		GROUP BY dd.delivery_driver_id, u.first_name, u.last_name
 		ORDER BY total_earnings DESC
 	`;
-	
+
 	return earnings as Array<Record<string, unknown>>;
 }
 
@@ -382,7 +380,7 @@ export async function getDeliveryDriverTotalEarnings(delivery_driver_id: string)
 		WHERE delivery_driver_id = ${delivery_driver_id}
 		AND status = 'completed'
 	`;
-	
+
 	const earnings = result as Array<{ total_earnings: number | null }>;
 	return earnings[0]?.total_earnings ?? 0;
 }
@@ -396,7 +394,7 @@ export async function getTotalDeliveryDriversEarnings(): Promise<number> {
 		FROM delivery_orders
 		WHERE status = 'completed'
 	`;
-	
+
 	const earnings = result as Array<{ total_earnings: number | null }>;
 	return earnings[0]?.total_earnings ?? 0;
 }

@@ -340,11 +340,7 @@ export async function getActiveOrdersByUserId(user_id: string, type?: string): P
 		const where: any = {
 			user_id,
 			status: {
-				in: [
-					TAXI_ORDER_STATUS.PENDING,
-					TAXI_ORDER_STATUS.TAXI_ACCEPTED,
-					TAXI_ORDER_STATUS.TAXI_DRIVING,
-				],
+				in: [TAXI_ORDER_STATUS.PENDING, TAXI_ORDER_STATUS.TAXI_ACCEPTED, TAXI_ORDER_STATUS.TAXI_DRIVING],
 			},
 		};
 
@@ -370,10 +366,7 @@ export async function getActiveOrdersByDriverId(driver_id: string): Promise<Taxi
 		const where = {
 			driver_id,
 			status: {
-				in: [
-					TAXI_ORDER_STATUS.TAXI_ACCEPTED,
-					TAXI_ORDER_STATUS.TAXI_DRIVING,
-				],
+				in: [TAXI_ORDER_STATUS.TAXI_ACCEPTED, TAXI_ORDER_STATUS.TAXI_DRIVING],
 			},
 		};
 
@@ -391,10 +384,7 @@ export async function getActiveOrdersByDriverId(driver_id: string): Promise<Taxi
  * @param limit - Number of orders to return.
  * @returns Array of completed orders.
  */
-export async function getCompletedOrdersByUserId(
-	user_id: string,
-	limit: number = 50
-): Promise<TaxiOrderDetail[]> {
+export async function getCompletedOrdersByUserId(user_id: string, limit: number = 50): Promise<TaxiOrderDetail[]> {
 	try {
 		const where = {
 			user_id,
@@ -469,7 +459,11 @@ export async function getTaxiOrdersIfNotCompleted(
 		const whereCondition: any = {
 			user_id,
 			status: {
-				notIn: [TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED],
+				notIn: [
+					TAXI_ORDER_STATUS.TAXI_COMPLETED,
+					TAXI_ORDER_STATUS.TAXI_CANCELED,
+					TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+				],
 			},
 		};
 
@@ -511,10 +505,7 @@ export async function getTaxiOrdersIfNotCompleted(
  * @param args - Additional query arguments.
  * @returns Array of delivery orders.
  */
-export async function getDeliveryOrdersByDriverId(
-	driver_id: string,
-	args: any = {}
-): Promise<TaxiOrderDetail[]> {
+export async function getDeliveryOrdersByDriverId(driver_id: string, args: any = {}): Promise<TaxiOrderDetail[]> {
 	try {
 		const whereCondition = {
 			driver_id,
@@ -550,10 +541,7 @@ export async function getDeliveryOrdersByDriverId(
  * @param args - Additional query arguments.
  * @returns Array of taxi orders.
  */
-export async function getOrdersByDriverId(
-	driver_id: string,
-	args: any = {}
-): Promise<TaxiOrderDetail[]> {
+export async function getOrdersByDriverId(driver_id: string, args: any = {}): Promise<TaxiOrderDetail[]> {
 	try {
 		const whereCondition = {
 			driver_id,
@@ -588,10 +576,7 @@ export async function getOrdersByDriverId(
  * @param driver - Driver object with user_id.
  * @returns Created order sent record.
  */
-export async function createOrderSent(
-	order_id: string,
-	driver: { user_id: string; driver_id?: string }
-): Promise<any> {
+export async function createOrderSent(order_id: string, driver: { user_id: string; driver_id?: string }): Promise<any> {
 	try {
 		return await prisma.taxi_order_sent.create({
 			data: {
@@ -613,10 +598,7 @@ export async function createOrderSent(
  * @param driver - Driver object with user_id.
  * @returns Order sent record or null.
  */
-export async function isOrderSent(
-	order_id: string,
-	driver: { user_id: string; driver_id?: string }
-): Promise<any> {
+export async function isOrderSent(order_id: string, driver: { user_id: string; driver_id?: string }): Promise<any> {
 	try {
 		return await prisma.taxi_order_sent.findFirst({
 			where: {
@@ -673,7 +655,11 @@ export async function cancelVehicleTransferOrder(
 				user_id,
 				type: 'VEHICLE_TRANSFER',
 				status: {
-					notIn: [TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED],
+					notIn: [
+						TAXI_ORDER_STATUS.TAXI_COMPLETED,
+						TAXI_ORDER_STATUS.TAXI_CANCELED,
+						TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+					],
 				},
 			},
 			data: {
@@ -1006,10 +992,7 @@ export async function updateTaxiOrderPayment(
  * @param order - Order data to update.
  * @returns Updated order.
  */
-export async function updateOrder(
-	order_id: string,
-	order: Record<string, unknown>
-): Promise<TaxiOrderDetail | null> {
+export async function updateOrder(order_id: string, order: Record<string, unknown>): Promise<TaxiOrderDetail | null> {
 	try {
 		return await prisma.taxi_orders.update({
 			where: { order_id },
@@ -1078,7 +1061,11 @@ export async function userActiveOrders(user_id: string): Promise<TaxiOrderDetail
 			where: {
 				user_id,
 				status: {
-					notIn: [TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED],
+					notIn: [
+						TAXI_ORDER_STATUS.TAXI_COMPLETED,
+						TAXI_ORDER_STATUS.TAXI_CANCELED,
+						TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+					],
 				},
 			},
 			include: {
@@ -1109,10 +1096,7 @@ export async function userActiveOrders(user_id: string): Promise<TaxiOrderDetail
  * @param taxi_order_sent_id - Taxi order sent ID.
  * @returns Deleted record.
  */
-export async function deleteOrderSent(
-	order_id: string,
-	taxi_order_sent_id: string
-): Promise<any> {
+export async function deleteOrderSent(order_id: string, taxi_order_sent_id: string): Promise<any> {
 	try {
 		return await prisma.taxi_order_sent.delete({
 			where: {

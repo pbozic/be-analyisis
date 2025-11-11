@@ -1,5 +1,6 @@
-import { PromoAnalyticsDetail } from '../schemas/dto/PromoAnalytics/promo-analytics.dto.js';
+import { PromoAnalyticsDetail, toPromoAnalyticsDetail } from '../schemas/dto/PromoAnalytics/promo-analytics.dto.js';
 import prisma from '../prisma/prisma.js';
+import promoAnalyticsDefaultInclude, { PromoAnalyticsWithIncludesPrisma } from '../prisma/includes/promoAnalytics.js';
 /**
  * Get all promo analytics for a specific period.
  *
@@ -13,7 +14,7 @@ async function getAllPromoAnalyticsForPeriod(
 	start: Date,
 	end: Date
 ): Promise<PromoAnalyticsDetail[]> {
-	return await prisma.promo_analytics.findMany({
+	const rows: PromoAnalyticsWithIncludesPrisma[] = await prisma.promo_analytics.findMany({
 		where: {
 			business_id: businessId,
 			created_at: {
@@ -21,8 +22,10 @@ async function getAllPromoAnalyticsForPeriod(
 				lte: end,
 			},
 		},
-		include: { order: { select: { order_id: true } } },
+		include: promoAnalyticsDefaultInclude,
 	});
+
+	return rows.map((r) => toPromoAnalyticsDetail(r));
 }
 /**
  * Get promo analytics for a specific period filtered by promo type and optional IDs.
@@ -45,7 +48,7 @@ async function getPromoAnalyticsForPeriodByPromoType(
 	sectionIds?: string[],
 	adIds?: string[]
 ): Promise<PromoAnalyticsDetail[]> {
-	return await prisma.promo_analytics.findMany({
+	const rows: PromoAnalyticsWithIncludesPrisma[] = await prisma.promo_analytics.findMany({
 		where: {
 			business_id: businessId,
 			created_at: {
@@ -57,8 +60,10 @@ async function getPromoAnalyticsForPeriodByPromoType(
 			promo_ads_id: Array.isArray(adIds) && adIds.length > 0 ? { in: adIds } : undefined,
 			word_id: Array.isArray(wordIds) && wordIds.length > 0 ? { in: wordIds } : undefined,
 		},
-		include: { order: { select: { order_id: true } } },
+		include: promoAnalyticsDefaultInclude,
 	});
+
+	return rows.map((r) => toPromoAnalyticsDetail(r));
 }
 export { getPromoAnalyticsForPeriodByPromoType, getAllPromoAnalyticsForPeriod };
 export default {

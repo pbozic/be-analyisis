@@ -32,7 +32,7 @@ import {
 	GetBusinessForSearchInput,
 	ParentBusinessIdParamsInput,
 	CreateBusinessInput,
-} from '../schemas/dto/Business/Business.validation.ts';
+} from '../schemas/dto/Business/business.validators.js';
 config();
 const { businessIndex, fullSearch } = elasticsearch;
 /**

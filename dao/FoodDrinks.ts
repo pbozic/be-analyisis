@@ -1,5 +1,7 @@
 import prisma from '../prisma/prisma.js';
-import { FoodDrinksDetail } from '../schemas/dto/FoodDrinks/food-drinks.dto';
+import type { FoodDrinksDetail } from '../schemas/dto/FoodDrinks/food-drinks.dto';
+import { toFoodDrinksDetail } from '../schemas/dto/FoodDrinks/food-drinks.dto';
+import type { FoodDrinksWithIncludesPrisma } from '../prisma/includes/foodDrinks.js';
 /**
  * Set food_drinks online status.
  *
@@ -9,7 +11,13 @@ import { FoodDrinksDetail } from '../schemas/dto/FoodDrinks/food-drinks.dto';
  */
 export async function setFoodDrinksOnline(food_drinks_id: string, online: boolean): Promise<FoodDrinksDetail> {
 	try {
-		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { online } });
+		const row = await prisma.food_drinks.update({ where: { food_drinks_id }, data: { online } });
+		try {
+			return toFoodDrinksDetail(row as FoodDrinksWithIncludesPrisma);
+		} catch (e: any) {
+			console.error('Failed to map food_drinks to DTO:', e?.message ?? String(e));
+			throw e;
+		}
 	} catch (error: unknown) {
 		const message = error instanceof Error ? error.message : String(error);
 		console.error('Error setting food_drinks online:', message);
@@ -28,7 +36,13 @@ export async function setFoodDrinksOverwhelmed(
 	overwhelmed: boolean
 ): Promise<FoodDrinksDetail> {
 	try {
-		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { overwhelmed } });
+		const row = await prisma.food_drinks.update({ where: { food_drinks_id }, data: { overwhelmed } });
+		try {
+			return toFoodDrinksDetail(row as FoodDrinksWithIncludesPrisma);
+		} catch (e: any) {
+			console.error('Failed to map food_drinks to DTO:', e?.message ?? String(e));
+			throw e;
+		}
 	} catch (error: unknown) {
 		const message = error instanceof Error ? error.message : String(error);
 		console.error('Error setting food_drinks overwhelmed:', message);
@@ -43,7 +57,16 @@ export async function setFoodDrinksOverwhelmed(
  */
 export async function disableFoodDrinks(food_drinks_id: string): Promise<FoodDrinksDetail> {
 	try {
-		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { enabled: false, online: false } });
+		const row = await prisma.food_drinks.update({
+			where: { food_drinks_id },
+			data: { enabled: false, online: false },
+		});
+		try {
+			return toFoodDrinksDetail(row as FoodDrinksWithIncludesPrisma);
+		} catch (e: any) {
+			console.error('Failed to map food_drinks to DTO:', e?.message ?? String(e));
+			throw e;
+		}
 	} catch (error: unknown) {
 		const message = error instanceof Error ? error.message : String(error);
 		console.error('Error disabling food_drinks:', message);
@@ -58,7 +81,13 @@ export async function disableFoodDrinks(food_drinks_id: string): Promise<FoodDri
  */
 export async function enableFoodDrinks(food_drinks_id: string): Promise<FoodDrinksDetail> {
 	try {
-		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { enabled: true } });
+		const row = await prisma.food_drinks.update({ where: { food_drinks_id }, data: { enabled: true } });
+		try {
+			return toFoodDrinksDetail(row as FoodDrinksWithIncludesPrisma);
+		} catch (e: any) {
+			console.error('Failed to map food_drinks to DTO:', e?.message ?? String(e));
+			throw e;
+		}
 	} catch (error: unknown) {
 		const message = error instanceof Error ? error.message : String(error);
 		console.error('Error enabling food_drinks:', message);

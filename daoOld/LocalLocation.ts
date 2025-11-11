@@ -27,7 +27,7 @@ const getAllLocalLocations = async (): Promise<LocalLocationDetail[]> => {
  * @param {Address} address
  * @returns {Promise<LocalLocationDetail>} - The created local location.
  */
-const createLocation = async (address: Address): Promise<LocalLocationDetail> => { 
+const createLocation = async (address: Address): Promise<LocalLocationDetail> => {
 	try {
 		const localLocation = await prisma.local_locations.create({
 			data: {

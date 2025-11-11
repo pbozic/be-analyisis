@@ -2,9 +2,16 @@ import {
 	BusinessLocalLocationBase,
 	BusinessLocalLocationDetail,
 	LocalLocationDetail,
+	toLocalLocationDetail,
+	toBusinessLocalLocationDetail,
 } from '../schemas/dto/Stores/localLocation.dto.js';
 import { Address } from '../types/addresses/Address.js';
 import prisma from '../prisma/prisma.js';
+import localLocationsDefaultInclude, {
+	businessLocalLocationsDefaultInclude,
+	LocalLocationsWithIncludesPrisma,
+	BusinessLocalLocationsWithIncludesPrisma,
+} from '../prisma/includes/localLocations.js';
 /**
  * Fetch all local locations.
  *
@@ -12,10 +19,11 @@ import prisma from '../prisma/prisma.js';
  */
 const getAllLocalLocations = async (): Promise<LocalLocationDetail[]> => {
 	try {
-		return await prisma.local_locations.findMany({
+		const rows = await prisma.local_locations.findMany({
 			where: { address_id: { not: undefined } },
-			include: { address: true },
+			include: localLocationsDefaultInclude,
 		});
+		return (rows as LocalLocationsWithIncludesPrisma[]).map((r) => toLocalLocationDetail(r));
 	} catch (error) {
 		throw new Error(`Error fetching all local locations: ${error}`);
 	}
@@ -27,19 +35,13 @@ const getAllLocalLocations = async (): Promise<LocalLocationDetail[]> => {
  * @param {Address} address
  * @returns {Promise<LocalLocationDetail>} - The created local location.
  */
-const createLocation = async (address: Address): Promise<LocalLocationDetail> => { 
+const createLocation = async (address: Address): Promise<LocalLocationDetail> => {
 	try {
 		const localLocation = await prisma.local_locations.create({
-			data: {
-				address: {
-					connect: {
-						address_id: address.address_id,
-					},
-				},
-			},
-			include: { address: true },
+			data: { address: { connect: { address_id: address.address_id } } },
+			include: localLocationsDefaultInclude,
 		});
-		return localLocation;
+		return toLocalLocationDetail(localLocation as LocalLocationsWithIncludesPrisma);
 	} catch (error) {
 		throw new Error(`Error creating local location: ${error}`);
 	}
@@ -64,13 +66,9 @@ const createBusinessLocalLocation = async (
 				local_location: { connect: { local_location_id: localLocationId } },
 				time: new Date(time),
 			},
-			include: {
-				local_location: {
-					include: { address: true },
-				},
-			},
+			include: businessLocalLocationsDefaultInclude,
 		});
-		return businessLocalLocation;
+		return toBusinessLocalLocationDetail(businessLocalLocation as BusinessLocalLocationsWithIncludesPrisma);
 	} catch (error) {
 		throw new Error(`Error creating business local location: ${error}`);
 	}
@@ -85,36 +83,26 @@ const createBusinessLocalLocation = async (
 const updateBusinessLocalLocation = async (locationId: string, time: Date): Promise<BusinessLocalLocationDetail> => {
 	try {
 		const updatedLocation = await prisma.business_local_locations.update({
-			where: {
-				business_local_location_id: locationId,
-			},
-			data: {
-				time,
-			},
-			include: {
-				local_location: { include: { address: true } },
-				delivery_orders: { select: { order_id: true, details: true, scheduled_at: true } },
-			},
+			where: { business_local_location_id: locationId },
+			data: { time },
+			include: businessLocalLocationsDefaultInclude,
 		});
-		for (const order of updatedLocation.orders) {
+		// Update related orders' details/scheduled time
+		for (const order of (updatedLocation.orders || []) as Array<{ order_id: string; details?: any }>) {
 			const updatedDetails = {
 				...order.details,
 				ready_for_pickup_at: time,
-				customer_expected_delivery_at: order.details.duration
-					? new Date(time.getTime() + order.details.duration * 1000)
-					: time,
+				customer_expected_delivery_at:
+					order.details && order.details.duration
+						? new Date(time.getTime() + order.details.duration * 1000)
+						: time,
 			};
 			await prisma.delivery_orders.update({
-				where: {
-					order_id: order.order_id,
-				},
-				data: {
-					details: updatedDetails,
-					scheduled_at: updatedLocation.time,
-				},
+				where: { order_id: order.order_id },
+				data: { details: updatedDetails, scheduled_at: (updatedLocation as any).time },
 			});
 		}
-		return updatedLocation as BusinessLocalLocationDetail;
+		return toBusinessLocalLocationDetail(updatedLocation as BusinessLocalLocationsWithIncludesPrisma);
 	} catch (error) {
 		throw new Error(`Error updating business local location: ${error}`);
 	}

@@ -11,7 +11,11 @@ import type {
 	BusinessWithAllModulesResponseDto,
 } from '../schemas/dto/Business/index.js';
 import { UUID } from '../schemas/primitives.js';
-import { toBusinessByIdResponse, toGetBusinessResponse } from '../schemas/dto/Business/index.js';
+import {
+	toBusinessByIdResponse,
+	toGetBusinessResponse,
+	parseBusinessWithDailyMeals,
+} from '../schemas/dto/Business/business.mappers.js';
 import { businessByIdInclude, getBusinessesInclude, BusinessFindManyArgs } from '../prisma/includes/business.js';
 
 type PrismaTransactionClient = Prisma.TransactionClient;
@@ -65,10 +69,7 @@ const getDailyMealBusinesses = async (): Promise<BusinessWithDailyMealsResponseD
 				},
 			},
 		});
-		return businesses.map((business: any) => ({
-			...business,
-			daily_meal_drivers: business.daily_meals_module.daily_meal_drivers,
-		}));
+		return businesses.map((business: any) => parseBusinessWithDailyMeals(business));
 	} catch (error) {
 		console.error('Error retrieving daily meal businesses:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get daily meal businesses');
@@ -112,6 +113,7 @@ const getBusinessAdminDataById = async (business_id: string): Promise<BusinessAd
 			},
 			include: {
 				address: true,
+				business_details: true,
 				business_users: {
 					include: {
 						users: true,
@@ -174,6 +176,7 @@ const getBusinessByEmail = async (email: string): Promise<BusinessResponseDto | 
 			},
 			include: {
 				address: true,
+				business_details: true,
 				business_users: true,
 			},
 		})) as BusinessResponseDto | null;
@@ -250,14 +253,17 @@ const getBusinessesByGroupName = async (search: string): Promise<BusinessRespons
  */
 const getTransferBusinessesMainInformation = async (): Promise<BusinessResponseDto[]> => {
 	try {
-		return (await prisma.business.findMany({
+		const rows = await prisma.business.findMany({
 			where: {
 				transport_module: { isNot: null },
 			},
 			include: {
+				business_details: true,
 				address: true,
 			},
-		})) as BusinessResponseDto[];
+		});
+		// Validate/shape results through the Business mapper
+		return rows.map(toGetBusinessResponse);
 	} catch (error) {
 		console.error('Error retrieving transfer businesses:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get transfer businesses');
@@ -271,14 +277,16 @@ const getTransferBusinessesMainInformation = async (): Promise<BusinessResponseD
  */
 const getStoresMainInformation = async (): Promise<BusinessResponseDto[]> => {
 	try {
-		return (await prisma.business.findMany({
+		const rows = await prisma.business.findMany({
 			where: {
 				stores_module: { isNot: null },
 			},
 			include: {
+				business_details: true,
 				address: true,
 			},
-		})) as BusinessResponseDto[];
+		});
+		return rows.map(toGetBusinessResponse);
 	} catch (error) {
 		console.error('Error retrieving stores:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get stores');
@@ -292,14 +300,16 @@ const getStoresMainInformation = async (): Promise<BusinessResponseDto[]> => {
  */
 const getFoodDrinksMainInformation = async (): Promise<BusinessResponseDto[]> => {
 	try {
-		return (await prisma.business.findMany({
+		const rows = await prisma.business.findMany({
 			where: {
 				food_drinks_module: { isNot: null },
 			},
 			include: {
+				business_details: true,
 				address: true,
 			},
-		})) as BusinessResponseDto[];
+		});
+		return rows.map(toGetBusinessResponse);
 	} catch (error) {
 		console.error('Error retrieving food & drinks businesses:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get food & drinks businesses');
@@ -326,12 +336,13 @@ const getBusinessesByType = async (type: string, args: any = {}): Promise<Busine
 			throw new Error(`Unknown business type: ${type}`);
 		}
 
-		return (await prisma.business.findMany({
+		const rows = await prisma.business.findMany({
 			where: {
 				...whereClause,
 				...args.where,
 			},
 			include: {
+				business_details: true,
 				address: true,
 				business_users: {
 					include: {
@@ -343,7 +354,8 @@ const getBusinessesByType = async (type: string, args: any = {}): Promise<Busine
 				...args.include,
 			},
 			...args,
-		})) as BusinessResponseDto[];
+		});
+		return rows.map(toGetBusinessResponse);
 	} catch (error) {
 		console.error('Error retrieving businesses by type:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get businesses by type');
@@ -365,13 +377,15 @@ const getParentBusiness = async (business_id: string): Promise<BusinessResponseD
 
 		if (!business?.parent_business_id) return null;
 
-		return (await prisma.business.findUnique({
+		const parent = await prisma.business.findUnique({
 			where: { business_id: business.parent_business_id },
 			include: {
+				business_details: true,
 				address: true,
 				business_users: true,
 			},
-		})) as BusinessResponseDto | null;
+		});
+		return parent ? toGetBusinessResponse(parent) : null;
 	} catch (error) {
 		console.error('Error retrieving parent business:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get parent business');
@@ -386,20 +400,26 @@ const getParentBusiness = async (business_id: string): Promise<BusinessResponseD
  */
 const getChildBusinesses = async (parent_business_id: string): Promise<BusinessResponseDto[]> => {
 	try {
-		return (await prisma.business.findMany({
+		const rows = await prisma.business.findMany({
 			where: {
 				parent_business_id: parent_business_id,
 			},
 			include: {
+				business_details: true,
 				address: true,
 				business_users: true,
 			},
-		})) as BusinessResponseDto[];
+		});
+		return rows.map(toGetBusinessResponse);
 	} catch (error) {
 		console.error('Error retrieving child businesses:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get child businesses');
 	}
 };
+
+// Re-export include shapes and types for external mappers/controllers that need to build queries
+export { businessByIdInclude, getBusinessesInclude };
+export type { BusinessFindManyArgs };
 
 /**
  * Update a business with new data.
@@ -423,6 +443,7 @@ const updateBusiness = async (
 			where: { business_id },
 			data: updateData,
 			include: {
+				business_details: true,
 				address: true,
 				business_users: true,
 			},
@@ -538,6 +559,7 @@ const createNewBusiness = async (business: Partial<BusinessBase>, tx: any = pris
 		return (await tx.business.create({
 			data: createData,
 			include: {
+				business_details: true,
 				address: true,
 				business_users: true,
 			},

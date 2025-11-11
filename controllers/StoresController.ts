@@ -28,7 +28,6 @@ export async function setStoreOnline(
 		const { online } = req.body;
 		const updated = await StoresDao.setStoreOnline(stores_id, !!online);
 		res.json(updated);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -58,7 +57,6 @@ export async function setStoreOverwhelmed(
 		const { overwhelmed } = req.body;
 		const updated = await StoresDao.setStoreOverwhelmed(stores_id, !!overwhelmed);
 		res.json(updated);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -84,7 +82,6 @@ export async function disableStore(
 		const { stores_id } = req.params;
 		const updated = await StoresDao.disableStore(stores_id);
 		res.json(updated);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -107,7 +104,6 @@ export async function enableStore(req: ValidatedRequest<unknown, { stores_id: st
 		const { stores_id } = req.params;
 		const updated = await StoresDao.enableStore(stores_id);
 		res.json(updated);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}

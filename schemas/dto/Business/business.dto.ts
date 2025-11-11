@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { OpenAPIRegistry, extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 
-// Import existing module DTOs
 import { TransportModuleRefSchema } from '../Transport/transport.dto.js';
 import { FoodDrinksModuleRefSchema } from '../FoodDrinks/food-drinks.dto.js';
 import { StoresModuleRefSchema } from '../Stores/store.dto.js';
@@ -11,8 +10,7 @@ import { MenuItemRefSchema, MenuCategoryRefSchema } from '../Menu/menu.dto.js';
 import { AddressRefSchema } from '../Address/index.js';
 import { UserRefSchema } from '../User/index.js';
 import { FileRefSchema } from '../Files/file.dto.js';
-import { BusinessByIdPrisma, GetBusinessesPrisma } from '../../../prisma/includes/business.ts';
-import { UUID } from '../../primitives.ts';
+import { UUID } from '../../primitives';
 extendZodWithOpenApi(z);
 
 // TODO: Fix dto after deleting menu from prisma model etc...
@@ -23,8 +21,8 @@ export const BusinessCreateDto = z
 		address_id: z.string().uuid().nullable().optional().openapi({ example: null }),
 		is_business_unit: z.boolean().optional().default(false).openapi({ example: false }),
 		business_group_name: z.string().nullable().optional().openapi({ example: 'Acme Holdings' }),
-		name: z.string().min(1).openapi({ example: 'Klikni d.o.o.' }),
-		description: z.string().nullable().optional().openapi({ example: 'Local delivery and taxi services' }),
+		// 'name' and 'description' moved to `business_details` model in Prisma.
+		// They are intentionally omitted here from the base create DTO.
 		tax_id: z.string().openapi({ example: 'HR12345678901' }),
 		registration_id: z.string().openapi({ example: '567890' }),
 		email: z.string().email().openapi({ example: 'info@klikni-web.eu' }),
@@ -41,8 +39,7 @@ export const BusinessCreateDto = z
 					tuesday: { open: '08:00', close: '20:00' },
 				},
 			}),
-		popular: z.boolean().optional().default(true).openapi({ example: true }),
-		new: z.boolean().optional().default(false).openapi({ example: false }),
+		// UI-only flags (e.g. 'popular'/'new') are intentionally omitted from the persisted DTOs.
 		parent_business_id: z.string().uuid().nullable().optional().openapi({ example: null }),
 		stripe_account_id: z.string().nullable().optional().openapi({ example: null }),
 		stripe_customer_id: z.string().nullable().optional().openapi({ example: null }),
@@ -56,8 +53,7 @@ export const BusinessCreateDto = z
 			address_id: null,
 			is_business_unit: false,
 			business_group_name: 'Acme Holdings',
-			name: 'Klikni d.o.o.',
-			description: 'Local delivery and taxi services',
+			// name/description are stored in `business_details` and omitted here
 			tax_id: 'HR12345678901',
 			registration_id: '567890',
 			email: 'info@klikni-web.eu',
@@ -68,8 +64,7 @@ export const BusinessCreateDto = z
 				monday: { open: '08:00', close: '20:00' },
 				tuesday: { open: '08:00', close: '20:00' },
 			},
-			popular: true,
-			new: false,
+			// Note: 'popular'/'new' flags are not persisted in the Prisma schema and therefore omitted here.
 			parent_business_id: null,
 			stripe_account_id: null,
 			stripe_customer_id: null,
@@ -83,20 +78,32 @@ export const BusinessCreateDto = z
 // Full response schema including DB-managed fields
 export const BusinessResponseDto = BusinessCreateDto.extend({
 	business_id: UUID,
+	// Keep business metadata inside `business_details` to match Prisma's normalized model.
+	// We intentionally avoid flattening name/description to the root.
+	business_details: z
+		.object({
+			name: z.string().optional(),
+			description: z.string().nullable().optional(),
+			// Optional file refs (IDs) — these fields are present on business_details in many setups.
+			logo_id: z.string().uuid().nullable().optional(),
+			banner_id: z.string().uuid().nullable().optional(),
+		})
+		.nullable()
+		.optional(),
 	created_at: z.string().datetime().openapi({ example: '2025-01-01T12:00:00.000Z' }),
 	updated_at: z.string().datetime().openapi({ example: '2025-01-10T12:00:00.000Z' }),
 	food_drinks_id: UUID.nullable().optional(),
 	transport_module_id: UUID.nullable().optional(),
 	reservation_module_id: UUID.nullable().optional(),
 	stores_id: UUID.nullable().optional(),
+	crm_module_id: UUID.nullable().optional(),
 }).openapi({
 	example: {
-		business_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+		business_id: '3Afa85f64-5717-4562-b3fc-2c963f66afa6',
 		address_id: null,
 		is_business_unit: false,
 		business_group_name: 'Acme Holdings',
-		name: 'Klikni d.o.o.',
-		description: 'Local delivery and taxi services',
+		// name/description live on business_details in Prisma; omitted here.
 		tax_id: 'HR12345678901',
 		registration_id: '567890',
 		email: 'info@klikni-web.eu',
@@ -107,8 +114,6 @@ export const BusinessResponseDto = BusinessCreateDto.extend({
 			monday: { open: '08:00', close: '20:00' },
 			tuesday: { open: '08:00', close: '20:00' },
 		},
-		popular: true,
-		new: false,
 		parent_business_id: null,
 		stripe_account_id: null,
 		stripe_customer_id: null,
@@ -215,9 +220,7 @@ export const BusinessWithAllModulesResponseDto = BusinessResponseDto.extend({
 	daily_meals: DailyMealsRefSchema.nullable().optional(),
 }).openapi('BusinessWithAllModulesResponse');
 
-// =======================
 // Business Ref Schema - minimal identity for embedding elsewhere
-// =======================
 
 export const BusinessRefSchema = z
 	.object({
@@ -229,6 +232,53 @@ export const BusinessRefSchema = z
 		banner_id: z.string().uuid().nullable().optional(),
 	})
 	.openapi('BusinessRef');
+
+// Business with Address and Business Users (common include used in many DAO functions)
+export const BusinessWithAddressAndUsersResponseDto = BusinessResponseDto.extend({
+	address: AddressRefSchema.nullable().optional(),
+	delivery_address: AddressRefSchema.nullable().optional(),
+	business_users: z
+		.array(
+			z.object({
+				users: UserRefSchema.optional(),
+			})
+		)
+		.optional(),
+	parent_business: BusinessRefSchema.nullable().optional(),
+	child_businesses: z.array(BusinessRefSchema).optional(),
+}).openapi('BusinessWithAddressAndUsersResponse');
+
+// Business matching the `getBusinessesInclude` shape returned by DAO.getBusinesses
+export const BusinessWithIncludesResponseDto = BusinessResponseDto.extend({
+	// includes from getBusinessesInclude
+	address: AddressRefSchema.nullable().optional(),
+	delivery_address: AddressRefSchema.nullable().optional(),
+	business_users: z
+		.array(
+			z.object({
+				users: UserRefSchema.optional(),
+			})
+		)
+		.optional(),
+	parent_business: BusinessRefSchema.nullable().optional(),
+	child_businesses: z.array(BusinessRefSchema).optional(),
+}).openapi('BusinessWithIncludesResponse');
+
+// Business Search Response (matches DAO select used in search endpoints)
+export const BusinessSearchResponseDto = z
+	.object({
+		business_id: z.string().uuid(),
+		name: z.string().optional(),
+		description: z.string().nullable().optional(),
+		email: z.string().email().optional(),
+		telephone: z.string().optional(),
+		website_url: z.string().url().nullable().optional(),
+		active: z.boolean().optional(),
+		popular: z.boolean().optional(),
+		new: z.boolean().optional(),
+		address: AddressRefSchema.nullable().optional(),
+	})
+	.openapi('BusinessSearchResponse');
 
 // exported TS types
 export type BusinessCreateDto = z.infer<typeof BusinessCreateDto>;
@@ -358,83 +408,10 @@ export const BusinessByIdResponseSchema = BusinessResponseDto.extend({
 }).openapi('BusinessByIdResponse');
 
 export type BusinessByIdResponse = z.infer<typeof BusinessByIdResponseSchema>;
-export function toGetBusinessResponse(row: GetBusinessesPrisma): BusinessWithAllModulesResponseDto {
-	return row as unknown as BusinessWithAllModulesResponseDto;
-}
-// Mapper function from getBusinessById Prisma result
-export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAllModulesResponseDto {
-	const r = row; // Complex nested structure from getBusinessById
-
-	return BusinessByIdResponseSchema.parse({
-		// Base business fields
-		business_id: r.business_id,
-		name: r.name,
-		description: r.description,
-		tax_id: r.tax_id,
-		registration_id: r.registration_id,
-		email: r.email,
-		telephone: r.telephone,
-		telephone_code: r.telephone_code,
-		website_url: r.website_url,
-		working_hours: r.working_hours,
-		is_business_unit: r.is_business_unit,
-		business_group_name: r.business_group_name,
-		parent_business_id: r.parent_business_id,
-		stripe_account_id: r.stripe_account_id,
-		stripe_customer_id: r.stripe_customer_id,
-		word_buy_stripe_subscription_id: r.word_buy_stripe_subscription_id,
-		first_activated_at: r.first_activated_at ? new Date(r.first_activated_at).toISOString() : undefined,
-		active: r.active,
-		sales_representative_id: r.sales_representative_id,
-		address_id: r.address_id,
-		created_at: r.created_at ? new Date(r.created_at).toISOString() : undefined,
-		updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
-
-		// Module relationships
-		transport_module: r.transport_module,
-		transport_module_id: r.transport_module?.transport_module_id,
-		food_drinks_module: r.food_drinks_module,
-		food_drinks_module_id: r.food_drinks_module?.food_drinks_module_id,
-		stores_module: r.stores_module,
-		stores_module_id: r.stores_module?.stores_module_id,
-		reservation_module: r.reservation_module,
-		reservation_module_id: r.reservation_module?.reservation_module_id,
-		table_reservations_module: r.table_reservations_module,
-		table_reservations_module_id: r.table_reservations_module?.id,
-		daily_meals_module: r.daily_meals_module,
-		daily_meals_module_id: r.daily_meals_module?.id,
-		crm_module: r.crm_module,
-		crm_module_id: r.crm_module?.crm_module_id,
-
-		// Address and User relationships
-		business_users: r.business_users,
-
-		// File relationships
-		logo: r.logo,
-		banner: r.banner,
-
-		// Computed/flattened fields
-		business_local_locations: r.stores_module?.business_local_locations,
-		business_clients: r.crm_module?.business_clients,
-		reservations: r.table_reservations_module?.reservations,
-		daily_meals_delivery_mapping: r.daily_meals_module?.daily_meals_delivery_mapping,
-
-		// Daily meals specific fields
-		maximum_daily_meals_subscribers: r.daily_meals_module?.maximum_daily_meals_subscribers,
-		daily_users_sorting_type: r.daily_meals_module?.daily_users_sorting_type,
-		daily_users_sorted: r.daily_meals_module?.daily_users_sorted,
-
-		// Module-specific logos (flattened)
-		stores_logo: r.stores_module?.logo,
-		food_drinks_logo: r.food_drinks_module?.logo,
-		reservations_logo: r.reservation_module?.logo,
-
-		// Module-specific banners (flattened)
-		stores_banner: r.stores_module?.banner,
-		food_drinks_banner: r.food_drinks_module?.banner,
-		reservations_banner: r.reservation_module?.banner,
-	});
-}
+// Mappers were moved to `business.mappers.ts` to avoid large DTO files containing mapping logic.
+// See `schemas/dto/Business/business.mappers.ts` for implementations of
+// - toGetBusinessResponse
+// - toBusinessByIdResponse
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	// Register base business schemas
@@ -460,6 +437,10 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('BusinessWithStoresResponse', BusinessWithStoresResponseDto);
 	registry.register('BusinessWithReservationResponse', BusinessWithReservationResponseDto);
 	registry.register('BusinessWithCrmResponse', BusinessWithCrmResponseDto);
+
+	// Register extra DAO-shaped responses
+	registry.register('BusinessWithAddressAndUsersResponse', BusinessWithAddressAndUsersResponseDto);
+	registry.register('BusinessWithIncludesResponse', BusinessWithIncludesResponseDto);
 
 	// Register business with all modules
 	registry.register('BusinessWithAllModulesResponse', BusinessWithAllModulesResponseDto);

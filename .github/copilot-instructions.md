@@ -103,35 +103,185 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 }
 ``` 
 to the bottom of the dto file registering all the schemas defined in that file.
-<<<<<<< HEAD
 
-=======
->>>>>>> df648d95 (fix: copilot instructions for daos and controllers)
-## When asked to convert dao to typescript please follow these rules:
-1. Always import dto types from schemas/dto/... and ignore types/
-4. do not skip any functions from the original dao, list all functions from original and at the end check if it matches the new one
-5. do not change any function logic
-6. do not delete the original .js
-7. export single functions inline with export async function functionName() { ... }
-8. at the end export default { functionName, functionName2, ... }
-9. use prisma types only when absolutely necessary, prefer dto types
-10. if a function returns multiple items use dto type array, e.g. ModelResponse[]
-11. we will use mappers to convert from prisma types to dto types
-12. for create and update functions use dto types for input parameters
-13. for functions that use filters or pagination create dto types for those inputs in schemas/dto
-14. you can check prisma/includes to see how we type prisma returns in the dao functions and then use them in mapper,
-15. also create mappers in schemas/dto/<model>/<model>Mapper.ts to convert from prisma types to dto types using the dto types defined in schemas/dto/<model>/<model>.ts and prisma/includes/<model>Include.ts for prisma return types
-16. dont use any
+## Rules for dto refactor
+Full DTO / Mappers / Validators Refactor — Detailed Plan
+Purpose
 
+Standardize DTOs, mappers, validators, controllers and DAOs.
+Keep route-level runtime body validation (middleware/zod.js).
+Type params via zod z.infer and ValidatedRequest<BodySchema, ParamType> in controllers (no runtime param middleware).
+DAOs return zod-validated DTOs only; expose reusable Prisma include constants for mapper typing.
+Register every schema (public + DAO-only) with registerSchemas(registry).
+Provide per-model index.ts aggregator to export DTOs, mappers, validators, and registration.
+Contents
 
-## When asked to convert controller or its functions to typescript please follow these rules:
-1. Always import dto types from schemas/dto/... and ignore types/
-2. use ValidatedRequest as in BlogController.ts for request validation
-3. use AuthenticatedRequest from types/validatedRequest.ts for authenticated requests without any validation, check the routes that call the function to see if they are validated/authenticated
-4. do not skip any functions from the original controller, list all functions from original and at the end check if it matches the new one
-5. do not change any function logic
-6. do not delete the original .js
-7. export single functions inline with export async function functionName() { ... }
-8. at the end export default { functionName, functionName2, ... }
-9. if we use req.params also use ValidatedRequest with params, again check blogcontroller.ts for example
-10. don use any
+Branch / workflow
+Discovery / inventory
+File layout & naming conventions
+DTO shape rules & registration
+Validators rules (route runtime + param typing with z.infer)
+Routes & controllers usage pattern
+DAO include reuse & mapper typing
+Mappers rules
+Testing / CI
+.js → .ts migration plan
+Automation & scaffolding
+Backwards-compatibility & TODOs
+Progress tracking / example commit plan
+Concrete examples (validator file, route use, controller signature, dao include, mapper, registerSchemas snippet)
+1) Branch & workflow
+Branch: feat/dtos-refactor
+Make small per-model commits; present diffs for review before pushing.
+Suggested flow:
+git checkout -b feat/dtos-refactor
+stage/commit per model
+push & open PR for review at the end of all operations
+2) Discovery / inventory
+Scan dao for prisma calls and collect unique include/select shapes per model.
+Commands:
+rg "prisma.[a-zA-Z_]+.(findUnique|findMany|findFirst)" dao -n
+Produce report: model → include permutations → files using them → prioritize by usage.
+3) File layout & naming conventions (per model)
+Folder: schemas/dto/<model>/
+<model>.dto.ts — ModelBase, ModelRef, ModelResponse (split if big)
+<model>.deep.dto.ts (opt.) — DAO-only deep shapes (if large)
+<model>.mappers.ts — typed mappers
+<model>.validators.ts — Create / Update / request schemas (AnyBody catch-all)
+index.ts — re-exports + registerSchemas(registry) aggregator
+DAO: dao/<Model>.ts — export const modelWithXInclude = { ... } as const; export type ModelWithXInclude = typeof modelWithXInclude;
+4) DTO shape rules (strict)
+Reuse primitives from primitives.ts.
+Provide three canonical schemas per model:
+<Model>Base — scalars only (no relations).
+<Model>Ref — id + label(s) only (scalars).
+<Model>Response — extends Base and embeds only other models' <OtherModel>Ref.
+Never import another model’s Response. Use only Ref.
+Dates in DTOs are ISO strings (string).
+No secrets (passwords) in Response DTOs.
+Avoid z.lazy unless true recursion; isolate tree recursion.
+No circular imports; replace nested Response with Ref when needed.
+Validate mapper outputs with zod.parse.
+Register all schemas defined in the file using registerSchemas(registry) (include DAO-only deep schemas).
+Example register block to include in dto file bottom (all schemas declared there must be registered):
+
+5) Validators rules (exact)
+Body validation: runtime on route only with validate(schema) from middleware/zod.js (do not move to controllers).
+Params validation: do NOT add runtime param middleware. Instead:
+Export a zod param schema in the validators file and export a TypeScript type via export type ParamType = z.infer<typeof ParamSchema>.
+Use that ParamType in controller signature ValidatedRequest<BodySchema, ParamType>.
+For ambiguous endpoints (controllers pass whole req.body to DAO), create:
+export const AnyBodySchema = z.any(); // TODO: catch-all validator
+Put validate(AnyBodySchema) on the route and mark TODO for stricter validation later.
+When writing validators, inspect controller & DAO to derive the expected body shape.
+6) Routes & controller usage pattern
+Route: attach validate(BodySchema) middleware for body validation.
+No runtime param middleware — controller uses typed ValidatedRequest<..., ParamType> and z.infer for param type.
+Authenticated routes: use AuthenticatedRequest<BodySchema, ParamType> (appends user).
+Controllers do not call schema.safeParse — route middleware already enforced validity; if controller still does safeParse, mark for cleanup.
+Example route (body validation on route):
+
+Example controller signature (params typed via z.infer exported type):
+
+Note: first generic to ValidatedRequest can be typeof BodySchema (to keep compile-time knowledge of the zod schema shape), while the params generic is the z.infer exported type.
+
+7) DAO include reuse & typing pattern
+In DAO file export include constant typed as const and export its type:
+Use include const in prisma calls and cast result:
+Mapper will accept the same typed payload.
+8) Mappers rules
+Mappers in <model>.mappers.ts.
+Each mapper parameter is exactly typed: Prisma.<model>GetPayload<{ include: typeof daoInclude }> (import include type from DAO).
+Create the Include types in prisma/includes/*model.ts
+Convert Dates → ISO strings; normalize nullable scalars; map children to Ref shapes unless mapper is DAO-specific deep response.
+Validate output via zod.parse(TargetResponseSchema).
+Provide:
+toModelResponse (for shallow/ref includes)
+toModelWithXResponse (DAO-specific deep)
+Keep mappers pure and side-effect free.
+Example mapper signature:
+
+9) Validators file placement & content
+File: schemas/dto/<model>/<model>.validators.ts
+Export:
+CreateModelSchema, UpdateModelSchema
+Param zod schema(s) and export type via z.infer
+AnyBodySchema = z.any() for ambiguous bodies (TODO)
+registerSchemas(registry) to register these validator schemas for docs
+Example:
+
+10) Controllers
+Controller handlers typed with ValidatedRequest<BodySchema, ParamType> where ParamType is z.infer exported from validators file.
+Controllers should not call schema.safeParse for body (route-level middleware already did). If they still do, mark for future cleanup.
+For authenticated endpoints use AuthenticatedRequest<BodySchema, ParamType>.
+Example signature using z.infer for params:
+
+11) Schema registration & index.ts aggregator
+Each DTO folder must have index.ts that re-exports DTOs, mappers, validators and provides registerSchemas(registry) which calls all register functions for the folder (including DAO-only deep shapes).
+This is required by your OpenAPI registry approach and the copilot-instructions.
+Example:
+
+12) Tests & CI
+Unit tests for mappers: create typed mock Prisma payloads → call mapper → expect zod-validated DTO (dates ISO, null normalization).
+Smoke tests for controllers: test route-level validate(schema) middleware + controller with stubbed DAO.
+Run npx tsc --noEmit and tests before merging PR.
+13) .js → .ts migration plan
+After DTOs/mappers/validators stable:
+Convert DAOs (they now use DTOs/mappers and exported include types).
+Convert controllers (use ValidatedRequest / AuthenticatedRequest types).
+Convert routes and remaining code.
+Keep changes small; run typecheck after each step.
+14) Automation & scaffolding
+Create generator to scaffold DTOs/mappers/validators from prisma/schema.prisma.
+Generate:
+Base/Ref/Response zod schemas
+validator stubs
+mapper skeleton typed to DAO include
+index.ts registerSchemas skeleton
+Add helper utilities: toIsoString, mapIncludedArray, mapIncludedRef.
+15) Backwards-compatibility & TODOs
+Temporarily preserve legacy flattened props returned by DAOs; add // TODO: remove legacy flattened props once controllers migrated.
+Use AnyBodySchema for ambiguous whole-body forwards; mark // TODO: catch-all validator.
+Keep a per-model TODO list tracking remaining work.
+16) Progress tracking (per-model checklist)
+Scanned
+DTO created
+Mappers created
+Validators created
+DAO updated (include exported)
+Routes updated (validate on route)
+Controllers updated (ValidatedRequest + param type)
+Tests added
+.js → .ts conversion done
+Done
+17) Prioritization (first-pass)
+Business (full example)
+User / business_users
+Menu / MenuItem / MenuCategory
+Addon, Document, Booking, Reservation
+Others by usage
+18) Example commit plan for “go business”
+Create feat/dtos-refactor branch
+Add business.dto.ts and business.deep.dto.ts if needed
+Add business.mappers.ts
+Add business.validators.ts (includes AnyBodySchema where needed)
+Add index.ts with registerSchemas
+Update Business.ts to export businessWithStoresInclude and change getBusinessById to use typed Prisma payload and mapper
+Update an example route/controller to use validate(schema) on route and ValidatedRequest<typeof BodySchema, ParamType> in controller signature (params typed via z.infer)
+Run typecheck/tests and present diffs for review
+19) OpenAPI / Controller docs (follow .github/copilot-instructions.md)
+When generating docs in controller files:
+Keep existing controller code unchanged.
+Add OpenAPI-style block above handler (see examples in BlogController.ts).
+Add @prisma_model <model> derived from the DAO (find await prisma.<model> in DAO).
+For request body example, use prisma model columns (skip created_at/updated_at).
+For response, include fields returned by DAO (including included relations — use their prisma models).
+Always include ./prisma/schema.prisma reference in docs comment block.
+Do not overwrite function code; only add/adjust doc comment block if missing.
+20) Final notes & rules summary
+Body validation remains on routes via validate(schema) (middleware/zod.js).
+Params are typed via z.infer<typeof ParamSchema> and used in controller signatures (ValidatedRequest<..., ParamType>); no runtime param middleware.
+Export AnyBodySchema = z.any() when controller/DAO patterns cannot be narrowed immediately; attach to route and mark TODO.
+DAOs must export include consts (as const) and mappers must use those typeof types for strict typing.
+Register all schemas (including DAO-only) via registerSchemas(registry) in each DTO folder.
+Present diffs/commits per model before pushing.

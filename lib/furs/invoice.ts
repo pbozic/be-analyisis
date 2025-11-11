@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Buffer } from 'node:buffer';
 
 import type { PrismaClient } from '@prisma/client';

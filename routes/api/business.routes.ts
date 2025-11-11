@@ -21,7 +21,7 @@ import {
 	ToggleTransportModuleSchema,
 	UpdateBusinessLocalLocationSchema,
 	UpdateBusinessSchema,
-} from '../../schemas/dto/Business/Business.validation.ts';
+} from '../../schemas/dto/Business/business.validators.js';
 import { ListPromoSectionsSchema } from '../../schemas/validation/PromoSection/PromoSection.validation.ts';
 
 const router = express.Router();

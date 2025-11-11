@@ -1,0 +1,829 @@
+dao/LostItems.ts:13:		return await prisma.lost_items.create({
+dao/LostItems.ts:35:		return await prisma.lost_items.delete({
+dao/LostItems.ts:51:		return await prisma.lost_items.findMany({
+dao/LostItems.ts:76:		return await prisma.lost_items.update({
+dao/TableReservation.js:11:		return await prisma.reservations.findMany({
+dao/TableReservation.js:37:		const reservation = await prisma.reservations.findFirst({
+dao/TableReservation.js:110:		return await prisma.reservations.findUnique({
+dao/TableReservation.js:137:		const reservation = await prisma.table_reservations_module.findFirst({
+dao/TableReservation.js:156:		const reservation = await prisma.reservations.create({
+dao/TableReservation.js:218:		return await prisma.reservations.update({
+dao/TableReservation.js:240:		return await prisma.reservations.update({
+dao/TableReservation.js:261:		return await prisma.reservations.delete({
+dao/Referrals.js:12:		return await prisma.referrals.create({
+dao/Referrals.js:35:		return await prisma.referrals.findUnique({
+dao/Referrals.js:54:		return await prisma.referrals.update({
+dao/Referrals.js:76:		return await prisma.referrals.update({
+dao/Referrals.js:97:		return await prisma.referrals.findUnique({
+dao/Referrals.js:119:		return await prisma.referrals.findMany({
+dao/UserFavoriteBusiness.js:14:		return await prisma.user_favorite_businesses.create({
+dao/UserFavoriteBusiness.js:34:		return await prisma.user_favorite_businesses.delete({
+dao/UserFavoriteBusiness.js:59:		return await prisma.user_favorite_businesses.findMany({
+dao/MenuItem.ts:18:		const newVersion = await prisma.menu_item_versions.create({
+dao/MenuItem.ts:22:		await prisma.menu_items.update({
+dao/MenuItem.ts:47:	return await prisma.menu_items.create({
+dao/MenuItem.ts:74:		const category = await prisma.menu_categories.findUnique({
+dao/MenuItem.ts:81:			return await prisma.menu_categories.update({
+dao/MenuItem.ts:103:		const category = await prisma.menu_categories.findUnique({
+dao/MenuItem.ts:109:		return await prisma.menu_categories.update({
+dao/MenuItem.ts:125:	return await prisma.menu_items.findMany({
+dao/MenuItem.ts:160:	return await prisma.menu_items.findMany({
+dao/MenuItem.ts:183:	return await prisma.menu_items.findMany({
+dao/MenuItem.ts:196:	return await prisma.menu_items.delete({
+dao/MenuItem.ts:213:	let existingItem = await prisma.menu_items.findUnique({
+dao/MenuItem.ts:222:		await prisma.menu_item_stock_change.create({
+dao/MenuItem.ts:232:	return await prisma.menu_items.update({
+dao/MenuItem.ts:247:	return await prisma.menu_items.update({
+dao/MenuItem.ts:264:	return await prisma.menu_items.update({
+dao/MenuItem.ts:283:		return await prisma.menu_items.update({
+dao/Menu.ts:16:		return await prisma.daily_meal_menus.create({
+dao/Menu.ts:36:		return await prisma.menus.create({
+dao/Menu.ts:55:		return await prisma.menus.create({
+dao/Menu.ts:103:		const menus = await prisma.menus.findMany({
+dao/Menu.ts:142:		return await prisma.menus.delete({
+dao/Menu.ts:160:		return await prisma.menus.update({
+dao/Menu.ts:211:		const business = await prisma.business.findUnique({
+dao/Menu.ts:237:		return await prisma.daily_meal_menus.findFirst({
+dao/Menu.ts:265:		return await prisma.menus.findUnique({
+dao/Group.ts:34:		return await prisma.group_users.findUnique({
+dao/Group.ts:53:		return await prisma.group_users.findFirst({
+dao/Group.ts:73:		const group_user = await prisma.group_users.create({
+dao/Group.ts:80:		await prisma.allowances.create({
+dao/Group.ts:105:		return await prisma.group_users.delete({
+dao/Group.ts:124:		return await prisma.group_users.update({
+dao/Group.ts:173:		const result = await prisma.group_users.findUnique({
+dao/Cashback.ts:17:		return await prisma.cashback.create({
+dao/Cashback.ts:36:		const cashbacks = await prisma.cashback.findMany({
+dao/Cashback.ts:65:		const cashbacks = await prisma.cashback.findMany({
+dao/UserFavoriteServiceLinks.ts:12:		await prisma.user_favorite_service_links.deleteMany({
+dao/UserFavoriteServiceLinks.ts:42:		return await prisma.user_favorite_service_links.findMany({
+dao/Subscription.ts:14:		return await prisma.action_bundle.create({
+dao/Subscription.ts:37:		return await prisma.action_bundle.update({
+dao/Subscription.ts:60:		await prisma.action_bundle.delete({
+dao/Subscription.ts:77:		return await prisma.action_bundle.findUnique({
+dao/Subscription.ts:94:		return await prisma.action_bundle.findUnique({
+dao/Subscription.ts:110:		return await prisma.action_bundle.findMany();
+dao/Subscription.ts:124:		return await prisma.action_bundle.findMany({
+dao/PaymentSplit.ts:35:		return await prisma.payment_splits.create({
+dao/PaymentSplit.ts:114:	return await prisma.payment_splits.findFirst({
+dao/DeliveryOrder.ts:29:		const orders = await prisma.delivery_orders.findMany({
+dao/DeliveryOrder.ts:60:		const orders = await prisma.delivery_orders.findMany({
+dao/DeliveryOrder.ts:85:		const order = await prisma.delivery_orders.findFirst({
+dao/DeliveryOrder.ts:103:		const orders = await prisma.delivery_orders.findMany({
+dao/DeliveryOrder.ts:133:		const orders = await prisma.delivery_orders.findMany({
+dao/DeliveryOrder.ts:232:		const currentOrder = await prisma.delivery_orders.findUnique({
+dao/DeliveryOrder.ts:248:		const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:273:		const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:295:		const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:330:		const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:355:		const currentOrder = await prisma.delivery_orders.findUnique({
+dao/DeliveryOrder.ts:371:		const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:397:		const order = await prisma.delivery_orders.findUnique({
+dao/DeliveryOrder.ts:418:		const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:444:		const currentOrder = await prisma.delivery_orders.findUnique({
+dao/DeliveryOrder.ts:460:		const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:482:		const orders = await prisma.delivery_orders.findMany({
+dao/DeliveryOrder.ts:526:		const orders = await prisma.delivery_orders.findMany({
+dao/DeliveryOrder.ts:566:		const orders = await prisma.delivery_orders.findMany({
+dao/DeliveryOrder.ts:601:		const orders = await prisma.delivery_orders.findMany({
+dao/DeliveryOrder.ts:636:		const orders = await prisma.delivery_orders.findMany({
+dao/DeliveryOrder.ts:674:		const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:696:		const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:721:		const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:761:		const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:786:		const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:808:		const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:834:			return await prisma.delivery_order_sent.create({
+dao/DeliveryOrder.ts:842:			return await prisma.delivery_order_sent.create({
+dao/DeliveryOrder.ts:866:			sentRecord = await prisma.delivery_order_sent.findUnique({
+dao/DeliveryOrder.ts:875:			sentRecord = await prisma.delivery_order_sent.findUnique({
+dao/DeliveryOrder.ts:900:		const deliveryDriver = await prisma.delivery_drivers.findUnique({
+dao/DeliveryOrder.ts:905:			await prisma.delivery_order_sent.update({
+dao/DeliveryOrder.ts:915:			await prisma.delivery_drivers.update({
+dao/DeliveryOrder.ts:934:			const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:948:			await prisma.delivery_order_sent.update({
+dao/DeliveryOrder.ts:958:			await prisma.drivers.update({
+dao/DeliveryOrder.ts:977:			const updatedOrder = await prisma.delivery_orders.update({
+dao/DeliveryOrder.ts:1000:		return await prisma.delivery_order_sent.findMany({
+dao/DeliveryOrder.ts:1025:		return await prisma.delivery_order_sent.findMany({
+dao/reservation/ScheduleSlotException.ts:16:		const records = await prisma.schedule_slot_exceptions.findMany({
+dao/reservation/ScheduleSlotException.ts:35:		const record = await prisma.schedule_slot_exceptions.create({
+dao/reservation/ScheduleSlotException.ts:63:		const record = await prisma.schedule_slot_exceptions.update({
+dao/reservation/ScheduleSlotException.ts:88:		await prisma.schedule_slot_exceptions.delete({
+dao/reservation/ScheduleSlotException.ts:104:		const record = await prisma.schedule_slot_exceptions.findUnique({
+dao/reservation/Customer.ts:11:		let customers = await prisma.customers.findMany({
+dao/reservation/Customer.ts:36:		let userExists = await prisma.users.findUnique({
+dao/reservation/Customer.ts:40:		let customer = await prisma.customers.create({
+dao/reservation/Customer.ts:67:		let customer = await prisma.customers.update({
+dao/reservation/Customer.ts:92:		await prisma.customers.delete({
+dao/reservation/Customer.ts:110:		let customer = await prisma.customers.findUnique({
+dao/reservation/Customer.ts:133:		let customer = await prisma.customers.findUnique({
+dao/reservation/Employee.ts:18:		let employees = await prisma.employee.findMany({
+dao/reservation/Employee.ts:62:		let employee = await prisma.employee.create({
+dao/reservation/Employee.ts:78:		let employee = await prisma.employee.findUnique({
+dao/reservation/Employee.ts:88:		await prisma.business_users.delete({
+dao/reservation/Employee.ts:93:		await prisma.employee.delete({
+dao/reservation/Employee.ts:111:		let employee = await prisma.employee.findFirst({
+dao/reservation/Employee.ts:119:		let businessUser = await prisma.business_users.findFirst({
+dao/reservation/Employee.ts:129:		let user = await prisma.users.findFirst({
+dao/reservation/Employee.ts:137:		await prisma.employee.update({
+dao/reservation/Employee.ts:165:		let employee = await prisma.employee.findUnique({
+dao/reservation/Employee.ts:197:		let employees = await prisma.employee.findMany({
+dao/reservation/Employee.ts:267:		const record = await prisma.employee.findMany({
+dao/reservation/Employee.ts:309:		let employee = await prisma.employee.findUnique({
+dao/reservation/ScheduleEmployee.ts:19:		const records = await prisma.schedule_employee.findMany({
+dao/reservation/ScheduleEmployee.ts:56:		const record = await prisma.schedule_employee.create({
+dao/reservation/ScheduleEmployee.ts:77:		const record = await prisma.schedule_employee.update({
+dao/reservation/ScheduleEmployee.ts:98:		await prisma.schedule_employee.delete({
+dao/reservation/ScheduleEmployee.ts:114:		const record = await prisma.schedule_employee.findUnique({
+dao/reservation/ScheduleEmployee.ts:131:		let employees = await prisma.schedule_employee.findMany({
+dao/reservation/BookingSlot.ts:12:		const records = await prisma.booking_slots.findMany({
+dao/reservation/BookingSlot.ts:29:		const record = await prisma.booking_slots.create({
+dao/reservation/BookingSlot.ts:51:		const record = await prisma.booking_slots.update({
+dao/reservation/BookingSlot.ts:73:		await prisma.booking_slots.delete({
+dao/reservation/BookingSlot.ts:89:		const record = await prisma.booking_slots.findUnique({
+dao/reservation/Schedule.ts:12:		let schedules = await prisma.schedule.findMany({
+dao/reservation/Schedule.ts:34:		let schedule = await prisma.schedule.create({
+dao/reservation/Schedule.ts:58:		let schedule = await prisma.schedule.update({
+dao/reservation/Schedule.ts:82:		await prisma.schedule.delete({
+dao/reservation/Schedule.ts:98:		let schedule = await prisma.schedule.findUnique({
+dao/reservation/Location.ts:12:		let locations = await prisma.location.findMany({
+dao/reservation/Location.ts:38:		let location = await prisma.location.create({
+dao/reservation/Location.ts:69:		let location = await prisma.location.update({
+dao/reservation/Location.ts:95:		await prisma.location.delete({
+dao/reservation/Location.ts:111:		let location = await prisma.location.findUnique({
+dao/reservation/Location.ts:132:		let locations = await prisma.location.findMany({
+dao/reservation/Booking.ts:472:		return (await prisma.booking.delete({ where: { booking_id: input.booking_id } })) as Booking;
+dao/reservation/Booking.ts:491:		const row = await prisma.booking.findUnique({
+dao/reservation/Booking.ts:522:		return (await prisma.booking.findMany({
+dao/reservation/Booking.ts:554:		const row = await prisma.booking_history_log.create({
+dao/reservation/Booking.ts:589:		const records = await prisma.booking.findMany({
+dao/reservation/Booking.ts:705:		const booking = await prisma.booking.findUnique({
+dao/reservation/Booking.ts:855:		return (await prisma.booking.findMany({
+dao/reservation/Booking.ts:888:		return prisma.booking.findUnique({
+dao/reservation/Booking.ts:933:		return prisma.booking.findMany({
+dao/reservation/Booking.ts:984:		return prisma.booking.findMany({
+dao/reservation/ScheduleSlot.ts:13:		const records = await prisma.schedule_slot.findMany({
+dao/reservation/ScheduleSlot.ts:30:		const record = await prisma.schedule_slot.create({
+dao/reservation/ScheduleSlot.ts:55:		const record = await prisma.schedule_slot.update({
+dao/reservation/ScheduleSlot.ts:80:		await prisma.schedule_slot.delete({
+dao/reservation/ScheduleSlot.ts:96:		const record = await prisma.schedule_slot.findUnique({
+dao/reservation/ScheduleSlot.ts:121:		const records = await prisma.schedule_slot.findMany({
+dao/reservation/Service.ts:11:		let services = await prisma.service.findMany({
+dao/reservation/Service.ts:35:		let service = await prisma.service.create({
+dao/reservation/Service.ts:73:		const current = await prisma.service.findUnique({
+dao/reservation/Service.ts:80:		let service = await prisma.service.update({
+dao/reservation/Service.ts:105:		await prisma.service.delete({
+dao/reservation/Service.ts:121:		let service = await prisma.service.findUnique({
+dao/reservation/Service.ts:144:		let service = await prisma.service.update({
+dao/reservation/Service.ts:166:		let service = await prisma.service.update({
+dao/reservation/Service.ts:187:		let services = await prisma.service.findMany({
+dao/reservation/Service.ts:210:		let serviceAssignment = await prisma.service_assignment.create({
+dao/reservation/Service.ts:240:		await prisma.service_assignment.delete({
+dao/reservation/Service.ts:261:		let services = await prisma.service.findMany({
+dao/reservation/ServiceCategory.ts:18:		let serviceCategories = await prisma.service_category.findMany({
+dao/reservation/ServiceCategory.ts:45:		let serviceCategory = await prisma.service_category.create({
+dao/reservation/ServiceCategory.ts:76:		let serviceCategory = await prisma.service_category.update({
+dao/reservation/ServiceCategory.ts:97:		await prisma.service_category.delete({
+dao/reservation/ServiceCategory.ts:113:		let serviceCategory = await prisma.service_category.findUnique({
+dao/LocalLocation.ts:15:		return await prisma.local_locations.findMany({
+dao/LocalLocation.ts:32:		const localLocation = await prisma.local_locations.create({
+dao/LocalLocation.ts:61:		const businessLocalLocation = await prisma.business_local_locations.create({
+dao/LocalLocation.ts:87:		const updatedLocation = await prisma.business_local_locations.update({
+dao/LocalLocation.ts:107:			await prisma.delivery_orders.update({
+dao/BusinessClient.ts:19:		return await prisma.business_clients.findMany({
+dao/BusinessClient.ts:38:		return await prisma.business_clients.findUnique({
+dao/BusinessClient.ts:59:		return await prisma.business_clients.findMany({
+dao/BusinessClient.ts:91:		return await prisma.business_clients.create({
+dao/BusinessClient.ts:116:		return await prisma.business_clients.update({
+dao/BusinessClient.ts:133:		return await prisma.business_clients.delete({
+dao/Categories.ts:38:		let categories = await prisma.categories.findMany({
+dao/Categories.ts:74:		let categories = await prisma.categories.findMany({
+dao/Categories.ts:116:		let category = await prisma.categories.findUnique({
+dao/Categories.ts:168:		let categoryExists = await prisma.categories.findUnique({
+dao/Categories.ts:181:		let translatable = await prisma.translatable.create({ data: {} });
+dao/Categories.ts:184:		let category = await prisma.categories.create({
+dao/Categories.ts:228:			let trans = await prisma.translations.create({
+dao/Categories.ts:384:		let category = await prisma.categories.findUnique({ where: { categories_id: id } });
+dao/Categories.ts:391:		await prisma.categories.update({
+dao/Categories.ts:400:		return await prisma.categories.delete({ 
+dao/Token.js:14:		return prisma.tokens.findFirst({
+dao/Token.js:32:		return prisma.tokens.findFirst({
+dao/Token.js:52:		return prisma.tokens.update({
+dao/Token.js:70:		await prisma.tokens.updateMany({
+dao/Token.js:79:		return prisma.tokens.create({
+dao/Token.js:98:		await prisma.tokens.updateMany({
+dao/Token.js:107:		return prisma.tokens.create({
+dao/Token.js:144:	let existsToken = await prisma.tokens.findUnique({
+dao/Token.js:151:		existsToken = await prisma.tokens.findUnique({
+dao/Token.js:180:	return await prisma.tokens.create({ data: tokenObj });
+dao/Token.js:189:	return await prisma.tokens.findFirst({
+dao/LateEvents.ts:11:	const newLateEvent = await prisma.late_events.create({
+dao/LateEvents.ts:40:	const row = await prisma.late_events.findUnique({
+dao/LateEvents.ts:61:	const rows = await prisma.late_events.findMany({
+dao/LateEvents.ts:82:	const rows = await prisma.late_events.findMany({
+dao/LateEvents.ts:102:	const rows = await prisma.late_events.findMany({
+dao/LateEvents.ts:135:	const updated = await prisma.late_events.update({
+dao/LateEvents.ts:162:	await prisma.late_events.delete({ where: { late_events_id } });
+dao/Vehicle.ts:53:		return await prisma.vehicles.findMany({
+dao/Vehicle.ts:73:		return await prisma.vehicles.findMany({
+dao/Vehicle.ts:113:		return await prisma.vehicles.findUnique({
+dao/Vehicle.ts:146:		return await prisma.vehicles.findMany({
+dao/Vehicle.ts:174:		return await prisma.vehicles.findMany({
+dao/Vehicle.ts:206:		return await prisma.vehicles.findMany({
+dao/Vehicle.ts:237:		return await prisma.vehicles.findMany({
+dao/Vehicle.ts:286:		return await prisma.vehicles.create({
+dao/Vehicle.ts:315:		return await prisma.vehicles.update({
+dao/Vehicle.ts:348:		return await prisma.driver_vehicle_link.create({
+dao/Vehicle.ts:369:		return await prisma.driver_vehicle_link.delete({
+dao/Vehicle.ts:392:		await prisma.driver_vehicle_link.deleteMany({
+dao/Vehicle.ts:397:		return await prisma.vehicles.delete({
+dao/OrderLobby.ts:19:		return await prisma.order_lobbies.create({
+dao/OrderLobby.ts:35:		return await prisma.order_lobbies.findUnique({
+dao/OrderLobby.ts:73:		return await prisma.order_lobbies.findMany({
+dao/OrderLobby.ts:112:		return await prisma.order_lobbies.findMany({
+dao/OrderLobby.ts:154:		return await prisma.order_lobbies.findMany({
+dao/OrderLobby.ts:204:		return await prisma.order_lobbies.update({
+dao/OrderLobby.ts:222:		return await prisma.order_lobbies.update({
+dao/OrderLobby.ts:239:		return await prisma.order_lobbies.delete({
+dao/OrderLobby.ts:260:		const orderLobby = await prisma.order_lobbies.findUnique({
+dao/OrderLobby.ts:317:		return await prisma.order_lobbies.findMany({
+dao/OrderLobby.ts:360:		return await prisma.order_lobbies.findMany({
+dao/FoodDrinks.ts:12:		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { online } });
+dao/FoodDrinks.ts:31:		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { overwhelmed } });
+dao/FoodDrinks.ts:46:		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { enabled: false, online: false } });
+dao/FoodDrinks.ts:61:		return await prisma.food_drinks.update({ where: { food_drinks_id }, data: { enabled: true } });
+dao/Document.ts:14:		return await prisma.documents.findMany({
+dao/Document.ts:33:		return await prisma.documents.findUnique({
+dao/Document.ts:53:		return await prisma.documents.findMany({
+dao/Document.ts:73:		return await prisma.documents.findMany({
+dao/Document.ts:93:		return await prisma.documents.findMany({
+dao/Document.ts:113:		return await prisma.documents.findMany({
+dao/Document.ts:133:		return await prisma.documents.findMany({
+dao/Document.ts:153:		return await prisma.documents.findMany({
+dao/Document.ts:177:		return await prisma.documents.findMany({
+dao/Document.ts:204:		return await prisma.documents.findMany({
+dao/Document.ts:231:		return await prisma.documents.findMany({
+dao/Document.ts:258:		return await prisma.documents.findMany({
+dao/Document.ts:285:		return await prisma.documents.findMany({
+dao/Document.ts:312:		return await prisma.documents.findFirst({
+dao/Document.ts:336:		const document = await prisma.documents.create({
+dao/Document.ts:363:		return await prisma.documents.create({
+dao/Document.ts:387:		return await prisma.documents.create({
+dao/Document.ts:411:		return await prisma.documents.create({
+dao/Document.ts:435:		return await prisma.documents.create({
+dao/Document.ts:459:		return await prisma.documents.create({
+dao/Document.ts:486:		return await prisma.documents.update({
+dao/Document.ts:508:		return await prisma.documents.update({
+dao/Document.ts:531:		await prisma.files.deleteMany({
+dao/Document.ts:535:		return await prisma.documents.update({
+dao/Document.ts:561:		return await prisma.documents.update({
+dao/Document.ts:583:		return await prisma.document_transactions.create({
+dao/Document.ts:604:		return await prisma.documents.update({
+dao/Document.ts:626:		return await prisma.documents.update({
+dao/Document.ts:648:		return await prisma.documents.update({
+dao/Document.ts:669:		return await prisma.documents.delete({
+dao/ScoringPoints.ts:15:	const row = await prisma.scoring_points.create({
+dao/ScoringPoints.ts:37:	const row = await prisma.scoring_points.findUnique({
+dao/ScoringPoints.ts:59:	const rows = await prisma.scoring_points.findMany({
+dao/ScoringPoints.ts:81:	const rows = await prisma.scoring_points.findMany({
+dao/ScoringPoints.ts:104:	const rows = await prisma.scoring_points.findMany({
+dao/ScoringPoints.ts:126:	const rows = await prisma.scoring_points.findMany({
+dao/ScoringPoints.ts:148:	const rows = await prisma.scoring_points.findMany({
+dao/ScoringPoints.ts:168:	const row = await prisma.scoring_points.update({
+dao/ScoringPoints.ts:195:	await prisma.scoring_points.delete({ where: { scoring_points_id } });
+dao/OrderLobbyItem.ts:41:		return await prisma.order_lobby_items.create({ data: order_lobby_item_data });
+dao/OrderLobbyItem.ts:61:		return await prisma.order_lobby_items.update({
+dao/OrderLobbyItem.ts:83:		return await prisma.order_lobby_items.findMany({
+dao/OrderLobbyItem.ts:111:		return await prisma.order_lobby_items.delete({
+dao/Promo.js:11:	let translatable = await prisma.translatable.create({
+dao/Promo.js:31:	const new_promo_section = await prisma.promo_sections.create({
+dao/Promo.js:37:		let trans = await prisma.translations.create({
+dao/Promo.js:75:	const updated_promo_section = await prisma.promo_sections.update({
+dao/Promo.js:86:		await prisma.translations.deleteMany({
+dao/Promo.js:94:			let trans = await prisma.translations.create({
+dao/Promo.js:121:				prisma.promo_sections.update({
+dao/Promo.js:139:	return await prisma.promo_sections.delete({
+dao/Promo.js:152:	const promo_section = await prisma.promo_sections.findUnique({
+dao/Promo.js:179:	const promo_sections = await prisma.promo_sections.findMany({
+dao/Promo.js:204:	const promo_sections = await prisma.promo_sections.findMany({
+dao/Promo.js:233:	return await prisma.promo_ads.create({
+dao/Promo.js:269:	return await prisma.promo_ads.update({
+dao/Promo.js:307:		prisma.promo_ads_category.deleteMany({
+dao/Promo.js:312:		prisma.promo_ads.delete({
+dao/Promo.js:326:	return await prisma.promo_ads.findUnique({
+dao/Promo.js:342:	return await prisma.promo_ads.findMany({
+dao/Promo.js:360:	return await prisma.promo_ads.findMany({
+dao/Promo.js:381:	return await prisma.promo_ads.findMany({
+dao/Promo.js:408:	return await prisma.promo_banners.create({
+dao/Promo.js:474:			return await prisma.promo_banners.update({
+dao/Promo.js:496:	return await prisma.promo_banners.delete({
+dao/Promo.js:509:	return await prisma.promo_banners.findUnique({
+dao/Promo.js:521:	return await prisma.promo_banners.findMany({
+dao/Promo.js:539:	return await prisma.promo_banners.findMany({
+dao/Promo.js:560:	return await prisma.promo_banners.findMany({
+dao/Promo.js:581:	return await prisma.promo_banners.findMany({
+dao/Promo.js:596://     return await prisma.promo_banners.findMany({
+dao/Promo.js:635:	return await prisma.promo_sections_buy.create({ data });
+dao/Promo.js:645:	return await prisma.promo_sections_buy.findUnique({
+dao/Promo.js:657:	return await prisma.promo_sections_buy.findMany();
+dao/Promo.js:666:	return await prisma.promo_sections_buy.findMany({
+dao/Promo.js:680:	return await prisma.promo_sections_buy.findMany({
+dao/Promo.js:708:	return await prisma.promo_sections_buy.findMany({
+dao/Promo.js:722:	return await prisma.promo_sections_buy.update({
+dao/Promo.js:737:	return await prisma.promo_sections_buy.findFirst({
+dao/UserAddress.ts:18:		const existingAddress = await prisma.addresses.findUnique({
+dao/UserAddress.ts:35:			const newAddress = await prisma.addresses.create({
+dao/UserAddress.ts:42:		const existingUserAddresses = await prisma.user_address.findMany({
+dao/UserAddress.ts:50:		return await prisma.user_address.create({
+dao/UserAddress.ts:73:		return await prisma.user_address.delete({
+dao/UserAddress.ts:99:			const currentAddress = await prisma.addresses.findUnique({
+dao/UserAddress.ts:110:				return await prisma.user_address.update({
+dao/UserAddress.ts:124:				const existingAddress = await prisma.addresses.findUnique({
+dao/UserAddress.ts:141:					const newAddress = await prisma.addresses.create({
+dao/UserAddress.ts:148:				return await prisma.user_address.update({
+dao/UserAddress.ts:165:		return await prisma.user_address.update({
+dao/Address.ts:75:				await prisma.user_address.create({
+dao/Address.ts:80:				await prisma.businesses.update({
+dao/Address.ts:86:				await prisma.stores_module.update({
+dao/Address.ts:92:				await prisma.food_drinks_module.update({
+dao/Address.ts:98:				await prisma.business_users.update({
+dao/Address.ts:104:				await prisma.daily_meal_subscriptions.update({
+dao/Address.ts:110:				await prisma.local_locations.update({
+dao/Address.ts:116:				await prisma.locations.update({
+dao/Address.ts:141:				await prisma.user_address.delete({
+dao/Address.ts:151:				await prisma.businesses.update({
+dao/Address.ts:157:				await prisma.stores_module.update({
+dao/Address.ts:163:				await prisma.food_drinks_module.update({
+dao/Address.ts:169:				await prisma.business_users.update({
+dao/Address.ts:175:				await prisma.daily_meal_subscriptions.update({
+dao/Address.ts:181:				await prisma.local_locations.update({
+dao/Address.ts:187:				await prisma.locations.update({
+dao/Address.ts:209:		return prisma.user_address.delete({
+dao/Address.ts:231:		let addresses = await prisma.user_address.findMany({
+dao/Address.ts:261:		return prisma.user_address.update({
+dao/Address.ts:283:		await prisma.user_address.updateMany({
+dao/Address.ts:291:		return prisma.user_address.update({
+dao/Address.ts:315:		const existingAddress = await prisma.addresses.findUnique({
+dao/Address.ts:321:		return await prisma.addresses.update({
+dao/Address.ts:338:		let addresses = await prisma.addresses.findMany({
+dao/DailyMealCategory.ts:16:	return await prisma.daily_meal_categories.findUnique({
+dao/DailyMealCategory.ts:41:	const dmc = await prisma.daily_meal_categories.create({
+dao/DailyMealCategory.ts:68:	return await prisma.daily_meal_categories.findMany({
+dao/DailyMealCategory.ts:86:	return await prisma.daily_meal_categories.findMany({
+dao/DailyMealCategory.ts:113:	return prisma.daily_meal_category_prices.create({
+dao/DailyMealCategory.ts:128:	return prisma.daily_meal_categories.update({
+dao/DailyMealCategory.ts:140:	return prisma.daily_meal_categories.update({
+dao/File.ts:29:		return await prisma.files.create({
+dao/File.ts:59:				return await prisma.files.create({
+dao/File.ts:88:		return await prisma.files.update({
+dao/File.ts:107:		await prisma.files.update({
+dao/File.ts:116:		return await prisma.files.delete({
+dao/File.ts:133:		await prisma.files.updateMany({
+dao/File.ts:139:		return await prisma.files.deleteMany({
+dao/File.ts:157:		return await prisma.files.findMany({
+dao/File.ts:179:		return await prisma.files.create({
+dao/File.ts:201:		return await prisma.files.findUnique({
+dao/File.ts:229:		return await prisma.files.update({
+dao/MenuCategory.ts:48:	const menu_category = await prisma.menu_categories.create({
+dao/MenuCategory.ts:66:		const category = await prisma.categories.findFirst({
+dao/MenuCategory.ts:76:		await prisma.menu_categories_categories.create({
+dao/MenuCategory.ts:88:	const menu_categoryR = await prisma.menu_categories.findUnique({
+dao/MenuCategory.ts:120:		const existingDailyMealPrice = await prisma.daily_meal_category_prices.findUnique({
+dao/MenuCategory.ts:133:		const menuCategory = await prisma.menu_categories.create({
+dao/MenuCategory.ts:171:	const menu = await prisma.menus.findUnique({
+dao/MenuCategory.ts:182:	return await prisma.menus.update({
+dao/MenuCategory.ts:201:	const menu = await prisma.menus.findUnique({
+dao/MenuCategory.ts:212:	return await prisma.menus.update({
+dao/MenuCategory.ts:228:		return await prisma.menu_categories.findMany({
+dao/MenuCategory.ts:274:		return await prisma.menu_categories.findMany({
+dao/MenuCategory.ts:319:		await prisma.menu_categories_categories.deleteMany({
+dao/MenuCategory.ts:324:		await prisma.menu_items.deleteMany({
+dao/MenuCategory.ts:328:		return await prisma.menu_categories.delete({
+dao/MenuCategory.ts:355:		return await prisma.menu_categories.update({
+dao/MenuCategory.ts:388:			prisma.menu_items.update({
+dao/MenuCategory.ts:397:		return await prisma.menu_categories.update({
+dao/MenuCategory.ts:465:		return await prisma.menu_categories_categories.create({
+dao/MenuCategory.ts:493:		return await prisma.menu_categories_categories.deleteMany({
+dao/MenuCategory.ts:517:		return await prisma.daily_meal_category_prices.updateMany({
+dao/MenuCategory.ts:535:		return await prisma.menu_categories.findUnique({
+dao/MenuCategory.ts:579:		return await prisma.menu_categories.updateMany({
+dao/Stores.ts:12:		return await prisma.stores.update({ where: { stores_id }, data: { online } });
+dao/Stores.ts:28:		return await prisma.stores.update({ where: { stores_id }, data: { overwhelmed } });
+dao/Stores.ts:43:		return await prisma.stores.update({ where: { stores_id }, data: { enabled: false, online: false } });
+dao/Stores.ts:58:		return await prisma.stores.update({ where: { stores_id }, data: { enabled: true } });
+dao/Stores.ts:75:		const row = await prisma.stores_module.findUnique({
+dao/Business.ts:34:		const rows = await prisma.business.findMany({
+dao/Business.ts:54:		const businesses = await prisma.business.findMany({
+dao/Business.ts:86:		const business = await prisma.business.findUnique({
+dao/Business.ts:109:		return (await prisma.business.findUnique({
+dao/Business.ts:140:		return (await prisma.business.findUnique({
+dao/Business.ts:171:		return (await prisma.business.findFirst({
+dao/Business.ts:194:		return (await prisma.business.findMany({
+dao/Business.ts:228:		return (await prisma.business.findMany({
+dao/Business.ts:253:		return (await prisma.business.findMany({
+dao/Business.ts:274:		return (await prisma.business.findMany({
+dao/Business.ts:295:		return (await prisma.business.findMany({
+dao/Business.ts:329:		return (await prisma.business.findMany({
+dao/Business.ts:361:		const business = await prisma.business.findUnique({
+dao/Business.ts:368:		return (await prisma.business.findUnique({
+dao/Business.ts:389:		return (await prisma.business.findMany({
+dao/Business.ts:422:		return (await prisma.business.update({
+dao/Business.ts:448:		return (await prisma.business.update({
+dao/Business.ts:467:		return (await prisma.business.update({
+dao/Business.ts:491:		return (await prisma.business.update({
+dao/Business.ts:513:		return (await prisma.business.update({
+dao/Business.ts:559:		return (await prisma.business.delete({
+dao/Business.ts:576:		return (await prisma.business.update({
+dao/Business.ts:600:		await prisma.daily_meals_module.update({
+dao/Business.ts:625:		await prisma.daily_meals_module.update({
+dao/Business.ts:644:		const business_data = await prisma.business.findUnique({
+dao/Business.ts:670:		return await prisma.business.findMany({
+dao/Business.ts:771:		const business = await prisma.business.findUnique({
+dao/Business.ts:788:		const taxiOrders = await prisma.taxi_orders.findMany({
+dao/Business.ts:840:		const stores = await prisma.business.findMany({
+dao/Business.ts:869:		const business = await prisma.business.findUnique({
+dao/Business.ts:948:		return await prisma.business.findFirst({
+dao/Addon.ts:19:		return await prisma.addon.create({
+dao/Addon.ts:41:		return await prisma.addon.update({
+dao/Addon.ts:63:		await prisma.addon.delete({
+dao/Addon.ts:78:		return await prisma.addon.findMany();
+dao/Addon.ts:92:		return await prisma.addon.findUnique({
+dao/Addon.ts:108:		return await prisma.addon.findMany({
+dao/Addon.ts:124:		return await prisma.business_addon.findMany({
+dao/Addon.ts:141:		return await prisma.business_addon.findMany({
+dao/Addon.ts:157:		return await prisma.addon.findMany({
+dao/Addon.ts:180:		return await prisma.addon.findUnique({
+dao/Addon.ts:204:		return await prisma.business_addon.findMany({
+dao/Addon.ts:230:		return await prisma.business_addon.findMany({
+dao/Addon.ts:252:		return await prisma.addon.findMany({
+dao/Addon.ts:274:		return await prisma.addon.findUnique({
+dao/Addon.ts:297:		return await prisma.business_addon.findMany({
+dao/Addon.ts:319:		return await prisma.business_addon.findMany({
+dao/Addon.ts:338:		return await prisma.addon.findMany({
+dao/Addon.ts:362:		return await prisma.addon.findUnique({
+dao/Addon.ts:387:		return await prisma.business_addon.findMany({
+dao/Addon.ts:414:		return await prisma.business_addon.findMany({
+dao/Addon.ts:437:		return await prisma.addon.findMany({
+dao/Addon.ts:461:		return await prisma.addon.findUnique({
+dao/Addon.ts:486:		return await prisma.business_addon.findMany({
+dao/Addon.ts:513:		return await prisma.business_addon.findMany({
+dao/Addon.ts:536:		return await prisma.addon.findMany({
+dao/Addon.ts:560:		return await prisma.addon.findUnique({
+dao/Addon.ts:587:		return await prisma.business_addon.findMany({
+dao/BusinessUsers.ts:48:		return await prisma.business_users.findMany({
+dao/BusinessUsers.ts:68:		return await prisma.business_users.findFirst({
+dao/BusinessUsers.ts:124:		return await prisma.business_users.findMany({
+dao/BusinessUsers.ts:144:		return await prisma.business.findMany({
+dao/BusinessUsers.ts:169:		return await prisma.business_users.findMany({
+dao/BusinessUsers.ts:246:		return await prisma.business_users.delete({
+dao/BusinessUsers.ts:264:		return await prisma.business_users.update({
+dao/BusinessUsers.ts:283:		return await prisma.business_users.update({
+dao/BusinessUsers.ts:302:		return await prisma.business_users.update({
+dao/BusinessUsers.ts:321:		return await prisma.business_users.update({
+dao/BusinessUsers.ts:374:		const business_user = await prisma.business_users.findUnique({
+dao/Driver.ts:42:		const drivers = await prisma.drivers.findMany({
+dao/Driver.ts:66:		const transportBusiness = await prisma.transport_module.findUnique({
+dao/Driver.ts:70:		const drivers = await prisma.drivers.findMany({
+dao/Driver.ts:89:		const drivers = await prisma.drivers.findMany({
+dao/Driver.ts:115:		const drivers = await prisma.drivers.findMany({
+dao/Driver.ts:144:		const driverLinks = await prisma.daily_meals_drivers.findMany({
+dao/Driver.ts:147:		const drivers = await prisma.drivers.findMany({
+dao/Driver.ts:166:		const driver = await prisma.drivers.findUnique({
+dao/Driver.ts:208:		const driver = await prisma.drivers.findFirst({
+dao/Driver.ts:234:		const driver = await prisma.drivers.findUnique({
+dao/Driver.ts:259:		const driver = await prisma.drivers.update({
+dao/Driver.ts:280:		const driver = await prisma.drivers.update({
+dao/Driver.ts:306:		const driver = await prisma.drivers.update({
+dao/Driver.ts:344:		return await prisma.driver_history_locations.create({
+dao/Driver.ts:367:		const driver = await prisma.drivers.update({
+dao/Driver.ts:407:		const driver = await prisma.drivers.create({
+dao/Driver.ts:445:		const drivers = await prisma.drivers.findMany({
+dao/Driver.ts:463:		const drivers = await prisma.drivers.findMany({
+dao/Driver.ts:501:		const driver = await prisma.drivers.update({
+dao/Driver.ts:525:		const driver = await prisma.drivers.update({
+dao/Driver.ts:561:		const locations = await prisma.driver_history_locations.findMany({
+dao/Driver.ts:604:		const rows = await prisma.driver_history_locations.findMany({
+dao/Driver.ts:722:		const driver = await prisma.drivers.update({
+dao/Driver.ts:753:		const driver = await prisma.drivers.update({
+dao/Driver.ts:783:		const existingMunicipalities = await prisma.driver_municipalities.findMany({
+dao/Driver.ts:801:			await prisma.driver_municipalities.deleteMany({
+dao/Driver.ts:809:			return prisma.driver_municipalities.create({
+dao/Driver.ts:832:		const driver = await prisma.drivers.update({
+dao/Tax.ts:11:		return await prisma.tax_rates.create({
+dao/Tax.ts:26:		return await prisma.tax_rates.findFirst({
+dao/Tax.ts:43:		return await prisma.tax_rates.findMany({
+dao/Tax.ts:62:		return await prisma.tax_rates.findMany({
+dao/DailyMealDao.ts:125:	return prisma.daily_meal_subscriptions.findMany({
+dao/DailyMealDao.ts:146:	return prisma.daily_meal_subscriptions.findMany({
+dao/DailyMealDao.ts:176:	return prisma.daily_meal_subscriptions.findMany({
+dao/DailyMealDao.ts:218:	return prisma.daily_meal_subscriptions.findMany({
+dao/DailyMealDao.ts:263:	return prisma.daily_meal_subscriptions.findMany({
+dao/DailyMealDao.ts:311:		return await prisma.daily_meal_subscriptions.create({
+dao/DailyMealDao.ts:388:	return await prisma.daily_meal_subscriptions.findUnique({
+dao/DailyMealDao.ts:406:	return await prisma.daily_meal_subscriptions.update({
+dao/DailyMealDao.ts:425:	return await prisma.daily_meal_subscriptions.update({
+dao/DailyMealDao.ts:445:	return await prisma.daily_meal_instances.updateMany({
+dao/DailyMealDao.ts:460:	return await prisma.daily_meal_instances.update({
+dao/UserFavoriteDriver.ts:32:		return await prisma.user_favorite_drivers.delete({
+dao/UserFavoriteDriver.ts:49:		return await prisma.user_favorite_drivers.findMany({
+dao/User.ts:54:		return (await prisma.users.findMany({
+dao/User.ts:76:		return (await prisma.users.findUnique({
+dao/User.ts:107:		return (await prisma.users.findUnique({
+dao/User.ts:125:		const merchantBusiness = await prisma.business.findFirst({
+dao/User.ts:140:		const scheduledUsers = (await prisma.users.findMany({
+dao/User.ts:179:		return (await prisma.users.findFirst({
+dao/User.ts:206:		return (await prisma.users.findFirst({
+dao/User.ts:227:		const user = (await prisma.users.findFirst({
+dao/User.ts:249:		return await prisma.tokens.findUnique({
+dao/User.ts:272:		return (await prisma.users.findUnique({
+dao/User.ts:302:		return (await prisma.users.update({
+dao/User.ts:323:		return (await prisma.users.update({
+dao/User.ts:351:		return (await prisma.users.update({
+dao/User.ts:376:		return (await prisma.users.update({
+dao/User.ts:396:		return (await prisma.users.update({
+dao/User.ts:418:		return (await prisma.users.update({
+dao/User.ts:443:		return (await prisma.users.update({
+dao/User.ts:461:		return (await prisma.users.update({
+dao/User.ts:519:		return (await prisma.users.update({
+dao/User.ts:540:		return (await prisma.users.update({
+dao/User.ts:561:		return (await prisma.users.update({
+dao/User.ts:582:		return (await prisma.users.update({
+dao/User.ts:603:		return (await prisma.users.update({
+dao/User.ts:624:		return (await prisma.users.update({
+dao/User.ts:645:		return (await prisma.users.update({
+dao/User.ts:666:		return (await prisma.users.update({
+dao/User.ts:684:		return (await prisma.users.update({
+dao/User.ts:719:			const exists = await prisma.users.findFirst({
+dao/User.ts:758:		return (await prisma.users.delete({
+dao/User.ts:822:		return (await prisma.transactions.findMany({
+dao/User.ts:842:		return (await prisma.users.update({
+dao/User.ts:869:		return (await prisma.users.update({
+dao/User.ts:933:		return (await prisma.users.update({
+dao/User.ts:955:		return (await prisma.users.update({
+dao/User.ts:975:		return (await prisma.users.update({
+dao/User.ts:997:		return (await prisma.users.update({
+dao/User.ts:1019:		return (await prisma.users.update({
+dao/Actions.ts:13:		return await prisma.action.create({
+dao/Actions.ts:34:		return await prisma.action.update({
+dao/Actions.ts:55:		await prisma.action.delete({
+dao/Actions.ts:70:		return await prisma.action.findMany({
+dao/Actions.ts:87:		return await prisma.action.findUnique({
+dao/Actions.ts:103:		return await prisma.action.findMany({
+dao/Actions.ts:121:		return await prisma.action.findMany({
+dao/Actions.ts:181:		await prisma.subscription_action.create({
+dao/Actions.ts:204:		await prisma.addon_action.create({
+dao/Actions.ts:226:		await prisma.subscription_action.delete({
+dao/Actions.ts:249:		await prisma.addon_action.delete({
+dao/Actions.ts:272:		await prisma.business_usage.create({
+dao/reservationNotifications/NotificationAuthoringDao.ts:37:		return await prisma.notification_event.findMany({ orderBy: { key: 'asc' } });
+dao/reservationNotifications/NotificationAuthoringDao.ts:51:		return await prisma.notification_event.create({ data });
+dao/reservationNotifications/NotificationAuthoringDao.ts:69:		return await prisma.notification_event.update({ where: { notification_event_id }, data });
+dao/reservationNotifications/NotificationAuthoringDao.ts:83:		await prisma.notification_event.delete({ where: { notification_event_id } });
+dao/reservationNotifications/NotificationAuthoringDao.ts:97:		return await prisma.notification_template.findMany({
+dao/reservationNotifications/NotificationAuthoringDao.ts:114:		return await prisma.notification_template.create({ data });
+dao/reservationNotifications/NotificationAuthoringDao.ts:132:		return await prisma.notification_template.update({ where: { notification_template_id }, data });
+dao/reservationNotifications/NotificationAuthoringDao.ts:146:		await prisma.notification_template.delete({ where: { notification_template_id } });
+dao/reservationNotifications/NotificationAuthoringDao.ts:169:// 		return await prisma.notification_template_version.create({
+dao/reservationNotifications/NotificationAuthoringDao.ts:189:		return await prisma.notification_template_version.update({
+dao/reservationNotifications/NotificationAuthoringDao.ts:209:		return await prisma.notification_template_version.update({
+dao/reservationNotifications/NotificationAuthoringDao.ts:226:		await prisma.notification_template_version.delete({ where: { notification_template_version_id } });
+dao/reservationNotifications/NotificationAuthoringDao.ts:244:		await prisma.notification_template_version.delete({
+dao/reservationNotifications/NotificationAuthoringDao.ts:260:		return await prisma.notification_mapping.findMany({
+dao/reservationNotifications/NotificationAuthoringDao.ts:277:		return await prisma.notification_mapping.create({ data });
+dao/reservationNotifications/NotificationAuthoringDao.ts:295:		return await prisma.notification_mapping.update({ where: { notification_mapping_id }, data });
+dao/reservationNotifications/NotificationAuthoringDao.ts:343:		return await prisma.notification_preference.findMany({
+dao/reservationNotifications/NotificationAuthoringDao.ts:386:		const mapping = await prisma.notification_mapping.findUnique({
+dao/reservationNotifications/NotificationRuntimeDao.ts:26:		return await prisma.notification_message.findUnique({ where: { notification_message_id } });
+dao/reservationNotifications/NotificationRuntimeDao.ts:52:		return await prisma.notification_message.findMany({
+dao/reservationNotifications/NotificationRuntimeDao.ts:75:		return await prisma.notification_message.create({ data });
+dao/reservationNotifications/NotificationRuntimeDao.ts:92:		return await prisma.notification_message.update({
+dao/reservationNotifications/NotificationRuntimeDao.ts:112:		return await prisma.notification_message_event.create({ data: payload });
+dao/reservationNotifications/NotificationRuntimeDao.ts:128:		return await prisma.notification_message_event.findMany({
+dao/reservationNotifications/NotificationRuntimeDao.ts:149:		return await prisma.notification_provider_credential.findMany({
+dao/reservationNotifications/NotificationRuntimeDao.ts:168:		return await prisma.notification_provider_credential.create({ data });
+dao/reservationNotifications/NotificationRuntimeDao.ts:186:		return await prisma.notification_provider_credential.update({
+dao/reservationNotifications/NotificationRuntimeDao.ts:203:		await prisma.notification_provider_credential.delete({ where: { notification_provider_credential_id } });
+dao/Invoices.ts:37:	return await prisma.business_premise.create({ data: payload });
+dao/Invoices.ts:57:	return await prisma.electronic_device.create({ data: payload });
+dao/Invoices.ts:74:	return await prisma.device_assignment.create({
+dao/Invoices.ts:86:	return await prisma.vehicles.update({ where: { vehicle_id }, data: { business_premise_id } });
+dao/Invoices.ts:99:	return await prisma.electronic_device.update({
+dao/Invoices.ts:117:	const latest = await prisma.device_assignment.findFirst({
+dao/Invoices.ts:124:	return await prisma.device_assignment.update({
+dao/Invoices.ts:136:	return await prisma.business_premise.update({
+dao/Transport.ts:11:		return await prisma.transport_module.update({ where: { transport_module_id }, data: { enabled: false } });
+dao/Transport.ts:26:		return await prisma.transport_module.update({ where: { transport_module_id }, data: { enabled: true } });
+dao/OrderLobbyUser.ts:24:	return await prisma.order_lobby_users.create({
+dao/OrderLobbyUser.ts:48:	return await prisma.order_lobby_users.findMany({
+dao/OrderLobbyUser.ts:68:	return await prisma.order_lobby_users.update({
+dao/roles/UserRoles.ts:10:	return prisma.user_role.findMany({
+dao/roles/UserRoles.ts:25:	return prisma.user_role.create({
+dao/roles/UserRoles.ts:53:	await prisma.user_role.delete({
+dao/roles/UserRoles.ts:84:	await prisma.user_role.delete({
+dao/roles/RolePermissions.ts:10:	return prisma.role_permission.findMany({
+dao/roles/RolePermissions.ts:48:	await prisma.role_permission.deleteMany({
+dao/roles/RolePermissions.ts:62:	return prisma.role_permission.findMany({
+dao/roles/UserPermissions.ts:17:		return await prisma.user_permission.findMany({
+dao/roles/UserPermissions.ts:38:		const action = await prisma.action.findFirst({
+dao/roles/UserPermissions.ts:47:		return await prisma.user_permission.create({
+dao/roles/UserPermissions.ts:75:		return await prisma.user_permission.update({
+dao/roles/UserPermissions.ts:97:		await prisma.user_permission.delete({
+dao/roles/UserPermissions.ts:113:		return await prisma.permission.findMany({
+dao/roles/Role.ts:13:		return await prisma.role.findMany({
+dao/roles/Role.ts:35:		return await prisma.role.create({
+dao/roles/Role.ts:52:		return await prisma.role.update({
+dao/roles/Role.ts:68:		await prisma.role.delete({
+dao/Blog.ts:15:		return await prisma.blog_posts.findMany({
+dao/Blog.ts:49:		return await prisma.blog_posts.findUnique({
+dao/Blog.ts:81:		return await prisma.blog_posts.findUnique({
+dao/Blog.ts:119:		let existingPost = await prisma.blog_posts.findFirst({
+dao/Blog.ts:126:			existingPost = await prisma.blog_posts.findFirst({
+dao/Blog.ts:133:		return await prisma.blog_posts.create({
+dao/Blog.ts:183:		let existingPost1 = await prisma.blog_posts.findUnique({
+dao/Blog.ts:201:			let existingPost = await prisma.blog_posts.findFirst({
+dao/Blog.ts:208:				existingPost = await prisma.blog_posts.findFirst({
+dao/Blog.ts:218:		return await prisma.blog_posts.update({
+dao/Blog.ts:269:		return await prisma.blog_posts.delete({
+dao/Blog.ts:301:		return await prisma.blog_posts.findMany({
+dao/Blog.ts:352:		return await prisma.blog_categories.findMany({
+dao/Blog.ts:380:		return await prisma.blog_categories.findUnique({
+dao/Blog.ts:411:		return await prisma.blog_categories.create({
+dao/Blog.ts:446:		return await prisma.blog_categories.update({
+dao/Blog.ts:476:		return await prisma.blog_categories.delete({
+dao/Blog.ts:504:		return await prisma.blog_tags.findMany({
+dao/Blog.ts:532:		return await prisma.blog_tags.findUnique({
+dao/Blog.ts:563:		return await prisma.blog_tags.create({
+dao/Blog.ts:598:		return await prisma.blog_tags.update({
+dao/Blog.ts:628:		return await prisma.blog_tags.delete({
+dao/Payment.ts:27:		return await prisma.payments.create({
+dao/Payment.ts:63:		return await prisma.payments.findUnique({
+dao/Payment.ts:91:		return await prisma.payments.findUnique({
+dao/Payment.ts:122:		return await prisma.payments.update({ where: { payment_id }, data: updates });
+dao/Payment.ts:147:		return await prisma.payments.delete({ where: { payment_id } });
+dao/Payment.ts:172:		return await prisma.payments.findMany({
+dao/LineItems.ts:11:		const lineItems: LineItemDetail[] = await prisma.line_items.createMany({ data: items, skipDuplicates: true });
+dao/LineItems.ts:27:		return await prisma.line_items.update({ where: { line_item_id }, data });
+dao/TaxiOrder.ts:35:		const results = await prisma.taxi_orders.findMany(mergedArgs);
+dao/TaxiOrder.ts:51:		const result = await prisma.taxi_orders.findFirst({
+dao/TaxiOrder.ts:120:		const result = await prisma.taxi_orders.create({
+dao/TaxiOrder.ts:161:		const result = await prisma.taxi_orders.update({
+dao/TaxiOrder.ts:203:		return await prisma.taxi_orders.update({
+dao/TaxiOrder.ts:254:		return await prisma.taxi_orders.update({
+dao/TaxiOrder.ts:305:		return await prisma.taxi_orders.update({
+dao/TaxiOrder.ts:432:		return await prisma.taxi_orders.update({
+dao/TaxiOrder.ts:484:		return await prisma.taxi_orders.findMany({
+dao/TaxiOrder.ts:525:		return await prisma.taxi_orders.findMany({
+dao/TaxiOrder.ts:563:		return await prisma.taxi_orders.findMany({
+dao/TaxiOrder.ts:596:		return await prisma.taxi_order_sent.create({
+dao/TaxiOrder.ts:621:		return await prisma.taxi_order_sent.findFirst({
+dao/TaxiOrder.ts:641:		const sentOrders = await prisma.taxi_order_sent.findMany({
+dao/TaxiOrder.ts:671:		return await prisma.taxi_orders.updateMany({
+dao/TaxiOrder.ts:700:		return await prisma.taxi_order_sent.updateMany({
+dao/TaxiOrder.ts:723:		return await prisma.taxi_order_sent.findMany({
+dao/TaxiOrder.ts:750:		return await prisma.taxi_orders.update({
+dao/TaxiOrder.ts:784:		return await prisma.taxi_orders.update({
+dao/TaxiOrder.ts:819:		return await prisma.taxi_orders.update({
+dao/TaxiOrder.ts:854:		return await prisma.taxi_orders.update({
+dao/TaxiOrder.ts:889:		return await prisma.taxi_orders.update({
+dao/TaxiOrder.ts:924:		const order = await prisma.taxi_orders.findUnique({
+dao/TaxiOrder.ts:935:		return await prisma.taxi_orders.update({
+dao/TaxiOrder.ts:979:		return await prisma.taxi_orders.update({
+dao/TaxiOrder.ts:1014:		return await prisma.taxi_orders.update({
+dao/TaxiOrder.ts:1044:		return await prisma.taxi_orders.findMany({
+dao/TaxiOrder.ts:1077:		return await prisma.taxi_orders.findMany({
+dao/TaxiOrder.ts:1117:		return await prisma.taxi_order_sent.delete({
+dao/PromoAnalytics.ts:16:	return await prisma.promo_analytics.findMany({
+dao/PromoAnalytics.ts:48:	return await prisma.promo_analytics.findMany({
+dao/DeliveryDriver.ts:73:	const drivers = await prisma.delivery_drivers.findMany({
+dao/DeliveryDriver.ts:89:	const drivers = await prisma.delivery_drivers.findMany({
+dao/DeliveryDriver.ts:106:	const drivers = await prisma.delivery_drivers.findMany({
+dao/DeliveryDriver.ts:126:	const drivers = await prisma.delivery_drivers.findMany({
+dao/DeliveryDriver.ts:143:	const driver = await prisma.delivery_drivers.findUnique({
+dao/DeliveryDriver.ts:160:	const driver = await prisma.delivery_drivers.findFirst({
+dao/DeliveryDriver.ts:177:	const driver = await prisma.delivery_drivers.findUnique({
+dao/DeliveryDriver.ts:208:	const driver = await prisma.delivery_drivers.update({
+dao/DeliveryDriver.ts:229:	const driver = await prisma.delivery_drivers.update({
+dao/DeliveryDriver.ts:253:	const driver = await prisma.delivery_drivers.update({
+dao/DeliveryDriver.ts:285:	const driver = await prisma.delivery_drivers.create({
+dao/DeliveryDriver.ts:412:		return await prisma.delivery_drivers.findMany({
+dao/DeliveryDriver.ts:474:		return await prisma.delivery_driver_history_locations.create({ data });
+dao/DeliveryDriver.ts:508:		return await prisma.delivery_drivers.update({
+dao/DeliveryDriver.ts:526:		const driver = await prisma.delivery_drivers.findUnique({
+dao/DeliveryDriver.ts:533:		const business = await prisma.business.findUnique({
+dao/BusinessTeam.ts:20:		return await prisma.business_teams.create({
+dao/BusinessTeam.ts:39:		return await prisma.business_teams.update({
+dao/BusinessTeam.ts:65:		const user = await prisma.users.findUnique({
+dao/BusinessTeam.ts:79:		const team = await prisma.business_teams.findUnique({
+dao/BusinessTeam.ts:88:		return await prisma.business_teams.update({
+dao/BusinessTeam.ts:115:		const user = await prisma.users.findUnique({
+dao/BusinessTeam.ts:129:		return await prisma.business_teams.update({
+dao/BusinessTeam.ts:157:		const user = await prisma.users.findUnique({
+dao/BusinessTeam.ts:170:		const newTeam = await prisma.business_teams.findUnique({
+dao/BusinessTeam.ts:229:		return await prisma.business_teams.findUnique({
+dao/BusinessTeam.ts:256:		return await prisma.business_teams.findMany({
+dao/BusinessTeam.ts:283:		return await prisma.business_teams.delete({
+dao/Review.js:10:		return prisma.reviewable.create({
+dao/Review.js:31:		return prisma.reviewable.create({
+dao/Review.js:52:		return prisma.reviews.create({
+dao/Review.js:68:		return prisma.reviews.findMany({
+dao/Review.js:89:	const user = await prisma.users.findUnique({ where: { user_id }, select: { reviewable_id: true } });
+dao/Review.js:91:	const created = await prisma.reviewable.create({ data: { user: { connect: { user_id } } } });
+dao/Review.js:92:	await prisma.users.update({ where: { user_id }, data: { reviewable_id: created.reviewable_id } });
+dao/Review.js:103:	const driver = await prisma.drivers.findUnique({ where: { driver_id }, select: { reviewable_id: true } });
+dao/Review.js:105:	const created = await prisma.reviewable.create({ data: { driver: { connect: { driver_id } } } });
+dao/Review.js:106:	await prisma.drivers.update({ where: { driver_id }, data: { reviewable_id: created.reviewable_id } });
+dao/Review.js:117:	const booking = await prisma.booking.findUnique({ where: { booking_id }, select: { reviewable_id: true } });
+dao/Review.js:119:	const created = await prisma.reviewable.create({ data: { reservation_booking: { connect: { booking_id } } } });
+dao/Review.js:120:	await prisma.booking.update({ where: { booking_id }, data: { reviewable_id: created.reviewable_id } });
+dao/Review.js:131:	const mod = await prisma.reservation_module.findUnique({
+dao/Review.js:136:	const created = await prisma.reviewable.create({
+dao/Review.js:139:	await prisma.reservation_module.update({
+dao/Review.js:153:	const mod = await prisma.transport_module.findUnique({
+dao/Review.js:158:	const created = await prisma.reviewable.create({
+dao/Review.js:161:	await prisma.transport_module.update({
+dao/Review.js:175:	const s = await prisma.stores.findUnique({ where: { stores_id }, select: { reviewable_id: true } });
+dao/Review.js:177:	const created = await prisma.reviewable.create({ data: { stores: { connect: { stores_id } } } });
+dao/Review.js:178:	await prisma.stores.update({ where: { stores_id }, data: { reviewable_id: created.reviewable_id } });
+dao/Review.js:189:	const fd = await prisma.food_drinks.findUnique({ where: { food_drinks_id }, select: { reviewable_id: true } });
+dao/Review.js:191:	const created = await prisma.reviewable.create({ data: { food_drinks: { connect: { food_drinks_id } } } });
+dao/Review.js:192:	await prisma.food_drinks.update({ where: { food_drinks_id }, data: { reviewable_id: created.reviewable_id } });
+dao/Review.js:208:		return await prisma.reviews.create({
+dao/Review.js:228:		return await prisma.reviews.create({
+dao/Review.js:248:		return await prisma.reviews.create({ data: { author_id, reviewable_id, rating, comment, feedback } });
+dao/Review.js:270:		return await prisma.reviews.create({ data: { author_id, reviewable_id, rating, comment, feedback } });
+dao/Review.js:292:		return await prisma.reviews.create({ data: { author_id, reviewable_id, rating, comment, feedback } });
+dao/Review.js:310:		return await prisma.reviews.create({ data: { author_id, reviewable_id, rating, comment, feedback } });
+dao/Review.js:332:		return await prisma.reviews.create({ data: { author_id, reviewable_id, rating, comment, feedback } });
+dao/Review.js:347:		const driver = await prisma.drivers.findUnique({ where: { driver_id }, select: { reviewable_id: true } });
+dao/Review.js:349:		return await prisma.reviews.findMany({
+dao/Tutorials.ts:17:	let state = await prisma.user_tutorial_state.findUnique({ where: { user_id } });
+dao/Tutorials.ts:19:		state = await prisma.user_tutorial_state.create({ data: { user_id } });
+dao/Tutorials.ts:33:	const tutorials: TutorialBase[] = await prisma.tutorial.findMany({ orderBy: { createdAt: 'asc' } });
+dao/Tutorials.ts:34:	const links: UserTutorialBase[] = await prisma.user_tutorials.findMany({
+dao/Tutorials.ts:65:	const tutorial = await prisma.tutorial.findUnique({ where: { key: tutorial_key } });
+dao/Tutorials.ts:97:	return prisma.user_tutorial_state.update({
+dao/WalletFunds.js:10:		// const newWalletFund = await prisma.wallet_funds.create({
+dao/WalletFunds.js:31:		const newTransaction = await prisma.transactions.create({
+dao/WalletFunds.js:51:		// const newTransaction = await prisma.transactions.create({
+dao/WalletFunds.js:59:		// const newWalletFund = await prisma.wallet_funds.create({
+dao/WalletFunds.js:90:	return await prisma.transactions.create({
+dao/WalletFunds.js:116:		const walletFunds = await prisma.wallet_funds.findMany({
+dao/WalletFunds.js:142:		const walletFunds = await prisma.wallet_funds.findMany({
+dao/WalletFunds.js:167:		const walletFunds = await prisma.wallet_funds.findMany({
+dao/WalletFunds.js:193:		await prisma.wallet_funds.delete({
+dao/WalletFunds.js:218:		const walletFund = await prisma.wallet_funds.findUnique({
+dao/WalletFunds.js:286:		const walletFund = await prisma.wallet_funds.findUnique({
+dao/WalletFunds.js:304:		const existingReservedFund = await prisma.wallet_funds.findFirst({
+dao/WalletFunds.js:320:			const updatedFund = await prisma.wallet_funds.update({
+dao/WalletFunds.js:331:			const newWalletFund = await prisma.wallet_funds.create({
+dao/WalletFunds.js:363:		const walletFund = await prisma.wallet_funds.findUnique({
+dao/WalletFunds.js:513:		return await prisma.wallet_funds.create({
+dao/WalletFunds.js:568:		return await prisma.wallet_funds.updateMany({
+dao/WalletFunds.js:597:		return prisma.wallet_funds.findMany({
+dao/WalletFunds.js:623:		return await prisma.wallet_funds.findMany({
+dao/WalletFunds.js:645:		return await prisma.wallet_funds.findMany({
+dao/WalletFunds.js:670:		return await prisma.wallet_funds.findMany({
+dao/WalletFunds.js:696:		return await prisma.wallet_funds.findMany({
+dao/BusinessMoneyFlows.ts:11:	return await prisma.business_money_flows.create({ data });
+dao/BusinessMoneyFlows.ts:20:	return await prisma.business_money_flows.findUnique({
+dao/BusinessMoneyFlows.ts:31:	return await prisma.business_money_flows.findMany({
+dao/BusinessMoneyFlows.ts:43:	return await prisma.business_money_flows.findMany({
+dao/BusinessMoneyFlows.ts:58:	return await prisma.business_money_flows.findMany();
+dao/UserMoneyFlows.ts:11:	return await prisma.user_money_flows.create({ data });
+dao/UserMoneyFlows.ts:20:	return await prisma.user_money_flows.findUnique({
+dao/UserMoneyFlows.ts:31:	return await prisma.user_money_flows.findMany({
+dao/UserMoneyFlows.ts:43:	return await prisma.user_money_flows.findMany({
+dao/UserMoneyFlows.ts:54:	return await prisma.user_money_flows.findMany();
+dao/Word.js:15:	let translatable = await prisma.translatable.create({
+dao/Word.js:19:	let new_word = await prisma.words.create({
+dao/Word.js:42:		let trans = await prisma.translations.create({
+dao/Word.js:70:	const existingWord = await prisma.words.findUnique({
+dao/Word.js:82:	const updatedWord = await prisma.words.update({
+dao/Word.js:105:		await prisma.translations.deleteMany({
+dao/Word.js:113:			let trans = await prisma.translations.create({
+dao/Word.js:137:	return await prisma.words.delete({
+dao/Word.js:151:		let word = await prisma.words.findUnique({
+dao/Word.js:182:		let words = await prisma.words.findMany({
+dao/Word.js:208:	return await prisma.words.findMany({
+dao/Word.js:223:	return await prisma.words.update({
+dao/Word.js:247:	return await prisma.words.update({
+dao/Word.js:267:	return await prisma.word_buy.create({
+dao/Word.js:308:				await prisma.business.update({
+dao/Word.js:312:				await prisma.word_buy.updateMany({
+dao/Word.js:359:					await prisma.word_buy.update({
+dao/Word.js:373:					await prisma.word_buy.update({
+dao/Word.js:489:			await prisma.business.update({
+dao/Word.js:502:		await prisma.word_buy.updateMany({
+dao/Word.js:533:		const business = await prisma.business.findUnique({
+dao/Word.js:545:					const last = await prisma.word_buy.findFirst({
+dao/Word.js:551:						await prisma.word_buy.update({
+dao/Word.js:556:					return await prisma.word_buy.create({
+dao/Word.js:606:	return await prisma.word_buy.update({
+dao/Word.js:621:	const wb = await prisma.word_buy.findUnique({
+dao/Word.js:636:	const wbs = await prisma.word_buy.findMany();
+dao/Word.js:650:	const wbs = await prisma.word_buy.findMany({
+dao/Word.js:670:	const wbs = await prisma.word_buy.findMany({
+dao/Word.js:703:	const wbs = await prisma.word_buy.findMany({
+dao/Word.js:735:	return await prisma.word_buy.update({
+dao/Word.js:752:	return await prisma.word_buy.update({

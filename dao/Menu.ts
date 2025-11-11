@@ -3,6 +3,18 @@ import { PrismaClient } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import type { MenuCategory, MenuBase, DailyMealMenuBase } from '../schemas/dto/Menu/index.js';
+import menusDefaultInclude, { dailyMealMenuDefaultInclude } from '../prisma/includes/menus.js';
+import type { MenuWithIncludesPrisma } from '../prisma/includes/menus.js';
+import { toMenuList, toMenuResponse, toDailyMealMenuResponse } from '../schemas/dto/Menu/menu.mappers.js';
+
+function getErrorMessage(err: unknown): string {
+	if (err instanceof Error) return err.message;
+	try {
+		return String(err);
+	} catch {
+		return 'Unknown error';
+	}
+}
 
 /**
  * Create a new daily meals menu for a dailyMealsModule.
@@ -13,15 +25,17 @@ import type { MenuCategory, MenuBase, DailyMealMenuBase } from '../schemas/dto/M
  */
 const createDailyMealsMenu = async (dailyMealsModuleId: string, date?: string | Date | null): Promise<MenuBase> => {
 	try {
-		return await prisma.daily_meal_menus.create({
+		const created = await prisma.daily_meal_menus.create({
 			data: {
 				daily_meals_module_id: dailyMealsModuleId,
 				date: date ? date : null,
 			},
+			include: dailyMealMenuDefaultInclude,
 		});
-	} catch (error: any) {
+		return toMenuResponse(created as MenuWithIncludesPrisma);
+	} catch (error: unknown) {
 		console.error('Error creating daily meals menu:', error);
-		throw new Error(error?.message || 'Error creating daily meals menu');
+		throw new Error(getErrorMessage(error) || 'Error creating daily meals menu');
 	}
 };
 
@@ -33,14 +47,11 @@ const createDailyMealsMenu = async (dailyMealsModuleId: string, date?: string | 
  */
 const createStoreMenu = async (module_id: string): Promise<MenuBase> => {
 	try {
-		return await prisma.menus.create({
-			data: {
-				stores_id: module_id,
-			},
-		});
-	} catch (error: any) {
+		const created = await prisma.menus.create({ data: { stores_id: module_id }, include: menusDefaultInclude });
+		return toMenuResponse(created as MenuWithIncludesPrisma);
+	} catch (error: unknown) {
 		console.error('Error creating store menu:', error);
-		throw new Error(error?.message || 'Error creating store menu');
+		throw new Error(getErrorMessage(error) || 'Error creating store menu');
 	}
 };
 
@@ -52,14 +63,14 @@ const createStoreMenu = async (module_id: string): Promise<MenuBase> => {
  */
 const createFoodDrinksMenu = async (module_id: string): Promise<MenuBase> => {
 	try {
-		return await prisma.menus.create({
-			data: {
-				food_drinks_id: module_id,
-			},
+		const created = await prisma.menus.create({
+			data: { food_drinks_id: module_id },
+			include: menusDefaultInclude,
 		});
-	} catch (error: any) {
+		return toMenuResponse(created as MenuWithIncludesPrisma);
+	} catch (error: unknown) {
 		console.error('Error creating food & drinks menu:', error);
-		throw new Error(error?.message || 'Error creating food & drinks menu');
+		throw new Error(getErrorMessage(error) || 'Error creating food & drinks menu');
 	}
 };
 
@@ -81,7 +92,7 @@ const getMenuByBusinessId = async (
 	moduleType?: 'STORES' | 'FOOD_DRINKS'
 ): Promise<MenuBase[]> => {
 	try {
-		let extraWhereArgs: Record<string, any> = {};
+		let extraWhereArgs: Record<string, unknown> = {};
 		if (isDailyMeal) {
 			if (!startDate) {
 				startDate = new Date();
@@ -107,27 +118,12 @@ const getMenuByBusinessId = async (
 				active: true,
 				...extraWhereArgs,
 			},
-			include: {
-				categories: {
-					orderBy: { menu_order_index: 'asc' },
-					include: {
-						menu_items: {
-							orderBy: { menu_category_order_index: 'asc' },
-							include: {
-								documents: { include: { files: true } },
-								tax_rate: true,
-							},
-						},
-						menu_categories_categories: { include: { category: true } },
-						daily_meal_category_price: true,
-					},
-				},
-			},
+			include: menusDefaultInclude,
 		});
-		return menus as MenuBase[];
-	} catch (error: any) {
+		return toMenuList(menus as MenuWithIncludesPrisma[]);
+	} catch (error: unknown) {
 		console.error('Error fetching menus by business id:', error);
-		throw new Error(error?.message || 'Error fetching menus by business id');
+		throw new Error(getErrorMessage(error) || 'Error fetching menus by business id');
 	}
 };
 
@@ -139,12 +135,11 @@ const getMenuByBusinessId = async (
  */
 const deleteMenu = async (menu_id: string): Promise<MenuBase> => {
 	try {
-		return await prisma.menus.delete({
-			where: { menu_id },
-		});
-	} catch (error: any) {
+		const deleted = await prisma.menus.delete({ where: { menu_id }, include: menusDefaultInclude });
+		return toMenuResponse(deleted as MenuWithIncludesPrisma);
+	} catch (error: unknown) {
 		console.error('Error deleting menu:', error);
-		throw new Error(error?.message || 'Error deleting menu');
+		throw new Error(getErrorMessage(error) || 'Error deleting menu');
 	}
 };
 
@@ -157,13 +152,15 @@ const deleteMenu = async (menu_id: string): Promise<MenuBase> => {
  */
 const setActiveMenu = async (menu_id: string, active: boolean): Promise<MenuBase> => {
 	try {
-		return await prisma.menus.update({
+		const updated = await prisma.menus.update({
 			where: { menu_id },
 			data: { active },
+			include: menusDefaultInclude,
 		});
-	} catch (error: any) {
+		return toMenuResponse(updated as MenuWithIncludesPrisma);
+	} catch (error: unknown) {
 		console.error('Error setting active flag on menu:', error);
-		throw new Error(error?.message || 'Error setting active flag on menu');
+		throw new Error(getErrorMessage(error) || 'Error setting active flag on menu');
 	}
 };
 
@@ -176,7 +173,7 @@ const setActiveMenu = async (menu_id: string, active: boolean): Promise<MenuBase
  */
 const updateMenuOrder = async (menu_id: string, orderedMenuCategoryIds: string[]): Promise<MenuBase> => {
 	try {
-		return await prisma.$transaction(async (tx: PrismaClient) => {
+		const result = await prisma.$transaction(async (tx: PrismaClient) => {
 			const validCategories = await tx.menu_categories.findMany({
 				where: { menu_id, menu_category_id: { in: orderedMenuCategoryIds } },
 				select: { menu_category_id: true },
@@ -190,14 +187,17 @@ const updateMenuOrder = async (menu_id: string, orderedMenuCategoryIds: string[]
 				tx.menu_categories.update({ where: { menu_category_id: id }, data: { menu_order_index: index } })
 			);
 			await Promise.all(updatePromises);
-			return await tx.menus.update({
+			const updated = await tx.menus.update({
 				where: { menu_id },
 				data: { menu_categories_ordered: orderedMenuCategoryIds },
+				include: menusDefaultInclude,
 			});
+			return updated;
 		});
-	} catch (error: any) {
+		return toMenuResponse(result as MenuWithIncludesPrisma);
+	} catch (error: unknown) {
 		console.error('Error updating menu order:', error);
-		throw new Error(error?.message || 'Error updating menu order');
+		throw new Error(getErrorMessage(error) || 'Error updating menu order');
 	}
 };
 /**
@@ -213,9 +213,9 @@ const getDailyMealsModuleIdByBusinessId = async (business_id: string): Promise<s
 			include: { daily_meals_module: { select: { id: true } } },
 		});
 		return business?.daily_meals_module?.id ?? null;
-	} catch (error: any) {
+	} catch (error: unknown) {
 		console.error('Error getting daily meals module id:', error);
-		throw new Error(error?.message || 'Error getting daily meals module id');
+		throw new Error(getErrorMessage(error) || 'Error getting daily meals module id');
 	}
 };
 
@@ -234,23 +234,17 @@ const getMenuByDate = async (business_id: string, date: Date | string): Promise<
 		startOfDay.setHours(0, 0, 0, 0);
 		const endOfDay = new Date(date as Date);
 		endOfDay.setHours(23, 59, 59, 999);
-		return await prisma.daily_meal_menus.findFirst({
+		const dm = await prisma.daily_meal_menus.findFirst({
 			where: {
 				daily_meals_module_id: dailyMealsModuleId,
 				date: { gte: startOfDay.toISOString(), lte: endOfDay.toISOString() },
 			},
-			include: {
-				categories: {
-					include: {
-						menu_items: { include: { tax_rate: true } },
-						menu_categories_categories: { include: { category: true } },
-					},
-				},
-			},
+			include: dailyMealMenuDefaultInclude,
 		});
-	} catch (error: any) {
+		return dm ? toDailyMealMenuResponse(dm) : null;
+	} catch (error: unknown) {
 		console.error('Error getting menu by date:', error);
-		throw new Error(error?.message || 'Error getting menu by date');
+		throw new Error(getErrorMessage(error) || 'Error getting menu by date');
 	}
 };
 
@@ -262,20 +256,11 @@ const getMenuByDate = async (business_id: string, date: Date | string): Promise<
  */
 const getMenuById = async (menu_id: string): Promise<MenuBase | null> => {
 	try {
-		return await prisma.menus.findUnique({
-			where: { menu_id },
-			include: {
-				categories: {
-					include: {
-						menu_items: { include: { tax_rate: true } },
-						menu_categories_categories: { include: { category: true } },
-					},
-				},
-			},
-		});
-	} catch (error: any) {
+		const menu = await prisma.menus.findUnique({ where: { menu_id }, include: menusDefaultInclude });
+		return menu ? toMenuResponse(menu) : null;
+	} catch (error: unknown) {
 		console.error('Error getting menu by id:', error);
-		throw new Error(error?.message || 'Error getting menu by id');
+		throw new Error(getErrorMessage(error) || 'Error getting menu by id');
 	}
 };
 

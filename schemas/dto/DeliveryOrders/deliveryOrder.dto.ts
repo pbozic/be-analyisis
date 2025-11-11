@@ -1,5 +1,8 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { MODULE } from '@prisma/client';
+
+import { UUID } from '../../primitives';
 
 extendZodWithOpenApi(z);
 
@@ -8,11 +11,13 @@ extendZodWithOpenApi(z);
 // ===============
 export const DeliveryOrderBaseSchema = z
 	.object({
-		order_id: z.string().uuid(),
-		user_id: z.string().uuid(),
-		business_id: z.string().uuid(),
-		delivery_driver_id: z.string().uuid().nullable().optional(),
-		driver_id: z.string().uuid().nullable().optional(),
+		order_id: UUID,
+		user_id: UUID,
+		// business_id: UUID,
+		module_id: UUID.optional(),
+		module_type: z.union([z.literal(MODULE.STORES), z.literal(MODULE.FOOD_DRINKS)]).optional(),
+		delivery_driver_id: UUID.nullable().optional(),
+		driver_id: UUID.nullable().optional(),
 		order_number: z.number().optional(),
 		status: z.string(),
 		details: z.record(z.any()).nullable().optional(),
@@ -43,7 +48,7 @@ export type DeliveryOrderBase = z.infer<typeof DeliveryOrderBaseSchema>;
 // ===============
 export const DeliveryOrderRefSchema = z
 	.object({
-		order_id: z.string().uuid(),
+		order_id: UUID,
 		order_number: z.number().optional(),
 		status: z.string(),
 		total_amount: z.number().nullable().optional(),

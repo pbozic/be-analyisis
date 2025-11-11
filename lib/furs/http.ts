@@ -5,7 +5,7 @@
  * @param {any} body - The JSON payload to include in the request.
  * @returns {Promise<{ status: number; data: T; raw: string }>} - The response from the server.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export const postJson = async <T = any>(url: string, body: any) => {
 	const res = await fetch(url, {
 		method: 'POST',
@@ -14,7 +14,7 @@ export const postJson = async <T = any>(url: string, body: any) => {
 	});
 	const text = await res.text();
 	// try parse JSON, otherwise return raw text
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 	let data: any;
 	try {
 		data = JSON.parse(text);

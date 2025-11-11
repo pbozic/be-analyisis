@@ -1,7 +1,10 @@
-import type { payment_splits, Prisma as TPrisma, SPLIT_DESTINATION_TYPE } from '@prisma/client';
+import type { Prisma as TPrisma, SPLIT_DESTINATION_TYPE } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
+import { toPaymentSplit } from '../schemas/dto/Payments/payments.mappers.js';
+import type { PaymentSplit } from '../schemas/dto/Payments/payments.dto.js';
+import paymentSplitsDefaultInclude from '../prisma/includes/paymentSplits.js';
 export type PaymentSplitData = {
 	destination_type: SPLIT_DESTINATION_TYPE;
 	destination_id?: string;
@@ -30,9 +33,9 @@ export async function createPaymentSplit(
 	amount_regular: number,
 	amount_credits: number,
 	metadata?: Record<string, string | number | boolean | object | null>
-): Promise<payment_splits> {
+): Promise<PaymentSplit> {
 	try {
-		return await prisma.payment_splits.create({
+		const created = await prisma.payment_splits.create({
 			data: {
 				payment_id,
 				destination_type,
@@ -41,7 +44,10 @@ export async function createPaymentSplit(
 				amount_credits,
 				metadata,
 			},
+			include: paymentSplitsDefaultInclude,
 		});
+
+		return toPaymentSplit(created);
 	} catch (error) {
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
 			// Known error with error code, e.g. unique constraint
@@ -110,13 +116,13 @@ export async function createManyPaymentSplits(
  * @param {string} payment_split_id - UUID of the split to fetch.
  * @returns {Promise<payment_splits | null>} The payment split.
  */
-export async function getPaymentSplitById(payment_split_id: string) {
-	return await prisma.payment_splits.findFirst({
+export async function getPaymentSplitById(payment_split_id: string): Promise<PaymentSplit | null> {
+	const row = await prisma.payment_splits.findFirst({
 		where: { payment_split_id },
-		include: {
-			payment: true,
-		},
+		include: paymentSplitsDefaultInclude,
 	});
+
+	return row ? toPaymentSplit(row) : null;
 }
 
 /**
@@ -135,7 +141,7 @@ export async function updatePaymentSplitById(
 		'amount_regular' | 'amount_credits' | 'destination_type' | 'payment_split_id' | 'payment_id'
 	>,
 	tx?: TPrisma.TransactionClient
-): Promise<payment_splits> {
+): Promise<PaymentSplit> {
 	const prismaClient = tx ?? prisma;
 
 	// If destination_id is included in the update, check whether it's allowed
@@ -154,10 +160,13 @@ export async function updatePaymentSplitById(
 		}
 	}
 
-	return await prismaClient.payment_splits.update({
+	const updated = await prismaClient.payment_splits.update({
 		where: { payment_split_id },
 		data,
+		include: paymentSplitsDefaultInclude,
 	});
+
+	return toPaymentSplit(updated);
 }
 
 export default {

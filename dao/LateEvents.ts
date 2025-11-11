@@ -1,5 +1,8 @@
 import prisma from '../prisma/prisma.js';
 import { LateEventsResponse, CreateLateEvents } from '../schemas/dto/LateEvents/lateEvents.dto.ts';
+import lateEventsDefaultInclude from '../prisma/includes/lateEvents.js';
+import type { LateEventsWithIncludesPrisma } from '../prisma/includes/lateEvents.js';
+import { toLateEventsResponse, toLateEventsList } from '../schemas/dto/LateEvents/late-events.mappers.js';
 
 /**
  * Create a late event for delivery or taxi order and link to business and user.
@@ -18,16 +21,9 @@ export async function createLateEvent(data: CreateLateEvents): Promise<LateEvent
 			food_drinks_id: data.food_drinks_id ?? undefined,
 			scoring_points_id: data.scoring_points_id ?? undefined,
 		},
-		include: {
-			driver: true,
-			stores_module: true,
-			food_drinks_module: true,
-			delivery_order: true,
-			taxi_order: true,
-			scoring_points: true,
-		},
+		include: lateEventsDefaultInclude,
 	});
-	return newLateEvent as LateEventsResponse;
+	return toLateEventsResponse(newLateEvent as LateEventsWithIncludesPrisma);
 }
 
 /**
@@ -37,18 +33,9 @@ export async function createLateEvent(data: CreateLateEvents): Promise<LateEvent
  * @returns {Promise<LateEventsResponse | null>} Late event or null.
  */
 export async function getLateEventById(late_events_id: string): Promise<LateEventsResponse | null> {
-	const row = await prisma.late_events.findUnique({
-		where: { late_events_id },
-		include: {
-			driver: true,
-			stores_module: true,
-			food_drinks_module: true,
-			delivery_order: true,
-			taxi_order: true,
-			scoring_points: true,
-		},
-	});
-	return row as LateEventsResponse | null;
+	const row = await prisma.late_events.findUnique({ where: { late_events_id }, include: lateEventsDefaultInclude });
+	if (!row) return null;
+	return toLateEventsResponse(row as LateEventsWithIncludesPrisma);
 }
 
 /**
@@ -61,15 +48,9 @@ export async function getLateEventsByDriverId(driver_id: string): Promise<LateEv
 	const rows = await prisma.late_events.findMany({
 		where: { driver_id },
 		orderBy: { created_at: 'desc' },
-		include: {
-			stores_module: true,
-			food_drinks_module: true,
-			delivery_order: true,
-			taxi_order: true,
-			scoring_points: true,
-		},
+		include: lateEventsDefaultInclude,
 	});
-	return rows as LateEventsResponse[];
+	return toLateEventsList(rows as LateEventsWithIncludesPrisma[]).data;
 }
 
 /**
@@ -81,15 +62,9 @@ export async function getLateEventsByDriverId(driver_id: string): Promise<LateEv
 export async function getLateEventsByTaxiOrderId(order_id: string): Promise<LateEventsResponse[]> {
 	const rows = await prisma.late_events.findMany({
 		where: { taxi_order_id: order_id },
-		include: {
-			driver: true,
-			stores_module: true,
-			food_drinks_module: true,
-			delivery_order: true,
-			scoring_points: true,
-		},
+		include: lateEventsDefaultInclude,
 	});
-	return rows as LateEventsResponse[];
+	return toLateEventsList(rows as LateEventsWithIncludesPrisma[]).data;
 }
 
 /**
@@ -101,15 +76,9 @@ export async function getLateEventsByTaxiOrderId(order_id: string): Promise<Late
 export async function getLateEventsByDeliveryOrderId(order_id: string): Promise<LateEventsResponse[]> {
 	const rows = await prisma.late_events.findMany({
 		where: { delivery_order_id: order_id },
-		include: {
-			driver: true,
-			stores_module: true,
-			food_drinks_module: true,
-			taxi_order: true,
-			scoring_points: true,
-		},
+		include: lateEventsDefaultInclude,
 	});
-	return rows as LateEventsResponse[];
+	return toLateEventsList(rows as LateEventsWithIncludesPrisma[]).data;
 }
 
 /**
@@ -140,16 +109,9 @@ export async function updateLateEvent(
 			food_drinks_id: data?.food_drinks_id ?? undefined,
 			scoring_points_id: data?.scoring_points_id ?? undefined,
 		},
-		include: {
-			driver: true,
-			stores_module: true,
-			food_drinks_module: true,
-			delivery_order: true,
-			taxi_order: true,
-			scoring_points: true,
-		},
+		include: lateEventsDefaultInclude,
 	});
-	return updated as LateEventsResponse;
+	return toLateEventsResponse(updated as LateEventsWithIncludesPrisma);
 }
 
 /**

@@ -6,61 +6,65 @@ extendZodWithOpenApi(z);
 // ===============
 // Base Schema (scalars only, no relations)
 // ===============
-export const TaxiOrderBaseSchema = z.object({
-	order_id: z.string().uuid(),
-	user_id: z.string().uuid(),
-	driver_id: z.string().uuid().nullable().optional(),
-	vehicle_id: z.string().uuid().nullable().optional(),
-	business_id: z.string().uuid().nullable().optional(),
-	status: z.string(),
-	type: z.string().optional(), // ORDER_TYPE
-	subtype: z.string().nullable().optional(), // ORDER_SUBTYPE
-	pickup_location: z.record(z.any()).nullable().optional(),
-	delivery_location: z.record(z.any()).nullable().optional(),
-	route: z.record(z.any()).nullable().optional(),
-	complete_route: z.record(z.any()).nullable().optional(),
-	distance: z.number().nullable().optional(),
-	duration: z.number().nullable().optional(),
-	price: z.number().nullable().optional(),
-	currency: z.string().nullable().optional(),
-	payment_method: z.string().nullable().optional(),
-	payment_status: z.string().nullable().optional(),
-	special_instructions: z.string().nullable().optional(),
-	passenger_count: z.number().nullable().optional(),
-	luggage_count: z.number().nullable().optional(),
-	scheduled_time: z.string().datetime().nullable().optional(),
-	pickup_time: z.string().datetime().nullable().optional(),
-	arrival_time: z.string().datetime().nullable().optional(),
-	completion_time: z.string().datetime().nullable().optional(),
-	cancellation_reason: z.string().nullable().optional(),
-	rating: z.number().nullable().optional(),
-	feedback: z.string().nullable().optional(),
-	tip_amount: z.number().nullable().optional(),
-	timeline: z.array(z.record(z.any())).optional().default([]),
-	metadata: z.record(z.any()).nullable().optional(),
-	last_sent_at: z.string().datetime().nullable().optional(),
-	parent_order_id: z.string().uuid().nullable().optional(),
-	is_grouped: z.boolean().optional(),
-	group_index: z.number().nullable().optional(),
-	preferences: z.record(z.any()).nullable().optional(),
-	created_at: z.string().datetime().optional(),
-	updated_at: z.string().datetime().optional(),
-}).openapi('TaxiOrderBase');
+export const TaxiOrderBaseSchema = z
+	.object({
+		order_id: z.string().uuid(),
+		user_id: z.string().uuid(),
+		driver_id: z.string().uuid().nullable().optional(),
+		vehicle_id: z.string().uuid().nullable().optional(),
+		business_id: z.string().uuid().nullable().optional(),
+		status: z.string(),
+		type: z.string().optional(), // ORDER_TYPE
+		subtype: z.string().nullable().optional(), // ORDER_SUBTYPE
+		pickup_location: z.record(z.any()).nullable().optional(),
+		delivery_location: z.record(z.any()).nullable().optional(),
+		route: z.record(z.any()).nullable().optional(),
+		complete_route: z.record(z.any()).nullable().optional(),
+		distance: z.number().nullable().optional(),
+		duration: z.number().nullable().optional(),
+		price: z.number().nullable().optional(),
+		currency: z.string().nullable().optional(),
+		payment_method: z.string().nullable().optional(),
+		payment_status: z.string().nullable().optional(),
+		special_instructions: z.string().nullable().optional(),
+		passenger_count: z.number().nullable().optional(),
+		luggage_count: z.number().nullable().optional(),
+		scheduled_time: z.string().datetime().nullable().optional(),
+		pickup_time: z.string().datetime().nullable().optional(),
+		arrival_time: z.string().datetime().nullable().optional(),
+		completion_time: z.string().datetime().nullable().optional(),
+		cancellation_reason: z.string().nullable().optional(),
+		rating: z.number().nullable().optional(),
+		feedback: z.string().nullable().optional(),
+		tip_amount: z.number().nullable().optional(),
+		timeline: z.array(z.record(z.any())).optional().default([]),
+		metadata: z.record(z.any()).nullable().optional(),
+		last_sent_at: z.string().datetime().nullable().optional(),
+		parent_order_id: z.string().uuid().nullable().optional(),
+		is_grouped: z.boolean().optional(),
+		group_index: z.number().nullable().optional(),
+		preferences: z.record(z.any()).nullable().optional(),
+		created_at: z.string().datetime().optional(),
+		updated_at: z.string().datetime().optional(),
+	})
+	.openapi('TaxiOrderBase');
 
 export type TaxiOrderBase = z.infer<typeof TaxiOrderBaseSchema>;
 
 // ===============
 // Ref Schema (minimal identity for embedding)
 // ===============
-export const TaxiOrderRefSchema = z.object({
-	order_id: z.string().uuid(),
-	status: z.string(),
-	type: z.string().optional(),
-	price: z.number().nullable().optional(),
-	pickup_location: z.record(z.any()).nullable().optional(),
-	delivery_location: z.record(z.any()).nullable().optional(),
-	created_at: z.string().datetime().optional(),
-}).openapi('TaxiOrderRef');
+export const TaxiOrderRefSchema = z
+	.object({
+		order_id: z.string().uuid(),
+		status: z.string(),
+		type: z.string().optional(),
+		price: z.number().nullable().optional(),
+		pickup_location: z.record(z.any()).nullable().optional(),
+		delivery_location: z.record(z.any()).nullable().optional(),
+		created_at: z.string().datetime().optional(),
+	})
+	.openapi('TaxiOrderRef');
 
 export type TaxiOrderRef = z.infer<typeof TaxiOrderRefSchema>;
 
@@ -88,10 +92,12 @@ export const CreateTaxiOrderSchema = TaxiOrderBaseSchema.omit({
 
 export type CreateTaxiOrder = z.infer<typeof CreateTaxiOrderSchema>;
 
-export const UpdateTaxiOrderSchema = TaxiOrderBaseSchema.partial().omit({
-	order_id: true,
-	created_at: true,
-}).openapi('UpdateTaxiOrder');
+export const UpdateTaxiOrderSchema = TaxiOrderBaseSchema.partial()
+	.omit({
+		order_id: true,
+		created_at: true,
+	})
+	.openapi('UpdateTaxiOrder');
 
 export type UpdateTaxiOrder = z.infer<typeof UpdateTaxiOrderSchema>;
 
@@ -146,7 +152,7 @@ type PrismaTaxiOrder = {
 
 export function toTaxiOrderDetail(row: unknown): TaxiOrderDetail {
 	const r = row as PrismaTaxiOrder;
-	
+
 	return TaxiOrderDetailSchema.parse({
 		order_id: r.order_id,
 		user_id: r.user_id,
@@ -186,11 +192,11 @@ export function toTaxiOrderDetail(row: unknown): TaxiOrderDetail {
 		preferences: r.preferences ?? null,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		user: r.user ? r.user as Record<string, unknown> : null,
-		driver: r.driver ? r.driver as Record<string, unknown> : null,
-		vehicle: r.vehicle ? r.vehicle as Record<string, unknown> : null,
-		business: r.business ? r.business as Record<string, unknown> : null,
-		grouped_orders: r.grouped_orders ? r.grouped_orders as Array<Record<string, unknown>> : [],
+		user: r.user ? (r.user as Record<string, unknown>) : null,
+		driver: r.driver ? (r.driver as Record<string, unknown>) : null,
+		vehicle: r.vehicle ? (r.vehicle as Record<string, unknown>) : null,
+		business: r.business ? (r.business as Record<string, unknown>) : null,
+		grouped_orders: r.grouped_orders ? (r.grouped_orders as Array<Record<string, unknown>>) : [],
 	});
 }
 

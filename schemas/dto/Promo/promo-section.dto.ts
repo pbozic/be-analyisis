@@ -17,6 +17,7 @@ export const TranslationItemSchema = z
 		translation: z.string().min(1),
 	})
 	.openapi('TranslationItem');
+export type TranslationItem = z.infer<typeof TranslationItemSchema>;
 
 export const TranslationsSchema = z.record(LanguageCode, z.string()).openapi('PromoTranslations');
 export type Translations = z.infer<typeof TranslationsSchema>;
@@ -62,6 +63,7 @@ export const PromoSectionDataSchema = z
 		display_cards_per_page: z.number().int().nullable().optional(),
 	})
 	.openapi('PromoSectionData');
+export type PromoSectionData = z.infer<typeof PromoSectionDataSchema>;
 
 export const CreatePromoSectionRequestSchema = z
 	.object({

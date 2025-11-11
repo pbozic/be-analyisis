@@ -33,7 +33,6 @@ export async function reviewPassenger(
 		const { rating, comment, feedback } = req.body;
 		const created = await ReviewsDao.reviewUser(author_id, user_id, { rating, comment, feedback });
 		res.json(created);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -68,7 +67,6 @@ export async function reviewDriver(
 		const { rating, comment, feedback } = req.body;
 		const created = await ReviewsDao.reviewDriver(author_id, driver_id, { rating, comment, feedback });
 		res.json(created);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -103,7 +101,6 @@ export async function reviewStore(
 		const { rating, comment, feedback } = req.body;
 		const created = await ReviewsDao.reviewStore(author_id, stores_id, { rating, comment, feedback });
 		res.json(created);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -138,7 +135,6 @@ export async function reviewFoodDrinks(
 		const { rating, comment, feedback } = req.body;
 		const created = await ReviewsDao.reviewFoodDrinks(author_id, food_drinks_id, { rating, comment, feedback });
 		res.json(created);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -177,7 +173,6 @@ export async function reviewReservationModule(
 			feedback,
 		});
 		res.json(created);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -216,7 +211,6 @@ export async function reviewTransportModule(
 			feedback,
 		});
 		res.json(created);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -251,7 +245,6 @@ export async function reviewReservationBooking(
 		const { rating, comment, feedback } = req.body;
 		const created = await ReviewsDao.reviewBooking(author_id, booking_id, { rating, comment, feedback });
 		res.json(created);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}

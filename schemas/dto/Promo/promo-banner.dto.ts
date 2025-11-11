@@ -23,6 +23,7 @@ export const ImageFileDataSchema = z
 		base64: z.string().min(1),
 	})
 	.openapi('ImageFileData');
+export type ImageFileData = z.infer<typeof ImageFileDataSchema>;
 
 export const PromoBannerDataSchema = z
 	.object({
@@ -33,6 +34,7 @@ export const PromoBannerDataSchema = z
 		promo_ads_id: UUID.nullable().optional(),
 	})
 	.openapi('PromoBannerData');
+export type PromoBannerData = z.infer<typeof PromoBannerDataSchema>;
 
 export const CreatePromoBannerRequestSchema = z
 	.object({

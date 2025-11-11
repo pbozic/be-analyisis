@@ -1,9 +1,7 @@
 import prisma from '../prisma/prisma.js';
-import {
-	CreateScoringPoints,
-	ScoringPointsBase,
-	ScoringPointsDetail,
-} from '../schemas/dto/ScoringPoints/scoring-points.dto.ts';
+import { CreateScoringPoints, ScoringPointsDetail } from '../schemas/dto/ScoringPoints/scoring-points.dto.ts';
+import scoringPointsDefaultInclude, { ScoringPointsWithIncludesPrisma } from '../prisma/includes/scoringPoints.js';
+import { toScoringPointsDetail, toScoringPointsList } from '../schemas/dto/ScoringPoints/scoring-points.mappers.js';
 
 /**
  * Create scoring points entry linked to user, business and/or orders.
@@ -11,7 +9,7 @@ import {
  * @param {CreateScoringPoints} data - Create payload.
  * @returns {Promise<ScoringPointsDetail>} Created scoring points row.
  */
-export async function createScoringPoints(data: CreateScoringPoints): Promise<ScoringPointsBase> {
+export async function createScoringPoints(data: CreateScoringPoints): Promise<ScoringPointsDetail> {
 	const row = await prisma.scoring_points.create({
 		data: {
 			points: data.points,
@@ -23,8 +21,9 @@ export async function createScoringPoints(data: CreateScoringPoints): Promise<Sc
 			delivery_order: data.delivery_order_id ? { connect: { order_id: data.delivery_order_id } } : undefined,
 			taxi_order: data.taxi_order_id ? { connect: { order_id: data.taxi_order_id } } : undefined,
 		},
+		include: scoringPointsDefaultInclude,
 	});
-	return row as ScoringPointsBase;
+	return toScoringPointsDetail(row as ScoringPointsWithIncludesPrisma);
 }
 
 /**
@@ -36,17 +35,9 @@ export async function createScoringPoints(data: CreateScoringPoints): Promise<Sc
 export async function getScoringPointsById(scoring_points_id: string): Promise<ScoringPointsDetail | null> {
 	const row = await prisma.scoring_points.findUnique({
 		where: { scoring_points_id },
-		include: {
-			user: true,
-			driver: true,
-			stores_module: true,
-			food_drinks_module: true,
-			delivery_order: true,
-			taxi_order: true,
-			late_events: true,
-		},
+		include: scoringPointsDefaultInclude,
 	});
-	return row as ScoringPointsDetail | null;
+	return row ? toScoringPointsDetail(row as ScoringPointsWithIncludesPrisma) : null;
 }
 
 /**
@@ -56,19 +47,8 @@ export async function getScoringPointsById(scoring_points_id: string): Promise<S
  * @returns {Promise<ScoringPointsDetail[]>} Points rows.
  */
 export async function getScoringPointsByDriverId(driver_id: string): Promise<ScoringPointsDetail[]> {
-	const rows = await prisma.scoring_points.findMany({
-		where: { driver_id },
-		include: {
-			user: true,
-			driver: true,
-			stores_module: true,
-			food_drinks_module: true,
-			delivery_order: true,
-			taxi_order: true,
-			late_events: true,
-		},
-	});
-	return rows as ScoringPointsDetail[];
+	const rows = await prisma.scoring_points.findMany({ where: { driver_id }, include: scoringPointsDefaultInclude });
+	return toScoringPointsList(rows as ScoringPointsWithIncludesPrisma[]);
 }
 
 /**
@@ -80,18 +60,10 @@ export async function getScoringPointsByDriverId(driver_id: string): Promise<Sco
 export async function getScoringPointsByUserId(user_id: string): Promise<ScoringPointsDetail[]> {
 	const rows = await prisma.scoring_points.findMany({
 		where: { user_id },
-		include: {
-			user: true,
-			driver: true,
-			stores_module: true,
-			food_drinks_module: true,
-			delivery_order: true,
-			taxi_order: true,
-			late_events: true,
-		},
+		include: scoringPointsDefaultInclude,
 		orderBy: { created_at: 'desc' },
 	});
-	return rows as ScoringPointsDetail[];
+	return toScoringPointsList(rows as ScoringPointsWithIncludesPrisma[]);
 }
 
 /**
@@ -103,17 +75,9 @@ export async function getScoringPointsByUserId(user_id: string): Promise<Scoring
 export async function getScoringPointsByTaxiOrderId(order_id: string): Promise<ScoringPointsDetail[]> {
 	const rows = await prisma.scoring_points.findMany({
 		where: { taxi_order_id: order_id },
-		include: {
-			user: true,
-			driver: true,
-			stores_module: true,
-			food_drinks_module: true,
-			delivery_order: true,
-			taxi_order: true,
-			late_events: true,
-		},
+		include: scoringPointsDefaultInclude,
 	});
-	return rows as ScoringPointsDetail[];
+	return toScoringPointsList(rows as ScoringPointsWithIncludesPrisma[]);
 }
 
 /**
@@ -125,17 +89,9 @@ export async function getScoringPointsByTaxiOrderId(order_id: string): Promise<S
 export async function getScoringPointsByDeliveryOrderId(order_id: string): Promise<ScoringPointsDetail[]> {
 	const rows = await prisma.scoring_points.findMany({
 		where: { delivery_order_id: order_id },
-		iinclude: {
-			user: true,
-			driver: true,
-			stores_module: true,
-			food_drinks_module: true,
-			delivery_order: true,
-			taxi_order: true,
-			late_events: true,
-		},
+		include: scoringPointsDefaultInclude,
 	});
-	return rows as ScoringPointsDetail[];
+	return toScoringPointsList(rows as ScoringPointsWithIncludesPrisma[]);
 }
 
 /**
@@ -147,8 +103,9 @@ export async function getScoringPointsByDeliveryOrderId(order_id: string): Promi
 export async function getScoringPointsByModuleId(module_id: string): Promise<ScoringPointsDetail[]> {
 	const rows = await prisma.scoring_points.findMany({
 		where: { OR: [{ food_drinks_module_id: module_id }, { stores_module_id: module_id }] },
+		include: scoringPointsDefaultInclude,
 	});
-	return rows as ScoringPointsDetail[];
+	return toScoringPointsList(rows as ScoringPointsWithIncludesPrisma[]);
 }
 
 /**
@@ -167,22 +124,10 @@ export async function updateScoringPoints(
 ): Promise<ScoringPointsDetail> {
 	const row = await prisma.scoring_points.update({
 		where: { scoring_points_id },
-		data: {
-			points: data?.points,
-			isPenalty: data?.isPenalty,
-			reason: data?.reason ?? undefined,
-		},
-		include: {
-			user: true,
-			driver: true,
-			stores_module: true,
-			food_drinks_module: true,
-			delivery_order: true,
-			taxi_order: true,
-			late_events: true,
-		},
+		data: { points: data?.points, isPenalty: data?.isPenalty, reason: data?.reason ?? undefined },
+		include: scoringPointsDefaultInclude,
 	});
-	return row as ScoringPointsDetail;
+	return toScoringPointsDetail(row as ScoringPointsWithIncludesPrisma);
 }
 
 /**

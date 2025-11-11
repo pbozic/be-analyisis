@@ -75,7 +75,7 @@ type PrismaCashback = {
 	delivery_order?: { order_id: string; order_number?: number | null } | null;
 };
 
-export function toCashbackDetail(cashback: unknown): CashbackDetail {
+export function toCashbackDetail(cashback: PrismaCashback): CashbackDetail {
 	const c = cashback as PrismaCashback;
 	return CashbackDetailSchema.parse({
 		cashback_id: c.cashback_id,

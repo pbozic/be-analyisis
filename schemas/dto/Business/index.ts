@@ -14,6 +14,8 @@ export {
 	MenuRefSchema,
 	DailyMealsRefSchema,
 	BusinessWithDailyMealsResponseDto,
+	BusinessWithAddressAndUsersResponseDto,
+	BusinessWithIncludesResponseDto,
 	type BusinessCreateDto as BusinessCreate,
 	type BusinessResponseDto as BusinessResponse,
 	type BusinessRefSchema as BusinessRef,
@@ -34,10 +36,11 @@ export {
 	type MenuItemRef,
 	type MenuCategoryRef,
 	type BusinessByIdResponse,
-	toBusinessByIdResponse,
-	toGetBusinessResponse,
 	registerSchemas as registerBusinessSchemas,
 } from './business.dto.js';
+
+// Note: mappers are implemented in `business.mappers.ts` and should be imported directly
+// where needed to avoid large transitive re-exports.
 
 // Legacy exports for backwards compatibility
 export {

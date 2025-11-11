@@ -1,7 +1,7 @@
 import express from 'express';
 
 import BusinessUsersController from '../../controllers/BusinessUsersController.js';
-import { AddAddressSchema } from '../../schemas/dto/Business/Business.validation.ts';
+import { AddAddressSchema } from '../../schemas/dto/Business/business.validators.js';
 import { validate } from '../../middleware/zod.js';
 import {
 	AcceptBusinessInvitationSchema,

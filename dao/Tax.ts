@@ -1,4 +1,5 @@
 import { TaxRateInput, TaxRateDetail } from '../schemas/dto/Tax/tax.dto.js';
+import { toTaxRateDetail } from '../schemas/dto/Tax/tax.mappers.js';
 import prisma from '../prisma/prisma.js';
 /**
  * Create a new tax rate
@@ -8,9 +9,8 @@ import prisma from '../prisma/prisma.js';
  */
 export async function createTaxRate(data: TaxRateInput): Promise<TaxRateDetail> {
 	try {
-		return await prisma.tax_rates.create({
-			data: { ...data },
-		});
+		const created = await prisma.tax_rates.create({ data: { ...data } });
+		return toTaxRateDetail(created);
 	} catch (error) {
 		throw new Error(`❌ Error creating tax rate:' ${error}`);
 	}
@@ -23,12 +23,8 @@ export async function createTaxRate(data: TaxRateInput): Promise<TaxRateDetail> 
  */
 export async function getTaxByName(name: string): Promise<TaxRateDetail | null> {
 	try {
-		return await prisma.tax_rates.findFirst({
-			where: {
-				name,
-				active: true,
-			},
-		});
+		const row = await prisma.tax_rates.findFirst({ where: { name, active: true } });
+		return row ? toTaxRateDetail(row) : null;
 	} catch (error) {
 		throw new Error(`❌ Error fetching tax rate by name: ${error}`);
 	}
@@ -40,14 +36,8 @@ export async function getTaxByName(name: string): Promise<TaxRateDetail | null> 
  */
 export async function getActiveTaxRates(): Promise<TaxRateDetail[]> {
 	try {
-		return await prisma.tax_rates.findMany({
-			where: {
-				active: true,
-			},
-			orderBy: {
-				rate: 'asc',
-			},
-		});
+		const rows = await prisma.tax_rates.findMany({ where: { active: true }, orderBy: { rate: 'asc' } });
+		return rows.map(toTaxRateDetail);
 	} catch (error) {
 		throw new Error(`❌ Error fetching active tax rates: ${error}`);
 	}
@@ -59,12 +49,8 @@ export async function getActiveTaxRates(): Promise<TaxRateDetail[]> {
  */
 export async function getInactiveTaxRates(): Promise<TaxRateDetail[]> {
 	try {
-		return await prisma.tax_rates.findMany({
-			where: {
-				active: false,
-				activated_at: null,
-			},
-		});
+		const rows = await prisma.tax_rates.findMany({ where: { active: false, activated_at: null } });
+		return rows.map(toTaxRateDetail);
 	} catch (error) {
 		throw new Error(`❌ Error fetching inactive tax rates: ${error}`);
 	}
