@@ -3,11 +3,15 @@ import { SERVICE_TYPE } from '../lib/constants.js';
 import type {
 	GroupUserResponse,
 	GroupUserDetailResponse,
-	GroupUserWithAllowanceResponse
+	GroupUserWithAllowanceResponse,
 } from '../schemas/dto/Group/index.js';
 import groupUsersDefaultInclude from '../prisma/includes/group.js';
 import type { GroupUsersWithIncludesPrisma } from '../prisma/includes/group.js';
-import { toGroupUserResponse, toGroupUserDetailResponse, toGroupUserWithAllowanceResponse } from '../schemas/dto/Group/group.mappers.js';
+import {
+	toGroupUserResponse,
+	toGroupUserDetailResponse,
+	toGroupUserWithAllowanceResponse,
+} from '../schemas/dto/Group/group.mappers.js';
 
 // Define common query arg types
 interface FindUniqueArgs {
@@ -34,7 +38,10 @@ interface CreateGroupUserData {
  */
 const getGroupUsersByParentId = async (parent_id: string): Promise<GroupUserResponse | null> => {
 	try {
-		const row = await prisma.group_users.findUnique({ where: { parent_user_id: parent_id }, include: groupUsersDefaultInclude });
+		const row = await prisma.group_users.findUnique({
+			where: { parent_user_id: parent_id },
+			include: groupUsersDefaultInclude,
+		});
 		if (!row) return null;
 		return toGroupUserResponse(row as GroupUsersWithIncludesPrisma);
 	} catch (error) {
@@ -51,7 +58,10 @@ const getGroupUsersByParentId = async (parent_id: string): Promise<GroupUserResp
  */
 const getGroupUserByChildId = async (child_id: string): Promise<GroupUserDetailResponse | null> => {
 	try {
-		const row = await prisma.group_users.findFirst({ where: { child_user_id: child_id }, include: { parent_user: true, allowance: true } });
+		const row = await prisma.group_users.findFirst({
+			where: { child_user_id: child_id },
+			include: { parent_user: true, allowance: true },
+		});
 		if (!row) return null;
 		return toGroupUserDetailResponse(row as GroupUsersWithIncludesPrisma);
 	} catch (error) {
@@ -74,7 +84,7 @@ const createGroupUser = async (group_user_data: CreateGroupUserData): Promise<Gr
 				child_user: { connect: { user_id: group_user_data.child_user_id } },
 			},
 		});
-		
+
 		await prisma.allowances.create({
 			data: {
 				user: {
@@ -85,7 +95,10 @@ const createGroupUser = async (group_user_data: CreateGroupUserData): Promise<Gr
 			},
 		});
 		// Fetch created row with standard include and return parsed DTO
-		const created = await prisma.group_users.findUnique({ where: { group_user_id: group_user.group_user_id }, include: groupUsersDefaultInclude });
+		const created = await prisma.group_users.findUnique({
+			where: { group_user_id: group_user.group_user_id },
+			include: groupUsersDefaultInclude,
+		});
 		if (!created) throw new Error('Failed to fetch created group user');
 		return toGroupUserResponse(created as GroupUsersWithIncludesPrisma);
 	} catch (error) {
@@ -102,7 +115,10 @@ const createGroupUser = async (group_user_data: CreateGroupUserData): Promise<Gr
  */
 const deleteGroupUser = async (group_user_id: string): Promise<GroupUserResponse> => {
 	try {
-		const deleted = await prisma.group_users.delete({ where: { group_user_id: group_user_id }, include: groupUsersDefaultInclude });
+		const deleted = await prisma.group_users.delete({
+			where: { group_user_id: group_user_id },
+			include: groupUsersDefaultInclude,
+		});
 		return toGroupUserResponse(deleted as GroupUsersWithIncludesPrisma);
 	} catch (error) {
 		console.error('Error deleting group user:', error);
@@ -120,7 +136,11 @@ const deleteGroupUser = async (group_user_id: string): Promise<GroupUserResponse
 const updateGroupUserEnabled = async (group_user_id: string, value: boolean): Promise<GroupUserResponse> => {
 	try {
 		console.log('UPDATE ENABLED FOR GROUP_USER: ', group_user_id, ' TO VALUE: ', value);
-		const updated = await prisma.group_users.update({ where: { group_user_id: group_user_id }, data: { enabled: value }, include: groupUsersDefaultInclude });
+		const updated = await prisma.group_users.update({
+			where: { group_user_id: group_user_id },
+			data: { enabled: value },
+			include: groupUsersDefaultInclude,
+		});
 		return toGroupUserResponse(updated as GroupUsersWithIncludesPrisma);
 	} catch (error) {
 		console.error('Error updating group user enabled status:', error);
@@ -136,10 +156,14 @@ const updateGroupUserEnabled = async (group_user_id: string, value: boolean): Pr
  * @param {string} type - Service type (SERVICE_TYPE enum).
  * @returns {Promise<GroupUserWithAllowanceResponse>} group_user with allowance included.
  */
-const updateGroupUserAllowance = async (group_user_id: string, value: number, type: string): Promise<GroupUserWithAllowanceResponse> => {
+const updateGroupUserAllowance = async (
+	group_user_id: string,
+	value: number,
+	type: string
+): Promise<GroupUserWithAllowanceResponse> => {
 	try {
 		const updateData: any = {};
-		
+
 		switch (type) {
 			case SERVICE_TYPE.TAXI:
 				updateData.amount_taxi_wallet = value;
@@ -156,23 +180,23 @@ const updateGroupUserAllowance = async (group_user_id: string, value: number, ty
 			default:
 				throw new Error('Invalid allowance type given');
 		}
-		
+
 		await prisma.allowances.upsert({
 			where: { group_user_id },
 			update: updateData,
 			create: { group_user_id, ...updateData },
 		});
-		
+
 		const result = await prisma.group_users.findUnique({
 			where: { group_user_id },
 			include: { allowance: true },
 		});
-		
+
 		if (!result) {
 			throw new Error('Group user not found after allowance update');
 		}
-        
-        return toGroupUserWithAllowanceResponse(result as GroupUsersWithIncludesPrisma);
+
+		return toGroupUserWithAllowanceResponse(result as GroupUsersWithIncludesPrisma);
 	} catch (error) {
 		console.error('Error updating group user allowance:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update group user allowance');

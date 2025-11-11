@@ -3,14 +3,17 @@ import { getBusinessById } from './Business.js';
 import {
 	toBusinessClientDetailResponse,
 	toBusinessClientResponse,
-	toBusinessClientWithOrdersResponse
+	toBusinessClientWithOrdersResponse,
 } from '../schemas/dto/BusinessClient/businessClient.mappers.js';
 import type {
 	BusinessClientResponse,
 	BusinessClientWithOrdersResponse,
 	BusinessClientDetailResponse,
 } from '../schemas/dto/BusinessClient/businessClient.dto.js';
-import type { CreateBusinessClientRequest, UpdateBusinessClientRequest } from '../schemas/dto/BusinessClient/requests.js';
+import type {
+	CreateBusinessClientRequest,
+	UpdateBusinessClientRequest,
+} from '../schemas/dto/BusinessClient/requests.js';
 import type {
 	BusinessClientDetailPrisma,
 	BusinessClientWithOrdersPrisma,
@@ -69,7 +72,9 @@ export async function getBusinessClientsByBusinessId(businessId: string): Promis
 			include: { taxi_orders: true },
 		});
 
-		return rows.map((r: BusinessClientWithOrdersPrisma) => toBusinessClientWithOrdersResponse(r as BusinessClientWithOrdersPrisma));
+		return rows.map((r: BusinessClientWithOrdersPrisma) =>
+			toBusinessClientWithOrdersResponse(r as BusinessClientWithOrdersPrisma)
+		);
 	} catch (error) {
 		console.error(`Error retrieving business clients for business ID ${businessId}:`, error);
 		throw new Error(String(error));
@@ -81,11 +86,13 @@ export async function getBusinessClientsByBusinessId(businessId: string): Promis
  * @param {CreateBusinessClientRequest} clientData - The data for the new business client
  * @returns {Promise<BusinessClientResponse>} The created business client
  */
-export async function createBusinessClient(clientData: CreateBusinessClientRequest & { crm_module_id: string }): Promise<BusinessClientResponse> {
+export async function createBusinessClient(
+	clientData: CreateBusinessClientRequest & { crm_module_id: string }
+): Promise<BusinessClientResponse> {
 	try {
 		// Normalize telephone fields
 		const { telephone_code, telephone_number } = clientData;
-		
+
 		// Construct the data object
 		const data = {
 			crm_module_id: clientData.crm_module_id,
@@ -121,7 +128,10 @@ export async function updateBusinessClient(
 			updates.telephone = `${updates.telephone_code}${updates.telephone_number}`;
 		}
 
-		const row = await prisma.business_clients.update({ where: { business_clients_id: businessClientsId }, data: updates });
+		const row = await prisma.business_clients.update({
+			where: { business_clients_id: businessClientsId },
+			data: updates,
+		});
 
 		return toBusinessClientResponse(row as BusinessClientDefaultPrisma);
 	} catch (error) {

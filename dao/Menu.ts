@@ -63,7 +63,10 @@ const createStoreMenu = async (module_id: string): Promise<MenuBase> => {
  */
 const createFoodDrinksMenu = async (module_id: string): Promise<MenuBase> => {
 	try {
-		const created = await prisma.menus.create({ data: { food_drinks_id: module_id }, include: menusDefaultInclude });
+		const created = await prisma.menus.create({
+			data: { food_drinks_id: module_id },
+			include: menusDefaultInclude,
+		});
 		return toMenuResponse(created as MenuWithIncludesPrisma);
 	} catch (error: unknown) {
 		console.error('Error creating food & drinks menu:', error);
@@ -89,7 +92,7 @@ const getMenuByBusinessId = async (
 	moduleType?: 'STORES' | 'FOOD_DRINKS'
 ): Promise<MenuBase[]> => {
 	try {
-	let extraWhereArgs: Record<string, unknown> = {};
+		let extraWhereArgs: Record<string, unknown> = {};
 		if (isDailyMeal) {
 			if (!startDate) {
 				startDate = new Date();
@@ -118,7 +121,7 @@ const getMenuByBusinessId = async (
 			include: menusDefaultInclude,
 		});
 		return toMenuList(menus as MenuWithIncludesPrisma[]);
-		} catch (error: unknown) {
+	} catch (error: unknown) {
 		console.error('Error fetching menus by business id:', error);
 		throw new Error(getErrorMessage(error) || 'Error fetching menus by business id');
 	}
@@ -149,7 +152,11 @@ const deleteMenu = async (menu_id: string): Promise<MenuBase> => {
  */
 const setActiveMenu = async (menu_id: string, active: boolean): Promise<MenuBase> => {
 	try {
-		const updated = await prisma.menus.update({ where: { menu_id }, data: { active }, include: menusDefaultInclude });
+		const updated = await prisma.menus.update({
+			where: { menu_id },
+			data: { active },
+			include: menusDefaultInclude,
+		});
 		return toMenuResponse(updated as MenuWithIncludesPrisma);
 	} catch (error: unknown) {
 		console.error('Error setting active flag on menu:', error);
@@ -180,7 +187,11 @@ const updateMenuOrder = async (menu_id: string, orderedMenuCategoryIds: string[]
 				tx.menu_categories.update({ where: { menu_category_id: id }, data: { menu_order_index: index } })
 			);
 			await Promise.all(updatePromises);
-			const updated = await tx.menus.update({ where: { menu_id }, data: { menu_categories_ordered: orderedMenuCategoryIds }, include: menusDefaultInclude });
+			const updated = await tx.menus.update({
+				where: { menu_id },
+				data: { menu_categories_ordered: orderedMenuCategoryIds },
+				include: menusDefaultInclude,
+			});
 			return updated;
 		});
 		return toMenuResponse(result as MenuWithIncludesPrisma);
@@ -223,8 +234,14 @@ const getMenuByDate = async (business_id: string, date: Date | string): Promise<
 		startOfDay.setHours(0, 0, 0, 0);
 		const endOfDay = new Date(date as Date);
 		endOfDay.setHours(23, 59, 59, 999);
-	const dm = await prisma.daily_meal_menus.findFirst({ where: { daily_meals_module_id: dailyMealsModuleId, date: { gte: startOfDay.toISOString(), lte: endOfDay.toISOString() } }, include: dailyMealMenuDefaultInclude });
-	return dm ? toDailyMealMenuResponse(dm) : null;
+		const dm = await prisma.daily_meal_menus.findFirst({
+			where: {
+				daily_meals_module_id: dailyMealsModuleId,
+				date: { gte: startOfDay.toISOString(), lte: endOfDay.toISOString() },
+			},
+			include: dailyMealMenuDefaultInclude,
+		});
+		return dm ? toDailyMealMenuResponse(dm) : null;
 	} catch (error: unknown) {
 		console.error('Error getting menu by date:', error);
 		throw new Error(getErrorMessage(error) || 'Error getting menu by date');
@@ -239,8 +256,8 @@ const getMenuByDate = async (business_id: string, date: Date | string): Promise<
  */
 const getMenuById = async (menu_id: string): Promise<MenuBase | null> => {
 	try {
-	const menu = await prisma.menus.findUnique({ where: { menu_id }, include: menusDefaultInclude });
-	return menu ? toMenuResponse(menu) : null;
+		const menu = await prisma.menus.findUnique({ where: { menu_id }, include: menusDefaultInclude });
+		return menu ? toMenuResponse(menu) : null;
 	} catch (error: unknown) {
 		console.error('Error getting menu by id:', error);
 		throw new Error(getErrorMessage(error) || 'Error getting menu by id');

@@ -1,11 +1,11 @@
 import { Prisma } from '@prisma/client';
 
 export const businessMoneyFlowWithBusinessInclude = Prisma.validator<Prisma.business_money_flowsInclude>()({
-    business: true,
+	business: true,
 });
 
 export type BusinessMoneyFlowWithBusinessPrisma = Prisma.business_money_flowsGetPayload<{
-    include: typeof businessMoneyFlowWithBusinessInclude;
+	include: typeof businessMoneyFlowWithBusinessInclude;
 }>;
 
 export type BusinessMoneyFlowDefaultPrisma = Prisma.business_money_flowsGetPayload<Record<string, never>>;

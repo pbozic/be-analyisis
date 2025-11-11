@@ -57,7 +57,12 @@ const getCategories = async (args?: FindManyArgs): Promise<CategoryResponse[]> =
  */
 const getCategoriesByType = async (type: string, args?: FindManyArgs): Promise<CategoryResponse[]> => {
 	try {
-		const categories = await prisma.categories.findMany({ where: { category_type: type }, include: categoriesDefaultInclude, orderBy: { name: 'asc' }, ...args });
+		const categories = await prisma.categories.findMany({
+			where: { category_type: type },
+			include: categoriesDefaultInclude,
+			orderBy: { name: 'asc' },
+			...args,
+		});
 
 		// Transform and flatten translations
 		return toCategoryList(categories as CategoryWithIncludesPrisma[]);
@@ -76,7 +81,11 @@ const getCategoriesByType = async (type: string, args?: FindManyArgs): Promise<C
  */
 const getCategoryById = async (id: string, args?: FindUniqueArgs): Promise<CategoryResponse> => {
 	try {
-		const category = await prisma.categories.findUnique({ where: { categories_id: id }, include: categoriesDefaultInclude, ...args });
+		const category = await prisma.categories.findUnique({
+			where: { categories_id: id },
+			include: categoriesDefaultInclude,
+			...args,
+		});
 
 		if (!category) throw new Error('Category not found');
 
@@ -116,14 +125,14 @@ const createCategory = async (
 				},
 			},
 		});
-		
+
 		if (categoryExists) {
 			throw new Error('Category already exists');
 		}
-		
+
 		let translatable = await prisma.translatable.create({ data: {} });
 		const { file_type, mime_type } = iconFileData;
-		
+
 		let category = await prisma.categories.create({
 			data: {
 				...categoryData,
@@ -158,7 +167,7 @@ const createCategory = async (
 			},
 			include: categoriesDefaultInclude,
 		});
-		
+
 		let translats = [];
 		for (let translation of translations) {
 			let trans = await prisma.translations.create({
@@ -173,7 +182,7 @@ const createCategory = async (
 			});
 			translats.push(trans);
 		}
-		
+
 		// Transform and flatten translations - use mapper with constructed translations
 		const built = { ...category, translatable: { translations: translats } };
 		return toCategoryResponse(built as CategoryWithIncludesPrisma);
@@ -203,14 +212,14 @@ const updateCategory = async (
 	iconFileData: IconFileData | null = null
 ): Promise<CategoryResponse> => {
 	try {
-		return await prisma.$transaction(async (tx: PrismaTransactionClient) => {
+		return (await prisma.$transaction(async (tx: PrismaTransactionClient) => {
 			const category = await tx.categories.findUnique({
 				where: { categories_id: id },
 				select: { translatable_id: true, icon_file_id: true },
 			});
-			
+
 			if (!category) throw new Error('Category not found');
-			
+
 			// Update translations
 			for (let translation of translations) {
 				const existingTranslation = await tx.translations.findUnique({
@@ -221,7 +230,7 @@ const updateCategory = async (
 						},
 					},
 				});
-				
+
 				if (!existingTranslation) {
 					await tx.translations.create({
 						data: {
@@ -245,9 +254,9 @@ const updateCategory = async (
 					});
 				}
 			}
-			
+
 			const updateData: any = { ...categoryData };
-			
+
 			// Handle parent category
 			if (parent_categories_id) {
 				updateData.parent_category = {
@@ -258,14 +267,14 @@ const updateCategory = async (
 					disconnect: true,
 				};
 			}
-			
+
 			// Handle subcategories
 			if (subcategories) {
 				updateData.sub_categories = {
 					set: subcategories.map((subId) => ({ categories_id: subId })),
 				};
 			}
-			
+
 			// Handle icon
 			if (iconFileData) {
 				const { file_type, mime_type } = iconFileData;
@@ -286,11 +295,15 @@ const updateCategory = async (
 							},
 						};
 			}
-			
-			const updated = await tx.categories.update({ where: { categories_id: id }, data: updateData, include: categoriesDefaultInclude });
+
+			const updated = await tx.categories.update({
+				where: { categories_id: id },
+				data: updateData,
+				include: categoriesDefaultInclude,
+			});
 
 			return toCategoryResponse(updated as CategoryWithIncludesPrisma);
-		}) as CategoryResponse;
+		})) as CategoryResponse;
 	} catch (error) {
 		console.error('Error updating category:', error);
 		throw new Error('Failed to update category: ' + (error instanceof Error ? error.message : 'Unknown error'));
@@ -306,11 +319,11 @@ const updateCategory = async (
 const deleteCategory = async (id: string): Promise<CategoryResponse> => {
 	try {
 		let category = await prisma.categories.findUnique({ where: { categories_id: id } });
-		
+
 		if (!category) {
 			throw new Error('Category not found');
 		}
-		
+
 		// Disconnect related words
 		await prisma.categories.update({
 			where: { categories_id: category.categories_id },
@@ -320,8 +333,11 @@ const deleteCategory = async (id: string): Promise<CategoryResponse> => {
 				},
 			},
 		});
-		
-		const deleted = await prisma.categories.delete({ where: { categories_id: id }, include: categoriesDefaultInclude });
+
+		const deleted = await prisma.categories.delete({
+			where: { categories_id: id },
+			include: categoriesDefaultInclude,
+		});
 
 		return toCategoryResponse(deleted as CategoryWithIncludesPrisma);
 	} catch (error) {

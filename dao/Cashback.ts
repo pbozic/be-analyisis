@@ -1,9 +1,6 @@
 import prisma from '../prisma/prisma.js';
 import { CASHBACK_STATUS } from '../lib/constants.js';
-import type {
-	CashbackBase,
-	CashbackDetail,
-} from '../schemas/dto/Cashback/cashback.dto.js';
+import type { CashbackBase, CashbackDetail } from '../schemas/dto/Cashback/cashback.dto.js';
 import { toCashbackDetail } from '../schemas/dto/Cashback/cashback.dto.js';
 import type { CashbackWithOrdersPrisma } from '../prisma/includes/cashback.js';
 import cashbackOrdersInclude from '../prisma/includes/cashback.js';

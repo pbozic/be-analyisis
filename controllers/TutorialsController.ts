@@ -26,7 +26,6 @@ export async function listTutorials(req: Request, res: Response): Promise<void> 
 		}
 		const tutorials = await TutorialsDao.listTutorialsWithStatus(user_id);
 		res.json({ tutorials });
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -56,7 +55,6 @@ export async function resetTutorials(req: Request, res: Response): Promise<void>
 		}
 		const state = await TutorialsDao.incrementEpoch(user_id);
 		res.json(state);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -95,7 +93,6 @@ export async function setTutorialStatus(req: ValidatedRequest<SetTutorialStatusB
 		}
 		const link = await TutorialsDao.setTutorialStatus(user_id, tutorial_key, status, versionSeen);
 		res.json(link);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}

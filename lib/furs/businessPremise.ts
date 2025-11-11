@@ -74,7 +74,7 @@ export const submitBusinessPremise = async (
 		message_id: string;
 		driver_id: string;
 		tokenEnvelope: FursTokenEnvelope;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 		decodedPayload?: any;
 	}
 ) => {
@@ -103,12 +103,10 @@ export const submitBusinessPremise = async (
 
 	let response_token: string | null = null;
 	if (data && typeof data === 'object' && 'token' in data) {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		response_token = (data as any).token;
 		// You can decode token and inspect .Error to set ACK/ERROR
 		try {
 			const payloadStr = Buffer.from(
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				(data as any).token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'),
 				'base64'
 			).toString('utf8');

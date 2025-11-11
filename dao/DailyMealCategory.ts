@@ -3,7 +3,10 @@ import type { daily_meal_categories, daily_meal_category_prices, Prisma } from '
 import prisma from '../prisma/prisma.js';
 import { UUID } from '../schemas/primitives.js';
 import type { DailyMealCategoryWithPricesPrisma } from '../prisma/includes/dailyMealCategory.js';
-import { toDailyMealCategoryResponse, toDailyMealCategoryList } from '../schemas/dto/DailyMealCategory/dailyMealCategory.mappers.js';
+import {
+	toDailyMealCategoryResponse,
+	toDailyMealCategoryList,
+} from '../schemas/dto/DailyMealCategory/dailyMealCategory.mappers.js';
 /**
  * Get daily meal category by id.
  *

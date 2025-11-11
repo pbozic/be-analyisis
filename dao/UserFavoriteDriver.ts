@@ -1,5 +1,8 @@
 import prisma from '../prisma/prisma.js';
-import { toUserFavoriteDriverResponse, toUserFavoriteDriversList } from '../schemas/dto/UserFavoriteDriver/userFavoriteDriver.mappers.js';
+import {
+	toUserFavoriteDriverResponse,
+	toUserFavoriteDriversList,
+} from '../schemas/dto/UserFavoriteDriver/userFavoriteDriver.mappers.js';
 import type { UserFavoriteDriverResponse } from '../types/users/UserFavoriteDriver.js';
 
 /**

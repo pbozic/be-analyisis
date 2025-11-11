@@ -28,7 +28,6 @@ export async function setFoodDrinksOnline(
 		const { online } = req.body;
 		const updated = await FoodDrinksDao.setFoodDrinksOnline(food_drinks_id, !!online);
 		res.json(updated);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -58,7 +57,6 @@ export async function setFoodDrinksOverwhelmed(
 		const { overwhelmed } = req.body;
 		const updated = await FoodDrinksDao.setFoodDrinksOverwhelmed(food_drinks_id, !!overwhelmed);
 		res.json(updated);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -85,7 +83,6 @@ export async function disableFoodDrinks(
 		const { food_drinks_id } = req.params;
 		const updated = await FoodDrinksDao.disableFoodDrinks(food_drinks_id);
 		res.json(updated);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -111,7 +108,6 @@ export async function enableFoodDrinks(
 		const { food_drinks_id } = req.params;
 		const updated = await FoodDrinksDao.enableFoodDrinks(food_drinks_id);
 		res.json(updated);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}

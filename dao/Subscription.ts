@@ -37,7 +37,10 @@ export async function createSubscription(data: CreateSubscriptionSchema): Promis
  * @param {UpdateSubscriptionSchema} data
  * @returns {Promise<SubscriptionResponse>}
  */
-export async function updateSubscription(subscriptionId: string, data: UpdateSubscriptionSchema): Promise<SubscriptionResponse> {
+export async function updateSubscription(
+	subscriptionId: string,
+	data: UpdateSubscriptionSchema
+): Promise<SubscriptionResponse> {
 	try {
 		const updated = await prisma.action_bundle.update({
 			where: { subscription_id: subscriptionId },
@@ -81,7 +84,10 @@ export async function deleteSubscription(subscriptionId: string): Promise<void> 
  */
 export async function getSubscriptionById(subscriptionId: string): Promise<SubscriptionResponse | null> {
 	try {
-		const row = await prisma.action_bundle.findUnique({ where: { subscription_id: subscriptionId }, include: subscriptionInclude });
+		const row = await prisma.action_bundle.findUnique({
+			where: { subscription_id: subscriptionId },
+			include: subscriptionInclude,
+		});
 		return row ? toSubscriptionResponse(row as SubscriptionWithIncludesPrisma) : null;
 	} catch (error) {
 		console.error('Error fetching subscription:', error);

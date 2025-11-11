@@ -1,18 +1,18 @@
 import {
-    BusinessResponseDto,
-    BusinessByIdResponseSchema,
-    BusinessWithIncludesResponseDto,
-    BusinessWithAddressAndUsersResponseDto,
-    BusinessSearchResponseDto,
+	BusinessResponseDto,
+	BusinessByIdResponseSchema,
+	BusinessWithIncludesResponseDto,
+	BusinessWithAddressAndUsersResponseDto,
+	BusinessSearchResponseDto,
 } from './business.dto.js';
 import { BusinessAdminResponseSchema } from './business.js';
 import type { BusinessWithAllModulesResponseDto, BusinessResponseDto as BusinessResponseType } from './business.dto.js';
 import type {
-    GetBusinessesPrisma,
-    BusinessByIdPrisma,
-    BusinessWithAddressAndUsersPrisma,
-    BusinessSearchSelectPrisma,
-    BusinessAdminPrisma,
+	GetBusinessesPrisma,
+	BusinessByIdPrisma,
+	BusinessWithAddressAndUsersPrisma,
+	BusinessSearchSelectPrisma,
+	BusinessAdminPrisma,
 } from '../../../prisma/includes/business.ts';
 import { BusinessWithDailyMealsResponseDto } from './business.dto.js';
 import type { BusinessWithDailyMealsResponseDto as BusinessWithDailyMealsResponseType } from './business.dto.js';
@@ -22,7 +22,10 @@ export function toGetBusinessResponse(row: GetBusinessesPrisma): BusinessRespons
 	const r = row as GetBusinessesPrisma;
 	const asRec = r as Record<string, any>;
 
-	const businessDetails = asRec.business_details ?? { name: asRec.name ?? null, description: asRec.description ?? null };
+	const businessDetails = asRec.business_details ?? {
+		name: asRec.name ?? null,
+		description: asRec.description ?? null,
+	};
 
 	return BusinessResponseDto.parse({
 		business_id: r.business_id,
@@ -58,7 +61,10 @@ export function toBusinessWithIncludesResponse(row: GetBusinessesPrisma) {
 	const r = row as GetBusinessesPrisma;
 	const asRec = r as Record<string, any>;
 
-	const businessDetails = asRec.business_details ?? { name: asRec.name ?? null, description: asRec.description ?? null };
+	const businessDetails = asRec.business_details ?? {
+		name: asRec.name ?? null,
+		description: asRec.description ?? null,
+	};
 
 	return BusinessWithIncludesResponseDto.parse({
 		business_id: r.business_id,
@@ -100,10 +106,12 @@ export function toBusinessWithAddressAndUsersResponse(row: BusinessWithAddressAn
 	const r = row as BusinessWithAddressAndUsersPrisma;
 	const asRec = r as Record<string, any>;
 
-
 	return BusinessWithAddressAndUsersResponseDto.parse({
 		business_id: r.business_id,
-		business_details: asRec.business_details ?? { name: asRec.name ?? null, description: asRec.description ?? null },
+		business_details: asRec.business_details ?? {
+			name: asRec.name ?? null,
+			description: asRec.description ?? null,
+		},
 		tax_id: asRec.tax_id ?? null,
 		registration_id: asRec.registration_id ?? null,
 		email: asRec.email ?? null,
@@ -142,7 +150,10 @@ export function toBusinessSearchResponse(row: BusinessSearchSelectPrisma) {
 
 	return BusinessSearchResponseDto.parse({
 		business_id: r.business_id,
-		business_details: asRec.business_details ?? { name: asRec.name ?? null, description: asRec.description ?? null },
+		business_details: asRec.business_details ?? {
+			name: asRec.name ?? null,
+			description: asRec.description ?? null,
+		},
 		email: asRec.email ?? null,
 		telephone: asRec.telephone ?? null,
 		website_url: asRec.website_url ?? null,
@@ -163,7 +174,10 @@ export function toBusinessAdminResponse(row: BusinessAdminPrisma) {
 export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAllModulesResponseDto {
 	const r = row as BusinessByIdPrisma;
 	const asRec = r as Record<string, any>;
-	const businessDetails = asRec.business_details ?? { name: asRec.name ?? null, description: asRec.description ?? null };
+	const businessDetails = asRec.business_details ?? {
+		name: asRec.name ?? null,
+		description: asRec.description ?? null,
+	};
 
 	return BusinessByIdResponseSchema.parse({
 		// Base business fields
@@ -194,10 +208,15 @@ export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAll
 		transport_module_id: r.transport_module?.transport_module_id,
 		food_drinks_module: r.food_drinks_module,
 		food_drinks_module_id:
-			(asRec.food_drinks_module && (asRec.food_drinks_module.food_drinks_module_id ?? asRec.food_drinks_module.food_drinks_id)) ?? asRec.food_drinks_id ?? null,
+			(asRec.food_drinks_module &&
+				(asRec.food_drinks_module.food_drinks_module_id ?? asRec.food_drinks_module.food_drinks_id)) ??
+			asRec.food_drinks_id ??
+			null,
 		stores_module: r.stores_module,
 		stores_module_id:
-			(asRec.stores_module && (asRec.stores_module.stores_module_id ?? asRec.stores_module.stores_id)) ?? asRec.stores_id ?? null,
+			(asRec.stores_module && (asRec.stores_module.stores_module_id ?? asRec.stores_module.stores_id)) ??
+			asRec.stores_id ??
+			null,
 		reservation_module: r.reservation_module,
 		reservation_module_id: r.reservation_module?.reservation_module_id,
 		table_reservations_module: r.table_reservations_module,

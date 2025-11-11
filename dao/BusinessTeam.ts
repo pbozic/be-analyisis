@@ -1,8 +1,5 @@
 import prisma from '../prisma/prisma.js';
-import type {
-	BusinessTeamResponse,
-	BusinessTeamWithUsersResponse,
-} from '../schemas/dto/BusinessTeam/index.js';
+import type { BusinessTeamResponse, BusinessTeamWithUsersResponse } from '../schemas/dto/BusinessTeam/index.js';
 import {
 	toBusinessTeamResponse,
 	toBusinessTeamWithUsersResponse,
@@ -37,7 +34,9 @@ export async function createBusinessTeam(data: Record<string, any>): Promise<Bus
  * @param {Object} data - The business team data with id
  * @returns {Promise<BusinessTeamWithUsersResponse>} Updated business team
  */
-export async function updateBusinessTeam(data: Record<string, any> & { business_teams_id: string }): Promise<BusinessTeamWithUsersResponse> {
+export async function updateBusinessTeam(
+	data: Record<string, any> & { business_teams_id: string }
+): Promise<BusinessTeamWithUsersResponse> {
 	try {
 		if (!data.business_teams_id) {
 			throw new Error('business_teams_id is required for update');
@@ -61,7 +60,10 @@ export async function updateBusinessTeam(data: Record<string, any> & { business_
  * @param {string} user_id - The ID of the user to add
  * @returns {Promise<BusinessTeamWithUsersResponse>} Updated user
  */
-export async function addUserToTeam(business_teams_id: string, user_id: string): Promise<BusinessTeamWithUsersResponse> {
+export async function addUserToTeam(
+	business_teams_id: string,
+	user_id: string
+): Promise<BusinessTeamWithUsersResponse> {
 	try {
 		// First check if user exists and isn't already in a team
 		const user = await prisma.users.findUnique({

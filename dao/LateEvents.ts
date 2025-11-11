@@ -45,7 +45,11 @@ export async function getLateEventById(late_events_id: string): Promise<LateEven
  * @returns {Promise<LateEventsResponse[]>} Late events.
  */
 export async function getLateEventsByDriverId(driver_id: string): Promise<LateEventsResponse[]> {
-	const rows = await prisma.late_events.findMany({ where: { driver_id }, orderBy: { created_at: 'desc' }, include: lateEventsDefaultInclude });
+	const rows = await prisma.late_events.findMany({
+		where: { driver_id },
+		orderBy: { created_at: 'desc' },
+		include: lateEventsDefaultInclude,
+	});
 	return toLateEventsList(rows as LateEventsWithIncludesPrisma[]).data;
 }
 
@@ -56,7 +60,10 @@ export async function getLateEventsByDriverId(driver_id: string): Promise<LateEv
  * @returns {Promise<LateEventsResponse[]>} Late events.
  */
 export async function getLateEventsByTaxiOrderId(order_id: string): Promise<LateEventsResponse[]> {
-	const rows = await prisma.late_events.findMany({ where: { taxi_order_id: order_id }, include: lateEventsDefaultInclude });
+	const rows = await prisma.late_events.findMany({
+		where: { taxi_order_id: order_id },
+		include: lateEventsDefaultInclude,
+	});
 	return toLateEventsList(rows as LateEventsWithIncludesPrisma[]).data;
 }
 
@@ -67,7 +74,10 @@ export async function getLateEventsByTaxiOrderId(order_id: string): Promise<Late
  * @returns {Promise<LateEventsResponse[]>} Late events.
  */
 export async function getLateEventsByDeliveryOrderId(order_id: string): Promise<LateEventsResponse[]> {
-	const rows = await prisma.late_events.findMany({ where: { delivery_order_id: order_id }, include: lateEventsDefaultInclude });
+	const rows = await prisma.late_events.findMany({
+		where: { delivery_order_id: order_id },
+		include: lateEventsDefaultInclude,
+	});
 	return toLateEventsList(rows as LateEventsWithIncludesPrisma[]).data;
 }
 

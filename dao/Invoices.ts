@@ -13,7 +13,12 @@ import businessPremiseDefaultInclude from '../prisma/includes/businessPremise.js
 import electronicDeviceDefaultInclude from '../prisma/includes/electronicDevice.js';
 import deviceAssignmentDefaultInclude from '../prisma/includes/deviceAssignment.js';
 import vehiclesDefaultInclude from '../prisma/includes/vehicles.js';
-import { toBusinessPremiseResponse, toElectronicDeviceResponse, toDeviceAssignmentResponse, toVehicleResponse } from '../schemas/dto/Invoices/invoice.mappers.js';
+import {
+	toBusinessPremiseResponse,
+	toElectronicDeviceResponse,
+	toDeviceAssignmentResponse,
+	toVehicleResponse,
+} from '../schemas/dto/Invoices/invoice.mappers.js';
 import type { BusinessPremiseWithIncludesPrisma } from '../prisma/includes/businessPremise.js';
 import type { ElectronicDeviceWithIncludesPrisma } from '../prisma/includes/electronicDevice.js';
 import type { DeviceAssignmentWithIncludesPrisma } from '../prisma/includes/deviceAssignment.js';
@@ -44,7 +49,10 @@ export async function createBusinessPremise(
 		special_notes: data.special_notes ?? null,
 	};
 	const created = await prisma.business_premise.create({ data: payload });
-	const row = await prisma.business_premise.findUnique({ where: { business_premise_id: created.business_premise_id }, include: businessPremiseDefaultInclude });
+	const row = await prisma.business_premise.findUnique({
+		where: { business_premise_id: created.business_premise_id },
+		include: businessPremiseDefaultInclude,
+	});
 	if (!row) throw new Error('Failed to fetch created business premise');
 	return toBusinessPremiseResponse(row as BusinessPremiseWithIncludesPrisma) as BusinessPremise;
 }
@@ -67,7 +75,10 @@ export async function createElectronicDevice(
 		active: data.active ?? true,
 	};
 	const created = await prisma.electronic_device.create({ data: payload });
-	const row = await prisma.electronic_device.findUnique({ where: { electronic_device_id: created.electronic_device_id }, include: electronicDeviceDefaultInclude });
+	const row = await prisma.electronic_device.findUnique({
+		where: { electronic_device_id: created.electronic_device_id },
+		include: electronicDeviceDefaultInclude,
+	});
 	if (!row) throw new Error('Failed to fetch created electronic device');
 	return toElectronicDeviceResponse(row as ElectronicDeviceWithIncludesPrisma) as ElectronicDevice;
 }
@@ -86,8 +97,13 @@ export async function assignDeviceToDriver(
 	electronic_device_id: string,
 	valid_from: Date = new Date()
 ): Promise<DeviceAssignment> {
-	const created = await prisma.device_assignment.create({ data: { driver_id, business_premise_id, electronic_device_id, valid_from } });
-	const row = await prisma.device_assignment.findUnique({ where: { device_assignment_id: created.device_assignment_id }, include: deviceAssignmentDefaultInclude });
+	const created = await prisma.device_assignment.create({
+		data: { driver_id, business_premise_id, electronic_device_id, valid_from },
+	});
+	const row = await prisma.device_assignment.findUnique({
+		where: { device_assignment_id: created.device_assignment_id },
+		include: deviceAssignmentDefaultInclude,
+	});
 	if (!row) throw new Error('Failed to fetch created device assignment');
 	return toDeviceAssignmentResponse(row as DeviceAssignmentWithIncludesPrisma) as DeviceAssignment;
 }
@@ -99,7 +115,11 @@ export async function assignDeviceToDriver(
  * @returns {Promise<Vehicle>}
  */
 export async function linkPremiseToVehicle(vehicle_id: string, business_premise_id: string): Promise<Vehicle> {
-	const updated = await prisma.vehicles.update({ where: { vehicle_id }, data: { business_premise_id }, include: vehiclesDefaultInclude });
+	const updated = await prisma.vehicles.update({
+		where: { vehicle_id },
+		data: { business_premise_id },
+		include: vehiclesDefaultInclude,
+	});
 	return toVehicleResponse(updated as VehicleWithIncludesPrisma) as Vehicle;
 }
 /**
@@ -113,7 +133,11 @@ export async function disableElectronicDevice(
 	business_premise_id: string,
 	electronic_device_id: string
 ): Promise<ElectronicDevice> {
-	const updated = await prisma.electronic_device.update({ where: { business_premise_id_electronic_device_id: { business_premise_id, electronic_device_id } }, data: { active: false }, include: electronicDeviceDefaultInclude });
+	const updated = await prisma.electronic_device.update({
+		where: { business_premise_id_electronic_device_id: { business_premise_id, electronic_device_id } },
+		data: { active: false },
+		include: electronicDeviceDefaultInclude,
+	});
 	return toElectronicDeviceResponse(updated as ElectronicDeviceWithIncludesPrisma) as ElectronicDevice;
 }
 /**
@@ -129,11 +153,18 @@ export async function endDeviceAssignment(
 	business_premise_id: string,
 	electronic_device_id: string
 ): Promise<DeviceAssignment> {
-	const latest = await prisma.device_assignment.findFirst({ where: { driver_id, business_premise_id, electronic_device_id, valid_to: null }, orderBy: { valid_from: 'desc' } });
+	const latest = await prisma.device_assignment.findFirst({
+		where: { driver_id, business_premise_id, electronic_device_id, valid_to: null },
+		orderBy: { valid_from: 'desc' },
+	});
 	if (!latest) {
 		throw new Error('No active device assignment found');
 	}
-	const updated = await prisma.device_assignment.update({ where: { device_assignment_id: latest.device_assignment_id }, data: { valid_to: new Date() }, include: deviceAssignmentDefaultInclude });
+	const updated = await prisma.device_assignment.update({
+		where: { device_assignment_id: latest.device_assignment_id },
+		data: { valid_to: new Date() },
+		include: deviceAssignmentDefaultInclude,
+	});
 	return toDeviceAssignmentResponse(updated as DeviceAssignmentWithIncludesPrisma) as DeviceAssignment;
 }
 /**
@@ -143,7 +174,11 @@ export async function endDeviceAssignment(
  * @returns {Promise<BusinessPremise>}
  */
 export async function confirmBusinessPremise(business_premise_id: string): Promise<BusinessPremise> {
-	const updated = await prisma.business_premise.update({ where: { business_premise_id }, data: { is_registered: true, registered_at: new Date() }, include: businessPremiseDefaultInclude });
+	const updated = await prisma.business_premise.update({
+		where: { business_premise_id },
+		data: { is_registered: true, registered_at: new Date() },
+		include: businessPremiseDefaultInclude,
+	});
 	return toBusinessPremiseResponse(updated as BusinessPremiseWithIncludesPrisma) as BusinessPremise;
 }
 

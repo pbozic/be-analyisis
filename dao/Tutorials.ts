@@ -4,9 +4,13 @@ import {
 	TutorialBase,
 	TutorialDetail,
 	UserTutorialState,
-	UserTutorialBase
+	UserTutorialBase,
 } from '../schemas/dto/Tutorials/tutorials.dto.js';
-import { toTutorialDetail, toUserTutorialState, toUserTutorialBase } from '../schemas/dto/Tutorials/tutorials.mappers.js';
+import {
+	toTutorialDetail,
+	toUserTutorialState,
+	toUserTutorialBase,
+} from '../schemas/dto/Tutorials/tutorials.mappers.js';
 import prisma from '../prisma/prisma.js';
 /**
  * Get or create tutorial state for a user

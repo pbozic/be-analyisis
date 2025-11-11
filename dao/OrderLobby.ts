@@ -19,7 +19,10 @@ const cropped_user_columns = {
 const createOrderLobby = async (data: Partial<CreateOrderLobby>): Promise<OrderLobbyResponse> => {
 	try {
 		const created = await prisma.order_lobbies.create({ data });
-		const row = await prisma.order_lobbies.findUnique({ where: { order_lobbies_id: created.order_lobbies_id }, include: orderLobbiesDefaultInclude as any });
+		const row = await prisma.order_lobbies.findUnique({
+			where: { order_lobbies_id: created.order_lobbies_id },
+			include: orderLobbiesDefaultInclude as any,
+		});
 		return toOrderLobbyResponse(row as OrderLobbyWithIncludesPrisma);
 	} catch (error: any) {
 		console.error('Error creating order lobby:', error);
@@ -34,7 +37,10 @@ const createOrderLobby = async (data: Partial<CreateOrderLobby>): Promise<OrderL
  */
 const getOrderLobbyById = async (orderLobbiesId: string): Promise<OrderLobbyResponse | null> => {
 	try {
-		const row = await prisma.order_lobbies.findUnique({ where: { order_lobbies_id: orderLobbiesId }, include: orderLobbiesDefaultInclude as any });
+		const row = await prisma.order_lobbies.findUnique({
+			where: { order_lobbies_id: orderLobbiesId },
+			include: orderLobbiesDefaultInclude as any,
+		});
 		return row ? toOrderLobbyResponse(row as OrderLobbyWithIncludesPrisma) : null;
 	} catch (error: any) {
 		console.error('Error getting order lobby by ID:', error);
@@ -63,7 +69,10 @@ const getAllOrderLobbies = async (): Promise<OrderLobbyResponse[]> => {
  */
 const getOrderLobbiesForBusiness = async (creating_business_id: string): Promise<OrderLobbyResponse[]> => {
 	try {
-		const rows = await prisma.order_lobbies.findMany({ where: { creating_business_id: creating_business_id }, include: orderLobbiesDefaultInclude });
+		const rows = await prisma.order_lobbies.findMany({
+			where: { creating_business_id: creating_business_id },
+			include: orderLobbiesDefaultInclude,
+		});
 		return toOrderLobbyList(rows as OrderLobbyWithIncludesPrisma[]);
 	} catch (error: any) {
 		console.error('Error getting order lobbies for business:', error);
@@ -78,7 +87,10 @@ const getOrderLobbiesForBusiness = async (creating_business_id: string): Promise
  */
 const getActiveOrderLobbiesByUserID = async (userId: string): Promise<OrderLobbyResponse[]> => {
 	try {
-		const rows = await prisma.order_lobbies.findMany({ where: { active: true, order_lobby_users: { some: { user_id: userId } } }, include: orderLobbiesDefaultInclude });
+		const rows = await prisma.order_lobbies.findMany({
+			where: { active: true, order_lobby_users: { some: { user_id: userId } } },
+			include: orderLobbiesDefaultInclude,
+		});
 		return toOrderLobbyList(rows as OrderLobbyWithIncludesPrisma[]);
 	} catch (error: any) {
 		console.error('Error getting active order lobbies by user ID:', error);
@@ -98,7 +110,10 @@ const updateOrderLobby = async (
 ): Promise<OrderLobbyResponse> => {
 	try {
 		const updated = await prisma.order_lobbies.update({ where: { order_lobbies_id: orderLobbiesId }, data });
-		const row = await prisma.order_lobbies.findUnique({ where: { order_lobbies_id: updated.order_lobbies_id }, include: orderLobbiesDefaultInclude as any });
+		const row = await prisma.order_lobbies.findUnique({
+			where: { order_lobbies_id: updated.order_lobbies_id },
+			include: orderLobbiesDefaultInclude as any,
+		});
 		return toOrderLobbyResponse(row as OrderLobbyWithIncludesPrisma);
 	} catch (error: any) {
 		console.error('Error updating order lobby:', error);
@@ -114,8 +129,14 @@ const updateOrderLobby = async (
  */
 const setOrderLobbyActive = async (orderLobbiesId: string, active: boolean): Promise<OrderLobbyResponse> => {
 	try {
-		const updated = await prisma.order_lobbies.update({ where: { order_lobbies_id: orderLobbiesId }, data: { active } });
-		const row = await prisma.order_lobbies.findUnique({ where: { order_lobbies_id: updated.order_lobbies_id }, include: orderLobbiesDefaultInclude as any });
+		const updated = await prisma.order_lobbies.update({
+			where: { order_lobbies_id: orderLobbiesId },
+			data: { active },
+		});
+		const row = await prisma.order_lobbies.findUnique({
+			where: { order_lobbies_id: updated.order_lobbies_id },
+			include: orderLobbiesDefaultInclude as any,
+		});
 		return toOrderLobbyResponse(row as OrderLobbyWithIncludesPrisma);
 	} catch (error: any) {
 		console.error('Error setting order lobby active status:', error);
@@ -130,7 +151,10 @@ const setOrderLobbyActive = async (orderLobbiesId: string, active: boolean): Pro
  */
 const deleteOrderLobby = async (orderLobbiesId: string): Promise<OrderLobbyResponse> => {
 	try {
-		const deleted = await prisma.order_lobbies.delete({ where: { order_lobbies_id: orderLobbiesId }, include: orderLobbiesDefaultInclude as any });
+		const deleted = await prisma.order_lobbies.delete({
+			where: { order_lobbies_id: orderLobbiesId },
+			include: orderLobbiesDefaultInclude as any,
+		});
 		return toOrderLobbyResponse(deleted as OrderLobbyWithIncludesPrisma);
 	} catch (error: any) {
 		console.error('Error deleting order lobby:', error);
@@ -161,7 +185,7 @@ const editUsersInOrderLobby = async (
 			throw new Error('Order lobby not found');
 		}
 
-	return await prisma.$transaction(async (tx: PrismaClient) => {
+		return await prisma.$transaction(async (tx: PrismaClient) => {
 			// Delete all existing users from the order lobby
 			await tx.order_lobby_users.deleteMany({
 				where: { order_lobbies_id: orderLobbiesId },
@@ -180,7 +204,10 @@ const editUsersInOrderLobby = async (
 			});
 
 			// Get the updated order lobby with users
-			const row = await tx.order_lobbies.findUnique({ where: { order_lobbies_id: orderLobbiesId }, include: { order_lobby_users: { include: { users: { select: cropped_user_columns } } } } });
+			const row = await tx.order_lobbies.findUnique({
+				where: { order_lobbies_id: orderLobbiesId },
+				include: { order_lobby_users: { include: { users: { select: cropped_user_columns } } } },
+			});
 			return row;
 		});
 	} catch (error: any) {
@@ -197,7 +224,10 @@ const editUsersInOrderLobby = async (
  */
 const getAllActiveOrderLobbiesByBusinessId = async (creating_business_id: string): Promise<OrderLobbyResponse[]> => {
 	try {
-		const rows = await prisma.order_lobbies.findMany({ where: { active: true, creating_business_id: creating_business_id }, include: orderLobbiesDefaultInclude });
+		const rows = await prisma.order_lobbies.findMany({
+			where: { active: true, creating_business_id: creating_business_id },
+			include: orderLobbiesDefaultInclude,
+		});
 		return toOrderLobbyList(rows as OrderLobbyWithIncludesPrisma[]);
 	} catch (error: any) {
 		console.error('Error getting all active order lobbies by business ID:', error);
@@ -213,7 +243,10 @@ const getAllActiveOrderLobbiesByBusinessId = async (creating_business_id: string
  */
 const getOrderLobbiesByUserId = async (userId: string): Promise<OrderLobbyResponse[]> => {
 	try {
-		const rows = await prisma.order_lobbies.findMany({ where: { order_lobby_users: { some: { user_id: userId } }, active: true }, include: orderLobbiesDefaultInclude });
+		const rows = await prisma.order_lobbies.findMany({
+			where: { order_lobby_users: { some: { user_id: userId } }, active: true },
+			include: orderLobbiesDefaultInclude,
+		});
 		return toOrderLobbyList(rows as OrderLobbyWithIncludesPrisma[]);
 	} catch (error: any) {
 		console.error('Error getting order lobbies by user ID:', error);

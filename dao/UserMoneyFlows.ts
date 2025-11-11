@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+
 import prisma from '../prisma/prisma.js';
 import { toUserMoneyFlowResponse, toUserMoneyFlowList } from '../schemas/dto/payments/userMoneyFlow.mappers.js';
 import type { UserMoneyFlowResponse } from '../types/payments/UserMoneyFlow.js';
@@ -33,7 +34,11 @@ export async function getUserMoneyFlowById(id: string): Promise<UserMoneyFlowRes
  * @returns {Promise<object[]>} The user money flow records.
  */
 export async function getUserMoneyFlowsByUserId(userId: string): Promise<UserMoneyFlowResponse[]> {
-	const rows = await prisma.user_money_flows.findMany({ where: { user_id: userId }, include: { user: true }, orderBy: { created_at: 'desc' } });
+	const rows = await prisma.user_money_flows.findMany({
+		where: { user_id: userId },
+		include: { user: true },
+		orderBy: { created_at: 'desc' },
+	});
 	return toUserMoneyFlowList(rows as UserMoneyFlowWithUserPrisma[]);
 }
 /**
@@ -44,7 +49,11 @@ export async function getUserMoneyFlowsByUserId(userId: string): Promise<UserMon
  * @returns {Promise<object[]>} The user money flow records within the date range.
  */
 export async function getUserMoneyFlowsByDateRange(from: Date, to: Date): Promise<UserMoneyFlowResponse[]> {
-	const rows = await prisma.user_money_flows.findMany({ where: { created_at: { gte: from, lte: to } }, include: { user: true }, orderBy: { created_at: 'desc' } });
+	const rows = await prisma.user_money_flows.findMany({
+		where: { created_at: { gte: from, lte: to } },
+		include: { user: true },
+		orderBy: { created_at: 'desc' },
+	});
 	return toUserMoneyFlowList(rows as UserMoneyFlowWithUserPrisma[]);
 }
 

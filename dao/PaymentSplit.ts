@@ -1,4 +1,4 @@
-import type { payment_splits, Prisma as TPrisma, SPLIT_DESTINATION_TYPE } from '@prisma/client';
+import type { Prisma as TPrisma, SPLIT_DESTINATION_TYPE } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';

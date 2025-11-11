@@ -1,6 +1,10 @@
-import prisma from '../prisma/prisma.js';
 import type { Prisma } from '@prisma/client';
-import { toBusinessMoneyFlowResponse, toBusinessMoneyFlowsList } from '../schemas/dto/BusinessMoneyFlow/businessMoneyFlow.mappers.js';
+
+import prisma from '../prisma/prisma.js';
+import {
+	toBusinessMoneyFlowResponse,
+	toBusinessMoneyFlowsList,
+} from '../schemas/dto/BusinessMoneyFlow/businessMoneyFlow.mappers.js';
 import type { BusinessMoneyFlowResponse } from '../types/payments/BusinessMoneyFlow.js';
 import type { BusinessMoneyFlowWithBusinessPrisma } from '../prisma/includes/businessMoneyFlows.js';
 /**
@@ -9,7 +13,9 @@ import type { BusinessMoneyFlowWithBusinessPrisma } from '../prisma/includes/bus
  * @param {Prisma.business_money_flowsCreateInput} data
  * @returns {Promise<Prisma.business_money_flowsGetPayload>}
  */
-export async function createBusinessMoneyFlow(data: Prisma.business_money_flowsCreateInput): Promise<BusinessMoneyFlowResponse> {
+export async function createBusinessMoneyFlow(
+	data: Prisma.business_money_flowsCreateInput
+): Promise<BusinessMoneyFlowResponse> {
 	const row = await prisma.business_money_flows.create({ data, include: { business: true } });
 
 	return toBusinessMoneyFlowResponse(row as BusinessMoneyFlowWithBusinessPrisma);
@@ -21,7 +27,10 @@ export async function createBusinessMoneyFlow(data: Prisma.business_money_flowsC
  * @returns {Promise<Prisma.business_money_flowsGetPayload>}
  */
 export async function getBusinessMoneyFlowById(id: string): Promise<BusinessMoneyFlowResponse | null> {
-	const row = await prisma.business_money_flows.findUnique({ where: { balance_change_id: id }, include: { business: true } });
+	const row = await prisma.business_money_flows.findUnique({
+		where: { balance_change_id: id },
+		include: { business: true },
+	});
 
 	return row ? toBusinessMoneyFlowResponse(row as BusinessMoneyFlowWithBusinessPrisma) : null;
 }
@@ -32,7 +41,10 @@ export async function getBusinessMoneyFlowById(id: string): Promise<BusinessMone
  * @returns {Promise<Prisma.business_money_flowsGetPayload[]>}
  */
 export async function getBusinessMoneyFlowsByBusinessId(businessId: string): Promise<BusinessMoneyFlowResponse[]> {
-	const rows = await prisma.business_money_flows.findMany({ where: { business_id: businessId }, include: { business: true } });
+	const rows = await prisma.business_money_flows.findMany({
+		where: { business_id: businessId },
+		include: { business: true },
+	});
 
 	return toBusinessMoneyFlowsList(rows as BusinessMoneyFlowWithBusinessPrisma[]);
 }

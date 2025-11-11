@@ -1,9 +1,10 @@
+import { Prisma } from '@prisma/client';
+
 import prisma from '../prisma/prisma.js';
 import type { DocumentResponse } from '../schemas/dto/Document/document.dto.js';
-import documentsDefaultInclude, { } from '../prisma/includes/document.js';
+import documentsDefaultInclude from '../prisma/includes/document.js';
 import type { DocumentWithIncludesPrisma } from '../prisma/includes/document.js';
 import { toDocumentList, toDocumentResponse } from '../schemas/dto/Document/document.mappers.js';
-import { Prisma } from '@prisma/client';
 
 type DocumentListResponse = DocumentResponse[];
 
@@ -34,7 +35,10 @@ const getDocuments = async (): Promise<DocumentListResponse> => {
  */
 const getDocumentById = async (documentId: string): Promise<DocumentResponse | null> => {
 	try {
-		const row = await prisma.documents.findUnique({ where: { document_id: documentId }, include: documentsDefaultInclude });
+		const row = await prisma.documents.findUnique({
+			where: { document_id: documentId },
+			include: documentsDefaultInclude,
+		});
 		if (!row) return null;
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
@@ -55,7 +59,10 @@ const getDocumentById = async (documentId: string): Promise<DocumentResponse | n
  */
 const getDocumentsForBusiness = async (businessId: string): Promise<DocumentListResponse> => {
 	try {
-		const rows = await prisma.documents.findMany({ where: { business_id: businessId }, include: documentsDefaultInclude });
+		const rows = await prisma.documents.findMany({
+			where: { business_id: businessId },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
 		} catch (e: any) {
@@ -95,7 +102,10 @@ const getDocumentsForUser = async (userId: string): Promise<DocumentListResponse
  */
 const getDocumentsForDeliveryPerson = async (deliveryPersonId: string): Promise<DocumentListResponse> => {
 	try {
-		const rows = await prisma.documents.findMany({ where: { delivery_driver_id: deliveryPersonId }, include: documentsDefaultInclude });
+		const rows = await prisma.documents.findMany({
+			where: { delivery_driver_id: deliveryPersonId },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
 		} catch (e: any) {
@@ -115,7 +125,10 @@ const getDocumentsForDeliveryPerson = async (deliveryPersonId: string): Promise<
  */
 const getDocumentsForDriver = async (driverId: string): Promise<DocumentListResponse> => {
 	try {
-		const rows = await prisma.documents.findMany({ where: { driver_id: driverId }, include: documentsDefaultInclude });
+		const rows = await prisma.documents.findMany({
+			where: { driver_id: driverId },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
 		} catch (e: any) {
@@ -135,7 +148,10 @@ const getDocumentsForDriver = async (driverId: string): Promise<DocumentListResp
  */
 const getDocumentsForVehicle = async (vehicleId: string): Promise<DocumentListResponse> => {
 	try {
-		const rows = await prisma.documents.findMany({ where: { vehicle_id: vehicleId }, include: documentsDefaultInclude });
+		const rows = await prisma.documents.findMany({
+			where: { vehicle_id: vehicleId },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
 		} catch (e: any) {
@@ -155,7 +171,10 @@ const getDocumentsForVehicle = async (vehicleId: string): Promise<DocumentListRe
  */
 const getDocumentsByDocumentType = async (documentType: string): Promise<DocumentListResponse> => {
 	try {
-		const rows = await prisma.documents.findMany({ where: { document_type: documentType }, include: documentsDefaultInclude });
+		const rows = await prisma.documents.findMany({
+			where: { document_type: documentType },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
 		} catch (e: any) {
@@ -206,7 +225,10 @@ const getDocumentsForUserByDocumentType = async (
 	documentType: string
 ): Promise<DocumentListResponse> => {
 	try {
-		const rows = await prisma.documents.findMany({ where: { user_id: userId, document_type: documentType }, include: documentsDefaultInclude });
+		const rows = await prisma.documents.findMany({
+			where: { user_id: userId, document_type: documentType },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
 		} catch (e: any) {
@@ -230,7 +252,10 @@ const getDocumentsForDriverByDocumentType = async (
 	documentType: string
 ): Promise<DocumentListResponse> => {
 	try {
-		const rows = await prisma.documents.findMany({ where: { driver_id: driverId, document_type: documentType }, include: documentsDefaultInclude });
+		const rows = await prisma.documents.findMany({
+			where: { driver_id: driverId, document_type: documentType },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
 		} catch (e: any) {
@@ -254,7 +279,10 @@ const getDocumentsForDeliveryPersonByDocumentType = async (
 	documentType: string
 ): Promise<DocumentListResponse> => {
 	try {
-		const rows = await prisma.documents.findMany({ where: { delivery_driver_id: deliveryPersonId, document_type: documentType }, include: documentsDefaultInclude });
+		const rows = await prisma.documents.findMany({
+			where: { delivery_driver_id: deliveryPersonId, document_type: documentType },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
 		} catch (e: any) {
@@ -278,7 +306,10 @@ const getDocumentsForVehicleByDocumentType = async (
 	documentType: string
 ): Promise<DocumentListResponse> => {
 	try {
-		const rows = await prisma.documents.findMany({ where: { vehicle_id: vehicleId, document_type: documentType }, include: documentsDefaultInclude });
+		const rows = await prisma.documents.findMany({
+			where: { vehicle_id: vehicleId, document_type: documentType },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
 		} catch (e: any) {
@@ -302,7 +333,10 @@ const findDocumentByTypeAndDriverId = async (
 	driverId: string
 ): Promise<DocumentResponse | null> => {
 	try {
-		const row = await prisma.documents.findFirst({ where: { document_type: documentType, driver_id: driverId }, include: documentsDefaultInclude });
+		const row = await prisma.documents.findFirst({
+			where: { document_type: documentType, driver_id: driverId },
+			include: documentsDefaultInclude,
+		});
 		if (!row) return null;
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
@@ -322,9 +356,15 @@ const findDocumentByTypeAndDriverId = async (
  * @param {any[]} filesData - Files data (optional).
  * @returns {Promise<DocumentResponse>} Created document.
  */
-const createDocument = async (documentData: Record<string, unknown>, filesData: Array<Record<string, unknown>> = []): Promise<DocumentResponse> => {
+const createDocument = async (
+	documentData: Record<string, unknown>,
+	filesData: Array<Record<string, unknown>> = []
+): Promise<DocumentResponse> => {
 	try {
-		const document = await prisma.documents.create({ data: { ...documentData, files: { create: filesData as any } }, include: documentsDefaultInclude });
+		const document = await prisma.documents.create({
+			data: { ...documentData, files: { create: filesData as any } },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(document as DocumentWithIncludesPrisma);
 		} catch (e: any) {
@@ -345,7 +385,10 @@ const createDocument = async (documentData: Record<string, unknown>, filesData: 
  */
 const createUserDocument = async (userId: string, documentData: Record<string, unknown>): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.create({ data: { ...documentData, user_id: userId }, include: documentsDefaultInclude });
+		const row = await prisma.documents.create({
+			data: { ...documentData, user_id: userId },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
 		} catch (e: any) {
@@ -364,9 +407,15 @@ const createUserDocument = async (userId: string, documentData: Record<string, u
  * @param {any} documentData - Document data.
  * @returns {Promise<DocumentResponse>} Created document.
  */
-const createBusinessDocument = async (businessId: string, documentData: Record<string, unknown>): Promise<DocumentResponse> => {
+const createBusinessDocument = async (
+	businessId: string,
+	documentData: Record<string, unknown>
+): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.create({ data: { ...documentData, business_id: businessId }, include: documentsDefaultInclude });
+		const row = await prisma.documents.create({
+			data: { ...documentData, business_id: businessId },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
 		} catch (e: any) {
@@ -385,9 +434,15 @@ const createBusinessDocument = async (businessId: string, documentData: Record<s
  * @param {any} documentData - Document data.
  * @returns {Promise<DocumentResponse>} Created document.
  */
-const createDriverDocument = async (driverId: string, documentData: Record<string, unknown>): Promise<DocumentResponse> => {
+const createDriverDocument = async (
+	driverId: string,
+	documentData: Record<string, unknown>
+): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.create({ data: { ...documentData, driver_id: driverId }, include: documentsDefaultInclude });
+		const row = await prisma.documents.create({
+			data: { ...documentData, driver_id: driverId },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
 		} catch (e: any) {
@@ -406,9 +461,15 @@ const createDriverDocument = async (driverId: string, documentData: Record<strin
  * @param {any} documentData - Document data.
  * @returns {Promise<DocumentResponse>} Created document.
  */
-const createVehicleDocument = async (vehicleId: string, documentData: Record<string, unknown>): Promise<DocumentResponse> => {
+const createVehicleDocument = async (
+	vehicleId: string,
+	documentData: Record<string, unknown>
+): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.create({ data: { ...documentData, vehicle_id: vehicleId }, include: documentsDefaultInclude });
+		const row = await prisma.documents.create({
+			data: { ...documentData, vehicle_id: vehicleId },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
 		} catch (e: any) {
@@ -427,9 +488,15 @@ const createVehicleDocument = async (vehicleId: string, documentData: Record<str
  * @param {any} documentData - Document data.
  * @returns {Promise<DocumentResponse>} Created document.
  */
-const createDeliveryPersonDocument = async (deliveryPersonId: string, documentData: Record<string, unknown>): Promise<DocumentResponse> => {
+const createDeliveryPersonDocument = async (
+	deliveryPersonId: string,
+	documentData: Record<string, unknown>
+): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.create({ data: { ...documentData, delivery_driver_id: deliveryPersonId }, include: documentsDefaultInclude });
+		const row = await prisma.documents.create({
+			data: { ...documentData, delivery_driver_id: deliveryPersonId },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
 		} catch (e: any) {
@@ -453,7 +520,11 @@ const updateDocumentExpirationDate = async (
 	expirationDate: string | Date
 ): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { expiration_date: expirationDate }, include: documentsDefaultInclude });
+		const row = await prisma.documents.update({
+			where: { document_id: documentId },
+			data: { expiration_date: expirationDate },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
 		} catch (e: any) {
@@ -474,7 +545,11 @@ const updateDocumentExpirationDate = async (
  */
 const updateDocumentIssueDate = async (documentId: string, issueDate: string | Date): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { issue_date: issueDate }, include: documentsDefaultInclude });
+		const row = await prisma.documents.update({
+			where: { document_id: documentId },
+			data: { issue_date: issueDate },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
 		} catch (e: any) {
@@ -493,12 +568,19 @@ const updateDocumentIssueDate = async (documentId: string, issueDate: string | D
  * @param {any[]} filesData - New files data.
  * @returns {Promise<DocumentResponse>} Updated document.
  */
-const updateDocumentFiles = async (documentId: string, filesData: Array<Record<string, unknown>>): Promise<DocumentResponse> => {
+const updateDocumentFiles = async (
+	documentId: string,
+	filesData: Array<Record<string, unknown>>
+): Promise<DocumentResponse> => {
 	try {
 		// Delete existing files and create new ones
 		await prisma.files.deleteMany({ where: { document_id: documentId } });
 
-		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { files: { create: filesData as any } }, include: documentsDefaultInclude });
+		const row = await prisma.documents.update({
+			where: { document_id: documentId },
+			data: { files: { create: filesData as any } },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
 		} catch (e: any) {
@@ -517,9 +599,16 @@ const updateDocumentFiles = async (documentId: string, filesData: Array<Record<s
  * @param {any} jsonData - Additional info JSON data.
  * @returns {Promise<DocumentResponse>} Updated document.
  */
-const updateDocumentAdditionalInfo = async (documentId: string, jsonData: Prisma.InputJsonValue): Promise<DocumentResponse> => {
+const updateDocumentAdditionalInfo = async (
+	documentId: string,
+	jsonData: Prisma.InputJsonValue
+): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { additional_info: jsonData }, include: documentsDefaultInclude });
+		const row = await prisma.documents.update({
+			where: { document_id: documentId },
+			data: { additional_info: jsonData },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
 		} catch (e: any) {
@@ -561,7 +650,11 @@ const linkDocumentToTransaction = async (documentId: string, transactionId: stri
  */
 const linkDocumentToVehicle = async (documentId: string, vehicleId: string): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { vehicle_id: vehicleId }, include: documentsDefaultInclude });
+		const row = await prisma.documents.update({
+			where: { document_id: documentId },
+			data: { vehicle_id: vehicleId },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
 		} catch (e: any) {
@@ -582,7 +675,11 @@ const linkDocumentToVehicle = async (documentId: string, vehicleId: string): Pro
  */
 const linkDocumentToDriver = async (documentId: string, driverId: string): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { driver_id: driverId }, include: documentsDefaultInclude });
+		const row = await prisma.documents.update({
+			where: { document_id: documentId },
+			data: { driver_id: driverId },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
 		} catch (e: any) {
@@ -603,7 +700,11 @@ const linkDocumentToDriver = async (documentId: string, driverId: string): Promi
  */
 const linkDocumentToBusiness = async (documentId: string, businessId: string): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { business_id: businessId }, include: documentsDefaultInclude });
+		const row = await prisma.documents.update({
+			where: { document_id: documentId },
+			data: { business_id: businessId },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
 		} catch (e: any) {
@@ -623,7 +724,10 @@ const linkDocumentToBusiness = async (documentId: string, businessId: string): P
  */
 const deleteDocument = async (documentId: string): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.delete({ where: { document_id: documentId }, include: documentsDefaultInclude });
+		const row = await prisma.documents.delete({
+			where: { document_id: documentId },
+			include: documentsDefaultInclude,
+		});
 		try {
 			return toDocumentResponse(row as DocumentWithIncludesPrisma);
 		} catch (e: any) {

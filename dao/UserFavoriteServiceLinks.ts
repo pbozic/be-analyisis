@@ -8,7 +8,10 @@ import type { UserFavoriteServiceLinkResponse } from '../types/users/UserFavorit
  * @param {string[]} service_ids - The IDs of the services to update.
  * @returns {Promise<object[]>} The updated favorite services.
  */
-export async function updateFavoriteServices(user_id: string, service_ids: string[]): Promise<UserFavoriteServiceLinkResponse[]> {
+export async function updateFavoriteServices(
+	user_id: string,
+	service_ids: string[]
+): Promise<UserFavoriteServiceLinkResponse[]> {
 	try {
 		// First, delete existing favorites not in the new list
 		await prisma.user_favorite_service_links.deleteMany({

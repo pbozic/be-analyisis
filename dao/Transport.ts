@@ -9,7 +9,10 @@ import { toTransportModuleDetail } from '../schemas/dto/Transport/transport.mapp
  */
 export async function disableTransportModule(transport_module_id: string): Promise<TransportModuleDetail> {
 	try {
-	const updated = await prisma.transport_module.update({ where: { transport_module_id }, data: { active: false } });
+		const updated = await prisma.transport_module.update({
+			where: { transport_module_id },
+			data: { active: false },
+		});
 		return toTransportModuleDetail(updated);
 	} catch (error: unknown) {
 		const message = error instanceof Error ? error.message : String(error);
@@ -25,7 +28,10 @@ export async function disableTransportModule(transport_module_id: string): Promi
  */
 export async function enableTransportModule(transport_module_id: string): Promise<TransportModuleDetail> {
 	try {
-	const updated = await prisma.transport_module.update({ where: { transport_module_id }, data: { active: true } });
+		const updated = await prisma.transport_module.update({
+			where: { transport_module_id },
+			data: { active: true },
+		});
 		return toTransportModuleDetail(updated);
 	} catch (error: unknown) {
 		const message = error instanceof Error ? error.message : String(error);

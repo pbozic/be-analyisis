@@ -80,7 +80,7 @@ export async function getStoresIdByBusinessId(businessId: string): Promise<strin
 			where: { business_id: businessId },
 			select: { stores_id: true },
 		});
-		return row?.stores_id as string ?? null;
+		return (row?.stores_id as string) ?? null;
 	} catch (error: unknown) {
 		const message = error instanceof Error ? error.message : String(error);
 		console.error('Error fetching stores_id by business_id:', message);

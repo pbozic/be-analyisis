@@ -44,7 +44,11 @@ async function addAddress(address: CreateAddressInput): Promise<AddressResponse 
  * @param {string} linkTarget - The ID of the target to link the address to.
  * @returns {Promise<object>} The created or linked address record.
  */
-async function addOrLinkAddress(address: CreateAddressInput, linkType: string, linkTarget: string): Promise<AddressResponse | Error> {
+async function addOrLinkAddress(
+	address: CreateAddressInput,
+	linkType: string,
+	linkTarget: string
+): Promise<AddressResponse | Error> {
 	try {
 		// Find or create the address
 		const addressRecord = await prisma.addresses.upsert({
@@ -268,7 +272,11 @@ async function addUserAddress(user_id: UUID, address_id: UUID): Promise<UserAddr
  * @param {object} data - Fields to update on the user_address.
  * @returns {Promise<object>} The updated user_address record.
  */
-async function editUserAddress(user_id: UUID, address_id: UUID, data: UpdateAddressInput): Promise<UserAddressResponse | Error> {
+async function editUserAddress(
+	user_id: UUID,
+	address_id: UUID,
+	data: UpdateAddressInput
+): Promise<UserAddressResponse | Error> {
 	try {
 		const row = await prisma.user_address.update({
 			where: {

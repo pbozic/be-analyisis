@@ -42,7 +42,6 @@ export async function addFavoriteDriver(
 		}
 		const fav = await FavoriteDao.addFavoriteDriver(user_id, driver_id);
 		res.json(fav);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -73,7 +72,6 @@ export async function removeFavoriteDriver(
 		}
 		const fav = await FavoriteDao.removeFavoriteDriver(user_id, driver_id);
 		res.json(fav);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -102,7 +100,6 @@ export async function listFavoriteDrivers(req: ValidatedRequest, res: Response):
 		}
 		const favs = await FavoriteDao.listFavoriteDrivers(user_id);
 		res.json(favs);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}

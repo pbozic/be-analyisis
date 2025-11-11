@@ -8,19 +8,19 @@ import type { DeviceAssignmentWithIncludesPrisma } from '../../../prisma/include
 import type { VehicleWithIncludesPrisma } from '../../../prisma/includes/vehicles.js';
 
 export function toBusinessPremiseResponse(row: BusinessPremiseWithIncludesPrisma) {
-    return BusinessPremiseResponseSchema.parse(row);
+	return BusinessPremiseResponseSchema.parse(row);
 }
 
 export function toElectronicDeviceResponse(row: ElectronicDeviceWithIncludesPrisma) {
-    return ElectronicDeviceResponseSchema.parse(row);
+	return ElectronicDeviceResponseSchema.parse(row);
 }
 
 export function toDeviceAssignmentResponse(row: DeviceAssignmentWithIncludesPrisma) {
-    return DeviceAssignmentResponseSchema.parse(row);
+	return DeviceAssignmentResponseSchema.parse(row);
 }
 
 export function toVehicleResponse(row: VehicleWithIncludesPrisma) {
-    return VehicleResponseSchema.parse(row as any);
+	return VehicleResponseSchema.parse(row as any);
 }
 
 export default { toBusinessPremiseResponse, toElectronicDeviceResponse, toDeviceAssignmentResponse, toVehicleResponse };

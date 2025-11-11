@@ -31,7 +31,7 @@ export const buildCompactJws = async (header: JwsHeader, payload: unknown, signF
  * @param {string} token
  * @returns {{ header: any; payload: any; signature: Buffer }} - The decoded JWS components.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export const decodeCompactJws = (token: string): { header: any; payload: any; signature: Buffer } => {
 	const [h, p, s] = token.split('.');
 	if (!h || !p || !s) throw new Error('Invalid JWS');

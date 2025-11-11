@@ -39,7 +39,10 @@ async function createOrderLobbyUser(
  * @returns List of users in the order lobby
  */
 async function getOrderLobbyUsersInOrderLobby(order_lobbies_id: string): Promise<OrderLobbyUserResponse[]> {
-	const rows = await prisma.order_lobby_users.findMany({ where: { order_lobbies_id }, include: { users: { select: cropped_user_columns } } });
+	const rows = await prisma.order_lobby_users.findMany({
+		where: { order_lobbies_id },
+		include: { users: { select: cropped_user_columns } },
+	});
 	return toOrderLobbyUserList(rows as unknown[]);
 }
 
@@ -53,7 +56,11 @@ async function updateOrderLobbyUserLimit(
 	order_lobby_users_id: string,
 	newLimit: number
 ): Promise<OrderLobbyUserResponse> {
-	const updated = await prisma.order_lobby_users.update({ where: { order_lobby_users_id }, data: { limit: newLimit }, include: { users: { select: cropped_user_columns } } });
+	const updated = await prisma.order_lobby_users.update({
+		where: { order_lobby_users_id },
+		data: { limit: newLimit },
+		include: { users: { select: cropped_user_columns } },
+	});
 	return toOrderLobbyUserResponse(updated as unknown);
 }
 

@@ -57,7 +57,10 @@ export async function setFoodDrinksOverwhelmed(
  */
 export async function disableFoodDrinks(food_drinks_id: string): Promise<FoodDrinksDetail> {
 	try {
-		const row = await prisma.food_drinks.update({ where: { food_drinks_id }, data: { enabled: false, online: false } });
+		const row = await prisma.food_drinks.update({
+			where: { food_drinks_id },
+			data: { enabled: false, online: false },
+		});
 		try {
 			return toFoodDrinksDetail(row as FoodDrinksWithIncludesPrisma);
 		} catch (e: any) {

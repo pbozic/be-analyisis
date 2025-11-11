@@ -15,7 +15,12 @@ import type {
 	BusinessUserListResponse,
 	BusinessUserCreationResponse,
 } from '../schemas/dto/BusinessUser/index.js';
-import type { BusinessUserWithBusinessPrisma, BusinessUserDefaultPrisma, BusinessUserWithAllowancePrisma, BusinessUserWithUsersPrisma } from '../prisma/includes/businessUsers.js';
+import type {
+	BusinessUserWithBusinessPrisma,
+	BusinessUserDefaultPrisma,
+	BusinessUserWithAllowancePrisma,
+	BusinessUserWithUsersPrisma,
+} from '../prisma/includes/businessUsers.js';
 
 // Define common query arg types
 interface FindManyArgs {
@@ -52,7 +57,9 @@ interface CreateBusinessUserData {
  */
 const getAllBusinessUsers = async (): Promise<BusinessUserListResponse> => {
 	try {
-		const rows = await prisma.business_users.findMany({ include: { users: true, business: true, allowance: true, operating_address: true } });
+		const rows = await prisma.business_users.findMany({
+			include: { users: true, business: true, allowance: true, operating_address: true },
+		});
 
 		return toBusinessUsersList(rows as BusinessUserWithBusinessPrisma[]);
 	} catch (error) {
@@ -123,7 +130,10 @@ const getBusinessUsersByBusinessId = async (business_id: string): Promise<Busine
  */
 const getBusinessUsersByBusinessType = async (type: string): Promise<any[]> => {
 	try {
-		return await prisma.business.findMany({ where: { type }, include: { business_users: { include: { users: true } } } });
+		return await prisma.business.findMany({
+			where: { type },
+			include: { business_users: { include: { users: true } } },
+		});
 	} catch (error) {
 		console.error('Error retrieving business users by business type:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get business users by business type');
@@ -137,9 +147,15 @@ const getBusinessUsersByBusinessType = async (type: string): Promise<any[]> => {
  * @param {string} company_role - The role to filter by.
  * @returns {Promise<BusinessUserListResponse>} A promise resolving to business_users records with users included.
  */
-const getAllBusinessUsersForBusinessByCompanyRole = async (business_id: string, company_role: string): Promise<BusinessUserListResponse> => {
+const getAllBusinessUsersForBusinessByCompanyRole = async (
+	business_id: string,
+	company_role: string
+): Promise<BusinessUserListResponse> => {
 	try {
-		const rows = await prisma.business_users.findMany({ where: { business_id, company_role }, include: { users: true } });
+		const rows = await prisma.business_users.findMany({
+			where: { business_id, company_role },
+			include: { users: true },
+		});
 
 		return toBusinessUsersList(rows as BusinessUserWithUsersPrisma[]);
 	} catch (error) {
@@ -158,25 +174,25 @@ const getAllBusinessUsersForBusinessByCompanyRole = async (business_id: string, 
  * @returns {Promise<BusinessUserCreationResponse>} The created/linked user and business_user relation.
  */
 const createBusinessUser = async (
-	userData: CreateBusinessUserData, 
-	business_id: string, 
-	createNewUser: boolean = true, 
+	userData: CreateBusinessUserData,
+	business_id: string,
+	createNewUser: boolean = true,
 	tx: PrismaTransactionClient = prisma
 ): Promise<BusinessUserCreationResponse> => {
 	try {
-		const stripeCustomer = await createCustomer(
+		const stripeCustomer = (await createCustomer(
 			userData.data.email,
 			userData.data.first_name + ' ' + userData.data.last_name,
 			userData.data.telephone
-		) as any; // Stripe customer object
-		
+		)) as any; // Stripe customer object
+
 		userData.data.date_of_birth = userData.data?.date_of_birth ? new Date(userData.data.date_of_birth) : undefined;
-		
+
 		const userObj = {
 			...userData.data,
 			stripe_customer_id: stripeCustomer.id,
 		};
-		
+
 		let user;
 		if (createNewUser) {
 			user = await UserDao.createNewUser(userObj, true, tx);
@@ -186,8 +202,10 @@ const createBusinessUser = async (
 		} else {
 			user = await UserDao.getUserByTelephone(userData.data.telephone);
 		}
-		
-	const businessUser = await tx.business_users.create({ data: { business_id, user_id: user!.user_id, company_role: userData.data.company_role } });
+
+		const businessUser = await tx.business_users.create({
+			data: { business_id, user_id: user!.user_id, company_role: userData.data.company_role },
+		});
 
 		return toBusinessUserCreationResponse(user, businessUser as BusinessUserDefaultPrisma);
 	} catch (error) {
@@ -220,7 +238,10 @@ const removeBusinessUser = async (business_users_id: string): Promise<BusinessUs
  * @param {Partial<BusinessUserBase>} updates - Partial fields to update.
  * @returns {Promise<BusinessUserResponse>} The updated business_user record.
  */
-const updateBusinessUser = async (business_users_id: string, updates: Partial<BusinessUserBase>): Promise<BusinessUserResponse> => {
+const updateBusinessUser = async (
+	business_users_id: string,
+	updates: Partial<BusinessUserBase>
+): Promise<BusinessUserResponse> => {
 	try {
 		const row = await prisma.business_users.update({ where: { business_users_id }, data: updates });
 
@@ -258,7 +279,10 @@ const updateCompanyRole = async (business_users_id: string, company_role: string
  */
 const addOperatingAddress = async (business_users_id: string, address_id: string): Promise<BusinessUserResponse> => {
 	try {
-		const row = await prisma.business_users.update({ where: { business_users_id }, data: { operating_address_id: address_id } });
+		const row = await prisma.business_users.update({
+			where: { business_users_id },
+			data: { operating_address_id: address_id },
+		});
 
 		return toBusinessUserResponse(row as BusinessUserDefaultPrisma);
 	} catch (error) {
@@ -274,14 +298,21 @@ const addOperatingAddress = async (business_users_id: string, address_id: string
  * @param {boolean} online - New online flag value.
  * @returns {Promise<BusinessUserResponse>} The updated business_user record with business included.
  */
-const updateBusinessUserOnlineStatus = async (business_users_id: string, online: boolean): Promise<BusinessUserResponse> => {
+const updateBusinessUserOnlineStatus = async (
+	business_users_id: string,
+	online: boolean
+): Promise<BusinessUserResponse> => {
 	try {
-		const row = await prisma.business_users.update({ where: { business_users_id }, data: { online: online }, include: { business: true } });
+		const row = await prisma.business_users.update({
+			where: { business_users_id },
+			data: { online: online },
+			include: { business: true },
+		});
 
 		return toBusinessUserWithBusinessResponse(row as BusinessUserWithBusinessPrisma);
 	} catch (error) {
 		console.error("Error setting delivery driver's online status:", error);
-		throw new Error(error instanceof Error ? error.message : "Failed to update business user online status");
+		throw new Error(error instanceof Error ? error.message : 'Failed to update business user online status');
 	}
 };
 
@@ -294,10 +325,15 @@ const updateBusinessUserOnlineStatus = async (business_users_id: string, online:
  * @param {string} type - Service type (TAXI, TRANSFER, DELIVERY, ANY).
  * @returns {Promise<BusinessUserResponse>} The business_user with populated allowance.
  */
-const updateAllowance = async (business_users_id: string, wallet: number, purchase_order: number, type: string): Promise<BusinessUserResponse> => {
+const updateAllowance = async (
+	business_users_id: string,
+	wallet: number,
+	purchase_order: number,
+	type: string
+): Promise<BusinessUserResponse> => {
 	try {
 		const updateData: any = {};
-		
+
 		switch (type) {
 			case SERVICE_TYPE.TAXI:
 				updateData.amount_taxi_wallet = wallet;
@@ -318,14 +354,17 @@ const updateAllowance = async (business_users_id: string, wallet: number, purcha
 			default:
 				throw new Error('Invalid allowance type given');
 		}
-		
+
 		await prisma.allowances.upsert({
 			where: { business_users_id },
 			update: updateData,
 			create: { business_users_id, ...updateData },
 		});
-		
-		const business_user = await prisma.business_users.findUnique({ where: { business_users_id }, include: { allowance: true } });
+
+		const business_user = await prisma.business_users.findUnique({
+			where: { business_users_id },
+			include: { allowance: true },
+		});
 
 		if (!business_user) throw new Error('Business user not found after allowance update');
 

@@ -1,5 +1,6 @@
-import prisma from '../prisma/prisma.js';
 import type { Prisma } from '@prisma/client';
+
+import prisma from '../prisma/prisma.js';
 import type { FileBase, FileResponse } from '../schemas/dto/Files/index.js';
 import filesDefaultInclude from '../prisma/includes/files.js';
 import type { FileWithIncludesPrisma } from '../prisma/includes/files.js';
@@ -17,7 +18,11 @@ type FindUniqueArgs = Prisma.filesFindUniqueArgs;
  * @param {boolean} isPublic - Whether the file is public.
  * @returns {Promise<FileResponse>} Created file.
  */
-const addFileToDocument = async (documentId: string, fileData: Partial<FileBase>, isPublic?: boolean): Promise<FileResponse> => {
+const addFileToDocument = async (
+	documentId: string,
+	fileData: Partial<FileBase>,
+	isPublic?: boolean
+): Promise<FileResponse> => {
 	const data = { ...fileData, public: isPublic || false };
 	try {
 		const created = await prisma.files.create({
@@ -45,7 +50,10 @@ const addFileToDocument = async (documentId: string, fileData: Partial<FileBase>
  * @param {Partial<FileBase>|Partial<FileBase>[]} filesData - Single file payload or array of file payloads.
  * @returns {Promise<FileResponse[]>} Created files.
  */
-const addFilesToDocument = async (documentId: string, filesData: Partial<FileBase> | Partial<FileBase>[]): Promise<FileResponse[]> => {
+const addFilesToDocument = async (
+	documentId: string,
+	filesData: Partial<FileBase> | Partial<FileBase>[]
+): Promise<FileResponse[]> => {
 	try {
 		// Ensure filesData is treated as an array
 		const filesArray = Array.isArray(filesData) ? filesData : [filesData];
@@ -80,7 +88,11 @@ const addFilesToDocument = async (documentId: string, filesData: Partial<FileBas
  * @param {boolean} isPublic - Whether the file is public.
  * @returns {Promise<FileResponse>} Updated file.
  */
-const updateFileInDocument = async (fileId: string, updateData: Partial<FileBase>, isPublic?: boolean): Promise<FileResponse> => {
+const updateFileInDocument = async (
+	fileId: string,
+	updateData: Partial<FileBase>,
+	isPublic?: boolean
+): Promise<FileResponse> => {
 	const data = { ...updateData, public: isPublic || false };
 	try {
 		const updated = await prisma.files.update({ where: { file_id: fileId }, data, include: filesDefaultInclude });
@@ -153,7 +165,10 @@ const getFilesByDocumentId = async (document_id: string, args?: FindManyArgs): P
  */
 const createFile = async (file_type: string, mime_type: string, isPublic: boolean = false): Promise<FileResponse> => {
 	try {
-		const created = await prisma.files.create({ data: { file_type, public: isPublic, mime_type }, include: filesDefaultInclude });
+		const created = await prisma.files.create({
+			data: { file_type, public: isPublic, mime_type },
+			include: filesDefaultInclude,
+		});
 		return toFileResponse(created as FileWithIncludesPrisma);
 	} catch (error) {
 		console.error('Error creating file:', error);
@@ -174,7 +189,7 @@ const getFile = async (file_id: string, args?: FindUniqueArgs): Promise<FileResp
 		// Ensure 'where' is specified only once: start from args, add include, then set/merge the where
 		const mergedArgs: FindUniqueArgs = { ...(args as FindUniqueArgs), include: filesDefaultInclude };
 		// Merge any provided where with the file_id, letting file_id take precedence
-		mergedArgs.where = { ...(mergedArgs.where as object || {}), file_id } as any;
+		mergedArgs.where = { ...((mergedArgs.where as object) || {}), file_id } as any;
 		const row = await prisma.files.findUnique(mergedArgs);
 		if (!row) return null;
 		return toFileResponse(row as FileWithIncludesPrisma);
@@ -193,14 +208,23 @@ const getFile = async (file_id: string, args?: FindUniqueArgs): Promise<FileResp
  * @param {string} url - File URL.
  * @returns {Promise<FileResponse>} Updated file.
  */
-const updateFileById = async (file_id: string, file_type?: string, mime_type?: string, url?: string): Promise<FileResponse> => {
+const updateFileById = async (
+	file_id: string,
+	file_type?: string,
+	mime_type?: string,
+	url?: string
+): Promise<FileResponse> => {
 	try {
 		const data: Record<string, unknown> = {};
 		if (file_type !== undefined) data.file_type = file_type;
 		if (mime_type !== undefined) data.mime_type = mime_type;
 		if (url !== undefined) data.url = url;
 
-		const updated = await prisma.files.update({ where: { file_id: file_id }, data: data as any, include: filesDefaultInclude });
+		const updated = await prisma.files.update({
+			where: { file_id: file_id },
+			data: data as any,
+			include: filesDefaultInclude,
+		});
 		return toFileResponse(updated as FileWithIncludesPrisma);
 	} catch (error) {
 		console.error('Error updating file by id:', error);

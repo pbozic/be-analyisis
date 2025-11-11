@@ -4,11 +4,11 @@ import { menuDefault } from './menu';
 export const getBusinessesInclude = Prisma.validator<Prisma.businessInclude>()({
 	address: true,
 	business_details: {
-				include: {
-					logo: true,
-					banner: true,
-				},
-			},
+		include: {
+			logo: true,
+			banner: true,
+		},
+	},
 	business_users: {
 		include: {
 			users: {
@@ -32,12 +32,12 @@ export type GetBusinessesPrisma = Prisma.businessGetPayload<{
 }>;
 
 export const businessByIdInclude = Prisma.validator<Prisma.businessInclude>()({
-    business_details: {
-				include: {
-					logo: true,
-					banner: true,
-				},
-			},
+	business_details: {
+		include: {
+			logo: true,
+			banner: true,
+		},
+	},
 	address: true,
 	stores_module: {
 		include: {
@@ -56,12 +56,16 @@ export const businessByIdInclude = Prisma.validator<Prisma.businessInclude>()({
 		},
 	},
 	business_users: { include: { users: true } },
-	reservation_module: { include: {business_details: {
+	reservation_module: {
+		include: {
+			business_details: {
 				include: {
 					logo: true,
 					banner: true,
 				},
-			}, } },
+			},
+		},
+	},
 	crm_module: { include: { business_clients: true } },
 	food_drinks_module: {
 		include: {
@@ -106,8 +110,10 @@ export const addressAndUsersInclude = Prisma.validator<Prisma.businessInclude>()
 	},
 } as const);
 
-export const addressInclude = Prisma.validator<Prisma.businessInclude>()({ address: true, business_details: true } as const);
-
+export const addressInclude = Prisma.validator<Prisma.businessInclude>()({
+	address: true,
+	business_details: true,
+} as const);
 
 // Admin include used by getBusinessAdminDataById
 export const adminInclude = {

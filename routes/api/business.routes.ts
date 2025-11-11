@@ -4,23 +4,23 @@ import { validate } from '../../middleware/zod.js';
 import BusinessController from '../../controllers/BusinessController.js';
 import * as DailyMealCategoryController from '../../controllers/DailyMealCategoryController.ts';
 import {
-    CreateDailyMealCategoryWithPriceSchema,
-    AddPriceToDailyMealCategorySchema,
+	CreateDailyMealCategoryWithPriceSchema,
+	AddPriceToDailyMealCategorySchema,
 } from '../../types/dailyMeals/DailyMealCategory.ts';
 import DailyMealController from '../../controllers/DailyMealController.js';
 import {
-    ActivateBusinessSchema,
-    AddBusinessToFavoritesSchema,
-    AddScheduledUserSortingTypeSchema,
-    CreateBusinessLocalLocationSchema,
-    CreateScoringPointsSchema,
-    DeactivateBusinessSchema,
-    GetBusinessAnalyticsSchema,
-    ManualSortScheduledUsersSchema,
-    RemoveBusinessFromFavoritesSchema,
-    ToggleTransportModuleSchema,
-    UpdateBusinessLocalLocationSchema,
-    UpdateBusinessSchema,
+	ActivateBusinessSchema,
+	AddBusinessToFavoritesSchema,
+	AddScheduledUserSortingTypeSchema,
+	CreateBusinessLocalLocationSchema,
+	CreateScoringPointsSchema,
+	DeactivateBusinessSchema,
+	GetBusinessAnalyticsSchema,
+	ManualSortScheduledUsersSchema,
+	RemoveBusinessFromFavoritesSchema,
+	ToggleTransportModuleSchema,
+	UpdateBusinessLocalLocationSchema,
+	UpdateBusinessSchema,
 } from '../../schemas/dto/Business/business.validators.js';
 import { ListPromoSectionsSchema } from '../../schemas/validation/PromoSection/PromoSection.validation.ts';
 

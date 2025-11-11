@@ -17,7 +17,8 @@ import type {
 } from '../schemas/dto/Addon/index.js';
 import type {
 	AddonWithActionsPrisma,
-	AddonWithActionsAndUsagesPrisma, BusinessAddonWithAddonPrisma
+	AddonWithActionsAndUsagesPrisma,
+	BusinessAddonWithAddonPrisma,
 } from '../prisma/includes/addon.js';
 import type { AddonDefaultPrisma } from '../prisma/includes/addon.js';
 
@@ -296,7 +297,7 @@ export async function getAddonsByReservationModuleIdWithActions(
  */
 export async function getAllAddonsWithUsages(): Promise<AddonsListResponse> {
 	try {
-	const rows: AddonWithActionsAndUsagesPrisma[] = await prisma.addon.findMany({
+		const rows: AddonWithActionsAndUsagesPrisma[] = await prisma.addon.findMany({
 			include: {
 				actions: { include: { action: true } },
 				business_addons: {
