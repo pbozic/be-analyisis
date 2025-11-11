@@ -17,9 +17,9 @@ import { TableReservationDetail, TableReservationBase } from '../schemas/dto/Tab
  * Retrieve reservations with optional prisma args and include relations.
  *
  * @param {object} [args] - Optional Prisma findMany args (where, orderBy, include, etc.).
- * @returns {Promise<any[]>} Array of reservation records (raw Prisma payload).
+ * @returns {Promise<TableReservationBase | []>} Array of reservation records (raw Prisma payload).
  */
-export async function getReservations(args?: any): Promise<any[]> {
+export async function getReservations(args?: any): Promise<TableReservationBase | []> {
 	try {
 		return await prisma.reservations.findMany({
 			...args,
@@ -34,6 +34,31 @@ export async function getReservations(args?: any): Promise<any[]> {
 		});
 	} catch (error) {
 		console.error('Error retrieving reservations:', error);
+		throw new Error(String(error));
+	}
+}
+
+/**
+ * Resolve the reservations identifier for a given business.
+ *
+ * @param {string} business_id - Business UUID to lookup.
+ * @returns {Promise<TableReservationBase | null>} The reservation module id or null if not found.
+ */
+export async function getReservationsbyBusinessId(business_id: string): Promise<TableReservationBase | null> {
+	try {
+		const reservation = await prisma.reservation.findMany({
+			where: { table_reservations: { business_id: business_id } },
+			include: {
+				table_reservations: {
+					include: {
+						business: true,
+					},
+				},
+			},
+		});
+		return reservation ? (reservation as any).reservation_id : null;
+	} catch (error) {
+		console.error('Error retrieving reservation ID by business ID:', error);
 		throw new Error(String(error));
 	}
 }
@@ -308,6 +333,7 @@ export async function deleteReservation(reservation_id: string): Promise<TableRe
 export default {
 	getReservations,
 	getReservationById,
+	getReservationsbyBusinessId,
 	createReservation,
 	updateReservationStatus,
 	deleteReservation,
