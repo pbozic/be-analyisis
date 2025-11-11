@@ -1,51 +1,60 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { MODULE } from '@prisma/client';
+
+import { UUID } from '../../primitives';
 
 extendZodWithOpenApi(z);
 
 // ===============
 // Base Schema (scalars only, no relations)
 // ===============
-export const DeliveryOrderBaseSchema = z.object({
-	order_id: z.string().uuid(),
-	user_id: z.string().uuid(),
-	business_id: z.string().uuid(),
-	delivery_driver_id: z.string().uuid().nullable().optional(),
-	driver_id: z.string().uuid().nullable().optional(),
-	order_number: z.number().optional(),
-	status: z.string(),
-	details: z.record(z.any()).nullable().optional(),
-	timeline: z.array(z.record(z.any())).optional().default([]),
-	delivery_address: z.record(z.any()).nullable().optional(),
-	pickup_address: z.record(z.any()).nullable().optional(),
-	pickup_time: z.string().datetime().nullable().optional(),
-	delivery_time: z.string().datetime().nullable().optional(),
-	estimated_delivery_time: z.string().datetime().nullable().optional(),
-	total_amount: z.number().nullable().optional(),
-	delivery_fee: z.number().nullable().optional(),
-	tip_amount: z.number().nullable().optional(),
-	payment_method: z.string().nullable().optional(),
-	is_daily_meal: z.boolean().optional(),
-	special_instructions: z.string().nullable().optional(),
-	items: z.array(z.record(z.any())).optional().default([]),
-	last_sent_at: z.string().datetime().nullable().optional(),
-	delivery_image: z.string().nullable().optional(),
-	created_at: z.string().datetime().optional(),
-	updated_at: z.string().datetime().optional(),
-}).openapi('DeliveryOrderBase');
+export const DeliveryOrderBaseSchema = z
+	.object({
+		order_id: UUID,
+		user_id: UUID,
+		// business_id: UUID,
+		module_id: UUID.optional(),
+		module_type: z.union([z.literal(MODULE.STORES), z.literal(MODULE.FOOD_DRINKS)]).optional(),
+		delivery_driver_id: UUID.nullable().optional(),
+		driver_id: UUID.nullable().optional(),
+		order_number: z.number().optional(),
+		status: z.string(),
+		details: z.record(z.any()).nullable().optional(),
+		timeline: z.array(z.record(z.any())).optional().default([]),
+		delivery_address: z.record(z.any()).nullable().optional(),
+		pickup_address: z.record(z.any()).nullable().optional(),
+		pickup_time: z.string().datetime().nullable().optional(),
+		delivery_time: z.string().datetime().nullable().optional(),
+		estimated_delivery_time: z.string().datetime().nullable().optional(),
+		total_amount: z.number().nullable().optional(),
+		delivery_fee: z.number().nullable().optional(),
+		tip_amount: z.number().nullable().optional(),
+		payment_method: z.string().nullable().optional(),
+		is_daily_meal: z.boolean().optional(),
+		special_instructions: z.string().nullable().optional(),
+		items: z.array(z.record(z.any())).optional().default([]),
+		last_sent_at: z.string().datetime().nullable().optional(),
+		delivery_image: z.string().nullable().optional(),
+		created_at: z.string().datetime().optional(),
+		updated_at: z.string().datetime().optional(),
+	})
+	.openapi('DeliveryOrderBase');
 
 export type DeliveryOrderBase = z.infer<typeof DeliveryOrderBaseSchema>;
 
 // ===============
 // Ref Schema (minimal identity for embedding)
 // ===============
-export const DeliveryOrderRefSchema = z.object({
-	order_id: z.string().uuid(),
-	order_number: z.number().optional(),
-	status: z.string(),
-	total_amount: z.number().nullable().optional(),
-	created_at: z.string().datetime().optional(),
-}).openapi('DeliveryOrderRef');
+export const DeliveryOrderRefSchema = z
+	.object({
+		order_id: UUID,
+		order_number: z.number().optional(),
+		status: z.string(),
+		total_amount: z.number().nullable().optional(),
+		created_at: z.string().datetime().optional(),
+	})
+	.openapi('DeliveryOrderRef');
 
 export type DeliveryOrderRef = z.infer<typeof DeliveryOrderRefSchema>;
 
@@ -72,10 +81,12 @@ export const CreateDeliveryOrderSchema = DeliveryOrderBaseSchema.omit({
 
 export type CreateDeliveryOrder = z.infer<typeof CreateDeliveryOrderSchema>;
 
-export const UpdateDeliveryOrderSchema = DeliveryOrderBaseSchema.partial().omit({
-	order_id: true,
-	created_at: true,
-}).openapi('UpdateDeliveryOrder');
+export const UpdateDeliveryOrderSchema = DeliveryOrderBaseSchema.partial()
+	.omit({
+		order_id: true,
+		created_at: true,
+	})
+	.openapi('UpdateDeliveryOrder');
 
 export type UpdateDeliveryOrder = z.infer<typeof UpdateDeliveryOrderSchema>;
 
@@ -116,7 +127,7 @@ type PrismaDeliveryOrder = {
 
 export function toDeliveryOrderDetail(row: unknown): DeliveryOrderDetail {
 	const r = row as PrismaDeliveryOrder;
-	
+
 	return DeliveryOrderDetailSchema.parse({
 		order_id: r.order_id,
 		user_id: r.user_id,
@@ -131,7 +142,9 @@ export function toDeliveryOrderDetail(row: unknown): DeliveryOrderDetail {
 		pickup_address: r.pickup_address ?? null,
 		pickup_time: r.pickup_time ? new Date(r.pickup_time as string | Date).toISOString() : null,
 		delivery_time: r.delivery_time ? new Date(r.delivery_time as string | Date).toISOString() : null,
-		estimated_delivery_time: r.estimated_delivery_time ? new Date(r.estimated_delivery_time as string | Date).toISOString() : null,
+		estimated_delivery_time: r.estimated_delivery_time
+			? new Date(r.estimated_delivery_time as string | Date).toISOString()
+			: null,
 		total_amount: r.total_amount ?? null,
 		delivery_fee: r.delivery_fee ?? null,
 		tip_amount: r.tip_amount ?? null,
@@ -143,10 +156,10 @@ export function toDeliveryOrderDetail(row: unknown): DeliveryOrderDetail {
 		delivery_image: r.delivery_image ?? null,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		user: r.user ? r.user as Record<string, unknown> : null,
-		business: r.business ? r.business as Record<string, unknown> : null,
-		delivery_driver: r.delivery_driver ? r.delivery_driver as Record<string, unknown> : null,
-		driver: r.driver ? r.driver as Record<string, unknown> : null,
+		user: r.user ? (r.user as Record<string, unknown>) : null,
+		business: r.business ? (r.business as Record<string, unknown>) : null,
+		delivery_driver: r.delivery_driver ? (r.delivery_driver as Record<string, unknown>) : null,
+		driver: r.driver ? (r.driver as Record<string, unknown>) : null,
 	});
 }
 
