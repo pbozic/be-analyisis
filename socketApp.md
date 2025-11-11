@@ -76,7 +76,7 @@ These locations join rooms and register listeners — useful for audits and norm
 - `components/delivery/OrderDetailsBottom/index.jsx` — joins `order_<id>` after successful create.
 - `screens/SearchingForDriver.js`, `screens/TaxiRide.js`, `screens/SetLocationViaMapTransfer.js` — join order rooms for active/selected orders.
 - `screens/ReceiptDelivery.js` — joins delivery order room to show live updates.
-- `screens/TableReservation.js` — joins `reservation_<id>` on create.
+- `screens/TableReservation.ts` — joins `reservation_<id>` on create.
 - `screens/BookingTaxi.js`, `screens/BookingTransfer.js` — booking flows that join order/reservation rooms.
 
 8) Typical flows, best-practices and troubleshooting
