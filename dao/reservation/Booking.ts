@@ -1,24 +1,36 @@
 import { BOOKING_STATUS, Prisma } from '@prisma/client';
 
 import prisma from '../../prisma/prisma.js';
+// DTO types
 import type {
-	Booking,
-	UpdateBookingInput,
-	CreateBookingHistoryLogInput,
+	BookingDAOResponse,
+	BookingWithEmployeeLocationServiceAndCustomerDAOResponse,
+	BookingWithDeepChildrenDAOResponse,
+	BookingForAnalyticsDAOResponse,
+	BookingCoursesDAOResponse,
+	BookingCoursesByModuleDAOResponse,
+	BookingCourseDAOResponse,
 	ListBookingsParams,
-	CreateBookingSingleInput,
-	CreateBookingCourseInput,
-	BookingCourseTimeInput,
-	CreateCourseParticipantInput,
-	UpdateCourseParticipantInput,
-	UpdateBookingCourseInput,
-	UpdateBookingCourseTimeInput,
-	DeleteBookingCourseTimeInput,
-} from '../../types/reservations/Booking.ts'; // <-- adjust path if different
+	CreateBookingSingleRequest,
+	UpdateBookingRequest,
+	CreateBookingCourseRequest,
+	UpdateBookingCourseRequest,
+} from '../../schemas/dto/reservations/booking/booking.dto.js';
+import type {
+	CreateBookingHistoryLogRequest,
+	BookingHistoryLogResponse,
+} from '../../schemas/dto/reservations/booking-history-log/booking-history-log.dto.js';
+import type {
+	CreateBookingCourseTimeRequest,
+	UpdateBookingCourseTimeRequest,
+	BookingCourseTimeResponse,
+} from '../../schemas/dto/reservations/booking-course-time/booking-course-time.dto.js';
+import type {
+	CreateBookingCourseParticipantRequest,
+	UpdateBookingCourseParticipantRequest,
+	BookingCourseParticipantResponse,
+} from '../../schemas/dto/reservations/booking-course-participant/booking-course-participant.dto.js';
 import { isBookingSlotAvailable, isEmployeeScheduledForWindow } from '../../lib/bookingHelpers.ts';
-import { BookingHistoryLog } from '../../types/reservations/BookingHistoryLog.ts';
-import { BookingCourseTime } from '../../types/reservations/BookingCourseTime.ts';
-import { BookingCourseParticipant } from '../../types/reservations/BookingCourseParticipant.ts';
 
 const cropped_user_columns = {
 	first_name: true,
@@ -146,15 +158,15 @@ async function resolveOrCreateCustomer(
  * Create a booking within a transaction.
  *
  * @param {Prisma.TransactionClient} tx
- * @param {CreateBookingSingleInput} input
+ * @param {CreateBookingSingleRequest} input
  * @param { { validateSchedule?: boolean; ignoreBooking?: boolean } } opts
- * @returns {Promise<Booking>}
+ * @returns {Promise<BookingDAOResponse>}
  */
 async function createBookingTx(
 	tx: Prisma.TransactionClient,
-	input: CreateBookingSingleInput,
+	input: CreateBookingSingleRequest,
 	opts: { validateSchedule: boolean; ignoreBooking?: boolean }
-): Promise<Booking> {
+): Promise<BookingDAOResponse> {
 	const tel = composeTelephone(input);
 
 	// guard module
@@ -263,21 +275,21 @@ async function createBookingTx(
 		},
 	});
 
-	return created as Booking;
+	return created as unknown as BookingDAOResponse;
 }
 
 // 2) Public: single create (kept for callers that need 1 booking)
 /**
  * Create a single booking within a transaction.
  *
- * @param {CreateBookingSingleInput} input
+ * @param {CreateBookingSingleRequest} input
  * @param { { validateSchedule?: boolean } } opts
- * @returns {Promise<Booking>}
+ * @returns {Promise<BookingDAOResponse>}
  */
 export async function createBooking(
-	input: CreateBookingSingleInput,
+	input: CreateBookingSingleRequest,
 	opts: { validateSchedule?: boolean } = {}
-): Promise<Booking> {
+): Promise<BookingDAOResponse> {
 	return prisma.$transaction((tx: Prisma.TransactionClient) =>
 		createBookingTx(tx, input, { validateSchedule: !!opts.validateSchedule })
 	);
@@ -287,21 +299,21 @@ export async function createBooking(
 /**
  * Create a group of bookings (parent + children) within a single transaction.
  *
- * @param { (CreateBookingSingleInput | UpdateBookingInput)[] } inputs
+ * @param { (CreateBookingSingleRequest)[] } inputs
  * @param { { validateSchedule?: boolean; ignoreBooking?: boolean } } opts
- * @returns {Promise<Booking[]>}
+ * @returns {Promise<BookingDAOResponse[]>}
  */
 export async function createBookingGroup(
-	inputs: CreateBookingSingleInput[],
+	inputs: CreateBookingSingleRequest[],
 	opts: { validateSchedule?: boolean; ignoreBooking?: boolean } = {}
-): Promise<Booking[]> {
+): Promise<BookingDAOResponse[]> {
 	if (!inputs.length) throw new Error('No services to create');
 	const validateSchedule = !!opts.validateSchedule;
 	const ignoreBooking = !!opts.ignoreBooking;
 	return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-		const created: Booking[] = [];
+		const created: BookingDAOResponse[] = [];
 		// parent
-		const parent = await createBookingTx(tx, inputs[0] as CreateBookingSingleInput, {
+		const parent = await createBookingTx(tx, inputs[0] as CreateBookingSingleRequest, {
 			validateSchedule,
 			ignoreBooking,
 		});
@@ -313,7 +325,7 @@ export async function createBookingGroup(
 				{
 					...inputs[i],
 					parent_booking_id: parent.booking_id,
-				} as CreateBookingSingleInput,
+				} as CreateBookingSingleRequest,
 				{ validateSchedule }
 			);
 			created.push(child);
@@ -323,17 +335,17 @@ export async function createBookingGroup(
 }
 
 /**
- * Update a booking using UpdateBookingInput. Will connect to provided customer_id,
+ * Update a booking using UpdateBookingRequest. Will connect to provided customer_id,
  * otherwise patch the currently linked customer (or create one if missing and fields provided).
  *
- * @param {UpdateBookingInput} input
- * @returns {Promise<Booking>}
+ * @param {UpdateBookingRequest} input
+ * @returns {Promise<BookingDAOResponse>}
  */
 export async function updateBooking(
-	input: UpdateBookingInput,
+	input: UpdateBookingRequest,
 	booking_id: string,
 	ignoreCheck: boolean | undefined
-): Promise<Booking> {
+): Promise<BookingDAOResponse> {
 	try {
 		const tel = composeTelephone(input);
 
@@ -454,7 +466,7 @@ export async function updateBooking(
 				});
 			}
 
-			return updated as Booking;
+			return updated as unknown as BookingDAOResponse;
 		});
 	} catch (error) {
 		throwPrisma('Error updating booking', error);
@@ -465,11 +477,13 @@ export async function updateBooking(
  * Delete a booking.
  *
  * @param {{ booking_id: string }} input
- * @returns {Promise<Booking>}
+ * @returns {Promise<BookingDAOResponse>}
  */
-export async function deleteBooking(input: { booking_id: string }): Promise<Booking> {
+export async function deleteBooking(input: { booking_id: string }): Promise<BookingDAOResponse> {
 	try {
-		return (await prisma.booking.delete({ where: { booking_id: input.booking_id } })) as Booking;
+		return (await prisma.booking.delete({
+			where: { booking_id: input.booking_id },
+		})) as unknown as BookingDAOResponse;
 	} catch (error) {
 		throwPrisma('Error deleting booking', error);
 	}
@@ -479,14 +493,9 @@ export async function deleteBooking(input: { booking_id: string }): Promise<Book
  * Get booking by id (with relations + condensed history).
  *
  * @param {{ booking_id: string }} input
- * @returns {Promise<(Booking & { history: Pick<BookingHistoryLog, 'booking_history_id' | 'status' | 'created_at'>[] }) | null>}
+ * @returns {Promise<BookingDAOResponse | null>}
  */
-export async function getBookingById(input: { booking_id: string }): Promise<
-	| (Booking & {
-			history: Pick<BookingHistoryLog, 'booking_history_id' | 'status' | 'created_at'>[];
-	  })
-	| null
-> {
+export async function getBookingById(input: { booking_id: string }): Promise<BookingDAOResponse | null> {
 	try {
 		const row = await prisma.booking.findUnique({
 			where: { booking_id: input.booking_id },
@@ -503,7 +512,7 @@ export async function getBookingById(input: { booking_id: string }): Promise<
 		});
 		if (!row) return null;
 		const { booking_history_log, ...rest } = row;
-		return { ...(rest as Booking), history: booking_history_log };
+		return { ...(rest as any), history: booking_history_log } as unknown as BookingDAOResponse;
 	} catch (error) {
 		throwPrisma('Error fetching booking by id', error);
 	}
@@ -513,9 +522,9 @@ export async function getBookingById(input: { booking_id: string }): Promise<
  * List bookings for a reservation module (no cursor).
  *
  * @param {ListBookingsParams} params
- * @returns {Promise<Booking[]>}
+ * @returns {Promise<BookingDAOResponse[]>}
  */
-export async function listBookingsByReservationModuleId(params: ListBookingsParams): Promise<Booking[]> {
+export async function listBookingsByReservationModuleId(params: ListBookingsParams): Promise<BookingDAOResponse[]> {
 	try {
 		const { reservation_module_id, status, from, to, location_id, employee_id, limit, offset } = params;
 
@@ -537,7 +546,7 @@ export async function listBookingsByReservationModuleId(params: ListBookingsPara
 			orderBy: [{ created_at: 'desc' }, { booking_id: 'desc' }],
 			...(limit != null ? { take: limit } : {}),
 			...(offset != null ? { skip: offset } : {}),
-		})) as Booking[];
+		})) as unknown as BookingDAOResponse[];
 	} catch (error) {
 		throwPrisma('Error listing bookings', error);
 	}
@@ -546,10 +555,12 @@ export async function listBookingsByReservationModuleId(params: ListBookingsPara
 /**
  * Create a booking history log entry.
  *
- * @param {CreateBookingHistoryLogInput} input
- * @returns {Promise<BookingHistoryLog>}
+ * @param {CreateBookingHistoryLogRequest} input
+ * @returns {Promise<BookingHistoryLogResponse>}
  */
-export async function createBookingHistoryLog(input: CreateBookingHistoryLogInput): Promise<BookingHistoryLog> {
+export async function createBookingHistoryLog(
+	input: CreateBookingHistoryLogRequest
+): Promise<BookingHistoryLogResponse> {
 	try {
 		const row = await prisma.booking_history_log.create({
 			data: {
@@ -562,7 +573,7 @@ export async function createBookingHistoryLog(input: CreateBookingHistoryLogInpu
 				user: input.user_id ? { connect: { user_id: input.user_id } } : undefined,
 			},
 		});
-		return row as BookingHistoryLog;
+		return row as unknown as BookingHistoryLogResponse;
 	} catch (error) {
 		throwPrisma('Error creating booking history log', error);
 	}
@@ -575,7 +586,7 @@ export async function createBookingHistoryLog(input: CreateBookingHistoryLogInpu
  * @param {string} endDate - The end date (inclusive) in ISO format (YYYY-MM-DD).
  * @param {string} location_id - The location ID.
  * @param {string} reservationModuleId - The reservation module ID.
- * @returns {Promise<Booking[]>} A promise that resolves to an array of booking records.
+ * @returns {Promise<BookingWithEmployeeLocationServiceAndCustomerDAOResponse[]>} A promise that resolves to an array of booking records.
  * @throws {Error} If there is an error retrieving the bookings.
  */
 export async function getBookingsByEmployeeIdsLocationAndDates(
@@ -584,7 +595,7 @@ export async function getBookingsByEmployeeIdsLocationAndDates(
 	endDate: string,
 	location_id: string,
 	reservationModuleId: string
-): Promise<Booking[]> {
+): Promise<BookingWithEmployeeLocationServiceAndCustomerDAOResponse[]> {
 	try {
 		const records = await prisma.booking.findMany({
 			where: {
@@ -609,24 +620,24 @@ export async function getBookingsByEmployeeIdsLocationAndDates(
 				child_bookings: { where: { status: { not: BOOKING_STATUS.deleted } } },
 			},
 		});
-		return records;
-	} catch (error) {
+		return records as unknown as BookingWithEmployeeLocationServiceAndCustomerDAOResponse[];
+	} catch {
 		throw new Error('Error retrieving schedule slots');
 	}
 }
 
 /**
- * Update a booking start, end, delete parent using UpdateBookingInput. Will connect to provided customer_id,
+ * Update a booking start, end, delete parent using UpdateBookingRequest. Will connect to provided customer_id,
  * otherwise patch the currently linked customer (or create one if missing and fields provided).
- * @param {UpdateBookingInput} input
- * @returns {Promise<Booking>}
+ * @param {UpdateBookingRequest} input
+ * @returns {Promise<BookingDAOResponse>}
  * @throws {Error} If there is an error updating the booking.
  */
 export async function updateBookingStart(
-	input: UpdateBookingInput,
+	input: UpdateBookingRequest,
 	booking_id: string,
 	user_id: string | undefined
-): Promise<Booking> {
+): Promise<BookingDAOResponse> {
 	try {
 		return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 			const updated = await tx.booking.update({
@@ -648,7 +659,7 @@ export async function updateBookingStart(
 					user: { connect: { user_id: user_id } },
 				},
 			});
-			return updated;
+			return updated as unknown as BookingDAOResponse;
 		});
 	} catch (error) {
 		throwPrisma('Error updating booking', error);
@@ -656,17 +667,17 @@ export async function updateBookingStart(
 }
 
 /**
- * Update a booking parent using UpdateBookingInput. Will connect to provided customer_id,
+ * Update a booking parent using UpdateBookingRequest. Will connect to provided customer_id,
  * otherwise patch the currently linked customer (or create one if missing and fields provided).
- * @param {UpdateBookingInput} input
- * @returns {Promise<Booking>}
+ * @param {UpdateBookingRequest} input
+ * @returns {Promise<BookingDAOResponse>}
  * @throws {Error} If there is an error updating the booking.
  */
 export async function updateBookingParent(
-	input: UpdateBookingInput,
+	input: UpdateBookingRequest,
 	booking_id: string,
 	user_id: string | undefined
-): Promise<Booking> {
+): Promise<BookingDAOResponse> {
 	try {
 		return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 			const updated = await tx.booking.update({
@@ -688,7 +699,7 @@ export async function updateBookingParent(
 					user: { connect: { user_id: user_id } },
 				},
 			});
-			return updated;
+			return updated as unknown as BookingDAOResponse;
 		});
 	} catch (error) {
 		throwPrisma('Error updating booking', error);
@@ -698,9 +709,11 @@ export async function updateBookingParent(
 /**
  * Get booking by id
  * @param {{ booking_id: string }} booking_id
- * @returns {Promise<Booking>}
+ * @returns {Promise<BookingWithDeepChildrenDAOResponse | null>}
  */
-export async function getBookingByIdWithChildren(booking_id: string): Promise<Booking> {
+export async function getBookingByIdWithChildren(
+	booking_id: string
+): Promise<BookingWithDeepChildrenDAOResponse | null> {
 	try {
 		const booking = await prisma.booking.findUnique({
 			where: { booking_id: booking_id },
@@ -749,57 +762,51 @@ export async function getBookingByIdWithChildren(booking_id: string): Promise<Bo
 				},
 			},
 		});
-		return booking;
+		return booking as unknown as BookingWithDeepChildrenDAOResponse;
 	} catch (error) {
 		throwPrisma('Error fetching booking by id', error);
 	}
 }
 /**
- * Update a booking group (parent + children) using UpdateBookingInput. Will connect to provided customer_id,
+ * Update a booking group (parent + children) using UpdateBookingRequest. Will connect to provided customer_id,
  * otherwise patch the currently linked customer (or create one if missing and fields provided).
- * @param { (CreateBookingSingleInput | UpdateBookingInput)[] } inputs
+ * @param { (CreateBookingSingleRequest | UpdateBookingRequest)[] } inputs
  * @param { { validateSchedule?: boolean; ignoreBooking?: boolean } } opts
- * @returns {Promise<Booking[]>}
+ * @returns {Promise<BookingDAOResponse[]>}
  */
 export async function updateBookingGroup(
-	inputs: (CreateBookingSingleInput | UpdateBookingInput)[],
+	inputs: (CreateBookingSingleRequest | UpdateBookingRequest)[],
 	opts: { validateSchedule?: boolean; ignoreBooking?: boolean } = {}
-): Promise<Booking[]> {
+): Promise<BookingDAOResponse[]> {
 	if (!inputs.length) throw new Error('No services to create');
 	const validateSchedule = !!opts.validateSchedule;
 	const ignoreBooking = !!opts.ignoreBooking;
 	return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-		const created: Booking[] = [];
+		const created: BookingDAOResponse[] = [];
 		// parent
-		const firstInput = inputs[0] as UpdateBookingInput;
-		const id: string | undefined = firstInput?.booking_id ?? undefined;
+		const firstInput = inputs[0] as UpdateBookingRequest | CreateBookingSingleRequest;
+		const id: string | undefined = (firstInput as any)?.booking_id ?? undefined;
 		const parent = id
-			? await updateBooking({ ...firstInput, parent_booking_id: null } as UpdateBookingInput, id, true)
-			: await createBookingTx(tx, inputs[0] as CreateBookingSingleInput, {
+			? await updateBooking({ ...(firstInput as UpdateBookingRequest), parent_booking_id: null }, id, true)
+			: await createBookingTx(tx, inputs[0] as CreateBookingSingleRequest, {
 					validateSchedule,
 					ignoreBooking,
 				});
 		created.push(parent);
 		// children
 		for (let i = 1; i < inputs.length; i++) {
-			const input = inputs[i] as UpdateBookingInput;
-			const idBooking: string | undefined = input?.booking_id ?? undefined;
+			const input = inputs[i] as UpdateBookingRequest | CreateBookingSingleRequest;
+			const idBooking: string | undefined = (input as any)?.booking_id ?? undefined;
 
 			const child = idBooking
 				? await updateBooking(
-						{
-							...input,
-							parent_booking_id: parent.booking_id,
-						} as UpdateBookingInput,
+						{ ...(input as UpdateBookingRequest), parent_booking_id: parent.booking_id },
 						idBooking,
 						true
 					)
 				: await createBookingTx(
 						tx,
-						{
-							...inputs[i],
-							parent_booking_id: parent.booking_id,
-						} as CreateBookingSingleInput,
+						{ ...(inputs[i] as CreateBookingSingleRequest), parent_booking_id: parent.booking_id },
 						{ validateSchedule }
 					);
 			created.push(child);
@@ -809,13 +816,13 @@ export async function updateBookingGroup(
 }
 
 /**
- * Update a booking parent using UpdateBookingInput. Will connect to provided customer_id,
+ * Update a booking parent using UpdateBookingRequest. Will connect to provided customer_id,
  * otherwise patch the currently linked customer (or create one if missing and fields provided).
- * @param {UpdateBookingInput} input
- * @returns {Promise<Booking>}
+ * @param {UpdateBookingRequest} input
+ * @returns {Promise<BookingDAOResponse>}
  * @throws {Error} If there is an error updating the booking.
  */
-export async function updateStatusDelete(booking_id: string, user_id: string | undefined): Promise<Booking> {
+export async function updateStatusDelete(booking_id: string, user_id: string | undefined): Promise<BookingDAOResponse> {
 	try {
 		return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 			const updated = await tx.booking.update({
@@ -836,7 +843,7 @@ export async function updateStatusDelete(booking_id: string, user_id: string | u
 					user: { connect: { user_id: user_id } },
 				},
 			});
-			return updated;
+			return updated as unknown as BookingDAOResponse;
 		});
 	} catch (error) {
 		throwPrisma('Error updating booking', error);
@@ -846,9 +853,9 @@ export async function updateStatusDelete(booking_id: string, user_id: string | u
 /**
  * Get bookings for analytics
  * @param {ListBookingsParams} params
- * @returns {Promise<Booking[]>}
+ * @returns {Promise<BookingForAnalyticsDAOResponse[]>}
  */
-export async function getBookingsForAnalytics(params: ListBookingsParams): Promise<Booking[]> {
+export async function getBookingsForAnalytics(params: ListBookingsParams): Promise<BookingForAnalyticsDAOResponse[]> {
 	try {
 		const { reservation_module_id, status, from, to, location_id, employee_id } = params;
 
@@ -871,7 +878,7 @@ export async function getBookingsForAnalytics(params: ListBookingsParams): Promi
 				customer: true,
 			},
 			orderBy: [{ created_at: 'desc' }, { booking_id: 'desc' }],
-		})) as Booking[];
+		})) as unknown as BookingForAnalyticsDAOResponse[];
 	} catch (error) {
 		throwPrisma('Error listing bookings', error);
 	}
@@ -880,10 +887,10 @@ export async function getBookingsForAnalytics(params: ListBookingsParams): Promi
 /**
  * Retrieves booking cours by booking id
  * @param {string} booking_id - The ID of the booking to retrieve course for.
- * @returns {Promise<Booking>} A promise that resolves to an bookin course.
+ * @returns {Promise<BookingCourseDAOResponse | null>} A promise that resolves to an bookin course.
  * @throws {Error} If there is an error retrieving the booking course.
  */
-export async function getBookingCourseById(booking_id: string): Promise<Booking> {
+export async function getBookingCourseById(booking_id: string): Promise<BookingCourseDAOResponse | null> {
 	try {
 		return prisma.booking.findUnique({
 			where: {
@@ -914,7 +921,7 @@ export async function getBookingCourseById(booking_id: string): Promise<Booking>
 					},
 				},
 			},
-		});
+		}) as unknown as BookingCourseDAOResponse | null;
 	} catch (error) {
 		throwPrisma('Error fetching booking courses', error);
 	}
@@ -923,10 +930,12 @@ export async function getBookingCourseById(booking_id: string): Promise<Booking>
 /**
  * Retrieves all booking courses for a given business module.
  * @param {ListBookingsParams} params - The parameters to filter the bookings courses.
- * @returns {Promise<Booking[]>} A promise that resolves to an array of bookings courses.
+ * @returns {Promise<BookingCoursesByModuleDAOResponse[]>} A promise that resolves to an array of bookings courses.
  * @throws {Error} If there is an error retrieving the bookings courses.
  */
-export async function getBookingCoursesByReservationModuleId(params: ListBookingsParams): Promise<Booking[]> {
+export async function getBookingCoursesByReservationModuleId(
+	params: ListBookingsParams
+): Promise<BookingCoursesByModuleDAOResponse[]> {
 	try {
 		const { reservation_module_id, status, from, to, location_id, employee_id } = params;
 
@@ -965,7 +974,7 @@ export async function getBookingCoursesByReservationModuleId(params: ListBooking
 					},
 				},
 			},
-		});
+		}) as unknown as BookingCoursesByModuleDAOResponse[];
 	} catch (error) {
 		throwPrisma('Error fetching booking courses', error);
 	}
@@ -974,10 +983,10 @@ export async function getBookingCoursesByReservationModuleId(params: ListBooking
 /**
  * Retrieves all booking courses
  * @param {ListBookingsParams} params - The parameters to filter the bookings courses.
- * @returns {Promise<Booking[]>} A promise that resolves to an array of bookings courses.
+ * @returns {Promise<BookingCoursesDAOResponse[]>} A promise that resolves to an array of bookings courses.
  * @throws {Error} If there is an error retrieving the bookings courses.
  */
-export async function getBookingCourses(params: ListBookingsParams): Promise<Booking[]> {
+export async function getBookingCourses(params: ListBookingsParams): Promise<BookingCoursesDAOResponse[]> {
 	try {
 		const { reservation_module_id, status, from, to } = params;
 
@@ -1014,13 +1023,16 @@ export async function getBookingCourses(params: ListBookingsParams): Promise<Boo
 					},
 				},
 			},
-		});
+		}) as unknown as BookingCoursesDAOResponse[];
 	} catch (error) {
 		throwPrisma('Error fetching booking courses', error);
 	}
 }
 
-async function createBookingCourseTx(tx: Prisma.TransactionClient, input: UpdateBookingInput): Promise<Booking> {
+async function createBookingCourseTx(
+	tx: Prisma.TransactionClient,
+	input: UpdateBookingRequest
+): Promise<BookingDAOResponse> {
 	// guard module
 	const mod = await tx.reservation_module.findUnique({
 		where: { reservation_module_id: input.reservation_module_id },
@@ -1084,19 +1096,19 @@ async function createBookingCourseTx(tx: Prisma.TransactionClient, input: Update
 		},
 	});
 
-	return created as Booking;
+	return created as unknown as BookingDAOResponse;
 }
 
 /**
  * Creates a new booking course time record.
- * @param {BookingCourseTimeInput} bookingCourseTimeData - The data for the new booking course time.
- * @returns {Promise<BookingCourseTime>} A promise that resolves to the created booking course time.
+ * @param {CreateBookingCourseTimeRequest} bookingCourseTimeData - The data for the new booking course time.
+ * @returns {Promise<BookingCourseTimeResponse>} A promise that resolves to the created booking course time.
  * @throws {Error} If there is an error creating the booking course time.
  */
 export async function createBookingCourseTimeTx(
 	tx: Prisma.TransactionClient,
-	input: BookingCourseTimeInput
-): Promise<BookingCourseTime> {
+	input: CreateBookingCourseTimeRequest
+): Promise<BookingCourseTimeResponse> {
 	try {
 		let bookingCourseTime = await tx.booking_course_time.create({
 			data: {
@@ -1108,22 +1120,22 @@ export async function createBookingCourseTimeTx(
 				booking: { connect: { booking_id: input.booking_id } },
 			},
 		});
-		return bookingCourseTime;
-	} catch (error) {
+		return bookingCourseTime as unknown as BookingCourseTimeResponse;
+	} catch {
 		throw new Error('Error creating booking course time');
 	}
 }
 
 /**
  * Updates an existing booking course time record.
- * @param {UpdateBookingCourseTimeInput} bookingCourseTimeData - The data for the updated booking course time.
- * @returns {Promise<BookingCourseTime>} A promise that resolves to the updated booking course time.
+ * @param {UpdateBookingCourseTimeRequest} bookingCourseTimeData - The data for the updated booking course time.
+ * @returns {Promise<BookingCourseTimeResponse>} A promise that resolves to the updated booking course time.
  * @throws {Error} If there is an error updating the booking course time.
  */
 export async function updateBookingCourseTimeTx(
 	tx: Prisma.TransactionClient,
-	input: UpdateBookingCourseTimeInput
-): Promise<BookingCourseTime> {
+	input: UpdateBookingCourseTimeRequest
+): Promise<BookingCourseTimeResponse> {
 	try {
 		let bookingCourseTime = await tx.booking_course_time.update({
 			where: { booking_course_time_id: input.booking_course_time_id },
@@ -1132,8 +1144,8 @@ export async function updateBookingCourseTimeTx(
 				end_time: input?.end_time ?? undefined,
 			},
 		});
-		return bookingCourseTime;
-	} catch (error) {
+		return bookingCourseTime as unknown as BookingCourseTimeResponse;
+	} catch {
 		throw new Error('Error updating booking course time');
 	}
 }
@@ -1142,16 +1154,16 @@ export async function updateBookingCourseTimeTx(
  * Delete a booking course time record.
  *
  * @param {{ booking_course_time_id: string }} input
- * @returns {Promise<BookingCourseTime>}
+ * @returns {Promise<BookingCourseTimeResponse>}
  */
 export async function deleteBookingCourseTime(
 	tx: Prisma.TransactionClient,
 	input: { booking_course_time_id: string }
-): Promise<BookingCourseTime> {
+): Promise<BookingCourseTimeResponse> {
 	try {
 		return (await tx.booking_course_time.delete({
 			where: { booking_course_time_id: input.booking_course_time_id },
-		})) as BookingCourseTime;
+		})) as unknown as BookingCourseTimeResponse;
 	} catch (error) {
 		throwPrisma('Error deleting booking course time', error);
 	}
@@ -1159,15 +1171,15 @@ export async function deleteBookingCourseTime(
 
 /**
  * Creates a new booking course (parent + times) within a single transaction.
- * @param {CreateBookingCourseInput} bookingCourseTimeData - The data for the new booking course.
- * @returns {Promise<Booking>} A promise that resolves to the created booking course.
+ * @param {CreateBookingCourseRequest} inputs - The data for the new booking course.
+ * @returns {Promise<BookingCourseDAOResponse>} A promise that resolves to the created booking course.
  * @throws {Error} If there is an error creating the booking course time.
  */
-export async function createBookingCourse(inputs: CreateBookingCourseInput): Promise<Booking[]> {
+export async function createBookingCourse(inputs: CreateBookingCourseRequest): Promise<BookingCourseDAOResponse> {
 	return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-		let created: Booking = {} as Booking;
+		let created = {} as any;
 		// parent
-		const booking = await createBookingCourseTx(tx, inputs as UpdateBookingInput);
+		const booking = await createBookingCourseTx(tx, inputs as unknown as UpdateBookingRequest);
 		created = booking;
 		// Initialize booking_course_time array if undefined
 		if (!created.booking_course_time) {
@@ -1179,24 +1191,25 @@ export async function createBookingCourse(inputs: CreateBookingCourseInput): Pro
 				booking_id: booking.booking_id,
 				reservation_module_id: booking.reservation_module_id,
 			})) || [];
-		const courseTimes: BookingCourseTimeInput[] = timesWithId;
+		const courseTimes: CreateBookingCourseTimeRequest[] =
+			timesWithId as unknown as CreateBookingCourseTimeRequest[];
 		for (let i = 0; i < courseTimes.length; i++) {
-			const child = await createBookingCourseTimeTx(tx, courseTimes[i] as BookingCourseTimeInput);
+			const child = await createBookingCourseTimeTx(tx, courseTimes[i] as CreateBookingCourseTimeRequest);
 			created.booking_course_time.push(child);
 		}
-		return created;
+		return created as BookingCourseDAOResponse;
 	});
 }
 
 /**
  * Creates a new booking course participant.
- * @param {CreateCourseParticipantInput} bookingCourseParticipantData - The data for the new booking course participant.
- * @returns {Promise<BookingCourseParticipant>} A promise that resolves to the created booking course participant.
+ * @param {CreateBookingCourseParticipantRequest} bookingCourseParticipantData - The data for the new booking course participant.
+ * @returns {Promise<BookingCourseParticipantResponse>} A promise that resolves to the created booking course participant.
  * @throws {Error} If there is an error creating the booking course participant.
  */
 export async function createBookingCourseParticipant(
-	input: CreateCourseParticipantInput
-): Promise<BookingCourseParticipant> {
+	input: CreateBookingCourseParticipantRequest
+): Promise<BookingCourseParticipantResponse> {
 	return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 		const tel = composeTelephone(input);
 
@@ -1251,19 +1264,19 @@ export async function createBookingCourseParticipant(
 			},
 		});
 
-		return created as BookingCourseParticipant;
+		return created as unknown as BookingCourseParticipantResponse;
 	});
 }
 
 /**
  * Updates a booking course participant.
- * @param {UpdateCourseParticipantInput} bookingCourseParticipantData - The data for the updated booking course participant.
- * @returns {Promise<BookingCourseParticipant>} A promise that resolves to the updated booking course participant.
+ * @param {UpdateBookingCourseParticipantRequest} bookingCourseParticipantData - The data for the updated booking course participant.
+ * @returns {Promise<BookingCourseParticipantResponse>} A promise that resolves to the updated booking course participant.
  * @throws {Error} If there is an error updating the booking course participant.
  */
 export async function cancelBookingCourseParticipant(
-	input: UpdateCourseParticipantInput
-): Promise<BookingCourseParticipant> {
+	input: UpdateBookingCourseParticipantRequest
+): Promise<BookingCourseParticipantResponse> {
 	return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 		// guard module
 		const mod = await tx.reservation_module.findUnique({
@@ -1296,18 +1309,21 @@ export async function cancelBookingCourseParticipant(
 			},
 		});
 
-		return created as BookingCourseParticipant;
+		return created as unknown as BookingCourseParticipantResponse;
 	});
 }
 
 /**
  * Updates a booking course.
- * @param {UpdateBookingCourseInput} input - The data for the updated booking course
+ * @param {UpdateBookingCourseRequest} input - The data for the updated booking course
  * @param {string} booking_id - The ID of the booking course to update
- * @returns {Promise<Booking>} A promise that resolves to the updated booking course.
+ * @returns {Promise<BookingCourseDAOResponse>} A promise that resolves to the updated booking course.
  * @throws {Error} If there is an error updating the booking course.
  */
-export async function updateBookingCourse(input: UpdateBookingCourseInput, booking_id: string): Promise<Booking> {
+export async function updateBookingCourse(
+	input: UpdateBookingCourseRequest,
+	booking_id: string
+): Promise<BookingCourseDAOResponse> {
 	try {
 		return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 			const existing = await tx.booking.findUnique({
@@ -1366,19 +1382,23 @@ export async function updateBookingCourse(input: UpdateBookingCourseInput, booki
 				},
 			});
 
-			const newTimes: BookingCourseTimeInput[] =
+			const newTimes: CreateBookingCourseTimeRequest[] =
 				input.course_time_added?.map((time) => ({
 					...time,
 					booking_id: booking_id,
 					reservation_module_id: existing.reservation_module_id,
-				})) ?? [];
-			const changedTimes: UpdateBookingCourseTimeInput[] =
+				})) ?? ([] as unknown as CreateBookingCourseTimeRequest[]);
+			const changedTimes: UpdateBookingCourseTimeRequest[] =
 				input.course_time_changed?.map((time) => ({
 					...time,
 					booking_id: booking_id,
 					reservation_module_id: existing.reservation_module_id,
-				})) ?? [];
-			const deletedTimeIds: DeleteBookingCourseTimeInput[] =
+				})) ?? ([] as unknown as UpdateBookingCourseTimeRequest[]);
+			const deletedTimeIds: {
+				booking_id: string;
+				reservation_module_id: string;
+				booking_course_time_id?: string;
+			}[] =
 				input.course_time_removed?.map((id) => ({
 					booking_id: booking_id,
 					reservation_module_id: existing.reservation_module_id,
@@ -1386,15 +1406,18 @@ export async function updateBookingCourse(input: UpdateBookingCourseInput, booki
 				})) ?? [];
 
 			for (let i = 0; i < newTimes.length; i++) {
-				const child = await createBookingCourseTimeTx(tx, newTimes[i] as BookingCourseTimeInput);
-				updated.booking_course_time.push(child);
+				const child = await createBookingCourseTimeTx(tx, newTimes[i] as CreateBookingCourseTimeRequest);
+				(updated.booking_course_time as unknown as any[]).push(child as unknown as any);
 			}
 			for (let i = 0; i < changedTimes.length; i++) {
-				const child = await updateBookingCourseTimeTx(tx, changedTimes[i] as UpdateBookingCourseTimeInput);
-				updated.booking_course_time.push(child);
+				const child = await updateBookingCourseTimeTx(tx, changedTimes[i] as UpdateBookingCourseTimeRequest);
+				(updated.booking_course_time as unknown as any[]).push(child as unknown as any);
 			}
 			for (let i = 0; i < deletedTimeIds.length; i++) {
-				await deleteBookingCourseTime(tx, deletedTimeIds[i] as DeleteBookingCourseTimeInput);
+				const delId = deletedTimeIds[i]?.booking_course_time_id;
+				if (delId) {
+					await deleteBookingCourseTime(tx, { booking_course_time_id: delId });
+				}
 			}
 
 			if (input.status !== undefined) {
@@ -1410,7 +1433,7 @@ export async function updateBookingCourse(input: UpdateBookingCourseInput, booki
 				});
 			}
 
-			return updated as Booking;
+			return updated as unknown as BookingCourseDAOResponse;
 		});
 	} catch (error) {
 		throwPrisma('Error updating booking', error);

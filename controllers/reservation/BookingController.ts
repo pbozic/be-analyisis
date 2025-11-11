@@ -4,41 +4,60 @@ import moment, { Moment, unitOfTime } from 'moment';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 import BookingDao from '../../dao/reservation/Booking.ts';
 import {
-	UpdateBookingInput,
-	CreateBookingHistoryLogInput,
+	UpdateBookingRequest,
 	ListBookingsParams,
-	FindBookingSlotsInput,
-	CreateBookingInput,
-	CreateBookingSingleInput,
-	AllBookingsForLocationAndEmployeesParams,
-	CreateMultipleBookingsInput,
-	Booking,
-	UpdateMultipleBookingsInput,
+	FindBookingSlotsRequest,
+	CreateBookingRequest,
+	CreateBookingSingleRequest,
+	AllBookingsForLocationAndEmployeesRequest,
+	CreateMultipleBookingsRequest,
+	UpdateMultipleBookingsRequest,
 	BookingsAnalyticsParams,
-	CreateBookingCourseInput,
-	UpdateBookingCourseInput,
-	CreateCourseParticipantInput,
-	UpdateCourseParticipantInput,
-} from '../../types/reservations/Booking.ts';
-import { Employee } from '../../types/reservations/Employee.ts';
+	CreateBookingCourseRequest,
+	UpdateBookingCourseRequest,
+} from '../../schemas/dto/reservations/booking/booking.dto.js';
+import { CreateBookingHistoryLogRequest } from '../../schemas/dto/reservations/booking-history-log/booking-history-log.dto.js';
+import {
+	CreateBookingCourseParticipantRequest,
+	UpdateBookingCourseParticipantRequest,
+} from '../../schemas/dto/reservations/booking-course-participant/booking-course-participant.dto.js';
+// Keep old types that don't have DTO equivalents
+// Use DTO response types instead of legacy Booking
+import type { BookingForAnalyticsDAOResponse } from '../../schemas/dto/reservations/booking/booking.dto.js';
+import type {
+	EmployeeDAOResponse,
+	EmployeeScheduleSlotsDAOResponse,
+	ScheduleSlotWithBookingsAndExceptions,
+} from '../../schemas/dto/reservations/employee/employee.dto.js';
+import type { BookingSlotBase } from '../../schemas/dto/reservations/booking-slot/booking-slot.dto.js';
+import type { ScheduleSlotExceptionBase } from '../../schemas/dto/reservations/schedule-slot-exception/schedule-slot-exception.dto.js';
 import { findSlots } from '../../lib/bookingHelpers.ts';
 import prisma from '../../prisma/prisma.js';
 import LocationDao from '../../dao/reservation/Location.ts';
 import EmployeeDao from '../../dao/reservation/Employee.ts';
 import ServiceDao from '../../dao/reservation/Service.ts';
 import CustomerDao from '../../dao/reservation/Customer.ts';
-import { ScheduleSlot } from '../../types/reservations/ScheduleSlot.ts';
-import { BookingSlot } from '../../types/reservations/BookingSlot.ts';
-import { ScheduleSlotException } from '../../types/reservations/ScheduleSlotException.ts';
+// Import DTO types for API documentation
+//import type {
+//	BookingResponse,
+//	BookingGroupResponse,
+//	BookingCourseDAOResponse,
+//	BookingCoursesByModuleDAOResponse,
+//	BookingsAnalyticsResponse,
+//	BookingsAndEmployeesWithSlotsResponse,
+//	UpdateBookingGroupResponse,
+//} from '../../schemas/dto/reservations/booking/booking.dto.js';
+//import type { BookingHistoryLogRef } from '../../schemas/dto/reservations/booking-history-log/booking-history-log.dto.js';
+//import type { BookingCourseParticipantRef } from '../../schemas/dto/reservations/booking-course-participant/booking-course-participant.dto.js';
 
 /**
  * POST /reservation/reservations/bookings/list
  * @tag Reservation
  * @summary List bookings for the current reservation module
  * @operationId listBookings
- * @bodyContent {object} application/json
+ * @bodyContent {ListBookingsParams} application/json
  * @response 200 - Bookings retrieved
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingCoursesDAOResponse[]} 200.application/json
  * @response 500 - Error retrieving bookings
  * @prisma_model booking
  */
@@ -67,7 +86,7 @@ export async function listBookings(req: ValidatedRequest<ListBookingsParams>, re
  * @operationId getBookingById
  * @pathParam {string} booking_id
  * @response 200 - Booking retrieved
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingResponse} 200.application/json
  * @response 404 - Booking not found
  * @response 500 - Error retrieving booking
  * @prisma_model booking
@@ -90,9 +109,9 @@ export async function getBooking(req: ValidatedRequest<null, { booking_id: strin
  * @tag Reservation
  * @summary Create a new booking (public flow)
  * @operationId createBooking
- * @bodyContent {object} application/json
+ * @bodyContent {CreateBookingInput} application/json
  * @response 201 - Booking created
- * @responseContent {object} 201.application/json
+ * @responseContent {BookingGroupResponse} 201.application/json
  * @response 500 - Error creating booking
  * @prisma_model reservation_module
  * @prisma_model booking
@@ -102,7 +121,7 @@ export async function getBooking(req: ValidatedRequest<null, { booking_id: strin
  * @prisma_model location
  * @prisma_model employee
  */
-export async function createBooking(req: ValidatedRequest<CreateBookingInput>, res: Response): Promise<void> {
+export async function createBooking(req: ValidatedRequest<CreateBookingRequest>, res: Response): Promise<void> {
 	const { service_ids, ...base } = req.body;
 	const reservation_module_id = req.user?.reservation_module_id ?? base.reservation_module_id;
 	let user_id = req.user?.user_id;
@@ -118,7 +137,9 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
 	});
 	let isEmployeeOfModule = false;
 	if (reservation_module && user_id) {
-		isEmployeeOfModule = reservation_module.employees.some((e: Employee) => e.business_user?.user_id === user_id);
+		isEmployeeOfModule = reservation_module.employees.some(
+			(e: EmployeeDAOResponse) => e.business_user?.user_id === user_id
+		);
 	}
 	// map to DAO’s single-service input
 	const inputs = service_ids.map((sid) => ({
@@ -126,7 +147,7 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
 		reservation_module_id,
 		service_id: sid,
 		// parent_booking_id set inside DAO for children
-	})) as CreateBookingSingleInput[];
+	})) as CreateBookingSingleRequest[];
 
 	try {
 		const all = await BookingDao.createBookingGroup(inputs, {
@@ -148,14 +169,15 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
  * @summary Update an existing booking
  * @operationId updateBooking
  * @pathParam {string} booking_id
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateBookingRequest} application/json
  * @response 200 - Booking updated
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingResponse} 200.application/json
  * @response 500 - Error updating booking
  * @prisma_model booking
+ * @prisma_model booking_history_log
  */
 export async function updateBooking(
-	req: ValidatedRequest<UpdateBookingInput, { booking_id: string }>,
+	req: ValidatedRequest<UpdateBookingRequest, { booking_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -176,7 +198,7 @@ export async function updateBooking(
 /**
  * DELETE /reservation/reservations/bookings/:booking_id
  * @tag Reservation
- * @summary Delete a booking
+ * @summary Delete a booking by ID
  * @operationId deleteBooking
  * @pathParam {string} booking_id
  * @response 204 - Booking deleted
@@ -198,15 +220,15 @@ export async function deleteBooking(req: ValidatedRequest<null, { booking_id: st
  * @summary Create a booking history log entry
  * @operationId createBookingHistoryLog
  * @pathParam {string} booking_id
- * @bodyContent {object} application/json
+ * @bodyContent {CreateBookingHistoryLogRequest} application/json
  * @response 201 - Booking history log created
- * @responseContent {object} 201.application/json
+ * @responseContent {BookingHistoryLogRef} 201.application/json
  * @response 500 - Error creating booking history log
  * @prisma_model booking_history_log
  * @prisma_model booking
  */
 export async function createBookingHistoryLog(
-	req: ValidatedRequest<CreateBookingHistoryLogInput, { booking_id: string }>,
+	req: ValidatedRequest<CreateBookingHistoryLogRequest, { booking_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -224,14 +246,17 @@ export async function createBookingHistoryLog(
 /**
  * POST /reservation/booking/find-slots
  * @tag Reservation
- * @summary Find available booking slots for given filters
+ * @summary Find available booking slots
  * @operationId findBookingSlots
- * @bodyContent {object} application/json
+ * @bodyContent {FindBookingSlotsSchema} application/json
  * @response 200 - Slots retrieved
- * @responseContent {object} 200.application/json
- * @response 500 - Error finding slots
+ * @responseContent {BookingSlot[]} 200.application/json
+ * @response 500 - Error retrieving slots
+ * @prisma_model booking
+ * @prisma_model schedule_slot
+ * @prisma_model schedule_slot_exception
  */
-export async function findBookingSlots(req: ValidatedRequest<FindBookingSlotsInput>, res: Response): Promise<void> {
+export async function findBookingSlots(req: ValidatedRequest<FindBookingSlotsRequest>, res: Response): Promise<void> {
 	try {
 		// Destructure request body
 		const { serviceIds, locationId, employeeId, reservationModuleId, date, returnFirst } = req.body;
@@ -261,7 +286,7 @@ export async function findBookingSlots(req: ValidatedRequest<FindBookingSlotsInp
  * @description Retrieves all reservation locations and their employees for the current reservation module.
  * @operationId getLocationsAndEmployees
  * @response 200 - Reservation locations and employees retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {{locations: LocationRefSchema[], employees: EmployeeDetailSchema[]}} 200.application/json
  * @response 500 - Error retrieving locations and employees
  * @prisma_model location
  * @prisma_model employee
@@ -287,9 +312,9 @@ export async function getLocationsAndEmployees(req: ValidatedRequest, res: Respo
  * @summary Get all bookings for given location and employees within a date range
  * @description Retrieves all bookings for a specified location and employees within a given date range.
  * @operationId getBookingsForLocationAndEmployees
- * @bodyContent {object} application/json
+ * @bodyContent {AllBookingsForLocationAndEmployeesParams} application/json
  * @response 200 - Reservation bookings and employees retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingsAndEmployeesWithSlotsResponse} 200.application/json
  * @response 500 - Error retrieving employees with schedule slots
  * @prisma_model booking
  * @prisma_model employee
@@ -298,7 +323,7 @@ export async function getLocationsAndEmployees(req: ValidatedRequest, res: Respo
  * @prisma_model booking_slots
  */
 export async function getBookingsForLocationAndEmployees(
-	req: ValidatedRequest<AllBookingsForLocationAndEmployeesParams>,
+	req: ValidatedRequest<AllBookingsForLocationAndEmployeesRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -325,14 +350,21 @@ export async function getBookingsForLocationAndEmployees(
 			startDate,
 			endDate
 		);
-		let employeeMap = employees.map((e) => {
+		let employeeMap = employees.map((e: EmployeeScheduleSlotsDAOResponse) => {
 			const scheduleSlots = e.schedule_slots;
-			const scheduleBookingSlots = scheduleSlots?.map((slot: ScheduleSlot) => slot.booking_slots).flat();
+
+			const scheduleBookingSlots = scheduleSlots
+				?.map((slot: ScheduleSlotWithBookingsAndExceptions) =>
+					slot && 'booking_slots' in slot ? slot.booking_slots : undefined
+				)
+				.flat();
 			const scheduleSlotExceptions = scheduleSlots
-				?.map((slot: ScheduleSlot) => slot.schedule_slot_exceptions)
+				?.map((slot: ScheduleSlotWithBookingsAndExceptions) =>
+					slot && 'schedule_slot_exceptions' in slot ? slot.schedule_slot_exceptions : undefined
+				)
 				.flat();
 			const bookingReorder = scheduleBookingSlots
-				? scheduleBookingSlots.sort((a: BookingSlot | undefined, b: BookingSlot | undefined) => {
+				? scheduleBookingSlots.sort((a: BookingSlotBase | undefined, b: BookingSlotBase | undefined) => {
 						if (!a && !b) return 0;
 						if (!a) return 1;
 						if (!b) return -1;
@@ -341,7 +373,7 @@ export async function getBookingsForLocationAndEmployees(
 				: [];
 			const exceptionsReorder = scheduleSlotExceptions
 				? scheduleSlotExceptions.sort(
-						(a: ScheduleSlotException | undefined, b: ScheduleSlotException | undefined) => {
+						(a: ScheduleSlotExceptionBase | undefined, b: ScheduleSlotExceptionBase | undefined) => {
 							if (!a && !b) return 0;
 							if (!a) return 1;
 							if (!b) return -1;
@@ -370,7 +402,7 @@ export async function getBookingsForLocationAndEmployees(
  * @description Retrieves all reservation services and their employees for the current reservation module.
  * @operationId getServicesAndEmployees
  * @response 200 - Reservation locations and employees retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {{services: ServiceRefSchema[], employees: EmployeeDetailSchema[], customers: CustomerDetailSchema[]}} 200.application/json
  * @response 500 - Error retrieving locations and employees
  * @prisma_model service
  * @prisma_model employee
@@ -394,18 +426,18 @@ export async function getServicesAndEmployees(req: ValidatedRequest, res: Respon
 }
 /**
  * Split consecutive slots into groups
- * @param {(CreateBookingSingleInput | UpdateBookingInput)[]} slots - The list of slots to split.
- * @returns {(CreateBookingSingleInput | UpdateBookingInput)[]} - The list of slots split into groups.
+ * @param {(CreateBookingSingleRequest | UpdateBookingRequest)[]} slots - The list of slots to split.
+ * @returns {(CreateBookingSingleRequest | UpdateBookingRequest)[]} - The list of slots split into groups.
  * @description This function takes an array of slots and splits them into groups of consecutive slots.
  */
 function splitConsecutiveSlots(
-	slots: (CreateBookingSingleInput | UpdateBookingInput)[]
-): (CreateBookingSingleInput | UpdateBookingInput)[][] {
+	slots: (CreateBookingSingleRequest | UpdateBookingRequest)[]
+): (CreateBookingSingleRequest | UpdateBookingRequest)[][] {
 	if (slots.length === 0) return [];
 
-	const result: (CreateBookingSingleInput | UpdateBookingInput)[][] = [];
+	const result: (CreateBookingSingleRequest | UpdateBookingRequest)[][] = [];
 	if (slots[0]) {
-		let currentGroup: (CreateBookingSingleInput | UpdateBookingInput)[] = [slots[0]];
+		let currentGroup: (CreateBookingSingleRequest | UpdateBookingRequest)[] = [slots[0]];
 
 		for (let i = 1; i < slots.length; i++) {
 			const prev = slots[i - 1];
@@ -434,15 +466,15 @@ function splitConsecutiveSlots(
  * @tag Reservation
  * @summary Create a new booking (admin group)
  * @operationId createBookingAdmin
- * @bodyContent {object} application/json
+ * @bodyContent {CreateMultipleBookingsInput} application/json
  * @response 201 - Booking created
- * @responseContent {object} 201.application/json
+ * @responseContent {{result: BookingGroupUpdateResult[]}} 201.application/json
  * @response 500 - Error creating booking
  * @prisma_model booking
  * @prisma_model booking_history_log
  */
 export async function createBookingAdmin(
-	req: ValidatedRequest<CreateMultipleBookingsInput>,
+	req: ValidatedRequest<CreateMultipleBookingsRequest>,
 	res: Response
 ): Promise<void> {
 	const { bookings, ...base } = req.body;
@@ -460,7 +492,9 @@ export async function createBookingAdmin(
 	});
 	let isEmployeeOfModule = false;
 	if (reservation_module && user_id) {
-		isEmployeeOfModule = reservation_module.employees.some((e: Employee) => e.business_user?.user_id === user_id);
+		isEmployeeOfModule = reservation_module.employees.some(
+			(e: EmployeeDAOResponse) => e.business_user?.user_id === user_id
+		);
 	}
 	// map to DAO’s single-service input
 	if (isEmployeeOfModule) {
@@ -469,13 +503,13 @@ export async function createBookingAdmin(
 			...booking,
 			reservation_module_id,
 			// parent_booking_id set inside DAO for children
-		})) as CreateBookingSingleInput[];
+		})) as CreateBookingSingleRequest[];
 		const splittedInputs = splitConsecutiveSlots(inputs);
 
 		try {
 			const result = await Promise.all(
 				splittedInputs.map(async (el) => {
-					const all = await BookingDao.createBookingGroup(el as CreateBookingSingleInput[], {
+					const all = await BookingDao.createBookingGroup(el as CreateBookingSingleRequest[], {
 						validateSchedule: !isEmployeeOfModule, // <- only enforce schedules for externals
 						ignoreBooking: true,
 					});
@@ -505,15 +539,15 @@ export async function createBookingAdmin(
  * @summary Update an existing booking start
  * @operationId updateBookingStartAdmin
  * @pathParam {string} booking_id
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateBookingRequest} application/json
  * @response 200 - Booking updated
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingResponse} 200.application/json
  * @response 500 - Error updating booking
  * @prisma_model booking
  * @prisma_model booking_history_log
  */
 export async function updateBookingStartAdmin(
-	req: ValidatedRequest<UpdateBookingInput, { booking_id: string }>,
+	req: ValidatedRequest<UpdateBookingRequest, { booking_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -532,7 +566,7 @@ export async function updateBookingStartAdmin(
 		let isEmployeeOfModule = false;
 		if (reservation_module && user_id) {
 			isEmployeeOfModule = reservation_module.employees.some(
-				(e: Employee) => e.business_user?.user_id === user_id
+				(e: EmployeeDAOResponse) => e.business_user?.user_id === user_id
 			);
 		}
 		if (isEmployeeOfModule) {
@@ -553,7 +587,7 @@ export async function updateBookingStartAdmin(
  * @operationId getBookingAdmin
  * @pathParam {string} booking_id
  * @response 200 - Booking retrieved
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingResponse[]} 200.application/json
  * @response 404 - Booking not found
  * @response 500 - Error retrieving booking
  * @prisma_model booking
@@ -600,15 +634,15 @@ function durationInMinutes(startIso: string | undefined, endIso: string | undefi
  * @summary Update an existing booking group start
  * @operationId updateBookingStartGroupAdmin
  * @pathParam {string} booking_id
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateBookingRequest} application/json
  * @response 200 - Bookings updated
- * @responseContent {object} 200.application/json
+ * @responseContent {{updatedBookings: BookingResponse[]}} 200.application/json
  * @response 500 - Error updating booking group
  * @prisma_model booking
  * @prisma_model booking_history_log
  */
 export async function updateBookingStartGroupAdmin(
-	req: ValidatedRequest<UpdateBookingInput, { booking_id: string }>,
+	req: ValidatedRequest<UpdateBookingRequest, { booking_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -627,7 +661,7 @@ export async function updateBookingStartGroupAdmin(
 		let isEmployeeOfModule = false;
 		if (reservation_module && user_id) {
 			isEmployeeOfModule = reservation_module.employees.some(
-				(e: Employee) => e.business_user?.user_id === user_id
+				(e: EmployeeDAOResponse) => e.business_user?.user_id === user_id
 			);
 		}
 		if (isEmployeeOfModule) {
@@ -637,7 +671,11 @@ export async function updateBookingStartGroupAdmin(
 			// If this is the first booking in the group (it is parent booking)
 			if (!inputs?.parent_booking_id && start_time && end_time) {
 				const bookingsData = await BookingDao.getBookingByIdWithChildren(req.params.booking_id);
-				const bookings = [bookingsData, ...(bookingsData?.child_bookings ?? [])];
+				if (!bookingsData) {
+					res.status(404).json({ message: 'Booking not found' });
+					return;
+				}
+				const bookings = [bookingsData, ...(bookingsData.child_bookings ?? [])];
 				// If this is first booking in the group and it is set to keep time gaps when moving
 				if (inputs?.keepTimeGaps) {
 					let end = '';
@@ -645,24 +683,24 @@ export async function updateBookingStartGroupAdmin(
 					const newBookings = bookings.map((booking, i) => {
 						if (i === 0) {
 							end = end_time;
-							previousEnd = booking?.end_time?.toISOString() ?? '';
+							previousEnd = booking?.end_time ?? '';
 							return {
 								booking_id: booking.booking_id,
 								start_time: inputs.start_time,
 								end_time: end,
 							};
 						} else {
-							const durationBetween = durationInMinutes(previousEnd, booking?.start_time?.toISOString());
+							const durationBetween = durationInMinutes(previousEnd, booking?.start_time ?? undefined);
 							const duration = durationInMinutes(
-								booking?.start_time?.toISOString(),
-								booking?.end_time?.toISOString()
+								booking?.start_time ?? undefined,
+								booking?.end_time ?? undefined
 							);
 							const nStart = new Date(end);
 							const new_start_time = nStart.setMinutes(nStart.getMinutes() + durationBetween);
 							const nEnd = new Date(new_start_time);
 							const new_end_time = nEnd.setMinutes(nEnd.getMinutes() + duration);
 							end = new Date(new_end_time).toISOString();
-							previousEnd = booking?.end_time?.toISOString() ?? '';
+							previousEnd = booking?.end_time ?? '';
 							return {
 								booking_id: booking.booking_id,
 								start_time: new Date(new_start_time).toISOString(),
@@ -673,7 +711,7 @@ export async function updateBookingStartGroupAdmin(
 					const updatedBookings = await Promise.all(
 						newBookings.map(async (el) => {
 							const booking = await BookingDao.updateBookingStart(
-								el as UpdateBookingInput,
+								el as UpdateBookingRequest,
 								el.booking_id,
 								user_id
 							);
@@ -694,8 +732,8 @@ export async function updateBookingStartGroupAdmin(
 							};
 						} else {
 							const duration = durationInMinutes(
-								booking?.start_time?.toISOString(),
-								booking?.end_time?.toISOString()
+								booking?.start_time ?? undefined,
+								booking?.end_time ?? undefined
 							);
 							const new_start_time = new Date(end);
 							const nEnd = new_start_time;
@@ -711,7 +749,7 @@ export async function updateBookingStartGroupAdmin(
 					const updatedBookings = await Promise.all(
 						newBookings.map(async (el) => {
 							const booking = await BookingDao.updateBookingStart(
-								el as UpdateBookingInput,
+								el as UpdateBookingRequest,
 								el.booking_id,
 								user_id
 							);
@@ -723,14 +761,18 @@ export async function updateBookingStartGroupAdmin(
 			} else if (inputs.parent_booking_id && start_time && end_time) {
 				// If this is not the first booking in the group
 				const bookingsData = await BookingDao.getBookingByIdWithChildren(inputs.parent_booking_id);
-				const bookings = [bookingsData, ...(bookingsData?.child_bookings ?? [])];
+				if (!bookingsData) {
+					res.status(404).json({ message: 'Booking not found' });
+					return;
+				}
+				const bookings = [bookingsData, ...(bookingsData.child_bookings ?? [])];
 				const findBookingIndex = bookings.findIndex((b) => b.booking_id === req.params.booking_id);
 				const findBooking = bookings.find((b) => b.booking_id === req.params.booking_id);
 				// If this is not the first booking in the group and it is set to keep time gaps when moving
 				if (inputs.keepTimeGaps) {
 					const calcDuration = durationInMinutes(
-						bookingsData?.start_time?.toISOString(),
-						findBooking?.start_time?.toISOString()
+						bookingsData?.start_time ?? undefined,
+						findBooking?.start_time ?? undefined
 					);
 					const inputStart = new Date(start_time);
 					const firstStart = inputStart.setMinutes(inputStart.getMinutes() - calcDuration);
@@ -740,12 +782,12 @@ export async function updateBookingStartGroupAdmin(
 					const newBookings = bookings.map((booking, i) => {
 						if (i === 0) {
 							const duration = durationInMinutes(
-								booking?.start_time?.toISOString(),
-								booking?.end_time?.toISOString()
+								booking?.start_time ?? undefined,
+								booking?.end_time ?? undefined
 							);
 							const nEnd = new Date(firstStart);
 							const new_end_time = nEnd.setMinutes(nEnd.getMinutes() + duration);
-							previousEnd = booking?.end_time?.toISOString() ?? '';
+							previousEnd = booking?.end_time ?? '';
 							end = new Date(new_end_time).toISOString();
 							return {
 								booking_id: booking.booking_id,
@@ -753,16 +795,16 @@ export async function updateBookingStartGroupAdmin(
 								end_time: new Date(new_end_time).toISOString(),
 							};
 						} else {
-							const durationBetween = durationInMinutes(previousEnd, booking?.start_time?.toISOString());
+							const durationBetween = durationInMinutes(previousEnd, booking?.start_time ?? undefined);
 							const duration = durationInMinutes(
-								booking?.start_time?.toISOString(),
-								booking?.end_time?.toISOString()
+								booking?.start_time ?? undefined,
+								booking?.end_time ?? undefined
 							);
 							const nStart = new Date(end);
 							const new_start_time = nStart.setMinutes(nStart.getMinutes() + durationBetween);
 							const nEnd = new Date(new_start_time);
 							const new_end_time = nEnd.setMinutes(nEnd.getMinutes() + duration);
-							previousEnd = booking?.end_time?.toISOString() ?? '';
+							previousEnd = booking?.end_time ?? '';
 							end = new Date(new_end_time).toISOString();
 							return {
 								booking_id: booking.booking_id,
@@ -774,7 +816,7 @@ export async function updateBookingStartGroupAdmin(
 					const updatedBookings = await Promise.all(
 						newBookings.map(async (el) => {
 							const booking = await BookingDao.updateBookingStart(
-								el as UpdateBookingInput,
+								el as UpdateBookingRequest,
 								el.booking_id,
 								user_id
 							);
@@ -789,7 +831,7 @@ export async function updateBookingStartGroupAdmin(
 						.slice(0, findBookingIndex)
 						.reduce(
 							(total, b) =>
-								total + durationInMinutes(b?.start_time?.toISOString(), b.end_time?.toISOString()),
+								total + durationInMinutes(b?.start_time ?? undefined, b.end_time ?? undefined),
 							0
 						);
 					const inputStart = new Date(start_time);
@@ -797,8 +839,8 @@ export async function updateBookingStartGroupAdmin(
 					const newBookings = bookings.map((booking, i) => {
 						if (i === 0) {
 							const duration = durationInMinutes(
-								booking?.start_time?.toISOString(),
-								booking?.end_time?.toISOString()
+								booking?.start_time ?? undefined,
+								booking?.end_time ?? undefined
 							);
 							const nEnd = new Date(firstStart);
 							const new_end_time = nEnd.setMinutes(nEnd.getMinutes() + duration);
@@ -810,8 +852,8 @@ export async function updateBookingStartGroupAdmin(
 							};
 						} else {
 							const duration = durationInMinutes(
-								booking?.start_time?.toISOString(),
-								booking?.end_time?.toISOString()
+								booking?.start_time ?? undefined,
+								booking?.end_time ?? undefined
 							);
 							const new_start_time = new Date(end);
 							const nEnd = new Date(end);
@@ -827,7 +869,7 @@ export async function updateBookingStartGroupAdmin(
 					const updatedBookings = await Promise.all(
 						newBookings.map(async (el) => {
 							const booking = await BookingDao.updateBookingStart(
-								el as UpdateBookingInput,
+								el as UpdateBookingRequest,
 								el.booking_id,
 								user_id
 							);
@@ -851,15 +893,15 @@ export async function updateBookingStartGroupAdmin(
  * @summary Update booking start time for the first booking in a group and parent of the group
  * @operationId updateBookingStartFirstInGroupAdmin
  * @pathParam {string} booking_id
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateBookingRequest} application/json
  * @response 200 - Booking updated
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingResponse} 200.application/json
  * @response 500 - Error updating booking
  * @prisma_model booking
  * @prisma_model booking_history_log
  */
 export async function updateBookingStartFirstInGroupAdmin(
-	req: ValidatedRequest<UpdateBookingInput, { booking_id: string }>,
+	req: ValidatedRequest<UpdateBookingRequest, { booking_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -878,24 +920,24 @@ export async function updateBookingStartFirstInGroupAdmin(
 		let isEmployeeOfModule = false;
 		if (reservation_module && user_id) {
 			isEmployeeOfModule = reservation_module.employees.some(
-				(e: Employee) => e.business_user?.user_id === user_id
+				(e: EmployeeDAOResponse) => e.business_user?.user_id === user_id
 			);
 		}
 		if (isEmployeeOfModule) {
 			const bookingsData = await BookingDao.getBookingByIdWithChildren(req.params.booking_id);
 			const booking = await BookingDao.updateBookingStart(req.body, req.params.booking_id, user_id);
-			const children: Booking[] = bookingsData?.child_bookings ?? [];
+			const children = bookingsData?.child_bookings ?? [];
 			if (children.length > 0) {
 				const [firstBooking, ...restBookings] = children;
 				const firstBookingData = await BookingDao.updateBookingStart(
-					{ parent_booking_id: firstBooking?.parent_booking_id as string } as UpdateBookingInput,
+					{ parent_booking_id: firstBooking?.parent_booking_id as string } as UpdateBookingRequest,
 					firstBooking?.booking_id as string,
 					user_id
 				);
 				const updatedBookings = await Promise.all(
 					restBookings.map(async (el) => {
 						const booking = await BookingDao.updateBookingParent(
-							{ parent_booking_id: firstBooking?.booking_id as string } as UpdateBookingInput,
+							{ parent_booking_id: firstBooking?.booking_id as string } as UpdateBookingRequest,
 							el.booking_id,
 							user_id
 						);
@@ -919,15 +961,15 @@ export async function updateBookingStartFirstInGroupAdmin(
  * @tag Reservation
  * @summary Update multiple bookings
  * @operationId updateBookingGroupAdmin
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateMultipleBookingsRequest} application/json
  * @response 201 - Bookings updated
- * @responseContent {object} 201.application/json
+ * @responseContent {UpdateBookingGroupResponse} 201.application/json
  * @response 500 - Error updating booking
  * @prisma_model booking
  * @prisma_model booking_history_log
  */
 export async function updateBookingGroupAdmin(
-	req: ValidatedRequest<UpdateMultipleBookingsInput>,
+	req: ValidatedRequest<UpdateMultipleBookingsRequest>,
 	res: Response
 ): Promise<void> {
 	const { bookings, customer, deletedBookings } = req.body;
@@ -946,7 +988,9 @@ export async function updateBookingGroupAdmin(
 	});
 	let isEmployeeOfModule = false;
 	if (reservation_module && user_id) {
-		isEmployeeOfModule = reservation_module.employees.some((e: Employee) => e.business_user?.user_id === user_id);
+		isEmployeeOfModule = reservation_module.employees.some(
+			(e: EmployeeDAOResponse) => e.business_user?.user_id === user_id
+		);
 	}
 	// map to DAO’s single-service input
 	if (isEmployeeOfModule) {
@@ -959,7 +1003,7 @@ export async function updateBookingGroupAdmin(
 			...customerInput,
 			reservation_module_id,
 			// parent_booking_id set inside DAO for children
-		})) as UpdateBookingInput[];
+		})) as UpdateBookingRequest[];
 		const splittedInputs = splitConsecutiveSlots(inputs);
 
 		try {
@@ -1003,7 +1047,7 @@ export async function updateBookingGroupAdmin(
  * @description Calculates the number of no-shows, cancellations, total price, and new customers from a list of bookings.
  */
 
-export function calcBookings(bookings: Booking[], start_date: string) {
+export function calcBookings(bookings: BookingForAnalyticsDAOResponse[], start_date: string) {
 	const start = moment(start_date);
 	const newCustomers = new Set<string>();
 
@@ -1058,7 +1102,12 @@ interface DailyStats {
  * @description Sorts bookings into daily stats within a date range, aggregating counts and total prices.
  */
 
-export function sortBookingStats(bookings: Booking[], startDate: string, endDate: string, type: string): DailyStats[] {
+export function sortBookingStats(
+	bookings: BookingForAnalyticsDAOResponse[],
+	startDate: string,
+	endDate: string,
+	type: string
+): DailyStats[] {
 	const start: Moment = moment(startDate);
 	const end: Moment = moment(endDate);
 	const days: DailyStats[] = [];
@@ -1107,9 +1156,9 @@ export function sortBookingStats(bookings: Booking[], startDate: string, endDate
  * @tag Reservation
  * @summary Get analytics for bookings
  * @operationId listBookingsAnalytics
- * @bodyContent {object} application/json
+ * @bodyContent {BookingsAnalyticsParams} application/json
  * @response 200 - Analytics retrieved
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingsAnalyticsResponse} 200.application/json
  * @response 500 - Error retrieving analytics
  * @prisma_model booking
  * @prisma_model customers
@@ -1171,9 +1220,9 @@ export async function getBookingsAnalytics(
  * @tag Reservation
  * @summary List bookings courses for the current reservation module
  * @operationId listBookingsCoursesByReservationModuleId
- * @bodyContent {object} application/json
+ * @bodyContent {ListBookingsParams} application/json
  * @response 200 - Bookings retrieved
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingCoursesByModuleDAOResponse[]} 200.application/json
  * @response 500 - Error retrieving bookings
  * @prisma_model booking
  */
@@ -1203,9 +1252,9 @@ export async function listBookingsCoursesByReservationModuleId(
  * @tag Reservation
  * @summary List bookings courses for the current reservation module
  * @operationId listBookingsCourses
- * @bodyContent {object} application/json
+ * @bodyContent {ListBookingsParams} application/json
  * @response 200 - Bookings retrieved
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingCoursesByModuleDAOResponse[]} 200.application/json
  * @response 500 - Error retrieving bookings
  * @prisma_model booking
  */
@@ -1226,7 +1275,7 @@ export async function listBookingsCourses(req: ValidatedRequest<ListBookingsPara
  * @operationId getBookingById
  * @pathParam {string} booking_id
  * @response 200 - Booking retrieved
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingCourseDAOResponse} 200.application/json
  * @response 404 - Booking not found
  * @response 500 - Error retrieving booking
  * @prisma_model booking
@@ -1252,15 +1301,15 @@ export async function getBookingCourse(
  * @tag Reservation
  * @summary Create a new booking course
  * @operationId createBookingCourse
- * @bodyContent {object} application/json
+ * @bodyContent {CreateBookingCourseRequest} application/json
  * @response 201 - Booking created
- * @responseContent {object} 201.application/json
+ * @responseContent {BookingCourseDAOResponse} 201.application/json
  * @response 500 - Error creating booking
  * @prisma_model booking
  * @prisma_model booking_history_log
  */
 export async function createBookingCourse(
-	req: ValidatedRequest<CreateBookingCourseInput>,
+	req: ValidatedRequest<CreateBookingCourseRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -1268,7 +1317,7 @@ export async function createBookingCourse(
 		const bookingInput = {
 			...req.body,
 			reservation_module_id,
-		} as CreateBookingCourseInput;
+		} as CreateBookingCourseRequest;
 		const booking = await BookingDao.createBookingCourse(bookingInput);
 		res.status(201).json(booking);
 	} catch (error) {
@@ -1281,15 +1330,15 @@ export async function createBookingCourse(
  * @summary Update an existing booking course
  * @operationId updateBookingCourse
  * @pathParam {string} booking_id
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateBookingCourseRequest} application/json
  * @response 200 - Booking updated
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingCourseDAOResponse} 200.application/json
  * @response 500 - Error updating booking
  * @prisma_model booking
  * @prisma_model booking_history_log
  */
 export async function updateBookingCourse(
-	req: ValidatedRequest<UpdateBookingCourseInput, { booking_id: string }>,
+	req: ValidatedRequest<UpdateBookingCourseRequest, { booking_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -1304,14 +1353,14 @@ export async function updateBookingCourse(
  * @tag Reservation
  * @summary Create a new course participant booking
  * @operationId newBookingCourseParticipant
- * @bodyContent {object} application/json
+ * @bodyContent {CreateBookingCourseParticipantRequest} application/json
  * @response 201 - Course participant created
- * @responseContent {object} 201.application/json
+ * @responseContent {BookingCourseParticipantRef} 201.application/json
  * @response 500 - Error creating course participant
  * @prisma_model booking_course_participant
  */
 export async function newBookingCourseParticipant(
-	req: ValidatedRequest<CreateCourseParticipantInput>,
+	req: ValidatedRequest<CreateBookingCourseParticipantRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -1319,7 +1368,7 @@ export async function newBookingCourseParticipant(
 		const input = {
 			...req.body,
 			reservation_module_id,
-		} as CreateCourseParticipantInput;
+		} as CreateBookingCourseParticipantRequest;
 		const participant = await BookingDao.createBookingCourseParticipant(input);
 		res.status(201).json(participant);
 	} catch (error) {
@@ -1331,14 +1380,14 @@ export async function newBookingCourseParticipant(
  * @tag Reservation
  * @summary Cancel a course participant booking
  * @operationId cancelBookingCourseParticipant
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateBookingCourseParticipantRequest} application/json
  * @response 200 - Course participant cancelled
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingCourseParticipantRef} 200.application/json
  * @response 500 - Error cancelling course participant
  * @prisma_model booking_course_participant
  */
 export async function cancelBookingCourseParticipant(
-	req: ValidatedRequest<UpdateCourseParticipantInput>,
+	req: ValidatedRequest<UpdateBookingCourseParticipantRequest>,
 	res: Response
 ): Promise<void> {
 	try {

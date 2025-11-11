@@ -1,12 +1,16 @@
 import prisma from '../../prisma/prisma';
-import type { Service, CreateServiceInput, UpdateServiceInput } from '../../types/reservations/Service.ts';
+import type {
+	CreateServiceRequest,
+	UpdateServiceRequest,
+	ServiceDAOResponse,
+} from '../../schemas/dto/reservations/service/service.dto.js';
 /**
  * Retrieves all services for a given business ID.
  * @param {string} businessId - The ID of the business to retrieve services for.
- * @returns {Promise<Service[]>} A promise that resolves to an array of services.
+ * @returns {Promise<ServiceDAOResponse[]>} A promise that resolves to an array of services.
  * @throws {Error} If there is an error retrieving the services.
  */
-export async function getServicesByReservationModuleId(reservationModuleId: string): Promise<Service[]> {
+export async function getServicesByReservationModuleId(reservationModuleId: string): Promise<ServiceDAOResponse[]> {
 	try {
 		let services = await prisma.service.findMany({
 			where: {
@@ -26,11 +30,14 @@ export async function getServicesByReservationModuleId(reservationModuleId: stri
 
 /**
  * Creates a new service.
- * @param {CreateServiceInput} serviceData - The data for the new service.
- * @returns {Promise<Service>} A promise that resolves to the created service.
+ * @param {CreateServiceRequest} serviceData - The data for the new service.
+ * @returns {Promise<ServiceDAOResponse>} A promise that resolves to the created service.
  * @throws {Error} If there is an error creating the service.
  */
-export async function createService(serviceData: CreateServiceInput, reservationModuleId: string): Promise<Service> {
+export async function createService(
+	serviceData: CreateServiceRequest,
+	reservationModuleId: string
+): Promise<ServiceDAOResponse> {
 	try {
 		let service = await prisma.service.create({
 			data: {
@@ -64,11 +71,11 @@ export async function createService(serviceData: CreateServiceInput, reservation
 /**
  * Updates an existing service.
  * @param {string} serviceId - The ID of the service to update.
- * @param {Partial<CreateServiceInput>} serviceData - The data to update the service with.
- * @returns {Promise<Service>} A promise that resolves to the updated service.
+ * @param {UpdateServiceRequest} serviceData - The data to update the service with.
+ * @returns {Promise<ServiceDAOResponse>} A promise that resolves to the updated service.
  * @throws {Error} If there is an error updating the service.
  */
-export async function updateService(serviceId: string, serviceData: UpdateServiceInput): Promise<Service> {
+export async function updateService(serviceId: string, serviceData: UpdateServiceRequest): Promise<ServiceDAOResponse> {
 	try {
 		const current = await prisma.service.findUnique({
 			where: { service_id: serviceId },
@@ -113,10 +120,10 @@ export async function deleteService(serviceId: string): Promise<void> {
 /**
  * Retrieves a service by its ID.
  * @param {string} serviceId - The ID of the service to retrieve.
- * @returns {Promise<Service | null>} A promise that resolves to the service or null if not found.
+ * @returns {Promise<ServiceDAOResponse | null>} A promise that resolves to the service or null if not found.
  * @throws {Error} If there is an error retrieving the service.
  */
-export async function getServiceById(serviceId: string): Promise<Service | null> {
+export async function getServiceById(serviceId: string): Promise<ServiceDAOResponse | null> {
 	try {
 		let service = await prisma.service.findUnique({
 			where: { service_id: serviceId },
@@ -136,10 +143,13 @@ export async function getServiceById(serviceId: string): Promise<Service | null>
  * Connects a service to a service category.
  * @param {string} serviceId - The ID of the service to connect.
  * @param {string} serviceCategoryId - The ID of the service category to connect to.
- * @returns {Promise<Service>} A promise that resolves to the updated service.
+ * @returns {Promise<ServiceDAOResponse>} A promise that resolves to the updated service.
  * @throws {Error} If there is an error connecting the service to the category.
  */
-export async function connectServiceToCategory(serviceId: string, serviceCategoryId: string): Promise<Service> {
+export async function connectServiceToCategory(
+	serviceId: string,
+	serviceCategoryId: string
+): Promise<ServiceDAOResponse> {
 	try {
 		let service = await prisma.service.update({
 			where: { service_id: serviceId },
@@ -158,10 +168,10 @@ export async function connectServiceToCategory(serviceId: string, serviceCategor
 /**
  * Disconnects a service from its service category.
  * @param {string} serviceId - The ID of the service to disconnect.
- * @returns {Promise<Service>} A promise that resolves to the updated service.
+ * @returns {Promise<ServiceDAOResponse>} A promise that resolves to the updated service.
  * @throws {Error} If there is an error disconnecting the service from the category.
  */
-export async function disconnectServiceFromCategory(serviceId: string): Promise<Service> {
+export async function disconnectServiceFromCategory(serviceId: string): Promise<ServiceDAOResponse> {
 	try {
 		let service = await prisma.service.update({
 			where: { service_id: serviceId },
@@ -180,9 +190,9 @@ export async function disconnectServiceFromCategory(serviceId: string): Promise<
  * Retrieves all services for a given service category ID.
  *
  * @param {string} serviceCategoryId - The ID of the service category to retrieve services for.
- * @returns {Promise<Service[]>} A promise that resolves to an array of services.
+ * @returns {Promise<ServiceDAOResponse[]>} A promise that resolves to an array of services.
  */
-export async function getServicesByCategoryId(serviceCategoryId: string): Promise<Service[]> {
+export async function getServicesByCategoryId(serviceCategoryId: string): Promise<ServiceDAOResponse[]> {
 	try {
 		let services = await prisma.service.findMany({
 			where: { service_category_id: serviceCategoryId },
@@ -202,10 +212,10 @@ export async function getServicesByCategoryId(serviceCategoryId: string): Promis
  * Creates a new service assignment to an employee.
  * @param {string} employee_id - The ID of the employee to assign the service to.
  * @param {string} service_id - The ID of the service to be assigned.
- * @returns {Promise<Service>} A promise that resolves to the created service assignment.
+ * @returns {Promise<ServiceDAOResponse>} A promise that resolves to the created service assignment.
  * @throws {Error} If there is an error creating the service assignment.
  */
-export async function createServiceAssigment(employee_id: string, service_id: string): Promise<Service> {
+export async function createServiceAssigment(employee_id: string, service_id: string): Promise<ServiceDAOResponse> {
 	try {
 		let serviceAssignment = await prisma.service_assignment.create({
 			data: {
@@ -253,10 +263,10 @@ export async function deleteServiceAssigment(employee_id: string, service_id: st
 /**
  * Retrieves all services for a given reservation module ID.
  * @param {string} reservationModuleId - The ID of the reservation module to retrieve services for.
- * @returns {Promise<Service[]>} A promise that resolves to an array of services.
+ * @returns {Promise<ServiceDAOResponse[]>} A promise that resolves to an array of services.
  * @throws {Error} If there is an error retrieving the services.
  */
-export async function getServicesByReservationId(reservationModuleId: string): Promise<Service[]> {
+export async function getServicesByReservationId(reservationModuleId: string): Promise<ServiceDAOResponse[]> {
 	try {
 		let services = await prisma.service.findMany({
 			where: {

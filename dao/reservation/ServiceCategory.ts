@@ -1,19 +1,19 @@
 import prisma from '../../prisma/prisma';
 import type {
-	CreateServiceCategoryInput,
-	ServiceCategory,
-	UpdateServiceCategoryInput,
-} from '../../types/reservations/ServiceCategory.ts';
+	CreateServiceCategoryRequest,
+	UpdateServiceCategoryRequest,
+	ServiceCategoryDAOResponse,
+} from '../../schemas/dto/reservations/service-category/service-category.dto.js';
 
 /**
  * Retrieves all service categories for a given business ID.
  * @param {string} businessId - The ID of the business to retrieve service categories for.
- * @returns {Promise<ServiceCategory[]>} A promise that resolves to an array of service categories.
+ * @returns {Promise<ServiceCategoryDAOResponse[]>} A promise that resolves to an array of service categories.
  * @throws {Error} If there is an error retrieving the service categories.
  */
 export async function getServiceCategoriesByReservationModuleId(
 	reservationModuleId: string
-): Promise<ServiceCategory[]> {
+): Promise<ServiceCategoryDAOResponse[]> {
 	try {
 		let serviceCategories = await prisma.service_category.findMany({
 			where: {
@@ -30,14 +30,14 @@ export async function getServiceCategoriesByReservationModuleId(
 }
 /**
  * Creates a new service category.
- * @param {CreateServiceCategoryInput} serviceCategoryData - The data for the new service category.
- * @returns {Promise<ServiceCategory>} A promise that resolves to the created service category.
+ * @param {CreateServiceCategoryRequest} serviceCategoryData - The data for the new service category.
+ * @returns {Promise<ServiceCategoryDAOResponse>} A promise that resolves to the created service category.
  * @throws {Error} If there is an error creating the service category.
  */
 export async function createServiceCategory(
-	serviceCategoryData: CreateServiceCategoryInput,
+	serviceCategoryData: CreateServiceCategoryRequest,
 	reservationModuleId: string
-): Promise<ServiceCategory> {
+): Promise<ServiceCategoryDAOResponse> {
 	try {
 		const parentRelation = serviceCategoryData.parent_id
 			? { parent: { connect: { parent_id: serviceCategoryData.parent_id } } }
@@ -61,14 +61,14 @@ export async function createServiceCategory(
 /**
  * Updates an existing service category.
  * @param {string} serviceCategoryId - The ID of the service category to update.
- * @param {ServiceCategory} serviceCategoryData - The data to update the service category with.
- * @returns {Promise<ServiceCategory>} A promise that resolves to the updated service category.
+ * @param {UpdateServiceCategoryRequest} serviceCategoryData - The data to update the service category with.
+ * @returns {Promise<ServiceCategoryDAOResponse>} A promise that resolves to the updated service category.
  * @throws {Error} If there is an error updating the service category.
  */
 export async function updateServiceCategory(
 	serviceCategoryId: string,
-	serviceCategoryData: UpdateServiceCategoryInput
-): Promise<ServiceCategory> {
+	serviceCategoryData: UpdateServiceCategoryRequest
+): Promise<ServiceCategoryDAOResponse> {
 	try {
 		const parentRelation = serviceCategoryData.parent_id
 			? { parent: { connect: { parent_id: serviceCategoryData.parent_id } } }
@@ -105,10 +105,10 @@ export async function deleteServiceCategory(serviceCategoryId: string): Promise<
 /**
  * Retrieves a service category by its ID.
  * @param {string} serviceCategoryId - The ID of the service category to retrieve.
- * @returns {Promise<ServiceCategory | null>} A promise that resolves to the service category, or null if not found.
+ * @returns {Promise<ServiceCategoryDAOResponse | null>} A promise that resolves to the service category, or null if not found.
  * @throws {Error} If there is an error retrieving the service category.
  */
-export async function getServiceCategoryById(serviceCategoryId: string): Promise<ServiceCategory | null> {
+export async function getServiceCategoryById(serviceCategoryId: string): Promise<ServiceCategoryDAOResponse | null> {
 	try {
 		let serviceCategory = await prisma.service_category.findUnique({
 			where: { service_category_id: serviceCategoryId },

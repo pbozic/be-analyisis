@@ -1,5 +1,11 @@
 import prisma from '../../prisma/prisma';
-import type { Employee, UpdateEmployeeInput } from '../../types/reservations/Employee.ts';
+import type {
+	EmployeeDAOResponse,
+	UpdateEmployeeRequest,
+	EmployeeByIdDAOResponse,
+	EmployeeWithSlotsDAOResponse,
+	EmployeeScheduleSlotsDAOResponse,
+} from '../../schemas/dto/reservations/employee/employee.dto.js';
 
 const cropped_user_columns = {
 	first_name: true,
@@ -8,12 +14,12 @@ const cropped_user_columns = {
 };
 
 /**
- * Retrieves all employees for a given business ID.
- * @param {string} businessId - The ID of the business to retrieve employees for.
- * @returns {Promise<Employee[]>} A promise that resolves to an array of employees.
+ * Retrieves all employees for a given reservation module.
+ * @param {string} reservationModuleId - The ID of the reservation module to retrieve employees for.
+ * @returns {Promise<EmployeeDAOResponse[]>} A promise that resolves to an array of employees.
  * @throws {Error} If there is an error retrieving the employees.
  */
-export async function getEmployeesByReservationModuleId(reservationModuleId: string): Promise<Employee[]> {
+export async function getEmployeesByReservationModuleId(reservationModuleId: string): Promise<EmployeeDAOResponse[]> {
 	try {
 		let employees = await prisma.employee.findMany({
 			where: {
@@ -45,7 +51,7 @@ export async function getEmployeesByReservationModuleId(reservationModuleId: str
  * 	reservation_module_id: string;
  * 	business_users_id: string;
  * }} employeeData - The data for the new employee.
- * @returns {Promise<Employee>} A promise that resolves to the created employee.
+ * @returns {Promise<EmployeeDAOResponse>} A promise that resolves to the created employee.
  * @throws {Error} If there is an error creating the employee.
  */
 export async function createEmployee(employeeData: {
@@ -57,7 +63,7 @@ export async function createEmployee(employeeData: {
 	telephone: string;
 	telephone_code?: string;
 	// telephone_number?: string;
-}): Promise<Employee> {
+}): Promise<EmployeeDAOResponse> {
 	try {
 		let employee = await prisma.employee.create({
 			data: employeeData,
@@ -102,11 +108,14 @@ export async function deleteEmployee(employeeId: string): Promise<void> {
 /**
  * Updates an existing employee.
  * @param {string} employeeId - The ID of the employee to update.
- * @param {UpdateEmployeeInput} employeeData - The data to update the employee with.
- * @returns {Promise<Employee>} A promise that resolves to the updated employee.
+ * @param {UpdateEmployeeRequest} employeeData - The data to update the employee with.
+ * @returns {Promise<EmployeeDAOResponse>} A promise that resolves to the updated employee.
  * @throws {Error} If there is an error updating the employee.
  */
-export async function updateEmployee(employeeId: string, employeeData: UpdateEmployeeInput): Promise<Employee> {
+export async function updateEmployee(
+	employeeId: string,
+	employeeData: UpdateEmployeeRequest
+): Promise<EmployeeDAOResponse> {
 	try {
 		let employee = await prisma.employee.findFirst({
 			where: {
@@ -160,7 +169,7 @@ export async function updateEmployee(employeeId: string, employeeData: UpdateEmp
  * @returns A promise that resolves to the employee, or null if not found.
  */
 
-export async function getEmployeeById(employeeId: string): Promise<Employee | null> {
+export async function getEmployeeById(employeeId: string): Promise<EmployeeByIdDAOResponse | null> {
 	try {
 		let employee = await prisma.employee.findUnique({
 			where: {
@@ -184,7 +193,7 @@ export async function getEmployeeById(employeeId: string): Promise<Employee | nu
 /**
  * Retrieves all employees for a given reservation module ID, including their schedules and slots.
  * @param {string} reservationModuleId - The ID of the business to retrieve employees for.
- * @returns {Promise<Employee[]>} A promise that resolves to an array of employees.
+ * @returns {Promise<EmployeeWithSlotsDAOResponse[]>} A promise that resolves to an array of employees.
  * @throws {Error} If there is an error retrieving the employees.
  */
 export async function getEmployeesByReservationModuleIdWithSlots(
@@ -192,7 +201,7 @@ export async function getEmployeesByReservationModuleIdWithSlots(
 	startDate: string,
 	endDate: string,
 	employee_ids: string[]
-): Promise<Employee[]> {
+): Promise<EmployeeWithSlotsDAOResponse[]> {
 	try {
 		let employees = await prisma.employee.findMany({
 			where: {
@@ -254,7 +263,7 @@ export async function getEmployeesByReservationModuleIdWithSlots(
  * @param {string} reservationModuleId - The reservation module ID.
  * @param {string} startDate - The start date of the range.
  * @param {string} endDate - The end date of the range.
- * @returns {Promise<Employee[]>} A promise that resolves to the retrieved schedule slot record or null.
+ * @returns {Promise<EmployeeScheduleSlotsDAOResponse[]>} A promise that resolves to the retrieved schedule slot record or null.
  * @throws {Error} If there is an error retrieving the schedule slot.
  */
 export async function getScheduleSlotsByEmployeesIdAndDate(
@@ -262,7 +271,7 @@ export async function getScheduleSlotsByEmployeesIdAndDate(
 	reservationModuleId: string,
 	startDate: string,
 	endDate: string
-): Promise<Employee[]> {
+): Promise<EmployeeScheduleSlotsDAOResponse[]> {
 	try {
 		const record = await prisma.employee.findMany({
 			where: {
@@ -304,7 +313,7 @@ export async function getScheduleSlotsByEmployeesIdAndDate(
  * @returns A promise that resolves to the employee, or null if not found.
  */
 
-export async function getEmployeeByIdWithSchedules(employeeId: string): Promise<Employee | null> {
+export async function getEmployeeByIdWithSchedules(employeeId: string): Promise<EmployeeByIdDAOResponse | null> {
 	try {
 		let employee = await prisma.employee.findUnique({
 			where: {

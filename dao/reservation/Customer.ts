@@ -1,12 +1,18 @@
 import prisma from '../../prisma/prisma';
-import type { Customer, CreateCustomerInput, UpdateCustomerInput } from '../../types/reservations/Customer.ts';
+import type {
+	CustomerDAOResponse,
+	CreateCustomerRequest,
+	UpdateCustomerRequest,
+	CustomerByCodeDAOResponse,
+} from '../../schemas/dto/reservations/customer/customer.dto.js';
+
 /**
- * Retrieves all customers for a given business ID.
- * @param {string} businessId - The ID of the business to retrieve customers for.
- * @returns {Promise<Customer[]>} A promise that resolves to an array of customers.
+ * Retrieves all customers for a given reservation module.
+ * @param {string} reservationModuleId - The ID of the reservation module to retrieve customers for.
+ * @returns {Promise<CustomerDAOResponse[]>} A promise that resolves to an array of customers.
  * @throws {Error} If there is an error retrieving the customers.
  */
-export async function getCustomersByReservationModuleId(reservationModuleId: string): Promise<Customer[]> {
+export async function getCustomersByReservationModuleId(reservationModuleId: string): Promise<CustomerDAOResponse[]> {
 	try {
 		let customers = await prisma.customers.findMany({
 			where: {
@@ -24,14 +30,14 @@ export async function getCustomersByReservationModuleId(reservationModuleId: str
 }
 /**
  * Creates a new customer.
- * @param {Customer} customerData - The data for the new customer.
- * @returns {Promise<Customer>} A promise that resolves to the created customer.
+ * @param {CreateCustomerRequest} customerData - The data for the new customer.
+ * @returns {Promise<CustomerDAOResponse>} A promise that resolves to the created customer.
  * @throws {Error} If there is an error creating the customer.
  */
 export async function createCustomer(
-	customerData: CreateCustomerInput,
+	customerData: CreateCustomerRequest,
 	reservationModuleId: string
-): Promise<Customer> {
+): Promise<CustomerDAOResponse> {
 	try {
 		let userExists = await prisma.users.findUnique({
 			where: { telephone: customerData.telephone },
@@ -58,11 +64,14 @@ export async function createCustomer(
 /**
  * Updates an existing customer.
  * @param {string} customerId - The ID of the customer to update.
- * @param {UpdateCustomerInput} customerData - The data to update the customer with.
- * @returns {Promise<Customer>} A promise that resolves to the updated customer.
+ * @param {UpdateCustomerRequest} customerData - The data to update the customer with.
+ * @returns {Promise<CustomerDAOResponse>} A promise that resolves to the updated customer.
  * @throws {Error} If there is an error updating the customer.
  */
-export async function updateCustomer(customerId: string, customerData: UpdateCustomerInput): Promise<Customer> {
+export async function updateCustomer(
+	customerId: string,
+	customerData: UpdateCustomerRequest
+): Promise<CustomerDAOResponse> {
 	try {
 		let customer = await prisma.customers.update({
 			where: {
@@ -102,10 +111,10 @@ export async function deleteCustomer(customerId: string): Promise<void> {
 /**
  * Retrieves a customer by its ID.
  * @param {string} customerId - The ID of the customer to retrieve.
- * @returns {Promise<Customer>} A promise that resolves to the retrieved customer.
+ * @returns {Promise<CustomerDAOResponse | null>} A promise that resolves to the retrieved customer.
  * @throws {Error} If there is an error retrieving the customer.
  */
-export async function getCustomerById(customerId: string): Promise<Customer | null> {
+export async function getCustomerById(customerId: string): Promise<CustomerDAOResponse | null> {
 	try {
 		let customer = await prisma.customers.findUnique({
 			where: {
@@ -125,10 +134,10 @@ export async function getCustomerById(customerId: string): Promise<Customer | nu
 /**
  * Retrieves a customer by its code.
  * @param {string} code - The code of the customer to retrieve.
- * @returns {Promise<Customer>} A promise that resolves to the retrieved customer.
+ * @returns {Promise<CustomerByCodeDAOResponse | null>} A promise that resolves to the retrieved customer.
  * @throws {Error} If there is an error retrieving the customer.
  */
-export async function getCustomerByCode(code: string): Promise<Customer | null> {
+export async function getCustomerByCode(code: string): Promise<CustomerByCodeDAOResponse | null> {
 	try {
 		let customer = await prisma.customers.findUnique({
 			where: {

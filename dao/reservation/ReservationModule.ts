@@ -5,10 +5,11 @@ import type { Prisma as TPrisma } from '@prisma/client';
 
 import prisma from '../../prisma/prisma';
 import type {
-	ReservationModule,
-	UpdateReservationModuleInput,
-	UpdateReservationSettingsInput,
-} from '../../types/reservations/ReservationModule.ts';
+	ReservationModuleDAOResponse,
+	ReservationModulePublicDAOResponse,
+	UpdateReservationModuleRequest,
+	UpdateReservationSettingsRequest,
+} from '../../schemas/dto/reservations/reservation-module/reservation-module.dto.js';
 /**
  * Generates a unique reservation hash.
  *
@@ -41,12 +42,12 @@ async function generateUniqueReservationHash(tx: TPrisma.TransactionClient | nul
  *
  * @param {string} reservationModuleId
  * @param {TPrisma.TransactionClient | undefined} tx
- * @returns {Promise<ReservationModule | null>}
+ * @returns {Promise<ReservationModuleDAOResponse | null>}
  */
 export async function getReservationModuleById(
 	reservationModuleId: string,
 	tx?: TPrisma.TransactionClient
-): Promise<ReservationModule | null> {
+): Promise<ReservationModuleDAOResponse | null> {
 	const prisma_client = tx || prisma;
 	try {
 		return await prisma_client.reservation_module.findUnique({
@@ -68,12 +69,12 @@ export async function getReservationModuleById(
  *
  * @param {string} businessId
  * @param {TPrisma.TransactionClient | undefined} tx
- * @returns {Promise<ReservationModule | null>}
+ * @returns {Promise<ReservationModuleDAOResponse | null>}
  */
 export async function getReservationModuleByBusinessId(
 	businessId: string,
 	tx?: TPrisma.TransactionClient
-): Promise<ReservationModule | null> {
+): Promise<ReservationModuleDAOResponse | null> {
 	const prisma_client = tx || prisma;
 	try {
 		return await prisma_client.reservation_module.findUnique({
@@ -90,12 +91,12 @@ export async function getReservationModuleByBusinessId(
  *
  * @param {string} business_id
  * @param {TPrisma.TransactionClient | undefined} tx
- * @returns {Promise<ReservationModule>}
+ * @returns {Promise<ReservationModuleDAOResponse>}
  */
 export async function createReservationModule(
 	business_id: string,
 	tx?: TPrisma.TransactionClient
-): Promise<ReservationModule> {
+): Promise<ReservationModuleDAOResponse> {
 	const prisma_client = tx || prisma;
 	try {
 		return await prisma_client.reservation_module.create({
@@ -113,27 +114,30 @@ export async function createReservationModule(
  * Updates an existing reservation module.
  *
  * @param {string} reservationModuleId
- * @param {UpdateReservationModuleInput} data
+ * @param {UpdateReservationModuleRequest} data
  * @param {TPrisma.TransactionClient | undefined} tx
- * @returns {Promise<ReservationModule>}
+ * @returns {Promise<ReservationModuleDAOResponse>}
  */
 export async function updateReservationModule(
 	reservationModuleId: string,
-	data: UpdateReservationModuleInput,
+	data: UpdateReservationModuleRequest,
 	tx?: TPrisma.TransactionClient
-): Promise<ReservationModule> {
+): Promise<ReservationModuleDAOResponse> {
 	const prisma_client = tx || prisma;
 	try {
+		const updateData: Partial<UpdateReservationModuleRequest> = {};
+		if (data.hours_before_reschedule !== undefined)
+			updateData.hours_before_reschedule = data.hours_before_reschedule;
+		if (data.hours_before_cancel !== undefined) updateData.hours_before_cancel = data.hours_before_cancel;
+		if (data.publicly_visible !== undefined) updateData.publicly_visible = data.publicly_visible;
+		if (data.subscription_active_until !== undefined)
+			updateData.subscription_active_until = data.subscription_active_until;
+		if (data.subscription_expires_at !== undefined)
+			updateData.subscription_expires_at = data.subscription_expires_at;
+
 		return await prisma_client.reservation_module.update({
 			where: { reservation_module_id: reservationModuleId },
-			data: {
-				hours_before_reschedule: data.hours_before_reschedule,
-				hours_before_cancel: data.hours_before_cancel,
-				publicly_visible: data.publicly_visible,
-				subscription_id: data.subscription_id,
-				subscription_active_until: data.subscription_active_until,
-				subscription_expires_at: data.subscription_expires_at,
-			},
+			data: updateData,
 		});
 	} catch {
 		throw new Error('Error updating reservation module');
@@ -141,18 +145,18 @@ export async function updateReservationModule(
 }
 
 /**
- * Updates an existing reservation module.
+ * Updates an existing reservation module settings.
  *
  * @param {string} reservationModuleId
- * @param {UpdateReservationSettingsInput} data
+ * @param {UpdateReservationSettingsRequest} data
  * @param {TPrisma.TransactionClient | undefined} tx
- * @returns {Promise<ReservationModule>}
+ * @returns {Promise<ReservationModuleDAOResponse>}
  */
 export async function updateReservationModuleSettings(
 	reservationModuleId: string,
-	data: UpdateReservationSettingsInput,
+	data: UpdateReservationSettingsRequest,
 	tx?: TPrisma.TransactionClient
-): Promise<ReservationModule> {
+): Promise<ReservationModuleDAOResponse> {
 	const prisma_client = tx || prisma;
 	try {
 		return await prisma_client.reservation_module.update({
@@ -194,12 +198,12 @@ export async function deleteReservationModule(
  *
  * @param {string} reservationModuleId
  * @param {TPrisma.TransactionClient | undefined} tx
- * @returns {Promise<ReservationModule>}
+ * @returns {Promise<ReservationModuleDAOResponse>}
  */
 export async function disableReservations(
 	reservationModuleId: string,
 	tx?: TPrisma.TransactionClient
-): Promise<ReservationModule> {
+): Promise<ReservationModuleDAOResponse> {
 	const prisma_client = tx || prisma;
 	try {
 		return await prisma_client.reservation_module.update({
@@ -216,12 +220,12 @@ export async function disableReservations(
  *
  * @param {string} reservationModuleId
  * @param {TPrisma.TransactionClient | undefined} tx
- * @returns {Promise<ReservationModule>}
+ * @returns {Promise<ReservationModuleDAOResponse>}
  */
 export async function enableReservations(
 	reservationModuleId: string,
 	tx?: TPrisma.TransactionClient
-): Promise<ReservationModule> {
+): Promise<ReservationModuleDAOResponse> {
 	const prisma_client = tx || prisma;
 	try {
 		return await prisma_client.reservation_module.update({
@@ -238,12 +242,12 @@ export async function enableReservations(
  *
  * @param {string} hash_or_businessid
  * @param {TPrisma.TransactionClient | undefined} tx
- * @returns {Promise<ReservationModule | null>}
+ * @returns {Promise<ReservationModulePublicDAOResponse | null>}
  */
 export async function getReservationModuleByPublicLinkHashOrBusinessId(
 	hash_or_businessid: string,
 	tx?: TPrisma.TransactionClient
-): Promise<ReservationModule | null> {
+): Promise<ReservationModulePublicDAOResponse | null> {
 	const prisma_client = tx || prisma;
 	try {
 		return await prisma_client.reservation_module.findUnique({

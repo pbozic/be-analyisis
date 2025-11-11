@@ -1,27 +1,29 @@
 import prisma from '../../prisma/prisma';
 import type {
-	NotificationMessage,
-	CreateNotificationMessageInput,
-	UpdateNotificationMessageStatusInput,
-} from '../../types/reservationNotifications/NotificationMessage';
+	CreateNotificationMessageRequest,
+	UpdateNotificationMessageStatusRequest,
+	NotificationMessageResponse,
+} from '../../schemas/dto/reservations/notification-message/notification-message.dto.js';
 import type {
-	NotificationMessageEvent,
-	CreateNotificationMessageEventInput,
-} from '../../types/reservationNotifications/NotificationMessageEvent';
+	CreateNotificationMessageEventRequest,
+	NotificationMessageEventResponse,
+} from '../../schemas/dto/reservations/notification-message-event/notification-message-event.dto.js';
 import type {
-	NotificationProviderCredential,
-	CreateNotificationProviderCredentialInput,
-	UpdateNotificationProviderCredentialInput,
-} from '../../types/reservationNotifications/NotificationProviderCredential';
+	CreateNotificationProviderCredentialRequest,
+	UpdateNotificationProviderCredentialRequest,
+	NotificationProviderCredentialResponse,
+} from '../../schemas/dto/reservations/notification-provider-credential/notification-provider-credential.dto.js';
 import type { NotificationChannel } from '../../types/reservationNotifications/enums';
 
 /**
  * Retrieves a notification message by ID.
  * @param {string} notification_message_id - The message ID.
- * @returns {Promise<NotificationMessage | null>} A promise that resolves to the message or null.
+ * @returns {Promise<NotificationMessageResponse | null>} A promise that resolves to the message or null.
  * @throws {Error} If there is an error retrieving the message.
  */
-export async function getNotificationMessageById(notification_message_id: string): Promise<NotificationMessage | null> {
+export async function getNotificationMessageById(
+	notification_message_id: string
+): Promise<NotificationMessageResponse | null> {
 	try {
 		return await prisma.notification_message.findUnique({ where: { notification_message_id } });
 	} catch {
@@ -37,7 +39,7 @@ export async function getNotificationMessageById(notification_message_id: string
  * @param {string} [params.status] - Optional status filter.
  * @param {number} [params.take=50] - Max records to return.
  * @param {number} [params.skip=0] - Records to skip.
- * @returns {Promise<NotificationMessage[]>} A promise that resolves to the list of messages.
+ * @returns {Promise<NotificationMessageResponse[]>} A promise that resolves to the list of messages.
  * @throws {Error} If there is an error retrieving the messages.
  */
 export async function listNotificationMessages(params: {
@@ -46,7 +48,7 @@ export async function listNotificationMessages(params: {
 	status?: string;
 	take?: number;
 	skip?: number;
-}): Promise<NotificationMessage[]> {
+}): Promise<NotificationMessageResponse[]> {
 	try {
 		const { reservation_module_id, notification_event_id, status, take = 50, skip = 0 } = params;
 		return await prisma.notification_message.findMany({
@@ -66,11 +68,13 @@ export async function listNotificationMessages(params: {
 
 /**
  * Creates a notification message (usually by renderer/worker).
- * @param {CreateNotificationMessageInput} data - The message data.
- * @returns {Promise<NotificationMessage>} A promise that resolves to the created message.
+ * @param {CreateNotificationMessageRequest} data - The message data.
+ * @returns {Promise<NotificationMessageResponse>} A promise that resolves to the created message.
  * @throws {Error} If there is an error creating the message.
  */
-export async function createNotificationMessage(data: CreateNotificationMessageInput): Promise<NotificationMessage> {
+export async function createNotificationMessage(
+	data: CreateNotificationMessageRequest
+): Promise<NotificationMessageResponse> {
 	try {
 		return await prisma.notification_message.create({ data });
 	} catch {
@@ -80,13 +84,13 @@ export async function createNotificationMessage(data: CreateNotificationMessageI
 
 /**
  * Updates a notification message status / provider ids / error.
- * @param {UpdateNotificationMessageStatusInput} data - The update payload.
- * @returns {Promise<NotificationMessage>} A promise that resolves to the updated message.
+ * @param {UpdateNotificationMessageStatusRequest} data - The update payload.
+ * @returns {Promise<NotificationMessageResponse>} A promise that resolves to the updated message.
  * @throws {Error} If there is an error updating the message.
  */
 export async function updateNotificationMessageStatus(
-	data: UpdateNotificationMessageStatusInput
-): Promise<NotificationMessage> {
+	data: UpdateNotificationMessageStatusRequest
+): Promise<NotificationMessageResponse> {
 	try {
 		const { notification_message_id, ...rest } = data;
 		return await prisma.notification_message.update({
@@ -100,13 +104,13 @@ export async function updateNotificationMessageStatus(
 
 /**
  * Creates a delivery/audit event for a message.
- * @param {CreateNotificationMessageEventInput} data - The event data.
- * @returns {Promise<NotificationMessageEvent>} A promise that resolves to the created event.
+ * @param {CreateNotificationMessageEventRequest} data - The event data.
+ * @returns {Promise<NotificationMessageEventResponse>} A promise that resolves to the created event.
  * @throws {Error} If there is an error creating the event.
  */
 export async function createNotificationMessageEvent(
-	data: CreateNotificationMessageEventInput
-): Promise<NotificationMessageEvent> {
+	data: CreateNotificationMessageEventRequest
+): Promise<NotificationMessageEventResponse> {
 	try {
 		const payload = { ...data, occurred_at: data.occurred_at ?? new Date() };
 		return await prisma.notification_message_event.create({ data: payload });
@@ -118,12 +122,12 @@ export async function createNotificationMessageEvent(
 /**
  * Lists delivery/audit events for a message ordered by time.
  * @param {string} notification_message_id - The message ID.
- * @returns {Promise<NotificationMessageEvent[]>} A promise that resolves to the list of events.
+ * @returns {Promise<NotificationMessageEventResponse[]>} A promise that resolves to the list of events.
  * @throws {Error} If there is an error retrieving the events.
  */
 export async function listNotificationMessageEvents(
 	notification_message_id: string
-): Promise<NotificationMessageEvent[]> {
+): Promise<NotificationMessageEventResponse[]> {
 	try {
 		return await prisma.notification_message_event.findMany({
 			where: { notification_message_id },
@@ -138,13 +142,13 @@ export async function listNotificationMessageEvents(
  * Retrieves provider credentials for a module (optionally by channel).
  * @param {string} reservation_module_id - The reservation module ID.
  * @param {NotificationChannel} [channel] - Optional channel filter.
- * @returns {Promise<NotificationProviderCredential[]>} A promise that resolves to provider credentials.
+ * @returns {Promise<NotificationProviderCredentialResponse[]>} A promise that resolves to provider credentials.
  * @throws {Error} If there is an error retrieving the credentials.
  */
 export async function listNotificationProviderCredentials(
 	reservation_module_id: string,
 	channel?: NotificationChannel
-): Promise<NotificationProviderCredential[]> {
+): Promise<NotificationProviderCredentialResponse[]> {
 	try {
 		return await prisma.notification_provider_credential.findMany({
 			where: { reservation_module_id, ...(channel ? { channel } : {}) },
@@ -157,13 +161,13 @@ export async function listNotificationProviderCredentials(
 
 /**
  * Creates provider credentials for a module+channel+provider.
- * @param {CreateNotificationProviderCredentialInput} data - The credential data.
- * @returns {Promise<NotificationProviderCredential>} A promise that resolves to the created credentials.
+ * @param {CreateNotificationProviderCredentialRequest} data - The credential data.
+ * @returns {Promise<NotificationProviderCredentialResponse>} A promise that resolves to the created credentials.
  * @throws {Error} If there is an error creating the credentials.
  */
 export async function createNotificationProviderCredential(
-	data: CreateNotificationProviderCredentialInput
-): Promise<NotificationProviderCredential> {
+	data: CreateNotificationProviderCredentialRequest
+): Promise<NotificationProviderCredentialResponse> {
 	try {
 		return await prisma.notification_provider_credential.create({ data });
 	} catch {
@@ -174,14 +178,14 @@ export async function createNotificationProviderCredential(
 /**
  * Updates provider credentials.
  * @param {string} notification_provider_credential_id - The credential ID.
- * @param {UpdateNotificationProviderCredentialInput} data - The fields to update.
- * @returns {Promise<NotificationProviderCredential>} A promise that resolves to the updated credentials.
+ * @param {UpdateNotificationProviderCredentialRequest} data - The fields to update.
+ * @returns {Promise<NotificationProviderCredentialResponse>} A promise that resolves to the updated credentials.
  * @throws {Error} If there is an error updating the credentials.
  */
 export async function updateNotificationProviderCredential(
 	notification_provider_credential_id: string,
-	data: UpdateNotificationProviderCredentialInput
-): Promise<NotificationProviderCredential> {
+	data: UpdateNotificationProviderCredentialRequest
+): Promise<NotificationProviderCredentialResponse> {
 	try {
 		return await prisma.notification_provider_credential.update({
 			where: { notification_provider_credential_id },

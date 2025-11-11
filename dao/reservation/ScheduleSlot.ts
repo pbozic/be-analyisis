@@ -1,14 +1,18 @@
 import prisma from '../../prisma/prisma';
-import type { CreateScheduleSlotInput, UpdateScheduleSlotInput } from '../../types/reservations/Schedule.ts';
-import { ScheduleSlot } from '../../types/reservations/ScheduleSlot.ts';
+import type {
+	CreateScheduleSlotRequest,
+	UpdateScheduleSlotRequest,
+	ScheduleSlotDAOResponse,
+	ScheduleSlotWithScheduleDAOResponse,
+} from '../../schemas/dto/reservations/schedule-slot/schedule-slot.dto.js';
 
 /**
  * Retrieves all schedule slots for a given schedule ID.
  * @param {string} scheduleId - The schedule ID.
- * @returns {Promise<ScheduleSlot[]>} A promise that resolves to an array of schedule slot records.
+ * @returns {Promise<ScheduleSlotDAOResponse[]>} A promise that resolves to an array of schedule slot records.
  * @throws {Error} If there is an error retrieving the schedule slots.
  */
-export async function getScheduleSlotsByScheduleId(scheduleId: string): Promise<ScheduleSlot[]> {
+export async function getScheduleSlotsByScheduleId(scheduleId: string): Promise<ScheduleSlotDAOResponse[]> {
 	try {
 		const records = await prisma.schedule_slot.findMany({
 			where: { schedule_id: scheduleId },
@@ -21,11 +25,11 @@ export async function getScheduleSlotsByScheduleId(scheduleId: string): Promise<
 
 /**
  * Creates a new schedule slot.
- * @param {CreateScheduleSlotInput} data - The data for the new schedule slot.
- * @returns {Promise<ScheduleSlot>} A promise that resolves to the created schedule slot record.
+ * @param {CreateScheduleSlotRequest} data - The data for the new schedule slot.
+ * @returns {Promise<ScheduleSlotDAOResponse>} A promise that resolves to the created schedule slot record.
  * @throws {Error} If there is an error creating the schedule slot.
  */
-export async function createScheduleSlot(data: CreateScheduleSlotInput): Promise<ScheduleSlot> {
+export async function createScheduleSlot(data: CreateScheduleSlotRequest): Promise<ScheduleSlotDAOResponse> {
 	try {
 		const record = await prisma.schedule_slot.create({
 			data: {
@@ -46,11 +50,14 @@ export async function createScheduleSlot(data: CreateScheduleSlotInput): Promise
 /**
  * Updates an existing schedule slot.
  * @param {string} id - The ID of the record to update.
- * @param {UpdateScheduleSlotInput} data - The data to update the record with.
- * @returns {Promise<ScheduleSlot>} A promise that resolves to the updated schedule slot record.
+ * @param {UpdateScheduleSlotRequest} data - The data to update the record with.
+ * @returns {Promise<ScheduleSlotDAOResponse>} A promise that resolves to the updated schedule slot record.
  * @throws {Error} If there is an error updating the schedule slot.
  */
-export async function updateScheduleSlot(id: string, data: UpdateScheduleSlotInput): Promise<ScheduleSlot> {
+export async function updateScheduleSlot(
+	id: string,
+	data: UpdateScheduleSlotRequest
+): Promise<ScheduleSlotDAOResponse> {
 	try {
 		const record = await prisma.schedule_slot.update({
 			where: { schedule_slot_id: id },
@@ -88,10 +95,10 @@ export async function deleteScheduleSlot(id: string): Promise<void> {
 /**
  * Retrieves a schedule slot by ID.
  * @param {string} id - The ID of the schedule slot record.
- * @returns {Promise<ScheduleSlot | null>} A promise that resolves to the retrieved schedule slot record or null.
+ * @returns {Promise<ScheduleSlotDAOResponse | null>} A promise that resolves to the retrieved schedule slot record or null.
  * @throws {Error} If there is an error retrieving the schedule slot.
  */
-export async function getScheduleSlotById(id: string): Promise<ScheduleSlot | null> {
+export async function getScheduleSlotById(id: string): Promise<ScheduleSlotDAOResponse | null> {
 	try {
 		const record = await prisma.schedule_slot.findUnique({
 			where: { schedule_slot_id: id },
@@ -110,13 +117,13 @@ export async function getScheduleSlotById(id: string): Promise<ScheduleSlot | nu
  * Retrieves all schedule slots for a given employee ID and dates.
  * @param {string} employee_id - The employee ID.
  * @param {Array} dates - An array of dates to filter the schedule slots.
- * @returns {Promise<ScheduleSlot[]>} A promise that resolves to an array of schedule slot records.
+ * @returns {Promise<ScheduleSlotWithScheduleDAOResponse[]>} A promise that resolves to an array of schedule slot records.
  * @throws {Error} If there is an error retrieving the schedule slots.
  */
 export async function getScheduleSlotsByEmployeeIdAndDates(
 	employee_id: string,
 	dates: Array<string>
-): Promise<ScheduleSlot[]> {
+): Promise<ScheduleSlotWithScheduleDAOResponse[]> {
 	try {
 		const records = await prisma.schedule_slot.findMany({
 			where: {

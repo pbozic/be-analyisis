@@ -1,13 +1,18 @@
 import prisma from '../../prisma/prisma';
-import type { Location, CreateLocationInput, UpdateLocationInput } from '../../types/reservations/Location.ts';
+import type {
+	LocationDAOResponse,
+	CreateLocationRequest,
+	UpdateLocationRequest,
+	LocationWithSchedulesDAOResponse,
+} from '../../schemas/dto/reservations/location/location.dto.js';
 
 /**
- * Retrieves all locations for a given business ID.
- * @param {string} reservationModuleId - The ID of the business to retrieve locations for.
- * @returns {Promise<Location[]>} A promise that resolves to an array of locations.
+ * Retrieves all locations for a given reservation module.
+ * @param {string} reservationModuleId - The ID of the reservation module to retrieve locations for.
+ * @returns {Promise<LocationDAOResponse[]>} A promise that resolves to an array of locations.
  * @throws {Error} If there is an error retrieving the locations.
  */
-export async function getLocationsByReservationModuleId(reservationModuleId: string): Promise<Location[]> {
+export async function getLocationsByReservationModuleId(reservationModuleId: string): Promise<LocationDAOResponse[]> {
 	try {
 		let locations = await prisma.location.findMany({
 			where: {
@@ -26,14 +31,14 @@ export async function getLocationsByReservationModuleId(reservationModuleId: str
 
 /**
  * Creates a new location.
- * @param {CreateLocationInput} locationData - The data for the new location.
- * @returns {Promise<Location>} A promise that resolves to the created location.
+ * @param {CreateLocationRequest} locationData - The data for the new location.
+ * @returns {Promise<LocationDAOResponse>} A promise that resolves to the created location.
  * @throws {Error} If there is an error creating the location.
  */
 export async function createLocation(
-	locationData: CreateLocationInput,
+	locationData: CreateLocationRequest,
 	reservation_module_id: string
-): Promise<Location> {
+): Promise<LocationDAOResponse> {
 	try {
 		let location = await prisma.location.create({
 			data: {
@@ -60,11 +65,14 @@ export async function createLocation(
 /**
  * Updates an existing location.
  * @param {string} locationId - The ID of the location to update.
- * @param {UpdateLocationInput} locationData - The data to update the location with.
- * @returns {Promise<Location>} A promise that resolves to the updated location.
+ * @param {UpdateLocationRequest} locationData - The data to update the location with.
+ * @returns {Promise<LocationDAOResponse>} A promise that resolves to the updated location.
  * @throws {Error} If there is an error updating the location.
  */
-export async function updateLocation(locationId: string, locationData: UpdateLocationInput): Promise<Location> {
+export async function updateLocation(
+	locationId: string,
+	locationData: UpdateLocationRequest
+): Promise<LocationDAOResponse> {
 	try {
 		let location = await prisma.location.update({
 			where: { location_id: locationId },
@@ -103,10 +111,10 @@ export async function deleteLocation(locationId: string): Promise<void> {
 /**
  * Retrieves a location by its ID.
  * @param {string} locationId - The ID of the location to retrieve.
- * @returns {Promise<Location>} A promise that resolves to the retrieved location.
+ * @returns {Promise<LocationDAOResponse | null>} A promise that resolves to the retrieved location.
  * @throws {Error} If there is an error retrieving the location.
  */
-export async function getLocationById(locationId: string): Promise<Location | null> {
+export async function getLocationById(locationId: string): Promise<LocationDAOResponse | null> {
 	try {
 		let location = await prisma.location.findUnique({
 			where: { location_id: locationId },
@@ -122,12 +130,14 @@ export async function getLocationById(locationId: string): Promise<Location | nu
 }
 
 /**
- * Retrieves all locations for a given reservation module ID, including their schedules.
- * @param {string} reservationModuleId - The ID of the reservation module to retrieve locations for.
- * @returns {Promise<Location[]>} A promise that resolves to an array of locations with their schedules.
- * @throws {Error} If there is an error retrieving the locations with schedules.
+ * Retrieves locations by reservation module ID with schedules.
+ * @param {string} reservationModuleId - The ID of the reservation module.
+ * @returns {Promise<LocationWithSchedulesDAOResponse[]>} A promise that resolves to an array of locations with schedules.
+ * @throws {Error} If there is an error retrieving the locations.
  */
-export async function getLocationsByReservationModuleIdWithSchedules(reservationModuleId: string): Promise<Location[]> {
+export async function getLocationsByReservationModuleIdWithSchedules(
+	reservationModuleId: string
+): Promise<LocationWithSchedulesDAOResponse[]> {
 	try {
 		let locations = await prisma.location.findMany({
 			where: {
