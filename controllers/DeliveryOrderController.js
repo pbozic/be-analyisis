@@ -278,7 +278,7 @@ async function startDailyMeals(req, res) {
 			}
 		};
 		const business = await BusinessDao.getBusinessById(deliveryDriver.daily_meal_business_id);
-		const providerLocation = convertAddressToLocation(business.delivery_address);
+		const providerLocation = convertAddressToLocation(business.daily_meals_module.delivery_address);
 		let sortedOrders = [];
 		if (business.daily_users_sorting_type === 'MANUAL') {
 			// Manual sorting based on provider.daily_users_sorted
@@ -419,7 +419,7 @@ async function acceptOrderDeliveryOld(req, res) {
 				.status(400)
 				.json({ error: 'Order is already accepted.', errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
 		}
-		const vehicle = deliverer.current_vehicle || deliverer.vehicles[0];
+		const vehicle = deliverer.current_vehicle;
 		order = await DeliveryOrderDao.acceptOrderDelivery(order, deliverer_id, vehicle?.vehicle_id);
 		order = await DeliveryOrderDao.getOrder(order.order_id, {
 			include: {
@@ -515,7 +515,7 @@ async function acceptOrderDelivery(req, res) {
 		const order2 = await DeliveryOrderDao.acceptOrderDeliveryWithRawLock(
 			order_id,
 			deliverer_id,
-			user.current_vehicle?.vehicle_id,
+			deliverer.current_vehicle?.vehicle_id,
 			isDD
 		);
 		let newOrder = await DeliveryOrderDao.getOrder(order2.order_id, {
@@ -681,24 +681,20 @@ async function completeOrder(req, res) {
 				console.log(`Order was ${late_seconds} seconds ${late_seconds > 0 ? 'late' : 'early or on time'}.`);
 				let allowed_leeway = 60 * 30;
 				if (late_seconds > allowed_leeway) {
-					await LateEventsDao.createLateEvent(
-						driver.business_id,
-						driver.user_id,
-						order.order_id,
-						null,
-						late_seconds - allowed_leeway
-					);
+					await LateEventsDao.createLateEvent({
+						driver_id: driver.driver_id,
+						order_id: order.order_id,
+						seconds: late_seconds - allowed_leeway,
+					});
 				}
 			} else {
-				await ScoringPointsDao.createScoringPoints(
-					order.business_id,
-					driver.user_id,
-					order.order_id,
-					null,
-					0,
-					false,
-					SCORING_POINTS_REASON.INSUFFICIENT_DATA
-				);
+				await ScoringPointsDao.createScoringPoints({
+					driver_id: order.driver_id || null,
+					delivery_order_id: order.order_id,
+					points: 0,
+					isPenalty: false,
+					reason: SCORING_POINTS_REASON.INSUFFICIENT_DATA,
+				});
 			}
 			if (!order.is_daily_meal) {
 				let delivery_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(driver.business_id);
@@ -841,17 +837,12 @@ async function completeOrder(req, res) {
 							description: `Cashback remainder after conversion to credit`,
 						});
 					}
-					const expiryDate = new Date();
-					expiryDate.setDate(expiryDate.getDate() + 30);
-					expiryDate.setHours(23, 59, 59, 999);
 					if (baskets > 0) {
-						await WalletFundsDao.convertCashbacksToCredit(
-							{
-								user: { connect: { user_id: order.user_id } },
-								amount: Math.floor(baskets / CREDITS.CASHBACK_CONVERSION_DELIVERY) * 100,
-							},
-							pendingCashbacks
-						);
+						await WalletFundsDao.convertCashbacksToCredit({
+							user_id: order.user_id,
+							amount: Math.floor(baskets / CREDITS.CASHBACK_CONVERSION_DELIVERY) * 100,
+							pending_cashback_ids: pendingCashbacks.map((cb) => cb.cashback_id),
+						});
 					}
 				}
 			}
@@ -1898,21 +1889,21 @@ async function updateOrderPickupTime(req, res) {
 		}
 		sendDeliveryOrderNotifications(null, d?.user, null, d?.user_id, DELIVERY_ORDER_STATUS.MERCHANT_DELAYED);
 		if (totalDelay > 120) {
-			const exising_penalties = await ScoringPointsDao.getScoringPointsByBusinessId(order.business_id);
+			const exising_penalties = await ScoringPointsDao.getScoringPointsByModuleId(
+				order.stores_id || order.food_drinks_id
+			);
 			const already_penalized_order = exising_penalties?.find(
 				(sp) => sp.delivery_order_id === order.order_id && sp.reason === SCORING_POINTS_REASON.LARGE_DELAY
 			);
 			if (!already_penalized_order) {
-				//Assuming only merchant makes this api call so we can user req.user.user_id
-				await ScoringPointsDao.createScoringPoints(
-					order.business_id,
-					req.user.user_id,
-					order.order_id,
-					null,
-					1,
-					true,
-					SCORING_POINTS_REASON.LARGE_DELAY
-				);
+				await ScoringPointsDao.createScoringPoints({
+					stores_id: order.stores_id || null,
+					food_drinks_id: order.food_drinks_id || null,
+					delivery_order_id: order.order_id,
+					points: 1,
+					isPenalty: true,
+					reason: SCORING_POINTS_REASON.LARGE_DELAY,
+				});
 			}
 		}
 		res.status(200).json(order);

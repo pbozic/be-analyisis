@@ -1295,24 +1295,20 @@ async function completeOrder(req, res) {
 			console.log(`pickup was ${late_seconds} seconds ${late_seconds > 0 ? 'late' : 'early or on time'}.`);
 			let allowed_leeway = order.is_scheduled ? 60 * 10 : Math.max(expected_travel_seconds_to_pickup, 60 * 5);
 			if (late_seconds > allowed_leeway) {
-				await LateEventsDao.createLateEvent(
-					driver.business_id,
-					driver.user_id,
-					null,
-					order.order_id,
-					late_seconds - allowed_leeway
-				);
+				await LateEventsDao.createLateEvent({
+					driver_id: driver.driver_id,
+					order_id: order.order_id,
+					seconds: late_seconds - allowed_leeway,
+				});
 			}
 		} else {
-			await ScoringPointsDao.createScoringPoints(
-				driver.business_id,
-				driver.user_id,
-				null,
-				order.order_id,
-				0,
-				false,
-				SCORING_POINTS_REASON.INSUFFICIENT_DATA
-			);
+			await ScoringPointsDao.createScoringPoints({
+				driver_id: order.driver_id || null,
+				taxi_order_id: order.order_id,
+				points: 0,
+				isPenalty: false,
+				reason: SCORING_POINTS_REASON.INSUFFICIENT_DATA,
+			});
 		}
 		let user = order.user;
 		if (order.type === ORDER_TYPE.VEHICLE_TRANSFER_COMBO) {
@@ -1672,13 +1668,11 @@ async function completeOrder(req, res) {
 						expiryDate.setDate(expiryDate.getDate() + 30);
 						expiryDate.setHours(23, 59, 59, 999);
 						if (wheels > 0) {
-							await WalletFundsDao.convertCashbacksToCredit(
-								{
-									user: { connect: { user_id: orderingUser.user_id } },
-									amount: Math.floor(wheels / CREDITS.CASHBACK_CONVERSION_TAXI) * 100,
-								},
-								pendingCashbacks
-							);
+							await WalletFundsDao.convertCashbacksToCredit({
+								user_id: orderingUser.user_id,
+								amount: Math.floor(wheels / CREDITS.CASHBACK_CONVERSION_TAXI) * 100,
+								pending_cashback_ids: pendingCashbacks.map((cb) => cb.cashback_id),
+							});
 						}
 					}
 				}
@@ -1722,20 +1716,20 @@ async function updateOrderStatus(req, res) {
 		let driver_id = order?.driver?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
 		let driver = await DriverDao.getDriverById(driver_id);
-		if (order.status === TAXI_ORDER_STATUS.TAXI_DRIVING && order.transport_module_id === null) {
-			await prisma.taxi_orders.update({
-				where: {
-					order_id: order.order_id,
-				},
-				data: {
-					transport_module: {
-						connect: {
-							transport_module_id: driver.transport_module_id,
-						},
-					},
-				},
-			});
-		}
+		// if (order.status === TAXI_ORDER_STATUS.TAXI_DRIVING && order.transport_module_id === null) {
+		// 	await prisma.taxi_orders.update({
+		// 		where: {
+		// 			order_id: order.order_id,
+		// 		},
+		// 		data: {
+		// 			transport_module: {
+		// 				connect: {
+		// 					transport_module_id: driver.transport_module_id,
+		// 				},
+		// 			},
+		// 		},
+		// 	});
+		// }
 		if (order.is_scheduled && !driver.on_order) {
 			await prisma.drivers.update({
 				where: {
@@ -1843,15 +1837,13 @@ async function cancelOrder(req, res) {
 		let driver = driver_id ? await DriverDao.getDriverById(driver_id) : null;
 		const skip_cancellation_fee = order.type === 'TAXI' || req.user.user_id !== order?.user_id;
 		if (req.user.user_id === driver?.user?.user_id) {
-			await ScoringPointsDao.createScoringPoints(
-				driver.business_id,
-				req.user.user_id,
-				null,
-				order.order_id,
-				1,
-				true,
-				SCORING_POINTS_REASON.CANCELED
-			);
+			await ScoringPointsDao.createScoringPoints({
+				driver_id: driver.driver_id,
+				taxi_order_id: order.order_id,
+				points: 1,
+				isPenalty: true,
+				reason: SCORING_POINTS_REASON.CANCELED,
+			});
 		}
 		console.log('user console.log', user?.user_id);
 		console.log('Driver console.log', driver?.user?.user_id);
@@ -1990,15 +1982,13 @@ async function rejectOrder(req, res) {
 		SocketStore.removeUserFromRoom(rejectingDriver?.user_id, `order_${order_id}`);
 		if (rejectingDriver && rejectingDriver.driver_id) {
 			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, rejectingDriver.driver_id);
-			await ScoringPointsDao.createScoringPoints(
-				rejectingDriver.business_id,
-				req.user.user_id,
-				null,
-				order.order_id,
-				1,
-				true,
-				SCORING_POINTS_REASON.REJECTED
-			);
+			await ScoringPointsDao.createScoringPoints({
+				driver_id: rejectingDriver.driver_id,
+				taxi_order_id: order.order_id,
+				points: 1,
+				isPenalty: true,
+				reason: SCORING_POINTS_REASON.REJECTED,
+			});
 			let order_sent = await prisma.taxi_order_sent.findUnique({
 				where: {
 					taxi_order_sent_driver_unique: {

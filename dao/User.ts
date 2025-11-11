@@ -6,7 +6,12 @@ import { addFileToDocument } from './File.js';
 import S3Helper from '../lib/s3.js';
 import { USER_ROLE, ACCOUNT_ACTIONS } from '../lib/constants.js';
 import WalletFundsDao from './WalletFunds.js';
-import type { UserBase, UserResponse, UserWithAddressesResponse } from '../schemas/dto/User/index.js';
+import type {
+	UserBase,
+	UserResponse,
+	UserWithAddressesResponse,
+	UserWithFavouritesResponse,
+} from '../schemas/dto/User/index.js';
 import type { TransactionResponse } from '../schemas/dto/User/index.js';
 
 declare const process: {
@@ -46,14 +51,14 @@ interface FindFirstArgs {
  */
 const getUsers = async (args?: FindManyArgs): Promise<UserResponse[]> => {
 	try {
-		return await prisma.users.findMany({
+		return (await prisma.users.findMany({
 			...args,
 			include: {
 				child_users: true,
 				parent_user: true,
 				...args?.include,
 			},
-		}) as UserResponse[];
+		})) as UserResponse[];
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get users');
 	}
@@ -64,11 +69,11 @@ const getUsers = async (args?: FindManyArgs): Promise<UserResponse[]> => {
  *
  * @param {string} user_id - User ID.
  * @param {FindUniqueArgs} args - Additional Prisma args to merge.
- * @returns {Promise<UserResponse | null>} User or null.
+ * @returns {Promise<UserWithFavouritesResponse | null>} User or null.
  */
-const getUserById = async (user_id: string, args?: FindUniqueArgs): Promise<UserResponse | null> => {
+const getUserById = async (user_id: string, args?: FindUniqueArgs): Promise<UserWithFavouritesResponse | null> => {
 	try {
-		return await prisma.users.findUnique({
+		return (await prisma.users.findUnique({
 			where: {
 				user_id: user_id,
 			},
@@ -84,7 +89,7 @@ const getUserById = async (user_id: string, args?: FindUniqueArgs): Promise<User
 				},
 			},
 			...args,
-		}) as UserResponse | null;
+		})) as UserWithFavouritesResponse | null;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID');
 	}
@@ -99,12 +104,12 @@ const getUserById = async (user_id: string, args?: FindUniqueArgs): Promise<User
  */
 const getUserByReferralCode = async (code: string, args?: FindUniqueArgs): Promise<UserResponse | null> => {
 	try {
-		return await prisma.users.findUnique({
+		return (await prisma.users.findUnique({
 			where: {
 				referral_code: code,
 			},
 			...args,
-		}) as UserResponse | null;
+		})) as UserResponse | null;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by referral code');
 	}
@@ -124,15 +129,15 @@ const getScheduledUsers = async (): Promise<UserWithAddressesResponse[]> => {
 			},
 		});
 		console.info('MERCHANT BUSINESSES', merchantBusiness);
-		
+
 		let sortingScheduledUsers: string[] | null = null;
 		if (!merchantBusiness) {
 			console.info('No merchant business found that offers daily meals');
 		} else {
 			sortingScheduledUsers = merchantBusiness.daily_users_sorted as string[] | null;
 		}
-		
-		const scheduledUsers = await prisma.users.findMany({
+
+		const scheduledUsers = (await prisma.users.findMany({
 			where: {
 				subscribed_to_daily_meals: true,
 			},
@@ -143,14 +148,16 @@ const getScheduledUsers = async (): Promise<UserWithAddressesResponse[]> => {
 					},
 				},
 			},
-		}) as UserWithAddressesResponse[];
+		})) as UserWithAddressesResponse[];
 
 		if (sortingScheduledUsers && sortingScheduledUsers.length !== 0) {
 			// Map user_id to user object for easy lookup
 			const userMap = new Map(scheduledUsers.map((user) => [user.user_id, user]));
 			console.info('ordered users', userMap);
 			// Sort users based on the order in sortingScheduledUsers
-			return sortingScheduledUsers.map((userId) => userMap.get(userId)).filter((user): user is UserWithAddressesResponse => user !== undefined);
+			return sortingScheduledUsers
+				.map((userId) => userMap.get(userId))
+				.filter((user): user is UserWithAddressesResponse => user !== undefined);
 		}
 		console.info('scheduled_users', scheduledUsers);
 		return scheduledUsers;
@@ -169,7 +176,7 @@ const getScheduledUsers = async (): Promise<UserWithAddressesResponse[]> => {
  */
 const getUserByEmailOrTelephone = async (query: string, args?: FindFirstArgs): Promise<UserResponse | null> => {
 	try {
-		return await prisma.users.findFirst({
+		return (await prisma.users.findFirst({
 			where: {
 				OR: [
 					{
@@ -181,7 +188,7 @@ const getUserByEmailOrTelephone = async (query: string, args?: FindFirstArgs): P
 				],
 			},
 			...args,
-		}) as UserResponse | null;
+		})) as UserResponse | null;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by email or telephone');
 	}
@@ -196,12 +203,12 @@ const getUserByEmailOrTelephone = async (query: string, args?: FindFirstArgs): P
  */
 const getUserByEmail = async (query: string, args?: FindFirstArgs): Promise<UserResponse | null> => {
 	try {
-		return await prisma.users.findFirst({
+		return (await prisma.users.findFirst({
 			where: {
 				email: query,
 			},
 			...args,
-		}) as UserResponse | null;
+		})) as UserResponse | null;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by email');
 	}
@@ -217,12 +224,12 @@ const getUserByEmail = async (query: string, args?: FindFirstArgs): Promise<User
 const getUserByTelephone = async (query: string, args?: FindFirstArgs): Promise<UserResponse | null> => {
 	try {
 		console.log('getUserByTelephone called with query:', query);
-		const user = await prisma.users.findFirst({
+		const user = (await prisma.users.findFirst({
 			where: {
 				telephone: query,
 			},
 			...args,
-		}) as UserResponse | null;
+		})) as UserResponse | null;
 		console.log('User found by telephone:', user);
 		return user;
 	} catch (error) {
@@ -262,12 +269,12 @@ const getUserByResetToken = async (resetToken: string, args?: FindUniqueArgs): P
  */
 const getUser = async (email: string, args?: FindUniqueArgs): Promise<UserResponse | null> => {
 	try {
-		return await prisma.users.findUnique({
+		return (await prisma.users.findUnique({
 			where: {
 				email: email,
 			},
 			...args,
-		}) as UserResponse | null;
+		})) as UserResponse | null;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user');
 	}
@@ -291,13 +298,13 @@ const updateUser = async (user_id: string, user: Partial<UserBase>): Promise<Use
 		delete (updateData as any).password;
 		delete (updateData as any).addresses;
 		delete (updateData as any).user_role;
-		
-		return await prisma.users.update({
+
+		return (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
 			data: updateData,
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		console.log(error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update user');
@@ -313,7 +320,7 @@ const updateUser = async (user_id: string, user: Partial<UserBase>): Promise<Use
  */
 const updateScheduledUser = async (user_id: string, user: Partial<UserBase>): Promise<UserWithAddressesResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
@@ -325,7 +332,7 @@ const updateScheduledUser = async (user_id: string, user: Partial<UserBase>): Pr
 					},
 				},
 			},
-		}) as UserWithAddressesResponse;
+		})) as UserWithAddressesResponse;
 	} catch (error) {
 		console.log(error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update scheduled user');
@@ -341,14 +348,14 @@ const updateScheduledUser = async (user_id: string, user: Partial<UserBase>): Pr
  */
 const updateEmail = async (user_id: string, email: string): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
 			data: {
 				email,
 			},
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update email');
 	}
@@ -361,14 +368,17 @@ const updateEmail = async (user_id: string, email: string): Promise<UserResponse
  * @param {object} telephone - Telephone fields (telephone, telephone_code).
  * @returns {Promise<UserResponse>} Updated user.
  */
-const updateTelephone = async (user_id: string, telephone: { telephone?: string; telephone_code?: string }): Promise<UserResponse> => {
+const updateTelephone = async (
+	user_id: string,
+	telephone: { telephone?: string; telephone_code?: string }
+): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
 			data: telephone,
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update telephone');
 	}
@@ -383,14 +393,14 @@ const updateTelephone = async (user_id: string, telephone: { telephone?: string;
  */
 const updateUserPassword = async (user_id: string, password: string): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
 			data: {
 				password,
 			},
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update password');
 	}
@@ -405,14 +415,14 @@ const updateUserPassword = async (user_id: string, password: string): Promise<Us
  */
 const updateUserType = async (user_id: string, user_role: string): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
 			data: {
 				user_role,
 			},
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update user type');
 	}
@@ -425,12 +435,15 @@ const updateUserType = async (user_id: string, user_role: string): Promise<UserR
  * @param {Record<string, any>} taxiPreferences - JSON preferences.
  * @returns {Promise<UserResponse>} Updated user.
  */
-const updateUserTaxiPreferences = async (user_id: string, taxiPreferences: Record<string, any>): Promise<UserResponse> => {
+const updateUserTaxiPreferences = async (
+	user_id: string,
+	taxiPreferences: Record<string, any>
+): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: { user_id },
 			data: { taxi_preferences: taxiPreferences },
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update taxi preferences');
 	}
@@ -445,10 +458,10 @@ const updateUserTaxiPreferences = async (user_id: string, taxiPreferences: Recor
  */
 const updateUserDateOfBirth = async (user_id: string, dateOfBirth: string | Date): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: { user_id },
 			data: { date_of_birth: dateOfBirth },
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update date of birth');
 	}
@@ -463,9 +476,14 @@ const updateUserDateOfBirth = async (user_id: string, dateOfBirth: string | Date
  * @param {string} reason - Reason text.
  * @returns {Promise<UserResponse>} Updated user.
  */
-const updateUserDisabled = async (user_id: string, disabled: boolean, action_creator_user_id: string, reason: string): Promise<UserResponse> => {
+const updateUserDisabled = async (
+	user_id: string,
+	disabled: boolean,
+	action_creator_user_id: string,
+	reason: string
+): Promise<UserResponse> => {
 	try {
-		return await prisma.$transaction(async (tx: PrismaTransactionClient) => {
+		return (await prisma.$transaction(async (tx: PrismaTransactionClient) => {
 			const updatedUser = await tx.users.update({
 				where: { user_id },
 				data: { disabled },
@@ -479,7 +497,7 @@ const updateUserDisabled = async (user_id: string, disabled: boolean, action_cre
 				},
 			});
 			return updatedUser;
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		console.error('Error updating user disabled status:', error);
 		throw new Error('Failed to update user status');
@@ -493,12 +511,15 @@ const updateUserDisabled = async (user_id: string, disabled: boolean, action_cre
  * @param {Record<string, any>} notificationPreferences - Preferences JSON.
  * @returns {Promise<UserResponse>} Updated user.
  */
-const updateUserNotificationPreferences = async (user_id: string, notificationPreferences: Record<string, any>): Promise<UserResponse> => {
+const updateUserNotificationPreferences = async (
+	user_id: string,
+	notificationPreferences: Record<string, any>
+): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: { user_id },
 			data: { notification_preferences: notificationPreferences },
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update notification preferences');
 	}
@@ -511,12 +532,15 @@ const updateUserNotificationPreferences = async (user_id: string, notificationPr
  * @param {Record<string, any>} pushNotificationPreferences - Preferences JSON.
  * @returns {Promise<UserResponse>} Updated user.
  */
-const updateUserTaxiPushNotifications = async (user_id: string, pushNotificationPreferences: Record<string, any>): Promise<UserResponse> => {
+const updateUserTaxiPushNotifications = async (
+	user_id: string,
+	pushNotificationPreferences: Record<string, any>
+): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: { user_id },
 			data: { taxi_push_notification_preferences: pushNotificationPreferences },
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update taxi push notifications');
 	}
@@ -529,12 +553,15 @@ const updateUserTaxiPushNotifications = async (user_id: string, pushNotification
  * @param {Record<string, any>} pushNotificationPreferences - Preferences JSON.
  * @returns {Promise<UserResponse>} Updated user.
  */
-const updateUserTransferPushNotifications = async (user_id: string, pushNotificationPreferences: Record<string, any>): Promise<UserResponse> => {
+const updateUserTransferPushNotifications = async (
+	user_id: string,
+	pushNotificationPreferences: Record<string, any>
+): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: { user_id },
 			data: { transfer_push_notification_preferences: pushNotificationPreferences },
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update transfer push notifications');
 	}
@@ -547,12 +574,15 @@ const updateUserTransferPushNotifications = async (user_id: string, pushNotifica
  * @param {Record<string, any>} pushNotificationPreferences - Preferences JSON.
  * @returns {Promise<UserResponse>} Updated user.
  */
-const updateUserDeliveryPushNotifications = async (user_id: string, pushNotificationPreferences: Record<string, any>): Promise<UserResponse> => {
+const updateUserDeliveryPushNotifications = async (
+	user_id: string,
+	pushNotificationPreferences: Record<string, any>
+): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: { user_id },
 			data: { delivery_push_notification_preferences: pushNotificationPreferences },
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update delivery push notifications');
 	}
@@ -565,12 +595,15 @@ const updateUserDeliveryPushNotifications = async (user_id: string, pushNotifica
  * @param {Record<string, any>} spicyPreferences - Preferences JSON.
  * @returns {Promise<UserResponse>} Updated user.
  */
-const updateUserSpicyPreferences = async (user_id: string, spicyPreferences: Record<string, any>): Promise<UserResponse> => {
+const updateUserSpicyPreferences = async (
+	user_id: string,
+	spicyPreferences: Record<string, any>
+): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: { user_id },
 			data: { spicy_preferences: spicyPreferences },
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update spicy preferences');
 	}
@@ -583,12 +616,15 @@ const updateUserSpicyPreferences = async (user_id: string, spicyPreferences: Rec
  * @param {Record<string, any>} transfer_preferences - Preferences JSON.
  * @returns {Promise<UserResponse>} Updated user.
  */
-const updateUserTransferPreferences = async (user_id: string, transfer_preferences: Record<string, any>): Promise<UserResponse> => {
+const updateUserTransferPreferences = async (
+	user_id: string,
+	transfer_preferences: Record<string, any>
+): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: { user_id },
 			data: { transfer_preferences: transfer_preferences },
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update transfer preferences');
 	}
@@ -601,12 +637,15 @@ const updateUserTransferPreferences = async (user_id: string, transfer_preferenc
  * @param {Record<string, any>} radioPreferences - Preferences JSON.
  * @returns {Promise<UserResponse>} Updated user.
  */
-const updateUserRadioPreferences = async (user_id: string, radioPreferences: Record<string, any>): Promise<UserResponse> => {
+const updateUserRadioPreferences = async (
+	user_id: string,
+	radioPreferences: Record<string, any>
+): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: { user_id },
 			data: { radio_preferences: radioPreferences },
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update radio preferences');
 	}
@@ -619,12 +658,15 @@ const updateUserRadioPreferences = async (user_id: string, radioPreferences: Rec
  * @param {Record<string, any>} allergiesPreferences - Preferences JSON.
  * @returns {Promise<UserResponse>} Updated user.
  */
-const updateUserAllergiesPreferences = async (user_id: string, allergiesPreferences: Record<string, any>): Promise<UserResponse> => {
+const updateUserAllergiesPreferences = async (
+	user_id: string,
+	allergiesPreferences: Record<string, any>
+): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: { user_id },
 			data: { allergies_preferences: allergiesPreferences },
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update allergies preferences');
 	}
@@ -639,10 +681,10 @@ const updateUserAllergiesPreferences = async (user_id: string, allergiesPreferen
  */
 const updateUserTelephoneVerified = async (user_id: string, telephoneVerified: boolean): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: { user_id },
 			data: { phone_verified: telephoneVerified },
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update telephone verified');
 	}
@@ -656,13 +698,17 @@ const updateUserTelephoneVerified = async (user_id: string, telephoneVerified: b
  * @param {PrismaTransactionClient} [tx=prisma] - Prisma transaction/client.
  * @returns {Promise<UserResponse>} Created user with relations.
  */
-const createNewUser = async (user: Partial<UserBase>, hashPassword: boolean = false, tx: PrismaTransactionClient = prisma): Promise<UserResponse> => {
+const createNewUser = async (
+	user: Partial<UserBase>,
+	hashPassword: boolean = false,
+	tx: PrismaTransactionClient = prisma
+): Promise<UserResponse> => {
 	try {
 		let newUser = { ...user };
 		if (newUser?.user_role && [USER_ROLE.DRIVER, USER_ROLE.DELIVERY_DRIVER].includes(newUser?.user_role)) {
 			newUser.active = false;
 		}
-		
+
 		// Check if password hashing is needed
 		if (hashPassword && user.password) {
 			const hash = await bcrypt.hash(user.password, Number(process.env.BCRYPT_SALT_ROUNDS || '12'));
@@ -686,16 +732,16 @@ const createNewUser = async (user: Partial<UserBase>, hashPassword: boolean = fa
 			};
 			delete (newUser as any).confirm_password;
 		}
-		
+
 		// Create the user with the potentially hashed password
-		return await tx.users.create({
+		return (await tx.users.create({
 			data: newUser,
 			include: {
 				child_users: true,
 				parent_user: true,
 				user_roles: true,
 			},
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to create new user.');
 	}
@@ -709,11 +755,11 @@ const createNewUser = async (user: Partial<UserBase>, hashPassword: boolean = fa
  */
 async function deleteUserByUserId(userId: string): Promise<UserResponse> {
 	try {
-		return await prisma.users.delete({
+		return (await prisma.users.delete({
 			where: {
 				user_id: userId,
 			},
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		console.error('Error deleting user:', error);
 		throw error;
@@ -737,13 +783,13 @@ const updateWalletBalance = async (userId: string, amount: number, documents?: a
 				const documentData = {
 					document_type: file.document_type,
 				};
-				const newDocument = await createDocument(documentData) as any;
+				const newDocument = (await createDocument(documentData)) as any;
 				await linkDocumentToTransaction(newDocument.document_id, newTransaction.transaction_id);
 				const base64 = file.base64;
 				delete file.base64;
 				delete file.document_type;
 				delete file.name;
-				const newFile = await addFileToDocument(newDocument.document_id, file, newDocument.public) as any;
+				const newFile = (await addFileToDocument(newDocument.document_id, file, newDocument.public)) as any;
 				const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 				await S3Helper.SaveObject(
 					key,
@@ -773,11 +819,11 @@ const updateWalletBalance = async (userId: string, amount: number, documents?: a
  */
 const getTransactions = async (userId: string): Promise<TransactionResponse[]> => {
 	try {
-		return await prisma.transactions.findMany({
+		return (await prisma.transactions.findMany({
 			where: {
 				user_id: userId,
 			},
-		}) as TransactionResponse[];
+		})) as TransactionResponse[];
 	} catch (error) {
 		console.error('Error fetching transactions:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get transactions');
@@ -793,14 +839,14 @@ const getTransactions = async (userId: string): Promise<TransactionResponse[]> =
  */
 const updateUserLanguage = async (user_id: string, language: string): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
 			data: {
 				language: language,
 			},
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update user language');
 	}
@@ -820,7 +866,7 @@ const wipeUserPersonalData = async (user_id: string): Promise<UserResponse> => {
 			},
 		});
 		const fake_number = String(disabled_count).padStart(10, '0');
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
@@ -832,7 +878,7 @@ const wipeUserPersonalData = async (user_id: string): Promise<UserResponse> => {
 				telephone: fake_number,
 				phone_verified: false,
 			},
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to wipe user personal data');
 	}
@@ -847,9 +893,14 @@ const wipeUserPersonalData = async (user_id: string): Promise<UserResponse> => {
  * @param {string} reason - Reason text.
  * @returns {Promise<UserResponse>} Updated user.
  */
-const updateUserActive = async (user_id: string, active: boolean, action_creator_user_id: string, reason: string): Promise<UserResponse> => {
+const updateUserActive = async (
+	user_id: string,
+	active: boolean,
+	action_creator_user_id: string,
+	reason: string
+): Promise<UserResponse> => {
 	try {
-		return await prisma.$transaction(async (tx: PrismaTransactionClient) => {
+		return (await prisma.$transaction(async (tx: PrismaTransactionClient) => {
 			const updatedUser = await tx.users.update({
 				where: { user_id },
 				data: { active },
@@ -863,7 +914,7 @@ const updateUserActive = async (user_id: string, active: boolean, action_creator
 				},
 			});
 			return updatedUser;
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		console.error('Error updating user active status:', error);
 		throw new Error('Failed to update user active status');
@@ -879,14 +930,14 @@ const updateUserActive = async (user_id: string, active: boolean, action_creator
  */
 const updateStripeCustomerId = async (user_id: string, customer_id: string): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
 			data: {
 				stripe_customer_id: customer_id,
 			},
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update Stripe customer ID');
 	}
@@ -901,12 +952,12 @@ const updateStripeCustomerId = async (user_id: string, customer_id: string): Pro
  */
 const addCredits = async (user_id: string, updateData: Partial<UserBase>): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
 			data: updateData,
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to add credits');
 	}
@@ -921,14 +972,14 @@ const addCredits = async (user_id: string, updateData: Partial<UserBase>): Promi
  */
 const updateUserMarketingNotifications = async (user_id: string, data: boolean): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
 			data: {
 				allow_marketing_push_notifications: data,
 			},
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update marketing notifications');
 	}
@@ -943,14 +994,14 @@ const updateUserMarketingNotifications = async (user_id: string, data: boolean):
  */
 const updateUserAdsPersonalization = async (user_id: string, data: boolean): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
 			data: {
 				allow_ads_personalization: data,
 			},
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update ads personalization');
 	}
@@ -965,14 +1016,14 @@ const updateUserAdsPersonalization = async (user_id: string, data: boolean): Pro
  */
 const updateUserNewsletter = async (user_id: string, data: boolean): Promise<UserResponse> => {
 	try {
-		return await prisma.users.update({
+		return (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
 			data: {
 				allow_newsletter: data,
 			},
-		}) as UserResponse;
+		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to update newsletter');
 	}

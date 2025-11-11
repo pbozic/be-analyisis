@@ -6,6 +6,32 @@ import { FILE_TYPE } from '@prisma/client';
 extendZodWithOpenApi(z);
 
 // =======================
+// File Base and Ref Schemas
+// =======================
+
+export const FileBaseSchema = z
+	.object({
+		file_id: z.string().uuid(),
+		file_type: z.nativeEnum(FILE_TYPE),
+		mime_type: z.string(),
+		url: z.string().url().nullable(),
+		public: z.boolean(),
+		created_at: z.string().datetime().optional(),
+		updated_at: z.string().datetime().optional(),
+	})
+	.openapi('FileBase');
+
+export const FileRefSchema = FileBaseSchema.pick({
+	file_id: true,
+	url: true,
+	file_type: true,
+	mime_type: true,
+}).openapi('FileRef');
+
+export type FileBase = z.infer<typeof FileBaseSchema>;
+export type FileRef = z.infer<typeof FileRefSchema>;
+
+// =======================
 // File DTO Schemas with OpenAPI
 // =======================
 
@@ -93,7 +119,7 @@ export type GetFilesByDocumentIdParams = z.infer<typeof GetFilesByDocumentIdPara
 
 export const CreateStandaloneFileInputSchema = z
 	.object({
-		file_type: z.nativeEnum(FILE_TYPE).openapi({ example: FILE_TYPE.OTHER }),
+		file_type: z.nativeEnum(FILE_TYPE).openapi({ example: FILE_TYPE.IMAGE }),
 		mime_type: z.string().openapi({ example: 'image/png' }),
 		isPublic: z.boolean().optional().openapi({ example: false }),
 	})
@@ -118,6 +144,10 @@ export const UpdateFileByIdInputSchema = z
 export type UpdateFileByIdInput = z.infer<typeof UpdateFileByIdInputSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
+	// Register base and ref schemas
+	registry.register('FileBase', FileBaseSchema);
+	registry.register('FileRef', FileRefSchema);
+
 	registry.register('CreateFileData', CreateFileDataSchema);
 	registry.register('CreateFileBody', CreateFileBodySchema);
 	registry.register('UpdateFileBody', UpdateFileBodySchema);

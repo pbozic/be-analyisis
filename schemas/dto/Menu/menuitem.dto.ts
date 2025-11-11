@@ -43,7 +43,8 @@ export type GetMenuItemsByIdsDaoInput = z.infer<typeof GetMenuItemsByIdsDaoInput
 
 export const GetMenuItemsByBusinessIdDaoParamsSchema = z
 	.object({
-		business_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		food_drinks_id: z.string().uuid().optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
+		stores_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		args: z.any().optional(),
 	})
 	.openapi('GetMenuItemsByBusinessIdDaoParams');

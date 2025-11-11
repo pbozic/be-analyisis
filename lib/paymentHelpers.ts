@@ -19,6 +19,7 @@ import WalletFundsDao from '../dao/WalletFunds.js';
 import UserDao from '../dao/User.js';
 import stripe from './stripe.js';
 import prisma from '../prisma/prisma.js';
+import { FUNDS_TYPE } from './constants.js';
 
 /**
  * Generates payment splits from a combination of fixed-amount and value-based splits.
@@ -434,9 +435,9 @@ export async function refundSinglePaymentSplit(
 	if (split.amount_credits > 0) {
 		if (split.status === SPLIT_STATUS.TRANSFERED) {
 			await WalletFundsDao.createCredit({
-				user: { connect: { user_id: payment.user_id } },
+				user_id: payment.user_id,
 				amount: split.amount_credits,
-				type: 'CREDITS_DELIVERY',
+				type: FUNDS_TYPE.CREDITS_DELIVERY,
 			});
 		} else {
 			await WalletFundsHelpers.releaseReservedWalletFundsForOrder(
@@ -657,9 +658,9 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
 			if (split.status === SPLIT_STATUS.TRANSFERED) {
 				// Refund credits to user
 				await WalletFundsDao.createCredit({
-					user: { connect: { user_id: payment.user_id } },
+					user_id: payment.user_id,
 					amount: split.amount_credits,
-					type: 'CREDITS_DELIVERY',
+					type: FUNDS_TYPE.CREDITS_DELIVERY,
 				});
 			} else if (split.status === SPLIT_STATUS.RESERVED) {
 				await WalletFundsHelpers.releaseReservedWalletFundsForOrder(

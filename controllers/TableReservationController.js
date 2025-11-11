@@ -118,13 +118,16 @@ async function createReservation(req, res) {
 	try {
 		const { business_id, ...reservationWithoutBusiness } = reservation || {};
 
-        // build the shape your DAO/prisma expects (flatten or keep as-is)
-        const reservationData = {
-            ...reservationWithoutBusiness, // seats, datetime, table_reservation_id, etc.
-            user_id,
-        };
+		// build the shape your DAO/prisma expects (flatten or keep as-is)
+		const table_reservation_id = await ReservationDao.getReservationIdbyBusinessId(business_id);
+
+		const reservationData = {
+			...reservationWithoutBusiness, // seats, datetime, table_reservation_id, etc.
+			user_id,
+			table_reservation_id,
+		};
 		console.log(reservationData, 'reservationData');
-		const newReservation = await ReservationDao.createReservation(reservationData, business_id);
+		const newReservation = await ReservationDao.createReservation(reservationData);
 		// Get all business users associated with the business
 		const businessUsers = await prisma.business_users.findMany({
 			where: {

@@ -17,8 +17,6 @@ model business {
     address_id          String?     @db.Uuid
     is_business_unit    Boolean     @default(false) // TODO: Remove later
     business_group_name String? // if part of any holding or other business group
-    name                String
-    description         String?
     tax_id              String
     registration_id     String
     email               String      @unique
@@ -49,7 +47,6 @@ model business {
     sales_representative_id         String?
 
     user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_business")
-    scoring_points           scoring_points[]           @relation("scoring_points_to_business")
     account_actions          account_actions[]
 
     business_money_flows business_money_flows[]
@@ -57,20 +54,47 @@ model business {
     business_users       business_users[]
     business_teams       business_teams[]
 
-    types              BUSINESS_TYPE[]
-    reservation_module reservation_module?
-    transport_module   transport_module?
-    stores_module      stores_module?
-    food_drinks_module food_drinks_module?
-    crm_module         crm_module?
-    logo_id  String?    @db.Uuid @unique
-    logo     files?     @relation("business_logo", fields: [logo_id], references: [file_id])
-    banner_id String?    @db.Uuid @unique
-    banner    files?     @relation("business_banner", fields: [banner_id], references: [file_id])
-    created_order_lobbies  order_lobbies[] @relation("business_to_lobby")
+    types                     BUSINESS_TYPE[]
+    reservation_module        reservation_module?
+    transport_module          transport_module?
+    stores_module             stores_module?
+    food_drinks_module        food_drinks_module?
+    crm_module                crm_module?
+    daily_meals_module        daily_meals_module?
+    table_reservations_module table_reservations_module?
+    business_details_id String?  @db.Uuid @unique
+    business_details    business_details? @relation("business_business_details", fields: [business_details_id], references: [business_details_id])
+    created_order_lobbies order_lobbies[] @relation("business_to_lobby")
+
     @@index([parent_business_id])
 }
+/// @summary Additional business details like name, description, logo, banner.
+/// @namespace Business
+/// Links to files for logo and banner images.
+/// @erd Delivery
+/// @erd Stores
+/// @erd FoodDrinks
+/// @erd Reservations
+model business_details {
+    business_details_id String   @id @default(uuid()) @db.Uuid
+    business_id        String   @unique @db.Uuid
+    name            String?
+    description     String?
+    logo_id       String?   @db.Uuid @unique
+    banner_id     String?   @db.Uuid @unique
+    logo          files?    @relation("business_details_logo", fields: [logo_id], references: [file_id])
+    banner        files?    @relation("business_details_banner", fields: [banner_id], references: [file_id])
 
+    created_at       DateTime @default(now()) @db.Timestamptz(6)
+    updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    business            business? @relation("business_business_details")
+    food_drinks_module  food_drinks_module? @relation("food_drinks_business_details")
+    stores_module       stores_module?    @relation("stores_business_details")
+    daily_meals_module  daily_meals_module? @relation("daily_meals_business_details")
+    table_reservations_module table_reservations_module? @relation("table_reservations_business_details")
+    reservation_module  reservation_module? @relation("reservation_module_business_details")
+}
 /// @summary User membership within a business (employees/managers).
 /// @namespace BusinessUsers
 /// @erd Business

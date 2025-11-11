@@ -39,6 +39,7 @@ import { getLocalisedTexts } from '../localisations/languages.js';
 import { handleDriverStatusChange } from '../lib/driverHelpers.js';
 import { sendDeliveryOrderNotifications, sendOrderNotifications } from '../lib/notifications.js';
 import dailyMealHelpers from '../lib/dailyMealHelpers.js';
+import BusinessDao from '../dao/Business.ts';
 config();
 const { io } = socket;
 /**
@@ -272,7 +273,7 @@ async function updateDeviceAssignment(req, res) {
  * @tag Drivers
  * @summary Get a list of drivers for business
  * @description Returns a list of drivers along with their user and vehicle information.
- * @operationId getDrivers
+ * @operationId getDriversByBusinessId
  * @response 200 - Successful operation, returns a list of drivers
  * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the driver list
@@ -283,7 +284,7 @@ async function updateDeviceAssignment(req, res) {
 async function getDriversByBusinessId(req, res) {
 	const businessId = req.params.business_id;
 	try {
-		const drivers = await DriverDao.getDrivers({ where: { business_id: businessId } });
+		const drivers = await DriverDao.getDriversByBusinessId({ where: { business_id: businessId } });
 		res.status(200).json(drivers);
 	} catch (error) {
 		console.error('Error obtaining drivers:', error);
@@ -295,7 +296,7 @@ async function getDriversByBusinessId(req, res) {
  * @tag Drivers
  * @summary Get a list of drivers
  * @description Returns a list of drivers along with their user and vehicle information.
- * @operationId getDrivers
+ * @operationId getDriversFull
  * @response 200 - Successful operation, returns a list of drivers
  * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the driver list
@@ -533,7 +534,7 @@ async function getDriversByDailyMealBusinessId(req, res) {
  * @tag Drivers
  * @summary Update a driver's daily meal business
  * @description Connects or disconnects a driver's daily meal business and toggles delivers_daily_meals.
- * @operationId updateDriverDailyMealBusiness
+ * @operationId updateDriverDailyMealBusinesses
  * @pathParam {string} driver_id - The ID of the driver to update
  * @bodyContent {object} application/json
  * @bodyRequired
@@ -543,27 +544,39 @@ async function getDriversByDailyMealBusinessId(req, res) {
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  * @prisma_model business (see ./prisma/schemas/base.prisma)
  */
-async function updateDriverDailyMealBusiness(req, res) {
+async function updateDriverDailyMealBusinesses(req, res) {
 	const { driver_id } = req.params;
-	const { businessId } = req.body;
+	const { ids } = req.body;
 	try {
-		let updateData = {};
-		if (businessId) {
-			updateData = {
-				delivers_daily_meals: true,
-				daily_meal_business: {
-					connect: { business_id: businessId },
-				},
-			};
-		} else {
-			updateData = {
-				delivers_daily_meals: false,
-				daily_meal_business: { disconnect: true },
-			};
+		let driver = await DriverDao.getDriverById(driver_id);
+		const currentIds = driver.daily_meals.map((b) => b.daily_meals_module_id);
+		// Determine the id to connect or disconnect
+		for (const id of ids) {
+			if (!currentIds.includes(id)) {
+				// Connect
+				await prisma.daily_meals_drivers.create({
+					data: {
+						driver_id,
+						daily_meals_module_id: id,
+					},
+				});
+			}
+		}
+		for (const id of currentIds) {
+			if (!ids.includes(id)) {
+				// Disconnect
+				await prisma.daily_meals_drivers.delete({
+					where: {
+						driver_id_daily_meals_module_id: {
+							driver_id,
+							daily_meals_module_id: id,
+						},
+					},
+				});
+			}
 			await dailyMealHelpers.disconnectDriverFromAllSubscriptions(driver_id);
 		}
-		const updatedDriver = await DriverDao.updateDriver(driver_id, updateData);
-		res.status(200).json(updatedDriver);
+		res.status(200).json(driver);
 	} catch (error) {
 		console.error('Error updating driver:', error);
 		res.status(400).json({ error: 'Error updating driver', detail: error.message });
@@ -1082,6 +1095,8 @@ async function createDriver(req, res) {
 			}
 		}
 		const driverData = { ...req.body.driver.data };
+		const business = await BusinessDao.getBusinessById(driverData.business_id);
+		driverData.transport_module_id = business?.transport_module_id;
 		const driver = await DriverDao.createNewDriver(driverData, newUser);
 		// Handle taxi documents
 		if (req.body.driver.documents) {
@@ -1520,7 +1535,7 @@ export { setCurrentVehicle };
 export { getDriverByUserId };
 export { listDriversWithDailyMeals };
 export { getDriversByDailyMealBusinessId };
-export { updateDriverDailyMealBusiness };
+export { updateDriverDailyMealBusinesses };
 export { assignBusinessForDailyMealsToDriver };
 export default {
 	getDriversByBusinessId,
@@ -1551,7 +1566,7 @@ export default {
 	getDriverByUserId,
 	listDriversWithDailyMeals,
 	getDriversByDailyMealBusinessId,
-	updateDriverDailyMealBusiness,
+	updateDriverDailyMealBusinesses,
 	assignBusinessForDailyMealsToDriver,
 	getDriverReviews,
 	unlinkDriverFromBusiness,

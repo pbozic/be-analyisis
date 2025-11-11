@@ -3,13 +3,12 @@ import { DELIVERY_ORDER_STATUS, DELIVERY_ORDER_END_STATES } from '../lib/constan
 import type { DeliveryOrderDetail, CreateDeliveryOrder } from '../schemas/dto/DeliveryOrders/index.js';
 import { toDeliveryOrderDetail } from '../schemas/dto/DeliveryOrders/index.js';
 
-
 /**
  * Add an entry to delivery order timeline
  */
 function addEntryToDeliveryOrderTimeline(
-	timeline: Array<Record<string, unknown>>, 
-	status: string, 
+	timeline: Array<Record<string, unknown>>,
+	status: string,
 	entry_data: Record<string, unknown> = {}
 ): Array<Record<string, unknown>> {
 	return [
@@ -46,7 +45,7 @@ export async function getOrders(args?: any): Promise<DeliveryOrderDetail[]> {
 			},
 			...args,
 		});
-		
+
 		return orders.map(toDeliveryOrderDetail);
 	} catch (e) {
 		throw new Error(e instanceof Error ? e.message : String(e));
@@ -70,7 +69,7 @@ export async function getActiveDeliveryOrders(): Promise<DeliveryOrderDetail[]> 
 				user: true,
 			},
 		});
-		
+
 		return orders.map(toDeliveryOrderDetail);
 	} catch (e) {
 		console.error('Error fetching order:', e);
@@ -89,7 +88,7 @@ export async function getOrder(order_id: string, args?: any): Promise<DeliveryOr
 			},
 			...args,
 		});
-		
+
 		return order ? toDeliveryOrderDetail(order) : null;
 	} catch (e) {
 		throw new Error(e instanceof Error ? e.message : String(e));
@@ -118,7 +117,7 @@ export async function getActiveDeliveryOrdersForBusiness(business_id: string): P
 				created_at: 'desc',
 			},
 		});
-		
+
 		return orders.map(toDeliveryOrderDetail);
 	} catch (e) {
 		console.error('Error fetching order:', e);
@@ -169,7 +168,7 @@ export async function getDeliveryOrdersIfNotCompleted(user_id: string): Promise<
 				created_at: 'desc',
 			},
 		});
-		
+
 		return orders.map(toDeliveryOrderDetail);
 	} catch (e) {
 		console.error('Error fetching orders:', e);
@@ -190,7 +189,7 @@ export async function createOrder(order: CreateDeliveryOrder, user_id: string): 
 				select: { order_number: true },
 			});
 			const order_number = lastOrder ? (lastOrder.order_number! + 1) % 10000 : 0;
-			
+
 			return tx.delivery_orders.create({
 				data: {
 					...orderData,
@@ -214,7 +213,7 @@ export async function createOrder(order: CreateDeliveryOrder, user_id: string): 
 				},
 			});
 		});
-		
+
 		return toDeliveryOrderDetail(result);
 	} catch (e) {
 		throw new Error(e instanceof Error ? e.message : String(e));
@@ -225,8 +224,8 @@ export async function createOrder(order: CreateDeliveryOrder, user_id: string): 
  * Update delivery order status.
  */
 export async function updateOrderStatus(
-	order_id: string, 
-	status: string, 
+	order_id: string,
+	status: string,
 	timeline_entry?: Record<string, unknown>
 ): Promise<DeliveryOrderDetail> {
 	try {
@@ -241,8 +240,8 @@ export async function updateOrderStatus(
 
 		const currentTimeline = Array.isArray(currentOrder.timeline) ? currentOrder.timeline : [];
 		const newTimeline = addEntryToDeliveryOrderTimeline(
-			currentTimeline as Array<Record<string, unknown>>, 
-			status, 
+			currentTimeline as Array<Record<string, unknown>>,
+			status,
 			timeline_entry || {}
 		);
 
@@ -314,8 +313,8 @@ export async function updateOrderDeliveryTime(order_id: string, delivery_time: D
  * Accept delivery order.
  */
 export async function acceptOrder(
-	order_id: string, 
-	delivery_driver_id: string, 
+	order_id: string,
+	delivery_driver_id: string,
 	estimated_delivery_time?: Date
 ): Promise<DeliveryOrderDetail> {
 	try {
@@ -348,7 +347,10 @@ export async function acceptOrder(
 /**
  * Complete delivery order.
  */
-export async function completeOrder(order_id: string, completion_data?: Record<string, unknown>): Promise<DeliveryOrderDetail> {
+export async function completeOrder(
+	order_id: string,
+	completion_data?: Record<string, unknown>
+): Promise<DeliveryOrderDetail> {
 	try {
 		const currentOrder = await prisma.delivery_orders.findUnique({
 			where: { order_id },
@@ -361,8 +363,8 @@ export async function completeOrder(order_id: string, completion_data?: Record<s
 
 		const currentTimeline = Array.isArray(currentOrder.timeline) ? currentOrder.timeline : [];
 		const newTimeline = addEntryToDeliveryOrderTimeline(
-			currentTimeline as Array<Record<string, unknown>>, 
-			DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED, 
+			currentTimeline as Array<Record<string, unknown>>,
+			DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED,
 			completion_data || {}
 		);
 
@@ -399,7 +401,7 @@ export async function getUserByDeliveryOrderId(order_id: string): Promise<Record
 			},
 		});
 
-		return order?.user as Record<string, unknown> || null;
+		return (order?.user as Record<string, unknown>) || null;
 	} catch (e) {
 		throw new Error(e instanceof Error ? e.message : String(e));
 	}
@@ -409,7 +411,7 @@ export async function getUserByDeliveryOrderId(order_id: string): Promise<Record
  * Update delivery order timeline.
  */
 export async function updateDeliveryOrderTimeline(
-	order_id: string, 
+	order_id: string,
 	timeline: Array<Record<string, unknown>>
 ): Promise<DeliveryOrderDetail> {
 	try {
@@ -434,8 +436,8 @@ export async function updateDeliveryOrderTimeline(
  * Add timeline entry to delivery order.
  */
 export async function addTimelineEntry(
-	order_id: string, 
-	status: string, 
+	order_id: string,
+	status: string,
 	entry_data?: Record<string, unknown>
 ): Promise<DeliveryOrderDetail> {
 	try {
@@ -450,8 +452,8 @@ export async function addTimelineEntry(
 
 		const currentTimeline = Array.isArray(currentOrder.timeline) ? currentOrder.timeline : [];
 		const newTimeline = addEntryToDeliveryOrderTimeline(
-			currentTimeline as Array<Record<string, unknown>>, 
-			status, 
+			currentTimeline as Array<Record<string, unknown>>,
+			status,
 			entry_data || {}
 		);
 
@@ -508,7 +510,7 @@ export async function getActiveOrdersByDeliveryDriverId(deliverer_id: string): P
 				business: true,
 			},
 		});
-		
+
 		return orders.map(toDeliveryOrderDetail);
 	} catch (e) {
 		console.error('Error fetching orders:', e);
@@ -549,7 +551,7 @@ export async function getOrdersByDeliveryDriverId(delivery_driver_id: string): P
 				business: true,
 			},
 		});
-		
+
 		return orders.map(toDeliveryOrderDetail);
 	} catch (e) {
 		throw new Error(e instanceof Error ? e.message : String(e));
@@ -584,7 +586,7 @@ export async function getCompletedOrdersByDeliveryDriverId(delivery_driver_id: s
 				created_at: 'desc',
 			},
 		});
-		
+
 		return orders.map(toDeliveryOrderDetail);
 	} catch (e) {
 		throw new Error(e instanceof Error ? e.message : String(e));
@@ -619,7 +621,7 @@ export async function getCompletedOrdersByBusinessId(business_id: string): Promi
 				created_at: 'desc',
 			},
 		});
-		
+
 		return orders.map(toDeliveryOrderDetail);
 	} catch (e) {
 		throw new Error(e instanceof Error ? e.message : String(e));
@@ -654,7 +656,7 @@ export async function getCompletedOrdersByUserId(user_id: string): Promise<Deliv
 				created_at: 'desc',
 			},
 		});
-		
+
 		return orders.map(toDeliveryOrderDetail);
 	} catch (e) {
 		throw new Error(e instanceof Error ? e.message : String(e));
@@ -664,7 +666,10 @@ export async function getCompletedOrdersByUserId(user_id: string): Promise<Deliv
 /**
  * Connect order with delivery driver.
  */
-export async function connectOrderWithDriver(order_id: string, delivery_driver_id: string): Promise<DeliveryOrderDetail> {
+export async function connectOrderWithDriver(
+	order_id: string,
+	delivery_driver_id: string
+): Promise<DeliveryOrderDetail> {
 	try {
 		const updatedOrder = await prisma.delivery_orders.update({
 			where: { order_id },
@@ -708,7 +713,10 @@ export async function updateOrder(order_id: string, updateData: Record<string, u
 /**
  * Update order items.
  */
-export async function updateOrderItems(order_id: string, items: Array<Record<string, unknown>>): Promise<DeliveryOrderDetail> {
+export async function updateOrderItems(
+	order_id: string,
+	items: Array<Record<string, unknown>>
+): Promise<DeliveryOrderDetail> {
 	try {
 		const updatedOrder = await prisma.delivery_orders.update({
 			where: { order_id },
@@ -752,9 +760,9 @@ export async function removeDriverFromOrder(order_id: string): Promise<DeliveryO
 	try {
 		const updatedOrder = await prisma.delivery_orders.update({
 			where: { order_id },
-			data: { 
+			data: {
 				delivery_driver_id: null,
-				driver_id: null 
+				driver_id: null,
 			},
 			include: {
 				delivery_driver: true,
@@ -817,7 +825,10 @@ export async function updateOrderLastSentAt(order_id: string): Promise<DeliveryO
 /**
  * Create order sent record for tracking.
  */
-export async function createOrderSent(order_id: string, driver: { delivery_driver_id?: string; driver_id?: string }): Promise<any> {
+export async function createOrderSent(
+	order_id: string,
+	driver: { delivery_driver_id?: string; driver_id?: string }
+): Promise<any> {
 	try {
 		if (driver.delivery_driver_id) {
 			return await prisma.delivery_order_sent.create({
@@ -845,7 +856,10 @@ export async function createOrderSent(order_id: string, driver: { delivery_drive
 /**
  * Check if order is already sent to driver.
  */
-export async function isOrderSent(order_id: string, driver: { delivery_driver_id?: string; driver_id?: string }): Promise<boolean> {
+export async function isOrderSent(
+	order_id: string,
+	driver: { delivery_driver_id?: string; driver_id?: string }
+): Promise<boolean> {
 	try {
 		let sentRecord;
 		if (driver.delivery_driver_id) {
@@ -877,8 +891,8 @@ export async function isOrderSent(order_id: string, driver: { delivery_driver_id
  * Accept order delivery with proper locking mechanism.
  */
 export async function acceptOrderDelivery(
-	order: any, 
-	deliverer_id: string, 
+	order: any,
+	deliverer_id: string,
 	vehicle_id?: string
 ): Promise<DeliveryOrderDetail> {
 	const { order_id } = order;

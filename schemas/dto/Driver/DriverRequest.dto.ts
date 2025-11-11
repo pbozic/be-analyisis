@@ -144,14 +144,13 @@ export const SetCurrentVehicleSchema = z
 	});
 
 // Used by: updateDriverDailyMealBusiness (PATCH /drivers/assign/:driver_id)
-export const UpdateDriverDailyMealBusinessSchema = z
+export const UpdateDriverDailyMealBusinessesSchema = z
 	.object({
-		business_id: UUID.nullable(),
-		delivers_daily_meals: z.boolean().optional(),
+		ids: z.array(UUID),
 	})
 	.openapi({
-		title: 'UpdateDriverDailyMealBusinessRequest',
-		description: 'Schema for connecting/disconnecting driver to daily meal business',
+		title: 'UpdateDriverDailyMealBusinessesRequest',
+		description: 'Schema for connecting/disconnecting driver to daily meal businesses',
 	});
 
 // Used by: unlinkDriverFromBusiness (PATCH /drivers/:driver_id/unlink)
@@ -323,7 +322,7 @@ export type UpdateDriverRideRequirementsRequest = z.infer<typeof UpdateDriverRid
 export type UpdateDriverOnlineStatusRequest = z.infer<typeof UpdateDriverOnlineStatusSchema>;
 export type ToggleDriverOrdersRequest = z.infer<typeof ToggleDriverOrdersSchema>;
 export type SetCurrentVehicleRequest = z.infer<typeof SetCurrentVehicleSchema>;
-export type UpdateDriverDailyMealBusinessRequest = z.infer<typeof UpdateDriverDailyMealBusinessSchema>;
+export type UpdateDriverDailyMealBusinessRequest = z.infer<typeof UpdateDriverDailyMealBusinessesSchema>;
 export type UnlinkDriverFromBusinessRequest = z.infer<typeof UnlinkDriverFromBusinessSchema>;
 export type CreateDriverRequest = z.infer<typeof CreateDriverSchema>;
 export type HandleSosAlertRequest = z.infer<typeof HandleSosAlertSchema>;
@@ -344,7 +343,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDriverOnlineStatus', UpdateDriverOnlineStatusSchema);
 	registry.register('ToggleDriverOrders', ToggleDriverOrdersSchema);
 	registry.register('SetCurrentVehicle', SetCurrentVehicleSchema);
-	registry.register('UpdateDriverDailyMealBusiness', UpdateDriverDailyMealBusinessSchema);
+	registry.register('UpdateDriverDailyMealBusiness', UpdateDriverDailyMealBusinessesSchema);
 	registry.register('UnlinkDriverFromBusiness', UnlinkDriverFromBusinessSchema);
 
 	// Driver registration schemas

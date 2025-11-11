@@ -144,14 +144,23 @@ const getMenuItemsByIds = async (menu_item_ids: string[]): Promise<MenuItemDetai
 /**
  * Get menu items for a business with optional filters.
  *
- * @param {string} business_id - Business ID.
+ * @param {string} stores_id - Stores module ID.
+ * @param {string} food_drinks_id - Food or drinks module  ID.
  * @param {object} args - Additional where filters or options.
  * @returns {Promise<MenuItemDetail[]>} Array of menu items with documents and files.
  */
-const getMenuItemsByBusinessId = async (business_id: string, args: object): Promise<MenuItemDetail[]> => {
+const getMenuItemsByBusinessId = async (
+	data: {
+		food_drinks_id: string;
+		stores_id: string;
+	},
+	args: object
+): Promise<MenuItemDetail[]> => {
+	const { food_drinks_id, stores_id } = data;
 	return await prisma.menu_items.findMany({
 		where: {
-			business_id: business_id,
+			...(stores_id ? { stores_id } : {}),
+			...(food_drinks_id ? { food_drinks_id } : {}),
 			...args,
 		},
 		include: {

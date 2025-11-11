@@ -32,7 +32,16 @@ export const FoodDrinksBaseSchema = z
 	})
 	.openapi('FoodDrinksBase');
 export type FoodDrinksBase = z.infer<typeof FoodDrinksBaseSchema>;
+export const FoodDrinksModuleRefSchema = FoodDrinksBaseSchema.pick({
+	food_drinks_id: true,
+	enabled: true,
+	online: true,
+	overwhelmed: true,
+	seats: true,
+	minimum_order: true,
+}).openapi('FoodDrinksModuleRef');
 
+export type FoodDrinksModuleRef = z.infer<typeof FoodDrinksModuleRefSchema>;
 // Detail variant – keep relations minimal (no deep embeds by design)
 export const FoodDrinksDetailSchema = FoodDrinksBaseSchema.openapi('FoodDrinksDetail');
 export type FoodDrinksDetail = z.infer<typeof FoodDrinksDetailSchema>;

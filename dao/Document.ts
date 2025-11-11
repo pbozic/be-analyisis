@@ -169,7 +169,10 @@ const getDocumentsByDocumentType = async (documentType: string): Promise<Documen
  * @param {string} documentType - Document type.
  * @returns {Promise<DocumentListResponse>} Array of documents.
  */
-const getDocumentsForBusinessByDocumentType = async (businessId: string, documentType: string): Promise<DocumentListResponse> => {
+const getDocumentsForBusinessByDocumentType = async (
+	businessId: string,
+	documentType: string
+): Promise<DocumentListResponse> => {
 	try {
 		return await prisma.documents.findMany({
 			where: {
@@ -193,7 +196,10 @@ const getDocumentsForBusinessByDocumentType = async (businessId: string, documen
  * @param {string} documentType - Document type.
  * @returns {Promise<DocumentListResponse>} Array of documents.
  */
-const getDocumentsForUserByDocumentType = async (userId: string, documentType: string): Promise<DocumentListResponse> => {
+const getDocumentsForUserByDocumentType = async (
+	userId: string,
+	documentType: string
+): Promise<DocumentListResponse> => {
 	try {
 		return await prisma.documents.findMany({
 			where: {
@@ -217,7 +223,10 @@ const getDocumentsForUserByDocumentType = async (userId: string, documentType: s
  * @param {string} documentType - Document type.
  * @returns {Promise<DocumentListResponse>} Array of documents.
  */
-const getDocumentsForDriverByDocumentType = async (driverId: string, documentType: string): Promise<DocumentListResponse> => {
+const getDocumentsForDriverByDocumentType = async (
+	driverId: string,
+	documentType: string
+): Promise<DocumentListResponse> => {
 	try {
 		return await prisma.documents.findMany({
 			where: {
@@ -241,7 +250,10 @@ const getDocumentsForDriverByDocumentType = async (driverId: string, documentTyp
  * @param {string} documentType - Document type.
  * @returns {Promise<DocumentListResponse>} Array of documents.
  */
-const getDocumentsForDeliveryPersonByDocumentType = async (deliveryPersonId: string, documentType: string): Promise<DocumentListResponse> => {
+const getDocumentsForDeliveryPersonByDocumentType = async (
+	deliveryPersonId: string,
+	documentType: string
+): Promise<DocumentListResponse> => {
 	try {
 		return await prisma.documents.findMany({
 			where: {
@@ -265,7 +277,10 @@ const getDocumentsForDeliveryPersonByDocumentType = async (deliveryPersonId: str
  * @param {string} documentType - Document type.
  * @returns {Promise<DocumentListResponse>} Array of documents.
  */
-const getDocumentsForVehicleByDocumentType = async (vehicleId: string, documentType: string): Promise<DocumentListResponse> => {
+const getDocumentsForVehicleByDocumentType = async (
+	vehicleId: string,
+	documentType: string
+): Promise<DocumentListResponse> => {
 	try {
 		return await prisma.documents.findMany({
 			where: {
@@ -289,7 +304,10 @@ const getDocumentsForVehicleByDocumentType = async (vehicleId: string, documentT
  * @param {string} driverId - Driver ID.
  * @returns {Promise<DocumentResponse | null>} Document or null.
  */
-const findDocumentByTypeAndDriverId = async (documentType: string, driverId: string): Promise<DocumentResponse | null> => {
+const findDocumentByTypeAndDriverId = async (
+	documentType: string,
+	driverId: string
+): Promise<DocumentResponse | null> => {
 	try {
 		return await prisma.documents.findFirst({
 			where: {
@@ -460,7 +478,10 @@ const createDeliveryPersonDocument = async (deliveryPersonId: string, documentDa
  * @param {string | Date} expirationDate - New expiration date.
  * @returns {Promise<DocumentResponse>} Updated document.
  */
-const updateDocumentExpirationDate = async (documentId: string, expirationDate: string | Date): Promise<DocumentResponse> => {
+const updateDocumentExpirationDate = async (
+	documentId: string,
+	expirationDate: string | Date
+): Promise<DocumentResponse> => {
 	try {
 		return await prisma.documents.update({
 			where: { document_id: documentId },

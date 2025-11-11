@@ -24,3 +24,4 @@ docs/FuncionalitiesOverview.md
 scripts/diagrams
 docs/docs/diagrams/images/*
 prisma/schemas/ERD.md
+ERD.md

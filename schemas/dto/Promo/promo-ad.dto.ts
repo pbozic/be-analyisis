@@ -17,6 +17,7 @@ export const PromoAdDataSchema = z
 		tag: z.string().min(1).optional(),
 	})
 	.openapi('PromoAdData');
+export type PromoAdData = z.infer<typeof PromoAdDataSchema>;
 
 export const CreatePromoAdRequestSchema = z
 	.object({

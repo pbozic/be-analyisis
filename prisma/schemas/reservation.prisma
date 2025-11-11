@@ -45,11 +45,8 @@ model reservation_module {
   notification_preferences          notification_preference[]
   notification_provider_credentials notification_provider_credential[]
   notification_messages             notification_message[]
-
-  logo_id   String? @unique @db.Uuid
-  logo      files?  @relation("reservations_logo", fields: [logo_id], references: [file_id])
-  banner_id String? @unique @db.Uuid
-  banner    files?  @relation("reservations_banner", fields: [banner_id], references: [file_id])
+  business_details_id String?  @db.Uuid @unique
+  business_details    business_details? @relation("reservation_module_business_details", fields: [business_details_id], references: [business_details_id])
 
   reviewable_id String?     @db.Uuid
   reviewable    reviewable? @relation(fields: [reviewable_id], references: [reviewable_id])

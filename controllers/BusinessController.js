@@ -1265,11 +1265,11 @@ async function removeBusinessFromFavorites(req, res) {
 		if (!favorited_entry) {
 			return res.status(400).json({ message: 'Business not favorited for given type.' });
 		}
-		const removed_entry = await UserFavoriteBusinessDao.removeFavoriteBusiness(user_favorite_businesses_id);
-		res.status(200).json(removed_entry);
+		await UserFavoriteBusinessDao.removeFavoriteBusiness(user_favorite_businesses_id);
+		res.status(200).json({ message: 'Favorite business removed successfully.' });
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ message: 'Internal Server Error while adding Business to Favorites' });
+		res.status(500).json({ message: 'Internal Server Error while removing Business from Favorites' });
 	}
 }
 /**
@@ -1325,23 +1325,15 @@ async function createScoringPointsHandler(req, res) {
 		if (!user_id) {
 			return res.status(401).json({ error: 'User not authenticated' });
 		}
-		const user_with_drivers = await UserDao.getUserById(user_id, {
-			include: { driver: true, delivery_driver: true },
-		});
-		const business_id =
-			user_with_drivers?.driver?.business_id || user_with_drivers?.delivery_driver?.business_id || null;
-		if (!business_id) {
-			return res.status(400).json({ error: 'Business ID is required' });
-		}
-		const scoringPoint = await ScoringPointsDao.createScoringPoints(
-			business_id,
-			user_id,
+		const user_with_driver = await UserDao.getUserById(user_id);
+		const scoringPoint = await ScoringPointsDao.createScoringPoints({
+			driver_id: user_with_driver.driver_id || null,
 			delivery_order_id,
 			taxi_order_id,
 			points,
-			true,
-			reason
-		);
+			isPenalty: true,
+			reason,
+		});
 		return res.status(201).json(scoringPoint);
 	} catch (error) {
 		console.error('Error in createScoringPointsHandler:', error);
@@ -2155,40 +2147,6 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 }
 
 /**
- * POST /business/admin/business-types
- * @tag BusinessTypes
- * @summary Create a new business type
- * @description Creates a new business_type row.
- * @operationId createBusinessType
- * @bodyDescription The business type to create
- * @bodyContent {
- *   "type": "RESTAURANT"
- * } application/json
- * @bodyRequired
- * @prisma_model business_type
- * @response 200 - Business type created successfully
- * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
- *   "type_id": "uuid",
- *   "type": "RESTAURANT"
- * }
- * @response 500 - Error creating business type
- */
-export async function createBusinessType(req, res) {
-	try {
-		const { type } = req.body;
-		if (!type) {
-			res.status(400).json({ error: 'type is required' });
-			return;
-		}
-		const created = await BusinessTypesDao.createBusinessType(type);
-		res.json(created);
-	} catch (e) {
-		res.status(500).json({ error: e.message });
-	}
-}
-
-/**
  * PUT /business/admin/:business_id/types
  * @tag BusinessTypes
  * @summary Replace all business types for a business
@@ -2370,7 +2328,6 @@ export default {
 	getBusinessPromoSectionsAnalytics,
 	getBusinessPromoWordsAnalytics,
 	setBusinessTypesForBusiness,
-	createBusinessType,
 	confirmBusinessPremise,
 	toggleTransportModule,
 };
