@@ -1,5 +1,8 @@
 import prisma from '../prisma/prisma.js';
 import type { CategoryBase, CategoryResponse } from '../schemas/dto/Category/index.js';
+import { toCategoryResponse, toCategoryList } from '../schemas/dto/Category/category.mappers.js';
+import type { CategoryWithIncludesPrisma } from '../prisma/includes/categories.js';
+import categoriesDefaultInclude from '../prisma/includes/categories.js';
 
 // Define common query arg types
 interface FindManyArgs {
@@ -35,27 +38,10 @@ interface IconFileData {
  */
 const getCategories = async (args?: FindManyArgs): Promise<CategoryResponse[]> => {
 	try {
-		let categories = await prisma.categories.findMany({
-			include: {
-				translatable: {
-					include: {
-						translations: true,
-					},
-				},
-				icon: true,
-				sub_categories: true,
-			},
-			...args,
-		});
-		
+		const categories = await prisma.categories.findMany({ include: categoriesDefaultInclude, ...args });
+
 		// Transform and flatten translations
-		return categories.map((category: any) => {
-			const { translatable, ...rest } = category;
-			return {
-				...rest,
-				translations: translatable?.translations || [],
-			};
-		}) as CategoryResponse[];
+		return toCategoryList(categories as CategoryWithIncludesPrisma[]);
 	} catch (error) {
 		console.error('Error getting categories:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get categories');
@@ -71,33 +57,10 @@ const getCategories = async (args?: FindManyArgs): Promise<CategoryResponse[]> =
  */
 const getCategoriesByType = async (type: string, args?: FindManyArgs): Promise<CategoryResponse[]> => {
 	try {
-		let categories = await prisma.categories.findMany({
-			where: {
-				category_type: type,
-			},
-			include: {
-				translatable: {
-					include: {
-						translations: true,
-					},
-				},
-				icon: true,
-				sub_categories: true,
-			},
-			orderBy: {
-				name: 'asc',
-			},
-			...args,
-		});
-		
+		const categories = await prisma.categories.findMany({ where: { category_type: type }, include: categoriesDefaultInclude, orderBy: { name: 'asc' }, ...args });
+
 		// Transform and flatten translations
-		return categories.map((category: any) => {
-			const { translatable, ...rest } = category;
-			return {
-				...rest,
-				translations: translatable?.translations || [],
-			};
-		}) as CategoryResponse[];
+		return toCategoryList(categories as CategoryWithIncludesPrisma[]);
 	} catch (error) {
 		console.error('Error getting categories:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get categories');
@@ -113,32 +76,12 @@ const getCategoriesByType = async (type: string, args?: FindManyArgs): Promise<C
  */
 const getCategoryById = async (id: string, args?: FindUniqueArgs): Promise<CategoryResponse> => {
 	try {
-		let category = await prisma.categories.findUnique({
-			where: {
-				categories_id: id,
-			},
-			include: {
-				translatable: {
-					include: {
-						translations: true,
-					},
-				},
-				icon: true,
-				sub_categories: true,
-			},
-			...args,
-		});
-		
-		if (!category) {
-			throw new Error('Category not found');
-		}
-		
+		const category = await prisma.categories.findUnique({ where: { categories_id: id }, include: categoriesDefaultInclude, ...args });
+
+		if (!category) throw new Error('Category not found');
+
 		// Transform and flatten translations
-		const { translatable, ...rest } = category;
-		return {
-			...rest,
-			translations: translatable?.translations || [],
-		} as CategoryResponse;
+		return toCategoryResponse(category as CategoryWithIncludesPrisma);
 	} catch (error) {
 		console.error('Error getting category by ID:', error);
 		throw error;
@@ -213,14 +156,7 @@ const createCategory = async (
 						}
 					: {}),
 			},
-			include: { 
-				icon: true,
-				translatable: {
-					include: {
-						translations: true,
-					},
-				},
-			},
+			include: categoriesDefaultInclude,
 		});
 		
 		let translats = [];
@@ -238,12 +174,9 @@ const createCategory = async (
 			translats.push(trans);
 		}
 		
-		// Transform and flatten translations
-		const { translatable: translatableData, ...rest } = category;
-		return {
-			...rest,
-			translations: translats,
-		} as CategoryResponse;
+		// Transform and flatten translations - use mapper with constructed translations
+		const built = { ...category, translatable: { translations: translats } };
+		return toCategoryResponse(built as CategoryWithIncludesPrisma);
 	} catch (error) {
 		console.error('Error creating category:', error);
 		throw new Error('Failed to create category: ' + (error instanceof Error ? error.message : 'Unknown error'));
@@ -354,18 +287,9 @@ const updateCategory = async (
 						};
 			}
 			
-			return await tx.categories.update({
-				where: { categories_id: id },
-				data: updateData,
-				include: {
-					icon: true,
-					translatable: {
-						include: {
-							translations: true,
-						},
-					},
-				},
-			});
+			const updated = await tx.categories.update({ where: { categories_id: id }, data: updateData, include: categoriesDefaultInclude });
+
+			return toCategoryResponse(updated as CategoryWithIncludesPrisma);
 		}) as CategoryResponse;
 	} catch (error) {
 		console.error('Error updating category:', error);
@@ -397,17 +321,9 @@ const deleteCategory = async (id: string): Promise<CategoryResponse> => {
 			},
 		});
 		
-		return await prisma.categories.delete({ 
-			where: { categories_id: id },
-			include: {
-				icon: true,
-				translatable: {
-					include: {
-						translations: true,
-					},
-				},
-			},
-		}) as CategoryResponse;
+		const deleted = await prisma.categories.delete({ where: { categories_id: id }, include: categoriesDefaultInclude });
+
+		return toCategoryResponse(deleted as CategoryWithIncludesPrisma);
 	} catch (error) {
 		console.error('Error deleting category:', error);
 		throw new Error('Failed to delete category: ' + (error instanceof Error ? error.message : 'Unknown error'));

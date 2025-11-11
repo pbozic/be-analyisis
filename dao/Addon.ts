@@ -1,12 +1,25 @@
 import type { MODULE_TYPE } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
+import {
+	toAddonResponse,
+	toAddonsList,
+	toAddonWithActionsResponse,
+	toAddonsWithActionsList,
+	toAddonFromBusinessAddon,
+	toAddonWithActionsAndUsagesResponse,
+} from '../schemas/dto/Addon/addon.mappers.js';
 import type {
 	CreateAddonRequest,
 	UpdateAddonRequest,
 	AddonResponse,
 	AddonsListResponse,
 } from '../schemas/dto/Addon/index.js';
+import type {
+	AddonWithActionsPrisma,
+	AddonWithActionsAndUsagesPrisma, BusinessAddonWithAddonPrisma
+} from '../prisma/includes/addon.js';
+import type { AddonDefaultPrisma } from '../prisma/includes/addon.js';
 
 /**
  * Create a new addon
@@ -16,7 +29,7 @@ import type {
  */
 export async function createAddon(data: CreateAddonRequest): Promise<AddonResponse> {
 	try {
-		return await prisma.addon.create({
+		const row = await prisma.addon.create({
 			data: {
 				module: data.module,
 				name: data.name,
@@ -24,6 +37,8 @@ export async function createAddon(data: CreateAddonRequest): Promise<AddonRespon
 				stripe_price_id: data.stripe_price_id,
 			},
 		});
+
+		return toAddonResponse(row as AddonDefaultPrisma);
 	} catch (error) {
 		console.error('Error creating addon:', error);
 		throw new Error('Failed to create addon');
@@ -38,7 +53,7 @@ export async function createAddon(data: CreateAddonRequest): Promise<AddonRespon
  */
 export async function updateAddon(addonId: string, data: UpdateAddonRequest): Promise<AddonResponse> {
 	try {
-		return await prisma.addon.update({
+		const row = await prisma.addon.update({
 			where: { addon_id: addonId },
 			data: {
 				module: data.module,
@@ -47,6 +62,8 @@ export async function updateAddon(addonId: string, data: UpdateAddonRequest): Pr
 				stripe_price_id: data.stripe_price_id,
 			},
 		});
+
+		return toAddonResponse(row as AddonDefaultPrisma);
 	} catch (error) {
 		console.error('Error updating addon:', error);
 		throw new Error('Failed to update addon');
@@ -75,7 +92,8 @@ export async function deleteAddon(addonId: string): Promise<void> {
  */
 export async function getAllAddons(): Promise<AddonsListResponse> {
 	try {
-		return await prisma.addon.findMany();
+		const rows: AddonDefaultPrisma[] = await prisma.addon.findMany();
+		return toAddonsList(rows);
 	} catch (error) {
 		console.error('Error fetching addons:', error);
 		throw new Error('Failed to fetch addons');
@@ -89,9 +107,10 @@ export async function getAllAddons(): Promise<AddonsListResponse> {
  */
 export async function getAddonById(addonId: string): Promise<AddonResponse | null> {
 	try {
-		return await prisma.addon.findUnique({
+		const row = await prisma.addon.findUnique({
 			where: { addon_id: addonId },
 		});
+		return row ? toAddonResponse(row) : null;
 	} catch (error) {
 		console.error('Error fetching addon:', error);
 		throw new Error('Failed to fetch addon');
@@ -105,9 +124,11 @@ export async function getAddonById(addonId: string): Promise<AddonResponse | nul
  */
 export async function getAddonsByModule(module: MODULE_TYPE): Promise<AddonsListResponse> {
 	try {
-		return await prisma.addon.findMany({
+		const rows: AddonDefaultPrisma[] = await prisma.addon.findMany({
 			where: { module },
 		});
+
+		return toAddonsList(rows);
 	} catch (error) {
 		console.error('Error fetching addons by module:', error);
 		throw new Error('Failed to fetch addons by module');
@@ -121,10 +142,19 @@ export async function getAddonsByModule(module: MODULE_TYPE): Promise<AddonsList
  */
 export async function getAddonsByBusinessId(businessId: string): Promise<AddonsListResponse> {
 	try {
-		return await prisma.business_addon.findMany({
+		const rows: BusinessAddonWithAddonPrisma[] = await prisma.business_addon.findMany({
 			where: { business_id: businessId },
-			include: { addon: true },
+			include: {
+				addon: {
+					include: {
+						actions: { include: { action: true } },
+					},
+				},
+				reservation_module: true,
+			},
 		});
+
+		return rows.map((r) => toAddonFromBusinessAddon(r));
 	} catch (error) {
 		console.error('Error fetching addons by business ID:', error);
 		throw new Error('Failed to fetch addons by business ID');
@@ -138,10 +168,18 @@ export async function getAddonsByBusinessId(businessId: string): Promise<AddonsL
  */
 export async function getAddonsByReservationModuleId(reservationModuleId: string): Promise<AddonsListResponse> {
 	try {
-		return await prisma.business_addon.findMany({
+		const rows: BusinessAddonWithAddonPrisma[] = await prisma.business_addon.findMany({
 			where: { reservation_module_id: reservationModuleId },
-			include: { addon: true },
+			include: {
+				addon: {
+					include: {
+						actions: { include: { action: true } },
+					},
+				},
+			},
 		});
+
+		return rows.map((r) => toAddonFromBusinessAddon(r));
 	} catch (error) {
 		console.error('Error fetching addons by reservation module ID:', error);
 		throw new Error('Failed to fetch addons by reservation module ID');
@@ -154,9 +192,9 @@ export async function getAddonsByReservationModuleId(reservationModuleId: string
  */
 export async function getAllAddonsWithActions(): Promise<AddonsListResponse> {
 	try {
-		return await prisma.addon.findMany({
+		const rows: AddonWithActionsPrisma[] = await prisma.addon.findMany({
 			include: {
-				actions: true,
+				actions: { include: { action: true } },
 				business_addons: {
 					include: {
 						reservation_module: true,
@@ -164,6 +202,8 @@ export async function getAllAddonsWithActions(): Promise<AddonsListResponse> {
 				},
 			},
 		});
+
+		return toAddonsWithActionsList(rows);
 	} catch (error) {
 		console.error('Error fetching addons with actions:', error);
 		throw new Error('Failed to fetch addons with actions');
@@ -177,10 +217,10 @@ export async function getAllAddonsWithActions(): Promise<AddonsListResponse> {
  */
 export async function getAddonWithActionsById(addonId: string): Promise<AddonResponse | null> {
 	try {
-		return await prisma.addon.findUnique({
+		const row = await prisma.addon.findUnique({
 			where: { addon_id: addonId },
 			include: {
-				actions: true,
+				actions: { include: { action: true } },
 				business_addons: {
 					include: {
 						reservation_module: true,
@@ -188,6 +228,8 @@ export async function getAddonWithActionsById(addonId: string): Promise<AddonRes
 				},
 			},
 		});
+
+		return row ? toAddonWithActionsResponse(row) : null;
 	} catch (error) {
 		console.error('Error fetching addon with actions:', error);
 		throw new Error('Failed to fetch addon with actions');
@@ -201,17 +243,20 @@ export async function getAddonWithActionsById(addonId: string): Promise<AddonRes
  */
 export async function getAddonsByBusinessIdWithActions(businessId: string): Promise<AddonsListResponse> {
 	try {
-		return await prisma.business_addon.findMany({
+		const rows: BusinessAddonWithAddonPrisma[] = await prisma.business_addon.findMany({
 			where: { business_id: businessId },
 			include: {
 				addon: {
 					include: {
-						actions: true,
+						actions: { include: { action: true } },
 					},
 				},
 				reservation_module: true,
 			},
 		});
+
+		// Map business_addon rows -> Addon DTOs (unwrap nested addon)
+		return rows.map((r) => toAddonFromBusinessAddon(r));
 	} catch (error) {
 		console.error('Error fetching addons by business ID with actions:', error);
 		throw new Error('Failed to fetch addons by business ID with actions');
@@ -227,16 +272,18 @@ export async function getAddonsByReservationModuleIdWithActions(
 	reservationModuleId: string
 ): Promise<AddonsListResponse> {
 	try {
-		return await prisma.business_addon.findMany({
+		const rows: BusinessAddonWithAddonPrisma[] = await prisma.business_addon.findMany({
 			where: { reservation_module_id: reservationModuleId },
 			include: {
 				addon: {
 					include: {
-						actions: true,
+						actions: { include: { action: true } },
 					},
 				},
 			},
 		});
+
+		return rows.map((r) => toAddonFromBusinessAddon(r));
 	} catch (error) {
 		console.error('Error fetching addons by reservation module ID with actions:', error);
 		throw new Error('Failed to fetch addons by reservation module ID with actions');
@@ -249,15 +296,18 @@ export async function getAddonsByReservationModuleIdWithActions(
  */
 export async function getAllAddonsWithUsages(): Promise<AddonsListResponse> {
 	try {
-		return await prisma.addon.findMany({
+	const rows: AddonWithActionsAndUsagesPrisma[] = await prisma.addon.findMany({
 			include: {
+				actions: { include: { action: true } },
 				business_addons: {
 					include: {
-						usages: true,
+						reservation_module: { include: { usages: true } },
 					},
 				},
 			},
 		});
+
+		return rows.map((r) => toAddonWithActionsAndUsagesResponse(r));
 	} catch (error) {
 		console.error('Error fetching addons with usages:', error);
 		throw new Error('Failed to fetch addons with usages');
@@ -271,16 +321,18 @@ export async function getAllAddonsWithUsages(): Promise<AddonsListResponse> {
  */
 export async function getAddonWithUsagesById(addonId: string): Promise<AddonResponse | null> {
 	try {
-		return await prisma.addon.findUnique({
+		const row = await prisma.addon.findUnique({
 			where: { addon_id: addonId },
 			include: {
 				business_addons: {
 					include: {
-						usages: true,
+						reservation_module: { include: { usages: true } },
 					},
 				},
 			},
 		});
+
+		return row ? toAddonWithActionsAndUsagesResponse(row) : null;
 	} catch (error) {
 		console.error('Error fetching addon with usages:', error);
 		throw new Error('Failed to fetch addon with usages');
@@ -294,13 +346,19 @@ export async function getAddonWithUsagesById(addonId: string): Promise<AddonResp
  */
 export async function getAddonsByBusinessIdWithUsages(businessId: string): Promise<AddonsListResponse> {
 	try {
-		return await prisma.business_addon.findMany({
+		const rows: BusinessAddonWithAddonPrisma[] = await prisma.business_addon.findMany({
 			where: { business_id: businessId },
 			include: {
-				addon: true,
-				usages: true,
+				addon: {
+					include: {
+						actions: { include: { action: true } },
+					},
+				},
+				reservation_module: { include: { usages: true } },
 			},
 		});
+
+		return rows.map((r) => toAddonFromBusinessAddon(r));
 	} catch (error) {
 		console.error('Error fetching addons by business ID with usages:', error);
 		throw new Error('Failed to fetch addons by business ID with usages');
@@ -316,13 +374,19 @@ export async function getAddonsByReservationModuleIdWithUsages(
 	reservationModuleId: string
 ): Promise<AddonsListResponse> {
 	try {
-		return await prisma.business_addon.findMany({
+		const rows: BusinessAddonWithAddonPrisma[] = await prisma.business_addon.findMany({
 			where: { reservation_module_id: reservationModuleId },
 			include: {
-				addon: true,
-				usages: true,
+				addon: {
+					include: {
+						actions: { include: { action: true } },
+					},
+				},
+				reservation_module: { include: { usages: true } },
 			},
 		});
+
+		return rows.map((r) => toAddonFromBusinessAddon(r));
 	} catch (error) {
 		console.error('Error fetching addons by reservation module ID with usages:', error);
 		throw new Error('Failed to fetch addons by reservation module ID with usages');
@@ -335,17 +399,18 @@ export async function getAddonsByReservationModuleIdWithUsages(
  */
 export async function getAllAddonsWithActionsAndUsages(): Promise<AddonsListResponse> {
 	try {
-		return await prisma.addon.findMany({
+		const rows: AddonWithActionsAndUsagesPrisma[] = await prisma.addon.findMany({
 			include: {
-				actions: true,
+				actions: { include: { action: true } },
 				business_addons: {
 					include: {
-						usages: true,
-						reservation_module: true,
+						reservation_module: { include: { usages: true } },
 					},
 				},
 			},
 		});
+
+		return rows.map((r) => toAddonWithActionsAndUsagesResponse(r));
 	} catch (error) {
 		console.error('Error fetching addons with actions and usages:', error);
 		throw new Error('Failed to fetch addons with actions and usages');
@@ -359,18 +424,19 @@ export async function getAllAddonsWithActionsAndUsages(): Promise<AddonsListResp
  */
 export async function getAddonWithActionsAndUsagesById(addonId: string): Promise<AddonResponse | null> {
 	try {
-		return await prisma.addon.findUnique({
+		const row = await prisma.addon.findUnique({
 			where: { addon_id: addonId },
 			include: {
-				actions: true,
+				actions: { include: { action: true } },
 				business_addons: {
 					include: {
-						usages: true,
-						reservation_module: true,
+						reservation_module: { include: { usages: true } },
 					},
 				},
 			},
 		});
+
+		return row ? toAddonWithActionsAndUsagesResponse(row) : null;
 	} catch (error) {
 		console.error('Error fetching addon with actions and usages:', error);
 		throw new Error('Failed to fetch addon with actions and usages');
@@ -384,18 +450,20 @@ export async function getAddonWithActionsAndUsagesById(addonId: string): Promise
  */
 export async function getAddonsByBusinessIdWithActionsAndUsages(businessId: string): Promise<AddonsListResponse> {
 	try {
-		return await prisma.business_addon.findMany({
+		const rows: BusinessAddonWithAddonPrisma[] = await prisma.business_addon.findMany({
 			where: { business_id: businessId },
 			include: {
 				addon: {
 					include: {
-						actions: true,
+						actions: { include: { action: true } },
 					},
 				},
-				usages: true,
-				reservation_module: true,
+				reservation_module: { include: { usages: true } },
 			},
 		});
+
+		// Unwrap business_addon rows to addon DTOs
+		return rows.map((r) => toAddonFromBusinessAddon(r));
 	} catch (error) {
 		console.error('Error fetching addons by business ID with actions and usages:', error);
 		throw new Error('Failed to fetch addons by business ID with actions and usages');
@@ -411,17 +479,19 @@ export async function getAddonsByReservationModuleIdWithActionsAndUsages(
 	reservationModuleId: string
 ): Promise<AddonsListResponse> {
 	try {
-		return await prisma.business_addon.findMany({
+		const rows: BusinessAddonWithAddonPrisma[] = await prisma.business_addon.findMany({
 			where: { reservation_module_id: reservationModuleId },
 			include: {
 				addon: {
 					include: {
-						actions: true,
+						actions: { include: { action: true } },
 					},
 				},
-				usages: true,
+				reservation_module: { include: { usages: true } },
 			},
 		});
+
+		return rows.map((r) => toAddonFromBusinessAddon(r));
 	} catch (error) {
 		console.error('Error fetching addons by reservation module ID with actions and usages:', error);
 		throw new Error('Failed to fetch addons by reservation module ID with actions and usages');
@@ -434,17 +504,18 @@ export async function getAddonsByReservationModuleIdWithActionsAndUsages(
  */
 export async function getAllAddonsWithUsagesAndActions(): Promise<AddonsListResponse> {
 	try {
-		return await prisma.addon.findMany({
+		const rows: AddonWithActionsAndUsagesPrisma[] = await prisma.addon.findMany({
 			include: {
 				business_addons: {
 					include: {
-						usages: true,
-						actions: true,
-						reservation_module: true,
+						reservation_module: { include: { usages: true } },
+						actions: { include: { action: true } },
 					},
 				},
 			},
 		});
+
+		return rows.map((r) => toAddonWithActionsAndUsagesResponse(r));
 	} catch (error) {
 		console.error('Error fetching addons with usages and actions:', error);
 		throw new Error('Failed to fetch addons with usages and actions');
@@ -458,18 +529,19 @@ export async function getAllAddonsWithUsagesAndActions(): Promise<AddonsListResp
  */
 export async function getAddonWithUsagesAndActionsById(addonId: string): Promise<AddonResponse | null> {
 	try {
-		return await prisma.addon.findUnique({
+		const row = await prisma.addon.findUnique({
 			where: { addon_id: addonId },
 			include: {
 				business_addons: {
 					include: {
-						usages: true,
-						actions: true,
-						reservation_module: true,
+						reservation_module: { include: { usages: true } },
+						actions: { include: { action: true } },
 					},
 				},
 			},
 		});
+
+		return row ? toAddonWithActionsAndUsagesResponse(row) : null;
 	} catch (error) {
 		console.error('Error fetching addon with usages and actions:', error);
 		throw new Error('Failed to fetch addon with usages and actions');
@@ -483,18 +555,19 @@ export async function getAddonWithUsagesAndActionsById(addonId: string): Promise
  */
 export async function getAddonsByBusinessIdWithUsagesAndActions(businessId: string): Promise<AddonsListResponse> {
 	try {
-		return await prisma.business_addon.findMany({
+		const rows: BusinessAddonWithAddonPrisma[] = await prisma.business_addon.findMany({
 			where: { business_id: businessId },
 			include: {
 				addon: {
 					include: {
-						actions: true,
+						actions: { include: { action: true } },
 					},
 				},
-				usages: true,
-				reservation_module: true,
+				reservation_module: { include: { usages: true } },
 			},
 		});
+
+		return rows.map((r) => toAddonFromBusinessAddon(r));
 	} catch (error) {
 		console.error('Error fetching addons by business ID with usages and actions:', error);
 		throw new Error('Failed to fetch addons by business ID with usages and actions');
@@ -510,17 +583,19 @@ export async function getAddonsByReservationModuleIdWithUsagesAndActions(
 	reservationModuleId: string
 ): Promise<AddonsListResponse> {
 	try {
-		return await prisma.business_addon.findMany({
+		const rows: BusinessAddonWithAddonPrisma[] = await prisma.business_addon.findMany({
 			where: { reservation_module_id: reservationModuleId },
 			include: {
 				addon: {
 					include: {
-						actions: true,
+						actions: { include: { action: true } },
 					},
 				},
-				usages: true,
+				reservation_module: { include: { usages: true } },
 			},
 		});
+
+		return rows.map((r) => toAddonFromBusinessAddon(r));
 	} catch (error) {
 		console.error('Error fetching addons by reservation module ID with usages and actions:', error);
 		throw new Error('Failed to fetch addons by reservation module ID with usages and actions');
@@ -533,17 +608,18 @@ export async function getAddonsByReservationModuleIdWithUsagesAndActions(
  */
 export async function getAllAddonsWithActionsUsagesAndBusinessAddons(): Promise<AddonsListResponse> {
 	try {
-		return await prisma.addon.findMany({
+		const rows: AddonWithActionsAndUsagesPrisma[] = await prisma.addon.findMany({
 			include: {
-				actions: true,
+				actions: { include: { action: true } },
 				business_addons: {
 					include: {
-						usages: true,
-						reservation_module: true,
+						reservation_module: { include: { usages: true } },
 					},
 				},
 			},
 		});
+
+		return rows.map((r) => toAddonWithActionsAndUsagesResponse(r));
 	} catch (error) {
 		console.error('Error fetching addons with actions, usages, and business addons:', error);
 		throw new Error('Failed to fetch addons with actions, usages, and business addons');
@@ -557,18 +633,19 @@ export async function getAllAddonsWithActionsUsagesAndBusinessAddons(): Promise<
  */
 export async function getAddonWithActionsUsagesAndBusinessAddonsById(addonId: string): Promise<AddonResponse | null> {
 	try {
-		return await prisma.addon.findUnique({
+		const row = await prisma.addon.findUnique({
 			where: { addon_id: addonId },
 			include: {
-				actions: true,
+				actions: { include: { action: true } },
 				business_addons: {
 					include: {
-						usages: true,
-						reservation_module: true,
+						reservation_module: { include: { usages: true } },
 					},
 				},
 			},
 		});
+
+		return row ? toAddonWithActionsAndUsagesResponse(row) : null;
 	} catch (error) {
 		console.error('Error fetching addon with actions, usages, and business addons:', error);
 		throw new Error('Failed to fetch addon with actions, usages, and business addons');
@@ -584,18 +661,19 @@ export async function getAddonsByBusinessIdWithActionsUsagesAndBusinessAddons(
 	businessId: string
 ): Promise<AddonsListResponse> {
 	try {
-		return await prisma.business_addon.findMany({
+		const rows: BusinessAddonWithAddonPrisma[] = await prisma.business_addon.findMany({
 			where: { business_id: businessId },
 			include: {
 				addon: {
 					include: {
-						actions: true,
+						actions: { include: { action: true } },
 					},
 				},
-				usages: true,
-				reservation_module: true,
+				reservation_module: { include: { usages: true } },
 			},
 		});
+
+		return rows.map((r) => toAddonFromBusinessAddon(r));
 	} catch (error) {
 		console.error('Error fetching addons by business ID with actions, usages, and business addons:', error);
 		throw new Error('Failed to fetch addons by business ID with actions, usages, and business addons');

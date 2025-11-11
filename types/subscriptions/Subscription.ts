@@ -19,6 +19,7 @@ export const CreateSubscriptionSchema = z
 		name: z.string().min(1),
 		price_cents: z.number().int().nonnegative(),
 		stripe_price_id: z.string().min(1),
+		stripe_product_id: z.string().min(1),
 	})
 	.openapi('CreateSubscription');
 

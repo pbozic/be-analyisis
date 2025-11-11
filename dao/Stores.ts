@@ -1,5 +1,5 @@
 import prisma from '../prisma/prisma.js';
-import { StoreDetail } from '../schemas/dto/Stores/store.dto.js';
+import { StoreDetail, toStoreDetail } from '../schemas/dto/Stores/store.dto.js';
 /**
  * Set store online or offline
  *
@@ -9,7 +9,8 @@ import { StoreDetail } from '../schemas/dto/Stores/store.dto.js';
  */
 export async function setStoreOnline(stores_id: string, online: boolean): Promise<StoreDetail> {
 	try {
-		return await prisma.stores.update({ where: { stores_id }, data: { online } });
+		const updated = await prisma.stores.update({ where: { stores_id }, data: { online } });
+		return toStoreDetail(updated);
 	} catch (error: unknown) {
 		const message = error instanceof Error ? error.message : String(error);
 		console.error('Error setting store online:', message);
@@ -25,7 +26,8 @@ export async function setStoreOnline(stores_id: string, online: boolean): Promis
  */
 export async function setStoreOverwhelmed(stores_id: string, overwhelmed: boolean): Promise<StoreDetail> {
 	try {
-		return await prisma.stores.update({ where: { stores_id }, data: { overwhelmed } });
+		const updated = await prisma.stores.update({ where: { stores_id }, data: { overwhelmed } });
+		return toStoreDetail(updated);
 	} catch (error: unknown) {
 		const message = error instanceof Error ? error.message : String(error);
 		console.error('Error setting store overwhelmed:', message);
@@ -40,7 +42,8 @@ export async function setStoreOverwhelmed(stores_id: string, overwhelmed: boolea
  */
 export async function disableStore(stores_id: string): Promise<StoreDetail> {
 	try {
-		return await prisma.stores.update({ where: { stores_id }, data: { enabled: false, online: false } });
+		const updated = await prisma.stores.update({ where: { stores_id }, data: { enabled: false, online: false } });
+		return toStoreDetail(updated);
 	} catch (error: unknown) {
 		const message = error instanceof Error ? error.message : String(error);
 		console.error('Error disabling store:', message);
@@ -55,7 +58,8 @@ export async function disableStore(stores_id: string): Promise<StoreDetail> {
  */
 export async function enableStore(stores_id: string): Promise<StoreDetail> {
 	try {
-		return await prisma.stores.update({ where: { stores_id }, data: { enabled: true } });
+		const updated = await prisma.stores.update({ where: { stores_id }, data: { enabled: true } });
+		return toStoreDetail(updated);
 	} catch (error: unknown) {
 		const message = error instanceof Error ? error.message : String(error);
 		console.error('Error enabling store:', message);
@@ -76,7 +80,7 @@ export async function getStoresIdByBusinessId(businessId: string): Promise<strin
 			where: { business_id: businessId },
 			select: { stores_id: true },
 		});
-		return row?.stores_id ?? null;
+		return row?.stores_id as string ?? null;
 	} catch (error: unknown) {
 		const message = error instanceof Error ? error.message : String(error);
 		console.error('Error fetching stores_id by business_id:', message);

@@ -9,6 +9,15 @@ import type {
 import { PREMISE_TYPE } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
+import businessPremiseDefaultInclude from '../prisma/includes/businessPremise.js';
+import electronicDeviceDefaultInclude from '../prisma/includes/electronicDevice.js';
+import deviceAssignmentDefaultInclude from '../prisma/includes/deviceAssignment.js';
+import vehiclesDefaultInclude from '../prisma/includes/vehicles.js';
+import { toBusinessPremiseResponse, toElectronicDeviceResponse, toDeviceAssignmentResponse, toVehicleResponse } from '../schemas/dto/Invoices/invoice.mappers.js';
+import type { BusinessPremiseWithIncludesPrisma } from '../prisma/includes/businessPremise.js';
+import type { ElectronicDeviceWithIncludesPrisma } from '../prisma/includes/electronicDevice.js';
+import type { DeviceAssignmentWithIncludesPrisma } from '../prisma/includes/deviceAssignment.js';
+import type { VehicleWithIncludesPrisma } from '../prisma/includes/vehicles.js';
 
 /**
  * Create a business premise.
@@ -34,7 +43,10 @@ export async function createBusinessPremise(
 		validity_date: data.validity_date ?? null,
 		special_notes: data.special_notes ?? null,
 	};
-	return await prisma.business_premise.create({ data: payload });
+	const created = await prisma.business_premise.create({ data: payload });
+	const row = await prisma.business_premise.findUnique({ where: { business_premise_id: created.business_premise_id }, include: businessPremiseDefaultInclude });
+	if (!row) throw new Error('Failed to fetch created business premise');
+	return toBusinessPremiseResponse(row as BusinessPremiseWithIncludesPrisma) as BusinessPremise;
 }
 /**
  * Create an electronic device.
@@ -54,7 +66,10 @@ export async function createElectronicDevice(
 		name: data.name ?? null,
 		active: data.active ?? true,
 	};
-	return await prisma.electronic_device.create({ data: payload });
+	const created = await prisma.electronic_device.create({ data: payload });
+	const row = await prisma.electronic_device.findUnique({ where: { electronic_device_id: created.electronic_device_id }, include: electronicDeviceDefaultInclude });
+	if (!row) throw new Error('Failed to fetch created electronic device');
+	return toElectronicDeviceResponse(row as ElectronicDeviceWithIncludesPrisma) as ElectronicDevice;
 }
 /**
  * Assign a device to a driver.
@@ -71,9 +86,10 @@ export async function assignDeviceToDriver(
 	electronic_device_id: string,
 	valid_from: Date = new Date()
 ): Promise<DeviceAssignment> {
-	return await prisma.device_assignment.create({
-		data: { driver_id, business_premise_id, electronic_device_id, valid_from },
-	});
+	const created = await prisma.device_assignment.create({ data: { driver_id, business_premise_id, electronic_device_id, valid_from } });
+	const row = await prisma.device_assignment.findUnique({ where: { device_assignment_id: created.device_assignment_id }, include: deviceAssignmentDefaultInclude });
+	if (!row) throw new Error('Failed to fetch created device assignment');
+	return toDeviceAssignmentResponse(row as DeviceAssignmentWithIncludesPrisma) as DeviceAssignment;
 }
 /**
  * Link a business premise to a vehicle.
@@ -83,7 +99,8 @@ export async function assignDeviceToDriver(
  * @returns {Promise<Vehicle>}
  */
 export async function linkPremiseToVehicle(vehicle_id: string, business_premise_id: string): Promise<Vehicle> {
-	return await prisma.vehicles.update({ where: { vehicle_id }, data: { business_premise_id } });
+	const updated = await prisma.vehicles.update({ where: { vehicle_id }, data: { business_premise_id }, include: vehiclesDefaultInclude });
+	return toVehicleResponse(updated as VehicleWithIncludesPrisma) as Vehicle;
 }
 /**
  * Disable an electronic device.
@@ -96,10 +113,8 @@ export async function disableElectronicDevice(
 	business_premise_id: string,
 	electronic_device_id: string
 ): Promise<ElectronicDevice> {
-	return await prisma.electronic_device.update({
-		where: { business_premise_id_electronic_device_id: { business_premise_id, electronic_device_id } },
-		data: { active: false },
-	});
+	const updated = await prisma.electronic_device.update({ where: { business_premise_id_electronic_device_id: { business_premise_id, electronic_device_id } }, data: { active: false }, include: electronicDeviceDefaultInclude });
+	return toElectronicDeviceResponse(updated as ElectronicDeviceWithIncludesPrisma) as ElectronicDevice;
 }
 /**
  * End a device assignment.
@@ -114,17 +129,12 @@ export async function endDeviceAssignment(
 	business_premise_id: string,
 	electronic_device_id: string
 ): Promise<DeviceAssignment> {
-	const latest = await prisma.device_assignment.findFirst({
-		where: { driver_id, business_premise_id, electronic_device_id, valid_to: null },
-		orderBy: { valid_from: 'desc' },
-	});
+	const latest = await prisma.device_assignment.findFirst({ where: { driver_id, business_premise_id, electronic_device_id, valid_to: null }, orderBy: { valid_from: 'desc' } });
 	if (!latest) {
 		throw new Error('No active device assignment found');
 	}
-	return await prisma.device_assignment.update({
-		where: { device_assignment_id: latest.device_assignment_id },
-		data: { valid_to: new Date() },
-	});
+	const updated = await prisma.device_assignment.update({ where: { device_assignment_id: latest.device_assignment_id }, data: { valid_to: new Date() }, include: deviceAssignmentDefaultInclude });
+	return toDeviceAssignmentResponse(updated as DeviceAssignmentWithIncludesPrisma) as DeviceAssignment;
 }
 /**
  * Confirm a business premise.
@@ -133,10 +143,8 @@ export async function endDeviceAssignment(
  * @returns {Promise<BusinessPremise>}
  */
 export async function confirmBusinessPremise(business_premise_id: string): Promise<BusinessPremise> {
-	return await prisma.business_premise.update({
-		where: { business_premise_id },
-		data: { is_registered: true, registered_at: new Date() },
-	});
+	const updated = await prisma.business_premise.update({ where: { business_premise_id }, data: { is_registered: true, registered_at: new Date() }, include: businessPremiseDefaultInclude });
+	return toBusinessPremiseResponse(updated as BusinessPremiseWithIncludesPrisma) as BusinessPremise;
 }
 
 export default {

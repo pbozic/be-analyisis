@@ -109,6 +109,7 @@ const getBusinessAdminDataById = async (business_id: string): Promise<BusinessAd
 			},
 			include: {
 				address: true,
+				business_details: true,
 				business_users: {
 					include: {
 						users: true,
@@ -169,10 +170,11 @@ const getBusinessByEmail = async (email: string): Promise<BusinessResponseDto | 
 			where: {
 				email: email,
 			},
-			include: {
-				address: true,
-				business_users: true,
-			},
+				include: {
+					address: true,
+					business_details: true,
+					business_users: true,
+				},
 		})) as BusinessResponseDto | null;
 	} catch (error) {
 		console.error('Error retrieving business by email:', error);
@@ -251,9 +253,10 @@ const getTransferBusinessesMainInformation = async (): Promise<BusinessResponseD
 			where: {
 				transport_module: { isNot: null },
 			},
-			include: {
-				address: true,
-			},
+				include: {
+					business_details: true,
+					address: true,
+				},
 		});
 		// Validate/shape results through the Business mapper
 		return rows.map(toGetBusinessResponse);
@@ -274,9 +277,10 @@ const getStoresMainInformation = async (): Promise<BusinessResponseDto[]> => {
 			where: {
 				stores_module: { isNot: null },
 			},
-			include: {
-				address: true,
-			},
+				include: {
+					business_details: true,
+					address: true,
+				},
 		});
 		return rows.map(toGetBusinessResponse);
 	} catch (error) {
@@ -296,9 +300,10 @@ const getFoodDrinksMainInformation = async (): Promise<BusinessResponseDto[]> =>
 			where: {
 				food_drinks_module: { isNot: null },
 			},
-			include: {
-				address: true,
-			},
+				include: {
+					business_details: true,
+					address: true,
+				},
 		});
 		return rows.map(toGetBusinessResponse);
 	} catch (error) {
@@ -332,13 +337,14 @@ const getBusinessesByType = async (type: string, args: any = {}): Promise<Busine
 				...whereClause,
 				...args.where,
 			},
-			include: {
-				address: true,
-				business_users: {
-					include: {
-						users: true,
+				include: {
+					business_details: true,
+					address: true,
+					business_users: {
+						include: {
+							users: true,
+						},
 					},
-				},
 				parent_business: true,
 				child_businesses: true,
 				...args.include,
@@ -369,10 +375,11 @@ const getParentBusiness = async (business_id: string): Promise<BusinessResponseD
 
 		const parent = await prisma.business.findUnique({
 			where: { business_id: business.parent_business_id },
-			include: {
-				address: true,
-				business_users: true,
-			},
+				include: {
+					business_details: true,
+					address: true,
+					business_users: true,
+				},
 		});
 		return parent ? toGetBusinessResponse(parent) : null;
 	} catch (error) {
@@ -393,10 +400,11 @@ const getChildBusinesses = async (parent_business_id: string): Promise<BusinessR
 			where: {
 				parent_business_id: parent_business_id,
 			},
-			include: {
-				address: true,
-				business_users: true,
-			},
+				include: {
+					business_details: true,
+					address: true,
+					business_users: true,
+				},
 		});
 		return rows.map(toGetBusinessResponse);
 	} catch (error) {
@@ -430,10 +438,11 @@ const updateBusiness = async (
 		return (await prisma.business.update({
 			where: { business_id },
 			data: updateData,
-			include: {
-				address: true,
-				business_users: true,
-			},
+				include: {
+					business_details: true,
+					address: true,
+					business_users: true,
+				},
 		})) as BusinessResponseDto;
 	} catch (error) {
 		console.error('Error updating business:', error);
@@ -545,10 +554,11 @@ const createNewBusiness = async (business: Partial<BusinessBase>, tx: any = pris
 
 		return (await tx.business.create({
 			data: createData,
-			include: {
-				address: true,
-				business_users: true,
-			},
+				include: {
+					business_details: true,
+					address: true,
+					business_users: true,
+				},
 		})) as BusinessResponseDto;
 	} catch (error) {
 		console.error('Error creating new business:', error);

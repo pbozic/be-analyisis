@@ -1,4 +1,6 @@
 import prisma from '../prisma/prisma.js';
+import { toUserFavoriteServiceLinkList } from '../schemas/dto/UserFavoriteServiceLink/userFavoriteServiceLink.mappers.js';
+import type { UserFavoriteServiceLinkResponse } from '../types/users/UserFavoriteServiceLink.js';
 /**
  * Update user's favorite services
  *
@@ -6,7 +8,7 @@ import prisma from '../prisma/prisma.js';
  * @param {string[]} service_ids - The IDs of the services to update.
  * @returns {Promise<object[]>} The updated favorite services.
  */
-export async function updateFavoriteServices(user_id: string, service_ids: string[]) {
+export async function updateFavoriteServices(user_id: string, service_ids: string[]): Promise<UserFavoriteServiceLinkResponse[]> {
 	try {
 		// First, delete existing favorites not in the new list
 		await prisma.user_favorite_service_links.deleteMany({
@@ -25,7 +27,8 @@ export async function updateFavoriteServices(user_id: string, service_ids: strin
 			})
 		);
 
-		return await Promise.all(upsertPromises);
+		const rows = await Promise.all(upsertPromises);
+		return toUserFavoriteServiceLinkList(rows as unknown[]);
 	} catch (error: unknown) {
 		console.error('Error updating favorite services:', error);
 		throw new Error(String(error));
@@ -37,13 +40,15 @@ export async function updateFavoriteServices(user_id: string, service_ids: strin
  * @param {string} user_id - The ID of the user.
  * @returns {Promise<object[]>} The user's favorite services.
  */
-export async function listFavoriteServices(user_id: string) {
+export async function listFavoriteServices(user_id: string): Promise<UserFavoriteServiceLinkResponse[]> {
 	try {
-		return await prisma.user_favorite_service_links.findMany({
+		const rows = await prisma.user_favorite_service_links.findMany({
 			where: { user_id },
 			include: { services: true },
 			orderBy: { created_at: 'desc' },
 		});
+
+		return toUserFavoriteServiceLinkList(rows as unknown[]);
 	} catch (error: unknown) {
 		console.error('Error listing favorite services:', error);
 		throw new Error(String(error));

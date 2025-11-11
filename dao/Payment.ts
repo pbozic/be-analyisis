@@ -1,6 +1,9 @@
-import { type payments, type payment_splits, type PAYMENT_METHOD, Prisma } from '@prisma/client';
+import { type payments, type PAYMENT_METHOD, Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
+import paymentsDefaultInclude, { PaymentWithIncludesPrisma } from '../prisma/includes/payments.js';
+import { toPaymentResponse, toPaymentList } from '../schemas/dto/Payments/payments.mappers.js';
+import type { PaymentResponse } from '../schemas/dto/Payments/payments.dto.js';
 
 /**
  * Creates a new payment record.
@@ -22,18 +25,14 @@ export async function createPayment(
 	credits_amount: number = 0,
 	payment_intent_id: string | null = null,
 	daily_meal_subscription_id: string | null = null
-): Promise<payments> {
+): Promise<PaymentResponse> {
 	try {
-		return await prisma.payments.create({
-			data: {
-				user_id,
-				amount,
-				payment_method,
-				credits_amount,
-				payment_intent_id,
-				daily_meal_subscription_id: daily_meal_subscription_id ? daily_meal_subscription_id : undefined,
-			},
+		const created = await prisma.payments.create({
+			data: { user_id, amount, payment_method, credits_amount, payment_intent_id, daily_meal_subscription_id: daily_meal_subscription_id ? daily_meal_subscription_id : undefined },
 		});
+
+		const row = await prisma.payments.findUnique({ where: { payment_id: created.payment_id }, include: paymentsDefaultInclude });
+		return toPaymentResponse(row as PaymentWithIncludesPrisma);
 	} catch (error) {
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
 			// Known error with error code, e.g. unique constraint
@@ -56,14 +55,10 @@ export async function createPayment(
  * @param {string} payment_id
  * @returns {Promise<payments | null>}
  */
-export async function getPaymentById(
-	payment_id: string
-): Promise<(payments & { payment_splits: payment_splits[] }) | null> {
+export async function getPaymentById(payment_id: string): Promise<PaymentResponse | null> {
 	try {
-		return await prisma.payments.findUnique({
-			where: { payment_id },
-			include: { payment_splits: true },
-		});
+		const row = await prisma.payments.findUnique({ where: { payment_id }, include: paymentsDefaultInclude });
+		return row ? toPaymentResponse(row as PaymentWithIncludesPrisma) : null;
 	} catch (error) {
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
 			// Known error with error code, e.g. unique constraint
@@ -86,12 +81,10 @@ export async function getPaymentById(
  * @param {string} daily_meal_subscription_id
  * @returns {Promise<payments | null>}
  */
-export async function getPaymentByGroupedId(daily_meal_subscription_id: string): Promise<payments | null> {
+export async function getPaymentByGroupedId(daily_meal_subscription_id: string): Promise<PaymentResponse | null> {
 	try {
-		return await prisma.payments.findUnique({
-			where: { daily_meal_subscription_id },
-			include: { daily_meal_subscription: true, payment_splits: true },
-		});
+		const row = await prisma.payments.findUnique({ where: { daily_meal_subscription_id }, include: paymentsDefaultInclude });
+		return row ? toPaymentResponse(row as PaymentWithIncludesPrisma) : null;
 	} catch (error) {
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
 			// Known error with error code, e.g. unique constraint
@@ -114,12 +107,11 @@ export async function getPaymentByGroupedId(daily_meal_subscription_id: string):
  * @param {string} payment_id
  * @returns {Promise<payments>}
  */
-export async function updatePayment(
-	payment_id: string,
-	updates: Partial<Pick<payments, 'amount' | 'credits_amount' | 'payment_method' | 'payment_intent_id' | 'status'>>
-): Promise<payments> {
+export async function updatePayment(payment_id: string, updates: Partial<Pick<payments, 'amount' | 'credits_amount' | 'payment_method' | 'payment_intent_id' | 'status'>>): Promise<PaymentResponse> {
 	try {
-		return await prisma.payments.update({ where: { payment_id }, data: updates });
+		const updated = await prisma.payments.update({ where: { payment_id }, data: updates });
+		const row = await prisma.payments.findUnique({ where: { payment_id: updated.payment_id }, include: paymentsDefaultInclude });
+		return toPaymentResponse(row as PaymentWithIncludesPrisma);
 	} catch (error) {
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
 			// Known error with error code, e.g. unique constraint
@@ -142,9 +134,10 @@ export async function updatePayment(
  * @param {string} payment_id
  * @returns {Promise<payments>}
  */
-export async function deletePayment(payment_id: string): Promise<payments> {
+export async function deletePayment(payment_id: string): Promise<PaymentResponse> {
 	try {
-		return await prisma.payments.delete({ where: { payment_id } });
+		const deleted = await prisma.payments.delete({ where: { payment_id }, include: paymentsDefaultInclude });
+		return toPaymentResponse(deleted as PaymentWithIncludesPrisma);
 	} catch (error) {
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
 			// Known error with error code, e.g. unique constraint
@@ -167,12 +160,10 @@ export async function deletePayment(payment_id: string): Promise<payments> {
  * @param {(string | null)} [daily_meal_subscription_id=null]
  * @returns {Promise<payments[]>}
  */
-export async function listPayments(daily_meal_subscription_id: string | null = null): Promise<payments[]> {
+export async function listPayments(daily_meal_subscription_id: string | null = null): Promise<PaymentResponse[]> {
 	try {
-		return await prisma.payments.findMany({
-			where: daily_meal_subscription_id ? { daily_meal_subscription_id } : undefined,
-			orderBy: { created_at: 'desc' },
-		});
+	const rows = await prisma.payments.findMany({ where: daily_meal_subscription_id ? { daily_meal_subscription_id } : undefined, orderBy: { created_at: 'desc' }, include: paymentsDefaultInclude });
+	return toPaymentList(rows as PaymentWithIncludesPrisma[]);
 	} catch (error) {
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
 			// Known error with error code, e.g. unique constraint

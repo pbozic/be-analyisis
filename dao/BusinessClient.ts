@@ -1,14 +1,21 @@
 import prisma from '../prisma/prisma.js';
+import { getBusinessById } from './Business.js';
+import {
+	toBusinessClientDetailResponse,
+	toBusinessClientResponse,
+	toBusinessClientWithOrdersResponse
+} from '../schemas/dto/BusinessClient/businessClient.mappers.js';
 import type {
 	BusinessClientResponse,
 	BusinessClientWithOrdersResponse,
 	BusinessClientDetailResponse,
 } from '../schemas/dto/BusinessClient/businessClient.dto.js';
+import type { CreateBusinessClientRequest, UpdateBusinessClientRequest } from '../schemas/dto/BusinessClient/requests.js';
 import type {
-	CreateBusinessClientRequest,
-	UpdateBusinessClientRequest,
-} from '../schemas/dto/BusinessClient/requests.js';
-import { getBusinessById } from './Business.js';
+	BusinessClientDetailPrisma,
+	BusinessClientWithOrdersPrisma,
+	BusinessClientDefaultPrisma,
+} from '../prisma/includes/businessClient.js';
 
 /**
  * Get all business clients
@@ -16,12 +23,14 @@ import { getBusinessById } from './Business.js';
  */
 export async function getAllBusinessClients(): Promise<BusinessClientDetailResponse[]> {
 	try {
-		return await prisma.business_clients.findMany({
+		const rows = await prisma.business_clients.findMany({
 			include: {
-				business: true,
+				crm_module: { include: { business: true } },
 				taxi_orders: true,
 			},
 		});
+
+		return rows.map((r) => toBusinessClientDetailResponse(r as BusinessClientDetailPrisma));
 	} catch (error) {
 		console.error('Error retrieving all business clients:', error);
 		throw new Error(String(error));
@@ -35,13 +44,12 @@ export async function getAllBusinessClients(): Promise<BusinessClientDetailRespo
  */
 export async function getBusinessClientById(businessClientsId: string): Promise<BusinessClientDetailResponse | null> {
 	try {
-		return await prisma.business_clients.findUnique({
+		const row = await prisma.business_clients.findUnique({
 			where: { business_clients_id: businessClientsId },
-			include: {
-				business: true,
-				taxi_orders: true,
-			},
+			include: { crm_module: { include: { business: true } }, taxi_orders: true },
 		});
+
+		return row ? toBusinessClientDetailResponse(row as BusinessClientDetailPrisma) : null;
 	} catch (error) {
 		console.error(`Error retrieving business client with ID ${businessClientsId}:`, error);
 		throw new Error(String(error));
@@ -56,12 +64,12 @@ export async function getBusinessClientById(businessClientsId: string): Promise<
 export async function getBusinessClientsByBusinessId(businessId: string): Promise<BusinessClientWithOrdersResponse[]> {
 	try {
 		const business = await getBusinessById(businessId);
-		return await prisma.business_clients.findMany({
+		const rows = await prisma.business_clients.findMany({
 			where: { crm_module_id: business.crm_module_id },
-			include: {
-				taxi_orders: true,
-			},
+			include: { taxi_orders: true },
 		});
+
+		return rows.map((r: BusinessClientWithOrdersPrisma) => toBusinessClientWithOrdersResponse(r as BusinessClientWithOrdersPrisma));
 	} catch (error) {
 		console.error(`Error retrieving business clients for business ID ${businessId}:`, error);
 		throw new Error(String(error));
@@ -88,9 +96,9 @@ export async function createBusinessClient(clientData: CreateBusinessClientReque
 			telephone_code,
 		};
 
-		return await prisma.business_clients.create({
-			data,
-		});
+		const row = await prisma.business_clients.create({ data });
+
+		return toBusinessClientResponse(row as BusinessClientDefaultPrisma);
 	} catch (error) {
 		console.error('Error creating a business client:', error);
 		throw new Error(String(error));
@@ -113,10 +121,9 @@ export async function updateBusinessClient(
 			updates.telephone = `${updates.telephone_code}${updates.telephone_number}`;
 		}
 
-		return await prisma.business_clients.update({
-			where: { business_clients_id: businessClientsId },
-			data: updates,
-		});
+		const row = await prisma.business_clients.update({ where: { business_clients_id: businessClientsId }, data: updates });
+
+		return toBusinessClientResponse(row as BusinessClientDefaultPrisma);
 	} catch (error) {
 		console.error(`Error updating business client with ID ${businessClientsId}:`, error);
 		throw new Error(String(error));
@@ -130,9 +137,9 @@ export async function updateBusinessClient(
  */
 export async function removeBusinessClient(businessClientsId: string): Promise<BusinessClientResponse> {
 	try {
-		return await prisma.business_clients.delete({
-			where: { business_clients_id: businessClientsId },
-		});
+		const row = await prisma.business_clients.delete({ where: { business_clients_id: businessClientsId } });
+
+		return toBusinessClientResponse(row as BusinessClientDefaultPrisma);
 	} catch (error) {
 		console.error(`Error removing business client with ID ${businessClientsId}:`, error);
 		throw new Error(String(error));

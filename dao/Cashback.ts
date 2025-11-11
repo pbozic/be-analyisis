@@ -1,10 +1,12 @@
 import prisma from '../prisma/prisma.js';
 import { CASHBACK_STATUS } from '../lib/constants.js';
 import type {
-    CashbackBase,
-    CashbackDetail,
+	CashbackBase,
+	CashbackDetail,
 } from '../schemas/dto/Cashback/cashback.dto.js';
 import { toCashbackDetail } from '../schemas/dto/Cashback/cashback.dto.js';
+import type { CashbackWithOrdersPrisma } from '../prisma/includes/cashback.js';
+import cashbackOrdersInclude from '../prisma/includes/cashback.js';
 
 /**
  * Create a cashback entry.
@@ -34,19 +36,12 @@ export async function createCashback(data: Record<string, any>): Promise<Cashbac
 export async function getUserCashbackHistory(user_id: string): Promise<CashbackDetail[]> {
 	try {
 		const cashbacks = await prisma.cashback.findMany({
-			where: {
-				user_id,
-			},
-			include: {
-				taxi_order: true,
-				delivery_order: true,
-			},
-			orderBy: {
-				earned_at: 'desc',
-			},
+			where: { user_id },
+			include: cashbackOrdersInclude,
+			orderBy: { earned_at: 'desc' },
 		});
 
-		return cashbacks.map(toCashbackDetail);
+		return (cashbacks as CashbackWithOrdersPrisma[]).map(toCashbackDetail);
 	} catch (error) {
 		console.error('Error fetching user cashback history:', error);
 		throw error;
@@ -63,21 +58,12 @@ export async function getUserCashbackHistory(user_id: string): Promise<CashbackD
 export async function getPendingUserCashbackByType(user_id: string, type: string): Promise<CashbackDetail[]> {
 	try {
 		const cashbacks = await prisma.cashback.findMany({
-			where: {
-				user_id: user_id,
-				status: CASHBACK_STATUS.PENDING,
-				type: type,
-			},
-			include: {
-				taxi_order: true,
-				delivery_order: true,
-			},
-			orderBy: {
-				earned_at: 'asc',
-			},
+			where: { user_id: user_id, status: CASHBACK_STATUS.PENDING, type: type },
+			include: cashbackOrdersInclude,
+			orderBy: { earned_at: 'asc' },
 		});
 
-		return cashbacks.map(toCashbackDetail);
+		return (cashbacks as CashbackWithOrdersPrisma[]).map(toCashbackDetail);
 	} catch (error) {
 		console.error('Error fetching pending user cashback by type:', error);
 		throw error;

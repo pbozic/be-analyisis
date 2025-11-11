@@ -1,5 +1,8 @@
 import prisma from '../prisma/prisma.js';
 import type { CreateLostItemInput, UpdateLostItemInput, LostItem as LostItemDTO } from '../types/lostItems/LostItem.js';
+import lostItemsDefaultInclude from '../prisma/includes/lostItems.js';
+import type { LostItemsWithIncludesPrisma } from '../prisma/includes/lostItems.js';
+import { toLostItemResponse, toLostItemList } from '../types/lostItems/LostItem.mappers.js';
 
 /**
  * Report a found item; creates lost_items row and connects reporting user.
@@ -10,14 +13,8 @@ import type { CreateLostItemInput, UpdateLostItemInput, LostItem as LostItemDTO 
  */
 const reportFoundItem = async (foundItemData: CreateLostItemInput, user: { user_id: string }): Promise<LostItemDTO> => {
 	try {
-		return await prisma.lost_items.create({
-			data: {
-				...foundItemData,
-				user: {
-					connect: { user_id: user.user_id },
-				},
-			},
-		});
+		const created = await prisma.lost_items.create({ data: { ...foundItemData, user: { connect: { user_id: user.user_id } } }, include: lostItemsDefaultInclude });
+		return toLostItemResponse(created as LostItemsWithIncludesPrisma) as LostItemDTO;
 	} catch (error) {
 		console.error('Error adding found item:', error);
 		throw new Error('Error adding found item');
@@ -32,9 +29,8 @@ const reportFoundItem = async (foundItemData: CreateLostItemInput, user: { user_
  */
 const deleteFoundItem = async (lost_item_id: string): Promise<LostItemDTO> => {
 	try {
-		return await prisma.lost_items.delete({
-			where: { lost_item_id },
-		});
+		const deleted = await prisma.lost_items.delete({ where: { lost_item_id }, include: lostItemsDefaultInclude });
+		return toLostItemResponse(deleted as LostItemsWithIncludesPrisma) as LostItemDTO;
 	} catch (error: any) {
 		console.error('Error deleting found item:', error);
 		throw new Error(error?.message || 'Error deleting found item');
@@ -48,16 +44,8 @@ const deleteFoundItem = async (lost_item_id: string): Promise<LostItemDTO> => {
  */
 const getLostItems = async (): Promise<LostItemDTO[]> => {
 	try {
-		return await prisma.lost_items.findMany({
-			include: {
-				documents: {
-					include: {
-						files: true,
-					},
-				},
-				user: true,
-			},
-		});
+		const rows = await prisma.lost_items.findMany({ include: lostItemsDefaultInclude });
+		return toLostItemList(rows as LostItemsWithIncludesPrisma[] ) as LostItemDTO[];
 	} catch (error) {
 		console.error('Error fetching lost items with documents and files:', error);
 		throw new Error('Could not retrieve lost items');
@@ -73,10 +61,8 @@ const getLostItems = async (): Promise<LostItemDTO[]> => {
  */
 const updateLostItem = async (lost_item_id: string, updateData: UpdateLostItemInput): Promise<LostItemDTO> => {
 	try {
-		return await prisma.lost_items.update({
-			where: { lost_item_id },
-			data: updateData,
-		});
+		const updated = await prisma.lost_items.update({ where: { lost_item_id }, data: updateData, include: lostItemsDefaultInclude });
+		return toLostItemResponse(updated as LostItemsWithIncludesPrisma) as LostItemDTO;
 	} catch (error) {
 		console.error('Error updating lost item:', error);
 		throw new Error('Error updating lost item');

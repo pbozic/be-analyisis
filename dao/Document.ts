@@ -1,7 +1,10 @@
 import prisma from '../prisma/prisma.js';
+import type { DocumentResponse } from '../schemas/dto/Document/document.dto.js';
+import documentsDefaultInclude, { } from '../prisma/includes/document.js';
+import type { DocumentWithIncludesPrisma } from '../prisma/includes/document.js';
+import { toDocumentList, toDocumentResponse } from '../schemas/dto/Document/document.mappers.js';
+import { Prisma } from '@prisma/client';
 
-// Using any type for document responses since the schema is complex and spread across multiple DTOs
-type DocumentResponse = any;
 type DocumentListResponse = DocumentResponse[];
 
 /**
@@ -11,11 +14,12 @@ type DocumentListResponse = DocumentResponse[];
  */
 const getDocuments = async (): Promise<DocumentListResponse> => {
 	try {
-		return await prisma.documents.findMany({
-			include: {
-				files: true,
-			},
-		});
+		const rows = await prisma.documents.findMany({ include: documentsDefaultInclude });
+		try {
+			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
+		} catch (e: any) {
+			throw new Error('Failed to map documents to DTOs: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error getting all documents:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get documents');
@@ -30,12 +34,13 @@ const getDocuments = async (): Promise<DocumentListResponse> => {
  */
 const getDocumentById = async (documentId: string): Promise<DocumentResponse | null> => {
 	try {
-		return await prisma.documents.findUnique({
-			where: { document_id: documentId },
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.findUnique({ where: { document_id: documentId }, include: documentsDefaultInclude });
+		if (!row) return null;
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error getting document by ID:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get document by ID');
@@ -50,12 +55,12 @@ const getDocumentById = async (documentId: string): Promise<DocumentResponse | n
  */
 const getDocumentsForBusiness = async (businessId: string): Promise<DocumentListResponse> => {
 	try {
-		return await prisma.documents.findMany({
-			where: { business_id: businessId },
-			include: {
-				files: true,
-			},
-		});
+		const rows = await prisma.documents.findMany({ where: { business_id: businessId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
+		} catch (e: any) {
+			throw new Error('Failed to map documents to DTOs: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error getting documents for business:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get documents for business');
@@ -70,12 +75,12 @@ const getDocumentsForBusiness = async (businessId: string): Promise<DocumentList
  */
 const getDocumentsForUser = async (userId: string): Promise<DocumentListResponse> => {
 	try {
-		return await prisma.documents.findMany({
-			where: { user_id: userId },
-			include: {
-				files: true,
-			},
-		});
+		const rows = await prisma.documents.findMany({ where: { user_id: userId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
+		} catch (e: any) {
+			throw new Error('Failed to map documents to DTOs: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error getting documents for user:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get documents for user');
@@ -90,12 +95,12 @@ const getDocumentsForUser = async (userId: string): Promise<DocumentListResponse
  */
 const getDocumentsForDeliveryPerson = async (deliveryPersonId: string): Promise<DocumentListResponse> => {
 	try {
-		return await prisma.documents.findMany({
-			where: { delivery_driver_id: deliveryPersonId },
-			include: {
-				files: true,
-			},
-		});
+		const rows = await prisma.documents.findMany({ where: { delivery_driver_id: deliveryPersonId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
+		} catch (e: any) {
+			throw new Error('Failed to map documents to DTOs: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error getting documents for delivery person:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get documents for delivery person');
@@ -110,12 +115,12 @@ const getDocumentsForDeliveryPerson = async (deliveryPersonId: string): Promise<
  */
 const getDocumentsForDriver = async (driverId: string): Promise<DocumentListResponse> => {
 	try {
-		return await prisma.documents.findMany({
-			where: { driver_id: driverId },
-			include: {
-				files: true,
-			},
-		});
+		const rows = await prisma.documents.findMany({ where: { driver_id: driverId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
+		} catch (e: any) {
+			throw new Error('Failed to map documents to DTOs: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error getting documents for driver:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get documents for driver');
@@ -130,12 +135,12 @@ const getDocumentsForDriver = async (driverId: string): Promise<DocumentListResp
  */
 const getDocumentsForVehicle = async (vehicleId: string): Promise<DocumentListResponse> => {
 	try {
-		return await prisma.documents.findMany({
-			where: { vehicle_id: vehicleId },
-			include: {
-				files: true,
-			},
-		});
+		const rows = await prisma.documents.findMany({ where: { vehicle_id: vehicleId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
+		} catch (e: any) {
+			throw new Error('Failed to map documents to DTOs: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error getting documents for vehicle:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get documents for vehicle');
@@ -150,12 +155,12 @@ const getDocumentsForVehicle = async (vehicleId: string): Promise<DocumentListRe
  */
 const getDocumentsByDocumentType = async (documentType: string): Promise<DocumentListResponse> => {
 	try {
-		return await prisma.documents.findMany({
-			where: { document_type: documentType },
-			include: {
-				files: true,
-			},
-		});
+		const rows = await prisma.documents.findMany({ where: { document_type: documentType }, include: documentsDefaultInclude });
+		try {
+			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
+		} catch (e: any) {
+			throw new Error('Failed to map documents to DTOs: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error getting documents by type:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get documents by type');
@@ -174,15 +179,15 @@ const getDocumentsForBusinessByDocumentType = async (
 	documentType: string
 ): Promise<DocumentListResponse> => {
 	try {
-		return await prisma.documents.findMany({
-			where: {
-				business_id: businessId,
-				document_type: documentType,
-			},
-			include: {
-				files: true,
-			},
+		const rows = await prisma.documents.findMany({
+			where: { business_id: businessId, document_type: documentType },
+			include: documentsDefaultInclude,
 		});
+		try {
+			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
+		} catch (e: any) {
+			throw new Error('Failed to map documents to DTOs: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error getting documents for business by type:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get documents for business by type');
@@ -201,15 +206,12 @@ const getDocumentsForUserByDocumentType = async (
 	documentType: string
 ): Promise<DocumentListResponse> => {
 	try {
-		return await prisma.documents.findMany({
-			where: {
-				user_id: userId,
-				document_type: documentType,
-			},
-			include: {
-				files: true,
-			},
-		});
+		const rows = await prisma.documents.findMany({ where: { user_id: userId, document_type: documentType }, include: documentsDefaultInclude });
+		try {
+			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
+		} catch (e: any) {
+			throw new Error('Failed to map documents to DTOs: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error getting documents for user by type:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get documents for user by type');
@@ -228,15 +230,12 @@ const getDocumentsForDriverByDocumentType = async (
 	documentType: string
 ): Promise<DocumentListResponse> => {
 	try {
-		return await prisma.documents.findMany({
-			where: {
-				driver_id: driverId,
-				document_type: documentType,
-			},
-			include: {
-				files: true,
-			},
-		});
+		const rows = await prisma.documents.findMany({ where: { driver_id: driverId, document_type: documentType }, include: documentsDefaultInclude });
+		try {
+			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
+		} catch (e: any) {
+			throw new Error('Failed to map documents to DTOs: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error getting documents for driver by type:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get documents for driver by type');
@@ -255,15 +254,12 @@ const getDocumentsForDeliveryPersonByDocumentType = async (
 	documentType: string
 ): Promise<DocumentListResponse> => {
 	try {
-		return await prisma.documents.findMany({
-			where: {
-				delivery_driver_id: deliveryPersonId,
-				document_type: documentType,
-			},
-			include: {
-				files: true,
-			},
-		});
+		const rows = await prisma.documents.findMany({ where: { delivery_driver_id: deliveryPersonId, document_type: documentType }, include: documentsDefaultInclude });
+		try {
+			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
+		} catch (e: any) {
+			throw new Error('Failed to map documents to DTOs: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error getting documents for delivery person by type:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get documents for delivery person by type');
@@ -282,15 +278,12 @@ const getDocumentsForVehicleByDocumentType = async (
 	documentType: string
 ): Promise<DocumentListResponse> => {
 	try {
-		return await prisma.documents.findMany({
-			where: {
-				vehicle_id: vehicleId,
-				document_type: documentType,
-			},
-			include: {
-				files: true,
-			},
-		});
+		const rows = await prisma.documents.findMany({ where: { vehicle_id: vehicleId, document_type: documentType }, include: documentsDefaultInclude });
+		try {
+			return toDocumentList(rows as DocumentWithIncludesPrisma[]);
+		} catch (e: any) {
+			throw new Error('Failed to map documents to DTOs: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error getting documents for vehicle by type:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get documents for vehicle by type');
@@ -309,15 +302,13 @@ const findDocumentByTypeAndDriverId = async (
 	driverId: string
 ): Promise<DocumentResponse | null> => {
 	try {
-		return await prisma.documents.findFirst({
-			where: {
-				document_type: documentType,
-				driver_id: driverId,
-			},
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.findFirst({ where: { document_type: documentType, driver_id: driverId }, include: documentsDefaultInclude });
+		if (!row) return null;
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error finding document by type and driver ID:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to find document by type and driver ID');
@@ -331,20 +322,14 @@ const findDocumentByTypeAndDriverId = async (
  * @param {any[]} filesData - Files data (optional).
  * @returns {Promise<DocumentResponse>} Created document.
  */
-const createDocument = async (documentData: any, filesData: any[] = []): Promise<DocumentResponse> => {
+const createDocument = async (documentData: Record<string, unknown>, filesData: Array<Record<string, unknown>> = []): Promise<DocumentResponse> => {
 	try {
-		const document = await prisma.documents.create({
-			data: {
-				...documentData,
-				files: {
-					create: filesData,
-				},
-			},
-			include: {
-				files: true,
-			},
-		});
-		return document;
+		const document = await prisma.documents.create({ data: { ...documentData, files: { create: filesData as any } }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(document as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map created document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error creating document:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to create document');
@@ -358,17 +343,14 @@ const createDocument = async (documentData: any, filesData: any[] = []): Promise
  * @param {any} documentData - Document data.
  * @returns {Promise<DocumentResponse>} Created document.
  */
-const createUserDocument = async (userId: string, documentData: any): Promise<DocumentResponse> => {
+const createUserDocument = async (userId: string, documentData: Record<string, unknown>): Promise<DocumentResponse> => {
 	try {
-		return await prisma.documents.create({
-			data: {
-				...documentData,
-				user_id: userId,
-			},
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.create({ data: { ...documentData, user_id: userId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map created document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error creating user document:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to create user document');
@@ -382,17 +364,14 @@ const createUserDocument = async (userId: string, documentData: any): Promise<Do
  * @param {any} documentData - Document data.
  * @returns {Promise<DocumentResponse>} Created document.
  */
-const createBusinessDocument = async (businessId: string, documentData: any): Promise<DocumentResponse> => {
+const createBusinessDocument = async (businessId: string, documentData: Record<string, unknown>): Promise<DocumentResponse> => {
 	try {
-		return await prisma.documents.create({
-			data: {
-				...documentData,
-				business_id: businessId,
-			},
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.create({ data: { ...documentData, business_id: businessId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map created document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error creating business document:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to create business document');
@@ -406,17 +385,14 @@ const createBusinessDocument = async (businessId: string, documentData: any): Pr
  * @param {any} documentData - Document data.
  * @returns {Promise<DocumentResponse>} Created document.
  */
-const createDriverDocument = async (driverId: string, documentData: any): Promise<DocumentResponse> => {
+const createDriverDocument = async (driverId: string, documentData: Record<string, unknown>): Promise<DocumentResponse> => {
 	try {
-		return await prisma.documents.create({
-			data: {
-				...documentData,
-				driver_id: driverId,
-			},
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.create({ data: { ...documentData, driver_id: driverId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map created document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error creating driver document:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to create driver document');
@@ -430,17 +406,14 @@ const createDriverDocument = async (driverId: string, documentData: any): Promis
  * @param {any} documentData - Document data.
  * @returns {Promise<DocumentResponse>} Created document.
  */
-const createVehicleDocument = async (vehicleId: string, documentData: any): Promise<DocumentResponse> => {
+const createVehicleDocument = async (vehicleId: string, documentData: Record<string, unknown>): Promise<DocumentResponse> => {
 	try {
-		return await prisma.documents.create({
-			data: {
-				...documentData,
-				vehicle_id: vehicleId,
-			},
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.create({ data: { ...documentData, vehicle_id: vehicleId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map created document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error creating vehicle document:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to create vehicle document');
@@ -454,17 +427,14 @@ const createVehicleDocument = async (vehicleId: string, documentData: any): Prom
  * @param {any} documentData - Document data.
  * @returns {Promise<DocumentResponse>} Created document.
  */
-const createDeliveryPersonDocument = async (deliveryPersonId: string, documentData: any): Promise<DocumentResponse> => {
+const createDeliveryPersonDocument = async (deliveryPersonId: string, documentData: Record<string, unknown>): Promise<DocumentResponse> => {
 	try {
-		return await prisma.documents.create({
-			data: {
-				...documentData,
-				delivery_driver_id: deliveryPersonId,
-			},
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.create({ data: { ...documentData, delivery_driver_id: deliveryPersonId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map created document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error creating delivery person document:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to create delivery person document');
@@ -483,13 +453,12 @@ const updateDocumentExpirationDate = async (
 	expirationDate: string | Date
 ): Promise<DocumentResponse> => {
 	try {
-		return await prisma.documents.update({
-			where: { document_id: documentId },
-			data: { expiration_date: expirationDate },
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { expiration_date: expirationDate }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map updated document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error updating document expiration date:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update document expiration date');
@@ -505,13 +474,12 @@ const updateDocumentExpirationDate = async (
  */
 const updateDocumentIssueDate = async (documentId: string, issueDate: string | Date): Promise<DocumentResponse> => {
 	try {
-		return await prisma.documents.update({
-			where: { document_id: documentId },
-			data: { issue_date: issueDate },
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { issue_date: issueDate }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map updated document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error updating document issue date:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update document issue date');
@@ -525,24 +493,17 @@ const updateDocumentIssueDate = async (documentId: string, issueDate: string | D
  * @param {any[]} filesData - New files data.
  * @returns {Promise<DocumentResponse>} Updated document.
  */
-const updateDocumentFiles = async (documentId: string, filesData: any[]): Promise<DocumentResponse> => {
+const updateDocumentFiles = async (documentId: string, filesData: Array<Record<string, unknown>>): Promise<DocumentResponse> => {
 	try {
 		// Delete existing files and create new ones
-		await prisma.files.deleteMany({
-			where: { document_id: documentId },
-		});
+		await prisma.files.deleteMany({ where: { document_id: documentId } });
 
-		return await prisma.documents.update({
-			where: { document_id: documentId },
-			data: {
-				files: {
-					create: filesData,
-				},
-			},
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { files: { create: filesData as any } }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map updated document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error updating document files:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update document files');
@@ -556,15 +517,14 @@ const updateDocumentFiles = async (documentId: string, filesData: any[]): Promis
  * @param {any} jsonData - Additional info JSON data.
  * @returns {Promise<DocumentResponse>} Updated document.
  */
-const updateDocumentAdditionalInfo = async (documentId: string, jsonData: any): Promise<DocumentResponse> => {
+const updateDocumentAdditionalInfo = async (documentId: string, jsonData: Prisma.InputJsonValue): Promise<DocumentResponse> => {
 	try {
-		return await prisma.documents.update({
-			where: { document_id: documentId },
-			data: { additional_info: jsonData },
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { additional_info: jsonData }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map updated document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error updating document additional info:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update document additional info');
@@ -601,13 +561,12 @@ const linkDocumentToTransaction = async (documentId: string, transactionId: stri
  */
 const linkDocumentToVehicle = async (documentId: string, vehicleId: string): Promise<DocumentResponse> => {
 	try {
-		return await prisma.documents.update({
-			where: { document_id: documentId },
-			data: { vehicle_id: vehicleId },
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { vehicle_id: vehicleId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map updated document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error linking document to vehicle:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to link document to vehicle');
@@ -623,13 +582,12 @@ const linkDocumentToVehicle = async (documentId: string, vehicleId: string): Pro
  */
 const linkDocumentToDriver = async (documentId: string, driverId: string): Promise<DocumentResponse> => {
 	try {
-		return await prisma.documents.update({
-			where: { document_id: documentId },
-			data: { driver_id: driverId },
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { driver_id: driverId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map updated document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error linking document to driver:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to link document to driver');
@@ -645,13 +603,12 @@ const linkDocumentToDriver = async (documentId: string, driverId: string): Promi
  */
 const linkDocumentToBusiness = async (documentId: string, businessId: string): Promise<DocumentResponse> => {
 	try {
-		return await prisma.documents.update({
-			where: { document_id: documentId },
-			data: { business_id: businessId },
-			include: {
-				files: true,
-			},
-		});
+		const row = await prisma.documents.update({ where: { document_id: documentId }, data: { business_id: businessId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map updated document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error linking document to business:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to link document to business');
@@ -666,9 +623,12 @@ const linkDocumentToBusiness = async (documentId: string, businessId: string): P
  */
 const deleteDocument = async (documentId: string): Promise<DocumentResponse> => {
 	try {
-		return await prisma.documents.delete({
-			where: { document_id: documentId },
-		});
+		const row = await prisma.documents.delete({ where: { document_id: documentId }, include: documentsDefaultInclude });
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map deleted document to DTO: ' + (e?.message ?? String(e)));
+		}
 	} catch (error) {
 		console.error('Error deleting document:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to delete document');

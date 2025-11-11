@@ -2,6 +2,7 @@ import { MODULE_TYPE } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import type { CreateActionRequest, ActionResponse } from '../schemas/dto/Action/index.js';
+import { toActionResponse, toActionsList } from '../schemas/dto/Action/action.mappers.js';
 /**
  * Create a new action
  *
@@ -10,12 +11,14 @@ import type { CreateActionRequest, ActionResponse } from '../schemas/dto/Action/
  */
 export async function createAction(data: CreateActionRequest): Promise<ActionResponse> {
 	try {
-		return await prisma.action.create({
+		const row = await prisma.action.create({
 			data: {
 				module: data.module,
 				name: data.name,
 			},
 		});
+		// Validate/shape the returned row via mapper (non-breaking)
+		return toActionResponse(row);
 	} catch (error) {
 		console.error('Error creating action:', error);
 		throw new Error('Failed to create action');
@@ -31,13 +34,15 @@ export async function createAction(data: CreateActionRequest): Promise<ActionRes
  */
 export async function updateAction(actionId: string, data: CreateActionRequest): Promise<ActionResponse> {
 	try {
-		return await prisma.action.update({
+		const row = await prisma.action.update({
 			where: { action_id: actionId },
 			data: {
 				module: data.module,
 				name: data.name,
 			},
 		});
+
+		return toActionResponse(row);
 	} catch (error) {
 		console.error('Error updating action:', error);
 		throw new Error('Failed to update action');
@@ -67,9 +72,10 @@ export async function deleteAction(actionId: string): Promise<void> {
  */
 export async function getAllActions(): Promise<ActionResponse[]> {
 	try {
-		return await prisma.action.findMany({
+		const rows = await prisma.action.findMany({
 			orderBy: { name: 'asc' },
 		});
+		return toActionsList(rows);
 	} catch (error) {
 		console.error('Error fetching actions:', error);
 		throw new Error('Failed to fetch actions');
@@ -84,9 +90,10 @@ export async function getAllActions(): Promise<ActionResponse[]> {
  */
 export async function getActionById(actionId: string): Promise<ActionResponse | null> {
 	try {
-		return await prisma.action.findUnique({
+		const row = await prisma.action.findUnique({
 			where: { action_id: actionId },
 		});
+		return row ? toActionResponse(row) : null;
 	} catch (error) {
 		console.error('Error fetching action:', error);
 		throw new Error('Failed to fetch action');
@@ -100,10 +107,11 @@ export async function getActionById(actionId: string): Promise<ActionResponse | 
  */
 export async function getActionsByModule(module: MODULE_TYPE): Promise<ActionResponse[]> {
 	try {
-		return await prisma.action.findMany({
+		const rows = await prisma.action.findMany({
 			where: { module },
 			orderBy: { name: 'asc' },
 		});
+		return toActionsList(rows);
 	} catch (error) {
 		console.error('Error fetching actions by module:', error);
 		throw new Error('Failed to fetch actions by module');
@@ -118,7 +126,7 @@ export async function getActionsByModule(module: MODULE_TYPE): Promise<ActionRes
  */
 export async function getActionsByName(name: string): Promise<ActionResponse[]> {
 	try {
-		return await prisma.action.findMany({
+		const rows = await prisma.action.findMany({
 			where: {
 				name: {
 					contains: name,
@@ -127,6 +135,7 @@ export async function getActionsByName(name: string): Promise<ActionResponse[]> 
 			},
 			orderBy: { name: 'asc' },
 		});
+		return toActionsList(rows);
 	} catch (error) {
 		console.error('Error fetching actions by name:', error);
 		throw new Error('Failed to fetch actions by name');

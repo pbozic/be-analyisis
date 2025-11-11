@@ -1,17 +1,23 @@
 import prisma from '../prisma/prisma.js';
 import { UUID } from '../schemas/primitives.js';
 import { CreateAddressInput, UpdateAddressInput } from '../types/addresses/Address.js';
+import { toAddressResponse } from '../schemas/dto/Address/address.mappers.js';
+import { toUserAddressResponse } from '../schemas/dto/UserAddress/userAddress.mappers.js';
+import type { AddressDefaultPrisma } from '../prisma/includes/address.js';
+import type { UserAddressDefaultPrisma } from '../prisma/includes/userAddress.js';
+import type { AddressResponse } from '../types/addresses/Address.js';
+import type { UserAddressResponse } from '../types/users/UserAddress.js';
 /**
  * Upsert an address by unique coordinates and address string.
  *
  * @param {object} address - Address payload (address, latitude, longitude, etc.).
  * @returns {Promise<object>} The created or updated address record.
  */
-async function addAddress(address: CreateAddressInput) {
+async function addAddress(address: CreateAddressInput): Promise<AddressResponse | Error> {
 	// delete address.name;
 	// delete address.icon;
 	try {
-		return prisma.addresses.upsert({
+		const row = await prisma.addresses.upsert({
 			where: {
 				uniqueAddressIdentifier: {
 					address: address.address,
@@ -22,6 +28,8 @@ async function addAddress(address: CreateAddressInput) {
 			update: { ...address },
 			create: { ...address },
 		});
+
+		return toAddressResponse(row as AddressDefaultPrisma);
 	} catch (error) {
 		//console.log(error);
 		return new Error(error instanceof Error ? error.message : String(error));
@@ -36,7 +44,7 @@ async function addAddress(address: CreateAddressInput) {
  * @param {string} linkTarget - The ID of the target to link the address to.
  * @returns {Promise<object>} The created or linked address record.
  */
-async function addOrLinkAddress(address: CreateAddressInput, linkType: string, linkTarget: string) {
+async function addOrLinkAddress(address: CreateAddressInput, linkType: string, linkTarget: string): Promise<AddressResponse | Error> {
 	try {
 		// Find or create the address
 		const addressRecord = await prisma.addresses.upsert({
@@ -54,7 +62,7 @@ async function addOrLinkAddress(address: CreateAddressInput, linkType: string, l
 		// Link the address to the specified module
 		await linkAddress(addressRecord.address_id, linkType, linkTarget);
 
-		return addressRecord;
+		return toAddressResponse(addressRecord as AddressDefaultPrisma);
 	} catch (error) {
 		return new Error(error instanceof Error ? error.message : String(error));
 	}
@@ -68,7 +76,7 @@ async function addOrLinkAddress(address: CreateAddressInput, linkType: string, l
  * @param {string} linkTarget - The ID of the target to link the address to.
  * @returns {Promise<void>} Resolves when the link is created.
  */
-async function linkAddress(addressId: UUID, linkType: string, linkTarget: string) {
+async function linkAddress(addressId: UUID, linkType: string, linkTarget: string): Promise<void> {
 	try {
 		switch (linkType) {
 			case 'user_address':
@@ -134,7 +142,7 @@ async function linkAddress(addressId: UUID, linkType: string, linkTarget: string
  * @param {string} linkTarget - The ID of the target to unlink the address from.
  * @returns {Promise<void>} Resolves when the link is removed.
  */
-async function unlinkAddress(addressId: UUID, linkType: string, linkTarget: string) {
+async function unlinkAddress(addressId: UUID, linkType: string, linkTarget: string): Promise<void> {
 	try {
 		switch (linkType) {
 			case 'user_address':
@@ -204,9 +212,9 @@ async function unlinkAddress(addressId: UUID, linkType: string, linkTarget: stri
  * @param {string} address_id - Address ID.
  * @returns {Promise<object>} The deleted user_address record.
  */
-async function deleteUserAddress(user_id: UUID, address_id: UUID) {
+async function deleteUserAddress(user_id: UUID, address_id: UUID): Promise<UserAddressResponse | Error> {
 	try {
-		return prisma.user_address.delete({
+		const row = await prisma.user_address.delete({
 			where: {
 				user_id_address_id: {
 					user_id,
@@ -214,6 +222,8 @@ async function deleteUserAddress(user_id: UUID, address_id: UUID) {
 				},
 			},
 		});
+
+		return toUserAddressResponse(row as UserAddressDefaultPrisma);
 	} catch (error) {
 		return new Error(error instanceof Error ? error.message : String(error));
 	}
@@ -225,7 +235,7 @@ async function deleteUserAddress(user_id: UUID, address_id: UUID) {
  * @param {string} address_id - Address ID.
  * @returns {Promise<object>} The upserted user_address record.
  */
-async function addUserAddress(user_id: UUID, address_id: UUID) {
+async function addUserAddress(user_id: UUID, address_id: UUID): Promise<UserAddressResponse | Error> {
 	try {
 		let primary = false;
 		let addresses = await prisma.user_address.findMany({
@@ -234,7 +244,7 @@ async function addUserAddress(user_id: UUID, address_id: UUID) {
 			},
 		});
 		if (!addresses.length) primary = true;
-		return prisma.user_address.upsert({
+		const row = await prisma.user_address.upsert({
 			where: {
 				user_id_address_id: {
 					user_id,
@@ -244,6 +254,8 @@ async function addUserAddress(user_id: UUID, address_id: UUID) {
 			update: {},
 			create: { user_id, address_id, primary },
 		});
+
+		return toUserAddressResponse(row as UserAddressDefaultPrisma);
 	} catch (error) {
 		return new Error(error instanceof Error ? error.message : String(error));
 	}
@@ -256,9 +268,9 @@ async function addUserAddress(user_id: UUID, address_id: UUID) {
  * @param {object} data - Fields to update on the user_address.
  * @returns {Promise<object>} The updated user_address record.
  */
-async function editUserAddress(user_id: UUID, address_id: UUID, data: UpdateAddressInput) {
+async function editUserAddress(user_id: UUID, address_id: UUID, data: UpdateAddressInput): Promise<UserAddressResponse | Error> {
 	try {
-		return prisma.user_address.update({
+		const row = await prisma.user_address.update({
 			where: {
 				user_id_address_id: {
 					user_id,
@@ -267,6 +279,8 @@ async function editUserAddress(user_id: UUID, address_id: UUID, data: UpdateAddr
 			},
 			data,
 		});
+
+		return toUserAddressResponse(row as UserAddressDefaultPrisma);
 	} catch (error) {
 		return new Error(error instanceof Error ? error.message : String(error));
 	}
@@ -278,7 +292,7 @@ async function editUserAddress(user_id: UUID, address_id: UUID, data: UpdateAddr
  * @param {string} address_id - Address ID to set as primary.
  * @returns {Promise<object>} The updated user_address record.
  */
-async function setPrimaryUserAddress(user_id: UUID, address_id: UUID) {
+async function setPrimaryUserAddress(user_id: UUID, address_id: UUID): Promise<UserAddressResponse | Error> {
 	try {
 		await prisma.user_address.updateMany({
 			where: {
@@ -288,7 +302,7 @@ async function setPrimaryUserAddress(user_id: UUID, address_id: UUID) {
 				primary: false,
 			},
 		});
-		return prisma.user_address.update({
+		const row = await prisma.user_address.update({
 			where: {
 				user_id_address_id: {
 					user_id,
@@ -299,6 +313,8 @@ async function setPrimaryUserAddress(user_id: UUID, address_id: UUID) {
 				primary: true,
 			},
 		});
+
+		return toUserAddressResponse(row as UserAddressDefaultPrisma);
 	} catch (error) {
 		return new Error(error instanceof Error ? error.message : String(error));
 	}
@@ -310,7 +326,7 @@ async function setPrimaryUserAddress(user_id: UUID, address_id: UUID) {
  * @param {object} updateData - Fields to update on the address.
  * @returns {Promise<object>} The updated address.
  */
-const updateAddressByAddressId = async (addressId: UUID, updateData: UpdateAddressInput) => {
+const updateAddressByAddressId = async (addressId: UUID, updateData: UpdateAddressInput): Promise<AddressResponse> => {
 	try {
 		const existingAddress = await prisma.addresses.findUnique({
 			where: { address_id: addressId },
@@ -318,10 +334,12 @@ const updateAddressByAddressId = async (addressId: UUID, updateData: UpdateAddre
 		if (!existingAddress) {
 			throw new Error('Address not found');
 		}
-		return await prisma.addresses.update({
+		const row = await prisma.addresses.update({
 			where: { address_id: addressId },
 			data: updateData,
 		});
+
+		return toAddressResponse(row as AddressDefaultPrisma);
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : String(error));
 	}
@@ -333,7 +351,7 @@ const updateAddressByAddressId = async (addressId: UUID, updateData: UpdateAddre
  * @param {number} longitude - Longitude value.
  * @returns {Promise<object|null>} The matching address or null.
  */
-async function findAddress(latitude: string, longitude: string) {
+async function findAddress(latitude: string, longitude: string): Promise<AddressResponse | null | Error> {
 	try {
 		let addresses = await prisma.addresses.findMany({
 			where: {
@@ -341,7 +359,8 @@ async function findAddress(latitude: string, longitude: string) {
 				longitude,
 			},
 		});
-		return addresses[0] || null;
+		const row = addresses[0];
+		return row ? toAddressResponse(row as AddressDefaultPrisma) : null;
 	} catch (error) {
 		return new Error(error instanceof Error ? error.message : String(error));
 	}

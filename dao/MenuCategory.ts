@@ -8,6 +8,17 @@ import type {
 	MenuCategory,
 } from '../schemas/dto/Menu/menu.dto.js';
 import type { DailyMealCategoryPriceBase } from '../schemas/dto/DailyMealCategory/daily-meal-category.dto.js';
+import menuCategoriesDefaultInclude, { MenuCategoryWithIncludesPrisma } from '../prisma/includes/menuCategories.js';
+import { toMenuCategoryDetail, toMenuCategoryList } from '../schemas/dto/Menu/menuCategory.mappers.js';
+
+function getErrorMessage(err: unknown): string {
+	if (err instanceof Error) return err.message;
+	try {
+		return String(err);
+	} catch {
+		return 'Unknown error';
+	}
+}
 
 // MenuCategory Detail Response - extends Ref with full relations
 export interface MenuCategoryDetail extends MenuCategoryRef {
@@ -85,24 +96,13 @@ export const createMenuCategory = async (
 		});
 	}
 
-	const menu_categoryR = await prisma.menu_categories.findUnique({
-		where: { menu_category_id: menu_category.menu_category_id },
-		include: {
-			menu_categories_categories: {
-				include: {
-					category: true,
-				},
-			},
-			menu_items: true,
-			daily_meal_category_price: true,
-		},
-	});
+	const menu_categoryR = await prisma.menu_categories.findUnique({ where: { menu_category_id: menu_category.menu_category_id }, include: menuCategoriesDefaultInclude });
 
 	if (!menu_categoryR) {
 		throw new Error('Failed to retrieve created menu category');
 	}
 
-	return menu_categoryR;
+	return toMenuCategoryDetail(menu_categoryR as MenuCategoryWithIncludesPrisma);
 };
 
 /**
@@ -117,14 +117,7 @@ export const createDailyMealMenuCategory = async (
 	daily_meal_category_price_id: string
 ): Promise<MenuCategoryDetail> => {
 	try {
-		const existingDailyMealPrice = await prisma.daily_meal_category_prices.findUnique({
-			where: {
-				daily_meal_category_price_id: daily_meal_category_price_id,
-			},
-			include: {
-				daily_meal_categories: true,
-			},
-		});
+		const existingDailyMealPrice = await prisma.daily_meal_category_prices.findUnique({ where: { daily_meal_category_price_id: daily_meal_category_price_id }, include: { daily_meal_categories: true } });
 
 		if (!existingDailyMealPrice) {
 			throw new Error(`Daily meal category price with ID ${daily_meal_category_price_id} not found`);
@@ -142,21 +135,13 @@ export const createDailyMealMenuCategory = async (
 					},
 				},
 			},
-			include: {
-				menu_categories_categories: {
-					include: {
-						category: true,
-					},
-				},
-				menu_items: true,
-				daily_meal_category_price: true,
-			},
+			include: menuCategoriesDefaultInclude,
 		});
 
-		return menuCategory;
-	} catch (error) {
+		return toMenuCategoryDetail(menuCategory as MenuCategoryWithIncludesPrisma);
+	} catch (error: unknown) {
 		console.error('Error creating daily meal menu category:', error);
-		throw error;
+		throw new Error(getErrorMessage(error));
 	}
 };
 
@@ -225,36 +210,11 @@ export const removeMenuCategoryIdFromOrder = async (
  */
 export const getMenuCategoriesByMenuId = async (menu_id: string): Promise<MenuCategoryDetail[]> => {
 	try {
-		return await prisma.menu_categories.findMany({
-			where: { menu_id },
-			orderBy: {
-				menu_order_index: 'asc',
-			},
-			include: {
-				menu_categories_categories: {
-					include: {
-						category: true,
-					},
-				},
-				menu_items: {
-					orderBy: {
-						menu_category_order_index: 'asc',
-					},
-					include: {
-						documents: {
-							include: {
-								files: true,
-							},
-						},
-						tax_rate: true,
-					},
-				},
-				daily_meal_category_price: true,
-			},
-		});
-	} catch (error) {
+		const rows = await prisma.menu_categories.findMany({ where: { menu_id }, orderBy: { menu_order_index: 'asc' }, include: menuCategoriesDefaultInclude });
+		return toMenuCategoryList(rows as MenuCategoryWithIncludesPrisma[]);
+	} catch (error: unknown) {
 		console.error('Error getting menu categories by menu ID:', error);
-		throw error;
+		throw new Error(getErrorMessage(error));
 	}
 };
 
@@ -265,45 +225,14 @@ export const getMenuCategoriesByMenuId = async (menu_id: string): Promise<MenuCa
  * @param stores_id - Stores module ID.
  * @returns Array of menu categories.
  */
-export const getMenuCategoriesByBusinessId = async (data: {
-	food_drinks_id: string;
-	stores_id: string;
-}): Promise<MenuCategoryDetail[]> => {
+export const getMenuCategoriesByBusinessId = async (data: { food_drinks_id: string; stores_id: string }): Promise<MenuCategoryDetail[]> => {
 	const { food_drinks_id, stores_id } = data;
 	try {
-		return await prisma.menu_categories.findMany({
-			where: {
-				...(stores_id ? { stores_id } : {}),
-				...(food_drinks_id ? { food_drinks_id } : {}),
-			},
-			orderBy: {
-				menu_order_index: 'asc',
-			},
-			include: {
-				menu_categories_categories: {
-					include: {
-						category: true,
-					},
-				},
-				menu_items: {
-					orderBy: {
-						menu_category_order_index: 'asc',
-					},
-					include: {
-						documents: {
-							include: {
-								files: true,
-							},
-						},
-						tax_rate: true,
-					},
-				},
-				daily_meal_category_price: true,
-			},
-		});
-	} catch (error) {
+		const rows = await prisma.menu_categories.findMany({ where: { ...(stores_id ? { stores_id } : {}), ...(food_drinks_id ? { food_drinks_id } : {}) }, orderBy: { menu_order_index: 'asc' }, include: menuCategoriesDefaultInclude });
+		return toMenuCategoryList(rows as MenuCategoryWithIncludesPrisma[]);
+	} catch (error: unknown) {
 		console.error('Error getting menu categories by business ID:', error);
-		throw error;
+		throw new Error(getErrorMessage(error));
 	}
 };
 
@@ -316,30 +245,16 @@ export const getMenuCategoriesByBusinessId = async (data: {
 export const deleteMenuCategory = async (menu_category_id: string): Promise<MenuCategoryDetail> => {
 	try {
 		// Delete relationships first
-		await prisma.menu_categories_categories.deleteMany({
-			where: { menu_category_id },
-		});
+		await prisma.menu_categories_categories.deleteMany({ where: { menu_category_id } });
 
 		// Delete menu items in this category
-		await prisma.menu_items.deleteMany({
-			where: { menu_category_id },
-		});
+		await prisma.menu_items.deleteMany({ where: { menu_category_id } });
 
-		return await prisma.menu_categories.delete({
-			where: { menu_category_id },
-			include: {
-				menu_categories_categories: {
-					include: {
-						category: true,
-					},
-				},
-				menu_items: true,
-				daily_meal_category_price: true,
-			},
-		});
-	} catch (error) {
+		const deleted = await prisma.menu_categories.delete({ where: { menu_category_id }, include: menuCategoriesDefaultInclude });
+		return toMenuCategoryDetail(deleted as MenuCategoryWithIncludesPrisma);
+	} catch (error: unknown) {
 		console.error('Error deleting menu category:', error);
-		throw error;
+		throw new Error(getErrorMessage(error));
 	}
 };
 
@@ -352,22 +267,11 @@ export const deleteMenuCategory = async (menu_category_id: string): Promise<Menu
  */
 export const updateMenuCategory = async (menu_category_id: string, data: MenuCategory): Promise<MenuCategoryDetail> => {
 	try {
-		return await prisma.menu_categories.update({
-			where: { menu_category_id },
-			data,
-			include: {
-				menu_categories_categories: {
-					include: {
-						category: true,
-					},
-				},
-				menu_items: true,
-				daily_meal_category_price: true,
-			},
-		});
-	} catch (error) {
+		const updated = await prisma.menu_categories.update({ where: { menu_category_id }, data, include: menuCategoriesDefaultInclude });
+		return toMenuCategoryDetail(updated as MenuCategoryWithIncludesPrisma);
+	} catch (error: unknown) {
 		console.error('Error updating menu category:', error);
-		throw error;
+		throw new Error(getErrorMessage(error));
 	}
 };
 
@@ -394,28 +298,11 @@ export const updateMenuItemsOrder = async (
 		await Promise.all(updatePromises);
 
 		// Update the category with the ordered items list
-		return await prisma.menu_categories.update({
-			where: { menu_category_id },
-			data: {
-				menu_items_ordered: ordered_menu_items_ids,
-			},
-			include: {
-				menu_categories_categories: {
-					include: {
-						category: true,
-					},
-				},
-				menu_items: {
-					orderBy: {
-						menu_category_order_index: 'asc',
-					},
-				},
-				daily_meal_category_price: true,
-			},
-		});
-	} catch (error) {
+		const updated = await prisma.menu_categories.update({ where: { menu_category_id }, data: { menu_items_ordered: ordered_menu_items_ids }, include: menuCategoriesDefaultInclude });
+		return toMenuCategoryDetail(updated as MenuCategoryWithIncludesPrisma);
+	} catch (error: unknown) {
 		console.error('Error updating menu items order:', error);
-		throw error;
+		throw new Error(getErrorMessage(error));
 	}
 };
 
@@ -429,9 +316,9 @@ export const updateMenuItemsOrder = async (
 export const addCategoryToMenu = async (menu_id: string, menu_category_id: string): Promise<MenuBase> => {
 	try {
 		return await addMenuCategoryIdToOrder(menu_id, menu_category_id);
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error adding category to menu:', error);
-		throw error;
+		throw new Error(getErrorMessage(error));
 	}
 };
 
@@ -444,9 +331,9 @@ export const addCategoryToMenu = async (menu_id: string, menu_category_id: strin
 export const removeCategoryFromMenu = async (menu_id: string, category_id: string): Promise<MenuCategoryDetail> => {
 	try {
 		return await deleteMenuCategory(category_id);
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error removing category from menu:', error);
-		throw error;
+		throw new Error(getErrorMessage(error));
 	}
 };
 
@@ -532,30 +419,9 @@ export const updateDailyMealMenuPrice = async (
  */
 export const getMenuCategoryById = async (menuCategoryId: string): Promise<MenuCategoryDetail> => {
 	try {
-		return await prisma.menu_categories.findUnique({
-			where: { menu_category_id: menuCategoryId },
-			include: {
-				menu_categories_categories: {
-					include: {
-						category: true,
-					},
-				},
-				menu_items: {
-					orderBy: {
-						menu_category_order_index: 'asc',
-					},
-					include: {
-						documents: {
-							include: {
-								files: true,
-							},
-						},
-						tax_rate: true,
-					},
-				},
-				daily_meal_category_price: true,
-			},
-		});
+		const row = await prisma.menu_categories.findUnique({ where: { menu_category_id: menuCategoryId }, include: menuCategoriesDefaultInclude });
+		if (!row) throw new Error(`Menu category ${menuCategoryId} not found`);
+		return toMenuCategoryDetail(row as MenuCategoryWithIncludesPrisma);
 	} catch (error) {
 		console.error('Error getting menu category by ID:', error);
 		throw error;
