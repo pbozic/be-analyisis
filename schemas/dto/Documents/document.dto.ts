@@ -70,24 +70,28 @@ export const CreateDocumentBodySchema = z
 // -----------------------
 export const UpdateDocumentExpirationSchema = z
 	.object({
+		document_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		expirationDate: z.string().datetime().openapi({ example: '2026-01-01T00:00:00Z' }),
 	})
 	.openapi('UpdateDocumentExpiration');
 
 export const UpdateDocumentIssueSchema = z
 	.object({
+		document_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		issueDate: z.string().datetime().openapi({ example: '2024-01-01T00:00:00Z' }),
 	})
 	.openapi('UpdateDocumentIssue');
 
 export const UpdateDocumentFilesSchema = z
 	.object({
+		document_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		files: z.array(CreateFileDataSchema).openapi({ example: [] }),
 	})
 	.openapi('UpdateDocumentFiles');
 
 export const UpdateDocumentAdditionalInfoSchema = z
 	.object({
+		document_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
 		jsonData: z.any().openapi({ example: { notes: 'scanned copy uploaded' } }),
 	})
 	.openapi('UpdateDocumentAdditionalInfo');

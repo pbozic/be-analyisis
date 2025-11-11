@@ -1,7 +1,23 @@
-import { config } from 'dotenv';
+import { Request, Response } from 'express';
 
 import DocumentDao from '../dao/Document.js';
-config();
+import { ValidatedRequest } from '../types/validatedRequest.ts';
+import {
+	CreateDocumentBody,
+	GetDocumentByIdParams,
+	GetDocumentsForBusinessParams,
+	GetDocumentsForDriverParams,
+	GetDocumentsForVehicleParams,
+	GetDocumentsByTypeParams,
+	GetDocumentsForBusinessByTypeParams,
+	GetDocumentsForDriverByTypeParams,
+	GetDocumentsForVehicleByTypeParams,
+	UpdateDocumentExpiration,
+	UpdateDocumentIssue,
+	UpdateDocumentFiles,
+	UpdateDocumentAdditionalInfo,
+} from '../schemas/dto/Documents/document.dto.ts';
+
 /**
  * GET /documents
  * @tag Documents
@@ -13,15 +29,16 @@ config();
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
-async function listDocuments(req, res) {
+export async function listDocuments(req: Request, res: Response): Promise<void> {
 	try {
 		const documents = await DocumentDao.getDocuments();
 		res.status(200).json(documents);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting all documents:', error);
-		res.status(400).json({ error: error.message });
+		res.status(400).json({ error: error?.message ?? String(error) });
 	}
 }
+
 /**
  * GET /documents/:documentId
  * @tag Documents
@@ -34,7 +51,10 @@ async function listDocuments(req, res) {
  * @response 400 - Error retrieving the document
  * @prisma_model documents
  */
-async function getDocumentById(req, res) {
+export async function getDocumentById(
+	req: ValidatedRequest<never, GetDocumentByIdParams>,
+	res: Response
+): Promise<void> {
 	try {
 		const { document_id } = req.params;
 		const document = await DocumentDao.getDocumentById(document_id);
@@ -43,168 +63,197 @@ async function getDocumentById(req, res) {
 		} else {
 			res.status(404).json({ message: 'Document not found' });
 		}
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting document by ID:', error);
-		res.status(400).json({ error: error.message });
+		res.status(400).json({ error: error?.message ?? String(error) });
 	}
 }
+
 /**
  * GET /documents/businesses/:businessId
  * @tag Documents
  * @summary Get documents for a business
  * @description Retrieves all documents associated with a specific business.
  * @operationId getDocumentsForBusiness
- * @pathParam {string} businessId - The ID of the business
+ * @pathParam {string} business_id - The ID of the business
  * @response 200 - Successful operation, returns documents
  * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
-async function getDocumentsForBusiness(req, res) {
+export async function getDocumentsForBusiness(
+	req: ValidatedRequest<never, GetDocumentsForBusinessParams>,
+	res: Response
+): Promise<void> {
 	try {
 		const { business_id } = req.params;
 		const documents = await DocumentDao.getDocumentsForBusiness(business_id);
 		res.status(200).json(documents);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting documents for business:', error);
-		res.status(400).json({ error: error.message });
+		res.status(400).json({ error: error?.message ?? String(error) });
 	}
 }
+
 /**
  * GET /documents/drivers/:driverId
  * @tag Documents
  * @summary Get documents for a driver
  * @description Retrieves all documents associated with a specific driver.
  * @operationId getDocumentsForDriver
- * @pathParam {string} driverId - The ID of the driver
+ * @pathParam {string} driver_id - The ID of the driver
  * @response 200 - Successful operation, returns documents
  * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
-async function getDocumentsForDriver(req, res) {
+export async function getDocumentsForDriver(
+	req: ValidatedRequest<never, GetDocumentsForDriverParams>,
+	res: Response
+): Promise<void> {
 	try {
 		const { driver_id } = req.params;
 		const documents = await DocumentDao.getDocumentsForDriver(driver_id);
 		res.status(200).json(documents);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting documents for driver:', error);
-		res.status(400).json({ error: error.message });
+		res.status(400).json({ error: error?.message ?? String(error) });
 	}
 }
+
 /**
  * GET /documents/vehicles/:vehicleId
  * @tag Documents
  * @summary Get documents for a vehicle
  * @description Retrieves all documents associated with a specific vehicle.
  * @operationId getDocumentsForVehicle
- * @pathParam {string} vehicleId - The ID of the vehicle
+ * @pathParam {string} vehicle_id - The ID of the vehicle
  * @response 200 - Successful operation, returns documents
  * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
-async function getDocumentsForVehicle(req, res) {
+export async function getDocumentsForVehicle(
+	req: ValidatedRequest<never, GetDocumentsForVehicleParams>,
+	res: Response
+): Promise<void> {
 	try {
 		const { vehicle_id } = req.params;
 		const documents = await DocumentDao.getDocumentsForVehicle(vehicle_id);
 		res.status(200).json(documents);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting documents for vehicle:', error);
-		res.status(400).json({ error: error.message });
+		res.status(400).json({ error: error?.message ?? String(error) });
 	}
 }
+
 /**
  * GET /documents/type/:documentType
  * @tag Documents
  * @summary Get documents by type
  * @description Retrieves documents of a specific type across all entities.
- * @operationId getDocumentsByType
- * @pathParam {string} documentType - The type of the documents to retrieve
+ * @operationId getDocumentsByDocumentType
+ * @pathParam {string} document_type - The type of the documents to retrieve
  * @response 200 - Successful operation, returns documents
  * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
-async function getDocumentsByDocumentType(req, res) {
+export async function getDocumentsByDocumentType(
+	req: ValidatedRequest<never, GetDocumentsByTypeParams>,
+	res: Response
+): Promise<void> {
 	try {
 		const { document_type } = req.params;
-		const documents = await DocumentDao.getDocumentsByType(document_type);
+		const documents = await DocumentDao.getDocumentsByDocumentType(document_type);
 		res.status(200).json(documents);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting documents by type:', error);
-		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
+		res.status(400).json({ error: 'Error retrieving documents', detail: error?.message });
 	}
 }
+
 /**
  * GET /documents/business/:businessId/documents/type/:documentType
  * @tag Documents
  * @summary Get documents for a business by type
  * @description Retrieves documents of a specific type associated with a business.
  * @operationId getDocumentsForBusinessByType
- * @pathParam {string} businessId - The ID of the business
- * @pathParam {string} documentType - The type of the documents
+ * @pathParam {string} business_id - The ID of the business
+ * @pathParam {string} document_type - The type of the documents
  * @response 200 - Successful operation, returns documents
  * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
-async function getDocumentsForBusinessByDocumentType(req, res) {
+export async function getDocumentsForBusinessByDocumentType(
+	req: ValidatedRequest<never, GetDocumentsForBusinessByTypeParams>,
+	res: Response
+): Promise<void> {
 	try {
 		const { business_id, document_type } = req.params;
-		const documents = await DocumentDao.getDocumentsForBusinessByType(business_id, document_type);
+		const documents = await DocumentDao.getDocumentsForBusinessByDocumentType(business_id, document_type);
 		res.status(200).json(documents);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting documents for business by type:', error);
-		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
+		res.status(400).json({ error: 'Error retrieving documents', detail: error?.message });
 	}
 }
+
 /**
  * GET /documents/drivers/:driverId/documents/type/:documentType
  * @tag Documents
  * @summary Get documents for a driver by type
  * @description Retrieves documents of a specific type associated with a driver.
  * @operationId getDocumentsForDriverByType
- * @pathParam {string} driverId - The ID of the driver
- * @pathParam {string} documentType - The type of the documents
+ * @pathParam {string} driver_id - The ID of the driver
+ * @pathParam {string} document_type - The type of the documents
  * @response 200 - Successful operation, returns documents
  * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
-async function getDocumentsForDriverByDocumentType(req, res) {
+export async function getDocumentsForDriverByDocumentType(
+	req: ValidatedRequest<never, GetDocumentsForDriverByTypeParams>,
+	res: Response
+): Promise<void> {
 	try {
 		const { driver_id, document_type } = req.params;
-		const documents = await DocumentDao.getDocumentsForDriverByType(driver_id, document_type);
+		const documents = await DocumentDao.getDocumentsForDriverByDocumentType(driver_id, document_type);
 		res.status(200).json(documents);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting documents for driver by type:', error);
-		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
+		res.status(400).json({ error: 'Error retrieving documents', detail: error?.message });
 	}
 }
+
 /**
  * GET /documents/vehicles/:vehicleId/documents/type/:documentType
  * @tag Documents
  * @summary Get documents for a vehicle by type
  * @description Retrieves documents of a specific type associated with a vehicle.
  * @operationId getDocumentsForVehicleByType
- * @pathParam {string} vehicleId - The ID of the vehicle
- * @pathParam {string} documentType - The type of the documents
+ * @pathParam {string} vehicle_id - The ID of the vehicle
+ * @pathParam {string} document_type - The type of the documents
  * @response 200 - Successful operation, returns documents
  * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
-async function getDocumentsForVehicleByDocumentType(req, res) {
+export async function getDocumentsForVehicleByDocumentType(
+	req: ValidatedRequest<never, GetDocumentsForVehicleByTypeParams>,
+	res: Response
+): Promise<void> {
 	try {
 		const { vehicle_id, document_type } = req.params;
-		const documents = await DocumentDao.getDocumentsForVehicleByType(vehicle_id, document_type);
+		const documents = await DocumentDao.getDocumentsForVehicleByDocumentType(vehicle_id, document_type);
 		res.status(200).json(documents);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error getting documents for vehicle by type:', error);
-		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
+		res.status(400).json({ error: 'Error retrieving documents', detail: error?.message });
 	}
 }
+
 /**
  * POST /documents/create/business/:business_id
  * @tag Documents
@@ -220,20 +269,26 @@ async function getDocumentsForVehicleByDocumentType(req, res) {
  * @prisma_model documents
  * @prisma_model files
  */
-async function createBusinessDocument(req, res) {
+export async function createBusinessDocument(
+	req: ValidatedRequest<CreateDocumentBody, { business_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		const { documentData, files } = req.body;
 		const businessId = req.params.business_id;
 		const document = await DocumentDao.createDocument(documentData, files);
 		if (!document) {
-			return res.status(400).json({ error: 'Error creating the document' });
+			res.status(400).json({ error: 'Error creating the document' });
+			return;
 		}
 		await DocumentDao.linkDocumentToBusiness(document.document_id, businessId);
-		res.status(200).json(document);
-	} catch (error) {
-		res.status(400).json({ error: 'Error creating or linking the document', detail: error.message });
+		res.status(201).json(document);
+	} catch (error: any) {
+		console.error('Error creating or linking the document:', error);
+		res.status(400).json({ error: 'Error creating or linking the document', detail: error?.message });
 	}
 }
+
 /**
  * POST /documents/create/driver/:driver_id
  * @tag Documents
@@ -249,20 +304,26 @@ async function createBusinessDocument(req, res) {
  * @prisma_model documents
  * @prisma_model files
  */
-async function createDriverDocument(req, res) {
+export async function createDriverDocument(
+	req: ValidatedRequest<CreateDocumentBody, { driver_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		const { documentData, files } = req.body;
 		const driverId = req.params.driver_id;
 		const document = await DocumentDao.createDocument(documentData, files);
 		if (!document) {
-			return res.status(400).json({ error: 'Error creating the document' });
+			res.status(400).json({ error: 'Error creating the document' });
+			return;
 		}
 		await DocumentDao.linkDocumentToDriver(document.document_id, driverId);
-		res.status(200).json(document);
-	} catch (error) {
-		res.status(400).json({ error: 'Error creating or linking the document', detail: error.message });
+		res.status(201).json(document);
+	} catch (error: any) {
+		console.error('Error creating or linking the document:', error);
+		res.status(400).json({ error: 'Error creating or linking the document', detail: error?.message });
 	}
 }
+
 /**
  * POST /documents/create/vehicle/:vehicle_id
  * @tag Documents
@@ -278,21 +339,29 @@ async function createDriverDocument(req, res) {
  * @prisma_model documents
  * @prisma_model files
  */
-async function createVehicleDocument(req, res) {
+export async function createVehicleDocument(
+	req: ValidatedRequest<CreateDocumentBody, { vehicle_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		const { documentData, files } = req.body;
 		const vehicleId = req.params.vehicle_id;
 		const document = await DocumentDao.createDocument(documentData, files);
+		if (!document) {
+			res.status(400).json({ error: 'Error creating the document' });
+			return;
+		}
 		await DocumentDao.linkDocumentToVehicle(document.document_id, vehicleId);
 		res.status(201).json(document);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error creating document for vehicle:', error);
 		res.status(400).json({
 			error: 'Error creating vehicle document or linking the document',
-			detail: error.message,
+			detail: error?.message,
 		});
 	}
 }
+
 /**
  * PATCH /documents/expirationDate
  * @tag Documents
@@ -307,17 +376,20 @@ async function createVehicleDocument(req, res) {
  * @response 400 - Error updating document's expiration date
  * @prisma_model documents
  */
-async function updateDocumentExpirationDate(req, res) {
+export async function updateDocumentExpirationDate(
+	req: ValidatedRequest<UpdateDocumentExpiration>,
+	res: Response
+): Promise<void> {
 	try {
-		const { document_id } = req.params;
-		const { expirationDate } = req.body;
+		const { document_id, expirationDate } = req.body;
 		const updatedDocument = await DocumentDao.updateDocumentExpirationDate(document_id, expirationDate);
 		res.status(200).json(updatedDocument);
-	} catch (error) {
+	} catch (error: any) {
 		console.error("Error updating document's expiration date:", error);
-		res.status(400).json({ error: "Error updating document's expiration date", detail: error.message });
+		res.status(400).json({ error: "Error updating document's expiration date", detail: error?.message });
 	}
 }
+
 /**
  * PATCH /documents/issueDate
  * @tag Documents
@@ -332,17 +404,20 @@ async function updateDocumentExpirationDate(req, res) {
  * @response 400 - Error updating document's issue date
  * @prisma_model documents
  */
-async function updateDocumentIssueDate(req, res) {
+export async function updateDocumentIssueDate(
+	req: ValidatedRequest<UpdateDocumentIssue>,
+	res: Response
+): Promise<void> {
 	try {
-		const { document_id } = req.params;
-		const { issueDate } = req.body;
+		const { document_id, issueDate } = req.body;
 		const updatedDocument = await DocumentDao.updateDocumentIssueDate(document_id, issueDate);
 		res.status(200).json(updatedDocument);
-	} catch (error) {
+	} catch (error: any) {
 		console.error("Error updating document's issue date:", error);
-		res.status(400).json({ error: "Error updating document's issue date", detail: error.message });
+		res.status(400).json({ error: "Error updating document's issue date", detail: error?.message });
 	}
 }
+
 /**
  * PATCH /documents/files
  * @tag Documents
@@ -358,17 +433,17 @@ async function updateDocumentIssueDate(req, res) {
  * @prisma_model documents
  * @prisma_model files
  */
-async function updateDocumentFiles(req, res) {
+export async function updateDocumentFiles(req: ValidatedRequest<UpdateDocumentFiles>, res: Response): Promise<void> {
 	try {
-		const { document_id } = req.params;
-		const { files } = req.body;
+		const { document_id, files } = req.body;
 		const updatedDocument = await DocumentDao.updateDocumentFiles(document_id, files);
 		res.status(200).json(updatedDocument);
-	} catch (error) {
+	} catch (error: any) {
 		console.error("Error updating document's files:", error);
-		res.status(400).json({ error: "Error updating document's files", detail: error.message });
+		res.status(400).json({ error: "Error updating document's files", detail: error?.message });
 	}
 }
+
 /**
  * PATCH /documents/additionalInfo
  * @tag Documents
@@ -383,54 +458,33 @@ async function updateDocumentFiles(req, res) {
  * @response 400 - Error updating document's additional info
  * @prisma_model documents
  */
-async function updateDocumentAdditionalInfo(req, res) {
+export async function updateDocumentAdditionalInfo(
+	req: ValidatedRequest<UpdateDocumentAdditionalInfo>,
+	res: Response
+): Promise<void> {
 	try {
-		const { document_id } = req.params;
-		const { jsonData } = req.body;
+		const { document_id, jsonData } = req.body;
 		const updatedDocument = await DocumentDao.updateDocumentAdditionalInfo(document_id, jsonData);
 		res.status(200).json(updatedDocument);
-	} catch (error) {
+	} catch (error: any) {
 		console.error("Error updating document's additional info:", error);
-		res.status(400).json({ error: "Error updating document's additional info", detail: error.message });
+		res.status(400).json({ error: "Error updating document's additional info", detail: error?.message });
 	}
 }
-export { listDocuments };
-export { getDocumentById };
-export { getDocumentsForUser };
-export { getDocumentsForVehicle };
-export { getDocumentsForDriver };
-export { getDocumentsForBusiness };
-export { getDocumentsByDocumentType };
-export { getDocumentsForBusinessByDocumentType };
-export { getDocumentsForDriverByDocumentType };
-export { getDocumentsForVehicleByDocumentType };
-export { getDocumentsForUserByDocumentType };
-export { createUserDocument };
-export { createBusinessDocument };
-export { createVehicleDocument };
-export { createDriverDocument };
-export { createDeliveryPersonDocument };
-export { updateDocumentExpirationDate };
-export { updateDocumentIssueDate };
-export { updateDocumentFiles };
-export { updateDocumentAdditionalInfo };
+
 export default {
 	listDocuments,
 	getDocumentById,
-	getDocumentsForUser,
-	getDocumentsForVehicle,
-	getDocumentsForDriver,
 	getDocumentsForBusiness,
+	getDocumentsForDriver,
+	getDocumentsForVehicle,
 	getDocumentsByDocumentType,
 	getDocumentsForBusinessByDocumentType,
 	getDocumentsForDriverByDocumentType,
 	getDocumentsForVehicleByDocumentType,
-	getDocumentsForUserByDocumentType,
-	createUserDocument,
 	createBusinessDocument,
-	createVehicleDocument,
 	createDriverDocument,
-	createDeliveryPersonDocument,
+	createVehicleDocument,
 	updateDocumentExpirationDate,
 	updateDocumentIssueDate,
 	updateDocumentFiles,
