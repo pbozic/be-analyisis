@@ -4,6 +4,10 @@ import type {
 	ScheduleEmployeeDAOResponse,
 	ScheduleEmployeeWithSlotsDAOResponse,
 } from '../../schemas/dto/reservations/schedule-employee/schedule-employee.dto.js';
+import {
+	toScheduleEmployeeResponse,
+	toScheduleEmployeeList,
+} from '../../schemas/dto/reservations/schedule-employee/schedule-employee.mappers.js';
 
 const cropped_user_columns = {
 	first_name: true,
@@ -42,7 +46,7 @@ export async function getScheduleEmployeesByScheduleId(scheduleId: string): Prom
 				},
 			},
 		});
-		return records;
+		return records.map(toScheduleEmployeeResponse);
 	} catch (error) {
 		throw new Error('Error retrieving schedule employees');
 	}
@@ -64,7 +68,7 @@ export async function createScheduleEmployee(
 				employee_id: data.employee_id,
 			},
 		});
-		return record;
+		return record as ScheduleEmployeeDAOResponse;
 	} catch (error) {
 		throw new Error('Error creating schedule employee');
 	}
@@ -89,7 +93,7 @@ export async function updateScheduleEmployee(
 				employee_id: data.employee_id,
 			},
 		});
-		return record;
+		return record as ScheduleEmployeeDAOResponse;
 	} catch (error) {
 		throw new Error('Error updating schedule employee');
 	}
@@ -122,7 +126,7 @@ export async function getScheduleEmployeeById(id: string): Promise<ScheduleEmplo
 		const record = await prisma.schedule_employee.findUnique({
 			where: { schedule_employee_id: id },
 		});
-		return record;
+		return record as ScheduleEmployeeDAOResponse | null;
 	} catch (error) {
 		throw new Error('Error retrieving schedule employee');
 	}
@@ -180,7 +184,7 @@ export async function getEmployeesByScheduleIdWithSlots(
 				},
 			},
 		});
-		return employees;
+		return employees as ScheduleEmployeeWithSlotsDAOResponse[];
 	} catch (error) {
 		throw new Error('Error retrieving employees');
 	}

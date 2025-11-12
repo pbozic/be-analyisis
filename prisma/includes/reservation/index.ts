@@ -4,6 +4,15 @@ export * from './employee';
 // ===== BOOKING =====
 export * from './booking';
 
+// ===== BOOKING COURSE PARTICIPANT =====
+export * from './booking-course-participant';
+
+// ===== BOOKING COURSE TIME =====
+export * from './booking-course-time';
+
+// ===== BOOKING HISTORY LOG =====
+export * from './booking-history-log';
+
 // ===== SCHEDULE =====
 export * from './schedule';
 

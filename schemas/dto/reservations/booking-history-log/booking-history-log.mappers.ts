@@ -1,28 +1,35 @@
 import type { BookingHistoryLogResponse } from './booking-history-log.dto';
 import { BookingHistoryLogResponseSchema } from './booking-history-log.dto';
+import type { BookingHistoryLogBasePrisma } from '../../../../prisma/includes/reservation/booking-history-log';
 
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
+function toIso(d: Date | string | null | undefined): string | undefined {
+	if (!d) return undefined;
+	return d instanceof Date ? d.toISOString() : new Date(d).toISOString();
 }
 
 /**
  * Map Prisma booking_history_log to BookingHistoryLogResponse
  */
-export function toBookingHistoryLogResponse(row: any): BookingHistoryLogResponse {
+export function toBookingHistoryLogResponse(row: BookingHistoryLogBasePrisma): BookingHistoryLogResponse {
 	const r = row;
 
 	const dto = {
-		booking_history_log_id: r.booking_history_log_id,
+		booking_history_id: r.booking_history_id,
 		booking_id: r.booking_id,
-		changed_by: r.changed_by,
-		change_type: r.change_type,
-		field_name: r.field_name ?? null,
-		old_value: r.old_value ?? null,
-		new_value: r.new_value ?? null,
-		notes: r.notes ?? null,
-		timestamp: toIso(r.timestamp) ?? '',
-		booking: r.booking ?? undefined,
-		changed_by_user: r.changed_by_user ?? undefined,
+		status: r.status,
+		comment: r.comment ?? null,
+		type: r.type ?? null,
+		title: r.title ?? null,
+		description: r.description ?? null,
+		created_at: toIso(r.created_at) ?? '',
+		updated_at: toIso(r.updated_at) ?? '',
+		user_id: r.user_id ?? null,
+		booking: r.booking
+			? {
+					booking_id: r.booking.booking_id,
+					status: r.booking.status,
+				}
+			: undefined,
 	};
 
 	return BookingHistoryLogResponseSchema.parse(dto);
@@ -31,7 +38,7 @@ export function toBookingHistoryLogResponse(row: any): BookingHistoryLogResponse
 /**
  * Map list of booking history logs
  */
-export function toBookingHistoryLogList(rows: any[]): BookingHistoryLogResponse[] {
+export function toBookingHistoryLogList(rows: BookingHistoryLogBasePrisma[]): BookingHistoryLogResponse[] {
 	return rows.map(toBookingHistoryLogResponse);
 }
 

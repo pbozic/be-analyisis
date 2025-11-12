@@ -6,12 +6,11 @@ import type {
 	EmployeeWithSlotsDAOResponse,
 	EmployeeScheduleSlotsDAOResponse,
 } from '../../schemas/dto/reservations/employee/employee.dto.js';
-
-const cropped_user_columns = {
-	first_name: true,
-	last_name: true,
-	user_id: true,
-};
+import {
+	toEmployeeDAOResponse,
+	toEmployeeByIdDAOResponse,
+} from '../../schemas/dto/reservations/employee/employee.mappers.js';
+import { employeeBase } from '../../prisma/includes/reservation/employee.js';
 
 /**
  * Retrieves all employees for a given reservation module.
@@ -21,25 +20,13 @@ const cropped_user_columns = {
  */
 export async function getEmployeesByReservationModuleId(reservationModuleId: string): Promise<EmployeeDAOResponse[]> {
 	try {
-		let employees = await prisma.employee.findMany({
+		const employees = await prisma.employee.findMany({
 			where: {
 				reservation_module_id: reservationModuleId,
 			},
-			include: {
-				reservation_module: true,
-				business_user: {
-					select: {
-						business_users_id: true,
-						business_id: true,
-						user_id: true,
-						users: {
-							select: cropped_user_columns,
-						},
-					},
-				},
-			},
+			include: employeeBase,
 		});
-		return employees;
+		return employees.map(toEmployeeDAOResponse);
 	} catch (error) {
 		throw new Error('Error retrieving employees');
 	}
@@ -50,6 +37,11 @@ export async function getEmployeesByReservationModuleId(reservationModuleId: str
  * @param {{
  * 	reservation_module_id: string;
  * 	business_users_id: string;
+ * 	first_name: string;
+ * 	last_name: string;
+ * 	email: string;
+ * 	telephone: string;
+ * 	telephone_code?: string;
  * }} employeeData - The data for the new employee.
  * @returns {Promise<EmployeeDAOResponse>} A promise that resolves to the created employee.
  * @throws {Error} If there is an error creating the employee.
@@ -65,14 +57,15 @@ export async function createEmployee(employeeData: {
 	// telephone_number?: string;
 }): Promise<EmployeeDAOResponse> {
 	try {
-		let employee = await prisma.employee.create({
+		const employee = await prisma.employee.create({
 			data: employeeData,
 		});
-		return employee;
+		return toEmployeeDAOResponse(employee);
 	} catch (error) {
 		throw new Error('Error creating employee');
 	}
 }
+
 /**
  * Deletes an employee by its ID.
  * @param {string} employeeId - The ID of the employee to delete.
@@ -117,7 +110,7 @@ export async function updateEmployee(
 	employeeData: UpdateEmployeeRequest
 ): Promise<EmployeeDAOResponse> {
 	try {
-		let employee = await prisma.employee.findFirst({
+		const employee = await prisma.employee.findFirst({
 			where: {
 				employee_id: employeeId,
 			},
@@ -125,7 +118,7 @@ export async function updateEmployee(
 		if (!employee) {
 			throw new Error('Employee not found');
 		}
-		let businessUser = await prisma.business_users.findFirst({
+		const businessUser = await prisma.business_users.findFirst({
 			where: {
 				business_users_id: employee.business_users_id,
 			},
@@ -135,7 +128,7 @@ export async function updateEmployee(
 			throw new Error('Business user not found');
 		}
 		// TODO: cannot delete ADMIN user
-		let user = await prisma.users.findFirst({
+		const user = await prisma.users.findFirst({
 			where: {
 				user_id: businessUser.user_id,
 			},
@@ -143,7 +136,7 @@ export async function updateEmployee(
 		if (!user) {
 			throw new Error('User not found');
 		}
-		await prisma.employee.update({
+		const updatedEmployee = await prisma.employee.update({
 			where: {
 				employee_id: employee.employee_id,
 			},
@@ -157,7 +150,7 @@ export async function updateEmployee(
 			},
 		});
 
-		return employee;
+		return toEmployeeDAOResponse(updatedEmployee);
 	} catch (error) {
 		throw new Error('Error updating employee');
 	}
@@ -171,7 +164,7 @@ export async function updateEmployee(
 
 export async function getEmployeeById(employeeId: string): Promise<EmployeeByIdDAOResponse | null> {
 	try {
-		let employee = await prisma.employee.findUnique({
+		const employee = await prisma.employee.findUnique({
 			where: {
 				employee_id: employeeId,
 			},
@@ -184,7 +177,7 @@ export async function getEmployeeById(employeeId: string): Promise<EmployeeByIdD
 				},
 			},
 		});
-		return employee;
+		return employee ? toEmployeeByIdDAOResponse(employee) : null;
 	} catch (error) {
 		throw new Error('Error retrieving employee');
 	}
@@ -203,7 +196,7 @@ export async function getEmployeesByReservationModuleIdWithSlots(
 	employee_ids: string[]
 ): Promise<EmployeeWithSlotsDAOResponse[]> {
 	try {
-		let employees = await prisma.employee.findMany({
+		const employees = await prisma.employee.findMany({
 			where: {
 				reservation_module_id: reservationModuleId,
 				employee_id: {
@@ -251,7 +244,7 @@ export async function getEmployeesByReservationModuleIdWithSlots(
 				//},
 			},
 		});
-		return employees;
+		return employees as EmployeeWithSlotsDAOResponse[];
 	} catch (error) {
 		throw new Error('Error retrieving employees');
 	}
@@ -301,7 +294,7 @@ export async function getScheduleSlotsByEmployeesIdAndDate(
 				},
 			},
 		});
-		return record;
+		return record as EmployeeScheduleSlotsDAOResponse[];
 	} catch (error) {
 		throw new Error('Error retrieving schedule slots');
 	}
@@ -315,7 +308,7 @@ export async function getScheduleSlotsByEmployeesIdAndDate(
 
 export async function getEmployeeByIdWithSchedules(employeeId: string): Promise<EmployeeByIdDAOResponse | null> {
 	try {
-		let employee = await prisma.employee.findUnique({
+		const employee = await prisma.employee.findUnique({
 			where: {
 				employee_id: employeeId,
 			},
@@ -337,7 +330,7 @@ export async function getEmployeeByIdWithSchedules(employeeId: string): Promise<
 				},
 			},
 		});
-		return employee;
+		return employee ? toEmployeeByIdDAOResponse(employee) : null;
 	} catch (error) {
 		throw new Error('Error retrieving employee');
 	}
