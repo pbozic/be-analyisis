@@ -49,10 +49,10 @@ export async function createWalletFunds(
  * Get available wallet funds for a user by type.
  *
  * @param {string} userId
- * @param {string} funds_type
+ * @param {FUNDS_TYPE} funds_type
  * @returns {Promise<WalletFundsResponse[]>} Available wallet funds
  */
-export async function getAvailableWalletFunds(userId: string, funds_type: string): Promise<WalletFundsResponse[]> {
+export async function getAvailableWalletFunds(userId: string, funds_type: FUNDS_TYPE): Promise<WalletFundsResponse[]> {
 	try {
 		return await prisma.wallet_funds.findMany({
 			where: {

@@ -9,6 +9,7 @@ import {
 	type Prisma as TPrisma,
 	TRANSFER_GROUP_STATUS,
 	SPLIT_TYPE,
+	FUNDS_TYPE,
 } from '@prisma/client';
 import { type Stripe as TStripe } from 'stripe';
 
@@ -19,7 +20,6 @@ import WalletFundsDao from '../dao/WalletFunds.js';
 import UserDao from '../dao/User.js';
 import stripe from './stripe.js';
 import prisma from '../prisma/prisma.js';
-import { FUNDS_TYPE } from './constants.js';
 
 /**
  * Generates payment splits from a combination of fixed-amount and value-based splits.
