@@ -179,7 +179,7 @@ export type VehicleEntityBaseInput = z.infer<typeof VehicleEntityBaseSchema>;
 export const VehicleCreateInputSchema = VehicleEntityBaseSchema.openapi('VehicleCreateInput');
 export type VehicleCreateInput = z.infer<typeof VehicleCreateInputSchema>;
 
-export const VehicleUpdateInputSchema = VehicleEntityBaseSchema.partial().openapi('VehicleUpdateInput');
+export const VehicleUpdateInputSchema = VehicleCreateInputSchema.openapi('VehicleUpdateInput');
 export type VehicleUpdateInput = z.infer<typeof VehicleUpdateInputSchema>;
 
 // Driver reference for assignment arrays
@@ -246,7 +246,7 @@ export const CreateVehicleRequestSchema = z
 	.openapi('CreateVehicleRequest');
 export type CreateVehicleRequest = z.infer<typeof CreateVehicleRequestSchema>;
 
-export const UpdateVehicleRequestSchema = CreateVehicleRequestSchema.partial().openapi('UpdateVehicleRequest');
+export const UpdateVehicleRequestSchema = CreateVehicleRequestSchema.openapi('UpdateVehicleRequest');
 export type UpdateVehicleRequest = z.infer<typeof UpdateVehicleRequestSchema>;
 
 // Shared body for assign/unassign vehicles to a driver

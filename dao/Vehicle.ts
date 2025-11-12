@@ -1,62 +1,20 @@
 import prisma from '../prisma/prisma.js';
-import type { VehicleBase } from '../schemas/dto/Vehicles/vehicle.dto.js';
-import { DriverRef } from '../schemas/dto/Drivers/index.js';
-
-// Vehicle interfaces using proper DTOs
-export interface VehicleDetail extends VehicleBase {
-	drivers?: Array<{
-		driver_id: string;
-		vehicle_id: string;
-		driver?: DriverRef;
-	}>;
-	documents?: Array<Record<string, unknown>>;
-}
-
-export interface CreateVehicleData {
-	business_id: string;
-	vehicle_class: string;
-	vehicle_category?: string;
-	make?: string;
-	model?: string;
-	year?: number;
-	color?: string;
-	license_plate?: string;
-	vin?: string;
-	capacity?: number;
-	specifications?: Record<string, unknown>;
-	is_active?: boolean;
-}
-
-export interface UpdateVehicleData {
-	vehicle_class?: string;
-	vehicle_category?: string;
-	make?: string;
-	model?: string;
-	year?: number;
-	color?: string;
-	license_plate?: string;
-	vin?: string;
-	capacity?: number;
-	specifications?: Record<string, unknown>;
-	is_active?: boolean;
-	business_id?: string;
-}
+import type { VehicleCreateInput, VehicleDetail, VehicleUpdateInput } from '../schemas/dto/Vehicles/vehicle.dto.js';
+import { VehicleDriver } from '../types/drivers/VehicleDriver.js';
 
 /**
  * Get all vehicles with optional Prisma args and includes.
  *
- * @param args - Additional Prisma findMany args.
  * @returns Array of vehicles.
  */
-export const getVehicles = async (args?: any): Promise<VehicleDetail[]> => {
+export const getVehicles = async (): Promise<VehicleDetail[]> => {
 	try {
 		return await prisma.vehicles.findMany({
-			...args,
 			include: {
 				documents: false,
 			},
 		});
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error retrieving vehicles:', error);
 		throw new Error(String(error));
 	}
@@ -96,7 +54,7 @@ export const getVehiclesByBusiness = async (businessId: string): Promise<Vehicle
 				},
 			},
 		});
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error retrieving vehicles by business:', error);
 		throw new Error(String(error));
 	}
@@ -129,7 +87,7 @@ export const getVehicleById = async (vehicle_id: string): Promise<VehicleDetail 
 				},
 			},
 		});
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error retrieving vehicle by ID:', error);
 		throw new Error(String(error));
 	}
@@ -157,7 +115,7 @@ export const getVehiclesByClass = async (vehicleClass: string): Promise<VehicleD
 				},
 			},
 		});
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error retrieving vehicles by class:', error);
 		throw new Error(String(error));
 	}
@@ -185,7 +143,7 @@ export const getVehiclesByCategory = async (vehicleCategory: string): Promise<Ve
 				},
 			},
 		});
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error retrieving vehicles by category:', error);
 		throw new Error(String(error));
 	}
@@ -220,7 +178,7 @@ export const getVehiclesByClassAndCategory = async (
 				},
 			},
 		});
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error retrieving vehicles by class and category:', error);
 		throw new Error(String(error));
 	}
@@ -254,7 +212,7 @@ export const getVehiclesByDriverId = async (driver_id: string): Promise<VehicleD
 				},
 			},
 		});
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error retrieving vehicles by driver ID:', error);
 		throw new Error(String(error));
 	}
@@ -266,21 +224,16 @@ export const getVehiclesByDriverId = async (driver_id: string): Promise<VehicleD
  * @param data - Vehicle creation data.
  * @returns Created vehicle.
  */
-export const createVehicle = async (data: CreateVehicleData): Promise<VehicleDetail> => {
+export const createVehicle = async (data: VehicleCreateInput): Promise<VehicleDetail> => {
 	try {
 		const vehicleData = {
-			business_id: data.business_id,
-			vehicle_class: data.vehicle_class,
-			vehicle_category: data.vehicle_category,
+			vehicle_class: data.class,
+			vehicle_category: data.category,
 			make: data.make,
 			model: data.model,
-			year: data.year,
 			color: data.color,
 			license_plate: data.license_plate,
-			vin: data.vin,
-			capacity: data.capacity,
-			specifications: data.specifications || {},
-			is_active: data.is_active !== undefined ? data.is_active : true,
+			// vin: data.vin,
 		};
 
 		return await prisma.vehicles.create({
@@ -297,7 +250,7 @@ export const createVehicle = async (data: CreateVehicleData): Promise<VehicleDet
 				},
 			},
 		});
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error creating vehicle:', error);
 		throw new Error(String(error));
 	}
@@ -310,13 +263,12 @@ export const createVehicle = async (data: CreateVehicleData): Promise<VehicleDet
  * @param data - Update data.
  * @returns Updated vehicle.
  */
-export const updateVehicle = async (vehicle_id: string, data: UpdateVehicleData): Promise<VehicleDetail | null> => {
+export const updateVehicle = async (vehicle_id: string, data: VehicleUpdateInput): Promise<VehicleDetail | null> => {
 	try {
 		return await prisma.vehicles.update({
 			where: { vehicle_id },
 			data: {
 				...data,
-				updated_at: new Date(),
 			},
 			include: {
 				drivers: {
@@ -330,7 +282,7 @@ export const updateVehicle = async (vehicle_id: string, data: UpdateVehicleData)
 				},
 			},
 		});
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error updating vehicle:', error);
 		throw new Error(String(error));
 	}
@@ -351,7 +303,7 @@ export const assignVehicleToDriver = async (vehicle_id: string, driver_id: strin
 				driver_id,
 			},
 		});
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error assigning vehicle to driver:', error);
 		throw new Error(String(error));
 	}
@@ -374,7 +326,7 @@ export const removeVehicleFromDriver = async (vehicle_id: string, driver_id: str
 				},
 			},
 		});
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error removing vehicle from driver:', error);
 		throw new Error(String(error));
 	}
@@ -400,10 +352,50 @@ export const deleteVehicle = async (vehicle_id: string): Promise<VehicleDetail> 
 				drivers: true,
 			},
 		});
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Error deleting vehicle:', error);
 		throw new Error(String(error));
 	}
+};
+
+/**
+ * Get the driver IDs linked to a vehicle.
+ *
+ * @param {string} vehicle_id - Vehicle ID.
+ * @returns {Promise<VehicleDriver[]>} Array of driver_id objects.
+ */
+const getVehicleDriversByVehicleId = async (vehicle_id: string): Promise<VehicleDriver[]> => {
+	try {
+		return await prisma.vehicle_drivers.findMany({
+			where: {
+				vehicle_id: vehicle_id,
+			},
+			select: {
+				driver_id: true,
+			},
+		});
+	} catch (error: unknown) {
+		console.error('Error retrieving vehicle drivers by vehicle ID:', error);
+		throw new Error(String(error));
+	}
+};
+
+/**
+ * Remove driver links for a vehicle that are not present in the newDriverIds list.
+ *
+ * @param {string} vehicle_id - Vehicle ID.
+ * @param {string[]} newDriverIds - Driver IDs to keep.
+ * @returns {Promise<void>} Resolves when done.
+ */
+const unAssignVehicleFromDrivers = async (vehicle_id: string, newDriverIds: string[]) => {
+	await prisma.vehicle_drivers.deleteMany({
+		where: {
+			vehicle_id: vehicle_id,
+			driver_id: {
+				notIn: newDriverIds,
+			},
+		},
+	});
 };
 
 export default {
@@ -419,4 +411,6 @@ export default {
 	assignVehicleToDriver,
 	removeVehicleFromDriver,
 	deleteVehicle,
+	getVehicleDriversByVehicleId,
+	unAssignVehicleFromDrivers,
 };

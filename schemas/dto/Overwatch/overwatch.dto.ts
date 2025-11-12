@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID } from '../../primitives';
+import { Timestamp, UUID } from '../../primitives';
 import { SERVICE_TYPE } from '../../../lib/constants';
 
 extendZodWithOpenApi(z);
@@ -25,6 +25,8 @@ export type GetOrdersWithPaginationInput = z.infer<typeof GetOrdersWithPaginatio
 export const UpdateDriverActivitySettingsSchema = z
 	.object({
 		driver_activity_settings_id: UUID.optional(),
+		created_at: Timestamp.optional(),
+		updated_at: Timestamp.optional(),
 		first_offline_lockout: z.coerce.number().int().min(1).default(30).openapi({ example: 30 }),
 		second_offline_lockout: z.coerce.number().int().min(1).default(120).openapi({ example: 120 }),
 		online_timeout: z.coerce.number().int().min(1).default(120).openapi({ example: 120 }),
@@ -34,7 +36,12 @@ export const UpdateDriverActivitySettingsSchema = z
 
 export type UpdateDriverActivitySettingsInput = z.infer<typeof UpdateDriverActivitySettingsSchema>;
 
+export const DriverActivitySettingsResponseSchema = UpdateDriverActivitySettingsSchema.extend({
+	driver_activity_settings_id: UUID,
+}).openapi('DriverActivitySettingsResponse');
+
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('GetOrdersWithPagination', GetOrdersWithPaginationSchema);
 	registry.register('UpdateDriverActivitySettings', UpdateDriverActivitySettingsSchema);
+	registry.register('DriverActivitySettingsResponse', DriverActivitySettingsResponseSchema);
 }

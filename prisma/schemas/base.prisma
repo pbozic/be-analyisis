@@ -659,8 +659,8 @@ model user_favorite_drivers {
   created_at               DateTime @default(now()) @db.Timestamptz(6)
   updated_at               DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-  users   users   @relation(fields: [user_id], references: [user_id])
-  drivers drivers @relation(fields: [driver_id], references: [driver_id])
+  user   users   @relation(fields: [user_id], references: [user_id])
+  driver drivers @relation(fields: [driver_id], references: [driver_id])
 
   @@unique(name: "user_typed_favorite", [user_id, driver_id])
   @@index([user_id, driver_id])

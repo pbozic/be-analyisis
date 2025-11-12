@@ -38,7 +38,7 @@ type PrismaFavoriteDriver = {
 	driver_id: string;
 	created_at?: string | Date | null;
 	updated_at?: string | Date | null;
-	drivers?: { driver_id: string } | null;
+	driver?: { driver_id: string } | null;
 };
 
 export function toFavoriteDriverDetail(row: unknown): FavoriteDriverDetail {
@@ -49,7 +49,7 @@ export function toFavoriteDriverDetail(row: unknown): FavoriteDriverDetail {
 		driver_id: r.driver_id,
 		created_at: r.created_at ? new Date(r.created_at).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
-		driver: r.drivers ? { driver_id: r.drivers.driver_id } : undefined,
+		driver: r.driver ? { driver_id: r.driver.driver_id } : undefined,
 	});
 }
 

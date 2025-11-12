@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { SERVICES } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import { createDocument, linkDocumentToTransaction } from './Document.js';
@@ -1062,6 +1063,21 @@ const linkRolesToUser = async (user_id: string, roles: any[], tx: PrismaTransact
 	}
 };
 
+const updateFavoriteServices = async (user_id: string, services: SERVICES[]): Promise<UserResponse> => {
+	try {
+		return (await prisma.users.update({
+			where: {
+				user_id: user_id,
+			},
+			data: {
+				user_favorite_service_links: services,
+			},
+		})) as UserResponse;
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Failed to update favorite services');
+	}
+};
+
 export { getUsers };
 export { getUserByReferralCode };
 export { getUserById };
@@ -1102,6 +1118,7 @@ export { updateUserMarketingNotifications };
 export { updateUserAdsPersonalization };
 export { updateUserNewsletter };
 export { linkRolesToUser };
+export { updateFavoriteServices };
 
 export default {
 	getUsers,
@@ -1144,4 +1161,5 @@ export default {
 	updateUserAdsPersonalization,
 	updateUserNewsletter,
 	linkRolesToUser,
+	updateFavoriteServices,
 };

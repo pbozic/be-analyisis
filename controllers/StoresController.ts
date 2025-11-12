@@ -11,12 +11,11 @@ import { StoreOnlineBody, StoreOverwhelmedBody } from '../schemas/dto/Stores/sto
  * @description Sets a store's online flag.
  * @operationId setStoreOnline
  * @bodyDescription Online state
- * @bodyContent { "online": true } application/json
+ * @bodyContent {StoreOnlineBody} application/json
  * @bodyRequired
  * @response 200 - Store updated
- * @responseContent {object} 200.application/json
+ * @responseContent {StoreBase} 200.application/json
  * @response 500 - Error updating store
- * @responseContent {object} 500.application/json The error object
  * @prisma_model stores
  */
 export async function setStoreOnline(
@@ -40,12 +39,11 @@ export async function setStoreOnline(
  * @description Sets a store's overwhelmed flag.
  * @operationId setStoreOverwhelmed
  * @bodyDescription Overwhelmed state
- * @bodyContent { "overwhelmed": true } application/json
+ * @bodyContent {StoreOverwhelmedBody} application/json
  * @bodyRequired
  * @response 200 - Store updated
- * @responseContent {object} 200.application/json
+ * @responseContent {StoreBase} 200.application/json
  * @response 500 - Error updating store
- * @responseContent {object} 500.application/json The error object
  * @prisma_model stores
  */
 export async function setStoreOverwhelmed(
@@ -69,15 +67,11 @@ export async function setStoreOverwhelmed(
  * @description Sets a store's enabled flag to false and online flag to false.
  * @operationId disableStore
  * @response 200 - Store disabled
- * @responseContent {object} 200.application/json
+ * @responseContent {StoreBase} 200.application/json
  * @response 500 - Error disabling store
- * @responseContent {object} 500.application/json The error object
  * @prisma_model stores
  */
-export async function disableStore(
-	req: ValidatedRequest<unknown, { stores_id: string }>,
-	res: Response
-): Promise<void> {
+export async function disableStore(req: ValidatedRequest<never, { stores_id: string }>, res: Response): Promise<void> {
 	try {
 		const { stores_id } = req.params;
 		const updated = await StoresDao.disableStore(stores_id);
@@ -94,12 +88,11 @@ export async function disableStore(
  * @description Sets a store's enabled flag to true.
  * @operationId enableStore
  * @response 200 - Store enabled
- * @responseContent {object} 200.application/json
+ * @responseContent {StoreBase} 200.application/json
  * @response 500 - Error enabling store
- * @responseContent {object} 500.application/json The error object
  * @prisma_model stores
  */
-export async function enableStore(req: ValidatedRequest<unknown, { stores_id: string }>, res: Response): Promise<void> {
+export async function enableStore(req: ValidatedRequest<never, { stores_id: string }>, res: Response): Promise<void> {
 	try {
 		const { stores_id } = req.params;
 		const updated = await StoresDao.enableStore(stores_id);

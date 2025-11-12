@@ -4,7 +4,6 @@ import express from 'express';
 import UserController from '../../controllers/UserController.js';
 import StripeController from '../../controllers/StripeController.js';
 import FavoriteDriversController from '../../controllers/FavoriteDriversController.ts';
-import FavoriteServicesController from '../../controllers/FavoriteServicesController.ts';
 import TutorialsController from '../../controllers/TutorialsController.ts';
 import { validate } from '../../middleware/zod.ts';
 import {
@@ -41,8 +40,8 @@ import {
 	InviteFamilyMemberSchema,
 	AcceptFamilyInvitationSchema,
 	UpdateWalletBalanceSchema,
+	UpdateFavoriteServicesBodySchema,
 } from '../../schemas/dto/User/UserRequest.dto';
-import { UpdateFavoriteServicesBodySchema } from '../../schemas/dto/FavoriteServices/favorite-services.dto.ts';
 import { SetTutorialStatusBodySchema } from '../../schemas/dto/Tutorials/tutorials.dto.ts';
 
 config();
@@ -155,9 +154,8 @@ router.get('/me/favorite-drivers', FavoriteDriversController.listFavoriteDrivers
 router.patch(
 	'/me/favorite-services',
 	validate(UpdateFavoriteServicesBodySchema),
-	FavoriteServicesController.updateFavoriteServices
+	UserController.updateFavoriteServices
 );
-router.get('/me/favorite-services', FavoriteServicesController.listFavoriteServices);
 
 router.get('/me/tutorials', TutorialsController.listTutorials);
 router.post('/me/tutorials/state/reset', TutorialsController.resetTutorials);
