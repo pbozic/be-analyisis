@@ -1,5 +1,14 @@
+import { Request, Response } from 'express';
+
 import BusinessClientDao from '../dao/BusinessClient.js';
+import { getBusinessById } from '../dao/Business.js';
 import prisma from '../prisma/prisma.js';
+import { ValidatedRequest } from '../types/validatedRequest.ts';
+import {
+	CreateBusinessClientInput,
+	UpdateBusinessClientInput,
+} from '../schemas/dto/BusinessClient/BusinessClient.validation.ts';
+
 /**
  * GET /business-clients
  * @tag BusinessClients
@@ -9,18 +18,21 @@ import prisma from '../prisma/prisma.js';
  * @response 200 - successful operation
  * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business client list
- * @responseContent {object} 400.application/json The error object
  * @prisma_model business_clients
  */
-async function getAllBusinessClients(req, res) {
+export async function getAllBusinessClients(req: Request, res: Response): Promise<void> {
 	try {
 		const businessClients = await BusinessClientDao.getAllBusinessClients();
 		res.status(200).json(businessClients);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error retrieving all business clients:', error);
-		res.status(400).json({ error: 'Error retrieving all business clients', detail: error.message });
+		res.status(400).json({
+			error: 'Error retrieving all business clients',
+			detail: error?.message ?? String(error),
+		});
 	}
 }
+
 /**
  * GET /business-clients/{business_clients_id}
  * @tag BusinessClients
@@ -31,21 +43,25 @@ async function getAllBusinessClients(req, res) {
  * @response 200 - successful operation
  * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business client
- * @responseContent {object} 400.application/json The error object
  * @prisma_model business_clients
  */
-async function getBusinessClientById(req, res) {
+export async function getBusinessClientById(
+	req: ValidatedRequest<never, { business_clients_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		const businessClient = await BusinessClientDao.getBusinessClientById(req.params.business_clients_id);
 		if (!businessClient) {
-			return res.status(404).json({ error: 'Business client not found' });
+			res.status(404).json({ error: 'Business client not found' });
+			return;
 		}
 		res.status(200).json(businessClient);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error retrieving business client:', error);
-		res.status(400).json({ error: 'Error retrieving business client', detail: error.message });
+		res.status(400).json({ error: 'Error retrieving business client', detail: error?.message ?? String(error) });
 	}
 }
+
 /**
  * GET /business-clients/business/{business_id}
  * @tag BusinessClients
@@ -56,18 +72,24 @@ async function getBusinessClientById(req, res) {
  * @response 200 - successful operation
  * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business client list
- * @responseContent {object} 400.application/json The error object
  * @prisma_model business_clients
  */
-async function getBusinessClientsByBusinessId(req, res) {
+export async function getBusinessClientsByBusinessId(
+	req: ValidatedRequest<never, { business_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		const businessClients = await BusinessClientDao.getBusinessClientsByBusinessId(req.params.business_id);
 		res.status(200).json(businessClients);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error retrieving business clients by business ID:', error);
-		res.status(400).json({ error: 'Error retrieving business clients by business ID', detail: error.message });
+		res.status(400).json({
+			error: 'Error retrieving business clients by business ID',
+			detail: error?.message ?? String(error),
+		});
 	}
 }
+
 /**
  * POST /business-clients
  * @tag BusinessClients
@@ -82,27 +104,30 @@ async function getBusinessClientsByBusinessId(req, res) {
  * @response 400 - Error creating business client.
  * @prisma_model business_clients
  */
-async function createBusinessClient(req, res) {
+export async function createBusinessClient(
+	req: ValidatedRequest<CreateBusinessClientInput>,
+	res: Response
+): Promise<void> {
 	try {
-		const business = await BusinessClientDao.getBusinessById(req.body.business_id);
+		const business = await getBusinessById(req.body.business_id);
 		if (!business) {
-			return res.status(404).json({ error: 'Business not found' });
+			res.status(404).json({ error: 'Business not found' });
+			return;
 		}
 		if (!business.crm_module_id) {
-			await prisma.crm_module.create({
-				data: { business: { connect: { business_id: business.business_id } } },
-			});
+			await prisma.crm_module.create({ data: { business: { connect: { business_id: business.business_id } } } });
 		}
 		const businessClient = await BusinessClientDao.createBusinessClient({
-			...req.body,
+			...(req.body || {}),
 			crm_module_id: business.crm_module_id,
-		});
+		} as any);
 		res.status(201).json(businessClient);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error creating a business client:', error);
-		res.status(400).json({ error: 'Error creating a business client', detail: error.message });
+		res.status(400).json({ error: 'Error creating a business client', detail: error?.message ?? String(error) });
 	}
 }
+
 /**
  * PATCH /business-clients/{business_clients_id}
  * @tag BusinessClients
@@ -119,18 +144,23 @@ async function createBusinessClient(req, res) {
  * @response 404 - Business client not found.
  * @prisma_model business_clients
  */
-async function updateBusinessClient(req, res) {
+export async function updateBusinessClient(
+	req: ValidatedRequest<UpdateBusinessClientInput, { business_clients_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		const businessClient = await BusinessClientDao.updateBusinessClient(req.params.business_clients_id, req.body);
 		if (!businessClient) {
-			return res.status(404).json({ error: 'Business client not found' });
+			res.status(404).json({ error: 'Business client not found' });
+			return;
 		}
 		res.status(200).json(businessClient);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error updating business client:', error);
-		res.status(400).json({ error: 'Error updating business client', detail: error.message });
+		res.status(400).json({ error: 'Error updating business client', detail: error?.message ?? String(error) });
 	}
 }
+
 /**
  * DELETE /business-clients/{business_clients_id}
  * @tag BusinessClients
@@ -143,21 +173,19 @@ async function updateBusinessClient(req, res) {
  * @response 400 - Error removing business client.
  * @prisma_model business_clients
  */
-async function removeBusinessClient(req, res) {
+export async function removeBusinessClient(
+	req: ValidatedRequest<never, { business_clients_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		await BusinessClientDao.removeBusinessClient(req.params.business_clients_id);
 		res.status(200).json({ message: 'Business client removed successfully.' });
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error removing a business client:', error);
-		res.status(400).json({ error: 'Error removing a business client', detail: error.message });
+		res.status(400).json({ error: 'Error removing a business client', detail: error?.message ?? String(error) });
 	}
 }
-export { getAllBusinessClients };
-export { getBusinessClientById };
-export { getBusinessClientsByBusinessId };
-export { createBusinessClient };
-export { updateBusinessClient };
-export { removeBusinessClient };
+
 export default {
 	getAllBusinessClients,
 	getBusinessClientById,
