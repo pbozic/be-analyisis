@@ -9,6 +9,7 @@
 - [Files](#files)
 - [Users](#users)
 - [Addresses](#addresses)
+- [Reviews](#reviews)
 - [Payments](#payments)
 - [LostItems](#lostitems)
 - [Wallet](#wallet)
@@ -42,6 +43,7 @@
 - [Bookings](#bookings)
 - [Notifications](#notifications)
 - [Delivery](#delivery)
+- [default](#default)
 
 ## Cashback
 
@@ -77,7 +79,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -161,7 +162,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -255,7 +255,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -511,7 +510,6 @@ erDiagram
   Boolean allow_credits_usage
   Int order_number
   String business_local_location_id FK "nullable"
-  String review_id FK,UK "nullable"
   String stores_id FK "nullable"
   String food_drinks_id FK "nullable"
   String file_id FK,UK "nullable"
@@ -576,7 +574,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -664,16 +661,6 @@ erDiagram
   Json details "nullable"
   ADDRESS_TYPE type
 }
-"reviews" {
-  String review_id PK
-  String reviewable_id FK
-  String author_id FK
-  Float rating "nullable"
-  String comment "nullable"
-  Json feedback "nullable"
-  DateTime(6) created_at
-  DateTime(6) updated_at
-}
 "tutorial" {
   String tutorial_id PK
   String key UK
@@ -705,7 +692,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -973,12 +959,10 @@ erDiagram
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
   VEHICLE_TYPE vehicle_type "nullable"
-  String reviewable_id FK "nullable"
 }
 "tokens" }o--|| "users" : users
 "user_address" }o--|| "users" : users
 "user_address" }o--|| "addresses" : address
-"reviews" }o--|| "users" : author
 "user_tutorial_state" |o--|| "users" : user
 "users" |o--o| "files" : profile_picture
 "user_roles" }o--|| "users" : user
@@ -1035,21 +1019,6 @@ Properties as follows:
 - `details`:
 - `type`:
 
-### `reviews`
-
-Review record authored by a user about a business or user.
-
-Properties as follows:
-
-- `review_id`:
-- `reviewable_id`:
-- `author_id`:
-- `rating`:
-- `comment`:
-- `feedback`:
-- `created_at`:
-- `updated_at`:
-
 ### `tutorial`
 
 Tutorials available in the system.
@@ -1098,7 +1067,6 @@ Properties as follows:
 - `notification_preferences`:
 - `taxi_preferences`:
 - `profile_picture_id`:
-- `reviewable_id`:
 - `review_complete`:
 - `one_signal_id`:
 - `stripe_customer_id`:
@@ -1349,7 +1317,6 @@ erDiagram
   Boolean enabled
   DateTime(6) created_at
   DateTime(6) updated_at
-  String reviewable_id FK "nullable"
   String delivery_address_id FK "nullable"
   Int minimum_order
   Boolean overwhelmed
@@ -1363,7 +1330,6 @@ erDiagram
   Boolean enabled
   DateTime(6) created_at
   DateTime(6) updated_at
-  String reviewable_id FK "nullable"
   String delivery_address_id FK "nullable"
   Int minimum_order
   Boolean overwhelmed
@@ -1431,6 +1397,37 @@ Properties as follows:
 - `city`:
 - `country`:
 - `postal`:
+
+## Reviews
+
+```mermaid
+erDiagram
+"reviews" {
+  String review_id PK
+  String author_id FK
+  REVIEWER_ROLE reviewer_role
+  String taxi_order_id FK "nullable"
+  String delivery_order_id FK "nullable"
+  String comment "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+}
+```
+
+### `reviews`
+
+Review record authored by a user about a business or user.
+
+Properties as follows:
+
+- `review_id`:
+- `author_id`:
+- `reviewer_role`:
+- `taxi_order_id`:
+- `delivery_order_id`:
+- `comment`:
+- `created_at`:
+- `updated_at`:
 
 ## Payments
 
@@ -1536,7 +1533,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -1717,7 +1713,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -1824,7 +1819,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -2346,7 +2340,6 @@ erDiagram
   Int hours_before_cancel "nullable"
   Boolean publicly_visible
   String business_details_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
 }
 "documents" {
   String document_id PK
@@ -2584,7 +2577,6 @@ Properties as follows:
 - `hours_before_cancel`:
 - `publicly_visible`:
 - `business_details_id`:
-- `reviewable_id`:
 
 ## Drivers
 
@@ -2655,7 +2647,6 @@ erDiagram
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
   VEHICLE_TYPE vehicle_type "nullable"
-  String reviewable_id FK "nullable"
 }
 "documents" {
   String document_id PK
@@ -2674,11 +2665,11 @@ erDiagram
 }
 "reviews" {
   String review_id PK
-  String reviewable_id FK
   String author_id FK
-  Float rating "nullable"
+  REVIEWER_ROLE reviewer_role
+  String taxi_order_id FK "nullable"
+  String delivery_order_id FK "nullable"
   String comment "nullable"
-  Json feedback "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
 }
@@ -2736,7 +2727,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -2865,7 +2855,6 @@ Properties as follows:
 - `on_daily_meals`:
 - `scheduled_meals_route`:
 - `vehicle_type`:
-- `reviewable_id`:
 
 ### `driver_activity_settings`
 
@@ -2925,7 +2914,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -3092,7 +3080,6 @@ erDiagram
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
   VEHICLE_TYPE vehicle_type "nullable"
-  String reviewable_id FK "nullable"
 }
 "settlements" }o--|| "municipalities" : municipality
 "weather_data" }o--o| "municipalities" : municipality
@@ -3461,7 +3448,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -3649,7 +3635,6 @@ erDiagram
   Boolean enabled
   DateTime(6) created_at
   DateTime(6) updated_at
-  String reviewable_id FK "nullable"
   String delivery_address_id FK "nullable"
   Int minimum_order
   Boolean overwhelmed
@@ -3673,11 +3658,11 @@ erDiagram
 }
 "reviews" {
   String review_id PK
-  String reviewable_id FK
   String author_id FK
-  Float rating "nullable"
+  REVIEWER_ROLE reviewer_role
+  String taxi_order_id FK "nullable"
+  String delivery_order_id FK "nullable"
   String comment "nullable"
-  Json feedback "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
 }
@@ -3760,7 +3745,6 @@ Properties as follows:
 - `enabled`:
 - `created_at`:
 - `updated_at`:
-- `reviewable_id`:
 - `delivery_address_id`:
 - `minimum_order`:
 - `overwhelmed`:
@@ -3806,7 +3790,6 @@ erDiagram
   Boolean enabled
   DateTime(6) created_at
   DateTime(6) updated_at
-  String reviewable_id FK "nullable"
   String delivery_address_id FK "nullable"
   Int minimum_order
   Boolean overwhelmed
@@ -3816,11 +3799,11 @@ erDiagram
 }
 "reviews" {
   String review_id PK
-  String reviewable_id FK
   String author_id FK
-  Float rating "nullable"
+  REVIEWER_ROLE reviewer_role
+  String taxi_order_id FK "nullable"
+  String delivery_order_id FK "nullable"
   String comment "nullable"
-  Json feedback "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
 }
@@ -3924,7 +3907,6 @@ Properties as follows:
 - `enabled`:
 - `created_at`:
 - `updated_at`:
-- `reviewable_id`:
 - `delivery_address_id`:
 - `minimum_order`:
 - `overwhelmed`:
@@ -3962,7 +3944,6 @@ erDiagram
   Boolean allow_credits_usage
   Int order_number
   String business_local_location_id FK "nullable"
-  String review_id FK,UK "nullable"
   String stores_id FK "nullable"
   String food_drinks_id FK "nullable"
   String file_id FK,UK "nullable"
@@ -4092,7 +4073,6 @@ erDiagram
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
   VEHICLE_TYPE vehicle_type "nullable"
-  String reviewable_id FK "nullable"
 }
 "vehicles" {
   String vehicle_id PK
@@ -4124,7 +4104,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -4210,7 +4189,6 @@ Properties as follows:
 - `allow_credits_usage`:
 - `order_number`:
 - `business_local_location_id`:
-- `review_id`:
 - `stores_id`:
 - `food_drinks_id`:
 - `file_id`:
@@ -4418,7 +4396,6 @@ erDiagram
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
   VEHICLE_TYPE vehicle_type "nullable"
-  String reviewable_id FK "nullable"
 }
 "users" {
   String user_id PK
@@ -4436,7 +4413,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -4823,7 +4799,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -4951,7 +4926,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -5379,7 +5353,6 @@ erDiagram
   Int hours_before_cancel "nullable"
   Boolean publicly_visible
   String business_details_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
 }
 "location" {
   String location_id PK
@@ -5491,7 +5464,6 @@ erDiagram
   DateTime deleted_at "nullable"
   String employee_id FK "nullable"
   String parent_booking_id FK "nullable"
-  String reviewable_id FK "nullable"
   Boolean course
   Int people_allowed "nullable"
   Int people_booked "nullable"
@@ -5605,11 +5577,11 @@ erDiagram
 }
 "reviews" {
   String review_id PK
-  String reviewable_id FK
   String author_id FK
-  Float rating "nullable"
+  REVIEWER_ROLE reviewer_role
+  String taxi_order_id FK "nullable"
+  String delivery_order_id FK "nullable"
   String comment "nullable"
-  Json feedback "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
 }
@@ -5709,7 +5681,6 @@ Properties as follows:
 - `hours_before_cancel`:
 - `publicly_visible`:
 - `business_details_id`:
-- `reviewable_id`:
 
 ### `location`
 
@@ -5873,7 +5844,6 @@ Properties as follows:
 - `deleted_at`:
 - `employee_id`:
 - `parent_booking_id`:
-- `reviewable_id`:
 - `course`:
 - `people_allowed`:
 - `people_booked`:
@@ -6167,15 +6137,14 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
   Boolean active
-  String reviewable_id FK "nullable"
 }
 "reviews" {
   String review_id PK
-  String reviewable_id FK
   String author_id FK
-  Float rating "nullable"
+  REVIEWER_ROLE reviewer_role
+  String taxi_order_id FK "nullable"
+  String delivery_order_id FK "nullable"
   String comment "nullable"
-  Json feedback "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
 }
@@ -6229,7 +6198,6 @@ erDiagram
   Boolean allow_credits_usage
   Int order_number
   String business_local_location_id FK "nullable"
-  String review_id FK,UK "nullable"
   String stores_id FK "nullable"
   String food_drinks_id FK "nullable"
   String file_id FK,UK "nullable"
@@ -6267,7 +6235,6 @@ erDiagram
   String creating_user_id "nullable"
   Boolean allow_credits_usage
   Int order_number
-  String review_id FK,UK "nullable"
 }
 "drivers" {
   String driver_id PK
@@ -6302,7 +6269,6 @@ erDiagram
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
   VEHICLE_TYPE vehicle_type "nullable"
-  String reviewable_id FK "nullable"
 }
 "vehicles" {
   String vehicle_id PK
@@ -6319,14 +6285,14 @@ erDiagram
   String business_premise_id FK,UK "nullable"
 }
 "transport_module" |o--|| "business" : business
+"reviews" }o--o| "taxi_orders" : taxi_order
+"reviews" }o--o| "delivery_orders" : delivery_order
 "business" }o--o| "business" : parent_business
 "delivery_orders" }o--o| "vehicles" : vehicle
 "delivery_orders" }o--o| "drivers" : driver
-"delivery_orders" |o--o| "reviews" : review
 "taxi_orders" }o--o| "drivers" : driver
 "taxi_orders" }o--o| "vehicles" : vehicle
 "taxi_orders" }o--o| "taxi_orders" : parent_order
-"taxi_orders" |o--o| "reviews" : review
 "drivers" |o--o| "vehicles" : current_vehicle
 "drivers" }o--o| "transport_module" : transport_module
 "vehicles" }o--o| "transport_module" : transport_module
@@ -6345,7 +6311,6 @@ Properties as follows:
 - `created_at`:
 - `updated_at`:
 - `active`:
-- `reviewable_id`:
 
 ## TaxiOrders
 
@@ -6384,7 +6349,6 @@ erDiagram
   String creating_user_id "nullable"
   Boolean allow_credits_usage
   Int order_number
-  String review_id FK,UK "nullable"
 }
 "taxi_order_sent" {
   String taxi_order_sent_id PK
@@ -6499,7 +6463,6 @@ erDiagram
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
   VEHICLE_TYPE vehicle_type "nullable"
-  String reviewable_id FK "nullable"
 }
 "vehicles" {
   String vehicle_id PK
@@ -6531,7 +6494,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -6623,7 +6585,6 @@ Properties as follows:
 - `creating_user_id`:
 - `allow_credits_usage`:
 - `order_number`:
-- `review_id`:
 
 ### `taxi_order_sent`
 
@@ -6724,7 +6685,6 @@ erDiagram
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
   VEHICLE_TYPE vehicle_type "nullable"
-  String reviewable_id FK "nullable"
 }
 "documents" }o--o| "drivers" : drivers
 "documents" }o--o| "vehicles" : vehicles
@@ -7106,7 +7066,6 @@ erDiagram
   DateTime deleted_at "nullable"
   String employee_id FK "nullable"
   String parent_booking_id FK "nullable"
-  String reviewable_id FK "nullable"
   Boolean course
   Int people_allowed "nullable"
   Int people_booked "nullable"
@@ -7218,7 +7177,6 @@ Properties as follows:
 - `deleted_at`:
 - `employee_id`:
 - `parent_booking_id`:
-- `reviewable_id`:
 - `course`:
 - `people_allowed`:
 - `people_booked`:
@@ -7297,7 +7255,6 @@ erDiagram
   DateTime deleted_at "nullable"
   String employee_id FK "nullable"
   String parent_booking_id FK "nullable"
-  String reviewable_id FK "nullable"
   Boolean course
   Int people_allowed "nullable"
   Int people_booked "nullable"
@@ -7334,11 +7291,11 @@ erDiagram
 }
 "reviews" {
   String review_id PK
-  String reviewable_id FK
   String author_id FK
-  Float rating "nullable"
+  REVIEWER_ROLE reviewer_role
+  String taxi_order_id FK "nullable"
+  String delivery_order_id FK "nullable"
   String comment "nullable"
-  Json feedback "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
 }
@@ -7368,7 +7325,6 @@ erDiagram
   Json notification_preferences "nullable"
   Json taxi_preferences "nullable"
   String profile_picture_id FK,UK "nullable"
-  String reviewable_id FK "nullable"
   Boolean review_complete
   String one_signal_id "nullable"
   String stripe_customer_id "nullable"
@@ -7471,7 +7427,6 @@ Properties as follows:
 - `deleted_at`:
 - `employee_id`:
 - `parent_booking_id`:
-- `reviewable_id`:
 - `course`:
 - `people_allowed`:
 - `people_booked`:
@@ -7783,7 +7738,6 @@ erDiagram
   Boolean enabled
   DateTime(6) created_at
   DateTime(6) updated_at
-  String reviewable_id FK "nullable"
   String delivery_address_id FK "nullable"
   Int minimum_order
   Boolean overwhelmed
@@ -7797,7 +7751,6 @@ erDiagram
   Boolean enabled
   DateTime(6) created_at
   DateTime(6) updated_at
-  String reviewable_id FK "nullable"
   String delivery_address_id FK "nullable"
   Int minimum_order
   Boolean overwhelmed
@@ -7813,3 +7766,34 @@ erDiagram
 "food_drinks_module" |o--o| "business_details" : business_details
 ```
 
+
+## default
+
+```mermaid
+erDiagram
+"review_items" {
+  String item_id PK
+  String review_id FK
+  REVIEW_SUBJECT subject_type
+  String subject_id
+  REVIEW_TYPE type
+  Float rating "nullable"
+  String comment "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+}
+```
+
+### `review_items`
+
+Properties as follows:
+
+- `item_id`:
+- `review_id`:
+- `subject_type`:
+- `subject_id`:
+- `type`:
+- `rating`:
+- `comment`:
+- `created_at`:
+- `updated_at`:

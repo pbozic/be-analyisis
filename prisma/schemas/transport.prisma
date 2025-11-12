@@ -8,12 +8,10 @@ model transport_module {
     created_at          DateTime @default(now()) @db.Timestamptz(6)
     updated_at          DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-    business      business    @relation(fields: [business_id], references: [business_id])
-    active        Boolean     @default(false)
-    reviewable_id String?     @db.Uuid
-    reviewable    reviewable? @relation(fields: [reviewable_id], references: [reviewable_id])
-    drivers       drivers[]
-    vehicles      vehicles[]
+    business business   @relation(fields: [business_id], references: [business_id])
+    active   Boolean    @default(false)
+    drivers  drivers[]
+    vehicles vehicles[]
 
     business_premises business_premise[]
 }
@@ -72,8 +70,7 @@ model taxi_orders {
     scoring_points           scoring_points[]           @relation("scoring_points_to_taxi_order")
     late_events              late_events[]              @relation("late_events_to_taxi_order")
     invoice                  invoice?
-    review_id                String?                    @unique @db.Uuid
-    review                   reviews?                   @relation("taxi_order_review", fields: [review_id], references: [review_id])
+    review                   reviews[]
 }
 
 /// @namespace TaxiOrders
@@ -217,8 +214,6 @@ model drivers {
     scheduled_meals_route Json?                      @default("[]")
     subscriptions         daily_meal_subscriptions[]
     vehicle_type          VEHICLE_TYPE?
-    reviewable_id         String?                    @db.Uuid
-    reviewable            reviewable?                @relation(fields: [reviewable_id], references: [reviewable_id])
     scoring_points        scoring_points[]           @relation("scoring_points_to_driver")
     late_events           late_events[]              @relation("late_events_to_driver")
     user_favorite_drivers user_favorite_drivers[]

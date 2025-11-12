@@ -156,29 +156,29 @@ model documents {
 /// @erd LostItems
 /// @erd PromoAds
 model files {
-  file_id            String              @id @default(uuid()) @db.Uuid
-  url                String?
-  file_type          FILE_TYPE
-  public             Boolean             @default(false)
-  mime_type          String
-  created_at         DateTime            @default(now()) @db.Timestamptz(6)
-  updated_at         DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
-  document_id        String?             @db.Uuid
-  documents          documents?          @relation(fields: [document_id], references: [document_id])
-  categories         categories[]
-  blog_posts         blog_posts[]
-  business_details_logo  business_details?  @relation("business_details_logo")
-  business_details_banner business_details?  @relation("business_details_banner")
-  user_id            String?             @db.Uuid
-  user               users?
-  driver_id          String?             @db.Uuid
-  driver             drivers?
-  menu_items         menu_items[]        @relation("menu_item_image") // TODO: This was needed for duplicate menu_items -> UPDATE DAO
-  lost_item_id       String?             @db.Uuid
-  lost_item          lost_items?
-  promo_banners      promo_banners[]
-  delivery_order_id  String?             @db.Uuid
-  delivery_order     delivery_orders?
+  file_id                 String            @id @default(uuid()) @db.Uuid
+  url                     String?
+  file_type               FILE_TYPE
+  public                  Boolean           @default(false)
+  mime_type               String
+  created_at              DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  document_id             String?           @db.Uuid
+  documents               documents?        @relation(fields: [document_id], references: [document_id])
+  categories              categories[]
+  blog_posts              blog_posts[]
+  business_details_logo   business_details? @relation("business_details_logo")
+  business_details_banner business_details? @relation("business_details_banner")
+  user_id                 String?           @db.Uuid
+  user                    users?
+  driver_id               String?           @db.Uuid
+  driver                  drivers?
+  menu_items              menu_items[]      @relation("menu_item_image") // TODO: This was needed for duplicate menu_items -> UPDATE DAO
+  lost_item_id            String?           @db.Uuid
+  lost_item               lost_items?
+  promo_banners           promo_banners[]
+  delivery_order_id       String?           @db.Uuid
+  delivery_order          delivery_orders?
 }
 
 /// @summary API and session tokens for users.
@@ -241,30 +241,8 @@ model user_address {
   @@id([user_id, address_id])
 }
 
-/// @summary Entity that can be reviewed (business, user, driver, module, store, food/drink).
-/// @namespace Users
-/// @namespace Drivers
-/// @namespace Transport
-/// @namespace Stores
-/// @namespace FoodDrinks
-/// @namespace Reservations
-/// @namespace Bookings
-/// @hidden
-model reviewable {
-  reviewable_id       String               @id @default(uuid()) @db.Uuid
-  reviews             reviews[]
-  // --------------SEPARATOR--------------
-  user                users[]
-  driver              drivers[]
-  reservation_module  reservation_module[]
-  reservation_booking booking[]
-  transport_module    transport_module[]
-  stores_module       stores_module[]
-  food_drinks_module  food_drinks_module[]
-}
-
 /// @summary Review record authored by a user about a business or user.
-/// @namespace Users
+/// @namespace Reviews
 /// @erd Drivers
 /// @erd Transport
 /// @erd Stores
@@ -272,19 +250,49 @@ model reviewable {
 /// @erd Reservations
 /// @erd Bookings
 model reviews {
-  review_id     String     @id @default(uuid()) @db.Uuid
-  reviewable_id String     @db.Uuid
-  author_id     String     @db.Uuid
-  rating        Float?
-  comment       String?
-  feedback      Json?
-  created_at    DateTime   @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
-  reviewable    reviewable @relation(fields: [reviewable_id], references: [reviewable_id])
-  author        users      @relation(fields: [author_id], references: [user_id], name: "review_author")
+  review_id         String        @id @default(uuid()) @db.Uuid
+  author_id         String        @db.Uuid // always a users.user_id
+  reviewer_role     REVIEWER_ROLE
+  taxi_order_id     String?       @db.Uuid
+  delivery_order_id String?       @db.Uuid
+  comment           String?
+  created_at        DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
 
-  delivery_order delivery_orders? @relation("delivery_order_review")
-  taxi_order     taxi_orders?     @relation("taxi_order_review")
+  taxi_order     taxi_orders?     @relation(fields: [taxi_order_id], references: [order_id])
+  delivery_order delivery_orders? @relation(fields: [delivery_order_id], references: [order_id])
+  author         users            @relation(fields: [author_id], references: [user_id], name: "review_author")
+  items          review_items[]
+
+  @@unique([author_id, taxi_order_id]) // prevent duplicate review per taxi order by same author
+  @@unique([author_id, delivery_order_id]) // same for delivery
+  @@index([taxi_order_id])
+  @@index([delivery_order_id])
+}
+
+/// @namespace Reviews
+/// @summary Single rated metric within a review. Targets a specific subject (user, driver, business or order) and can carry a rating and optional comment.
+/// @erd Users
+/// @erd Drivers
+/// @erd Business
+/// @erd TaxiOrders
+/// @erd DeliveryOrders
+
+model review_items {
+  item_id      String         @id @default(uuid()) @db.Uuid
+  review_id    String         @db.Uuid
+  subject_type REVIEW_SUBJECT
+  subject_id   String         @db.Uuid // targets users/driver/business/order id
+  type         REVIEW_TYPE    @default(DEFAULT)
+  rating       Float?
+  comment      String?
+  created_at   DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
+
+  review reviews @relation(fields: [review_id], references: [review_id])
+
+  @@unique([review_id, subject_type, subject_id, type])
+  @@index([subject_type, subject_id])
 }
 
 /// @namespace Payments
@@ -1480,4 +1488,22 @@ enum SERVICES {
   RESERVATIONS
   TABLE_RESERVATIONS
   RESERVATION_SERVICES
+}
+
+enum REVIEW_SUBJECT {
+  USER
+  DRIVER
+  BUSINESS
+  TAXI_ORDER
+  DELIVERY_ORDER
+}
+
+enum REVIEWER_ROLE {
+  CUSTOMER
+  DRIVER
+}
+
+enum REVIEW_TYPE {
+  DEFAULT
+  OVERALL
 }

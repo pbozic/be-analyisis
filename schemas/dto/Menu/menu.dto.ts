@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { DOCUMENT_TYPE } from '@prisma/client';
 
+import { UUID } from '../../primitives';
 import { CreateFileDataSchema } from '../Files/file.dto.js';
 
 extendZodWithOpenApi(z);
@@ -11,7 +12,7 @@ extendZodWithOpenApi(z);
 // =======================
 export const MenuBaseSchema = z
 	.object({
-		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: UUID,
 		stores_id: z.string().uuid().nullable().optional(),
 		food_drinks_id: z.string().uuid().nullable().optional(),
 		menu_categories_ordered: z.any().nullable().optional(),
@@ -72,7 +73,7 @@ export const MenuCategoryDataSchema = z
 
 export const CreateMenuCategorySchema = z
 	.object({
-		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: UUID,
 		data: MenuCategoryDataSchema,
 	})
 	.openapi('CreateMenuCategory');
@@ -380,14 +381,14 @@ export type GetMenuByBusinessIdParams = z.infer<typeof GetMenuByBusinessIdParams
 
 export const DeleteMenuInputSchema = z
 	.object({
-		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: UUID,
 	})
 	.openapi('DeleteMenuInput');
 export type DeleteMenuInput = z.infer<typeof DeleteMenuInputSchema>;
 
 export const SetActiveMenuInputSchema = z
 	.object({
-		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: UUID,
 		active: z.boolean().openapi({ example: true }),
 	})
 	.openapi('SetActiveMenuInput');
@@ -395,7 +396,7 @@ export type SetActiveMenuInput = z.infer<typeof SetActiveMenuInputSchema>;
 
 export const UpdateMenuOrderInputSchema = z
 	.object({
-		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: UUID,
 		orderedMenuCategoryIds: z
 			.array(z.string().uuid())
 			.openapi({ example: ['aa0e8400-e29b-41d4-a716-446655440000'] }),
