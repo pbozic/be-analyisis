@@ -1,63 +1,83 @@
-import { MODULE } from '@prisma/client';
-
-import DeliveryOrderDao from '../dao/DeliveryOrder.js';
-import DeliveryDriverDao from '../dao/DeliveryDriver.js';
-import MenuItemDao from '../dao/MenuItem.js';
-import BusinessDao from '../dao/Business.js';
-import DriverDao from '../dao/Driver.js';
-import socket from '../socket.js';
-import Helpers from './helpersLib.js';
-import FlagDao from '../dao/Flags.js';
-import UsersDao from '../dao/User.js';
-import BusinessHelpers from './businessHelpers.js';
-import { AUTOREJECT_THRESHOLD, MAX_DELIVERY_RADIUS_KM } from './constants.js';
 import {
+	MODULE,
 	DELIVERY_ORDER_STATUS,
 	TAXI_ORDER_STATUS,
-	DRIVE_FEE,
-	RESTAURANT_FEE,
+	BUSINESS_TYPE,
 	SCORING_POINTS_REASON,
 	FUNDS_TYPE,
-	DELIVERY_COST_CALCULATION,
-	DELIVERY_ORDER_END_STATES,
-	SERVICE_TYPE,
-	DOCUMENT_TYPE,
-	BUSINESS_TYPE,
-	WEIGHTED_ITEM_QTY_INCREASE_LIMIT,
-} from './constants.js';
-import prisma from '../prisma/prisma.js';
-import gApi from './gApis.js';
-import TaxiOrderDao from '../dao/TaxiOrder.js';
+	TRANSACTION_TYPE,
+} from '@prisma/client';
+
+import type { DeliveryOrderDetail } from '../schemas/dto/DeliveryOrders/deliveryOrder.dto.ts';
+import type { BusinessByIdResponse } from '../schemas/dto/Business/business.dto.ts';
+import type { UserBase } from '../schemas/dto/User/index.js';
+import DeliveryOrderDao from '../dao/DeliveryOrder.js';
+import DriverDao from '../dao/Driver.js';
+import BusinessDao from '../dao/Business.js';
+import MenuItemDao from '../dao/MenuItem.js';
 import MenuDao from '../dao/Menu.js';
+import TaxiOrderDao from '../dao/TaxiOrder.js';
+import WalletFundsDao from '../dao/WalletFunds.js';
+import ScoringPointsDao from '../dao/ScoringPoints.js';
+import prisma from '../prisma/prisma.js';
+import socket from '../socket.js';
+import UsersDao from '../dao/User.js';
+import { haversineDistance } from './helpersLib.js';
+import BusinessHelpers from './businessHelpers.js';
+import gApi, { LatLng } from './gApis.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
 import { sendNotificationToUser } from './oneSignal.js';
+import {
+	DELIVERY_ORDER_END_STATES,
+	AUTOREJECT_THRESHOLD,
+	DELIVERY_COST_CALCULATION,
+	DRIVE_FEE,
+	RESTAURANT_FEE,
+	WEIGHTED_ITEM_QTY_INCREASE_LIMIT,
+	MAX_DELIVERY_RADIUS_KM,
+} from './constants.js';
 import { sendDeliveryOrderNotifications } from './notifications.js';
-import WalletFundsDao from '../dao/WalletFunds.js';
-import stripe from './stripe.js';
 import WalletFundsHelpers from './WalletFundsHelpers.js';
-import ScoringPointsDao from '../dao/ScoringPoints.js';
-import { haversineDistance } from './helpersLib.js';
+// @ts-ignore - legacy JS module without types yet
+import stripe from './stripe.js';
 import { handleStockSync } from '../controllers/DeliveryOrderController.js';
-const { io, SocketStore, UserSockets } = socket;
-// const haversine = require("haversine-distance");
+import { CalculateOrderLobbyOrderDetails } from '../libOld/deliveryHelpers.js';
+
 const NUMBER_OF_DRIVERS_TO_SEND = 3;
 const MAX_ORDER_FIND_ATTEMPTS = 0;
-const cropped_user_columns = {
-	first_name: true,
-	last_name: true,
-	user_id: true,
-};
+
+const { io, SocketStore, UserSockets } = socket;
+
+// Narrow types for driver objects used during scoring (subset of DeliveryDriverDetail/DriverDetail)
+interface CandidateDriver {
+	driver_id?: string;
+	// delivery_driver_id?: string;
+	user_id: string;
+	on_order?: boolean;
+	location: { coordinates: { latitude: number | null; longitude: number | null } };
+	travelTime?: number;
+	arrivalTime?: Date;
+	distanceM?: number;
+	distanceKm?: number;
+	duration?: number;
+	timeDifference?: number;
+	score?: number;
+}
+
+interface DeliveryOrderWithAttempts extends DeliveryOrderDetail {
+	find_drivers_attempts?: number;
+}
+
 /**
  * Finds eligible delivery drivers for a given order and sends it to them.
  * - Selects drivers, computes scores, sends socket events, and updates last_sent_at.
- * @param {object} order - The delivery order to dispatch.
+ * @param {DeliveryOrderWithAttempts} order - The delivery order to dispatch.
  * @returns {Promise<void>} Resolves when notifications are sent.
  */
-async function findDeliveryOrderDrivers(order) {
+export async function findDeliveryOrderDrivers(order: DeliveryOrderWithAttempts): Promise<void> {
 	try {
 		const drivers = await selectDeliveryOrderDrivers(order);
-		const pushDrivers = drivers.map((driver) => sendDeliveryOrderToDriver(order, driver));
-		await Promise.all(pushDrivers);
+		await Promise.all(drivers.map((d) => sendDeliveryOrderToDriver(order, d)));
 		await DeliveryOrderDao.updateOrderLastSentAt(order.order_id);
 	} catch (e) {
 		console.log('Find delivery drivers error', e);
@@ -66,22 +86,19 @@ async function findDeliveryOrderDrivers(order) {
 }
 /**
  * Calculates and attaches delivery earnings estimate to the order based on distance/cost.
- * @param {object} order - The order object; will have details.delivery_earnings assigned.
- * @returns {Promise<object>} The updated order with delivery_earnings.
+ * @param {DeliveryOrderWithAttempts} order - The order object; will have details.delivery_earnings assigned.
+ * @returns {Promise<DeliveryOrderWithAttempts>} The updated order with delivery_earnings.
  */
-async function addDeliveryEarningToOrder(order) {
+async function addDeliveryEarningToOrder(order: DeliveryOrderWithAttempts): Promise<DeliveryOrderWithAttempts> {
 	if (order?.details?.delivery_cost) {
-		order.details.delivery_earnings = order.details.delivery_cost * 1.25;
-	} else {
-		const pricePerKm = 0.5; // Example rate per kilometer
+		(order.details as any).delivery_earnings = order.details.delivery_cost * 1.25;
+	} else if (order?.details) {
+		const pricePerKm = 0.5;
 		const deliveryEarning = pricePerKm * order.details.distance * 1.25;
-		if (!order.details) {
-			order.details = {};
-		}
-		order.details.delivery_earnings = deliveryEarning;
+		(order.details as any).delivery_earnings = deliveryEarning;
 	}
-	console.log('delivery_earnings', order.details.delivery_earnings);
-	await DeliveryOrderDao.updateOrder(order.order_id, order);
+	console.log('delivery_earnings', order.details?.delivery_earnings);
+	await DeliveryOrderDao.updateOrder(order.order_id, order as unknown as Record<string, unknown>);
 	return order;
 }
 /**
@@ -89,41 +106,43 @@ async function addDeliveryEarningToOrder(order) {
  * @param {string} driver_id - The delivery_driver_id or driver_id.
  * @returns {Promise<number>} Count of pending sent orders.
  */
-async function getNumberPendingOrders(driver_id) {
-	let sent_orders = await DeliveryOrderDao.getAlreadySentOrdersByDeliveryDriverId(driver_id);
-	if (!sent_orders) return 0;
-	return sent_orders.length;
+async function getNumberPendingOrders(driver_id: string): Promise<number> {
+	const sent = await DeliveryOrderDao.getAlreadySentOrdersByDeliveryDriverId(driver_id);
+	return sent?.length || 0;
 }
 /**
  * Heuristic score to prioritize drivers for a delivery order based on timing and availability.
- * @param {object} driver - Driver object including on_order flag.
+ * @param {CandidateDriver} driver - Driver object including on_order flag.
  * @param {Date} readyTime - When the order is ready for pickup.
  * @param {Date} arrivalTime - Driver ETA to merchant.
  * @returns {Promise<number>} Score from roughly 0-100+ (higher is better).
  */
-async function calculateDeliveryDriverScore(driver, readyTime, arrivalTime) {
+async function calculateDeliveryDriverScore(
+	driver: CandidateDriver,
+	readyTime: Date,
+	arrivalTime: Date
+): Promise<number> {
 	let score = 100;
 	const LATE_SCORE = 5;
 	const EARLY_SCORE = 1;
 	const MINUTE_SUB = 1;
 	const PENDING_ORDER_SCORE = 10;
-	const numberPendingOrders = await getNumberPendingOrders(driver.delivery_driver_id || driver.driver_id);
-	//TODO: calcualte a score dpentding on the time difference between the ready time and the arrival time
-	let timeDifference = arrivalTime.getTime() - readyTime.getTime();
-	let timeDifferenceMinutes = timeDifference / 1000 / 60;
-	if (timeDifference > 0) {
-		score = score - timeDifferenceMinutes * LATE_SCORE * MINUTE_SUB;
-	} else {
-		score = score + timeDifferenceMinutes * EARLY_SCORE * MINUTE_SUB;
-	}
-	if (driver.on_order) {
-		score -= 25; // Deduct points if the driver is not available
-	}
-	score -= (numberPendingOrders || 0) * PENDING_ORDER_SCORE; // Deduct points for pending orders
+	const numberPendingOrders = await getNumberPendingOrders(driver.driver_id || driver.user_id);
+	const timeDifference = arrivalTime.getTime() - readyTime.getTime();
+	const timeDifferenceMinutes = timeDifference / 60000;
+	if (timeDifference > 0) score -= timeDifferenceMinutes * LATE_SCORE * MINUTE_SUB;
+	else score += timeDifferenceMinutes * EARLY_SCORE * MINUTE_SUB;
+	if (driver.on_order) score -= 25;
+	score -= (numberPendingOrders || 0) * PENDING_ORDER_SCORE;
 	console.log('score: ', score);
 	return score;
 }
-async function calculateDriverScore(driver, readyTime, travelTime, order) {
+async function calculateDriverScore(
+	driver: CandidateDriver,
+	readyTime: Date,
+	travelTime: number,
+	order: DeliveryOrderWithAttempts
+) {
 	let baseScore = 100;
 	const LATE_SCORE = 5;
 	const EARLY_SCORE = 1;
@@ -157,101 +176,100 @@ async function calculateDriverScore(driver, readyTime, travelTime, order) {
 	// Add any other factors and corresponding score calculations here
 	return baseScore;
 }
-async function selectDeliveryOrderDrivers(order) {
-	let eligibleDrivers = [];
-	let now = new Date();
-	let readyTime = new Date(order.details.ready_for_pickup_at);
+/**
+ * Selects eligible delivery drivers for a given order based on readiness and scoring.
+ *
+ * - Computes scores, filters, and sorts drivers to find the best candidates.
+ * @param {DeliveryOrderWithAttempts} order - The delivery order to evaluate.
+ * @returns {Promise<CandidateDriver[]>} List of candidate drivers sorted by score.
+ */
+async function selectDeliveryOrderDrivers(order: DeliveryOrderWithAttempts): Promise<CandidateDriver[]> {
+	const eligible: CandidateDriver[] = [];
+	const now = new Date();
+	const readyRaw = order.details?.ready_for_pickup_at;
+	if (!readyRaw) return eligible;
+	const readyTime = new Date(readyRaw);
 	console.log('ready time: ', readyTime);
 	console.log('now: ', now);
 	// is readyTime 20min from now or less
 	if (readyTime.getTime() > now.getTime() + 20 * 60 * 1000) {
 		console.log('Order is not ready yet');
-		return eligibleDrivers;
+		return eligible;
 	}
-	const MIN_ORDER_SCORE = 85 - order.find_drivers_attempts * 5;
-	let onlineDrivers = await DriverDao.getOnlineDrivers({
+	const MIN_ORDER_SCORE = 85 - (order.find_drivers_attempts as number) * 5;
+	const onlineDrivers = await DriverDao.getOnlineDrivers({
 		handles_delivery_orders: true,
 		delivery_orders_toggled: true,
 		on_order: false,
 	});
 	console.info('available drivers', onlineDrivers?.length);
 	// TODO: get pending orders for the driver and check if the order is already sent to the driver
-	for (let driver of onlineDrivers) {
-		let isSent = await DeliveryOrderDao.isOrderSent(order.order_id, driver);
-		if (isSent) {
-			console.info('order already send!');
-			continue;
-		}
-		//Skip driver whose socket is not connected
-		if (!UserSockets.get(driver.user_id)) {
-			console.log('UserSocket not found for driver: ', driver.user_id);
-			continue;
-		}
-		if (driver.location.coordinates.latitude === null) continue;
-		if (driver.location.coordinates.longitude === null) continue;
-		let { result } = await gApi.distanceBetweenTwoPoints(
-			driver.location.coordinates,
-			order.pickup_location.coordinates,
+	for (const driver of onlineDrivers) {
+		if (await DeliveryOrderDao.isOrderSent(order.order_id, driver)) continue;
+		if (!UserSockets.get(driver.user_id)) continue;
+		const lat = (driver as any).location?.coordinates?.latitude;
+		const lng = (driver as any).location?.coordinates?.longitude;
+		if (lat == null || lng == null) continue;
+		const { distanceM, durationS } = await gApi.distanceBetweenTwoPoints(
+			(driver as any).location.coordinates,
+			(order as any).pickup_location.coordinates,
 			'driving',
 			new Date(),
 			'best_guess'
 		);
-		let travelTime = result.rows[0].elements[0].duration.value;
-		let distanceM = result.rows[0].elements[0].distance.value;
+		const travelTime = durationS; // seconds
 		console.log('travel time: ', travelTime);
 		let arrivalTime = new Date(now.getTime() + travelTime * 1000);
 		console.log('arrival time: ', arrivalTime.getTime());
 		console.log('ready time: ', readyTime.getTime());
 		console.log('arrival time - ready time: ', arrivalTime.getTime() < readyTime.getTime());
-		driver.travelTime = travelTime;
-		driver.arrivalTime = arrivalTime;
-		driver.distanceM = distanceM;
-		driver.distanceKm = distanceM / 1000;
-		driver.duration = result.rows[0].elements[0].duration.value;
-		driver.timeDifference = arrivalTime.getTime() - readyTime.getTime();
-		await addDeliveryEarningToOrder(order, driver);
-		driver.score = await calculateDeliveryDriverScore(driver, readyTime, arrivalTime, order);
+		const cd: CandidateDriver = {
+			driver_id: driver.driver_id,
+			user_id: driver.user_id,
+			on_order: driver.on_order,
+			location: driver.location,
+			travelTime,
+			arrivalTime,
+			distanceM,
+			distanceKm: distanceM / 1000,
+			duration: travelTime,
+			timeDifference: arrivalTime.getTime() - readyTime.getTime(),
+		};
+		await addDeliveryEarningToOrder(order);
+		cd.score = await calculateDeliveryDriverScore(cd, readyTime, arrivalTime);
 		console.log('MIN_ORDER_SCORE', MIN_ORDER_SCORE);
-		console.log(driver.score, 'driver.score');
+		console.log(cd.score, 'driver.score');
 		//TODO: uncomment
-		//if (driver.score >= MIN_ORDER_SCORE) eligibleDrivers.push(driver);
-		if (order.find_drivers_attempts >= MAX_ORDER_FIND_ATTEMPTS) eligibleDrivers.push(driver);
+		//if (cd.score >= MIN_ORDER_SCORE) eligibleDrivers.push(cd);
+		if ((order.find_drivers_attempts as number) >= MAX_ORDER_FIND_ATTEMPTS) eligible.push(cd); // retain logic from JS (score gating disabled)
 	}
-	eligibleDrivers.sort((a, b) => b.score - a.score);
-	eligibleDrivers = eligibleDrivers.slice(0, NUMBER_OF_DRIVERS_TO_SEND);
-	console.log('eligible drivers: ', eligibleDrivers);
-	if (eligibleDrivers.length === 0) {
-		console.log('No eligible drivers found');
-		order.find_drivers_attempts = order.find_drivers_attempts + 1;
+	eligible.sort((a, b) => b.score! - a.score!);
+	const sliced = eligible.slice(0, NUMBER_OF_DRIVERS_TO_SEND);
+	if (!sliced.length) {
+		order.find_drivers_attempts = (order.find_drivers_attempts || 0) + 1;
 		await DeliveryOrderDao.updateOrder(order.order_id, {
 			find_drivers_attempts: order.find_drivers_attempts,
 		});
 	}
-	return eligibleDrivers;
+	return sliced;
 }
 /**
  * Notifies a single driver about a new delivery order via sockets and push notifications.
  * Skips if already sent or driver socket is missing.
- * @param {object} order - The delivery order payload.
- * @param {object} delivery_driver - The driver object to notify.
+ * @param {DeliveryOrderWithAttempts} order - The delivery order payload.
+ * @param {CandidateDriver} delivery_driver - The driver object to notify.
  * @returns {Promise<void>}
  */
-async function sendDeliveryOrderToDriver(order, delivery_driver) {
+async function sendDeliveryOrderToDriver(order: DeliveryOrderWithAttempts, driver: CandidateDriver): Promise<void> {
 	try {
-		let isSent = await DeliveryOrderDao.isOrderSent(order.order_id, delivery_driver);
-		if (isSent) {
-			return;
-		}
-		if (!UserSockets.get(delivery_driver.user_id)) {
-			//console.log("UserSocket not found for driver: ", delivery_driver.user_id);
-			throw new Error(`UserSocket not found for driver ${delivery_driver.user_id}`);
-		}
-		await DeliveryOrderDao.createOrderSent(order.order_id, delivery_driver);
-		const l10nText = getLocalisedTexts('DELIVERY_DRIVER_NOTIFICATIONS', delivery_driver);
-		const l10nTextHeading = getLocalisedTexts('HEADING', delivery_driver);
-		sendNotificationToUser(l10nTextHeading?.pending_delivery, l10nText?.accepted, delivery_driver.user_id);
-		console.log('Sending order: ', order.order_id, ' to delivery driver: ', delivery_driver.user_id);
-		UserSockets.get(delivery_driver.user_id).emit('new_order__delivery', order);
+		if (await DeliveryOrderDao.isOrderSent(order.order_id, driver)) return;
+		const sock = UserSockets.get(driver.user_id);
+		if (!sock) throw new Error(`UserSocket not found for driver ${driver.user_id}`);
+		await DeliveryOrderDao.createOrderSent(order.order_id, driver);
+		const l10nText = getLocalisedTexts('DELIVERY_DRIVER_NOTIFICATIONS', driver as any);
+		const l10nTextHeading = getLocalisedTexts('HEADING', driver as any);
+		sendNotificationToUser(l10nTextHeading?.pending_delivery, l10nText?.accepted, driver.user_id);
+		sock.emit('new_order__delivery', order);
 	} catch (e) {
 		console.error(e);
 	}
@@ -262,22 +280,14 @@ async function sendDeliveryOrderToDriver(order, delivery_driver) {
  * @param {string} order_id - The order identifier.
  * @returns {Promise<void>}
  */
-async function revokeDeliveryOrderFromDrivers(order_id) {
-	let deliveryOrderSent = await DeliveryOrderDao.getSentDeliveryDrivers(order_id);
-	for (let sent of deliveryOrderSent) {
-		if (sent.accepted) {
-			continue;
-		}
-		await SocketStore.removeUserFromRoom(
-			sent.delivery_driver?.user_id || sent.driver?.user_id,
-			`order_${order_id}`
-		);
-		const isDDriver = !!sent.delivery_driver;
-		if (isDDriver && UserSockets.get(sent.delivery_driver.user_id)) {
-			UserSockets.get(sent.delivery_driver.user_id).emit('order_revoked__delivery', order_id);
-		} else if (!isDDriver && UserSockets.get(sent.driver?.user_id)) {
-			UserSockets.get(sent.driver.user_id).emit('order_revoked__delivery', order_id);
-		}
+export async function revokeDeliveryOrderFromDrivers(order_id: string): Promise<void> {
+	const sent = await DeliveryOrderDao.getSentDeliveryDrivers(order_id);
+	for (const s of sent) {
+		if (s.accepted) continue;
+		const userId = s.delivery_driver?.user_id || s.driver?.user_id;
+		if (userId) await SocketStore.removeUserFromRoom(userId, `order_${order_id}`);
+		const sock = userId ? UserSockets.get(userId) : undefined;
+		sock?.emit('order_revoked__delivery', order_id);
 	}
 }
 /**
@@ -285,87 +295,50 @@ async function revokeDeliveryOrderFromDrivers(order_id) {
  * Uses status checks, last_sent_at window, and details.type filter.
  * @returns {Promise<void>}
  */
-async function checkIfDeliveryOrdersNeedSending() {
+export async function checkIfDeliveryOrdersNeedSending(): Promise<void> {
 	console.log('Checking for delivery orders to send...');
-	let orders = await DeliveryOrderDao.getOrders({
+	const orders = await DeliveryOrderDao.getOrders({
 		where: {
 			AND: [
-				{
-					//If any driver is set the order shouldn't be sent to anyone.
-					delivery_driver_id: null,
-					driver_id: null,
-				},
+				{ delivery_driver_id: null, driver_id: null },
 				{
 					OR: [
 						{ status: DELIVERY_ORDER_STATUS.MERCHANT_PREPARING },
 						{ status: DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP },
 					],
 				},
-				{
-					OR: [
-						{ last_sent_at: null }, // Include records where last_sent_at is null
-						{ last_sent_at: { lte: new Date(new Date() - 0.5 * 60 * 1000) } }, // Include records where last_sent_at is less than or equal to 5 minutes ago
-					],
-				},
-				{
-					details: {
-						path: ['type'],
-						equals: 'delivery',
-					},
-				},
-				{
-					is_daily_meal: false,
-				},
+				{ OR: [{ last_sent_at: null }, { last_sent_at: { lte: new Date(Date.now() - 30 * 1000) } }] },
+				{ details: { path: ['type'], equals: 'delivery' } },
+				{ is_daily_meal: false },
 			],
 		},
-		include: {
-			user: {
-				select: {
-					user_id: true,
-					first_name: true,
-					last_name: true,
-					telephone: true,
-				},
-			},
-		},
+		include: { user: { select: { user_id: true, first_name: true, last_name: true, telephone: true } } },
 	});
 	console.log('open delivery orders: ', orders.length);
-	for (let order of orders) {
-		findDeliveryOrderDrivers(order); //TODO: notify the closest drivers X minutes (travel time to the merchant from delivery drivers) before order status is MERCHANT_READY_FOR_PICKUP.
-	}
+	for (const order of orders as DeliveryOrderDetail[]) findDeliveryOrderDrivers(order);
 }
 /**
  * Periodic worker: transitions restaurant orders to READY_FOR_PICKUP when ready_time reached.
  * Emits order status change events upon transition.
  * @returns {Promise<void>}
  */
-async function checkIfRestaurantOrderIsPrepared() {
+export async function checkIfRestaurantOrderIsPrepared(): Promise<void> {
 	const now = new Date();
 	console.log('Checking delivery orders prepared!');
 	const orders = await prisma.delivery_orders.findMany({
-		where: {
-			status: DELIVERY_ORDER_STATUS.MERCHANT_PREPARING,
-		},
-		include: {
-			business: {
-				select: {
-					type: true,
-				},
-			},
-		},
+		where: { status: DELIVERY_ORDER_STATUS.MERCHANT_PREPARING },
+		include: { business: { select: { type: true } } },
 	});
 	for (const or of orders) {
-		const isRestaurant = or.food_drinks_module_id;
-		const readyTime = new Date(or.details?.ready_for_pickup_at);
-		if (readyTime.getTime() <= now.getTime() && isRestaurant) {
-			const order = await DeliveryOrderDao.updateOrderStatus(
+		const readyRaw = (or.details as any)?.ready_for_pickup_at;
+		if (!readyRaw) continue;
+		const readyTime = new Date(readyRaw);
+		if (readyTime.getTime() <= now.getTime() && or.food_drinks_module_id) {
+			const updated = await DeliveryOrderDao.updateOrderStatus(
 				or.order_id,
 				DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP
 			);
-			if (order) {
-				console.log(`Order ${order.order_id} is ready for pickup`);
-				io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
-			}
+			if (updated) io.to('order_' + updated.order_id).emit('order_status_change__delivery', updated);
 		}
 	}
 }
@@ -374,13 +347,10 @@ async function checkIfRestaurantOrderIsPrepared() {
  * Handles payment cleanup, scoring, stock sync, and emits status events.
  * @returns {Promise<void>}
  */
-async function autoRejectDeliveryOrders() {
+export async function autoRejectDeliveryOrders(): Promise<void> {
 	console.log('Checking delivery orders auto-reject!');
-	const orders = await prisma.delivery_orders.findMany({
-		where: {
-			status: { in: [DELIVERY_ORDER_STATUS.PENDING, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING] },
-		},
-		include: { business: true },
+	const orders: DeliveryOrderDetail[] = await prisma.delivery_orders.findMany({
+		where: { status: { in: [DELIVERY_ORDER_STATUS.PENDING, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING] } },
 	});
 	for (const or of orders) {
 		const type = or.business_local_location_id
@@ -390,10 +360,10 @@ async function autoRejectDeliveryOrders() {
 				: BUSINESS_TYPE.RESTAURANT;
 		const threshold = AUTOREJECT_THRESHOLD[type] || AUTOREJECT_THRESHOLD.RESTAURANT;
 		const now = new Date();
-		const threshold_time = new Date(now.getTime() - threshold * 60 * 1000);
+		const threshold_time = new Date(now.getTime() - (threshold as number) * 60 * 1000);
 		if (
-			or.created_at.getTime() > threshold_time.getTime() &&
-			(type !== BUSINESS_TYPE.LOCAL || now.getTime() < new Date(or.scheduled?.time).getTime())
+			new Date(or.created_at as string).getTime() > threshold_time.getTime() &&
+			(type !== BUSINESS_TYPE.LOCAL || now.getTime() < new Date(or.scheduled_at as string).getTime())
 		) {
 			continue;
 		}
@@ -402,25 +372,28 @@ async function autoRejectDeliveryOrders() {
 		let d;
 		if (order.driver_id) {
 			d = await DriverDao.getDriverById(order.driver_id);
-		} else if (order.delivery_driver_id) {
-			d = await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id);
 		}
-		sendDeliveryOrderNotifications(order.user, d?.user, order.user_id, d?.user_id, order.status);
-		order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.FAIL);
+		sendDeliveryOrderNotifications(
+			order.user as UserBase,
+			d?.user as UserBase,
+			order.user_id,
+			d?.user_id || null,
+			order.status
+		);
+		order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.ORDER_FINISHED_FAIL);
 		await handleStockSync(order);
 		if (order) {
 			console.log(`Order ${order.order_id} has been automatically rejected.`);
 			io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 			io.to('orders_' + order.business_id).emit('order_status_change__delivery', order);
-			await ScoringPointsDao.createScoringPoints(
-				order.business_id,
-				null,
-				order.order_id,
-				null,
-				1,
-				true,
-				SCORING_POINTS_REASON.AUTO_REJECTED
-			);
+			await ScoringPointsDao.createScoringPoints({
+				stores_id: order.stores_id || null,
+				food_drinks_id: order.food_drinks_id || null,
+				delivery_order_id: order.order_id,
+				points: 1,
+				isPenalty: true,
+				reason: SCORING_POINTS_REASON.AUTO_REJECTED,
+			});
 		}
 	}
 }
@@ -429,16 +402,27 @@ async function autoRejectDeliveryOrders() {
  * @param {object} driver - Driver object containing user_id and delivery/driver id.
  * @returns {Promise<void>}
  */
-async function resendPendingOrdersToDeliveryDriver(driver) {
+export async function resendPendingOrdersToDeliveryDriver(driver: Partial<CandidateDriver>): Promise<void> {
 	try {
-		const deliverer_id = driver.delivery_driver_id || driver.driver_id;
-		const sentOrders = await DeliveryOrderDao.getAlreadySentOrdersByDeliveryDriverId(deliverer_id);
+		if (!driver?.driver_id) {
+			console.log('Driver ID is missing, cannot resend orders.');
+			return;
+		}
+		const sentOrders = await DeliveryOrderDao.getAlreadySentOrdersByDeliveryDriverId(driver?.driver_id);
 		for (let sentOrder of sentOrders) {
 			if (sentOrder.accepted) continue;
 			const order = await DeliveryOrderDao.getOrder(sentOrder.order_id, {
-				include: { user: { select: cropped_user_columns } },
+				include: {
+					user: {
+						select: {
+							first_name: true,
+							last_name: true,
+							user_id: true,
+						},
+					},
+				},
 			});
-			if (!(order.delivery_driver_id || order.driver_id) && !DELIVERY_ORDER_END_STATES.includes(order.status)) {
+			if (order && !order.driver_id && !DELIVERY_ORDER_END_STATES.includes(order.status)) {
 				if (UserSockets.get(driver.user_id)) {
 					console.log('Re-sending order: ', order.order_id, ' to driver: ', driver.user_id);
 					UserSockets.get(driver.user_id).emit('new_order__delivery', order);
@@ -449,13 +433,14 @@ async function resendPendingOrdersToDeliveryDriver(driver) {
 		console.error('Error re-sending pending orders to driver:', error);
 	}
 }
+
 /**
  * Sends active and pending orders to a driver: splits daily meals vs other orders and sorts.
  * Emits a single socket payload with both lists.
  * @param {object} driver - Driver with user_id and scheduled route info.
  * @returns {Promise<void>}
  */
-async function sendActiveOrdersToDeliveryDriver(driver) {
+export async function sendActiveOrdersToDeliveryDriver(driver) {
 	try {
 		const deliverer_id = driver.delivery_driver_id || driver.driver_id;
 		const activeOrders = await DeliveryOrderDao.getActiveOrdersByDeliveryDriverId(deliverer_id);
@@ -465,25 +450,25 @@ async function sendActiveOrdersToDeliveryDriver(driver) {
 		const today = new Date().toISOString().split('T')[0];
 		// Separate daily meal orders for the current day
 		const dailyMealOrders = activeOrders.filter((order) => {
-			const createdAtDate = new Date(order.created_at).toISOString().split('T')[0];
+			const createdAtDate = new Date(order.created_at as string).toISOString().split('T')[0];
 			return order.is_daily_meal && createdAtDate === today;
 		});
 		const otherOrders = activeOrders.filter((order) => !order.is_daily_meal);
 		// Sort daily meal orders first by `created_at`, then by `daily_meal_delivery_order`
 		const sortedDailyMealOrders = dailyMealOrders.sort((a, b) => {
-			const createdAtA = new Date(a.created_at);
-			const createdAtB = new Date(b.created_at);
+			const createdAtA = new Date(a.created_at as string).getTime();
+			const createdAtB = new Date(b.created_at as string).getTime();
 			if (createdAtA - createdAtB !== 0) {
 				return createdAtA - createdAtB;
 			}
-			const mealDeliveryA = new Date(a.details?.daily_meal_delivery_order);
-			const mealDeliveryB = new Date(b.details?.daily_meal_delivery_order);
+			const mealDeliveryA = new Date(a.details?.daily_meal_delivery_order).getTime();
+			const mealDeliveryB = new Date(b.details?.daily_meal_delivery_order).getTime();
 			return mealDeliveryA - mealDeliveryB;
 		});
 		// Sort other orders by `customer_expected_delivery_at`
 		const sortedOtherOrders = otherOrders.sort((a, b) => {
-			const deliveryTimeA = new Date(a.details?.customer_expected_delivery_at);
-			const deliveryTimeB = new Date(b.details?.customer_expected_delivery_at);
+			const deliveryTimeA = new Date(a.details?.customer_expected_delivery_at).getTime();
+			const deliveryTimeB = new Date(b.details?.customer_expected_delivery_at).getTime();
 			return deliveryTimeA - deliveryTimeB;
 		});
 		const combinedOrders = [...sortedDailyMealOrders, ...sortedOtherOrders];
@@ -524,10 +509,11 @@ async function sendActiveOrdersToDeliveryDriver(driver) {
  * @param {object} menuItem - The base menu item used for price/discount.
  * @returns {object[]} Generated item list for the order body.
  */
-function generateItemsFromPreferences(preferences, menuItem) {
+// Legacy helper retained; exported for potential future controller parity.
+export function generateItemsFromPreferences(preferences: any, menuItem: any) {
 	const items = [];
 	const { normal, substitution } = preferences;
-	const createItem = (id, type) => ({
+	const createItem = (id: string, type: 'normal' | 'substitution') => ({
 		menu_item_id: id,
 		names: {
 			en: type === 'substitution' ? 'Substitution meal' : 'Normal meal',
@@ -536,8 +522,8 @@ function generateItemsFromPreferences(preferences, menuItem) {
 		discount: menuItem.discount,
 		quantity: type === 'normal' ? normal.amount : substitution.amount,
 	});
-	if (normal.amount > 0) items.push(createItem(0, 'normal'));
-	if (substitution.amount > 0) items.push(createItem(1, 'substitution'));
+	if (normal.amount > 0) items.push(createItem('0', 'normal'));
+	if (substitution.amount > 0) items.push(createItem('1', 'substitution'));
 	return items;
 }
 
@@ -547,11 +533,16 @@ function generateItemsFromPreferences(preferences, menuItem) {
  * @param {string} [orderType='order'] - The type used for wallet reservation lookup.
  * @returns {Promise<{DRIVER_CREDIT_CUT:number, MERCHANT_CREDIT_CUT:number, PLATFORM_CREDIT_CUT:number, DRIVER_CUT:number, MERCHANT_CUT:number, PLATFORM_CUT:number}>}
  */
-async function calculateDeliveryOrderPaymentCuts(order, orderType = 'order') {
+async function calculateDeliveryOrderPaymentCuts(order: any, orderType = 'order') {
 	const { details, user_id, order_id } = order;
 	const TOTAL_PRICE_CENTS = Math.round(details.total_price * 100); // already includes delivery cost
 
-	const reservedCredits = (await WalletFundsDao.getReservedCredits(user_id, order_id, orderType)) || [];
+	const reservedCredits =
+		(await WalletFundsDao.getReservedCredits(
+			user_id,
+			order_id,
+			orderType as 'order' | 'daily_meals_subscription_payment'
+		)) || [];
 	const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + (wf.amount || 0), 0);
 	// console.log(JSON.stringify(reservedCredits, null, 2));
 	console.log(CREDITS_AMOUNT_RESERVED);
@@ -589,7 +580,7 @@ async function calculateDeliveryOrderPaymentCuts(order, orderType = 'order') {
  * Handles payment failure by canceling a payment intent if necessary and releasing any reserved wallet funds.
  * @param {Object} order - the order object for which the payment failed.
  */
-async function handlePaymentCleanup(order) {
+async function handlePaymentCleanup(order: any) {
 	try {
 		if (order?.payment?.type === 'CARD' && order.payment_intent_id) {
 			await stripe.client.paymentIntents.cancel(order.payment_intent_id);
@@ -604,7 +595,7 @@ async function handlePaymentCleanup(order) {
  * @param {object} order - The order to refund, including payment info and details.
  * @returns {Promise<void>}
  */
-async function handlePaymentRefund(order) {
+async function handlePaymentRefund(order: any) {
 	const WF_reserved = await WalletFundsDao.getReservedWalletFunds(order.user_id, order.order_id);
 	const { credits_wf_amount_reserved, regular_wf_amount_reserved } = WF_reserved.reduce(
 		(acc, wf) => {
@@ -629,6 +620,7 @@ async function handlePaymentRefund(order) {
 			user_id: order.user_id,
 			amount: credit_discount_used - credits_wf_amount_reserved,
 			type: FUNDS_TYPE.CREDITS_DELIVERY,
+			transaction_type: TRANSACTION_TYPE.CREDIT,
 		});
 	}
 	if (PAYMENT_TYPE === 'WALLET') {
@@ -657,124 +649,6 @@ async function handlePaymentRefund(order) {
 		}
 	}
 }
-/**
- * Computes delivery cost based on haversine distance and student-meal eligibility.
- * @param {object} orderData - Order data with delivery and pickup coordinates in details.
- * @param {boolean} is_student - Whether student pricing applies (may waive delivery for student meals).
- * @returns {number} Delivery cost in currency units.
- */
-const calculateOrderDeliveryCost = (orderData, is_student) => {
-	if (orderData?.details?.type === 'delivery' && !is_student) {
-		const distance = haversineDistance(
-			orderData.delivery_location?.coordinates,
-			orderData.pickup_location?.coordinates
-		);
-		let pricePer500m = DELIVERY_COST_CALCULATION.COST_PER_500;
-		console.info(distance);
-		const delivery_cost = Math.round(distance / 0.5) * pricePer500m;
-		return Math.max(DELIVERY_COST_CALCULATION.MINIMUM_COST, delivery_cost);
-	} else {
-		return 0;
-	}
-};
-/**
- * Verifies that the client-provided order costs match the server-calculated values.
- * Checks delivery cost, minimum order fee, sub-total, discounts, and total price.
- * @param {object} orderData - Order body sent from client including items and details.
- * @returns {Promise<boolean>} True if costs are valid and consistent; otherwise false.
- */
-const verifyOrderCosts = async (orderData) => {
-	const menu_item_ids = Array.isArray(orderData?.items) ? orderData.items.map((item) => item.menu_item_id) : [];
-	const merchant_business = await BusinessDao.getBusinessById(orderData.details.business_id);
-	const minimumOrderFee =
-		orderData.module === MODULE.STORES
-			? merchant_business?.stores_module?.minimum_order
-			: merchant_business?.food_drinks_module?.minimum_order;
-	const db_items = await MenuItemDao.getMenuItemsByIds(menu_item_ids);
-
-	const order_items = await Promise.all(
-		orderData.items.map(async (item) => {
-			const db_item = db_items.find((i) => i.menu_item_id === item.menu_item_id);
-			let extras = [];
-			// console.log('EXTRAS', item?.extras);
-			if (Array.isArray(item?.extras) && item.extras.length > 0) {
-				extras = await MenuItemDao.getMenuItemsByIds(item.extras.map((e) => e.menu_item_id));
-			}
-			let sides = [];
-			// console.log('SIDES', item?.sides);
-			if (Array.isArray(item?.sides) && item.sides.length > 0) {
-				sides = await MenuItemDao.getMenuItemsByIds(item.sides.map((s) => s.menu_item_id));
-			}
-
-			return {
-				...db_item,
-				extras,
-				sides,
-				quantity: item.quantity,
-			};
-		})
-	);
-	let orderTotal = 0;
-	let discountTotal = 0;
-	let is_student = false;
-	for (const item of order_items) {
-		let price = Number(item?.price) || 0;
-		const discount = Number(item?.discount) || 0;
-		let quantity = Number(item?.quantity) || 0;
-		if (item.is_weighted) {
-			price = (price / 1000) * WEIGHTED_ITEM_QTY_INCREASE_LIMIT; // Convert grams to kg if needed and increase price by X percent to allow for possible quantity increase.
-		}
-		if (item?.menu_category.menu_categories_categories.some((mcc) => mcc.category.tag === 'student-meals'))
-			is_student = true;
-
-		const discountedPrice = price - price * discount;
-		const roundedDiscountedPrice = Math.round(discountedPrice * quantity * 100) / 100;
-		orderTotal += roundedDiscountedPrice;
-		discountTotal += discount > 0 ? price * quantity - roundedDiscountedPrice : 0;
-
-		// Extras
-		if (Array.isArray(item?.extras)) {
-			item?.extras.forEach((extra) => {
-				const extraPrice = Number(extra?.price) || 0;
-				orderTotal += extraPrice * (1 - (extra.discount || 0)) * quantity;
-				discountTotal += extraPrice * (extra.discount || 0) * quantity;
-			});
-		}
-
-		// Sides
-		if (Array.isArray(item?.sides)) {
-			item?.sides.forEach((side) => {
-				const sidePrice = Number(side?.price) || 0;
-				orderTotal += sidePrice * (1 - (side.discount || 0)) * quantity;
-				discountTotal += sidePrice * (side.discount || 0) * quantity;
-			});
-		}
-	}
-	let delivery_cost = calculateOrderDeliveryCost(orderData, is_student);
-	console.info('Comparing:', delivery_cost, orderData.details.delivery_cost);
-	if (delivery_cost.toFixed(2) !== orderData.details.delivery_cost.toFixed(2)) return false;
-	orderTotal = rounded(orderTotal);
-	//minimum_order_fee
-	const expectedFee = minimumOrderFee - orderTotal;
-	const actualFee = orderData.details.minimum_order_fee;
-	console.info('Comparing:', expectedFee, actualFee);
-	const checkMinimumFee = orderTotal < minimumOrderFee;
-	if (checkMinimumFee && actualFee.toFixed(2) !== expectedFee.toFixed(2)) return false;
-	discountTotal = checkMinimumFee ? discountTotal - expectedFee : discountTotal;
-	discountTotal = discountTotal > 0 ? discountTotal : 0;
-	console.info('Comparing:', orderTotal, orderData.details.sub_total_price);
-	console.info('Comparing:', discountTotal, orderData.details.discount_savings);
-	if (
-		orderTotal.toFixed(2) !== orderData.details.sub_total_price.toFixed(2) ||
-		orderData.details.discount_savings.toFixed(2) !== discountTotal.toFixed(2)
-	)
-		return false;
-
-	const expected_total_sum = delivery_cost + orderTotal + (checkMinimumFee ? expectedFee : 0);
-	console.info('Comparing Total:', expected_total_sum, orderData.details.total_price);
-	if (orderData.details.total_price.toFixed(2) !== expected_total_sum.toFixed(2)) return false;
-	return true;
-};
 
 /**
  * Builds a lookup table of menu items (by menu_item_id) from active menus.
@@ -782,7 +656,7 @@ const verifyOrderCosts = async (orderData) => {
  * @param {object[]} menus - Active menus including categories and menu_items.
  * @returns {object} Lookup object keyed by menu_item_id.
  */
-function buildMenuItemLookupFromMenus(menus) {
+function buildMenuItemLookupFromMenus(menus: any[]): Record<string, any> {
 	return menus.reduce((lookup, menu) => {
 		menu.categories.forEach((category) => {
 			category.menu_items.forEach((item) => {
@@ -806,7 +680,12 @@ function buildMenuItemLookupFromMenus(menus) {
  * @param {Array<{ menu_item_id: string }>} [sides=[]] - A list of side items to validate. Each must exist in the parent item's `sides` array.
  * @throws Will throw an error if the parent menu item is not found or if any extra or side is not valid for the item.
  */
-function validateExtrasAndSides(itemId, menuItemLookup, extras = [], sides = []) {
+function validateExtrasAndSides(
+	itemId: string,
+	menuItemLookup: Record<string, any>,
+	extras: Array<{ menu_item_id: string }> = [],
+	sides: Array<{ menu_item_id: string }> = []
+) {
 	const menuDef = menuItemLookup[itemId];
 	if (!menuDef) throw new Error(`menu_item_id "${itemId}" not found in menuItemLookup`);
 
@@ -842,7 +721,7 @@ function validateExtrasAndSides(itemId, menuItemLookup, extras = [], sides = [])
  * @returns {Object} The enriched order item with validated extras, sides, and optionally a replaced item.
  * @throws {Error} If the `menu_item_id` is not found in the lookup or if any extra or side is invalid.
  */
-function enrichItem(orderItem, menuItemLookup) {
+function enrichItem(orderItem: any, menuItemLookup: Record<string, any>): any {
 	const itemId = orderItem.menu_item_id;
 
 	if (!menuItemLookup[itemId]) {
@@ -881,7 +760,7 @@ function enrichItem(orderItem, menuItemLookup) {
  * @returns {Array<Object>} A list of enriched and validated order items.
  * @throws {Error} If an item is missing from the lookup or includes invalid extras or sides.
  */
-function validateAndEnrichOrderItems(orderItems, menuItemLookup) {
+function validateAndEnrichOrderItems(orderItems: any[], menuItemLookup: Record<string, any>): any[] {
 	const result = [];
 
 	for (const orderItem of orderItems) {
@@ -899,7 +778,7 @@ function validateAndEnrichOrderItems(orderItems, menuItemLookup) {
  * @param {number} number - The value to round.
  * @returns {number} Rounded value to 2 decimals.
  */
-function rounded(number) {
+function rounded(number: number): number {
 	return Math.round(number * 100) / 100;
 }
 /**
@@ -924,8 +803,8 @@ function rounded(number) {
  * @param {Object} [item.replaced_item] - Original item (if this item replaces another).
  * @returns {{ line_total: number, line_discount: number }} - The total price and total discount for the item line.
  */
-function calculateItemTotal(item) {
-	function getCappedPrice(item, replaced = false) {
+function calculateItemTotal(item: any): { line_total: number; line_discount: number } {
+	function getCappedPrice(item: any, replaced = false): number {
 		let quantity = Number(item.quantity ?? 0);
 		let discount = Number(item.discount ?? 0);
 		let unitPrice = Number(item.price ?? 0) * (1 - discount);
@@ -1015,7 +894,7 @@ function calculateItemTotal(item) {
  *   is_student: boolean
  * }} - Resulting order breakdown with totals and student meal flag.
  */
-function calculateOrderTotals(enrichedOrderItems) {
+function calculateOrderTotals(enrichedOrderItems: any) {
 	let orderTotal = 0;
 	let discountTotal = 0;
 	let is_student = false;
@@ -1078,7 +957,7 @@ function calculateOrderTotals(enrichedOrderItems) {
  * }>}
  * @throws {Error} If no active menus are found, or validation fails.
  */
-async function calculateAndVerifyPriceForOrderItems(order) {
+async function calculateAndVerifyPriceForOrderItems(order: DeliveryOrderDetail) {
 	// 2. Create lookup from menu_items
 	const active_menus = await MenuDao.getMenuByBusinessId(order.business_id);
 	if (!active_menus || active_menus.length === 0) {
@@ -1114,178 +993,165 @@ async function calculateAndVerifyPriceForOrderItems(order) {
  * @param {Date} date_threshold - Funds are eligible if order updated_at is older than this.
  * @returns {boolean} True to release reserved funds; otherwise false.
  */
-function shouldReleaseFunds(order, service_type, date_threshold) {
+function shouldReleaseFunds(order: any, service_type: 'delivery' | 'taxi', date_threshold: Date): boolean {
 	const updatedAt = new Date(order.updated_at);
 	if (updatedAt > date_threshold) return false;
-	if (service_type === 'delivery' && order.status === DELIVERY_ORDER_STATUS.FAIL) {
-		return true;
-	}
+	if (service_type === 'delivery' && order.status === DELIVERY_ORDER_STATUS.ORDER_FINISHED_FAIL) return true;
 	if (
 		service_type === 'taxi' &&
 		[TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED].includes(order.status)
-	) {
+	)
 		return true;
-	}
 	return false;
 }
+
 /**
  * Releases reserved wallet funds for failed/canceled orders older than a set threshold.
  * @returns {Promise<void>}
  */
-async function releaseWFForFailedOrders() {
-	try {
-		const reservedWFs = await WalletFundsDao.getAllReservedWalletFunds();
-		const groupedReservedWFs = reservedWFs.reduce((groups, wf) => {
-			const orderId = wf.reserved_order;
-			if (!groups[orderId]) groups[orderId] = [];
-			groups[orderId].push(wf);
-			return groups;
+export async function releaseWFForFailedOrders(): Promise<void> {
+	const reservedWFs = await WalletFundsDao.getAllReservedWalletFunds();
+	const grouped = reservedWFs
+		.filter((wf: any) => wf.reserved_order)
+		.reduce<Record<string, typeof reservedWFs>>((acc, wf: any) => {
+			const id = wf.reserved_order as string; // filtered so defined
+			(acc[id] ||= []).push(wf);
+			return acc;
 		}, {});
-		const orderIds = Object.keys(groupedReservedWFs);
-		const now = new Date();
-		const date_threshold = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
-		const releasePromises = [];
-		await Promise.all(
-			orderIds.map(async (orderId) => {
-				let order = await DeliveryOrderDao.getOrder(orderId);
-				let service_type = SERVICE_TYPE.DELIVERY;
-				if (!order) {
-					order = await TaxiOrderDao.getOrder(orderId);
-					service_type = SERVICE_TYPE.TAXI;
-				}
-				if (!order) {
-					console.warn(`Order not found for ID: ${orderId}`);
-					return;
-				}
-				if (shouldReleaseFunds(order, service_type, date_threshold)) {
-					for (const wf of groupedReservedWFs[orderId]) {
-						releasePromises.push(
-							WalletFundsDao.releaseFunds(wf.wallet_funds_id, wf.amount).catch((err) => {
-								console.error(`Failed to release wallet fund ${wf.wallet_funds_id}:`, err);
-							})
-						);
-					}
-				}
-			})
-		);
-		const results = await Promise.allSettled(releasePromises);
-		const successCount = results.filter((r) => r.status === 'fulfilled').length;
-		const failureCount = results.filter((r) => r.status === 'rejected').length;
-		console.log(`Successfully released ${successCount} wallet funds.`);
-		console.log(`Failed to release ${failureCount} wallet funds (see error logs).`);
-	} catch (error) {
-		console.error('Error in releaseWFForFailedOrders:', error);
+	const now = new Date();
+	const date_threshold = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
+	const releases: Promise<unknown>[] = [];
+	for (const orderId of Object.keys(grouped)) {
+		let order: any = await DeliveryOrderDao.getOrder(orderId);
+		let service_type: 'delivery' | 'taxi' = 'delivery';
+		if (!order) {
+			order = await TaxiOrderDao.getOrder(orderId);
+			service_type = 'taxi';
+		}
+		if (!order) continue;
+		if (shouldReleaseFunds(order, service_type, date_threshold)) {
+			for (const wf of grouped[orderId] || []) {
+				releases.push(WalletFundsDao.releaseFunds(wf.wallet_funds_id, wf.amount).catch(() => {}));
+			}
+		}
 	}
+	await Promise.allSettled(releases);
 }
 
 /**
  * Calculates haversine distance in meters between two lat/lng points.
- * @param {{lat:number,lng:number}} start - Starting coordinates.
- * @param {{lat:number,lng:number}} end - Ending coordinates.
+ * @param {LatLng} start - Starting coordinates.
+ * @param {LatLng} end - Ending coordinates.
  * @returns {number} Distance in meters.
  */
-export const calculateDistanceBetweenTwoPoints = (start, end) => {
+export function calculateDistanceBetweenTwoPoints(
+	start: { lat: number; lng: number },
+	end: { lat: number; lng: number }
+): number {
 	const R = 6371e3; // metres
-	const a1 = (start.lat * Math.PI) / 180; // φ, λ in radians
+	const a1 = (start.lat * Math.PI) / 180;
 	const a2 = (end.lat * Math.PI) / 180;
 	const b1 = ((end.lat - start.lat) * Math.PI) / 180;
 	const b2 = ((end.lng - start.lng) * Math.PI) / 180;
-
-	const a = Math.sin(b1 / 2) * Math.sin(b1 / 2) + Math.cos(a1) * Math.cos(a2) * Math.sin(b2 / 2) * Math.sin(b2 / 2);
+	const a = Math.sin(b1 / 2) ** 2 + Math.cos(a1) * Math.cos(a2) * Math.sin(b2 / 2) ** 2;
 	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	return R * c;
+}
 
-	return R * c; // in metres
-};
-const calculateDistanceDelivery = (start, end, base = 0) => {
-	let pricePer500 = DELIVERY_COST_CALCULATION.COST_PER_500;
-	let distance = calculateDistanceBetweenTwoPoints(start, end);
-	return {
-		cost: Math.max(
-			DELIVERY_COST_CALCULATION.MINIMUM_COST,
-			base + Math.round(Math.max(distance, 0) / 500) * pricePer500
-		),
-		distance: distance,
-	};
-};
 /**
- * Calculates order details for the order-lobby flow (pre-order validation and pricing summary).
- * @param {object} provider - Business/provider with pricing and address.
- * @param {object[]} cartItems - Items in the cart (price, discount, sides, extras, quantity).
- * @param {object} selectedAddress - Customer address with coordinates.
- * @param {string} [paymentType='cash'] - Payment type indicator.
- * @param {object} orderData - Order body containing delivery/pickup metadata.
- * @returns {object} Calculated order details block for UI confirmation and payment.
+ * Computes delivery cost based on haversine distance and student-meal eligibility.
+ * @param {object} orderData - Order data with delivery and pickup coordinates in details.
+ * @param {boolean} is_student - Whether student pricing applies (may waive delivery for student meals).
+ * @returns {number} Delivery cost in currency units.
  */
-function CalculateOrderLobbyOrderDetails(provider, cartItems, selectedAddress, paymentType = 'cash', orderData) {
+function calculateOrderDeliveryCost(orderData: any, is_student: boolean): number {
+	if (orderData?.details?.type === 'delivery' && !is_student) {
+		const distance = haversineDistance(
+			orderData.delivery_location?.coordinates,
+			orderData.pickup_location?.coordinates
+		);
+		const pricePer500m = DELIVERY_COST_CALCULATION.COST_PER_500;
+		const delivery_cost = Math.round(distance / 0.5) * pricePer500m;
+		return Math.max(DELIVERY_COST_CALCULATION.MINIMUM_COST, delivery_cost);
+	}
+	return 0;
+}
+
+/**
+ * Verifies that the client-provided order costs match the server-calculated values.
+ * Checks delivery cost, minimum order fee, sub-total, discounts, and total price.
+ * @param {object} orderData - Order body sent from client including items and details.
+ * @returns {Promise<boolean>} True if costs are valid and consistent; otherwise false.
+ */
+export async function verifyOrderCosts(orderData: any): Promise<boolean> {
+	const menu_item_ids = Array.isArray(orderData?.items) ? orderData.items.map((i: any) => i.menu_item_id) : [];
+	const merchant_business = (await BusinessDao.getBusinessById(
+		orderData.details.business_id
+	)) as BusinessByIdResponse | null;
+	const minimumOrderFee =
+		orderData.module === MODULE.STORES
+			? (merchant_business as any)?.stores_module?.minimum_order
+			: (merchant_business as any)?.food_drinks_module?.minimum_order;
+	const db_items = await MenuItemDao.getMenuItemsByIds(menu_item_ids);
+	const order_items = await Promise.all(
+		orderData.items.map(async (item: any) => {
+			const db_item = db_items.find((i: any) => i.menu_item_id === item.menu_item_id);
+			let extras: any[] = [];
+			if (Array.isArray(item?.extras) && item.extras.length)
+				extras = await MenuItemDao.getMenuItemsByIds(item.extras.map((e: any) => e.menu_item_id));
+			let sides: any[] = [];
+			if (Array.isArray(item?.sides) && item.sides.length)
+				sides = await MenuItemDao.getMenuItemsByIds(item.sides.map((s: any) => s.menu_item_id));
+			return { ...db_item, extras, sides, quantity: item.quantity };
+		})
+	);
 	let orderTotal = 0;
 	let discountTotal = 0;
-	let minimum_order_fee = 0;
-
-	const items = Array.isArray(cartItems) ? cartItems : [];
-
-	let student_meal = false;
-	items.forEach((item) => {
-		const quantity = Number(item.quantity) || 0;
-		const price = Number(item.price) || 0;
-		const discount = Number(item.discount) || 0;
-
+	let is_student = false;
+	for (const item of order_items) {
+		let price = Number((item as any)?.price) || 0;
+		const discount = Number((item as any)?.discount) || 0;
+		const quantity = Number((item as any)?.quantity) || 0;
+		if ((item as any).is_weighted) price = (price / 1000) * WEIGHTED_ITEM_QTY_INCREASE_LIMIT;
+		if (
+			(item as any)?.menu_category?.menu_categories_categories?.some(
+				(mcc: any) => mcc.category.tag === 'student-meals'
+			)
+		)
+			is_student = true;
 		const discountedPrice = price - price * discount;
-
-		orderTotal += discountedPrice * quantity;
-		discountTotal += discount * price * quantity;
-
-		// Extras
-		if (Array.isArray(item?.extras)) {
-			item.extras.forEach((extra) => {
-				if (typeof extra !== 'string') {
-					// Then it must be of type MenuItemType
-					const extraPrice = Number(extra?.price) || 0;
-					orderTotal += extraPrice * quantity;
-				}
-			});
+		const roundedDiscountedPrice = Math.round(discountedPrice * quantity * 100) / 100;
+		orderTotal += roundedDiscountedPrice;
+		discountTotal += discount > 0 ? price * quantity - roundedDiscountedPrice : 0;
+		for (const extra of (item as any)?.extras || []) {
+			const extraPrice = Number(extra?.price) || 0;
+			orderTotal += extraPrice * (1 - (extra.discount || 0)) * quantity;
+			discountTotal += extraPrice * (extra.discount || 0) * quantity;
 		}
-
-		// Sides
-		if (Array.isArray(item?.sides)) {
-			item.sides.forEach((side) => {
-				if (typeof side !== 'string') {
-					// Then it must be of type MenuItemType
-					const sidePrice = Number(side?.price) || 0;
-					orderTotal += sidePrice * quantity;
-				}
-			});
+		for (const side of (item as any)?.sides || []) {
+			const sidePrice = Number(side?.price) || 0;
+			orderTotal += sidePrice * (1 - (side.discount || 0)) * quantity;
+			discountTotal += sidePrice * (side.discount || 0) * quantity;
 		}
-		if (item?.student_meal) student_meal = true;
-	});
-	//minimum_order_fee
-	if (orderTotal < (provider?.minimum_order ?? 0)) {
-		minimum_order_fee = (provider?.minimum_order ?? 0) - orderTotal;
 	}
-	// Delivery Cost
-	const delivery_cost = calculateOrderDeliveryCost(orderData, student_meal);
-
-	const deliverLocation = {
-		address: selectedAddress?.address,
-		coordinates: { latitude: selectedAddress?.latitude, longitude: selectedAddress?.longitude },
-	};
-
-	return {
-		sub_total_price: orderTotal,
-		total_price: orderTotal + (delivery_cost || 0) + (minimum_order_fee || 0),
-		discount_savings: discountTotal,
-		provider_address: {
-			address: provider?.address?.address,
-			coordinates: { latitude: provider?.address?.latitude, longitude: provider?.address?.longitude },
-		},
-		business_id: provider?.business_id || '',
-		delivery_cost: delivery_cost || 0,
-		delivery_address: deliverLocation,
-		minimum_order_fee: minimum_order_fee || 0,
-		payment_type: paymentType,
-		ready_for_pickup_at: null,
-		customer_expected_delivery_at: null,
-		type: 'delivery',
-	};
+	const delivery_cost = calculateOrderDeliveryCost(orderData, is_student);
+	if (delivery_cost.toFixed(2) !== orderData.details.delivery_cost.toFixed(2)) return false;
+	const rounded = (n: number) => Math.round(n * 100) / 100;
+	orderTotal = rounded(orderTotal);
+	const expectedFee = minimumOrderFee - orderTotal;
+	const actualFee = orderData.details.minimum_order_fee;
+	const checkMinimumFee = orderTotal < minimumOrderFee;
+	if (checkMinimumFee && actualFee.toFixed(2) !== expectedFee.toFixed(2)) return false;
+	discountTotal = checkMinimumFee ? discountTotal - expectedFee : discountTotal;
+	discountTotal = discountTotal > 0 ? discountTotal : 0;
+	if (
+		orderTotal.toFixed(2) !== orderData.details.sub_total_price.toFixed(2) ||
+		orderData.details.discount_savings.toFixed(2) !== discountTotal.toFixed(2)
+	)
+		return false;
+	const expected_total_sum = delivery_cost + orderTotal + (checkMinimumFee ? expectedFee : 0);
+	if (orderData.details.total_price.toFixed(2) !== expected_total_sum.toFixed(2)) return false;
+	return true;
 }
 
 /**
@@ -1296,7 +1162,11 @@ function CalculateOrderLobbyOrderDetails(provider, cartItems, selectedAddress, p
  * @param {string} [return_url] - Optional return URL for payment redirection flows.
  * @returns {Promise<{order: object, payment_intent?: object}>} The created order and optional payment intent.
  */
-async function generateOrder(orderBody, user_id, return_url) {
+async function generateOrder(
+	orderBody: any,
+	user_id: string,
+	return_url?: string
+): Promise<{ order: object; payment_intent?: object }> {
 	console.info('CREATE DELIVERY ORDER: ', orderBody);
 	let order;
 	try {
@@ -1322,17 +1192,12 @@ async function generateOrder(orderBody, user_id, return_url) {
 						latitude: business.delivery_address?.latitude,
 						longitude: business.delivery_address?.longitude,
 					};
-			const distance = Helpers.haversineDistance(orderData.delivery_location.coordinates, pickup);
+			const distance = haversineDistance(orderData.delivery_location.coordinates, pickup);
 			if (distance && distance > MAX_DELIVERY_RADIUS_KM) {
 				throw new Error('Distance out of delivery range!');
 			}
 		}
-		let flags = await FlagDao.getFlags();
-		let falgsObj = {};
-		flags.map((flag) => {
-			falgsObj[flag.name] = flag.status;
-		});
-		orderData.flags = falgsObj;
+
 		let user = await UsersDao.getUserById(user_id);
 		const customer_acc = user.stripe_customer_id;
 		const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user_id);
@@ -1386,11 +1251,11 @@ async function generateOrder(orderBody, user_id, return_url) {
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				details: order.details,
 			});
-		} else if (order.scheduled?.time && order.scheduled?.date) {
+		} else if (order.scheduled_at) {
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				details: {
 					...order.details,
-					ready_for_pickup_at: order.scheduled?.time,
+					ready_for_pickup_at: order.scheduled_at,
 				},
 			});
 		}
@@ -1471,35 +1336,7 @@ async function generateOrder(orderBody, user_id, return_url) {
 		} else {
 			throw new Error('Invalid costs calculated!!');
 		}
-		order = await DeliveryOrderDao.getOrder(order.order_id, {
-			include: {
-				business: {
-					select: {
-						business_id: true,
-						type: true,
-						name: true,
-						email: true,
-						telephone: true,
-						address: true,
-						documents: {
-							where: {
-								document_type: { in: [DOCUMENT_TYPE.LOGO, DOCUMENT_TYPE.BANNER] },
-							},
-							include: {
-								files: true,
-							},
-						},
-					},
-				},
-			},
-		});
-		if (order) {
-			order.business.logo =
-				orderData.module === MODULE.FOOD_DRINKS ? business.food_drinks_logo : business.stores_logo;
-			order.business.banner =
-				orderData.module === MODULE.FOOD_DRINKS ? business.food_drinks_banner : business.stores_banner;
-			delete order.business.documents;
-		}
+		//TODO: handle business logo
 		if (order.stores_id) {
 			await handleStockSync(order);
 		}
@@ -1519,21 +1356,6 @@ async function generateOrder(orderBody, user_id, return_url) {
 	}
 }
 
-export { autoRejectDeliveryOrders };
-export { checkIfDeliveryOrdersNeedSending };
-export { checkIfRestaurantOrderIsPrepared };
-export { resendPendingOrdersToDeliveryDriver };
-export { generateItemsFromPreferences };
-export { sendActiveOrdersToDeliveryDriver };
-export { revokeDeliveryOrderFromDrivers };
-export { calculateDeliveryOrderPaymentCuts };
-export { handlePaymentCleanup };
-export { handlePaymentRefund };
-export { verifyOrderCosts };
-export { releaseWFForFailedOrders };
-export { CalculateOrderLobbyOrderDetails };
-export { generateOrder };
-export { calculateAndVerifyPriceForOrderItems };
 export default {
 	autoRejectDeliveryOrders,
 	checkIfDeliveryOrdersNeedSending,
@@ -1549,5 +1371,6 @@ export default {
 	releaseWFForFailedOrders,
 	CalculateOrderLobbyOrderDetails,
 	generateOrder,
+	calculateOrderDeliveryCost,
 	calculateAndVerifyPriceForOrderItems,
 };

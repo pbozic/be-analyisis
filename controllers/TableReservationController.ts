@@ -1,7 +1,17 @@
-import ReservationDao from '../dao/TableReservation.ts';
+import { Request, Response } from 'express';
+
+import * as ReservationDao from '../dao/TableReservation.ts';
 import socket from '../socket.js';
 import prisma from '../prisma/prisma.js';
-const { UserSockets, io } = socket;
+import { ValidatedRequest } from '../types/validatedRequest.ts';
+import type {
+	CreateReservationRequest,
+	AddTableNumberRequest,
+	UpdateReservationStatusRequest,
+} from '../schemas/dto/TableReservation/TableReservationRequest.dto.ts';
+
+const { UserSockets, io } = socket as any;
+
 /**
  * GET /reservations
  * @tag Reservations
@@ -13,15 +23,16 @@ const { UserSockets, io } = socket;
  * @response 400 - Error occurred while obtaining the reservation list
  * @prisma_model reservations
  */
-async function getReservations(req, res) {
+export async function getReservations(req: Request, res: Response): Promise<void> {
 	try {
 		const reservations = await ReservationDao.getReservations({});
 		res.status(200).json(reservations);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error listing reservations:', error);
-		res.status(400).json({ error: 'Error listing reservations', detail: error.message });
+		res.status(400).json({ error: 'Error listing reservations', detail: error?.message });
 	}
 }
+
 /**
  * GET /reservations/:reservation_id
  * @tag Reservations
@@ -35,7 +46,10 @@ async function getReservations(req, res) {
  * @response 400 - Error retrieving reservation information
  * @prisma_model reservations
  */
-async function getReservationById(req, res) {
+export async function getReservationById(
+	req: ValidatedRequest<never, { reservation_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		const reservation = await ReservationDao.getReservationById(req.params.reservation_id);
 		if (reservation) {
@@ -43,11 +57,12 @@ async function getReservationById(req, res) {
 		} else {
 			res.status(404).json({ error: 'Reservation not found' });
 		}
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error retrieving reservation:', error);
-		res.status(400).json({ error: 'Error retrieving reservation information', detail: error.message });
+		res.status(400).json({ error: 'Error retrieving reservation information', detail: error?.message });
 	}
 }
+
 /**
  * GET /reservations/business/:business_id
  * @tag Reservations
@@ -61,44 +76,43 @@ async function getReservationById(req, res) {
  * @response 400 - Error retrieving reservations
  * @prisma_model reservations
  */
-async function getReservationsByBusinessId(req, res) {
+export async function getReservationsByBusinessId(
+	req: ValidatedRequest<never, { business_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
-		const reservations = await ReservationDao.getReservations({
-			where: {
-				business_id: req.params.business_id,
-			},
-			include: {
-				business: true,
-				user: true,
-			},
-		});
+		const reservations = await ReservationDao.getReservations(req.params.business_id);
 		res.status(200).json(reservations);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error retrieving reservations by business ID:', error);
-		res.status(400).json({ error: 'Error retrieving reservations by business ID', detail: error.message });
+		res.status(400).json({ error: 'Error retrieving reservations by business ID', detail: error?.message });
 	}
 }
+
 /**
  * GET /reservations/active/:user_id
  * @tag Reservations
  * @summary Get active reservations orders.
- * @description This fetches all completed orders for a specific driver.
+ * @description This fetches the next upcoming or in-progress reservation for a user.
  * @operationId getActiveTableReservation
- * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {object} 200.application/json
- * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ * @response 200 - Successful operation. Returns reservation or null.
+ * @response 500 - Server error.
  * @prisma_model reservations
  */
-async function getActiveTableReservation(req, res) {
+export async function getActiveTableReservation(
+	req: ValidatedRequest<never, { user_id: string }>,
+	res: Response
+): Promise<void> {
 	const { user_id } = req.params;
 	try {
 		const activeReservations = await ReservationDao.getReservationIfNotCompleted(user_id);
 		res.status(200).json(activeReservations);
-	} catch (e) {
-		console.log(e);
-		res.status(500).json(e);
+	} catch (e: any) {
+		console.error(e);
+		res.status(500).json({ error: e?.message ?? String(e) });
 	}
 }
+
 /**
  * POST /reservations/create
  * @tag Reservations
@@ -113,7 +127,7 @@ async function getActiveTableReservation(req, res) {
  * @prisma_model reservations
  * @prisma_model business_users
  */
-async function createReservation(req, res) {
+export async function createReservation(req: ValidatedRequest<CreateReservationRequest>, res: Response): Promise<void> {
 	const { reservation, user_id } = req.body;
 	try {
 		const { business_id, ...reservationWithoutBusiness } = reservation || {};
@@ -125,7 +139,7 @@ async function createReservation(req, res) {
 			...reservationWithoutBusiness, // seats, datetime, table_reservation_id, etc.
 			user_id,
 			table_reservation_id,
-		};
+		} as any;
 		console.log(reservationData, 'reservationData');
 		const newReservation = await ReservationDao.createReservation(reservationData);
 		// Get all business users associated with the business
@@ -138,53 +152,58 @@ async function createReservation(req, res) {
 			},
 		});
 		// Notify all business users about the new reservation
-		businessUsers.forEach((businessUser) => {
+		businessUsers.forEach((businessUser: any) => {
 			const userSocket = UserSockets.get(businessUser.user_id);
-			if (userSocket) {
+			if (userSocket && newReservation) {
 				io.to('reservations_' + reservation.business_id).emit('new_reservation', newReservation);
 			}
 		});
 		res.status(201).json(newReservation);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error creating new reservation:', error);
-		res.status(400).json({ error: 'Error creating new reservation', detail: error.message });
+		res.status(400).json({ error: 'Error creating new reservation', detail: error?.message });
 	}
 }
+
 /**
  * POST /reservations/table
  * @tag Reservations
  * @summary Update table number
  * @description Updates the table number of a specific reservation.
  * @operationId addTableNumber
- * @pathParam {string} reservationId - The ID of the reservation to update
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Reservation table updated successfully
  * @responseContent {object} 200.application/json
- * @response 400 - Error updating reservation status
+ * @response 400 - Error updating reservation table number
  * @prisma_model reservations
  */
-async function addTableNumber(req, res) {
+export async function addTableNumber(req: ValidatedRequest<AddTableNumberRequest>, res: Response): Promise<void> {
 	try {
 		const updatedReservation = await ReservationDao.addTableNumber(req.body.reservation_id, req.body.table);
 		// Notify the user about the reservation table number
-		const userSocket = UserSockets.get(updatedReservation.user_id);
-		if (userSocket) {
-			io.to('reservation_' + updatedReservation.reservation_id).emit('added_table_number', updatedReservation);
+		if (updatedReservation) {
+			const userSocket = UserSockets.get(updatedReservation.user_id);
+			if (userSocket) {
+				io.to('reservation_' + updatedReservation.reservation_id).emit(
+					'added_table_number',
+					updatedReservation
+				);
+			}
 		}
 		res.status(200).json(updatedReservation);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error updating reservation table number:', error);
-		res.status(400).json({ error: 'Error updating reservation table number', detail: error.message });
+		res.status(400).json({ error: 'Error updating reservation table number', detail: error?.message });
 	}
 }
+
 /**
  * PATCH /reservations/status
  * @tag Reservations
  * @summary Update reservation status
  * @description Updates the status of a specific reservation.
  * @operationId updateReservationStatus
- * @pathParam {string} reservationId - The ID of the reservation to update
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Reservation status updated successfully
@@ -192,26 +211,32 @@ async function addTableNumber(req, res) {
  * @response 400 - Error updating reservation status
  * @prisma_model reservations
  */
-async function updateReservationStatus(req, res) {
+export async function updateReservationStatus(
+	req: ValidatedRequest<UpdateReservationStatusRequest>,
+	res: Response
+): Promise<void> {
 	try {
 		const updatedReservation = await ReservationDao.updateReservationStatus(
 			req.body.reservation_id,
 			req.body.status
 		);
 		// Notify the user about the reservation status change
-		const userSocket = UserSockets.get(updatedReservation.user_id);
-		if (userSocket) {
-			io.to('reservation_' + updatedReservation.reservation_id).emit(
-				'reservation_status_change',
-				updatedReservation
-			);
+		if (updatedReservation) {
+			const userSocket = UserSockets.get(updatedReservation.user_id);
+			if (userSocket) {
+				io.to('reservation_' + updatedReservation.reservation_id).emit(
+					'reservation_status_change',
+					updatedReservation
+				);
+			}
 		}
 		res.status(200).json(updatedReservation);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error updating reservation status:', error);
-		res.status(400).json({ error: 'Error updating reservation status', detail: error.message });
+		res.status(400).json({ error: 'Error updating reservation status', detail: error?.message });
 	}
 }
+
 /**
  * DELETE /reservations/:reservationId
  * @tag Reservations
@@ -224,23 +249,19 @@ async function updateReservationStatus(req, res) {
  * @response 400 - Error deleting reservation
  * @prisma_model reservations
  */
-async function deleteReservation(req, res) {
+export async function deleteReservation(req: Request, res: Response): Promise<void> {
 	try {
-		await ReservationDao.deleteReservation(req.params.reservation_id);
+		await ReservationDao.deleteReservation(req.params.reservation_id as string);
 		res.status(200).json({ message: 'Reservation deleted successfully' });
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error deleting reservation:', error);
-		res.status(400).json({ error: 'Error deleting reservation', detail: error.message });
+		res.status(400).json({ error: 'Error deleting reservation', detail: error?.message });
 	}
 }
-export { getReservations };
-export { getReservationById };
-export { getReservationsByBusinessId };
-export { createReservation };
-export { updateReservationStatus };
-export { deleteReservation };
-export { addTableNumber };
-export { getActiveTableReservation };
+
+// Individual named exports are provided via the exported function declarations above.
+// The default export below exposes the same handlers in an object shape for older JS consumers.
+
 export default {
 	getReservations,
 	getReservationById,

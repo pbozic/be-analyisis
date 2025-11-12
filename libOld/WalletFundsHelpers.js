@@ -1,5 +1,5 @@
 import WalletFundsDao from '../dao/WalletFunds.js';
-import stripe from './stripe.js';
+import stripe from '../lib/stripe.js';
 import { sendCreditExpirationNotifications } from './notifications.js';
 import { FUNDS_TYPE } from './constants.js';
 /**

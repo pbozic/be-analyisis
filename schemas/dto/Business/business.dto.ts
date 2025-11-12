@@ -11,6 +11,7 @@ import { AddressRefSchema } from '../Address/index.js';
 import { UserRefSchema } from '../User/index.js';
 import { FileRefSchema } from '../Files/file.dto.js';
 import { UUID } from '../../primitives';
+import { DriverBaseSchema } from '../Drivers/driver.dto.ts';
 extendZodWithOpenApi(z);
 
 // TODO: Fix dto after deleting menu from prisma model etc...
@@ -168,7 +169,7 @@ export const BusinessWithDailyMealsResponseDto = BusinessResponseDto.extend({
 	})
 		.nullable()
 		.optional(),
-	daily_meal_drivers: z.array(z.string().uuid()).optional(),
+	daily_meal_drivers: z.array(DriverBaseSchema).optional(),
 }).openapi('BusinessWithDailyMealsResponse');
 
 // Business with Food & Drinks Module

@@ -1,30 +1,30 @@
 import moment from 'moment';
 import joi from 'joi';
+import {
+	FUNDS_TYPE,
+	ORDER_TYPE,
+	TAXI_ORDER_STATUS,
+	TRANSACTION_TYPE,
+	VEHICLE_CATEGORY,
+	VEHICLE_CLASS,
+} from '@prisma/client';
 
 import TaxiOrderDao from '../dao/TaxiOrder.js';
 import DriverDao from '../dao/Driver.js';
 import socket from '../socket.js';
-import {
-	TAXI_ORDER_STATUS,
-	VEHICLE_CLASS,
-	ORDER_TYPE,
-	TAXI_STARTING_FEE,
-	COST_PER_KM,
-	VEHICLE_CATEGORY,
-	DRIVE_FEE,
-	CARGO_TRANSFER_FEE,
-	FUNDS_TYPE,
-	SERVICE_TYPE,
-} from './constants.js';
+import { TAXI_STARTING_FEE, COST_PER_KM, DRIVE_FEE, CARGO_TRANSFER_FEE, SERVICE_TYPE } from './constants.js';
 import prisma from '../prisma/prisma.js';
-import gApi from './gApis.js';
+import gApi, { LatLng } from './gApis.js';
 import { UserSockets as UserSockets$0 } from '../socket.js';
 import { sendNotificationToUser } from './oneSignal.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
 import { getPriceSurgeDataForTransferTrip } from './priceSurgeHelpers.js';
 import WalletFundsDao from '../dao/WalletFunds.js';
+// @ts-ignore
 import stripe from './stripe.js';
 import WalletFundsHelpers from './WalletFundsHelpers.js';
+import type { TaxiOrderDetail } from '../schemas/dto/TaxiOrders/taxiOrder.dto.ts';
+
 const { io, SocketStore } = socket;
 const NUMBER_OF_DRIVERS_TO_SEND = 3;
 const UserSockets = { UserSockets: UserSockets$0 }.UserSockets;
@@ -34,7 +34,7 @@ const MAX_PENDING_ORDERS = 1;
  * Send scheduled order notifications 24h and 1h before departure to users and drivers.
  * @returns {Promise<boolean|void>} True on completion.
  */
-async function scheduledOrdersNotificationsHandler() {
+async function scheduledOrdersNotificationsHandler(): Promise<boolean | void> {
 	try {
 		const now = new Date();
 		const twentyFourHoursLater = new Date(now.getTime() + 24 * 60 * 60 * 1000);
@@ -117,7 +117,7 @@ async function scheduledOrdersNotificationsHandler() {
  * @param {number} seconds - Number of seconds to wait.
  * @returns {Promise<void>}
  */
-function waitSeconds(seconds) {
+function waitSeconds(seconds: number): Promise<void> {
 	return new Promise((resolve) => {
 		globalThis.setTimeout(resolve, seconds * 1000);
 	});
@@ -126,7 +126,7 @@ function waitSeconds(seconds) {
  * Trigger a driver search after 20 seconds.
  * @returns {Promise<void>}
  */
-async function searchAfter20Seconds() {
+async function searchAfter20Seconds(): Promise<void> {
 	await waitSeconds(20);
 	checkIfOrdersNeedSending();
 }
@@ -134,7 +134,7 @@ async function searchAfter20Seconds() {
  * Trigger a driver search after 40 seconds.
  * @returns {Promise<void>}
  */
-async function searchAfter40Seconds() {
+async function searchAfter40Seconds(): Promise<void> {
 	await waitSeconds(40);
 	checkIfOrdersNeedSending();
 }
@@ -142,9 +142,7 @@ async function searchAfter40Seconds() {
  * Revoke accepted orders from drivers repeatedly with pauses to enforce timeouts.
  * @returns {Promise<void>}
  */
-async function revokeAcceptedOrdersFromDriverHandler() {
-	await revokeAcceptedOrdersFromDriver();
-	await waitSeconds(10);
+async function revokeAcceptedOrdersFromDriverHandler(): Promise<void> {
 	await revokeAcceptedOrdersFromDriver();
 	await waitSeconds(10);
 	await revokeAcceptedOrdersFromDriver();
@@ -159,7 +157,7 @@ async function revokeAcceptedOrdersFromDriverHandler() {
  * Revoke all accepted taxi orders from their assigned drivers.
  * @returns {Promise<void>}
  */
-async function revokeAcceptedOrdersFromDriver() {
+async function revokeAcceptedOrdersFromDriver(): Promise<void> {
 	const orders = await TaxiOrderDao.getAcceptedOrders();
 	for (let order of orders) {
 		await revokeTaxiOrderFromDrivers(order.order_id, true);
@@ -170,37 +168,38 @@ async function revokeAcceptedOrdersFromDriver() {
  * @param {object} order - Taxi order entity.
  * @returns {Promise<void>}
  */
-async function findTaxiOrderDrivers(order) {
+async function findTaxiOrderDrivers(order: TaxiOrderDetail): Promise<void> {
 	console.log('hi');
-	// eslint-disable-next-line no-async-promise-executor
 	return new Promise(async (resolve, reject) => {
-		let drivers = [];
+		let drivers: Array<Record<string, unknown>> = [];
 		console.log('Finding drivers for order: ', order.order_id);
 		if (order?.driver_id) {
-			// If a specific driver is selected in the order creation, send the order only to that driver
-			// after x minutes, we can send it to other drivers
-			const thresholdTime = new Date(Date.now() - 5 * 60 * 1000); // 5 minutes
-			const expired = order.created_at < thresholdTime;
+			const thresholdTime = new Date(Date.now() - 5 * 60 * 1000);
+			const expired = (order.created_at as unknown as Date) < thresholdTime;
 			console.log('Order created at:', order.created_at, 'Threshold time:', thresholdTime);
 			const driver = await DriverDao.getDriverById(order.driver_id);
 			if (driver?.on_order) {
-				await revokeTaxiOrderFromDriver(order.order_id, order.driver_id, order);
+				await revokeTaxiOrderFromDriver(
+					order.order_id,
+					order.driver_id,
+					order as unknown as Record<string, unknown>
+				);
 			} else if (driver && !expired) {
 				drivers = [driver];
 			} else if (driver && expired) {
-				drivers = await selectTaxiOrderDrivers(order);
+				drivers = await selectTaxiOrderDrivers(order as unknown as Record<string, unknown>);
 			}
 		} else {
-			drivers = await selectTaxiOrderDrivers(order);
+			drivers = await selectTaxiOrderDrivers(order as unknown as Record<string, unknown>);
 		}
 		console.log(
 			'Drivers found: ',
-			drivers?.map((d) => d.driver_id)
+			drivers?.map((d: any) => d.driver_id)
 		);
-		let pushDrivers = [];
+		let pushDrivers: Array<Promise<void>> = [];
 		if (Array.isArray(drivers)) {
 			for (let driver of drivers) {
-				pushDrivers.push(sendTaxiOrderToDriver(order, driver));
+				pushDrivers.push(sendTaxiOrderToDriver(order as unknown as Record<string, unknown>, driver));
 			}
 		}
 		if (pushDrivers.length !== 0) {
@@ -226,7 +225,7 @@ async function findTaxiOrderDrivers(order) {
  * @returns {number}
  */
 // eslint-disable-next-line no-unused-vars
-function compareDurations(a, b) {
+function compareDurations(a: { duration: string }, b: { duration: string }): number {
 	return parseInt(a.duration) - parseInt(b.duration);
 }
 /**
@@ -234,7 +233,7 @@ function compareDurations(a, b) {
  * @param {string} driver_id
  * @returns {Promise<number>} Number of pending orders.
  */
-async function getNumberPendingOrders(driver_id) {
+async function getNumberPendingOrders(driver_id: string): Promise<number> {
 	let sent_orders = await TaxiOrderDao.getAlreadySentOrdersByDriverId(driver_id);
 	if (!sent_orders) return 0;
 	return sent_orders.length;
@@ -244,9 +243,9 @@ async function getNumberPendingOrders(driver_id) {
  * @param {object} order - Taxi or transfer order.
  * @returns {Promise<object[]|void>} Array of eligible driver objects.
  */
-async function selectTaxiOrderDrivers(order) {
+async function selectTaxiOrderDrivers(order: Record<string, any>): Promise<any[] | void> {
 	try {
-		let drivers = [];
+		let drivers: any[] = [];
 		let radius = 200;
 		let attempts = order.find_driver_attempts;
 		let vehicleClass = order.preferences?.vehicle_class || '';
@@ -262,15 +261,6 @@ async function selectTaxiOrderDrivers(order) {
 		if (attempts > 8) {
 			// offer transfer
 		}
-		//console.log(vehicleFilters, "FILTERS")
-		// if (order.find_driver_attempts === 4) {
-		// 	//TODO emit event to notify user that no drivers are available
-		// 	if (!UserSockets.get(order.user_id)) {
-		// 		return;
-		// 	}
-		// 	UserSockets.get(order.user_id).emit("no_drivers_found_taxi", order);
-		// }
-		//console.info(order.preferences.ride_requirements, "ride_Req");
 		while (drivers.length === 0 && radius < 30000) {
 			let fetchedDrivers = await prisma.drivers.inRadius(
 				order.pickup_location.coordinates,
@@ -283,7 +273,7 @@ async function selectTaxiOrderDrivers(order) {
 			console.log('in radius', fetchedDrivers?.length);
 			const onlineDrivers = (
 				await Promise.all(
-					fetchedDrivers.map(async (driver) => {
+					fetchedDrivers.map(async (driver: any) => {
 						const numPendingOrders = await getNumberPendingOrders(driver.driver_id);
 						console.log('numPendingOrders', numPendingOrders, driver.driver_id);
 						if (numPendingOrders >= MAX_PENDING_ORDERS) return null;
@@ -296,12 +286,12 @@ async function selectTaxiOrderDrivers(order) {
 						return driver;
 					})
 				)
-			).filter(Boolean); // remove nulls
+			).filter(Boolean) as any[];
 			console.log('onlineDrivers', onlineDrivers?.length);
 			drivers = onlineDrivers;
 			radius += 1000;
 		}
-		let acceptableDrivers = [];
+		let acceptableDrivers: any[] = [];
 		if (drivers.length > 0) {
 			for (let driver of drivers) {
 				if (order.type === ORDER_TYPE.TAXI && (!driver.handles_taxi_orders || !driver.taxi_orders_toggled)) {
@@ -327,20 +317,16 @@ async function selectTaxiOrderDrivers(order) {
 			}
 		}
 		acceptableDrivers.sort((a, b) => {
-			// Compare by duration first
 			if (parseInt(a.duration) !== parseInt(b.duration)) {
-				return parseInt(a.duration) - parseInt(b.duration); // Sort by ascending duration
+				return parseInt(a.duration) - parseInt(b.duration);
 			}
-			// If duration is the same, compare by number of pending orders
-			return a.numPendingOrders - b.numPendingOrders; // Sort by ascending pending orders
+			return a.numPendingOrders - b.numPendingOrders;
 		});
 		acceptableDrivers = acceptableDrivers.slice(0, NUMBER_OF_DRIVERS_TO_SEND);
-		// Obtain the list of drivers again via their respective IDs to include user and vehicle information
-		const eligibleDrivers = [];
+		const eligibleDrivers: any[] = [];
 		for (let driver of acceptableDrivers) {
 			const detailedDriver = await DriverDao.getDriverById(driver.driver_id);
 			if (detailedDriver) {
-				//console.log("Eligible driver: ", detailedDriver.user_id)
 				eligibleDrivers.push(detailedDriver);
 			}
 		}
@@ -349,7 +335,7 @@ async function selectTaxiOrderDrivers(order) {
 		});
 		console.log(
 			'Eligible drivers: ',
-			eligibleDrivers.map((d) => d.driver_id)
+			eligibleDrivers.map((d: any) => d.driver_id)
 		);
 		return eligibleDrivers;
 	} catch (e) {
@@ -363,16 +349,14 @@ async function selectTaxiOrderDrivers(order) {
  * @param {boolean} [force=false] - Force resending even if rejected.
  * @returns {Promise<void>|void}
  */
-async function sendTaxiOrderToDriver(order, driver, force = false) {
-	let isSent = await TaxiOrderDao.isOrderSent(order.order_id, driver);
+async function sendTaxiOrderToDriver(order: Record<string, any>, driver: Record<string, any>, force = false) {
+	let isSent = await TaxiOrderDao.isOrderSent(order.order_id, driver.driver_id);
 	if (isSent && !force && isSent.rejected === true) {
-		//console.log("Order: ", order.order_id, "was already sent to driver: ", driver.user_id);
 		return;
 	}
 	if (!UserSockets.get(driver.user_id)) {
 		return;
 	}
-	//TODO: zakaj smo že prestavili order na sent, če ga še nismo poslali driverju?
 	let order_sent = await prisma.taxi_order_sent.findUnique({
 		where: {
 			taxi_order_sent_driver_unique: {
@@ -384,7 +368,7 @@ async function sendTaxiOrderToDriver(order, driver, force = false) {
 
 	console.log('Sending order: ', order.order_id, ' to driver: ', driver.user_id);
 	if (!order_sent) {
-		await TaxiOrderDao.createOrderSent(order.order_id, driver);
+		await TaxiOrderDao.createOrderSent(order.order_id, driver.driver_id);
 		const l10nText = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver.user);
 		const l10nTextHeading = getLocalisedTexts('HEADING', driver.user);
 		await sendNotificationToUser(l10nTextHeading?.pending, l10nText?.pending, driver.user_id);
@@ -407,12 +391,12 @@ async function sendTaxiOrderToDriver(order, driver, force = false) {
  * @param {object} driver - Driver entity.
  * @returns {Promise<void>}
  */
-async function resendPendingOrdersToDriver(driver) {
+async function resendPendingOrdersToDriver(driver: Record<string, any>) {
 	try {
-		const sentOrders = await TaxiOrderDao.getAlreadySentOrdersByDriverId(driver.driver_id);
-		for (let sentOrder of sentOrders) {
-			const order = await TaxiOrderDao.getOrder(sentOrder.order.order_id);
-			if (order.status !== TAXI_ORDER_STATUS.PENDING) {
+		const sentOrderIds = await TaxiOrderDao.getAlreadySentOrdersByDriverId(driver.driver_id);
+		for (let sentOrderId of sentOrderIds) {
+			const order = await TaxiOrderDao.getOrder(sentOrderId);
+			if (order?.status !== TAXI_ORDER_STATUS.PENDING) {
 				continue;
 			}
 			console.info('resendPendingOrdersToDriver', driver.user_id);
@@ -430,7 +414,7 @@ async function resendPendingOrdersToDriver(driver) {
  * @param {object} driver - Driver entity.
  * @returns {Promise<void>}
  */
-async function sendActiveOrdersToDriver(driver) {
+async function sendActiveOrdersToDriver(driver: Record<string, any>) {
 	try {
 		const activeOrders = await TaxiOrderDao.getActiveOrdersByDriverId(driver.driver_id);
 		console.info('sendActiveOrdersToDriver', driver.user_id);
@@ -448,7 +432,7 @@ async function sendActiveOrdersToDriver(driver) {
  * @param {boolean} [cron=false] - Skip accepted orders when invoked from cron.
  * @returns {Promise<void>}
  */
-async function revokeTaxiOrderFromDrivers(order_id, cron = false) {
+async function revokeTaxiOrderFromDrivers(order_id: string, cron = false) {
 	let taxiOrderSent = await TaxiOrderDao.getSentDrivers(order_id);
 	for (let sent of taxiOrderSent) {
 		if (sent.accepted && cron) {
@@ -469,8 +453,13 @@ async function revokeTaxiOrderFromDrivers(order_id, cron = false) {
  * @param {object|null} [order=null] - Optional order object to localize messages.
  * @returns {Promise<void>}
  */
-async function revokeTaxiOrderFromDriver(order_id, driver_id, order = null) {
+async function revokeTaxiOrderFromDriver(
+	order_id: string,
+	driver_id: string,
+	order: Record<string, any> | null = null
+) {
 	let driver = await DriverDao.getDriverById(driver_id);
+	if (!driver) return;
 	console.log('Revoking order: ', order_id, ' from driver: ', driver.user_id);
 	SocketStore.removeUserFromRoom(driver?.user_id, `order_${order_id}`);
 	if (!UserSockets.get(driver.user_id)) {
@@ -478,10 +467,10 @@ async function revokeTaxiOrderFromDriver(order_id, driver_id, order = null) {
 	}
 	UserSockets.get(driver.user_id).emit('order_revoked__taxi', order_id);
 	if (order?.user) {
-		const order = await TaxiOrderDao.getOrder(order_id);
-		const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', order.user);
-		const l10nTextHeading = getLocalisedTexts('HEADING', order.user);
-		await sendNotificationToUser(l10nTextHeading?.taxi, l10nText?.revoked, order.user_id);
+		const freshOrder = await TaxiOrderDao.getOrder(order_id);
+		const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', freshOrder?.user);
+		const l10nTextHeading = getLocalisedTexts('HEADING', freshOrder?.user);
+		await sendNotificationToUser(l10nTextHeading?.taxi, l10nText?.revoked, freshOrder?.user_id);
 	}
 }
 /**
@@ -490,7 +479,7 @@ async function revokeTaxiOrderFromDriver(order_id, driver_id, order = null) {
  * @param {string} driver_id - Accepted driver ID to keep.
  * @returns {Promise<void>}
  */
-async function revokeTaxiOrderFromOtherDrivers(order_id, driver_id) {
+async function revokeTaxiOrderFromOtherDrivers(order_id: string, driver_id: string) {
 	let taxiOrderSent = await TaxiOrderDao.getSentDrivers(order_id);
 	for (let sent of taxiOrderSent) {
 		if (sent.accepted) {
@@ -513,20 +502,20 @@ async function revokeTaxiOrderFromOtherDrivers(order_id, driver_id) {
  * @param {object} order - Order entity.
  * @returns {number}
  */
-function calculateScoreForOrder(order) {
+function calculateScoreForOrder(order: Record<string, any>): number {
 	const now = new Date();
 	const createdAt = new Date(order.created_at);
-	const waitingMinutes = Math.floor((now - createdAt) / 60000); // milliseconds to minutes
+	const waitingMinutes = Math.floor((now.getTime() - createdAt.getTime()) / 60000);
 	let basePriority = order.type === 'TRANSFER_PRIVATE' ? 5 : 0;
-	let premiumBonus = order.preferences?.vehicle_category === VEHICLE_CLASS.PREMIUM ? 5 : 0;
-	const waitingWeight = 1; // can tweak this
+	let premiumBonus = order.preferences?.vehicle_category === VEHICLE_CATEGORY.PREMIUM ? 5 : 0;
+	const waitingWeight = 1;
 	return basePriority + premiumBonus + waitingWeight * waitingMinutes;
 }
 /**
  * Check for pending taxi orders and dispatch them to drivers.
  * @returns {Promise<void>}
  */
-async function checkIfOrdersNeedSending() {
+async function checkIfOrdersNeedSending(): Promise<void> {
 	try {
 		console.log('Checking for taxi orders to send...');
 		let orders = await TaxiOrderDao.getOrders({
@@ -543,11 +532,11 @@ async function checkIfOrdersNeedSending() {
 			},
 		});
 		console.log('Open taxi orders scheduled:', scheduledOrders.length);
-		let all_orders = [...orders, ...scheduledOrders];
+		let all_orders = [...orders, ...scheduledOrders] as any[];
 		all_orders.sort((a, b) => calculateScoreForOrder(b) - calculateScoreForOrder(a));
 		for (let order of all_orders) {
 			console.log('Order last_sent_at:', order.last_sent_at);
-			await findTaxiOrderDrivers(order);
+			await findTaxiOrderDrivers(order as TaxiOrderDetail);
 		}
 	} catch (error) {
 		console.log(error);
@@ -557,7 +546,7 @@ async function checkIfOrdersNeedSending() {
  * Cancel scheduled orders that are still pending 2 hours past the scheduled time.
  * @returns {Promise<void>}
  */
-async function closeScheduledOrders() {
+async function closeScheduledOrders(): Promise<void> {
 	const twoHoursBeforeNow = new Date();
 	twoHoursBeforeNow.setHours(twoHoursBeforeNow.getHours() - 2);
 	let localDate = moment.parseZone(twoHoursBeforeNow).utc(true).format();
@@ -585,7 +574,7 @@ async function closeScheduledOrders() {
  * @param {string} vehicleCategory - One of VEHICLE_CATEGORY.STANDARD|PREMIUM.
  * @returns {Promise<{price:number,reasons:string[]|null,distance:number,durationS:number,duration:number}>}
  */
-async function calculateTransferRidePrice(route, vehicleCategory) {
+async function calculateTransferRidePrice(route: Array<{ coordinates: LatLng }>, vehicleCategory: string) {
 	if (vehicleCategory !== VEHICLE_CATEGORY.STANDARD && vehicleCategory !== VEHICLE_CATEGORY.PREMIUM) {
 		throw new Error(`Invalid vehicle category, got ${vehicleCategory}. Only STANDARD and PREMIUM are allowed.`);
 	}
@@ -597,8 +586,8 @@ async function calculateTransferRidePrice(route, vehicleCategory) {
 		throw new Error('Unable to calculate distance between the two locations.');
 	}
 	const distanceInKm = totalDistanceM / 1000;
-	const pricePerKm = COST_PER_KM[vehicleCategory] * COST_PER_KM.TRANSFER_BONUS; // Example price per km
-	const basePrice = TAXI_STARTING_FEE[vehicleCategory]; // Example base price
+	const pricePerKm = COST_PER_KM[vehicleCategory] * COST_PER_KM.TRANSFER_BONUS;
+	const basePrice = TAXI_STARTING_FEE[vehicleCategory];
 	const totalPrice = basePrice + pricePerKm * distanceInKm;
 	let priceSurge = await getPriceSurgeDataForTransferTrip(route, new Date(), null, null);
 	const finalPrice = Math.round(totalPrice * priceSurge.multiplier * 100) / 100;
@@ -616,8 +605,7 @@ async function calculateTransferRidePrice(route, vehicleCategory) {
  * @param {string} [orderType='order'] - Reserve type used in wallet funds.
  * @returns {Promise<{DRIVER_CREDIT_CUT:number,PLATFORM_CREDIT_CUT:number,DRIVER_CUT:number,PLATFORM_CUT:number}>}
  */
-async function calculateTransferOrderPaymentCuts(order, orderType = 'order') {
-	//CALCULATE IN CENTS
+async function calculateTransferOrderPaymentCuts(order: any, orderType = 'order') {
 	const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100);
 	const EXTRAS_COST_CENTS = Math.round(
 		parseFloat(
@@ -628,8 +616,13 @@ async function calculateTransferOrderPaymentCuts(order, orderType = 'order') {
 				: 0
 		) * 100
 	);
-	const reservedCredits = (await WalletFundsDao.getReservedCredits(order.user_id, order.order_id, orderType)) || [];
-	const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + (wf.amount || 0), 0);
+	const reservedCredits =
+		(await WalletFundsDao.getReservedCredits(
+			order.user_id,
+			order.order_id,
+			orderType as 'order' | 'daily_meals_subscription_payment'
+		)) || [];
+	const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum: number, wf: any) => sum + (wf.amount || 0), 0);
 	const INITIAL_PLATFORM_CUT = Math.round(PRICE_CENTS * DRIVE_FEE) + EXTRAS_COST_CENTS;
 	const TOTAL_COST_CENTS = PRICE_CENTS + EXTRAS_COST_CENTS;
 	const INITIAL_DRIVER_CUT = TOTAL_COST_CENTS - INITIAL_PLATFORM_CUT;
@@ -661,11 +654,17 @@ async function calculateTransferOrderPaymentCuts(order, orderType = 'order') {
  * @param {boolean} [skip_fee=false] - Skip cancellation fee.
  * @returns {Promise<void>}
  */
-async function handlePaymentRefund(order_id, user_id, payment, additional_workers, vehicle_class, skip_fee = false) {
-	//get payment details:
+async function handlePaymentRefund(
+	order_id: string,
+	user_id: string,
+	payment: any,
+	additional_workers: number,
+	vehicle_class: string,
+	skip_fee = false
+) {
 	const WF_reserved = await WalletFundsDao.getReservedWalletFunds(user_id, order_id);
 	const { credits_wf_amount_reserved, regular_wf_amount_reserved } = WF_reserved.reduce(
-		(acc, wf) => {
+		(acc: any, wf: any) => {
 			if (wf.type !== FUNDS_TYPE.FUNDS) {
 				acc.credits_wf_amount_reserved += wf.amount || 0;
 			} else {
@@ -684,7 +683,6 @@ async function handlePaymentRefund(order_id, user_id, payment, additional_worker
 	);
 	const total_price_cents = Math.round((payment.price + extras_cost) * 100);
 	const PAYMENT_TYPE = payment.type;
-	// const transfer_amount = Math.round(total_price_cents * (skip_fee ? 0 : 0.1))//TODO: Make cancellation fee a constant
 	const transfer_amount_credits = Math.round(credit_discount_used * (skip_fee ? 0 : 0.1));
 	const transfer_amount_regular = Math.round((total_price_cents - credit_discount_used) * (skip_fee ? 0 : 0.1));
 	if (transfer_amount_credits > 0) {
@@ -706,7 +704,6 @@ async function handlePaymentRefund(order_id, user_id, payment, additional_worker
 		);
 	}
 	await WalletFundsHelpers.releaseReservedWalletFundsForOrder(user_id, order_id);
-	//calculate transfered credits and if needed, create new ones with fresh expiry dates
 	const total_credits_to_refund = credit_discount_used - transfer_amount_credits;
 	const reserved_credits_to_refund = credits_wf_amount_reserved - transfer_amount_credits;
 	const credits_discrepancy = total_credits_to_refund - reserved_credits_to_refund;
@@ -715,6 +712,7 @@ async function handlePaymentRefund(order_id, user_id, payment, additional_worker
 			user_id,
 			amount: credits_discrepancy,
 			type: FUNDS_TYPE.CREDITS_TAXI,
+			transaction_type: TRANSACTION_TYPE.CREDIT,
 		});
 	}
 	const refund_amount_regular = total_price_cents - credit_discount_used - transfer_amount_regular;
@@ -723,13 +721,11 @@ async function handlePaymentRefund(order_id, user_id, payment, additional_worker
 		const reserved_wf_to_refund = regular_wf_amount_reserved - transfer_amount_regular;
 		const wf_discrepancy = total_wf_to_refund - reserved_wf_to_refund;
 		console.log(`got into wallet if`);
-		//calculate transfered WF and if to_be_retuned amount is larger than the released amount, create new ones for the difference.
 		if (payment.status === 'PAID' && wf_discrepancy > 0) {
 			await WalletFundsDao.createWalletFunds(user_id, wf_discrepancy, null);
 		}
 	}
 	if (PAYMENT_TYPE === 'CARD' || PAYMENT_TYPE === 'PLATFORM') {
-		//cancel or refund paymentIntent if any exists.
 		if (payment.payment_intent_id) {
 			console.log(`got into card if`);
 			const payment_intent = await stripe.client.paymentIntents.retrieve(payment.payment_intent_id);
@@ -744,6 +740,7 @@ async function handlePaymentRefund(order_id, user_id, payment, additional_worker
 		}
 	}
 }
+
 export { checkIfOrdersNeedSending };
 export { findTaxiOrderDrivers };
 export { resendPendingOrdersToDriver };

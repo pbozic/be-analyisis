@@ -22,5 +22,5 @@ export type AuthenticatedRequest<TBody = unknown, TParams = unknown, TQuery = un
 	TBody,
 	TQuery
 > & {
-	user: AuthUser;
+	user?: AuthUser;
 };

@@ -31,6 +31,22 @@ import type {
 	BookingCourseParticipantResponse,
 } from '../../schemas/dto/reservations/booking-course-participant/booking-course-participant.dto.js';
 import { isBookingSlotAvailable, isEmployeeScheduledForWindow } from '../../lib/bookingHelpers.ts';
+// Mappers
+import {
+	toBookingDAOResponseBase,
+	toBookingDAOResponseWithHistory,
+	toBookingDAOList,
+	toBookingCourseDAOResponse,
+	toBookingForAnalyticsDAOList,
+	toBookingCoursesDAOList,
+} from '../../schemas/dto/reservations/booking/booking.mappers.js';
+// Prisma includes
+import {
+	bookingBase,
+	bookingWithHistory,
+	bookingWithCourseDetails,
+	bookingCoursesSimple,
+} from '../../prisma/includes/reservation/booking.js';
 
 const cropped_user_columns = {
 	first_name: true,
@@ -275,7 +291,7 @@ async function createBookingTx(
 		},
 	});
 
-	return created as unknown as BookingDAOResponse;
+	return toBookingDAOResponseBase(created);
 }
 
 // 2) Public: single create (kept for callers that need 1 booking)
@@ -466,7 +482,7 @@ export async function updateBooking(
 				});
 			}
 
-			return updated as unknown as BookingDAOResponse;
+			return toBookingDAOResponseBase(updated);
 		});
 	} catch (error) {
 		throwPrisma('Error updating booking', error);
@@ -481,9 +497,11 @@ export async function updateBooking(
  */
 export async function deleteBooking(input: { booking_id: string }): Promise<BookingDAOResponse> {
 	try {
-		return (await prisma.booking.delete({
+		const deleted = await prisma.booking.delete({
 			where: { booking_id: input.booking_id },
-		})) as unknown as BookingDAOResponse;
+		});
+
+		return deleted as unknown as BookingDAOResponse;
 	} catch (error) {
 		throwPrisma('Error deleting booking', error);
 	}
@@ -499,20 +517,10 @@ export async function getBookingById(input: { booking_id: string }): Promise<Boo
 	try {
 		const row = await prisma.booking.findUnique({
 			where: { booking_id: input.booking_id },
-			include: {
-				customer: true,
-				location: true,
-				service: true,
-				employee: true,
-				booking_history_log: {
-					select: { booking_history_id: true, status: true, created_at: true },
-					orderBy: { created_at: 'desc' },
-				},
-			},
+			include: bookingWithHistory,
 		});
 		if (!row) return null;
-		const { booking_history_log, ...rest } = row;
-		return { ...(rest as any), history: booking_history_log } as unknown as BookingDAOResponse;
+		return toBookingDAOResponseWithHistory(row);
 	} catch (error) {
 		throwPrisma('Error fetching booking by id', error);
 	}
@@ -528,7 +536,7 @@ export async function listBookingsByReservationModuleId(params: ListBookingsPara
 	try {
 		const { reservation_module_id, status, from, to, location_id, employee_id, limit, offset } = params;
 
-		return (await prisma.booking.findMany({
+		const rows = await prisma.booking.findMany({
 			where: {
 				reservation_module_id,
 				...(status && status.length ? { status: { in: status } } : {}),
@@ -546,7 +554,9 @@ export async function listBookingsByReservationModuleId(params: ListBookingsPara
 			orderBy: [{ created_at: 'desc' }, { booking_id: 'desc' }],
 			...(limit != null ? { take: limit } : {}),
 			...(offset != null ? { skip: offset } : {}),
-		})) as unknown as BookingDAOResponse[];
+			include: bookingBase,
+		});
+		return toBookingDAOList(rows);
 	} catch (error) {
 		throwPrisma('Error listing bookings', error);
 	}
@@ -659,7 +669,8 @@ export async function updateBookingStart(
 					user: { connect: { user_id: user_id } },
 				},
 			});
-			return updated as unknown as BookingDAOResponse;
+
+			return toBookingDAOResponseBase(updated);
 		});
 	} catch (error) {
 		throwPrisma('Error updating booking', error);
@@ -699,7 +710,8 @@ export async function updateBookingParent(
 					user: { connect: { user_id: user_id } },
 				},
 			});
-			return updated as unknown as BookingDAOResponse;
+
+			return toBookingDAOResponseBase(updated);
 		});
 	} catch (error) {
 		throwPrisma('Error updating booking', error);
@@ -843,7 +855,8 @@ export async function updateStatusDelete(booking_id: string, user_id: string | u
 					user: { connect: { user_id: user_id } },
 				},
 			});
-			return updated as unknown as BookingDAOResponse;
+
+			return toBookingDAOResponseBase(updated);
 		});
 	} catch (error) {
 		throwPrisma('Error updating booking', error);
@@ -859,7 +872,7 @@ export async function getBookingsForAnalytics(params: ListBookingsParams): Promi
 	try {
 		const { reservation_module_id, status, from, to, location_id, employee_id } = params;
 
-		return (await prisma.booking.findMany({
+		const rows = await prisma.booking.findMany({
 			where: {
 				reservation_module_id,
 				...(status && status.length ? { status: { in: status } } : {}),
@@ -878,7 +891,8 @@ export async function getBookingsForAnalytics(params: ListBookingsParams): Promi
 				customer: true,
 			},
 			orderBy: [{ created_at: 'desc' }, { booking_id: 'desc' }],
-		})) as unknown as BookingForAnalyticsDAOResponse[];
+		});
+		return toBookingForAnalyticsDAOList(rows);
 	} catch (error) {
 		throwPrisma('Error listing bookings', error);
 	}
@@ -892,36 +906,15 @@ export async function getBookingsForAnalytics(params: ListBookingsParams): Promi
  */
 export async function getBookingCourseById(booking_id: string): Promise<BookingCourseDAOResponse | null> {
 	try {
-		return prisma.booking.findUnique({
+		const row = await prisma.booking.findUnique({
 			where: {
 				booking_id: booking_id,
 				course: true,
 			},
-			include: {
-				booking_course_time: { orderBy: { start_time: 'asc' } },
-				booking_course_attendees: {
-					include: {
-						customer: true,
-					},
-				},
-				service: true,
-				location: true,
-				employee: {
-					include: {
-						business_user: {
-							select: {
-								business_users_id: true,
-								business_id: true,
-								user_id: true,
-								users: {
-									select: cropped_user_columns,
-								},
-							},
-						},
-					},
-				},
-			},
-		}) as unknown as BookingCourseDAOResponse | null;
+			include: bookingWithCourseDetails,
+		});
+		if (!row) return null;
+		return toBookingCourseDAOResponse(row);
 	} catch (error) {
 		throwPrisma('Error fetching booking courses', error);
 	}
@@ -939,7 +932,7 @@ export async function getBookingCoursesByReservationModuleId(
 	try {
 		const { reservation_module_id, status, from, to, location_id, employee_id } = params;
 
-		return prisma.booking.findMany({
+		const rows = await prisma.booking.findMany({
 			where: {
 				reservation_module_id,
 				course: true,
@@ -955,26 +948,9 @@ export async function getBookingCoursesByReservationModuleId(
 					: {}),
 				...(location_id ? { location_id } : {}),
 			},
-			include: {
-				booking_course_time: { orderBy: { start_time: 'asc' } },
-				location: true,
-				service: true,
-				employee: {
-					include: {
-						business_user: {
-							select: {
-								business_users_id: true,
-								business_id: true,
-								user_id: true,
-								users: {
-									select: cropped_user_columns,
-								},
-							},
-						},
-					},
-				},
-			},
-		}) as unknown as BookingCoursesByModuleDAOResponse[];
+			include: bookingCoursesSimple,
+		});
+		return toBookingCoursesDAOList(rows);
 	} catch (error) {
 		throwPrisma('Error fetching booking courses', error);
 	}
@@ -990,7 +966,7 @@ export async function getBookingCourses(params: ListBookingsParams): Promise<Boo
 	try {
 		const { reservation_module_id, status, from, to } = params;
 
-		return prisma.booking.findMany({
+		const rows = await prisma.booking.findMany({
 			where: {
 				course: true,
 				reservation_module_id,
@@ -1004,26 +980,9 @@ export async function getBookingCourses(params: ListBookingsParams): Promise<Boo
 						}
 					: {}),
 			},
-			include: {
-				booking_course_time: { orderBy: { start_time: 'asc' } },
-				location: true,
-				service: true,
-				employee: {
-					include: {
-						business_user: {
-							select: {
-								business_users_id: true,
-								business_id: true,
-								user_id: true,
-								users: {
-									select: cropped_user_columns,
-								},
-							},
-						},
-					},
-				},
-			},
-		}) as unknown as BookingCoursesDAOResponse[];
+			include: bookingCoursesSimple,
+		});
+		return toBookingCoursesDAOList(rows);
 	} catch (error) {
 		throwPrisma('Error fetching booking courses', error);
 	}
@@ -1096,7 +1055,7 @@ async function createBookingCourseTx(
 		},
 	});
 
-	return created as unknown as BookingDAOResponse;
+	return toBookingDAOResponseBase(created);
 }
 
 /**
