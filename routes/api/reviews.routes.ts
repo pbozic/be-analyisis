@@ -1,24 +1,34 @@
 import { Router } from 'express';
 
 import {
-	reviewPassenger,
-	reviewDriver,
-	reviewStore,
-	reviewFoodDrinks,
-	reviewReservationModule,
-	reviewTransportModule,
-	reviewReservationBooking,
+	createReviewForTaxiOrder,
+	createReviewForDeliveryOrder,
+	getReviewById,
+	getReviewsForSubject,
+	getReviewsForTaxiOrder,
+	getReviewsForDeliveryOrder,
+	deleteReview,
+	deleteReviewsForSubject,
 } from '../../controllers/ReviewsController.js';
 import { validate } from '../../middleware/zod.ts';
 import { ReviewBodySchema } from '../../schemas/dto/Reviews/review.dto.ts';
 
 const router = Router();
-router.post('/passenger/:user_id', validate(ReviewBodySchema, 'body'), reviewPassenger);
-router.post('/driver/:driver_id', validate(ReviewBodySchema, 'body'), reviewDriver);
-router.post('/stores/:stores_id', validate(ReviewBodySchema, 'body'), reviewStore);
-router.post('/food-drinks/:food_drinks_id', validate(ReviewBodySchema, 'body'), reviewFoodDrinks);
-router.post('/reservation-module/:reservation_module_id', validate(ReviewBodySchema, 'body'), reviewReservationModule);
-router.post('/transport-module/:transport_module_id', validate(ReviewBodySchema, 'body'), reviewTransportModule);
-router.post('/reservation-booking/:booking_id', validate(ReviewBodySchema, 'body'), reviewReservationBooking);
+
+// create
+router.post('/delivery', validate(ReviewBodySchema, 'body'), createReviewForDeliveryOrder);
+router.post('/taxi', validate(ReviewBodySchema, 'body'), createReviewForTaxiOrder);
+
+// list by order
+router.get('/taxi/:taxi_order_id', getReviewsForTaxiOrder);
+router.get('/delivery/:delivery_order_id', getReviewsForDeliveryOrder);
+
+// list / delete by subject (subject_id + review_subject)
+router.get('/subject/:subject_id/:review_subject', getReviewsForSubject);
+router.delete('/subject/:subject_id/:review_subject', deleteReviewsForSubject);
+
+// single review get / delete
+router.get('/:review_id', getReviewById);
+router.delete('/:review_id', deleteReview);
 
 export default router;

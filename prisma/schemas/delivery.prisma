@@ -10,8 +10,6 @@ model stores_module {
     enabled                  Boolean                    @default(false)
     created_at               DateTime                   @default(now()) @db.Timestamptz(6)
     updated_at               DateTime                   @default(now()) @updatedAt @db.Timestamptz(6)
-    reviewable_id            String?                    @db.Uuid
-    reviewable               reviewable?                @relation(fields: [reviewable_id], references: [reviewable_id])
     business_local_locations business_local_locations[]
     business                 business                   @relation(fields: [business_id], references: [business_id])
     delivery_address_id      String?                    @db.Uuid
@@ -21,8 +19,8 @@ model stores_module {
     menu                     menus?
     overwhelmed              Boolean                    @default(false)
     online                   Boolean                    @default(false)
-    business_details_id String?  @db.Uuid @unique
-    business_details    business_details? @relation("stores_business_details", fields: [business_details_id], references: [business_details_id])
+    business_details_id      String?                    @unique @db.Uuid
+    business_details         business_details?          @relation("stores_business_details", fields: [business_details_id], references: [business_details_id])
     working_hours            Json?
 
     scoring_points scoring_points[] @relation("scoring_points_to_store")
@@ -36,13 +34,11 @@ model stores_module {
 ///
 /// Controls restaurant state, delivery address and restaurant/table reservations.
 model food_drinks_module {
-    food_drinks_id String      @id @default(uuid()) @db.Uuid
-    business_id    String      @unique @db.Uuid
-    enabled        Boolean     @default(false)
-    created_at     DateTime    @default(now()) @db.Timestamptz(6)
-    updated_at     DateTime    @default(now()) @updatedAt @db.Timestamptz(6)
-    reviewable_id  String?     @db.Uuid
-    reviewable     reviewable? @relation(fields: [reviewable_id], references: [reviewable_id])
+    food_drinks_id String   @id @default(uuid()) @db.Uuid
+    business_id    String   @unique @db.Uuid
+    enabled        Boolean  @default(false)
+    created_at     DateTime @default(now()) @db.Timestamptz(6)
+    updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
     business            business          @relation(fields: [business_id], references: [business_id])
     delivery_address_id String?           @db.Uuid
@@ -51,11 +47,11 @@ model food_drinks_module {
     minimum_order       Int               @default(0)
     menu                menus?
 
-    overwhelmed   Boolean @default(false)
-    online        Boolean @default(false)
-    business_details_id String?  @db.Uuid @unique
+    overwhelmed         Boolean           @default(false)
+    online              Boolean           @default(false)
+    business_details_id String?           @unique @db.Uuid
     business_details    business_details? @relation("food_drinks_business_details", fields: [business_details_id], references: [business_details_id])
-    working_hours Json?
+    working_hours       Json?
 
     scoring_points scoring_points[] @relation("scoring_points_to_food_drinks")
     late_events    late_events[]    @relation("late_events_to_food_drinks")
@@ -109,8 +105,7 @@ model delivery_orders {
     business_local_location    business_local_locations?  @relation(fields: [business_local_location_id], references: [business_local_location_id])
     promo_analytics            promo_analytics[]
     invoice                    invoice?
-    review_id                  String?                    @unique @db.Uuid
-    review                     reviews?                   @relation("delivery_order_review", fields: [review_id], references: [review_id])
+    reviews                    reviews[]
     stores_id                  String?                    @db.Uuid
     stores_module              stores_module?             @relation(fields: [stores_id], references: [stores_id])
     food_drinks_id             String?                    @db.Uuid
@@ -161,8 +156,8 @@ model daily_meals_module {
     daily_meal_drivers       daily_meals_drivers[]
     daily_meal_categories    daily_meal_categories[]
     daily_meal_subscriptions daily_meal_subscriptions[]
-    business_details_id String?  @db.Uuid @unique
-    business_details    business_details? @relation("daily_meals_business_details", fields: [business_details_id], references: [business_details_id])
+    business_details_id      String?                    @unique @db.Uuid
+    business_details         business_details?          @relation("daily_meals_business_details", fields: [business_details_id], references: [business_details_id])
 }
 
 /// @summary Drivers assigned to daily meals deliveries.
@@ -446,12 +441,12 @@ model menu_item_stock_change {
 /// @namespace TableReservations
 /// @erd FoodDrinks
 model table_reservations_module {
-    id           String         @id @default(uuid()) @db.Uuid
-    business_id  String         @unique @db.Uuid
-    seats        Int?
-    business     business       @relation(fields: [business_id], references: [business_id])
-    reservations reservations[]
-    business_details_id String?  @db.Uuid @unique
+    id                  String            @id @default(uuid()) @db.Uuid
+    business_id         String            @unique @db.Uuid
+    seats               Int?
+    business            business          @relation(fields: [business_id], references: [business_id])
+    reservations        reservations[]
+    business_details_id String?           @unique @db.Uuid
     business_details    business_details? @relation("table_reservations_business_details", fields: [business_details_id], references: [business_details_id])
 }
 

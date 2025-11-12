@@ -1,10 +1,14 @@
+import { Request, Response } from 'express';
 import { config } from 'dotenv';
 
 import LostItemsDao from '../dao/LostItems.js';
-import DocumentDao from '../dao/Document.js';
 import FileDao from '../dao/File.js';
 import S3Helper from '../lib/s3.js';
+import { ValidatedRequest } from '../types/validatedRequest.ts';
+import type { CreateLostItemInput, UpdateLostItemInput } from '../types/lostItems/LostItem.js';
+import { ReportFoundItemRequest } from '../schemas/dto/LostItems/lostitem.dto.ts';
 config();
+
 /**
  * GET /lost_items
  * @tag LostItems
@@ -18,15 +22,16 @@ config();
  * @prisma_model documents
  * @prisma_model files
  */
-async function getAllLostItems(req, res) {
+export async function getAllLostItems(req: Request, res: Response): Promise<void> {
 	try {
 		const lostItems = await LostItemsDao.getLostItems();
 		res.status(200).json(lostItems);
-	} catch (e) {
+	} catch (e: any) {
 		console.error('Error retrieving lost items:', e);
-		res.status(500).json({ error: 'Error retrieving lost items', detail: e.message });
+		res.status(500).json({ error: 'Error retrieving lost items', detail: e?.message ?? String(e) });
 	}
 }
+
 /**
  * POST /lost_items/report
  * @tag LostItems
@@ -42,32 +47,27 @@ async function getAllLostItems(req, res) {
  * @prisma_model documents
  * @prisma_model files
  */
-async function reportFoundItem(req, res) {
+export async function reportFoundItem(req: ValidatedRequest<ReportFoundItemRequest>, res: Response): Promise<void> {
 	const { description, found, images, user } = req.body;
-	console.info('user', user);
 	try {
-		const foundItem = await LostItemsDao.reportFoundItem({ description, found }, user);
-		if (images && images.files.length > 0) {
-			const document = await DocumentDao.createDocument(images.documentData);
+		const foundItem = await LostItemsDao.reportFoundItem({ description, found } as CreateLostItemInput, user);
+		if (images && images.files && images.files.length > 0) {
 			for (const file of images.files) {
-				let base64 = file.base64;
-				delete file.base64;
-				let fileData = await FileDao.createFile(file.file_type, file.mime_type, true);
-				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-				await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, document.public);
+				const fileData = await FileDao.createFile(file.file_type, file.mime_type, true);
+				const key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+				await S3Helper.SaveObject(key, file.base64, file.mime_type, {}, fileData, fileData.public);
 				await LostItemsDao.updateLostItem(foundItem.lost_item_id, {
-					image: {
-						connect: { image_id: fileData.file_id },
-					},
-				});
+					image: { connect: { image_id: fileData.file_id } },
+				} as any);
 			}
 		}
 		res.status(201).json(foundItem);
-	} catch (e) {
+	} catch (e: any) {
 		console.error('Error reporting found item:', e);
-		res.status(400).json({ error: 'Error reporting found item', detail: e.message });
+		res.status(400).json({ error: 'Error reporting found item', detail: e?.message ?? String(e) });
 	}
 }
+
 /**
  * DELETE /lost_items/delete/:lost_item_id
  * @tag LostItems
@@ -82,17 +82,20 @@ async function reportFoundItem(req, res) {
  * @prisma_model documents
  * @prisma_model files
  */
-async function deleteFoundItem(req, res) {
+export async function deleteFoundItem(
+	req: ValidatedRequest<never, { lost_item_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
-		const { lost_item_id } = req.params;
-		await DocumentDao.deleteDocumentsAndFiles('lost_item_id', lost_item_id);
+		const { lost_item_id } = req.params as { lost_item_id: string };
 		await LostItemsDao.deleteFoundItem(lost_item_id);
 		res.status(200).json({ message: 'Found item deleted successfully' });
-	} catch (e) {
+	} catch (e: any) {
 		console.error('Error deleting found item:', e);
-		res.status(400).json({ error: 'Error deleting found item', detail: e.message });
+		res.status(400).json({ error: 'Error deleting found item', detail: e?.message ?? String(e) });
 	}
 }
+
 /**
  * PATCH /lost_items/update/:lost_item_id
  * @tag LostItems
@@ -107,30 +110,32 @@ async function deleteFoundItem(req, res) {
  * @response 400 - Error updating lost item
  * @prisma_model lost_items
  */
-async function updateLostItem(req, res) {
+export async function updateLostItem(
+	req: ValidatedRequest<UpdateLostItemInput, { lost_item_id: string }>,
+	res: Response
+): Promise<void> {
 	const { lost_item_id } = req.params;
 	const { description, status } = req.body;
 	try {
 		if (!description && !status) {
-			return res.status(400).json({ error: 'No data provided to update' });
+			res.status(400).json({ error: 'No data provided to update' });
+			return;
 		}
-		const updateData = {};
+		const updateData: Partial<UpdateLostItemInput> = {};
 		if (description) updateData.description = description;
 		if (status) updateData.status = status;
-		const updatedLostItem = await LostItemsDao.updateLostItem(lost_item_id, updateData);
+		const updatedLostItem = await LostItemsDao.updateLostItem(lost_item_id, updateData as UpdateLostItemInput);
 		if (!updatedLostItem) {
-			return res.status(404).json({ error: 'Lost item not found' });
+			res.status(404).json({ error: 'Lost item not found' });
+			return;
 		}
 		res.status(200).json(updatedLostItem);
-	} catch (e) {
+	} catch (e: any) {
 		console.error('Error updating lost item:', e);
-		res.status(400).json({ error: 'Error updating lost item', detail: e.message });
+		res.status(400).json({ error: 'Error updating lost item', detail: e?.message ?? String(e) });
 	}
 }
-export { getAllLostItems };
-export { reportFoundItem };
-export { deleteFoundItem };
-export { updateLostItem };
+
 export default {
 	getAllLostItems,
 	reportFoundItem,

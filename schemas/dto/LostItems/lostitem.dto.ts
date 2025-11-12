@@ -37,9 +37,7 @@ export const ReportFoundItemRequestSchema = z
 		found: z.boolean().optional().openapi({ example: true }),
 		images: ReportFoundItemImagesSchema.optional(),
 		// The controller expects a user object with at least user_id when calling the DAO.
-		user: z
-			.object({ user_id: z.string().uuid().openapi({ example: '990e8400-e29b-41d4-a716-446655440000' }) })
-			.optional(),
+		user: z.object({ user_id: z.string().uuid().openapi({ example: '990e8400-e29b-41d4-a716-446655440000' }) }),
 	})
 	.openapi('ReportFoundItemRequest');
 
