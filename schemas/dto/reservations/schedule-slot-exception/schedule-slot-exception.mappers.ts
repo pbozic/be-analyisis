@@ -1,14 +1,16 @@
 import type { ScheduleSlotExceptionResponse } from './schedule-slot-exception.dto';
 import { ScheduleSlotExceptionResponseSchema } from './schedule-slot-exception.dto';
+import type { ScheduleSlotExceptionBasePrisma } from '../../../../prisma/includes/reservation/schedule-slot-exception';
 
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
+function toIso(d: Date | string | null | undefined): string | undefined {
+	if (!d) return undefined;
+	return d instanceof Date ? d.toISOString() : new Date(d).toISOString();
 }
 
 /**
  * Map Prisma schedule_slot_exceptions to ScheduleSlotExceptionResponse
  */
-export function toScheduleSlotExceptionResponse(row: any): ScheduleSlotExceptionResponse {
+export function toScheduleSlotExceptionResponse(row: ScheduleSlotExceptionBasePrisma): ScheduleSlotExceptionResponse {
 	const r = row;
 
 	const dto = {
@@ -19,7 +21,6 @@ export function toScheduleSlotExceptionResponse(row: any): ScheduleSlotException
 		end_time: toIso(r.end_time) ?? '',
 		reason: r.reason ?? null,
 		type: r.type,
-		schedule_slot: r.schedule_slot ?? undefined,
 	};
 
 	return ScheduleSlotExceptionResponseSchema.parse(dto);
@@ -28,7 +29,7 @@ export function toScheduleSlotExceptionResponse(row: any): ScheduleSlotException
 /**
  * Map list of schedule slot exceptions
  */
-export function toScheduleSlotExceptionList(rows: any[]): ScheduleSlotExceptionResponse[] {
+export function toScheduleSlotExceptionList(rows: ScheduleSlotExceptionBasePrisma[]): ScheduleSlotExceptionResponse[] {
 	return rows.map(toScheduleSlotExceptionResponse);
 }
 

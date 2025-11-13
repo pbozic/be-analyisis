@@ -6,8 +6,9 @@ import {
 } from './employee.dto';
 import type { EmployeeBasePrisma, EmployeeWithSlotsPrisma } from '../../../../prisma/includes/reservation/employee';
 
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
+function toIso(d: Date | string | null | undefined): string | undefined {
+	if (!d) return undefined;
+	return d instanceof Date ? d.toISOString() : new Date(d).toISOString();
 }
 
 /**

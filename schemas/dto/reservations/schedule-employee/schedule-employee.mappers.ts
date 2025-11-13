@@ -1,24 +1,17 @@
 import type { ScheduleEmployeeResponse } from './schedule-employee.dto';
 import { ScheduleEmployeeResponseSchema } from './schedule-employee.dto';
-
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
-}
+import type { ScheduleEmployeeBasePrisma } from '../../../../prisma/includes/reservation/schedule-employee';
 
 /**
  * Map Prisma schedule_employee to ScheduleEmployeeResponse
  */
-export function toScheduleEmployeeResponse(row: any): ScheduleEmployeeResponse {
+export function toScheduleEmployeeResponse(row: ScheduleEmployeeBasePrisma): ScheduleEmployeeResponse {
 	const r = row;
 
 	const dto = {
 		schedule_employee_id: r.schedule_employee_id,
 		schedule_id: r.schedule_id,
 		employee_id: r.employee_id,
-		is_active: r.is_active ?? true,
-		assigned_at: toIso(r.assigned_at) ?? '',
-		schedule: r.schedule ?? undefined,
-		employee: r.employee ?? undefined,
 	};
 
 	return ScheduleEmployeeResponseSchema.parse(dto);
@@ -27,7 +20,7 @@ export function toScheduleEmployeeResponse(row: any): ScheduleEmployeeResponse {
 /**
  * Map list of schedule employees
  */
-export function toScheduleEmployeeList(rows: any[]): ScheduleEmployeeResponse[] {
+export function toScheduleEmployeeList(rows: ScheduleEmployeeBasePrisma[]): ScheduleEmployeeResponse[] {
 	return rows.map(toScheduleEmployeeResponse);
 }
 

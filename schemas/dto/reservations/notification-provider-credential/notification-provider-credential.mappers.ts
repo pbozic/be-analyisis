@@ -1,25 +1,28 @@
 import type { NotificationProviderCredentialResponse } from './notification-provider-credential.dto';
 import { NotificationProviderCredentialResponseSchema } from './notification-provider-credential.dto';
+import type { NotificationProviderCredentialBasePrisma } from '../../../../prisma/includes/reservation/notification-provider-credential';
 
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
+function toIso(d: Date | string | null | undefined): string | undefined {
+	if (!d) return undefined;
+	return d instanceof Date ? d.toISOString() : new Date(d).toISOString();
 }
 
 /**
  * Map Prisma notification_provider_credential to NotificationProviderCredentialResponse
  */
-export function toNotificationProviderCredentialResponse(row: any): NotificationProviderCredentialResponse {
+export function toNotificationProviderCredentialResponse(
+	row: NotificationProviderCredentialBasePrisma
+): NotificationProviderCredentialResponse {
 	const r = row;
 
 	const dto = {
 		notification_provider_credential_id: r.notification_provider_credential_id,
-		business_id: r.business_id ?? null,
+		reservation_module_id: r.reservation_module_id,
+		channel: r.channel,
 		provider: r.provider,
-		credentials: r.credentials,
-		is_active: r.is_active ?? true,
+		config: r.config,
+		is_default: r.is_default,
 		created_at: toIso(r.created_at) ?? '',
-		updated_at: toIso(r.updated_at) ?? '',
-		business: r.business ?? undefined,
 	};
 
 	return NotificationProviderCredentialResponseSchema.parse(dto);
@@ -28,7 +31,9 @@ export function toNotificationProviderCredentialResponse(row: any): Notification
 /**
  * Map list of notification provider credentials
  */
-export function toNotificationProviderCredentialList(rows: any[]): NotificationProviderCredentialResponse[] {
+export function toNotificationProviderCredentialList(
+	rows: NotificationProviderCredentialBasePrisma[]
+): NotificationProviderCredentialResponse[] {
 	return rows.map(toNotificationProviderCredentialResponse);
 }
 

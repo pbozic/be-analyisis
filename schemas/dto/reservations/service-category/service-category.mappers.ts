@@ -1,27 +1,19 @@
 import type { ServiceCategoryResponse } from './service-category.dto';
 import { ServiceCategoryResponseSchema } from './service-category.dto';
-
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
-}
+import type { ServiceCategoryBasePrisma } from '../../../../prisma/includes/reservation/service-category';
 
 /**
  * Map Prisma service_category to ServiceCategoryResponse
  */
-export function toServiceCategoryResponse(row: any): ServiceCategoryResponse {
+export function toServiceCategoryResponse(row: ServiceCategoryBasePrisma): ServiceCategoryResponse {
 	const r = row;
 
 	const dto = {
 		service_category_id: r.service_category_id,
 		reservation_module_id: r.reservation_module_id,
 		name: r.name,
-		description: r.description ?? null,
-		icon: r.icon ?? null,
-		sort_order: r.sort_order ?? 0,
-		is_active: r.is_active ?? true,
-		created_at: toIso(r.created_at) ?? '',
-		updated_at: toIso(r.updated_at) ?? '',
-		services: r.services ?? undefined,
+		parent_id: r.parent_id ?? null,
+		color: r.color ?? null,
 	};
 
 	return ServiceCategoryResponseSchema.parse(dto);
@@ -30,7 +22,7 @@ export function toServiceCategoryResponse(row: any): ServiceCategoryResponse {
 /**
  * Map list of service categories
  */
-export function toServiceCategoryList(rows: any[]): ServiceCategoryResponse[] {
+export function toServiceCategoryList(rows: ServiceCategoryBasePrisma[]): ServiceCategoryResponse[] {
 	return rows.map(toServiceCategoryResponse);
 }
 
