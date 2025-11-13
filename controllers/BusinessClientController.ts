@@ -16,7 +16,7 @@ import {
  * @description Returns a list of all business clients.
  * @operationId getAllBusinessClients
  * @response 200 - successful operation
- * @responseContent {object} 200.application/json
+ * @responseContent {BusinessClientDetailResponse[]} 200.application/json
  * @response 400 - Error occurred while obtaining the business client list
  * @prisma_model business_clients
  */
@@ -41,7 +41,7 @@ export async function getAllBusinessClients(req: Request, res: Response): Promis
  * @operationId getBusinessClientById
  * @pathParam {string} business_clients_id - The ID of the business client
  * @response 200 - successful operation
- * @responseContent {object} 200.application/json
+ * @responseContent {BusinessClientDetailResponse} 200.application/json
  * @response 400 - Error occurred while obtaining the business client
  * @prisma_model business_clients
  */
@@ -70,7 +70,7 @@ export async function getBusinessClientById(
  * @operationId getBusinessClientsByBusinessId
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - successful operation
- * @responseContent {object} 200.application/json
+ * @responseContent {BusinessClientWithOrdersResponse[]} 200.application/json
  * @response 400 - Error occurred while obtaining the business client list
  * @prisma_model business_clients
  */
@@ -97,10 +97,10 @@ export async function getBusinessClientsByBusinessId(
  * @description Creates a new business client and links it to a business.
  * @operationId createBusinessClient
  * @bodyDescription The data to create a new business client
- * @bodyContent {object} application/json
+ * @bodyContent {CreateBusinessClient} application/json
  * @bodyRequired
  * @response 201 - Business client created successfully. Returns the created business client.
- * @responseContent {object} 201.application/json
+ * @responseContent {BusinessClientResponse} 201.application/json
  * @response 400 - Error creating business client.
  * @prisma_model business_clients
  */
@@ -136,10 +136,10 @@ export async function createBusinessClient(
  * @operationId updateBusinessClient
  * @pathParam {string} business_clients_id - The ID of the business client to update
  * @bodyDescription The data to update
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateBusinessClient} application/json
  * @bodyRequired
  * @response 200 - Business client updated successfully. Returns the updated business client.
- * @responseContent {object} 200.application/json
+ * @responseContent {BusinessClientResponse} 200.application/json
  * @response 400 - Error updating business client.
  * @response 404 - Business client not found.
  * @prisma_model business_clients
@@ -169,7 +169,7 @@ export async function updateBusinessClient(
  * @operationId removeBusinessClient
  * @pathParam {string} business_clients_id - The ID of the business client to remove
  * @response 200 - Business client removed successfully.
- * @responseContent {object} 200.application/json
+ * @responseContent {BusinessClientResponse} 200.application/json
  * @response 400 - Error removing business client.
  * @prisma_model business_clients
  */
