@@ -75,6 +75,14 @@ export const LineItemDetailSchema: z.ZodType<LineItemDetail, z.ZodTypeDef, unkno
 	)
 	.openapi('LineItemDetail');
 
+export const LineItemCreateInputDataSchema = LineItemBaseSchema.omit({ line_item_id: true })
+	.extend({
+		sides: z.array(z.lazy(() => LineItemDetailSchema)).optional(),
+		extras: z.array(z.lazy(() => LineItemDetailSchema)).optional(),
+	})
+	.openapi('LineItemCreateInputData');
+export type LineItemCreateInputData = z.infer<typeof LineItemCreateInputDataSchema>;
+
 // ===============
 // Mappers
 // ===============

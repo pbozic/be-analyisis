@@ -2,7 +2,8 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { MODULE } from '@prisma/client';
 
-import { UUID } from '../../primitives';
+import { Timestamp, UUID } from '../../primitives';
+import { LineItemBaseSchema, LineItemDetailSchema } from '../LineItems/line-items.dto';
 
 extendZodWithOpenApi(z);
 
@@ -14,8 +15,8 @@ export const DeliveryOrderBaseSchema = z
 		order_id: UUID,
 		user_id: UUID,
 		// business_id: UUID,
-		module_id: UUID.optional(),
-		module_type: z.union([z.literal(MODULE.STORES), z.literal(MODULE.FOOD_DRINKS)]).optional(),
+		module_id: UUID,
+		module_type: z.union([z.literal(MODULE.STORES), z.literal(MODULE.FOOD_DRINKS)]),
 		delivery_driver_id: UUID.nullable().optional(),
 		driver_id: UUID.nullable().optional(),
 		order_number: z.number().optional(),
@@ -24,9 +25,9 @@ export const DeliveryOrderBaseSchema = z
 		timeline: z.array(z.record(z.any())).optional().default([]),
 		delivery_address: z.record(z.any()).nullable().optional(),
 		pickup_address: z.record(z.any()).nullable().optional(),
-		pickup_time: z.string().datetime().nullable().optional(),
-		delivery_time: z.string().datetime().nullable().optional(),
-		estimated_delivery_time: z.string().datetime().nullable().optional(),
+		pickup_time: Timestamp.nullable().optional(),
+		delivery_time: Timestamp.nullable().optional(),
+		estimated_delivery_time: Timestamp.nullable().optional(),
 		total_amount: z.number().nullable().optional(),
 		delivery_fee: z.number().nullable().optional(),
 		tip_amount: z.number().nullable().optional(),
@@ -34,11 +35,10 @@ export const DeliveryOrderBaseSchema = z
 		payment_method: z.string().nullable().optional(),
 		is_daily_meal: z.boolean().optional(),
 		special_instructions: z.string().nullable().optional(),
-		items: z.array(z.record(z.any())).optional().default([]),
-		last_sent_at: z.string().datetime().nullable().optional(),
+		last_sent_at: Timestamp.nullable().optional(),
 		delivery_image: z.string().nullable().optional(),
-		created_at: z.string().datetime().optional(),
-		updated_at: z.string().datetime().optional(),
+		created_at: Timestamp.optional(),
+		updated_at: Timestamp.optional(),
 	})
 	.openapi('DeliveryOrderBase');
 
@@ -53,7 +53,7 @@ export const DeliveryOrderRefSchema = z
 		order_number: z.number().optional(),
 		status: z.string(),
 		total_amount: z.number().nullable().optional(),
-		created_at: z.string().datetime().optional(),
+		created_at: Timestamp.optional(),
 	})
 	.openapi('DeliveryOrderRef');
 
@@ -67,9 +67,35 @@ export const DeliveryOrderDetailSchema = DeliveryOrderBaseSchema.extend({
 	business: z.record(z.any()).nullable().optional(),
 	delivery_driver: z.record(z.any()).nullable().optional(),
 	driver: z.record(z.any()).nullable().optional(),
+	items: z.array(LineItemDetailSchema).optional(),
 }).openapi('DeliveryOrderDetail');
 
 export type DeliveryOrderDetail = z.infer<typeof DeliveryOrderDetailSchema>;
+
+export const DeliveryOrderCreateRequestSchema = z
+	.object({
+		user_id: UUID,
+		module_id: UUID,
+		module_type: z.union([z.literal(MODULE.STORES), z.literal(MODULE.FOOD_DRINKS)]),
+		delivery_address: z.record(z.any()).nullable().optional(),
+		pickup_address: z.record(z.any()).nullable().optional(),
+		pickup_time: Timestamp.nullable().optional(),
+		delivery_time: Timestamp.nullable().optional(),
+		estimated_delivery_time: Timestamp.nullable().optional(),
+		total_amount: z.number().nullable().optional(),
+		delivery_fee: z.number().nullable().optional(),
+		tip_amount: z.number().nullable().optional(),
+		payment_method: z.string().nullable().optional(),
+		is_daily_meal: z.boolean().optional(),
+		special_instructions: z.string().nullable().optional(),
+		items: z.array(LineItemBaseSchema).min(1),
+	})
+	.openapi('DeliveryOrderCreateRequest');
+
+export const CreateDeliveryOrderDaoInputSchema =
+	DeliveryOrderCreateRequestSchema.openapi('CreateDeliveryOrderDaoInput');
+
+export type CreateDeliveryOrderDaoInput = z.infer<typeof CreateDeliveryOrderDaoInputSchema>;
 
 // ===============
 // Create/Update Schemas
