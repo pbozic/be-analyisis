@@ -32,6 +32,7 @@ export type PaymentBase = z.infer<typeof PaymentBaseSchema>;
 export const PaymentRefSchema = z
 	.object({
 		payment_id: UUID,
+		payment_method: z.string(),
 	})
 	.openapi('PaymentRef');
 export type PaymentRef = z.infer<typeof PaymentRefSchema>;

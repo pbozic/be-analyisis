@@ -37,11 +37,11 @@ const createOrderLobby = async (data: Partial<CreateOrderLobby>): Promise<OrderL
  */
 const getOrderLobbyById = async (orderLobbiesId: string): Promise<OrderLobbyResponse | null> => {
 	try {
-		const row = await prisma.order_lobbies.findUnique({
+		const row = (await prisma.order_lobbies.findUnique({
 			where: { order_lobbies_id: orderLobbiesId },
 			include: orderLobbiesDefaultInclude as any,
-		});
-		return row ? toOrderLobbyResponse(row as OrderLobbyWithIncludesPrisma) : null;
+		})) as OrderLobbyWithIncludesPrisma;
+		return row ? toOrderLobbyResponse(row) : null;
 	} catch (error: any) {
 		console.error('Error getting order lobby by ID:', error);
 		throw error;

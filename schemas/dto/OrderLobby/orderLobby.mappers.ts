@@ -1,5 +1,5 @@
-import { OrderLobbyResponseSchema } from './orderLobby.js';
-import type { OrderLobbyResponse } from './orderLobby.js';
+import { OrderLobbyResponseSchema } from './orderLobby.dto.js';
+import type { OrderLobbyResponse } from './orderLobby.dto.js';
 import { toOrderLobbyItemList } from './orderLobbyItem.mappers.js';
 import { toOrderLobbyUserList } from './orderLobbyUser.mappers.js';
 

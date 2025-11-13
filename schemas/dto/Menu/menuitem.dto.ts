@@ -2,9 +2,82 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { CreateMenuItemSchema, GetMenuItemsByIdsRequestSchema } from './menu.dto.ts';
-import { UUID } from '../../primitives.ts';
+import { UUID, Timestamp } from '../../primitives.ts';
 
 extendZodWithOpenApi(z);
+
+// ===========================
+// MenuItem Base Schema - scalars only, no relations
+// ===========================
+
+export const MenuItemBaseSchema = z
+	.object({
+		menu_item_id: UUID,
+		name_translatable_id: UUID,
+		description_translatable_id: UUID,
+		spicy_level: z.number().int().nullable().optional().openapi({ example: 2 }),
+		unit_size: z.string().nullable().optional().openapi({ example: '500g' }),
+		price: z.number().default(0).openapi({ example: 12.99 }),
+		discount: z.number().nullable().optional().openapi({ example: 10.5 }),
+		sides: z.array(UUID),
+		extras: z.array(UUID),
+		ingredients: z.any().openapi({ example: [{ name: 'Tomato', allergen: false }] }),
+		availability: z.array(z.string()).openapi({ example: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'] }),
+		stores_id: UUID.nullable().optional(),
+		food_drinks_id: UUID.nullable().optional(),
+		menu_category_id: UUID.nullable().optional(),
+		daily_date: Timestamp.nullable().optional(),
+		image_file_id: UUID.nullable().optional(),
+		requires_id_check: z.boolean().default(false).openapi({ example: false }),
+		is_enabled: z.boolean().default(true).openapi({ example: true }),
+		is_copy: z.boolean().default(false).openapi({ example: false }),
+		menu_category_order_index: z.number().int().nullable().optional().openapi({ example: 1 }),
+		allergens_text: z
+			.any()
+			.nullable()
+			.optional()
+			.openapi({ example: { en: 'Contains nuts' } }),
+		ingredients_text: z
+			.any()
+			.nullable()
+			.optional()
+			.openapi({ example: { en: 'Fresh ingredients' } }),
+		usage_text: z
+			.any()
+			.nullable()
+			.optional()
+			.openapi({ example: { en: 'Best served hot' } }),
+		origin_text: z
+			.any()
+			.nullable()
+			.optional()
+			.openapi({ example: { en: 'Local farm' } }),
+		is_weighted: z.boolean().default(false).openapi({ example: false }),
+		weight_quantity: z.number().nullable().optional().openapi({ example: 0.5 }),
+		stock: z.number().nullable().default(1).openapi({ example: 100 }),
+		latest_version_id: UUID.nullable().optional(),
+		tax_rates_id: UUID.nullable().optional(),
+	})
+	.openapi('MenuItemBase');
+
+export type MenuItemBase = z.infer<typeof MenuItemBaseSchema>;
+
+// ===========================
+// MenuItem Ref Schema - minimal identity for embedding elsewhere
+// ===========================
+
+export const MenuItemRefSchema = z
+	.object({
+		menu_item_id: UUID,
+		name_translatable_id: UUID,
+		price: z.number().openapi({ example: 12.99 }),
+		image_file_id: UUID.nullable().optional(),
+		is_enabled: z.boolean().openapi({ example: true }),
+		stock: z.number().nullable().openapi({ example: 100 }),
+	})
+	.openapi('MenuItemRef');
+
+export type MenuItemRef = z.infer<typeof MenuItemRefSchema>;
 
 // -----------------------
 // MenuItem DAO-level input schemas
@@ -98,6 +171,8 @@ export const MenuItemsIdsBodySchema = z.object({ ids: z.array(UUID).min(1) }).op
 
 // Register MenuItem DAO schemas
 export function registerMenuItemDaoSchemas(registry: OpenAPIRegistry) {
+	registry.register('MenuItemBase', MenuItemBaseSchema);
+	registry.register('MenuItemRef', MenuItemRefSchema);
 	registry.register('CreateMenuItemVersionInput', CreateMenuItemVersionInputSchema);
 	registry.register('CreateMenuItemInput', CreateMenuItemInputSchema);
 	registry.register('AddMenuItemIdToOrderInput', AddMenuItemIdToOrderInputSchema);

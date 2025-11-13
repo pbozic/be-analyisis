@@ -1,5 +1,5 @@
-import { OrderLobbyItemResponseSchema } from './orderLobbyItem.js';
-import type { OrderLobbyItemResponse } from './orderLobbyItem.js';
+import { OrderLobbyItemResponseSchema } from './orderLobbyItem.dto.js';
+import type { OrderLobbyItemResponse } from './orderLobbyItem.dto.js';
 
 function toIso(d: unknown): string | undefined | null {
 	if (d === null) return null;

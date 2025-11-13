@@ -8,6 +8,7 @@ import {
 	TRANSACTION_TYPE,
 } from '@prisma/client';
 
+import type { BusinessWithAllModulesResponseDto } from '../schemas/dto/Business';
 import type { DeliveryOrderDetail } from '../schemas/dto/DeliveryOrders/deliveryOrder.dto.ts';
 import type { BusinessByIdResponse } from '../schemas/dto/Business/business.dto.ts';
 import type { UserBase } from '../schemas/dto/User/index.js';
@@ -24,7 +25,7 @@ import socket from '../socket.js';
 import UsersDao from '../dao/User.js';
 import { haversineDistance } from './helpersLib.js';
 import BusinessHelpers from './businessHelpers.js';
-import gApi, { LatLng } from './gApis.js';
+import gApi from './gApis.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
 import { sendNotificationToUser } from './oneSignal.js';
 import {
@@ -41,7 +42,8 @@ import WalletFundsHelpers from './WalletFundsHelpers.js';
 // @ts-ignore - legacy JS module without types yet
 import stripe from './stripe.js';
 import { handleStockSync } from '../controllers/DeliveryOrderController.js';
-import { CalculateOrderLobbyOrderDetails } from '../libOld/deliveryHelpers.js';
+import { LocationWithAddress } from '../schemas/dto/common/Location.dto.ts';
+import { OrderItem } from '../schemas/dto/common/Order.dto.ts';
 
 const NUMBER_OF_DRIVERS_TO_SEND = 3;
 const MAX_ORDER_FIND_ATTEMPTS = 0;
@@ -253,6 +255,116 @@ async function selectDeliveryOrderDrivers(order: DeliveryOrderWithAttempts): Pro
 	}
 	return sliced;
 }
+
+/**
+ * Calculates order details for an order lobby including totals, fees, and delivery information.
+ *
+ * This function computes:
+ * - Sub-total from cart items (including extras and sides)
+ * - Discount savings
+ * - Minimum order fee (if applicable)
+ * - Delivery cost (with student meal consideration)
+ * - Total price (sum of all above)
+ *
+ * @param {BusinessWithAllModulesResponseDto} provider - The business/restaurant providing the order
+ * @param {MenuItemBase[]} cartItems - Array of menu items with quantities, prices, and optional extras/sides
+ * @param {AddressBase} selectedAddress - The delivery address with coordinates
+ * @param {string} [paymentType='cash'] - Payment method type
+ * @param {any} orderData - Additional order data for delivery cost calculation
+ * @returns {DeliveryOrderDetail['details']} Order details object with all calculated values
+ */
+export function CalculateOrderLobbyOrderDetails(
+	provider: BusinessWithAllModulesResponseDto,
+	cartItems: OrderItem[],
+	selectedAddress: LocationWithAddress,
+	paymentType: string = 'cash',
+	orderData: any
+): DeliveryOrderDetail['details'] {
+	// TODO: Refactor this function!!!!!!!!!
+	// On items there will be options, that means extras and sides are not valid anymore
+
+	let orderTotal = 0;
+	let discountTotal = 0;
+	let minimum_order_fee = 0;
+
+	const items = Array.isArray(cartItems) ? cartItems : [];
+
+	let student_meal = false;
+
+	items.forEach((item) => {
+		const quantity = Number(item.quantity) || 0;
+		const price = Number(item.price) || 0;
+		const discount = Number(item.discount) || 0;
+
+		const discountedPrice = price - price * discount;
+
+		orderTotal += discountedPrice * quantity;
+		discountTotal += discount * price * quantity;
+
+		// Extras
+		if (Array.isArray(item?.extras)) {
+			item.extras.forEach((extra: any) => {
+				if (typeof extra !== 'string') {
+					// Then it must be of type MenuItemType
+					const extraPrice = Number(extra?.price) || 0;
+					orderTotal += extraPrice * quantity;
+				}
+			});
+		}
+
+		// Sides
+		if (Array.isArray(item?.sides)) {
+			item.sides.forEach((side: any) => {
+				if (typeof side !== 'string') {
+					// Then it must be of type MenuItemType
+					const sidePrice = Number(side?.price) || 0;
+					orderTotal += sidePrice * quantity;
+				}
+			});
+		}
+
+		if (item?.student_meal) student_meal = true;
+	});
+
+	// Minimum order fee
+	const providerMinimumOrder = provider?.minimum_order ?? 0;
+	if (orderTotal < providerMinimumOrder) {
+		minimum_order_fee = providerMinimumOrder - orderTotal;
+	}
+
+	// Delivery Cost
+	const delivery_cost = calculateOrderDeliveryCost(orderData, student_meal);
+
+	const deliverLocation = {
+		address: selectedAddress?.address,
+		coordinates: {
+			latitude: selectedAddress?.latitude,
+			longitude: selectedAddress?.longitude,
+		},
+	};
+
+	return {
+		sub_total_price: orderTotal,
+		total_price: orderTotal + (delivery_cost || 0) + (minimum_order_fee || 0),
+		discount_savings: discountTotal,
+		provider_address: {
+			address: provider?.address?.address,
+			coordinates: {
+				latitude: provider?.address?.latitude,
+				longitude: provider?.address?.longitude,
+			},
+		},
+		business_id: provider?.business_id || '',
+		delivery_cost: delivery_cost || 0,
+		delivery_address: deliverLocation,
+		minimum_order_fee: minimum_order_fee || 0,
+		payment_type: paymentType,
+		ready_for_pickup_at: null,
+		customer_expected_delivery_at: null,
+		type: 'delivery',
+	} as DeliveryOrderDetail['details'];
+}
+
 /**
  * Notifies a single driver about a new delivery order via sockets and push notifications.
  * Skips if already sent or driver socket is missing.

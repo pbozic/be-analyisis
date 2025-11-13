@@ -3,16 +3,16 @@ import express from 'express';
 import { validate } from '../../middleware/zod.ts';
 import OrderLobbyController from '../../controllers/OrderLobbyController.js';
 import {
-	CreateLobbyRequestSchema,
+	CreateOrderLobbySchema,
 	SubmitLobbyRequestSchema,
 	SetLobbyUsersWithLimitsRequestSchema,
 	SetUserOrderLobbyItemsRequestSchema,
-} from '../../schemas/dto/OrderLobby/orderlobby.dto.ts';
+} from '../../schemas/dto/OrderLobby';
 const router = express.Router();
 router.get('/:order_lobbies_id', OrderLobbyController.getOrderLobbyById);
 router.get('/actives/:business_id', OrderLobbyController.getActiveOrderLobbiesByBusinessId);
 router.get('/user/:user_id', OrderLobbyController.getOrderLobbiesByUserId);
-router.post('/create', validate(CreateLobbyRequestSchema), OrderLobbyController.createLobby);
+router.post('/create', validate(CreateOrderLobbySchema), OrderLobbyController.createLobby);
 router.post('/submit/:order_lobbies_id', validate(SubmitLobbyRequestSchema), OrderLobbyController.submitLobby);
 router.put(
 	'/users/:order_lobbies_id',

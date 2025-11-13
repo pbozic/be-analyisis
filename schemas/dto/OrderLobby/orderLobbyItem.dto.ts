@@ -3,7 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, Timestamp } from '../../primitives.js';
 import { UserRefSchema } from '../User/user.js';
-import { OrderLobbyRefSchema } from './orderLobby.js';
+import { OrderLobbyRefSchema } from './orderLobby.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -17,8 +17,8 @@ export const OrderLobbyItemBaseSchema = z
 		menu_item_id: UUID,
 		menu_item_version_id: UUID,
 		user_id: UUID.nullable().optional(),
-		sides: z.string().describe('JSON array of side item IDs'),
-		extras: z.string().describe('JSON array of extra item IDs'),
+		sides: z.array(UUID).describe('JSON array of side item IDs'),
+		extras: z.array(UUID).describe('JSON array of extra item IDs'),
 		quantity: z.number().int().positive().describe('Quantity of the item'),
 		customer_note: z.string().nullable().optional().describe('Customer note for the item'),
 		created_at: Timestamp,
@@ -40,8 +40,12 @@ export const OrderLobbyItemRefSchema = z
 		order_lobbies_id: UUID,
 		menu_item_id: UUID,
 		user_id: UUID.nullable().optional(),
+		sides: z.array(UUID).describe('JSON array of side item IDs'),
+		extras: z.array(UUID).describe('JSON array of extra item IDs'),
 		quantity: z.number().int().positive(),
 		customer_note: z.string().nullable().optional(),
+		price: z.number().optional().describe('Total price for the item including quantity and extras'),
+		discount: z.number().optional().describe('Discount applied to the item if any'),
 	})
 	.openapi({
 		title: 'OrderLobbyItemRef',
