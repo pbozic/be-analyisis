@@ -19,7 +19,7 @@ const { UserSockets, io } = socket as any;
  * @description Returns a list of reservations along with their business and user information.
  * @operationId getReservations
  * @response 200 - Successful operation, returns a list of reservations
- * @responseContent {object} 200.application/json
+ * @responseContent {TableReservationBase} 200.application/json
  * @response 400 - Error occurred while obtaining the reservation list
  * @prisma_model reservations
  */
@@ -41,7 +41,7 @@ export async function getReservations(req: Request, res: Response): Promise<void
  * @operationId getReservationById
  * @pathParam {string} reservation_id - The ID of the reservation to retrieve
  * @response 200 - Successful operation, returns detailed reservation information
- * @responseContent {object} 200.application/json
+ * @responseContent {TableReservationBase} 200.application/json
  * @response 404 - Reservation not found
  * @response 400 - Error retrieving reservation information
  * @prisma_model reservations
@@ -71,7 +71,7 @@ export async function getReservationById(
  * @operationId getReservationsByBusinessId
  * @pathParam {string} business_id - The ID of the business to retrieve reservations for
  * @response 200 - Successful operation, returns a list of reservations
- * @responseContent {object} 200.application/json
+ * @responseContent {TableReservationBase[]} 200.application/json
  * @response 404 - Business not found
  * @response 400 - Error retrieving reservations
  * @prisma_model reservations
@@ -95,8 +95,11 @@ export async function getReservationsByBusinessId(
  * @summary Get active reservations orders.
  * @description This fetches the next upcoming or in-progress reservation for a user.
  * @operationId getActiveTableReservation
- * @response 200 - Successful operation. Returns reservation or null.
- * @response 500 - Server error.
+ * @pathParam {string} user_id - The ID of the user to retrieve active reservations for
+ * @response 200 - Successful operation, returns a list of reservations
+ * @responseContent {TableReservationDetail} 200.application/json
+ * @response 404 - reservations not found
+ * @response 400 - Error retrieving reservations
  * @prisma_model reservations
  */
 export async function getActiveTableReservation(
@@ -119,10 +122,10 @@ export async function getActiveTableReservation(
  * @summary Create a new reservation
  * @description Adds a new reservation to the database.
  * @operationId createReservation
- * @bodyContent {object} application/json
+ * @bodyContent {CreateReservation} application/json
  * @bodyRequired
  * @response 201 - Reservation created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {TableReservationDetail} 201.application/json
  * @response 400 - Error creating reservation
  * @prisma_model reservations
  * @prisma_model business_users
@@ -171,10 +174,10 @@ export async function createReservation(req: ValidatedRequest<CreateReservationR
  * @summary Update table number
  * @description Updates the table number of a specific reservation.
  * @operationId addTableNumber
- * @bodyContent {object} application/json
+ * @bodyContent {AddTableNumber} application/json
  * @bodyRequired
  * @response 200 - Reservation table updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {TableReservationBase} 200.application/json
  * @response 400 - Error updating reservation table number
  * @prisma_model reservations
  */
@@ -204,10 +207,10 @@ export async function addTableNumber(req: ValidatedRequest<AddTableNumberRequest
  * @summary Update reservation status
  * @description Updates the status of a specific reservation.
  * @operationId updateReservationStatus
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateReservationStatus} application/json
  * @bodyRequired
  * @response 200 - Reservation status updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {TableReservationBase} 200.application/json
  * @response 400 - Error updating reservation status
  * @prisma_model reservations
  */
@@ -245,7 +248,7 @@ export async function updateReservationStatus(
  * @operationId deleteReservation
  * @pathParam {string} reservationId - The ID of the reservation to delete
  * @response 200 - Reservation deleted successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {TableReservationBase} 200.application/json
  * @response 400 - Error deleting reservation
  * @prisma_model reservations
  */

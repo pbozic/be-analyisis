@@ -10,36 +10,22 @@ import { ValidatedRequest } from '../types/validatedRequest.ts';
  * @description Creates or ensures a record in user_favorite_drivers.
  * @operationId addFavoriteDriver
  * @bodyDescription Driver to favorite
- * @bodyContent {
- *   "driver_id": "uuid"
- * } application/json
- * @bodyRequired
  * @prisma_model user_favorite_drivers
  * @response 200 - Favorite driver added
- * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
- *   "user_favorite_drivers_id": "uuid",
- *   "user_id": "uuid",
- *   "driver_id": "uuid"
- * }
+ * @responseContent {FavoriteDriverBase} 200.application/json
  * @prisma_model user_favorite_drivers
  */
 export async function addFavoriteDriver(
-	req: ValidatedRequest<unknown, { driver_id: string }>,
+	req: ValidatedRequest<never, { driver_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
-		// @ts-ignore auth middleware attaches user
-		const user_id: string = req.user?.user_id;
-		const { driver_id } = req.params;
+		const user_id = req.user?.user_id;
 		if (!user_id) {
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
 		}
-		if (!driver_id) {
-			res.status(400).json({ error: 'driver_id is required' });
-			return;
-		}
+		const { driver_id } = req.params;
 		const fav = await FavoriteDao.addFavoriteDriver(user_id, driver_id);
 		res.json(fav);
 	} catch (e: any) {
@@ -55,23 +41,24 @@ export async function addFavoriteDriver(
  * @operationId removeFavoriteDriver
  * @pathParam {string} driver_id - ID of the driver to remove from favorites
  * @response 200 - Favorite driver removed
- * @responseContent {object} 200.application/json
+ * @responseContent {
+ *   "success": true
+ * } 200.application/json
  * @prisma_model user_favorite_drivers
  */
 export async function removeFavoriteDriver(
-	req: ValidatedRequest<unknown, { driver_id: string }>,
+	req: ValidatedRequest<never, { driver_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
-		// @ts-ignore
-		const user_id: string = req.user?.user_id;
+		const user_id = req.user?.user_id;
 		const { driver_id } = req.params;
 		if (!user_id) {
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
 		}
-		const fav = await FavoriteDao.removeFavoriteDriver(user_id, driver_id);
-		res.json(fav);
+		await FavoriteDao.removeFavoriteDriver(user_id, driver_id);
+		res.json({ success: true });
 	} catch (e: any) {
 		res.status(500).json({ error: e.message });
 	}
@@ -83,17 +70,15 @@ export async function removeFavoriteDriver(
  * @summary List the authenticated user's favorite drivers
  * @description Lists user_favorite_drivers for the user including driver data.
  * @operationId listFavoriteDrivers
- * @prisma_model user_favorite_drivers
  * @response 200 - Favorites listed
- * @responseContent {object} 200.application/json
+ * @responseContent {FavoriteDriverDetail[]} 200.application/json
  * @response 500 - Error listing favorites
- * @prisma_model users
  * @prisma_model user_favorite_drivers
+ * @prisma_model users
  */
 export async function listFavoriteDrivers(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
-		// @ts-ignore
-		const user_id: string = req.user?.user_id;
+		const user_id = req.user?.user_id;
 		if (!user_id) {
 			res.status(401).json({ error: 'Unauthorized' });
 			return;

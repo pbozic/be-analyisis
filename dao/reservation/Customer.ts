@@ -5,6 +5,8 @@ import type {
 	UpdateCustomerRequest,
 	CustomerByCodeDAOResponse,
 } from '../../schemas/dto/reservations/customer/customer.dto.js';
+import { toCustomerDAOResponse, toCustomerDAOList } from '../../schemas/dto/reservations/customer/customer.mappers.js';
+import { customerBase } from '../../prisma/includes/reservation/customer.js';
 
 /**
  * Retrieves all customers for a given reservation module.
@@ -14,16 +16,13 @@ import type {
  */
 export async function getCustomersByReservationModuleId(reservationModuleId: string): Promise<CustomerDAOResponse[]> {
 	try {
-		let customers = await prisma.customers.findMany({
+		const customers = await prisma.customers.findMany({
 			where: {
 				reservation_module_id: reservationModuleId,
 			},
-			include: {
-				reservation_module: true,
-				bookings: true,
-			},
+			include: customerBase,
 		});
-		return customers;
+		return toCustomerDAOList(customers);
 	} catch (error) {
 		throw new Error('Error retrieving customers');
 	}
@@ -39,11 +38,11 @@ export async function createCustomer(
 	reservationModuleId: string
 ): Promise<CustomerDAOResponse> {
 	try {
-		let userExists = await prisma.users.findUnique({
+		const userExists = await prisma.users.findUnique({
 			where: { telephone: customerData.telephone },
 		});
-		let userRelation = userExists ? { user: { connect: { user_id: userExists.user_id } } } : {};
-		let customer = await prisma.customers.create({
+		const userRelation = userExists ? { user: { connect: { user_id: userExists.user_id } } } : {};
+		const customer = await prisma.customers.create({
 			data: {
 				first_name: customerData.first_name,
 				last_name: customerData.last_name,
@@ -55,7 +54,7 @@ export async function createCustomer(
 				...userRelation,
 			},
 		});
-		return customer;
+		return toCustomerDAOResponse(customer);
 	} catch (error) {
 		throw new Error('Error creating customer');
 	}
@@ -73,7 +72,7 @@ export async function updateCustomer(
 	customerData: UpdateCustomerRequest
 ): Promise<CustomerDAOResponse> {
 	try {
-		let customer = await prisma.customers.update({
+		const customer = await prisma.customers.update({
 			where: {
 				customer_id: customerId,
 			},
@@ -84,7 +83,7 @@ export async function updateCustomer(
 				telephone: customerData.telephone,
 			},
 		});
-		return customer;
+		return toCustomerDAOResponse(customer);
 	} catch (error) {
 		throw new Error('Error updating customer');
 	}
@@ -116,16 +115,13 @@ export async function deleteCustomer(customerId: string): Promise<void> {
  */
 export async function getCustomerById(customerId: string): Promise<CustomerDAOResponse | null> {
 	try {
-		let customer = await prisma.customers.findUnique({
+		const customer = await prisma.customers.findUnique({
 			where: {
 				customer_id: customerId,
 			},
-			include: {
-				reservation_module: true,
-				bookings: true,
-			},
+			include: customerBase,
 		});
-		return customer;
+		return customer ? toCustomerDAOResponse(customer) : null;
 	} catch (error) {
 		throw new Error('Error retrieving customer');
 	}
@@ -139,7 +135,7 @@ export async function getCustomerById(customerId: string): Promise<CustomerDAORe
  */
 export async function getCustomerByCode(code: string): Promise<CustomerByCodeDAOResponse | null> {
 	try {
-		let customer = await prisma.customers.findUnique({
+		const customer = await prisma.customers.findUnique({
 			where: {
 				code: code,
 			},
@@ -159,7 +155,7 @@ export async function getCustomerByCode(code: string): Promise<CustomerByCodeDAO
 				},
 			},
 		});
-		return customer;
+		return customer as CustomerByCodeDAOResponse | null;
 	} catch (error) {
 		throw new Error('Error retrieving customer');
 	}

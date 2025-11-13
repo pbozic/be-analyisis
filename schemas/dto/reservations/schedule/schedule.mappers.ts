@@ -1,9 +1,12 @@
 import type { ScheduleDAOResponse } from './schedule.dto';
 import { ScheduleDAOResponseSchema } from './schedule.dto';
 import type { ScheduleBasePrisma, ScheduleWithSlotsPrisma } from '../../../../prisma/includes/reservation/schedule';
+import type { BookingSlotRef } from '../booking-slot/booking-slot.dto';
+import type { ScheduleSlotExceptionBase } from '../schedule-slot-exception/schedule-slot-exception.dto';
 
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
+function toIso(d: Date | string | null | undefined): string | undefined {
+	if (!d) return undefined;
+	return d instanceof Date ? d.toISOString() : new Date(d).toISOString();
 }
 
 /**
@@ -28,7 +31,7 @@ export function toScheduleDAOResponse(row: ScheduleBasePrisma): ScheduleDAORespo
 /**
  * Map ScheduleWithSlotsPrisma - returns schedule with slots and employees
  */
-export function toScheduleWithSlots(row: ScheduleWithSlotsPrisma): any {
+export function toScheduleWithSlots(row: ScheduleWithSlotsPrisma) {
 	const r = row;
 
 	const schedule_slots = (r.schedule_slots || []).map((slot) => ({
@@ -36,24 +39,27 @@ export function toScheduleWithSlots(row: ScheduleWithSlotsPrisma): any {
 		schedule_id: slot.schedule_id,
 		schedule_employee_id: slot.schedule_employee_id,
 		employee_id: slot.employee_id,
-		date: toIso(slot.date),
-		start_time: toIso(slot.start_time),
-		end_time: toIso(slot.end_time),
-		booking_slots: (slot.booking_slots || []).map((bs) => ({
-			booking_slot_id: bs.booking_slot_id,
-			schedule_slot_id: bs.schedule_slot_id,
-			start_time: toIso(bs.start_time),
-			end_time: toIso(bs.end_time),
-		})),
-		schedule_slot_exceptions: (slot.schedule_slot_exceptions || []).map((ex) => ({
-			schedule_slot_exception_id: ex.schedule_slot_exception_id,
-			schedule_slot_id: ex.schedule_slot_id,
-			date: toIso(ex.date),
-			start_time: toIso(ex.start_time),
-			end_time: toIso(ex.end_time),
-			reason: ex.reason ?? null,
-			type: ex.type,
-		})),
+		date: toIso(slot.date) ?? '',
+		start_time: toIso(slot.start_time) ?? '',
+		end_time: toIso(slot.end_time) ?? '',
+		booking_slots: (slot.booking_slots || []).map(
+			(bs): BookingSlotRef => ({
+				booking_slot_id: bs.booking_slot_id,
+				start_time: toIso(bs.start_time) ?? '',
+				end_time: toIso(bs.end_time) ?? '',
+			})
+		),
+		schedule_slot_exceptions: (slot.schedule_slot_exceptions || []).map(
+			(ex): ScheduleSlotExceptionBase => ({
+				schedule_slot_exception_id: ex.schedule_slot_exception_id,
+				schedule_slot_id: ex.schedule_slot_id,
+				date: toIso(ex.date) ?? '',
+				start_time: toIso(ex.start_time) ?? '',
+				end_time: toIso(ex.end_time) ?? '',
+				reason: ex.reason ?? null,
+				type: ex.type,
+			})
+		),
 	}));
 
 	const schedule_employees = (r.schedule_employees || []).map((se) => ({
@@ -68,8 +74,8 @@ export function toScheduleWithSlots(row: ScheduleWithSlotsPrisma): any {
 		location_id: r.location_id,
 		name: r.name,
 		color: r.color ?? null,
-		start_date: toIso(r.start_date),
-		end_date: toIso(r.end_date),
+		start_date: toIso(r.start_date) ?? '',
+		end_date: toIso(r.end_date) ?? '',
 		location: r.location ?? null,
 		schedule_slots,
 		schedule_employees,

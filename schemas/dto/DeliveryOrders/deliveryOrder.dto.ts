@@ -30,6 +30,7 @@ export const DeliveryOrderBaseSchema = z
 		total_amount: z.number().nullable().optional(),
 		delivery_fee: z.number().nullable().optional(),
 		tip_amount: z.number().nullable().optional(),
+		payment: z.record(z.any()).nullable().optional(),
 		payment_method: z.string().nullable().optional(),
 		is_daily_meal: z.boolean().optional(),
 		special_instructions: z.string().nullable().optional(),

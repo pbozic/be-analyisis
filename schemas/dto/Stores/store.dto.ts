@@ -21,6 +21,7 @@ export const StoreBaseSchema = z
 		enabled: z.boolean().optional(),
 		online: z.boolean().optional(),
 		overwhelmed: z.boolean().optional(),
+		minimum_order: z.number().int().nullable().optional(),
 		created_at: Timestamp.optional(),
 		updated_at: Timestamp.optional(),
 	})
@@ -42,6 +43,7 @@ export function toStoreDetail(row: unknown): StoreDetail {
 		enabled?: boolean;
 		online?: boolean;
 		overwhelmed?: boolean;
+		minimum_order?: number | null;
 		created_at?: string | Date | null;
 		updated_at?: string | Date | null;
 	};
@@ -50,6 +52,7 @@ export function toStoreDetail(row: unknown): StoreDetail {
 		enabled: r.enabled,
 		online: r.online,
 		overwhelmed: r.overwhelmed,
+		minimum_order: r.minimum_order,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
 	});

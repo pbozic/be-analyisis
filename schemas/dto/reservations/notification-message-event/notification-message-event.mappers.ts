@@ -1,24 +1,26 @@
 import type { NotificationMessageEventResponse } from './notification-message-event.dto';
 import { NotificationMessageEventResponseSchema } from './notification-message-event.dto';
+import type { NotificationMessageEventBasePrisma } from '../../../../prisma/includes/reservation/notification-message-event';
 
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
+function toIso(d: Date | string | null | undefined): string | undefined {
+	if (!d) return undefined;
+	return d instanceof Date ? d.toISOString() : new Date(d).toISOString();
 }
 
 /**
  * Map Prisma notification_message_event to NotificationMessageEventResponse
  */
-export function toNotificationMessageEventResponse(row: any): NotificationMessageEventResponse {
+export function toNotificationMessageEventResponse(
+	row: NotificationMessageEventBasePrisma
+): NotificationMessageEventResponse {
 	const r = row;
 
 	const dto = {
 		notification_message_event_id: r.notification_message_event_id,
-		message_id: r.message_id,
-		event_id: r.event_id,
-		event_data: r.event_data ?? null,
-		timestamp: toIso(r.timestamp) ?? '',
-		message: r.message ?? undefined,
-		event: r.event ?? undefined,
+		notification_message_id: r.notification_message_id,
+		type: r.type,
+		provider_raw: r.provider_raw ?? null,
+		occurred_at: toIso(r.occurred_at) ?? '',
 	};
 
 	return NotificationMessageEventResponseSchema.parse(dto);
@@ -27,7 +29,9 @@ export function toNotificationMessageEventResponse(row: any): NotificationMessag
 /**
  * Map list of notification message events
  */
-export function toNotificationMessageEventList(rows: any[]): NotificationMessageEventResponse[] {
+export function toNotificationMessageEventList(
+	rows: NotificationMessageEventBasePrisma[]
+): NotificationMessageEventResponse[] {
 	return rows.map(toNotificationMessageEventResponse);
 }
 

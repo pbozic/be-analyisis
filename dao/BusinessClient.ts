@@ -26,7 +26,7 @@ import type {
  */
 export async function getAllBusinessClients(): Promise<BusinessClientDetailResponse[]> {
 	try {
-		const rows = await prisma.business_clients.findMany({
+		const rows: BusinessClientDetailPrisma[] = await prisma.business_clients.findMany({
 			include: {
 				crm_module: { include: { business: true } },
 				taxi_orders: true,
@@ -67,8 +67,11 @@ export async function getBusinessClientById(businessClientsId: string): Promise<
 export async function getBusinessClientsByBusinessId(businessId: string): Promise<BusinessClientWithOrdersResponse[]> {
 	try {
 		const business = await getBusinessById(businessId);
+		if (!business) {
+			throw new Error('Business not found');
+		}
 		const rows = await prisma.business_clients.findMany({
-			where: { crm_module_id: business.crm_module_id },
+			where: { crm_module_id: business.crm_module?.crm_module_id },
 			include: { taxi_orders: true },
 		});
 

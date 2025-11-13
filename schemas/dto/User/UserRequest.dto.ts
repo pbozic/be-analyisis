@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { SERVICES } from '@prisma/client';
 
 import { Email, PhoneNumber, UUID } from '../../primitives.js';
 
@@ -597,6 +598,15 @@ export const AcceptFamilyInvitationSchema = z
 		description: 'Request body for accepting a family invitation with invitation code',
 	});
 
+/**
+ * Used by updateFavoriteServices function - PATCH /users/me/favorite-services
+ * Update favorite services schema
+ */
+export const UpdateFavoriteServicesBodySchema = z
+	.object({ service_ids: z.array(z.nativeEnum(SERVICES)) })
+	.openapi('UpdateFavoriteServicesBody');
+export type UpdateFavoriteServicesBody = z.infer<typeof UpdateFavoriteServicesBodySchema>;
+
 // Export all types
 export type UpdateMeRequest = z.infer<typeof UpdateMeSchema>;
 export type UpdateUserByUserIdRequest = z.infer<typeof UpdateUserByUserIdSchema>;
@@ -701,4 +711,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	// Family invitation schemas
 	registry.register('InviteFamilyMemberRequest', InviteFamilyMemberSchema);
 	registry.register('AcceptFamilyInvitationRequest', AcceptFamilyInvitationSchema);
+
+	registry.register('UpdateFavoriteServicesBody', UpdateFavoriteServicesBodySchema);
 }

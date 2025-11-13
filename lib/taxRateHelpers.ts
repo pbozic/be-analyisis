@@ -1,8 +1,9 @@
 import type { Prisma } from '@prisma/client';
-import type { menu_items, tax_rates } from '@prisma/client';
+import type { menu_items } from '@prisma/client';
 
 import TaxDao from '../dao/Tax.js';
 import prisma from '../prisma/prisma.js';
+import { TaxRateDetail } from '../schemas/dto/Tax/tax.dto.js';
 /**
  * Update menu items with new tax rates.
  *
@@ -52,10 +53,10 @@ export async function updateMenuItemsWithNewTaxRates(): Promise<void> {
 /**
  * Execute tax rate change
  *
- * @param {tax_rates} newTaxRate - The new tax rate to be activated
+ * @param {TaxRateDetail} newTaxRate - The new tax rate to be activated
  * @returns {Promise<void>}
  */
-async function executeTaxRateChange(newTaxRate: tax_rates): Promise<void> {
+async function executeTaxRateChange(newTaxRate: TaxRateDetail): Promise<void> {
 	const taxRateId = newTaxRate.tax_rates_id;
 	console.log(`Executing tax rate change for ID: ${taxRateId}`);
 
@@ -129,7 +130,7 @@ export async function checkTaxRateChanges(): Promise<void> {
 		const upcomingTaxRates = await TaxDao.getInactiveTaxRates();
 
 		for (const taxRate of upcomingTaxRates) {
-			const validFromDate = new Date(taxRate.valid_from);
+			const validFromDate = new Date(taxRate.valid_from as string);
 			const now = new Date();
 			now.setHours(0, 0, 0, 0);
 

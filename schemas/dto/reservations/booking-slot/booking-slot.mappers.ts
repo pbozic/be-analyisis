@@ -1,14 +1,16 @@
 import type { BookingSlotResponse } from './booking-slot.dto';
 import { BookingSlotResponseSchema } from './booking-slot.dto';
+import type { BookingSlotBasePrisma } from '../../../../prisma/includes/reservation/booking-slot';
 
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
+function toIso(d: Date | string | null | undefined): string | undefined {
+	if (!d) return undefined;
+	return d instanceof Date ? d.toISOString() : new Date(d).toISOString();
 }
 
 /**
  * Map Prisma booking_slots to BookingSlotResponse
  */
-export function toBookingSlotResponse(row: any): BookingSlotResponse {
+export function toBookingSlotResponse(row: BookingSlotBasePrisma): BookingSlotResponse {
 	const r = row;
 
 	const dto = {
@@ -16,7 +18,13 @@ export function toBookingSlotResponse(row: any): BookingSlotResponse {
 		schedule_slot_id: r.schedule_slot_id,
 		start_time: toIso(r.start_time) ?? '',
 		end_time: toIso(r.end_time) ?? '',
-		schedule_slot: r.schedule_slot ?? undefined,
+		schedule_slot: r.schedule_slot
+			? {
+					schedule_slot_id: r.schedule_slot.schedule_slot_id,
+					start_time: toIso(r.schedule_slot.start_time) ?? '',
+					end_time: toIso(r.schedule_slot.end_time) ?? '',
+				}
+			: undefined,
 	};
 
 	return BookingSlotResponseSchema.parse(dto);
@@ -25,7 +33,7 @@ export function toBookingSlotResponse(row: any): BookingSlotResponse {
 /**
  * Map list of booking slots
  */
-export function toBookingSlotList(rows: any[]): BookingSlotResponse[] {
+export function toBookingSlotList(rows: BookingSlotBasePrisma[]): BookingSlotResponse[] {
 	return rows.map(toBookingSlotResponse);
 }
 

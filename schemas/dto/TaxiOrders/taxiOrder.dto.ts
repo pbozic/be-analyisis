@@ -23,6 +23,8 @@ export const TaxiOrderBaseSchema = z
 		distance: z.number().nullable().optional(),
 		duration: z.number().nullable().optional(),
 		price: z.number().nullable().optional(),
+		payment: z.record(z.any()).nullable().optional(),
+		details: z.record(z.any()).nullable().optional(),
 		currency: z.string().nullable().optional(),
 		payment_method: z.string().nullable().optional(),
 		payment_status: z.string().nullable().optional(),

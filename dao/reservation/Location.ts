@@ -5,6 +5,12 @@ import type {
 	UpdateLocationRequest,
 	LocationWithSchedulesDAOResponse,
 } from '../../schemas/dto/reservations/location/location.dto.js';
+import {
+	toLocationDAOResponse,
+	toLocationDAOList,
+	toLocationWithSchedules,
+} from '../../schemas/dto/reservations/location/location.mappers.js';
+import { locationBase, locationWithSchedules } from '../../prisma/includes/reservation/location.js';
 
 /**
  * Retrieves all locations for a given reservation module.
@@ -14,16 +20,13 @@ import type {
  */
 export async function getLocationsByReservationModuleId(reservationModuleId: string): Promise<LocationDAOResponse[]> {
 	try {
-		let locations = await prisma.location.findMany({
+		const locations = await prisma.location.findMany({
 			where: {
 				reservation_module_id: reservationModuleId,
 			},
-			include: {
-				reservation_module: true,
-				address: true,
-			},
+			include: locationBase,
 		});
-		return locations;
+		return toLocationDAOList(locations);
 	} catch (error) {
 		throw new Error('Error retrieving locations');
 	}
@@ -40,7 +43,7 @@ export async function createLocation(
 	reservation_module_id: string
 ): Promise<LocationDAOResponse> {
 	try {
-		let location = await prisma.location.create({
+		const location = await prisma.location.create({
 			data: {
 				name: locationData.name,
 				phone: locationData.phone,
@@ -56,7 +59,7 @@ export async function createLocation(
 				},
 			},
 		});
-		return location;
+		return toLocationDAOResponse(location);
 	} catch (error) {
 		throw new Error('Error creating location');
 	}
@@ -74,7 +77,7 @@ export async function updateLocation(
 	locationData: UpdateLocationRequest
 ): Promise<LocationDAOResponse> {
 	try {
-		let location = await prisma.location.update({
+		const location = await prisma.location.update({
 			where: { location_id: locationId },
 			data: {
 				name: locationData.name,
@@ -86,7 +89,7 @@ export async function updateLocation(
 				address_id: locationData.address_id,
 			},
 		});
-		return location;
+		return toLocationDAOResponse(location);
 	} catch (error) {
 		throw new Error('Error updating location');
 	}
@@ -116,14 +119,11 @@ export async function deleteLocation(locationId: string): Promise<void> {
  */
 export async function getLocationById(locationId: string): Promise<LocationDAOResponse | null> {
 	try {
-		let location = await prisma.location.findUnique({
+		const location = await prisma.location.findUnique({
 			where: { location_id: locationId },
-			include: {
-				reservation_module: true,
-				address: true,
-			},
+			include: locationBase,
 		});
-		return location;
+		return location ? toLocationDAOResponse(location) : null;
 	} catch (error) {
 		throw new Error('Error retrieving location');
 	}
@@ -139,16 +139,13 @@ export async function getLocationsByReservationModuleIdWithSchedules(
 	reservationModuleId: string
 ): Promise<LocationWithSchedulesDAOResponse[]> {
 	try {
-		let locations = await prisma.location.findMany({
+		const locations = await prisma.location.findMany({
 			where: {
 				reservation_module_id: reservationModuleId,
 			},
-			include: {
-				reservation_module: true,
-				schedules: true,
-			},
+			include: locationWithSchedules,
 		});
-		return locations;
+		return locations.map(toLocationWithSchedules);
 	} catch (error) {
 		throw new Error('Error retrieving locations with schedules');
 	}

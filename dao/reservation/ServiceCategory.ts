@@ -4,6 +4,10 @@ import type {
 	UpdateServiceCategoryRequest,
 	ServiceCategoryDAOResponse,
 } from '../../schemas/dto/reservations/service-category/service-category.dto.js';
+import {
+	toServiceCategoryResponse,
+	toServiceCategoryList,
+} from '../../schemas/dto/reservations/service-category/service-category.mappers.js';
 
 /**
  * Retrieves all service categories for a given business ID.
@@ -15,7 +19,7 @@ export async function getServiceCategoriesByReservationModuleId(
 	reservationModuleId: string
 ): Promise<ServiceCategoryDAOResponse[]> {
 	try {
-		let serviceCategories = await prisma.service_category.findMany({
+		const serviceCategories = await prisma.service_category.findMany({
 			where: {
 				reservation_module_id: reservationModuleId,
 			},
@@ -23,7 +27,7 @@ export async function getServiceCategoriesByReservationModuleId(
 				services: true,
 			},
 		});
-		return serviceCategories;
+		return toServiceCategoryList(serviceCategories);
 	} catch (error) {
 		throw new Error('Error retrieving service categories');
 	}
@@ -42,7 +46,7 @@ export async function createServiceCategory(
 		const parentRelation = serviceCategoryData.parent_id
 			? { parent: { connect: { parent_id: serviceCategoryData.parent_id } } }
 			: {};
-		let serviceCategory = await prisma.service_category.create({
+		const serviceCategory = await prisma.service_category.create({
 			data: {
 				name: serviceCategoryData.name,
 				color: serviceCategoryData.color,
@@ -52,7 +56,7 @@ export async function createServiceCategory(
 				},
 			},
 		});
-		return serviceCategory;
+		return toServiceCategoryResponse(serviceCategory);
 	} catch (error) {
 		throw new Error('Error creating service category');
 	}
@@ -73,7 +77,7 @@ export async function updateServiceCategory(
 		const parentRelation = serviceCategoryData.parent_id
 			? { parent: { connect: { parent_id: serviceCategoryData.parent_id } } }
 			: { parent: { disconnect: true } };
-		let serviceCategory = await prisma.service_category.update({
+		const serviceCategory = await prisma.service_category.update({
 			where: { service_category_id: serviceCategoryId },
 			data: {
 				name: serviceCategoryData.name,
@@ -81,7 +85,7 @@ export async function updateServiceCategory(
 				...parentRelation,
 			},
 		});
-		return serviceCategory;
+		return toServiceCategoryResponse(serviceCategory);
 	} catch (error) {
 		throw new Error('Error updating service category');
 	}
@@ -110,7 +114,7 @@ export async function deleteServiceCategory(serviceCategoryId: string): Promise<
  */
 export async function getServiceCategoryById(serviceCategoryId: string): Promise<ServiceCategoryDAOResponse | null> {
 	try {
-		let serviceCategory = await prisma.service_category.findUnique({
+		const serviceCategory = await prisma.service_category.findUnique({
 			where: { service_category_id: serviceCategoryId },
 			include: {
 				services: true,
@@ -118,7 +122,7 @@ export async function getServiceCategoryById(serviceCategoryId: string): Promise
 				children: true,
 			},
 		});
-		return serviceCategory;
+		return serviceCategory ? toServiceCategoryResponse(serviceCategory) : null;
 	} catch (error) {
 		throw new Error('Error retrieving service category');
 	}

@@ -45,11 +45,8 @@ model reservation_module {
   notification_preferences          notification_preference[]
   notification_provider_credentials notification_provider_credential[]
   notification_messages             notification_message[]
-  business_details_id String?  @db.Uuid @unique
-  business_details    business_details? @relation("reservation_module_business_details", fields: [business_details_id], references: [business_details_id])
-
-  reviewable_id String?     @db.Uuid
-  reviewable    reviewable? @relation(fields: [reviewable_id], references: [reviewable_id])
+  business_details_id               String?                            @unique @db.Uuid
+  business_details                  business_details?                  @relation("reservation_module_business_details", fields: [business_details_id], references: [business_details_id])
 }
 
 /// @summary Physical location accepting reservations.
@@ -323,8 +320,6 @@ model booking {
   service               service?              @relation(fields: [service_id], references: [service_id])
   customer              customers?            @relation(fields: [customer_id], references: [customer_id])
   booking_history_log   booking_history_log[]
-  reviewable_id         String?               @db.Uuid
-  reviewable            reviewable?           @relation(fields: [reviewable_id], references: [reviewable_id])
   course                Boolean               @default(false)
   people_allowed        Int?                  @default(1)
   people_booked         Int?                  @default(1)
@@ -356,15 +351,15 @@ model booking_course_time {
 /// @namespace Bookings
 /// @namespace Courses
 model booking_course_participant {
-  booking_course_participant_id String @id @default(uuid()) @db.Uuid
-  reservation_module_id         String @db.Uuid
-  status                BOOKING_STATUS
-  booking_id  String    @db.Uuid
-  customer_id String    @unique @db.Uuid
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
+  booking_course_participant_id String         @id @default(uuid()) @db.Uuid
+  reservation_module_id         String         @db.Uuid
+  status                        BOOKING_STATUS
+  booking_id                    String         @db.Uuid
+  customer_id                   String         @unique @db.Uuid
+  created_at                    DateTime       @default(now())
+  updated_at                    DateTime       @updatedAt
 
-  customer    customers @relation(fields: [customer_id], references: [customer_id])
+  customer           customers          @relation(fields: [customer_id], references: [customer_id])
   booking            booking            @relation(fields: [booking_id], references: [booking_id])
   reservation_module reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
 }

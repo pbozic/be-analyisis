@@ -6,7 +6,7 @@ import { ReservationModuleRefSchema } from '../reservation-module/reservation-mo
 import { ScheduleSlotRefSchema } from '../schedule-slot/schedule-slot.dto.js';
 import { ScheduleEmployeeRefSchema } from '../schedule-employee/schedule-employee.dto.js';
 import { ScheduleDetailSchema } from '../schedule/schedule.dto.js';
-import { BusinessUserDetailSchema } from '../../Business/index.js';
+import { BusinessUserDetailSchema, BusinessUserLightSchema } from '../../Business/index.js';
 import { BookingSlotBaseSchema } from '../booking-slot/booking-slot.dto.js';
 import { ScheduleSlotExceptionBaseSchema } from '../schedule-slot-exception/schedule-slot-exception.dto.js';
 
@@ -59,6 +59,14 @@ export const EmployeeDetailSchema = EmployeeBaseSchema.extend({
 }).openapi({
 	title: 'EmployeeDetail',
 	description: 'Full employee details returned from DAO functions with business user information',
+});
+
+// ===== LIGHT SCHEMA (for includes with limited business_user select) =====
+export const EmployeeLightSchema = EmployeeBaseSchema.extend({
+	business_user: BusinessUserLightSchema.nullable().optional(),
+}).openapi({
+	title: 'EmployeeLight',
+	description: 'Employee with lightweight business_user (limited select fields from Prisma include)',
 });
 
 // ===== CREATE/UPDATE REQUEST SCHEMAS =====
@@ -179,6 +187,7 @@ export type EmployeeBase = z.infer<typeof EmployeeBaseSchema>;
 export type EmployeeRef = z.infer<typeof EmployeeRefSchema>;
 export type EmployeeWithBusinessUser = z.infer<typeof EmployeeWithBusinessUserSchema>;
 export type EmployeeDetail = z.infer<typeof EmployeeDetailSchema>;
+export type EmployeeLight = z.infer<typeof EmployeeLightSchema>;
 export type CreateEmployeeRequest = z.infer<typeof CreateEmployeeRequestSchema>;
 export type UpdateEmployeeRequest = z.infer<typeof UpdateEmployeeRequestSchema>;
 export type DeleteEmployeeRequest = z.infer<typeof DeleteEmployeeRequestSchema>;
@@ -199,6 +208,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('EmployeeRef', EmployeeRefSchema);
 	registry.register('EmployeeWithBusinessUser', EmployeeWithBusinessUserSchema);
 	registry.register('EmployeeDetail', EmployeeDetailSchema);
+	registry.register('EmployeeLight', EmployeeLightSchema);
 	registry.register('CreateEmployeeRequest', CreateEmployeeRequestSchema);
 	registry.register('UpdateEmployeeRequest', UpdateEmployeeRequestSchema);
 	registry.register('DeleteEmployeeRequest', DeleteEmployeeRequestSchema);

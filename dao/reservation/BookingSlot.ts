@@ -4,7 +4,10 @@ import type {
 	UpdateBookingSlotRequest,
 	BookingSlotResponse,
 } from '../../schemas/dto/reservations/booking-slot/booking-slot.dto';
-// Note: keeping conversions inline per request (no shared mapper file)
+import {
+	toBookingSlotResponse,
+	toBookingSlotList,
+} from '../../schemas/dto/reservations/booking-slot/booking-slot.mappers';
 /**
  * Retrieves all booking slots for a given schedule slot ID.
  * @param {string} scheduleSlotId - The schedule slot ID.
@@ -16,7 +19,7 @@ export async function getBookingSlotsByScheduleSlotId(scheduleSlotId: string): P
 		const records = await prisma.booking_slots.findMany({
 			where: { schedule_slot_id: scheduleSlotId },
 		});
-		return records;
+		return toBookingSlotList(records);
 	} catch (error) {
 		throw new Error('Error retrieving booking slots');
 	}
@@ -37,7 +40,7 @@ export async function createBookingSlot(data: CreateBookingSlotRequest): Promise
 				end_time: data.end_time,
 			},
 		});
-		return record;
+		return toBookingSlotResponse(record);
 	} catch (error) {
 		throw new Error('Error creating booking slot');
 	}
@@ -60,7 +63,7 @@ export async function updateBookingSlot(id: string, data: UpdateBookingSlotReque
 				end_time: data.end_time,
 			},
 		});
-		return record;
+		return toBookingSlotResponse(record);
 	} catch (error) {
 		throw new Error('Error updating booking slot');
 	}
@@ -93,7 +96,7 @@ export async function getBookingSlotById(id: string): Promise<BookingSlotRespons
 		const record = await prisma.booking_slots.findUnique({
 			where: { booking_slot_id: id },
 		});
-		return record;
+		return record ? toBookingSlotResponse(record) : null;
 	} catch (error) {
 		throw new Error('Error retrieving booking slot');
 	}

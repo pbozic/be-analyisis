@@ -14,7 +14,8 @@ import {
 	menu_items,
 	addresses,
 	DELIVERY_ORDER_STATUS,
-	drivers,
+	daily_meals_module,
+	daily_meal_menus,
 } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
@@ -25,6 +26,7 @@ import DailyMealCategory from '../dao/DailyMealCategory.js';
 import BusinessDao from '../dao/Business.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import { DAILY_MEAL_DELIVERY_COST_CENTS } from './constants.js';
+import { DriverBase } from '../schemas/dto/Drivers/driver.dto.js';
 
 /**
  * Convert JavaScript's weekday (Sunday=0) to our system's weekday (Monday=0)
@@ -105,10 +107,7 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 	const now = new Date(new Date().setUTCHours(0, 0, 0, 0));
 	const max_date = new Date(new Date(future_date).setUTCHours(23, 59, 59, 999));
 
-	const DM_businesses = await prisma.business.findMany({
-		where: {
-			offers_daily_meals: true,
-		},
+	const DM_businesses = await prisma.daily_meals_module.findMany({
 		include: {
 			daily_meal_categories: {
 				include: { daily_meal_category_prices: true },
@@ -118,10 +117,9 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 	//TODO:make function for day range generation for each business
 	for (let business of DM_businesses) {
 		console.log('Generating categories for business ', business.business_id);
-		const valid_menus = (await prisma.menus.findMany({
+		const valid_menus = (await prisma.daily_meal_menus.findMany({
 			where: {
-				business_id: business.business_id,
-				isDailyMeal: true,
+				daily_meals_module_id: business.id,
 				date: {
 					gte: now,
 					lte: max_date,
@@ -181,11 +179,8 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 
 		for (let date of create_dates) {
 			try {
-				const new_menu: menus & { date: Date; categories: menu_categories[] } = await MenuDao.createMenu(
-					business.business_id,
-					true,
-					date
-				);
+				const new_menu: daily_meal_menus & { date: Date; categories: menu_categories[] } =
+					await MenuDao.createDailyMealsMenu(business.business_id, date);
 				for (let dmc of business.daily_meal_categories.filter(
 					(cat: daily_meal_categories) => cat.start_date.getTime() <= new_menu.date.getTime() && cat.active
 				)) {
@@ -203,7 +198,7 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 							);
 
 							const new_menu_category = await MenuCategoryDao.createDailyMealMenuCategory(
-								new_menu.menu_id,
+								new_menu.daily_meal_menu_id,
 								relevant_price.daily_meal_category_prices_id
 							);
 						} catch (error) {
@@ -231,17 +226,16 @@ export async function generateDailyMealMenuCategoriesUpToDateForCategory(
 	const now = new Date(new Date().setUTCHours(0, 0, 0, 0));
 	const max_date = new Date(new Date(future_date).setUTCHours(23, 59, 59, 999));
 	const daily_meal_category = await DailyMealCategory.getDailyMealCategoryById(daily_meal_category_id, {
-		business: true,
+		daily_meals_module: true,
 		daily_meal_category_prices: true,
 	});
 
 	//TODO:make function for day range generation for each business
-	const business = daily_meal_category.business;
+	const business = daily_meal_category.daily_meals_module;
 	console.log('Generating categories for business ', business.business_id);
-	const valid_menus = (await prisma.menus.findMany({
+	const valid_menus = (await prisma.daily_meal_menus.findMany({
 		where: {
-			business_id: business.business_id,
-			isDailyMeal: true,
+			daily_meals_module_id: business.id,
 			date: {
 				gte: now,
 				lte: max_date,
@@ -250,7 +244,7 @@ export async function generateDailyMealMenuCategoriesUpToDateForCategory(
 		include: {
 			categories: true,
 		},
-	})) as Array<menus & { date: Date; categories: menu_categories[] }>;
+	})) as Array<daily_meal_menus & { date: Date; categories: menu_categories[] }>;
 
 	// CEHCK ALL valid menus if they have all the menucategories that they should. If not, create them
 	//TODO:make function for single day geenration for single business
@@ -268,7 +262,7 @@ export async function generateDailyMealMenuCategoriesUpToDateForCategory(
 				try {
 					console.log('Generating menu_category for ', menu.date, relevant_price.daily_meal_category_id);
 					const new_menu_category = await MenuCategoryDao.createDailyMealMenuCategory(
-						menu.menu_id,
+						menu.daily_meal_menu_id,
 						relevant_price.daily_meal_category_prices_id
 					);
 				} catch (error) {
@@ -292,11 +286,8 @@ export async function generateDailyMealMenuCategoriesUpToDateForCategory(
 
 	for (let date of create_dates) {
 		try {
-			const new_menu: menus & { date: Date; categories: menu_categories[] } = await MenuDao.createMenu(
-				business.business_id,
-				true,
-				date
-			);
+			const new_menu: daily_meal_menus & { date: Date; categories: menu_categories[] } =
+				await MenuDao.createDailyMealsMenu(business.id, date);
 
 			const sorted_prices: daily_meal_category_prices[] = daily_meal_category.daily_meal_category_prices.sort(
 				(p1: daily_meal_category_prices, p2: daily_meal_category_prices) =>
@@ -384,14 +375,14 @@ export async function generateDMInstancesForDateSimple(datestring: string): Prom
 		},
 	});
 	// console.log(JSON.stringify(subscriptions, null, 2));
-	const business_id_set = new Set<string>();
-	subscriptions.forEach((sub: { business_id: string }) => {
-		business_id_set.add(sub.business_id);
+	const daily_meals_id_set = new Set<string>();
+	subscriptions.forEach((sub: { daily_meals_id: string }) => {
+		daily_meals_id_set.add(sub.daily_meals_id);
 	});
 
-	const businesses = await prisma.business.findMany({
+	const businesses = await prisma.daily_meals_module.findMany({
 		where: {
-			business_id: { in: Array.from(business_id_set) },
+			id: { in: Array.from(daily_meals_id_set) },
 		},
 	});
 	type DeliveryDayMapping = {
@@ -403,19 +394,15 @@ export async function generateDMInstancesForDateSimple(datestring: string): Prom
 		'5': number;
 		'6': number;
 	};
-	// Create a mapping: business_id -> business object
+	// Create a mapping: daily_meals_id -> business object
 	const businessDeliveryMappingMap = new Map<string, DeliveryDayMapping>();
-	businesses.forEach((business: business) => {
-		businessDeliveryMappingMap.set(
-			business.business_id,
-			business.daily_meals_delivery_mapping as DeliveryDayMapping
-		);
+	businesses.forEach((business: daily_meals_module) => {
+		businessDeliveryMappingMap.set(business.id, business.daily_meals_delivery_mapping as DeliveryDayMapping);
 	});
 
-	const menus = await prisma.menus.findMany({
+	const menus = await prisma.daily_meal_menus.findMany({
 		where: {
-			business_id: { in: Array.from(business_id_set) },
-			isDailyMeal: true,
+			daily_meals_module_id: { in: Array.from(daily_meals_id_set) },
 			date: intended_date,
 		},
 		include: {
@@ -438,7 +425,7 @@ export async function generateDMInstancesForDateSimple(datestring: string): Prom
 	>();
 	menus.forEach(
 		(
-			menu: menus & {
+			menu: daily_meal_menus & {
 				categories: (menu_categories & {
 					daily_meal_category_price: daily_meal_category_prices;
 					daily_meal_instances: daily_meal_instances[];
@@ -454,7 +441,7 @@ export async function generateDMInstancesForDateSimple(datestring: string): Prom
 				) => {
 					// console.log(JSON.stringify(menu_category,null,2))
 					if (menu_category.daily_meal_category_price) {
-						const key = `${menu.business_id},${menu_category.daily_meal_category_price.daily_meal_category_id}`;
+						const key = `${menu.daily_meals_module_id},${menu_category.daily_meal_category_price.daily_meal_category_id}`;
 						menuCategoryMap.set(key, menu_category);
 					}
 				}
@@ -483,7 +470,7 @@ export async function generateDMInstancesForDateSimple(datestring: string): Prom
 				(
 					sub_customer: daily_meal_subscription_customers & { daily_meal_instances: daily_meal_instances[] }
 				) => {
-					const menuCategoryMapKey = `${sub.business_id},${sub_customer.daily_meal_category_id}`;
+					const menuCategoryMapKey = `${sub.daily_meals_id},${sub_customer.daily_meal_category_id}`;
 					const menuCategory = menuCategoryMap.get(menuCategoryMapKey);
 					if (menuCategory) {
 						if (
@@ -501,10 +488,10 @@ export async function generateDMInstancesForDateSimple(datestring: string): Prom
 							// 			instance.menu_category_id === menuCategory.menu_category_id
 							// 	)
 							// );
-							const delivery_date = businessDeliveryMappingMap.get(sub.business_id)
+							const delivery_date = businessDeliveryMappingMap.get(sub.daily_meals_id)
 								? mapDateToEarlierWeekday(
 										intended_date,
-										businessDeliveryMappingMap.get(sub.business_id) as Record<number, number>
+										businessDeliveryMappingMap.get(sub.daily_meals_id) as Record<number, number>
 									)
 								: intended_date;
 
@@ -523,7 +510,7 @@ export async function generateDMInstancesForDateSimple(datestring: string): Prom
 						}
 					} else {
 						console.warn(
-							`Missing menu_category ${`${sub.business_id},${sub_customer.daily_meal_category_id}`} for date ${intended_date}`
+							`Missing menu_category ${`${sub.daily_meals_id},${sub_customer.daily_meal_category_id}`} for date ${intended_date}`
 						);
 					}
 				}
@@ -642,7 +629,7 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 		customers: {
 			include: { daily_meal_instances: true },
 		},
-		business: true,
+		daily_meals_module: true,
 	});
 	console.log(sub);
 	const startDate = new Date(sub.start_date || null);
@@ -666,11 +653,10 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 	}> = [];
 	for (let intended_date of create_dates) {
 		console.log(intended_date.toISOString());
-		const menus = await prisma.menus.findMany({
+		const menus = await prisma.daily_meal_menus.findMany({
 			where: {
 				date: intended_date,
-				business_id: sub.business_id,
-				isDailyMeal: true,
+				daily_meals_module_id: sub.daily_meals_id,
 			},
 			select: {
 				menu_id: true,
@@ -705,10 +691,10 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 								instance.menu_category_id === menuCategoryId
 						)
 					) {
-						const delivery_date = sub.business.daily_meals_delivery_mapping
+						const delivery_date = sub.daily_meals_module.daily_meals_delivery_mapping
 							? mapDateToEarlierWeekday(
 									intended_date,
-									sub.business.daily_meals_delivery_mapping as Record<number, number>
+									sub.daily_meals_module.daily_meals_delivery_mapping as Record<number, number>
 								)
 							: intended_date;
 
@@ -785,19 +771,19 @@ export async function cancelSubscriptionById(subscription_id: string) {
 /**
  * Assigns a delivery driver with the least number of active subscriptions.
  *
- * @param {drivers[]} delivery_drivers - Array of delivery drivers with their active subscriptions
+ * @param {DriverBase[] | undefined} delivery_drivers - Array of delivery drivers with their active subscriptions
  * @param {string} id_to_ignore - ID of the driver to ignore
- * @returns {Object} - The assigned delivery driver
+ * @returns {DriverBase} - The assigned delivery driver
  */
 function assignDeliveryDriver(
-	delivery_drivers: (drivers & { subscriptions: daily_meal_subscriptions[] })[],
+	delivery_drivers: (DriverBase & { subscriptions: daily_meal_subscriptions[] })[] | undefined,
 	id_to_ignore?: string
 ) {
 	if (!delivery_drivers || delivery_drivers.length === 0) {
 		throw new Error('No delivery drivers available for assignment.');
 	}
 	const driver = delivery_drivers
-		.filter((d: drivers) => d.driver_id !== id_to_ignore)
+		.filter((d: DriverBase) => d.driver_id !== id_to_ignore)
 		.reduce((prev, current) => {
 			return (prev.subscriptions?.length || 0) < (current.subscriptions?.length || 0) ? prev : current;
 		});
@@ -947,14 +933,14 @@ export async function createDailyMeals() {
 /**
  * Disconnects a delivery driver from all their assigned daily meal subscriptions.
  *
- * @param {string} delivery_driver_id - The ID of the delivery driver to disconnect.
+ * @param {string} driver_id - The ID of the delivery driver to disconnect.
  * @returns {Promise<void>}
  */
-export async function disconnectDriverFromAllSubscriptions(delivery_driver_id: string) {
+export async function disconnectDriverFromAllSubscriptions(driver_id: string) {
 	try {
 		const subscriptions = await prisma.daily_meal_subscriptions.findMany({
 			where: {
-				delivery_driver_id: delivery_driver_id,
+				driver_id,
 			},
 			include: {
 				business: {
@@ -969,32 +955,32 @@ export async function disconnectDriverFromAllSubscriptions(delivery_driver_id: s
 			},
 		});
 		if (subscriptions.length === 0) {
-			console.log(`No daily meal subscriptions found for driver ${delivery_driver_id}`);
+			console.log(`No daily meal subscriptions found for driver ${driver_id}`);
 			return;
 		}
 		await prisma.daily_meal_subscriptions.updateMany({
 			where: {
-				delivery_driver_id: delivery_driver_id,
+				driver_id,
 			},
 			data: {
-				delivery_driver_id: null,
+				driver_id: null,
 			},
 		});
-		console.log(`Disconnected driver ${delivery_driver_id} from ${subscriptions.length} subscriptions`);
+		console.log(`Disconnected driver ${driver_id} from ${subscriptions.length} subscriptions`);
 
 		for (const subscription of subscriptions) {
 			const deliveryDriver = assignDeliveryDriver(
-				subscriptions[0].business.daily_meal_drivers,
-				delivery_driver_id
+				subscriptions[0].daily_meals_module.daily_meal_drivers,
+				driver_id
 			);
 			if (!deliveryDriver) {
 				console.warn(`No delivery driver found to assign for subscription ${subscription.id}`);
 				continue;
 			}
-			await DailyMealDao.connectSubscriptionWithDriver(subscription.id, deliveryDriver.delivery_driver_id);
+			await DailyMealDao.connectSubscriptionWithDriver(subscription.id, deliveryDriver.driver_id);
 		}
 	} catch (error) {
-		console.error(`Error disconnecting driver ${delivery_driver_id} from subscriptions:`, error);
+		console.error(`Error disconnecting driver ${driver_id} from subscriptions:`, error);
 	}
 }
 

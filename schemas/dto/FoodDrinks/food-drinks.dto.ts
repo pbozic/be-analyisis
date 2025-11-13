@@ -25,7 +25,6 @@ export const FoodDrinksBaseSchema = z
 		enabled: z.boolean().optional(),
 		online: z.boolean().optional(),
 		overwhelmed: z.boolean().optional(),
-		seats: z.number().int().nullable().optional(),
 		minimum_order: z.number().int().nullable().optional(),
 		created_at: Timestamp.optional(),
 		updated_at: Timestamp.optional(),
@@ -37,7 +36,6 @@ export const FoodDrinksModuleRefSchema = FoodDrinksBaseSchema.pick({
 	enabled: true,
 	online: true,
 	overwhelmed: true,
-	seats: true,
 	minimum_order: true,
 }).openapi('FoodDrinksModuleRef');
 
@@ -55,7 +53,6 @@ export type PrismaFoodDrinks = {
 	enabled?: boolean | null;
 	online?: boolean | null;
 	overwhelmed?: boolean | null;
-	seats?: number | null;
 	minimum_order?: number | null;
 	created_at?: string | Date | null;
 	updated_at?: string | Date | null;
@@ -69,7 +66,6 @@ export function toFoodDrinksDetail(row: FoodDrinksWithIncludesPrisma | unknown):
 		enabled: r.enabled,
 		online: r.online,
 		overwhelmed: r.overwhelmed,
-		seats: r.seats ?? null,
 		minimum_order: r.minimum_order ?? null,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,

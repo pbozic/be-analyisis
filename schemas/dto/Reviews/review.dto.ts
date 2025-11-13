@@ -1,77 +1,96 @@
 import { z } from 'zod';
-import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { REVIEW_SUBJECT, REVIEW_TYPE, REVIEWER_ROLE } from '@prisma/client';
 
+import { UserRefSchema } from '../User/index';
 import { UUID } from '../../primitives';
 
-extendZodWithOpenApi(z);
+// ReviewItem (Base / Ref / Response)
+// Scalars only
+export const ReviewItemBaseSchema = z.object({
+	item_id: UUID,
+	review_id: UUID,
+	subject_type: z.nativeEnum(REVIEW_SUBJECT).openapi({ example: 'BUSINESS' }), // changed to use Prisma enum
+	subject_id: UUID,
+	type: z.nativeEnum(REVIEW_TYPE).openapi({ example: 'OVERALL' }), // changed to use Prisma enum
+	rating: z.number().nullable().openapi({ example: 4 }),
+	comment: z.string().nullable().openapi({ example: 'Good packaging and delivery' }),
+	created_at: z.string().datetime().openapi({ example: '2025-11-11T12:00:00.000Z' }),
+	updated_at: z.string().datetime().openapi({ example: '2025-11-11T12:00:00.000Z' }),
+});
+export type ReviewItemBase = z.infer<typeof ReviewItemBaseSchema>;
 
-// =======================
-// Review Controller Input Schemas
-// =======================
+// Minimal identity for embedding elsewhere
+export const ReviewItemRefSchema = z.object({
+	item_id: UUID,
+	// label - choose rating as small helpful label (can be null)
+	rating: z.number().nullable().openapi({ example: 4 }),
+});
+export type ReviewItemRef = z.infer<typeof ReviewItemRefSchema>;
 
-export const ReviewBodySchema = z
-	.object({
-		rating: z.number().int().min(1).max(5),
-		comment: z.string().max(2000).optional(),
-		// feedback can be any JSON-like object; keep it flexible but typed
-		feedback: z.record(z.unknown()).optional(),
+// Response / Detail (no relations other than Refs)
+export const ReviewItemResponseSchema = ReviewItemBaseSchema.merge(
+	z.object({
+		// embed only refs of other models if needed (none here)
 	})
-	.openapi('ReviewBody');
-export type ReviewBody = z.infer<typeof ReviewBodySchema>;
+);
+export type ReviewItemResponse = z.infer<typeof ReviewItemResponseSchema>;
 
-// =======================
-// Review DTOs (DAO responses)
-// =======================
-
-export const ReviewBaseSchema = z
-	.object({
-		review_id: UUID,
-		reviewable_id: UUID,
-		author_id: UUID,
-		rating: z.number().nullable().optional(),
-		comment: z.string().nullable().optional(),
-		// feedback is arbitrary JSON
-		feedback: z.unknown().nullable().optional(),
-		created_at: z.string().datetime(),
-		updated_at: z.string().datetime(),
-	})
-	.openapi('ReviewBase');
+// Review (Base / Ref / Response)
+export const ReviewBaseSchema = z.object({
+	event_id: UUID,
+	author_id: UUID,
+	reviewer_role: z.nativeEnum(REVIEWER_ROLE).openapi({ example: 'CUSTOMER' }), // changed to use Prisma enum
+	taxi_order_id: UUID.nullable(),
+	delivery_order_id: UUID.nullable(),
+	comment: z.string().nullable().openapi({ example: 'Overall very satisfied' }),
+	created_at: z.string().datetime().openapi({ example: '2025-11-11T12:00:00.000Z' }),
+	updated_at: z.string().datetime().openapi({ example: '2025-11-11T12:00:00.000Z' }),
+});
 export type ReviewBase = z.infer<typeof ReviewBaseSchema>;
 
-export const ReviewDetailSchema = ReviewBaseSchema.openapi('ReviewDetail');
-export type ReviewDetail = z.infer<typeof ReviewDetailSchema>;
+export const ReviewRefSchema = z.object({
+	event_id: UUID,
+	// label - short preview of comment or role
+	comment: z.string().nullable().openapi({ example: 'Overall very satisfied' }),
+});
+export type ReviewRef = z.infer<typeof ReviewRefSchema>;
 
-// ===============
-// Mappers
-// ===============
-type PrismaReview = {
-	review_id: string;
-	reviewable_id: string;
-	author_id: string;
-	rating?: number | null;
-	comment?: string | null;
-	feedback?: unknown | null;
-	created_at: string | Date;
-	updated_at: string | Date;
-};
+// Response includes author as UserRef and items as array of ReviewItemResponse
+export const ReviewResponseSchema = ReviewBaseSchema.merge(
+	z.object({
+		author: UserRefSchema.optional(),
+		items: z.array(ReviewItemResponseSchema).optional(),
+	})
+);
+export type ReviewResponse = z.infer<typeof ReviewResponseSchema>;
 
-export function toReviewDetail(row: unknown): ReviewDetail {
-	const r = row as PrismaReview;
-	return ReviewDetailSchema.parse({
-		review_id: r.review_id,
-		reviewable_id: r.reviewable_id,
-		author_id: r.author_id,
-		rating: r.rating ?? null,
-		comment: r.comment ?? null,
-		feedback: r.feedback ?? null,
-		created_at: new Date(r.created_at).toISOString(),
-		updated_at: new Date(r.updated_at).toISOString(),
-	});
-}
-
-export function registerSchemas(registry: OpenAPIRegistry) {
+export const ReviewBodySchema = z.object({
+	author_id: UUID,
+	taxi_order_id: UUID.optional(),
+	delivery_order_id: UUID.optional(),
+	reviewer_role: z.nativeEnum(REVIEWER_ROLE).openapi({ example: 'CUSTOMER' }), // changed to use Prisma enum
+	reviewItems: z
+		.array(
+			z.object({
+				rating: z.number(),
+				subject_type: z.nativeEnum(REVIEW_SUBJECT).openapi({ example: 'BUSINESS' }), // changed to use Prisma enum
+				subject_id: UUID,
+				type: z.nativeEnum(REVIEW_TYPE).openapi({ example: 'OVERALL' }), // changed to use Prisma enum
+			})
+		)
+		.openapi({ example: [{ rating: 5, subject_type: 'BUSINESS', subject_id: 'uuid', type: 'OVERALL' }] }),
+	comment: z.string().optional(),
+});
+export type ReviewBody = z.infer<typeof ReviewBodySchema>;
+// Register schemas with OpenAPI registry
+// export names as required by the project's registry pattern
+export function registerSchemas(registry: any /* OpenAPIRegistry */) {
+	// Request/response schemas
+	registry.register('ReviewItemBase', ReviewItemBaseSchema);
+	registry.register('ReviewItemRef', ReviewItemRefSchema);
+	registry.register('ReviewItemResponse', ReviewItemResponseSchema);
 	registry.register('ReviewBody', ReviewBodySchema);
-
 	registry.register('ReviewBase', ReviewBaseSchema);
-	registry.register('ReviewDetail', ReviewDetailSchema);
+	registry.register('ReviewRef', ReviewRefSchema);
+	registry.register('ReviewResponse', ReviewResponseSchema);
 }

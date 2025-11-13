@@ -5,6 +5,10 @@ import type {
 	ScheduleSlotDAOResponse,
 	ScheduleSlotWithScheduleDAOResponse,
 } from '../../schemas/dto/reservations/schedule-slot/schedule-slot.dto.js';
+import {
+	toScheduleSlotDAOResponse,
+	toScheduleSlotDAOList,
+} from '../../schemas/dto/reservations/schedule-slot/schedule-slot.mappers.js';
 
 /**
  * Retrieves all schedule slots for a given schedule ID.
@@ -17,7 +21,7 @@ export async function getScheduleSlotsByScheduleId(scheduleId: string): Promise<
 		const records = await prisma.schedule_slot.findMany({
 			where: { schedule_id: scheduleId },
 		});
-		return records;
+		return toScheduleSlotDAOList(records);
 	} catch (error) {
 		throw new Error('Error retrieving schedule slots');
 	}
@@ -31,7 +35,7 @@ export async function getScheduleSlotsByScheduleId(scheduleId: string): Promise<
  */
 export async function createScheduleSlot(data: CreateScheduleSlotRequest): Promise<ScheduleSlotDAOResponse> {
 	try {
-		const record = await prisma.schedule_slot.create({
+		const slot = await prisma.schedule_slot.create({
 			data: {
 				schedule_id: data.schedule_id,
 				schedule_employee_id: data.schedule_employee_id,
@@ -41,7 +45,7 @@ export async function createScheduleSlot(data: CreateScheduleSlotRequest): Promi
 				end_time: data.end_time,
 			},
 		});
-		return record;
+		return toScheduleSlotDAOResponse(slot);
 	} catch (error) {
 		throw new Error('Error creating schedule slot');
 	}
@@ -59,7 +63,7 @@ export async function updateScheduleSlot(
 	data: UpdateScheduleSlotRequest
 ): Promise<ScheduleSlotDAOResponse> {
 	try {
-		const record = await prisma.schedule_slot.update({
+		const slot = await prisma.schedule_slot.update({
 			where: { schedule_slot_id: id },
 			data: {
 				schedule_id: data.schedule_id,
@@ -70,7 +74,7 @@ export async function updateScheduleSlot(
 				end_time: data.end_time,
 			},
 		});
-		return record;
+		return toScheduleSlotDAOResponse(slot);
 	} catch (error) {
 		throw new Error('Error updating schedule slot');
 	}
@@ -107,7 +111,7 @@ export async function getScheduleSlotById(id: string): Promise<ScheduleSlotDAORe
 				schedule_slot_exceptions: true,
 			},
 		});
-		return record;
+		return record ? toScheduleSlotDAOResponse(record) : null;
 	} catch (error) {
 		throw new Error('Error retrieving schedule slot');
 	}
@@ -140,7 +144,7 @@ export async function getScheduleSlotsByEmployeeIdAndDates(
 				},
 			},
 		});
-		return records;
+		return records as ScheduleSlotWithScheduleDAOResponse[];
 	} catch (error) {
 		throw new Error('Error retrieving schedule slots');
 	}

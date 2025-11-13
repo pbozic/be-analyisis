@@ -32,6 +32,27 @@ export const BusinessUserRefSchema = z.object({
 
 export type BusinessUserRef = z.infer<typeof BusinessUserRefSchema>;
 
+// Lightweight User Ref Schema for nested includes (minimal fields from Prisma select)
+export const UserMinimalRefSchema = z.object({
+	user_id: UUID,
+	email: z.string().nullable(),
+	first_name: z.string().nullable(),
+	last_name: z.string().nullable(),
+});
+
+export type UserMinimalRef = z.infer<typeof UserMinimalRefSchema>;
+
+// Lightweight BusinessUser Schema for includes with limited select fields
+// Used when the Prisma include only selects specific business_user fields (e.g., in employeeBase)
+export const BusinessUserLightSchema = z.object({
+	business_users_id: UUID,
+	business_id: UUID,
+	user_id: UUID,
+	users: UserMinimalRefSchema.optional(),
+});
+
+export type BusinessUserLight = z.infer<typeof BusinessUserLightSchema>;
+
 // BusinessUser Detail Schema - for use in other entities (like Employee) with full user details
 export const BusinessUserDetailSchema = BusinessUserBaseSchema.extend({
 	users: UserResponseSchema.optional(),
@@ -91,6 +112,8 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('BusinessUserRef', BusinessUserRefSchema);
 	registry.register('BusinessUserBase', BusinessUserBaseSchema);
 	registry.register('BusinessUserDetail', BusinessUserDetailSchema);
+	registry.register('BusinessUserLight', BusinessUserLightSchema);
+	registry.register('UserMinimalRef', UserMinimalRefSchema);
 	registry.register('BusinessUserWithBusiness', BusinessUserWithBusinessResponseSchema);
 	registry.register('BusinessUserList', BusinessUserListResponseSchema);
 	registry.register('BusinessUserCreation', BusinessUserCreationResponseSchema);

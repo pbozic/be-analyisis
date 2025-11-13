@@ -3083,6 +3083,34 @@ async function acceptFamilyInvitation(req, res) {
 		return res.status(500).json({ error: error.message || 'Error accepting family invitation' });
 	}
 }
+/**
+ * PATCH /users/me/favorite-services
+ * @tag Users
+ * @summary Update the authenticated user's favorite service links
+ * @description Updates user_favorite_service_links for the user.
+ * @operationId updateFavoriteServices
+ * @bodyContent {object} application/json
+ * @response 200 - Favorites updated
+ * @responseContent {object} 200.application/json
+ * @response 400 - Invalid input data
+ * @responseContent {object} 400.application/json
+ * @response 500 - Error updating favorites
+ * @prisma_model users
+ */
+export async function updateFavoriteServices(req, res) {
+	try {
+		const user_id = req.user?.user_id;
+		if (!user_id) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
+		const { service_ids } = req.body;
+		const updatedFavs = await UserDao.updateFavoriteServices(user_id, service_ids);
+		res.json(updatedFavs);
+	} catch (e) {
+		res.status(500).json({ error: e.message });
+	}
+}
 export { getReferral };
 export { claimReward };
 export { redeemReferralCode };
@@ -3143,6 +3171,7 @@ export { updateNewsletter };
 export { requestData };
 export { inviteFamilyMember };
 export { acceptFamilyInvitation };
+export { updateFavoriteServices };
 export default {
 	getReferral,
 	claimReward,
@@ -3204,4 +3233,5 @@ export default {
 	requestData,
 	inviteFamilyMember,
 	acceptFamilyInvitation,
+	updateFavoriteServices,
 };

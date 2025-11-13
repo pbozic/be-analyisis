@@ -4,7 +4,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, Timestamp } from '../../../primitives';
 import { CustomerRefSchema, CustomerDetailSchema } from '../customer/customer.dto.js';
-import { EmployeeRefSchema, EmployeeDetailSchema } from '../employee/employee.dto.js';
+import { EmployeeRefSchema, EmployeeLightSchema } from '../employee/employee.dto.js';
 import { LocationRefSchema } from '../location/location.dto.js';
 import { ReservationModuleRefSchema } from '../reservation-module/reservation-module.dto.js';
 import { ServiceRefSchema, ServiceWithCategorySchema } from '../service/service.dto.js';
@@ -87,7 +87,7 @@ export const BookingRefSchema = z
 export const BookingWithRelationsSchema = BookingRefSchema.extend({
 	customer: CustomerDetailSchema.nullable().optional(),
 	location: LocationRefSchema.nullable().optional(),
-	employee: EmployeeDetailSchema.nullable().optional(),
+	employee: EmployeeLightSchema.nullable().optional(),
 	service: ServiceRefSchema.nullable().optional(),
 }).openapi({
 	title: 'BookingWithRelations',
@@ -418,7 +418,7 @@ export const BookingResponseSchema = BookingBaseSchema.extend({
 export const BookingDAOResponseSchema = BookingBaseSchema.extend({
 	customer: CustomerDetailSchema.nullable().optional(),
 	location: LocationRefSchema.nullable().optional(),
-	employee: EmployeeDetailSchema.nullable().optional(),
+	employee: EmployeeLightSchema.nullable().optional(),
 	service: ServiceRefSchema.nullable().optional(),
 	reservation_module: ReservationModuleRefSchema.optional(),
 	booking_history_log: z.array(BookingHistoryLogRefSchema).optional(),
@@ -445,7 +445,7 @@ export const BookingWithChildrenDAOResponseSchema = BookingDAOResponseSchema.ext
 
 // DAO response for getBookingsByEmployeeIdsLocationAndDates
 export const BookingWithEmployeeLocationServiceAndCustomerDAOResponseSchema = BookingBaseSchema.extend({
-	employee: EmployeeDetailSchema.nullable().optional(),
+	employee: EmployeeLightSchema.nullable().optional(),
 	location: LocationRefSchema.nullable().optional(),
 	service: ServiceWithCategorySchema.nullable().optional(),
 	customer: CustomerDetailSchema.nullable().optional(),
@@ -460,14 +460,14 @@ export const BookingWithDeepChildrenDAOResponseSchema = BookingBaseSchema.extend
 	customer: CustomerDetailSchema.nullable().optional(),
 	location: LocationRefSchema.nullable().optional(),
 	service: ServiceRefSchema.nullable().optional(),
-	employee: EmployeeDetailSchema.nullable().optional(),
+	employee: EmployeeLightSchema.nullable().optional(),
 	child_bookings: z
 		.array(
 			BookingBaseSchema.extend({
 				customer: CustomerDetailSchema.nullable().optional(),
 				location: LocationRefSchema.nullable().optional(),
 				service: ServiceRefSchema.nullable().optional(),
-				employee: EmployeeDetailSchema.nullable().optional(),
+				employee: EmployeeLightSchema.nullable().optional(),
 			})
 		)
 		.optional(),
@@ -488,7 +488,7 @@ export const BookingCourseDAOResponseSchema = BookingBaseSchema.extend({
 		.optional(),
 	service: ServiceRefSchema.nullable().optional(),
 	location: LocationRefSchema.nullable().optional(),
-	employee: EmployeeDetailSchema.nullable().optional(),
+	employee: EmployeeLightSchema.nullable().optional(),
 }).openapi({
 	title: 'BookingCourseDAOResponse',
 	description: 'Course booking response with course times, attendees and related entities',
@@ -499,7 +499,7 @@ export const BookingCoursesDAOResponseSchema = BookingBaseSchema.extend({
 	booking_course_time: z.array(BookingCourseTimeRefSchema).optional(),
 	location: LocationRefSchema.nullable().optional(),
 	service: ServiceRefSchema.nullable().optional(),
-	employee: EmployeeDetailSchema.nullable().optional(),
+	employee: EmployeeLightSchema.nullable().optional(),
 }).openapi({
 	title: 'BookingCoursesDAOResponse',
 	description: 'Course booking response with course times and related entities',
@@ -630,7 +630,7 @@ export type UpdateBookingGroupResponse = z.infer<typeof UpdateBookingGroupRespon
 
 // ===== BOOKING WITH EMPLOYEES AND SLOTS SCHEMA =====
 
-export const EmployeeWithSlotsSchema = EmployeeDetailSchema.extend({
+export const EmployeeWithSlotsSchema = EmployeeLightSchema.extend({
 	booking_slots: z.array(BookingResponseSchema).optional(),
 	schedule_slot_exceptions: z.array(BookingResponseSchema).optional(),
 }).openapi({
@@ -654,6 +654,22 @@ export type BookingsAndEmployeesWithSlotsResponse = z.infer<typeof BookingsAndEm
 
 // ===== EXPORTED TYPES =====
 export type BookingBase = z.infer<typeof BookingBaseSchema>;
+
+/**
+ * BookingBasePrismaResult - represents raw Prisma booking result with Date objects
+ * Use this type for mappers that receive direct Prisma query results
+ */
+export type BookingBasePrismaResult = Omit<
+	BookingBase,
+	'created_at' | 'updated_at' | 'start_time' | 'end_time' | 'deleted_at'
+> & {
+	created_at: Date;
+	updated_at: Date;
+	start_time: Date | null;
+	end_time: Date | null;
+	deleted_at: Date | null;
+};
+
 export type BookingRef = z.infer<typeof BookingRefSchema>;
 export type BookingWithRelations = z.infer<typeof BookingWithRelationsSchema>;
 export type CreateBookingRequest = z.infer<typeof CreateBookingRequestSchema>;
