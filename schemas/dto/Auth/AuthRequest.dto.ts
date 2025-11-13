@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { MODULE } from '@prisma/client';
 
 import { Email, PhoneNumber, UUID } from '../../primitives.js';
 import {
@@ -33,37 +34,50 @@ export const LoginSchema = z
  * Used by register function - POST /auth/register
  * User registration schema with all required user data
  */
-export const RegisterUserSchema = z
-	.object({
-		first_name: z.string().min(1),
-		last_name: z.string().min(1),
-		email: Email.optional(),
-		telephone: PhoneNumber,
-		telephone_code: z.string(),
-		telephone_number: z.string().optional(),
-		password: z.string().min(8),
-		confirm_password: z.string().min(8),
-		date_of_birth: z.string().datetime(),
-		user_role: z.string().default('PERSONAL'),
-		user_roles: z
-			.array(
-				z.object({
-					role: z.string(),
-					primary: z.boolean(),
-				})
-			)
-			.optional(),
-		apple_id: z.string().optional(),
-		google_id: z.string().optional(),
-		referral_code: z.string().length(6).optional(),
-	})
-	.refine((data) => data.password === data.confirm_password, {
-		message: "Passwords don't match",
-		path: ['confirm_password'],
+const RegisterUserBaseSchema = z.object({
+	first_name: z.string().min(1),
+	last_name: z.string().min(1),
+	email: Email.optional(),
+	telephone: PhoneNumber,
+	telephone_code: z.string(),
+	telephone_number: z.string().optional(),
+	password: z.string().min(8),
+	confirm_password: z.string().min(8),
+	date_of_birth: z.string().datetime(),
+	user_role: z.string().default('PERSONAL'),
+	user_roles: z
+		.array(
+			z.object({
+				role: z.string(),
+				primary: z.boolean(),
+			})
+		)
+		.optional(),
+	apple_id: z.string().optional(),
+	google_id: z.string().optional(),
+	referral_code: z.string().length(6).optional(),
+});
+
+export const RegisterUserSchema = RegisterUserBaseSchema.refine((data) => data.password === data.confirm_password, {
+	message: "Passwords don't match",
+	path: ['confirm_password'],
+}).openapi({
+	title: 'RegisterUserRequest',
+	description: 'Request body for user registration with all required user information',
+});
+
+export const CreateUserSchema = RegisterUserBaseSchema.omit({
+	confirm_password: true,
+	telephone_number: true,
+	referral_code: true,
+	user_roles: true,
+})
+	.extend({
+		stripe_customer_id: z.string().optional(),
 	})
 	.openapi({
-		title: 'RegisterUserRequest',
-		description: 'Request body for user registration with all required user information',
+		title: 'CreateUserRequest',
+		description: 'Request body for creating a user with required information',
 	});
 
 /**
@@ -123,10 +137,10 @@ export const PasswordResetSchema = z
 // ===== BUSINESS REGISTRATION REQUESTS =====
 
 /**
- * Used by registerTaxiService function - POST /auth/taxi/register
- * Complex taxi service registration schema
+ * Used by registerTransportService function - POST /auth/transport/register
+ * Complex transport service registration schema
  */
-export const RegisterTaxiServiceSchema = z
+export const RegisterTransportServiceSchema = z
 	.object({
 		business: z.object({
 			...BusinessRegistrationDataSchema.shape,
@@ -137,9 +151,7 @@ export const RegisterTaxiServiceSchema = z
 			.array(
 				z.object({
 					user: z.object({
-						data: UserRegistrationDataSchema.extend({
-							user_role: z.string().default('DRIVER'),
-						}),
+						data: UserRegistrationDataSchema,
 						documents: z.array(DocumentWithFilesSchema).optional(),
 						addresses: z.array(z.record(z.any())).optional(),
 					}),
@@ -170,105 +182,6 @@ export const RegisterTaxiServiceSchema = z
 	});
 
 /**
- * Used by registerDeliveryService function - POST /auth/delivery/register
- * Complex delivery service registration schema
- */
-export const RegisterDeliveryServiceSchema = z
-	.object({
-		business: BusinessRegistrationDataSchema.extend({
-			type: z.string().default('DELIVERY'),
-		}),
-		deliveryDrivers: z
-			.array(
-				z.object({
-					user: z.object({
-						data: UserRegistrationDataSchema.extend({
-							user_role: z.string().default('DELIVERY_DRIVER'),
-						}),
-						documents: z.array(DocumentWithFilesSchema).optional(),
-						addresses: z.array(z.record(z.any())).optional(),
-					}),
-					driver: z.object({
-						data: z.object({
-							online: z.boolean().default(false),
-							delivers_daily_meals: z.boolean().default(false),
-							working_hours: z.record(z.any()).optional(),
-						}),
-						documents: z
-							.array(
-								z.object({
-									documentData: z.object({
-										document_type: z.string(),
-										public: z.boolean().default(false),
-									}),
-									files: z.array(
-										z.object({
-											file_type: z.string(),
-											mime_type: z.string(),
-											base64: z.string(),
-										})
-									),
-								})
-							)
-							.optional(),
-					}),
-					vehicles: z
-						.array(
-							z.object({
-								data: z.object({
-									class: z.string(),
-									category: z.string(),
-									make: z.string(),
-									model: z.string(),
-									color: z.string(),
-									license_plate: z.string(),
-									year: z.number().optional(),
-									active: z.boolean().default(true),
-								}),
-								documents: z
-									.array(
-										z.object({
-											documentData: z.object({
-												document_type: z.string(),
-												public: z.boolean().default(false),
-											}),
-											files: z.array(
-												z.object({
-													file_type: z.string(),
-													mime_type: z.string(),
-													base64: z.string(),
-												})
-											),
-										})
-									)
-									.optional(),
-							})
-						)
-						.optional(),
-				})
-			)
-			.optional(),
-		addresses: z
-			.object({
-				business: z
-					.object({
-						address: z.string().min(1),
-						city: z.string().min(1),
-						postal_code: z.string().min(1),
-						country: z.string().length(2).default('SI'),
-						latitude: z.number().optional(),
-						longitude: z.number().optional(),
-					})
-					.optional(),
-			})
-			.optional(),
-	})
-	.openapi({
-		title: 'RegisterDeliveryServiceRequest',
-		description: 'Request body for registering a complete delivery service with business and delivery drivers',
-	});
-
-/**
  * Used by registerMerchantService function - POST /auth/merchant/register
  * Complex merchant service registration schema
  */
@@ -276,6 +189,7 @@ export const RegisterMerchantServiceSchema = z
 	.object({
 		business: z.object({
 			data: z.object({
+				business_id: UUID.optional(),
 				name: z.string().min(1),
 				email: Email,
 				telephone: PhoneNumber,
@@ -302,6 +216,7 @@ export const RegisterMerchantServiceSchema = z
 					})
 				)
 				.optional(),
+			types: z.array(z.nativeEnum(MODULE)).optional(),
 		}),
 		users: z
 			.array(
@@ -336,7 +251,7 @@ export const RegisterMerchantServiceSchema = z
 					.object({
 						address: z.string().min(1),
 						city: z.string().min(1),
-						postal_code: z.string().min(1),
+						postal: z.string().min(1),
 						country: z.string().length(2).default('SI'),
 						latitude: z.number().optional(),
 						longitude: z.number().optional(),
@@ -346,7 +261,7 @@ export const RegisterMerchantServiceSchema = z
 					.object({
 						address: z.string().min(1),
 						city: z.string().min(1),
-						postal_code: z.string().min(1),
+						postal: z.string().min(1),
 						country: z.string().length(2).default('SI'),
 						latitude: z.number().optional(),
 						longitude: z.number().optional(),
@@ -428,7 +343,7 @@ export const RegisterBusinessSchema = z
 					.object({
 						address: z.string().min(1),
 						city: z.string().min(1),
-						postal_code: z.string().min(1),
+						postal: z.string().min(1),
 						country: z.string().length(2).default('SI'),
 						latitude: z.number().optional(),
 						longitude: z.number().optional(),
@@ -449,6 +364,8 @@ export const RegisterBusinessSchema = z
 export const RegisterReservationBusinessSchema = z
 	.object({
 		userData: z.object({
+			first_name: z.string().min(1),
+			last_name: z.string().min(1),
 			email: Email,
 			password: z.string().min(8),
 			registration_token: z.string().optional(),
@@ -607,11 +524,11 @@ export const GoogleLoginSchema = z
 // Export all types
 export type LoginRequest = z.infer<typeof LoginSchema>;
 export type RegisterUserRequest = z.infer<typeof RegisterUserSchema>;
+export type CreateUser = z.infer<typeof CreateUserSchema>;
 export type RefreshTokenRequest = z.infer<typeof RefreshTokenSchema>;
 export type RequestPasswordResetRequest = z.infer<typeof RequestPasswordResetSchema>;
 export type PasswordResetRequest = z.infer<typeof PasswordResetSchema>;
-export type RegisterTaxiServiceRequest = z.infer<typeof RegisterTaxiServiceSchema>;
-export type RegisterDeliveryServiceRequest = z.infer<typeof RegisterDeliveryServiceSchema>;
+export type RegisterTransportServiceRequest = z.infer<typeof RegisterTransportServiceSchema>;
 export type RegisterMerchantServiceRequest = z.infer<typeof RegisterMerchantServiceSchema>;
 export type RegisterBusinessRequest = z.infer<typeof RegisterBusinessSchema>;
 export type RegisterReservationBusinessRequest = z.infer<typeof RegisterReservationBusinessSchema>;
@@ -620,6 +537,21 @@ export type UpdateScheduledUserRequest = z.infer<typeof UpdateScheduledUserSchem
 export type AuthenticateRegistrationSessionRequest = z.infer<typeof AuthenticateRegistrationSessionSchema>;
 export type AppleLoginRequest = z.infer<typeof AppleLoginSchema>;
 export type GoogleLoginRequest = z.infer<typeof GoogleLoginSchema>;
+
+export function toUserCreate(user: RegisterUserRequest): CreateUser {
+	return {
+		first_name: user.first_name,
+		last_name: user.last_name,
+		email: user.email,
+		telephone: user.telephone,
+		telephone_code: user.telephone_code,
+		password: user.password,
+		date_of_birth: user.date_of_birth,
+		user_role: user.user_role,
+		apple_id: user.apple_id,
+		google_id: user.google_id,
+	};
+}
 
 /**
  * Register all Auth request schemas with the OpenAPI registry
@@ -635,8 +567,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('GoogleLoginRequest', GoogleLoginSchema);
 
 	// Business registration schemas
-	registry.register('RegisterTaxiServiceRequest', RegisterTaxiServiceSchema);
-	registry.register('RegisterDeliveryServiceRequest', RegisterDeliveryServiceSchema);
+	registry.register('RegisterTransportServiceRequest', RegisterTransportServiceSchema);
 	registry.register('RegisterMerchantServiceRequest', RegisterMerchantServiceSchema);
 	registry.register('RegisterBusinessRequest', RegisterBusinessSchema);
 	registry.register('RegisterReservationBusinessRequest', RegisterReservationBusinessSchema);

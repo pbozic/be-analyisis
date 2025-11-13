@@ -224,7 +224,7 @@ export const getVehiclesByDriverId = async (driver_id: string): Promise<VehicleD
  * @param data - Vehicle creation data.
  * @returns Created vehicle.
  */
-export const createVehicle = async (data: VehicleCreateInput): Promise<VehicleDetail> => {
+export const createVehicle = async (data: VehicleCreateInput, tx: any = prisma): Promise<VehicleDetail> => {
 	try {
 		const vehicleData = {
 			vehicle_class: data.class,
@@ -236,7 +236,7 @@ export const createVehicle = async (data: VehicleCreateInput): Promise<VehicleDe
 			// vin: data.vin,
 		};
 
-		return await prisma.vehicles.create({
+		return await tx.vehicles.create({
 			data: vehicleData,
 			include: {
 				drivers: {
@@ -295,9 +295,9 @@ export const updateVehicle = async (vehicle_id: string, data: VehicleUpdateInput
  * @param driver_id - Driver ID.
  * @returns Vehicle-driver link.
  */
-export const assignVehicleToDriver = async (vehicle_id: string, driver_id: string) => {
+export const assignVehicleToDriver = async (vehicle_id: string, driver_id: string, tx: any = prisma) => {
 	try {
-		return await prisma.driver_vehicle_link.create({
+		return await tx.driver_vehicle_link.create({
 			data: {
 				vehicle_id,
 				driver_id,

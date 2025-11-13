@@ -64,6 +64,7 @@ export type UserRef = z.infer<typeof UserRefSchema>;
 
 // User Response Schema - Base with embedded refs (no password)
 export const UserResponseSchema = UserBaseSchema.omit({ password: true });
+export const UserPasswordSchema = UserBaseSchema.pick({ password: true, user_id: true });
 
 // User with Business Users - for getUserById with business_users include
 export const UserWithBusinessUsersResponseSchema = UserResponseSchema.extend({
@@ -107,6 +108,7 @@ export const UserListResponseSchema = z.object({
 });
 
 export type UserResponse = z.infer<typeof UserResponseSchema>;
+export type UserPassword = z.infer<typeof UserPasswordSchema>;
 export type UserWithBusinessUsersResponse = z.infer<typeof UserWithBusinessUsersResponseSchema>;
 export type UserWithAddressesResponse = z.infer<typeof UserWithAddressesResponseSchema>;
 export type UserDetailResponse = z.infer<typeof UserDetailResponseSchema>;
@@ -128,4 +130,5 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 
 	// Responses
 	registry.register('UserResponse', UserResponseSchema);
+	registry.register('UserPassword', UserPasswordSchema);
 }

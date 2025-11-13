@@ -31,12 +31,14 @@ export const DriverBaseSchema = z
 		handles_taxi_orders: z.boolean().optional(),
 		handles_transfer_orders: z.boolean().optional(),
 		handles_delivery_orders: z.boolean().optional(),
+		handles_cargo_orders: z.boolean().optional(),
 		taxi_orders_toggled: z.boolean().optional(),
 		transfer_orders_toggled: z.boolean().optional(),
 		delivery_orders_toggled: z.boolean().optional(),
+		cargo_orders_toggled: z.boolean().optional(),
 		business_id: UUID.nullable().optional(),
 		transport_module_id: UUID.nullable().optional(),
-		daily_meal_business_id: UUID.nullable().optional(),
+		// daily_meal_business_id: UUID.nullable().optional(),
 		last_used_vehicle_id: UUID.nullable().optional(),
 		created_at: Timestamp.optional(),
 		updated_at: Timestamp.optional(),
@@ -44,10 +46,29 @@ export const DriverBaseSchema = z
 	.openapi('DriverBase');
 export type DriverBase = z.infer<typeof DriverBaseSchema>;
 
+export const VehicleDriversSchema = z
+	.object({
+		vehicle_drivers_id: UUID,
+		vehicle_id: UUID,
+		driver_id: UUID,
+		can_drive: z.boolean(),
+		created_at: Timestamp,
+		updated_at: Timestamp,
+	})
+	.openapi('VehicleDrivers');
+export type VehicleDrivers = z.infer<typeof VehicleDriversSchema>;
+
 export const DriverDetailSchema = DriverBaseSchema.extend({
 	user: BasicUserDataSchema.optional(),
 	current_vehicle: VehicleBaseSchema.nullable().optional(),
-	vehicles: z.array(VehicleBaseSchema).optional().default([]),
+	vehicles: z
+		.array(
+			VehicleDriversSchema.omit({ driver_id: true, created_at: true, updated_at: true }).extend({
+				vehicle: VehicleBaseSchema,
+			})
+		)
+		.optional()
+		.default([]),
 }).openapi('DriverDetail');
 export type DriverDetail = z.infer<typeof DriverDetailSchema>;
 
@@ -70,7 +91,6 @@ type PrismaDriver = {
 	transfer_orders_toggled?: boolean;
 	delivery_orders_toggled?: boolean;
 	cargo_orders_toggled?: boolean;
-	business_id?: string | null;
 	transport_module_id?: string | null;
 	transport_module?: TransportModuleBase | null;
 	last_used_vehicle_id?: string | null;
@@ -115,7 +135,7 @@ function toVehicleBase(row: unknown | null | undefined) {
 	});
 }
 
-export function toDriverDetail(row: unknown): DriverDetail {
+export function toDriverDetail(row: unknown, user?: unknown): DriverDetail {
 	const r = row as PrismaDriver;
 	const currentVehicle = r.current_vehicle ? toVehicleBase(r.current_vehicle) : null;
 	const vehicles = Array.isArray(r.vehicles) ? r.vehicles.map((v) => toVehicleBase(v)!).filter(Boolean) : [];
@@ -140,7 +160,7 @@ export function toDriverDetail(row: unknown): DriverDetail {
 		last_used_vehicle_id: r.last_used_vehicle_id ?? null,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		user: (r as { user?: unknown }).user,
+		user: user || (r as { user?: unknown }).user,
 		current_vehicle: currentVehicle,
 		vehicles,
 	});

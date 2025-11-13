@@ -67,15 +67,15 @@ router.post(
 	validate(CreateDocumentBodySchema),
 	DocumentsController.createVehicleDocument
 );
-/**
- *    * @module transport
- *
- */
-router.post(
-	'/create/delivery_driver/:delivery_driver_id',
-	validate(CreateDocumentBodySchema),
-	DocumentsController.createDeliveryPersonDocument
-);
+// /**
+//  *    * @module transport
+//  *
+//  */
+// router.post(
+// 	'/create/delivery_driver/:delivery_driver_id',
+// 	validate(CreateDocumentBodySchema),
+// 	DocumentsController.createDeliveryPersonDocument
+// );
 router.patch(
 	'/expirationDate',
 	validate(UpdateDocumentExpirationInputSchema),

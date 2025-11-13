@@ -51,7 +51,7 @@ const MAX_ORDER_FIND_ATTEMPTS = 0;
 const { io, SocketStore, UserSockets } = socket;
 
 // Narrow types for driver objects used during scoring (subset of DeliveryDriverDetail/DriverDetail)
-interface CandidateDriver {
+export interface CandidateDriver {
 	driver_id?: string;
 	// delivery_driver_id?: string;
 	user_id: string;

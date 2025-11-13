@@ -131,7 +131,7 @@ async function createBusinessIndex(force = false) {
 		console.error('❌ Error creating business_index:', error);
 	}
 }
-async function indexBusinesses(business_id = null, force = false) {
+async function indexBusinesses(businessId, force = false) {
 	//TODO: Set up indexing for reservation businesses and change for merchants
 	//- Call this function on:
 	//  - App startup
@@ -161,6 +161,7 @@ async function indexBusinesses(business_id = null, force = false) {
 		const whereClause = {
 			OR: [{ stores_module_id: { not: null } }, { food_drinks_module_id: { not: null } }],
 		};
+		const business_id = businessId;
 		if (business_id) {
 			whereClause.business_id = business_id;
 		}

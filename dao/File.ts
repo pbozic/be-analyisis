@@ -21,11 +21,12 @@ type FindUniqueArgs = Prisma.filesFindUniqueArgs;
 const addFileToDocument = async (
 	documentId: string,
 	fileData: Partial<FileBase>,
-	isPublic?: boolean
+	isPublic?: boolean,
+	tx: any = prisma
 ): Promise<FileResponse> => {
 	const data = { ...fileData, public: isPublic || false };
 	try {
-		const created = await prisma.files.create({
+		const created = await tx.files.create({
 			data: {
 				...data,
 				documents: {
@@ -52,7 +53,8 @@ const addFileToDocument = async (
  */
 const addFilesToDocument = async (
 	documentId: string,
-	filesData: Partial<FileBase> | Partial<FileBase>[]
+	filesData: Partial<FileBase> | Partial<FileBase>[],
+	tx: any = prisma
 ): Promise<FileResponse[]> => {
 	try {
 		// Ensure filesData is treated as an array
@@ -60,7 +62,7 @@ const addFilesToDocument = async (
 		// Create files
 		const created = await Promise.all(
 			filesArray.map(async (file) => {
-				return await prisma.files.create({
+				return await tx.files.create({
 					data: {
 						...file,
 						documents: {
@@ -163,9 +165,14 @@ const getFilesByDocumentId = async (document_id: string, args?: FindManyArgs): P
  * @param {boolean} [isPublic=false] - Whether the file is public.
  * @returns {Promise<FileResponse>} Created file.
  */
-const createFile = async (file_type: string, mime_type: string, isPublic: boolean = false): Promise<FileResponse> => {
+const createFile = async (
+	file_type: string,
+	mime_type: string,
+	isPublic: boolean = false,
+	tx: any = prisma
+): Promise<FileResponse> => {
 	try {
-		const created = await prisma.files.create({
+		const created = await tx.files.create({
 			data: { file_type, public: isPublic, mime_type },
 			include: filesDefaultInclude,
 		});

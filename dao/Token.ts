@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { Prisma, TokenType } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-import { TokenBase } from '../schemas/dto/Tokens/token.dto.js';
+import { TokenBase, TokenDetail } from '../schemas/dto/Tokens/token.dto.js';
 
 /**
  * Find an active password reset token by token string.
@@ -182,10 +182,10 @@ export async function generateSMSVerificationToken(user: { user_id: string }): P
 /**
  * Generate a unique password reset token and persist it for a user.
  *
- * @param {object} user - User object with user_id.
+ * @param {object} user_id - User ID.
  * @returns {Promise<TokenBase>} Created token.
  */
-export async function generatePaswordResetToken(user: { user_id: string }): Promise<TokenBase> {
+export async function generatePasswordResetToken(user_id: string): Promise<TokenBase> {
 	let tokenHash = crypto.randomBytes(20).toString('hex');
 	const resetTokenExpires = Date.now() + 3600000 * 24;
 	let existsToken = await prisma.tokens.findUnique({ where: { token: tokenHash } });
@@ -194,7 +194,7 @@ export async function generatePaswordResetToken(user: { user_id: string }): Prom
 		existsToken = await prisma.tokens.findUnique({ where: { token: tokenHash } });
 	}
 	let tokenObj = {
-		user_id: user.user_id,
+		user_id,
 		token: tokenHash,
 		type: 'PASSWORD_RESET',
 		expires_at: new Date(resetTokenExpires),
@@ -239,9 +239,9 @@ export async function generateRegistrationSessionToken(user: { user_id: string }
  * Validate a BUSINESS_REGISTRATION token string and return token including user->business_users->business.
  *
  * @param {string} tokenString - Token string to validate.
- * @returns {Promise<TokenBase|null>} Token row or null if invalid/expired.
+ * @returns {Promise<TokenDetail|null>} Token row or null if invalid/expired.
  */
-export async function validateRegistrationSessionToken(tokenString: string): Promise<TokenBase | null> {
+export async function validateRegistrationSessionToken(tokenString: string): Promise<TokenDetail | null> {
 	try {
 		return await prisma.tokens.findFirst({
 			where: { token: tokenString, type: TokenType.BUSINESS_REGISTRATION, expires_at: { gte: new Date() } },
@@ -277,7 +277,7 @@ export default {
 	updateToken,
 	savePasswordResetToken,
 	generateSMSVerificationToken,
-	generatePaswordResetToken,
+	generatePasswordResetToken,
 	getPasswordToken,
 	generateRegistrationSessionToken,
 	validateRegistrationSessionToken,

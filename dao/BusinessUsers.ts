@@ -21,6 +21,7 @@ import type {
 	BusinessUserWithAllowancePrisma,
 	BusinessUserWithUsersPrisma,
 } from '../prisma/includes/businessUsers.js';
+import { CreateBusinessUser } from '../schemas/dto/BusinessUser/businessUser.js';
 
 // Define common query arg types
 interface FindManyArgs {
@@ -37,18 +38,6 @@ interface FindUniqueArgs {
 }
 
 type PrismaTransactionClient = any;
-
-interface CreateBusinessUserData {
-	data: {
-		email: string;
-		first_name: string;
-		last_name: string;
-		telephone: string;
-		date_of_birth?: Date | string;
-		company_role: string;
-		[key: string]: any;
-	};
-}
 
 /**
  * Get all business_user relations with included user and business.
@@ -167,44 +156,41 @@ const getAllBusinessUsersForBusinessByCompanyRole = async (
 /**
  * Create a business_user relation, optionally creating a new user and Stripe customer.
  *
- * @param {CreateBusinessUserData} userData - Payload containing user data and role.
+ * @param {CreateBusinessUser} userData - Payload containing user data and role.
  * @param {string} business_id - The business to attach the user to.
  * @param {boolean} createNewUser - Whether to create a new user or link an existing one.
  * @param {PrismaTransactionClient} tx - Optional Prisma transaction/client to use.
  * @returns {Promise<BusinessUserCreationResponse>} The created/linked user and business_user relation.
  */
 const createBusinessUser = async (
-	userData: CreateBusinessUserData,
+	userData: CreateBusinessUser,
 	business_id: string,
 	createNewUser: boolean = true,
 	tx: PrismaTransactionClient = prisma
 ): Promise<BusinessUserCreationResponse> => {
 	try {
-		const stripeCustomer = (await createCustomer(
-			userData.data.email,
-			userData.data.first_name + ' ' + userData.data.last_name,
-			userData.data.telephone
-		)) as any; // Stripe customer object
-
-		userData.data.date_of_birth = userData.data?.date_of_birth ? new Date(userData.data.date_of_birth) : undefined;
-
-		const userObj = {
-			...userData.data,
-			stripe_customer_id: stripeCustomer.id,
-		};
-
 		let user;
 		if (createNewUser) {
+			const stripeCustomer = await createCustomer(
+				userData.email,
+				`${userData.first_name} ${userData.last_name}`,
+				userData.telephone
+			); // Stripe customer object
+			const userObj = {
+				...userData,
+				stripe_customer_id: stripeCustomer.id,
+			};
 			user = await UserDao.createNewUser(userObj, true, tx);
 			if (!user) {
 				throw new Error('Failed to create user for new driver');
 			}
+			// TODO: link to user_roles
 		} else {
-			user = await UserDao.getUserByTelephone(userData.data.telephone);
+			user = await UserDao.getUserByTelephone(userData.telephone);
 		}
 
 		const businessUser = await tx.business_users.create({
-			data: { business_id, user_id: user!.user_id, company_role: userData.data.company_role },
+			data: { business_id, user_id: user!.user_id, company_role: userData.company_role },
 		});
 
 		return toBusinessUserCreationResponse(user, businessUser as BusinessUserDefaultPrisma);

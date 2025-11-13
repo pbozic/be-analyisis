@@ -45,9 +45,9 @@ const createDailyMealsMenu = async (dailyMealsModuleId: string, date?: string | 
  * @param {string} module_id - The store's module ID to create the menu for.
  * @returns {Promise<MenuBase>} The created menu record.
  */
-const createStoreMenu = async (module_id: string): Promise<MenuBase> => {
+const createStoreMenu = async (module_id: string, tx: any = prisma): Promise<MenuBase> => {
 	try {
-		const created = await prisma.menus.create({ data: { stores_id: module_id }, include: menusDefaultInclude });
+		const created = await tx.menus.create({ data: { stores_id: module_id }, include: menusDefaultInclude });
 		return toMenuResponse(created as MenuWithIncludesPrisma);
 	} catch (error: unknown) {
 		console.error('Error creating store menu:', error);
@@ -61,9 +61,9 @@ const createStoreMenu = async (module_id: string): Promise<MenuBase> => {
  * @param {string} module_id - The food and drinks module ID.
  * @returns {Promise<MenuBase>} The created menu record.
  */
-const createFoodDrinksMenu = async (module_id: string): Promise<MenuBase> => {
+const createFoodDrinksMenu = async (module_id: string, tx: any = prisma): Promise<MenuBase> => {
 	try {
-		const created = await prisma.menus.create({
+		const created = await tx.menus.create({
 			data: { food_drinks_id: module_id },
 			include: menusDefaultInclude,
 		});

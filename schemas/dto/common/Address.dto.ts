@@ -3,6 +3,7 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { CoordinatesSchema } from './Location.dto.js';
+import { UUID } from '../../primitives.js';
 
 extendZodWithOpenApi(z);
 
@@ -11,7 +12,7 @@ export const BusinessAddressSchema = z
 	.object({
 		address: z.string().min(1),
 		city: z.string().min(1),
-		postal_code: z.string().min(1),
+		postal: z.string().min(1),
 		country: z.string().length(2).default('SI'),
 		latitude: z.number().optional(),
 		longitude: z.number().optional(),
@@ -20,6 +21,13 @@ export const BusinessAddressSchema = z
 		title: 'BusinessAddress',
 		description: 'Business address with coordinates',
 	});
+
+export const AddressResponseSchema = BusinessAddressSchema.extend({
+	address_id: UUID,
+}).openapi({
+	title: 'AddressResponse',
+	description: 'Business address response with ID',
+});
 
 // === Address with Details ===
 export const AddressWithDetailsSchema = BusinessAddressSchema.extend({
@@ -78,6 +86,7 @@ export const BusinessAddressCollectionSchema = z
 	});
 
 // === Type exports ===
+export type AddressResponse = z.infer<typeof AddressResponseSchema>;
 export type BusinessAddress = z.infer<typeof BusinessAddressSchema>;
 export type AddressWithDetails = z.infer<typeof AddressWithDetailsSchema>;
 export type FullAddress = z.infer<typeof FullAddressSchema>;
@@ -86,6 +95,7 @@ export type BusinessAddressCollection = z.infer<typeof BusinessAddressCollection
 
 // === OpenAPI Registry ===
 export function registerSchemas(registry: OpenAPIRegistry) {
+	registry.register('AddressResponse', AddressResponseSchema);
 	registry.register('BusinessAddress', BusinessAddressSchema);
 	registry.register('AddressWithDetails', AddressWithDetailsSchema);
 	registry.register('FullAddress', FullAddressSchema);

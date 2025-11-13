@@ -16,7 +16,6 @@ interface FindManyArgs {
 }
 
 interface CreateDriverData {
-	user_id: string;
 	business_id?: string | null;
 	transport_module_id?: string | null;
 	daily_meal_business_id?: string | null;
@@ -388,32 +387,53 @@ const updateDriver = async (driver_id: string, updateData: Partial<DriverBase>):
  * @param {CreateUserData} userData - User data for driver.
  * @returns {Promise<DriverDetail>} Created driver.
  */
-const createNewDriver = async (driverData: CreateDriverData, userData: CreateUserData): Promise<DriverDetail> => {
+const createNewDriver = async (
+	driverData: CreateDriverData,
+	userData: CreateUserData,
+	tx: any = prisma
+): Promise<DriverDetail> => {
 	try {
-		const stripeCustomer = (await createCustomer(
-			userData.email,
-			`${userData.first_name} ${userData.last_name}`,
-			userData.telephone
-		)) as any;
-		const user = await UserDao.createNewUser({ ...userData, stripe_customer_id: stripeCustomer.id }, true);
-		if (!user) throw new Error('Failed to create user for new driver');
+		let user;
+		const existingUser = await tx.users.findUnique({ where: { telephone: userData.telephone } });
+		if (!existingUser) {
+			const stripeCustomer = await createCustomer(
+				userData.email,
+				`${userData.first_name} ${userData.last_name}`,
+				userData.telephone
+			);
+			const createdUser = await UserDao.createNewUser(
+				{ ...userData, stripe_customer_id: stripeCustomer.id },
+				true,
+				tx
+			);
+			if (!createdUser) throw new Error('Failed to create user for new driver');
+
+			const userRoles = userData.user_roles || [{ role: userData.user_role || 'DRIVER', primary: true }];
+			const result = await UserDao.linkRolesToUser(createdUser?.user_id, userRoles, tx);
+			console.log('User roles linked:', result);
+			user = createdUser;
+		} else {
+			user = existingUser;
+		}
 		// Default location scaffold & timestamp
 		const locationData = {
 			name: null,
 			address: null,
 			coordinates: { latitude: null, longitude: null },
 		};
-		delete (driverData as any).business_id;
-		const driver = await prisma.drivers.create({
+		const driver = await tx.drivers.create({
 			data: {
 				...driverData,
 				location: locationData,
 				last_ping_at: new Date(),
-				user_id: user.user_id,
+				user: { connect: { user_id: user.user_id } },
+				transport_module: driverData.transport_module_id
+					? { connect: { transport_module_id: driverData.transport_module_id } }
+					: undefined,
 			},
 			include: { user: true, vehicles: true, current_vehicle: true },
 		});
-		return toDriverDetail(driver);
+		return toDriverDetail(driver, user);
 	} catch (error) {
 		console.error('Error creating new driver:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to create new driver');
@@ -778,9 +798,13 @@ const clearDriverCurrentVehicle = async (driver_id: string): Promise<DriverDetai
  * @param {string[]} newMunicipalityIds - New municipality IDs to set.
  * @returns {Promise<void>} Resolves when update is complete.
  */
-const addDriverMunicipalities = async (driver_id: string, newMunicipalityIds: string[]): Promise<void> => {
+const addDriverMunicipalities = async (
+	driver_id: string,
+	newMunicipalityIds: string[],
+	tx: any = prisma
+): Promise<void> => {
 	try {
-		const existingMunicipalities = await prisma.driver_municipalities.findMany({
+		const existingMunicipalities = await tx.driver_municipalities.findMany({
 			where: {
 				driver_id: driver_id,
 			},
@@ -798,7 +822,7 @@ const addDriverMunicipalities = async (driver_id: string, newMunicipalityIds: st
 		const municipalitiesToAdd = newMunicipalityIds.filter((id: string) => !existingMunicipalityIds.includes(id));
 
 		if (municipalitiesToRemove.length > 0) {
-			await prisma.driver_municipalities.deleteMany({
+			await tx.driver_municipalities.deleteMany({
 				where: {
 					AND: [{ driver_id: driver_id }, { municipalities_id: { in: municipalitiesToRemove } }],
 				},
@@ -806,7 +830,7 @@ const addDriverMunicipalities = async (driver_id: string, newMunicipalityIds: st
 		}
 
 		const createPromises = municipalitiesToAdd.map((municipality: string) => {
-			return prisma.driver_municipalities.create({
+			return tx.driver_municipalities.create({
 				data: {
 					driver_id: driver_id,
 					municipalities_id: municipality,

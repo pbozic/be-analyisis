@@ -31,16 +31,48 @@ export const AutocompleteQuerySchema = z
 	})
 	.openapi('AutocompleteQuery');
 
-// (Predictions/response schemas removed - only input schema retained)
+// Predictions/response schemas
+export const PlacePredictionSchema = z
+	.object({
+		place_id: z.string().openapi({ example: 'ChIJ...xyz' }),
+		description: z.string().openapi({ example: 'Prešernova cesta 1, 1000 Ljubljana, Slovenia' }),
+	})
+	.openapi('PlacePrediction');
+
+export const AutocompleteResponseSchema = z
+	.object({
+		predictions: z
+			.array(
+				PlacePredictionSchema.extend({
+					description: z.string().openapi({
+						description: 'Shortened address without country and postal code',
+						example: 'Prešernova cesta 1, Ljubljana',
+					}),
+				})
+			)
+			.openapi({
+				description: 'List of address predictions based on the input text',
+			}),
+	})
+	.openapi('AutocompleteResponse');
 
 // =======================
 // Types/Exports
 // =======================
 export type GeocodeRequest = z.infer<typeof GeocodeRequestSchema>;
 export type AutocompleteRequest = z.infer<typeof AutocompleteRequestSchema>;
+export type AutocompleteQuery = z.infer<typeof AutocompleteQuerySchema>;
+export type PlacePrediction = z.infer<typeof PlacePredictionSchema>;
+export type AutocompleteResponse = z.infer<typeof AutocompleteResponseSchema>;
+
+// =======================
+// Register schemas
+// =======================
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('GeocodeRequest', GeocodeRequestSchema);
 	registry.register('AutocompleteRequest', AutocompleteRequestSchema);
 	registry.register('AutocompleteQuery', AutocompleteQuerySchema);
+	registry.register('PlacePrediction', PlacePredictionSchema);
+	registry.register('AutocompleteResponse', AutocompleteResponseSchema);
 }

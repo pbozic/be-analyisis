@@ -10,7 +10,7 @@ import adminRoutes from './api/admin.routes.js';
 import userRoutes from './api/users.routes.ts';
 import authRoutes from './api/auth.routes.js';
 import authTaxiRoutes from './api/taxi/auth.routes.js';
-import authDeliveryRoutes from './api/delivery/auth.routes.js';
+import authTransportRoutes from './api/transport/auth.routes.js';
 import authMerchantRoutes from './api/merchant/auth.routes.ts';
 import reservationsMerchantRoutes from './api/merchant/tableReservations.routes.ts';
 import taxiRoutes from './api/taxi.routes.js';
@@ -78,10 +78,10 @@ router.use('/user/auth', authRoutes);
  */
 router.use('/taxi/auth', authTaxiRoutes);
 /**
- *    * @module delivery,auth,register
+ *    * @module auth,register
  *
  */
-router.use('/delivery/auth', authDeliveryRoutes);
+router.use('/transport/auth', authTransportRoutes);
 /**
  *    * @module merchant,auth,register
  *

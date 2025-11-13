@@ -2,7 +2,8 @@ import { z } from 'zod';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { Email, PhoneNumber } from '../../primitives.js';
+import { Email, PhoneNumber, UUID } from '../../primitives.js';
+import { VehicleEntityBaseSchema } from '../Vehicles/vehicle.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -23,6 +24,7 @@ export type BusinessRef = z.infer<typeof BusinessRefSchema>;
 // === Business Registration Data ===
 export const BusinessRegistrationDataSchema = z
 	.object({
+		business_id: UUID.optional(),
 		name: z.string().min(1),
 		email: Email,
 		telephone: PhoneNumber,
@@ -38,17 +40,17 @@ export const BusinessRegistrationDataSchema = z
 	});
 
 // === Vehicle Information ===
-export const VehicleInformationSchema = z
-	.object({
-		class: z.string(),
-		category: z.string(),
-		make: z.string(),
-		model: z.string(),
-		color: z.string(),
-		license_plate: z.string(),
-		year: z.number().optional(),
-		active: z.boolean().default(true),
-	})
+export const VehicleInformationSchema = VehicleEntityBaseSchema
+	// z.object({
+	// 	class: z.string(),
+	// 	category: z.string(),
+	// 	make: z.string(),
+	// 	model: z.string(),
+	// 	color: z.string(),
+	// 	license_plate: z.string(),
+	// 	year: z.number().optional(),
+	// 	active: z.boolean().default(true),
+	// })
 	.openapi({
 		title: 'VehicleInformation',
 		description: 'Complete vehicle information for registration',
@@ -64,6 +66,7 @@ export const UserRegistrationDataSchema = z
 		telephone_code: z.string(),
 		telephone_number: z.string().optional(),
 		password: z.string().min(8),
+		confirm_password: z.string().min(8),
 		date_of_birth: z.string().datetime(),
 		user_role: z.string(),
 		user_roles: z
@@ -74,6 +77,9 @@ export const UserRegistrationDataSchema = z
 				})
 			)
 			.optional(),
+	})
+	.refine((data) => data.password === data.confirm_password, {
+		message: 'Passwords do not match',
 	})
 	.openapi({
 		title: 'UserRegistrationData',

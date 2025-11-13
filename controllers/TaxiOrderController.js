@@ -673,7 +673,19 @@ async function buildOrder(cleanOrderData, userId, parentOrderId, driverId, busin
 	}
 	return firstOrderId;
 }
-
+/**
+ * POST /taxi/auth/transfer_price
+ * @tag Taxi
+ * @summary Request transfer order price.
+ * @description This endpoint calculates and returns the price for a transfer order based on the provided route and vehicle category.
+ * @operationId requestTransferOrderPrice
+ * @requestBody {object} request.body.required - The request body containing route and vehicle category.
+ * @requestBodyContent {object} application/json
+ * @response 200 - Successful operation. Returns the calculated price for the transfer order.
+ * @responseContent {object} 200.application/json
+ * @response 500 - Server error. Returns error message "Internal Server Error" if any exception is encountered during execution.
+ * @prisma_model taxi_orders
+ */
 async function requestTransferOrderPrice(req, res) {
 	try {
 		const { route, vehicle_category } = req.body;
@@ -775,8 +787,8 @@ async function handlePaymentForTransferOrder(order, return_url) {
 			platform: PLATFORM_CREDIT_CUT_CENTS,
 		};
 		order = await TaxiOrderDao.updateTaxiOrderPayment(order.order_id, order.payment);
-		const PLATFORM_CUT_CENTS = INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS;
-		const DRIVER_CUT_CENTS = INITIAL_DRIVER_CUT - DRIVER_CREDIT_CUT_CENTS;
+		INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS;
+		INITIAL_DRIVER_CUT - DRIVER_CREDIT_CUT_CENTS;
 		// if(PLATFORM_CREDIT_CUT_CENTS>0) {
 		// 	const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
 		// }
@@ -791,7 +803,7 @@ async function handlePaymentForTransferOrder(order, return_url) {
 					throw new Error('Insufficient funds');
 				}
 				// await UsersDao.removeWalletBalance(order.user_id, (DISCOUNTED_TOTAL_COST / 100), order.order_id, "taxi");
-				const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
+				await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
 					user.user_id,
 					DISCOUNTED_TOTAL_COST,
 					order.order_id
@@ -828,7 +840,7 @@ async function handlePaymentForTransferOrder(order, return_url) {
 					throw new Error('Insufficient funds');
 				}
 				// await UsersDao.removeWalletBalance(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id, "taxi");
-				const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
+				await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
 					parent_user.user_id,
 					DISCOUNTED_TOTAL_COST,
 					order.order_id
@@ -1325,7 +1337,7 @@ async function completeOrder(req, res) {
 					await calculateTransferOrderPaymentCuts(order);
 				TOTAL_COST_CENTS = DRIVER_CREDIT_CUT + PLATFORM_CREDIT_CUT + DRIVER_CUT + PLATFORM_CUT;
 				if (PLATFORM_CREDIT_CUT > 0) {
-					const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(
+					await WalletFundsHelpers.transferReservedCreditsForOrder(
 						user.user_id,
 						'platform',
 						PLATFORM_CREDIT_CUT,
@@ -1334,7 +1346,7 @@ async function completeOrder(req, res) {
 					);
 				}
 				if (DRIVER_CREDIT_CUT > 0) {
-					const transferedCreditsDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(
+					await WalletFundsHelpers.transferReservedCreditsForOrder(
 						user.user_id,
 						driver_business.stripe_account_id,
 						DRIVER_CREDIT_CUT,
@@ -1347,15 +1359,11 @@ async function completeOrder(req, res) {
 						const paymentIntent = await stripe.client.paymentIntents.retrieve(
 							order.payment.payment_intent_id
 						);
-						const transferDriver = stripe.splitCutFromPaymentIntent(
-							paymentIntent,
-							driver_business.stripe_account_id,
-							DRIVER_CUT
-						);
+						stripe.splitCutFromPaymentIntent(paymentIntent, driver_business.stripe_account_id, DRIVER_CUT);
 					}
 				} else if (order.payment.type === 'WALLET') {
 					if (PLATFORM_CUT > 0) {
-						const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							order.user_id,
 							'platform',
 							PLATFORM_CUT,
@@ -1364,7 +1372,7 @@ async function completeOrder(req, res) {
 						);
 					}
 					if (DRIVER_CUT > 0) {
-						const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							order.user_id,
 							driver_business.stripe_account_id,
 							DRIVER_CUT,
@@ -1395,7 +1403,7 @@ async function completeOrder(req, res) {
 					}
 					let parent_user_id = user.parent_user.parent_user_id;
 					if (PLATFORM_CUT > 0) {
-						const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							parent_user_id,
 							'platform',
 							PLATFORM_CUT,
@@ -1404,7 +1412,7 @@ async function completeOrder(req, res) {
 						);
 					}
 					if (DRIVER_CUT > 0) {
-						const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							parent_user_id,
 							driver_business.stripe_account_id,
 							DRIVER_CUT,
@@ -1457,7 +1465,7 @@ async function completeOrder(req, res) {
 				const PLATFORM_CUT_CENTS = INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS;
 				const DRIVER_CUT_CENTS = INITIAL_DRIVER_CUT - DRIVER_CREDIT_CUT_CENTS;
 				if (PLATFORM_CREDIT_CUT_CENTS > 0) {
-					const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(
+					await WalletFundsHelpers.transferReservedCreditsForOrder(
 						user.user_id,
 						'platform',
 						PLATFORM_CREDIT_CUT_CENTS,
@@ -1466,7 +1474,7 @@ async function completeOrder(req, res) {
 					);
 				}
 				if (DRIVER_CREDIT_CUT_CENTS > 0) {
-					const transferedCreditsDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(
+					await WalletFundsHelpers.transferReservedCreditsForOrder(
 						user.user_id,
 						driver_business.stripe_account_id,
 						DRIVER_CREDIT_CUT_CENTS,
@@ -1503,7 +1511,7 @@ async function completeOrder(req, res) {
 							}
 						}
 						// await UsersDao.removeWalletBalance(order.user_id, (DISCOUNTED_TOTAL_COST / 100), order.order_id, "taxi");
-						const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
+						await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
 							businessUser ? businessUser.user_id : user.user_id,
 							DISCOUNTED_TOTAL_COST,
 							order.order_id
@@ -1528,14 +1536,14 @@ async function completeOrder(req, res) {
 						}
 						//Only transfer money to driver since we already have the wallet money?
 						// const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
-						const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							businessUser ? businessUser.user_id : user.user_id,
 							driver_business.stripe_account_id,
 							DRIVER_CUT_CENTS,
 							order.order_id,
 							SERVICE_TYPE.TAXI
 						);
-						const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							businessUser ? businessUser.user_id : user.user_id,
 							'platform',
 							PLATFORM_CUT_CENTS,
@@ -1566,7 +1574,7 @@ async function completeOrder(req, res) {
 							throw new Error('Insufficient funds');
 						}
 						// await UsersDao.removeWalletBalance(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id, "taxi");
-						const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
+						await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
 							parent_user.user_id,
 							DISCOUNTED_TOTAL_COST,
 							order.order_id
@@ -1587,14 +1595,14 @@ async function completeOrder(req, res) {
 							},
 							data: updateData,
 						});
-						const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							parent_user.user_id,
 							driver_business.stripe_account_id,
 							DRIVER_CUT_CENTS,
 							order.order_id,
 							SERVICE_TYPE.TAXI
 						);
-						const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							parent_user.user_id,
 							'platform',
 							PLATFORM_CUT_CENTS,
@@ -2758,44 +2766,44 @@ async function rejectGroupedOrderByParentId(req, res) {
 	}
 }
 
-/**
- * GET /taxi/orders/van/split
- * @tag Taxi
- * @summary Splits Van order into multiple smaller orders
- * @description If we cant find a Van driver, we offer the user to split his order into multiple smaller orders.
- * @operationId splitVanOrder
- * @response 200 - Successful operation. Returns a list of all taxi orders created.
- * @responseContent {object} 200.application/json
- * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
- * @prisma_model taxi_orders
- */
-async function splitVanOrder(req, res) {
-	const { order_id, info } = req.body;
-	console.info('TaxiOrderController', 'SPLIT VAN ORDER', req.body);
-	try {
-		let order = await TaxiOrderDao.getOrder(order_id);
-		if (order.preferences?.vehicle_class === VEHICLE_CLASS.VAN) {
-			if (order.parent_order_id) {
-				order = await TaxiOrderDao.getOrder(order.parent_order_id);
-			}
-			if (order.grouped_orders.length > 0) {
-				let num_people = 0;
-				for (let or of order.grouped_orders) {
-					if (or.status === TAXI_ORDER_STATUS.PENDING || or.status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
-						let seats_Adults = or.prefs.adults;
-						let seats_ChildrenUnder140 = or.prefs.children_under_140;
-						let total_seats = seats_Adults + seats_ChildrenUnder140;
-						num_people += total_seats;
-					}
-				}
-			}
-		}
-		res.status(200).json(order);
-	} catch (e) {
-		console.log('TaxiOrderController', e);
-		res.status(500).json(e);
-	}
-}
+// /**
+//  * GET /taxi/orders/van/split
+//  * @tag Taxi
+//  * @summary Splits Van order into multiple smaller orders
+//  * @description If we cant find a Van driver, we offer the user to split his order into multiple smaller orders.
+//  * @operationId splitVanOrder
+//  * @response 200 - Successful operation. Returns a list of all taxi orders created.
+//  * @responseContent {object} 200.application/json
+//  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+//  * @prisma_model taxi_orders
+//  */
+// async function splitVanOrder(req, res) {
+// 	const { order_id, info } = req.body;
+// 	console.info('TaxiOrderController', 'SPLIT VAN ORDER', req.body);
+// 	try {
+// 		let order = await TaxiOrderDao.getOrder(order_id);
+// 		if (order.preferences?.vehicle_class === VEHICLE_CLASS.VAN) {
+// 			if (order.parent_order_id) {
+// 				order = await TaxiOrderDao.getOrder(order.parent_order_id);
+// 			}
+// 			if (order.grouped_orders.length > 0) {
+// 				let num_people = 0;
+// 				for (let or of order.grouped_orders) {
+// 					if (or.status === TAXI_ORDER_STATUS.PENDING || or.status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
+// 						let seats_Adults = or.prefs.adults;
+// 						let seats_ChildrenUnder140 = or.prefs.children_under_140;
+// 						let total_seats = seats_Adults + seats_ChildrenUnder140;
+// 						num_people += total_seats;
+// 					}
+// 				}
+// 			}
+// 		}
+// 		res.status(200).json(order);
+// 	} catch (e) {
+// 		console.log('TaxiOrderController', e);
+// 		res.status(500).json(e);
+// 	}
+// }
 /**
  * POST /taxi/auth/calculate_transfer_price
  * @tag Taxi
