@@ -1,13 +1,11 @@
 import prisma from '../prisma/prisma.js';
-import type { CreateMenuCategoryWithCategoriesInput } from '../schemas/dto/Menu/menucategory.dto.js';
 import type {
-	MenuCategoryRef,
-	MenuItemDetail,
+	CreateMenuCategoryWithCategoriesInput,
 	MenuCategoryCategory,
-	MenuBase,
 	MenuCategory,
-} from '../schemas/dto/Menu/menu.dto.js';
-import type { DailyMealCategoryPriceBase } from '../schemas/dto/DailyMealCategory/daily-meal-category.dto.js';
+} from '../schemas/dto/Menu/menucategory.dto.js';
+import type { MenuCategoryRef, MenuItemDetail, MenuBase } from '../schemas/dto/Menu/menu.dto.js';
+import type { DailyMealCategoryPriceBase } from '../schemas/dto/DailyMealCategory/dailyMealCategory.js';
 import menuCategoriesDefaultInclude, { MenuCategoryWithIncludesPrisma } from '../prisma/includes/menuCategories.js';
 import { toMenuCategoryDetail, toMenuCategoryList } from '../schemas/dto/Menu/menuCategory.mappers.js';
 
@@ -105,7 +103,7 @@ export const createMenuCategory = async (
 		throw new Error('Failed to retrieve created menu category');
 	}
 
-	return toMenuCategoryDetail(menu_categoryR as MenuCategoryWithIncludesPrisma);
+	return toMenuCategoryDetail(menu_categoryR);
 };
 
 /**

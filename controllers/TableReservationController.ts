@@ -8,7 +8,7 @@ import type {
 	CreateReservationRequest,
 	AddTableNumberRequest,
 	UpdateReservationStatusRequest,
-} from '../schemas/dto/TableReservation/TableReservationRequest.dto.ts';
+} from '../schemas/dto/TableReservation/tableReservation.validators.ts';
 
 const { UserSockets, io } = socket as any;
 

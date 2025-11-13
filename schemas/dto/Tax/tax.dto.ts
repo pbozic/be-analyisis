@@ -37,17 +37,7 @@ export type TaxRateDetail = z.infer<typeof TaxRateDetailSchema>;
 
 // Mapper functions moved to `tax.mappers.ts` to keep DTOs and mappers separated.
 
-export const TaxRateInputSchema = z
-	.object({
-		name: z.string().min(1),
-		description: z.string().nullable().optional(),
-		country: z.string().nullable().optional(),
-		rate: z.number(),
-		active: z.boolean(),
-		valid_from: Timestamp,
-	})
-	.openapi('TaxRateInput');
-export type TaxRateInput = z.infer<typeof TaxRateInputSchema>;
+// Request schemas moved to tax.validators.ts
 
 // =======================
 // OpenAPI Registration
@@ -57,5 +47,4 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('TaxRateBase', TaxRateBaseSchema);
 	registry.register('TaxRateRef', TaxRateRefSchema);
 	registry.register('TaxRateDetail', TaxRateDetailSchema);
-	registry.register('TaxRateInput', TaxRateInputSchema);
 }

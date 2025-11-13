@@ -40,12 +40,12 @@ export const BusinessBaseSchema = z.object({
 export type BusinessBase = z.infer<typeof BusinessBaseSchema>;
 
 // Business Ref Schema - minimal identity for embedding elsewhere
+// Updated to match common/Business.dto.ts format (includes logo and banner)
 export const BusinessRefSchema = z.object({
 	business_id: UUID,
-	name: z.string(),
-	email: z.string().email(),
-	telephone: z.string(),
-	active: z.boolean(),
+	name: z.string().nullable().optional(),
+	logo: z.string().url().nullable().optional(),
+	banner: z.string().url().nullable().optional(),
 });
 
 export type BusinessRef = z.infer<typeof BusinessRefSchema>;

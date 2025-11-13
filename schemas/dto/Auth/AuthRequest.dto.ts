@@ -9,8 +9,8 @@ import {
 	UserRegistrationDataSchema,
 	DocumentWithFilesSchema,
 	VehicleRegistrationSchema,
-} from '../common/Business.dto.js';
-import { BusinessAddressSchema } from '../common/Address.dto.js';
+} from '../Business/business.validators.js';
+import { BusinessAddressSchema } from '../Address/address.js';
 
 extendZodWithOpenApi(z);
 

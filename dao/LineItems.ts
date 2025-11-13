@@ -1,12 +1,7 @@
 import { Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-import {
-	UpdateLineItemBody,
-	LineItemData,
-	LineItemDetail,
-	toLineItemDetail,
-} from '../schemas/dto/LineItems/line-items.dto.js';
+import { UpdateLineItemBody, LineItemData, LineItemDetail, toLineItemDetail } from '../schemas/dto/LineItems/index.js';
 import lineItemsDefaultInclude from '../prisma/includes/lineItems.js';
 import type { LineItemsWithIncludesPrisma } from '../prisma/includes/lineItems.js';
 import { UUID } from '../schemas/primitives.js';

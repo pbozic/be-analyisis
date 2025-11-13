@@ -1,4 +1,5 @@
-import { TaxRateInput, TaxRateDetail } from '../schemas/dto/Tax/tax.dto.js';
+import { TaxRateDetail } from '../schemas/dto/Tax/tax.dto.js';
+import { TaxRateInput } from '../schemas/dto/Tax/tax.validators.js';
 import { toTaxRateDetail } from '../schemas/dto/Tax/tax.mappers.js';
 import prisma from '../prisma/prisma.js';
 /**

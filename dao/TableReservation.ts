@@ -3,8 +3,8 @@ import { integer } from '@elastic/elasticsearch/lib/api/types.js';
 
 import prisma from '../prisma/prisma.js';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
-import type { CreateReservationRequest } from '../schemas/dto/TableReservation/TableReservationRequest.dto';
 import { TableReservationDetail, TableReservationBase } from '../schemas/dto/TableReservation/table-reservation.dto.js';
+import { CreateReservationRequest } from '../schemas/dto/TableReservation/tableReservation.validators.js';
 
 /**
  * Get reservations with optional args and includes for business and user.

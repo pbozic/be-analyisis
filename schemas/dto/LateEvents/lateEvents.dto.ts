@@ -4,7 +4,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { UUID, Timestamp } from '../../primitives.js';
 import { UserRefSchema } from '../User/user.js';
 import { StoreBaseSchema } from '../Stores/store.dto.js';
-import { FoodDrinksBaseSchema } from '../FoodDrinks/food-drinks.dto.js';
+import { FoodDrinksBaseSchema } from '../FoodDrinks/index.js';
 
 extendZodWithOpenApi(z);
 
@@ -114,86 +114,7 @@ export const LateEventsResponseSchema = LateEventsBaseSchema.extend({
 
 export type LateEventsResponse = z.infer<typeof LateEventsResponseSchema>;
 
-// ===== REQUEST SCHEMAS =====
-
-// Create LateEvents Schema - for createLateEvent function
-export const CreateLateEventsSchema = z
-	.object({
-		driver_id: UUID.nullable().optional(),
-		delivery_order_id: UUID.nullable().optional(),
-		taxi_order_id: UUID.nullable().optional(),
-		seconds: z.number().int().nonnegative().describe('Delay in seconds'),
-		stores_id: UUID.nullable().optional(),
-		food_drinks_id: UUID.nullable().optional(),
-		scoring_points_id: UUID.nullable().optional(),
-	})
-	.openapi({
-		title: 'CreateLateEvents',
-		description: 'Schema for creating new late events entry',
-	});
-
-export type CreateLateEvents = z.infer<typeof CreateLateEventsSchema>;
-
-// Update LateEvents Schema - for updateLateEvent function
-export const UpdateLateEventsSchema = z
-	.object({
-		late_events_id: UUID,
-		data: z
-			.object({
-				seconds: z.number().int().nonnegative().optional(),
-				stores_id: UUID.nullable().optional(),
-				food_drinks_id: UUID.nullable().optional(),
-				scoring_points_id: UUID.nullable().optional(),
-			})
-			.openapi({
-				title: 'UpdateLateEventsData',
-				description: 'Fields that can be updated in late events',
-			}),
-	})
-	.openapi({
-		title: 'UpdateLateEvents',
-		description: 'Schema for updating late events entry',
-	});
-
-export type UpdateLateEvents = z.infer<typeof UpdateLateEventsSchema>;
-
-// ===== QUERY SCHEMAS =====
-
-// Get Late Events by Business Query - for getLateEventsByBusinessId function
-export const GetLateEventsByBusinessQuerySchema = z
-	.object({
-		business_id: UUID,
-	})
-	.openapi({
-		title: 'GetLateEventsByBusinessQuery',
-		description: 'Query parameters for getting late events by business ID',
-	});
-
-export type GetLateEventsByBusinessQuery = z.infer<typeof GetLateEventsByBusinessQuerySchema>;
-
-// Get Late Event by ID Query - for getLateEventById function
-export const GetLateEventByIdQuerySchema = z
-	.object({
-		late_events_id: UUID,
-	})
-	.openapi({
-		title: 'GetLateEventByIdQuery',
-		description: 'Query parameters for getting late event by ID',
-	});
-
-export type GetLateEventByIdQuery = z.infer<typeof GetLateEventByIdQuerySchema>;
-
-// Delete Late Event Schema - for deleteLateEvent function
-export const DeleteLateEventsSchema = z
-	.object({
-		late_events_id: UUID,
-	})
-	.openapi({
-		title: 'DeleteLateEvents',
-		description: 'Schema for deleting late events entry',
-	});
-
-export type DeleteLateEvents = z.infer<typeof DeleteLateEventsSchema>;
+// Request schemas moved to lateEvents.validators.ts
 
 // ===== LIST RESPONSE SCHEMAS =====
 
@@ -232,19 +153,7 @@ export const LateEventsStatsSchema = z
 
 export type LateEventsStats = z.infer<typeof LateEventsStatsSchema>;
 
-// ===== BULK OPERATIONS =====
-
-// Bulk Create Late Events - for creating multiple late events at once
-export const BulkCreateLateEventsSchema = z
-	.object({
-		events: z.array(CreateLateEventsSchema).min(1).max(100),
-	})
-	.openapi({
-		title: 'BulkCreateLateEvents',
-		description: 'Schema for bulk creating late events (max 100 per request)',
-	});
-
-export type BulkCreateLateEvents = z.infer<typeof BulkCreateLateEventsSchema>;
+// Bulk operations moved to lateEvents.validators.ts
 
 // ===== REGISTRATION FUNCTION =====
 
@@ -258,15 +167,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('DriverRef', DriverRefSchema);
 	registry.register('ScoringPointsRef', ScoringPointsRefSchema);
 
-	// Register request schemas
-	registry.register('CreateLateEvents', CreateLateEventsSchema);
-	registry.register('UpdateLateEvents', UpdateLateEventsSchema);
-	registry.register('DeleteLateEvents', DeleteLateEventsSchema);
-	registry.register('BulkCreateLateEvents', BulkCreateLateEventsSchema);
-
-	// Register query schemas
-	registry.register('GetLateEventsByBusinessQuery', GetLateEventsByBusinessQuerySchema);
-	registry.register('GetLateEventByIdQuery', GetLateEventByIdQuerySchema);
+	// Request schemas registered in lateEvents.validators.ts
 
 	// Register response schemas
 	registry.register('LateEvents', LateEventsResponseSchema);

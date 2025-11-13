@@ -1,4 +1,5 @@
-import { PromoAnalyticsDetail, toPromoAnalyticsDetail } from '../schemas/dto/PromoAnalytics/promo-analytics.dto.js';
+import { PromoAnalyticsDetail } from '../schemas/dto/PromoAnalytics/promo-analytics.dto.js';
+import { toPromoAnalyticsDetail } from '../schemas/dto/PromoAnalytics/promoAnalytics.mappers.js';
 import prisma from '../prisma/prisma.js';
 import promoAnalyticsDefaultInclude, { PromoAnalyticsWithIncludesPrisma } from '../prisma/includes/promoAnalytics.js';
 /**

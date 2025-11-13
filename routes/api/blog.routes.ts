@@ -6,9 +6,11 @@ import {
 	CreateBlogPostSchema,
 	UpdateBlogPostSchema,
 	SearchBlogPostsSchema,
-} from '../../schemas/dto/Blog/blogpost.dto.ts';
-import { CreateBlogCategorySchema, UpdateBlogCategorySchema } from '../../schemas/dto/Blog/blogcategory.dto.ts';
-import { CreateBlogTagSchema, UpdateBlogTagSchema } from '../../schemas/dto/Blog/blogtag.dto.ts';
+	CreateBlogCategorySchema,
+	UpdateBlogCategorySchema,
+	CreateBlogTagSchema,
+	UpdateBlogTagSchema,
+} from '../../schemas/dto/Blog/index.js';
 import authMiddleware from '../../middleware/auth.js';
 const router = express.Router();
 

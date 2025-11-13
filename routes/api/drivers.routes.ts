@@ -20,7 +20,7 @@ import {
 	CreateElectronicDeviceForPremiseSchema,
 	DisableElectronicDeviceSchema,
 	UpdateDeviceAssignmentSchema,
-} from '../../schemas/dto/Driver/DriverRequest.dto.js';
+} from '../../schemas/dto/Driver/driver.validators.js';
 
 const router = express.Router();
 router.get('/', DriverController.listDrivers);

@@ -1,6 +1,6 @@
 import prisma from '../prisma/prisma.js';
-import type { FoodDrinksDetail } from '../schemas/dto/FoodDrinks/food-drinks.dto';
-import { toFoodDrinksDetail } from '../schemas/dto/FoodDrinks/food-drinks.dto';
+import type { FoodDrinksDetail } from '../schemas/dto/FoodDrinks/index.js';
+import { toFoodDrinksDetail } from '../schemas/dto/FoodDrinks/index.js';
 import type { FoodDrinksWithIncludesPrisma } from '../prisma/includes/foodDrinks.js';
 /**
  * Set food_drinks online status.

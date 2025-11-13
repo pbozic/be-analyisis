@@ -7,7 +7,7 @@ import { ValidatedRequest } from '../types/validatedRequest.ts';
 import {
 	CreateBusinessClientInput,
 	UpdateBusinessClientInput,
-} from '../schemas/dto/BusinessClient/BusinessClient.validation.ts';
+} from '../schemas/dto/BusinessClient/businessClient.validators.js';
 
 /**
  * GET /business-clients

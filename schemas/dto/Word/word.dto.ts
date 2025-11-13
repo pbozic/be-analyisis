@@ -47,27 +47,10 @@ export const WordDetailSchema = WordBaseSchema.extend({
 }).openapi('WordDetail');
 export type WordDetail = z.infer<typeof WordDetailSchema>;
 
-// Create/Update Word
-export const WordDataSchema = z
-	.object({
-		word: z.string().min(1),
-		categories_id: UUID,
-	})
-	.openapi('WordData');
+// Request schemas moved to word.validators.ts
 
-export const CreateWordRequestSchema = z
-	.object({
-		wordData: WordDataSchema,
-		translations: z.array(TranslationItemSchema).min(1),
-	})
-	.openapi('CreateWordRequest');
-export type CreateWordRequest = z.infer<typeof CreateWordRequestSchema>;
-
-export const UpdateWordRequestSchema = CreateWordRequestSchema.openapi('UpdateWordRequest');
-export type UpdateWordRequest = z.infer<typeof UpdateWordRequestSchema>;
-
-// Word Buy
-export const WordBuyItemSchema = z
+// Word Buy Response
+export const WordBuyItemDetailSchema = z
 	.object({
 		word_id: UUID,
 		price: z.number().nonnegative(),
@@ -77,32 +60,10 @@ export const WordBuyItemSchema = z
 		updated_at: Timestamp.optional(),
 		business_id: UUID.optional(),
 		business: BusinessBaseSchema.optional(),
+		word: WordDetailSchema,
 	})
-	.openapi('WordBuyItem');
-export type WordBuyItem = z.infer<typeof WordBuyItemSchema>;
-
-export const WordBuyItemDetailSchema = WordBuyItemSchema.extend({
-	word: WordDetailSchema,
-}).openapi('WordBuyItemDetail');
+	.openapi('WordBuyItemDetail');
 export type WordBuyItemDetail = z.infer<typeof WordBuyItemDetailSchema>;
-
-export const CreateWordBuyRequestSchema = z
-	.object({
-		words: z.array(WordBuyItemSchema).min(1),
-		business_id: UUID,
-	})
-	.openapi('CreateWordBuyRequest');
-export type CreateWordBuyRequest = z.infer<typeof CreateWordBuyRequestSchema>;
-
-export const UpdateWordBuysRequestSchema = CreateWordBuyRequestSchema.openapi('UpdateWordBuysRequest');
-export type UpdateWordBuysRequest = z.infer<typeof UpdateWordBuysRequestSchema>;
-
-export const UpdateSingleWordBuyRequestSchema = z
-	.object({
-		price: z.number().nonnegative(),
-	})
-	.openapi('UpdateSingleWordBuyRequest');
-export type UpdateSingleWordBuyRequest = z.infer<typeof UpdateSingleWordBuyRequestSchema>;
 
 // =======================
 // Subscription Responses
@@ -141,18 +102,11 @@ export const CreateWordBuySubscriptionResponseSchema = z
 export type CreateWordBuySubscriptionResponse = z.infer<typeof CreateWordBuySubscriptionResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
-	// Responses
 	registry.register('CategoryRef', CategoryRefSchema);
 	registry.register('WordBase', WordBaseSchema);
 	registry.register('WordDetail', WordDetailSchema);
 	registry.register('TranslationItem', TranslationItemSchema);
-	registry.register('WordData', WordDataSchema);
-	registry.register('CreateWordRequest', CreateWordRequestSchema);
-	registry.register('UpdateWordRequest', UpdateWordRequestSchema);
-	registry.register('WordBuyItem', WordBuyItemSchema);
-	registry.register('CreateWordBuyRequest', CreateWordBuyRequestSchema);
-	registry.register('UpdateWordBuysRequest', UpdateWordBuysRequestSchema);
-	registry.register('UpdateSingleWordBuyRequest', UpdateSingleWordBuyRequestSchema);
+	registry.register('WordBuyItemDetail', WordBuyItemDetailSchema);
 
 	// Subscription Responses
 	registry.register('UpdateUserSubscriptionSuccess', UpdateUserSubscriptionSuccessSchema);

@@ -12,9 +12,9 @@ import { toDeliveryOrderDetail } from '../schemas/dto/DeliveryOrders/index.js';
 import { Timestamp, UUID } from '../schemas/primitives.js';
 import { delivery_order_sent } from '../prisma/schemas/interfaces.js';
 import { UserBase } from '../schemas/dto/User/index.js';
-import type { DriverDetail } from '../schemas/dto/Drivers/index.js';
+import type { DriverDetail } from '../schemas/dto/Driver/index.js';
 import { DeliveryOrderSent } from '../types/deliveryOrders/DeliveryOrderSent.js';
-import { LineItemCreateInputData } from '../schemas/dto/LineItems/line-items.dto.js';
+import { LineItemCreateInputData } from '../schemas/dto/LineItems/index.js';
 /**
  * Add an entry to delivery order timeline
  */
@@ -947,9 +947,13 @@ export async function acceptOrderDelivery(
 			});
 
 			const updateData: any = {
-				timeline: addEntryToDeliveryOrderTimeline(order.timeline, DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED, {
-					driver_id: deliverer_id,
-				}),
+				timeline: addEntryToDeliveryOrderTimeline(
+					order.timeline,
+					DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED as PrismaDeliveryOrderStatus,
+					{
+						driver_id: deliverer_id,
+					}
+				),
 				delivery_driver: {
 					connect: { delivery_driver_id: deliverer_id },
 				},
@@ -990,9 +994,13 @@ export async function acceptOrderDelivery(
 			});
 
 			const updateData: any = {
-				timeline: addEntryToDeliveryOrderTimeline(order.timeline, DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED, {
-					driver_id: deliverer_id,
-				}),
+				timeline: addEntryToDeliveryOrderTimeline(
+					order.timeline,
+					DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED as PrismaDeliveryOrderStatus,
+					{
+						driver_id: deliverer_id,
+					}
+				),
 				driver: {
 					connect: { driver_id: deliverer_id },
 				},
@@ -1060,9 +1068,13 @@ export async function acceptOrderDeliveryWithRawLock(order_id: UUID, delivererId
 		const updated = await tx.delivery_orders.update({
 			where: { order_id: order_id },
 			data: {
-				timeline: addEntryToDeliveryOrderTimeline(orderOld.timeline, DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED, {
-					driver_id: delivererId,
-				}) as Prisma.JsonArray,
+				timeline: addEntryToDeliveryOrderTimeline(
+					orderOld.timeline,
+					DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED as PrismaDeliveryOrderStatus,
+					{
+						driver_id: delivererId,
+					}
+				) as Prisma.JsonArray,
 				driver: { connect: { driver_id: delivererId } },
 				vehicle: vehicleId ? { connect: { vehicle_id: vehicleId } } : undefined,
 			},

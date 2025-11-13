@@ -76,127 +76,7 @@ export const WalletFundsResponseSchema = WalletFundsBaseSchema.extend({
 
 export type WalletFundsResponse = z.infer<typeof WalletFundsResponseSchema>;
 
-// ===== REQUEST SCHEMAS =====
-
-// Create WalletFunds Schema - for createWalletFunds, createCredit
-export const CreateWalletFundsSchema = z
-	.object({
-		user_id: UUID,
-		amount: z.number().int().positive().describe('Amount in cents'),
-		charge_id: z.string().nullable().optional(),
-		transaction_type: z.nativeEnum(TRANSACTION_TYPE).default(TRANSACTION_TYPE.CREDIT),
-		type: FundsTypeSchema.default('FUNDS'),
-		status: CreditStatusSchema.optional(),
-		expires_at: Timestamp.nullable().optional(),
-		referral_id: UUID.nullable().optional(),
-	})
-	.openapi({
-		title: 'CreateWalletFunds',
-		description: 'Schema for creating new wallet funds entry',
-	});
-
-export type CreateWalletFunds = z.infer<typeof CreateWalletFundsSchema>;
-
-// Reserve Funds Schema - for reserveFunds function
-export const ReserveFundsSchema = z
-	.object({
-		wallet_funds_id: UUID,
-		reserve_amount: z.number().int().positive().describe('Amount to reserve in cents'),
-		order_id: z.string(),
-		reserve_type: z.enum(['order', 'daily_meals_subscription_payment']).default('order'),
-	})
-	.openapi({
-		title: 'ReserveFunds',
-		description: 'Schema for reserving wallet funds for orders',
-	});
-
-export type ReserveFunds = z.infer<typeof ReserveFundsSchema>;
-
-// Release Funds Schema - for releaseFunds function
-export const ReleaseFundsSchema = z
-	.object({
-		wallet_funds_id: UUID,
-		release_amount: z.number().int().positive().describe('Amount to release in cents'),
-	})
-	.openapi({
-		title: 'ReleaseFunds',
-		description: 'Schema for releasing reserved wallet funds',
-	});
-
-export type ReleaseFunds = z.infer<typeof ReleaseFundsSchema>;
-
-// Subtract Funds Schema - for subtractFunds function
-export const SubtractFundsSchema = z
-	.object({
-		wallet_funds_id: UUID,
-		amount: z.number().int().positive().describe('Amount to subtract in cents'),
-		order_id: z.string().nullable().optional(),
-		service_type: z.enum(['TAXI', 'DELIVERY']).nullable().optional(),
-	})
-	.openapi({
-		title: 'SubtractFunds',
-		description: 'Schema for subtracting funds from wallet',
-	});
-
-export type SubtractFunds = z.infer<typeof SubtractFundsSchema>;
-
-// Convert Cashbacks to Credit Schema - for convertCashbacksToCredit function
-export const ConvertCashbacksToCreditSchema = z
-	.object({
-		user_id: UUID,
-		amount: z.number().int().positive().describe('Total amount from cashbacks in cents'),
-		pending_cashback_ids: z.array(UUID),
-		expires_at: Timestamp.optional(),
-		referral_id: UUID.nullable().optional(),
-	})
-	.openapi({
-		title: 'ConvertCashbacksToCredit',
-		description: 'Schema for converting pending cashbacks to credit wallet funds',
-	});
-
-export type ConvertCashbacksToCredit = z.infer<typeof ConvertCashbacksToCreditSchema>;
-
-// ===== QUERY SCHEMAS =====
-
-// Get Available Wallet Funds Query - for getAvailableWalletFunds function
-export const GetAvailableWalletFundsQuerySchema = z
-	.object({
-		user_id: UUID,
-		funds_type: FundsTypeSchema,
-	})
-	.openapi({
-		title: 'GetAvailableWalletFundsQuery',
-		description: 'Query parameters for getting available wallet funds by type',
-	});
-
-export type GetAvailableWalletFundsQuery = z.infer<typeof GetAvailableWalletFundsQuerySchema>;
-
-// Get Reserved Wallet Funds Query - for getReservedWalletFunds function
-export const GetReservedWalletFundsQuerySchema = z
-	.object({
-		user_id: UUID,
-		order_id: z.string(),
-		reserve_type: z.enum(['order', 'daily_meals_subscription_payment']).default('order'),
-	})
-	.openapi({
-		title: 'GetReservedWalletFundsQuery',
-		description: 'Query parameters for getting reserved wallet funds',
-	});
-
-export type GetReservedWalletFundsQuery = z.infer<typeof GetReservedWalletFundsQuerySchema>;
-
-// Get Available Credits Query - for getAvailableCreditsByType, getAvailableCreditsForOrder functions
-export const GetAvailableCreditsQuerySchema = z
-	.object({
-		user_id: UUID,
-		type: FundsTypeSchema,
-	})
-	.openapi({
-		title: 'GetAvailableCreditsQuery',
-		description: 'Query parameters for getting available credits by type',
-	});
-
-export type GetAvailableCreditsQuery = z.infer<typeof GetAvailableCreditsQuerySchema>;
+// Request and query schemas moved to walletFunds.validators.ts
 
 // ===== AGGREGATE RESPONSE SCHEMAS =====
 
@@ -280,17 +160,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('WalletFundsBase', WalletFundsBaseSchema);
 	registry.register('WalletFundsRef', WalletFundsRefSchema);
 
-	// Register request schemas
-	registry.register('CreateWalletFunds', CreateWalletFundsSchema);
-	registry.register('ReserveFunds', ReserveFundsSchema);
-	registry.register('ReleaseFunds', ReleaseFundsSchema);
-	registry.register('SubtractFunds', SubtractFundsSchema);
-	registry.register('ConvertCashbacksToCredit', ConvertCashbacksToCreditSchema);
-
-	// Register query schemas
-	registry.register('GetAvailableWalletFundsQuery', GetAvailableWalletFundsQuerySchema);
-	registry.register('GetReservedWalletFundsQuery', GetReservedWalletFundsQuerySchema);
-	registry.register('GetAvailableCreditsQuery', GetAvailableCreditsQuerySchema);
+	// Request schemas registered in walletFunds.validators.ts
 
 	// Register response schemas
 	registry.register('WalletFunds', WalletFundsResponseSchema);

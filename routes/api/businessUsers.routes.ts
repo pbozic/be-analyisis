@@ -10,7 +10,7 @@ import {
 	UpdateAllowanceSchema,
 	UpdateCompanyRoleSchema,
 	UpdateOnlineStatusSchema,
-} from '../../schemas/dto/BusinessUser/BusinessUser.validation.ts';
+} from '../../schemas/dto/BusinessUser/businessUser.validators.js';
 
 const router = express.Router();
 router.get('/', BusinessUsersController.getAllBusinessUsers);

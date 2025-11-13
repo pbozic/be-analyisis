@@ -2,7 +2,7 @@ import express from 'express';
 
 import TaxiOrderController from '../../../controllers/TaxiOrderController.js';
 import { validate } from '../../../middleware/zod.js';
-import { TransferPriceRequestSchema } from '../../../schemas/dto/Taxi/taxiorder.dto.js';
+import { TransferPriceRequestSchema } from '../../../schemas/dto/Taxi/index.js';
 
 const router = express.Router();
 router.post(

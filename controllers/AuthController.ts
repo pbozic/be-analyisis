@@ -45,7 +45,7 @@ import type {
 	CreateUser,
 } from '../schemas/dto/Auth/AuthRequest.dto.ts';
 import { AuthUserResponse } from '../schemas/dto/Auth/AuthResponse.dto.ts';
-import { DriverDetail } from '../schemas/dto/Drivers/driver.dto.ts';
+import { DriverDetail } from '../schemas/dto/Driver/index.js';
 import { UserBase } from '../schemas/dto/User/index.ts';
 import { CreateBusinessUser } from '../schemas/dto/BusinessUser/businessUser.ts';
 import { BusinessWithAllModulesResponse } from '../schemas/dto/Business/index.ts';

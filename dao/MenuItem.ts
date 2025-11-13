@@ -1,14 +1,11 @@
 import { Prisma } from '@prisma/client';
 import { float } from '@elastic/elasticsearch/lib/api/types.js';
+import type { z } from 'zod';
 
 import prisma from '../prisma/prisma.js';
-import {
-	MenuItem,
-	MenuCategory,
-	MenuItemDetail,
-	UpdateMenuItem,
-	MenuItemVersionResponse,
-} from '../schemas/dto/Menu/menu.dto.js';
+import type { MenuItemDetail, MenuItemVersionResponse } from '../schemas/dto/Menu/menu.dto.js';
+import type { MenuCategory } from '../schemas/dto/Menu/menucategory.dto.js';
+import type { MenuItemDataSchema, UpdateMenuItemInput } from '../schemas/dto/Menu/menu.validators.js';
 import menuItemsDefaultInclude, { MenuItemWithIncludesPrisma } from '../prisma/includes/menuItems.js';
 import { toMenuItemResponse, toMenuItemList, toMenuItemVersionResponse } from '../schemas/dto/Menu/menu.mappers.js';
 
@@ -63,7 +60,7 @@ const createMenuItemVersion = async (
 const createMenuItem = async (
 	categoryId: string,
 	taxRateId: string | null,
-	menuItemData: MenuItem,
+	menuItemData: z.infer<typeof MenuItemDataSchema>,
 	is_copy: boolean
 ): Promise<MenuItemDetail> => {
 	try {
@@ -218,9 +215,9 @@ const deleteMenuItem = async (menuItemId: string): Promise<MenuItemDetail> => {
  * @param {UpdateMenuItem} data - Partial fields to update (stock handled specially).
  * @returns {Promise<MenuItem>} The updated menu item.
  */
-const updateMenuItem = async (menuItemId: string, data: UpdateMenuItem): Promise<MenuItemDetail> => {
+const updateMenuItem = async (menuItemId: string, data: UpdateMenuItemInput['data']): Promise<MenuItemDetail> => {
 	// exclude stock from the data object if it exists
-	let { stock, ...rest } = data;
+	let { stock, ...rest } = (data as any) || {};
 	data = rest;
 	let existingItem = await prisma.menu_items.findUnique({
 		where: {

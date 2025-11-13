@@ -1,5 +1,6 @@
 import prisma from '../prisma/prisma.js';
-import { CreateScoringPoints, ScoringPointsDetail } from '../schemas/dto/ScoringPoints/scoring-points.dto.ts';
+import { ScoringPointsDetail } from '../schemas/dto/ScoringPoints/scoring-points.dto.ts';
+import { CreateScoringPoints } from '../schemas/dto/ScoringPoints/scoringPoints.validators.ts';
 import scoringPointsDefaultInclude, { ScoringPointsWithIncludesPrisma } from '../prisma/includes/scoringPoints.js';
 import { toScoringPointsDetail, toScoringPointsList } from '../schemas/dto/ScoringPoints/scoring-points.mappers.js';
 

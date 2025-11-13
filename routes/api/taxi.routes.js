@@ -17,7 +17,7 @@ import {
 	UpdatePaymentSchema,
 	TaxiFileBodySchema,
 	TaxiPaginationSchema,
-} from '../../schemas/dto/Taxi/taxiorder.dto.ts';
+} from '../../schemas/dto/Taxi/index.js';
 const router = express.Router();
 router.get('/', TaxiOrderController.getTaxiOrders);
 router.get('/today', TaxiOrderController.getTaxiOrdersToday);

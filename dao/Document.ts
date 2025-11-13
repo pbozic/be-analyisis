@@ -1,10 +1,10 @@
 import { Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-import type { DocumentResponse } from '../schemas/dto/Document/document.dto.js';
+import type { DocumentResponse } from '../schemas/dto/Document/index.js';
 import documentsDefaultInclude from '../prisma/includes/document.js';
 import type { DocumentWithIncludesPrisma } from '../prisma/includes/document.js';
-import { toDocumentList, toDocumentResponse } from '../schemas/dto/Document/document.mappers.js';
+import { toDocumentList, toDocumentResponse } from '../schemas/dto/Document/index.js';
 
 type DocumentListResponse = DocumentResponse[];
 
@@ -727,7 +727,50 @@ const deleteDocument = async (documentId: string): Promise<DocumentResponse> => 
 		throw new Error(error instanceof Error ? error.message : 'Failed to delete document');
 	}
 };
+/**
+ * Find a document by associated file ID.
+ *
+ * @param {string} fileId - File ID.
+ * @returns {Promise<DocumentResponse | null>} Document or null.
+ */
+export async function findDocumentByFileId(fileId: string): Promise<DocumentResponse | null> {
+	try {
+		const file = await prisma.files.findUnique({
+			where: { file_id: fileId },
+			include: { document: { include: documentsDefaultInclude } },
+		});
+		if (!file || !file.document) return null;
 
+		return toDocumentResponse(file.document as DocumentWithIncludesPrisma);
+	} catch (error) {
+		console.error('Error finding document by file ID:', error);
+		throw new Error(error instanceof Error ? error.message : 'Failed to find document by file ID');
+	}
+}
+/**
+ * Update a document by its document ID.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {Record<string, unknown>} updateData - Data to update.
+ * @returns {Promise<DocumentResponse>} Updated document.
+ */
+export async function updateDocumentByDocumentId(
+	documentId: string,
+	updateData: Record<string, unknown>
+): Promise<DocumentResponse> {
+	try {
+		const row = await prisma.documents.update({
+			where: { document_id: documentId },
+			data: updateData,
+			include: documentsDefaultInclude,
+		});
+
+		return toDocumentResponse(row as DocumentWithIncludesPrisma);
+	} catch (error) {
+		console.error('Error updating document by document ID:', error);
+		throw new Error(error instanceof Error ? error.message : 'Failed to update document by document ID');
+	}
+}
 export { getDocuments };
 export { getDocumentById };
 export { getDocumentsForBusiness };

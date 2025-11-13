@@ -3,28 +3,15 @@ import { MODULE_TYPE } from '@prisma/client';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { Business } from '../business/Business.js';
-import type { RolePermission } from './RolePermission.js';
-import type { UserRole } from './UserRole.js';
-import { RolePermissionResponseBaseSchema } from './RolePermission';
-import { UserRoleResponseBaseSchema } from './UserRole';
-import { BusinessResponseBaseSchema } from '../business/Business';
+import type { RolePermission } from './rolepermission.dto.js';
+import type { UserRole } from './userrole.dto.js';
+import { RolePermissionResponseBaseSchema } from './rolepermission.dto.js';
+import { UserRoleResponseBaseSchema } from './userrole.dto.js';
+import { BusinessResponseBaseSchema } from '../business/Business.js';
 
 extendZodWithOpenApi(z);
 
-// --- SCHEMAS ---
-
-export const CreateRoleSchema = z
-	.object({
-		name: z.string(),
-		module: z.nativeEnum(MODULE_TYPE),
-		business_id: z.string().uuid().optional(), // null = global
-	})
-	.openapi('CreateRole');
-
-export const UpdateRoleSchema = CreateRoleSchema.partial().openapi('UpdateRole');
-
-export type CreateRoleInput = z.infer<typeof CreateRoleSchema>;
-export type UpdateRoleInput = z.infer<typeof UpdateRoleSchema>;
+// Request schemas moved to role.validators.ts
 
 export const RoleResponseBaseSchema = z
 	.object({
@@ -46,8 +33,6 @@ export type RoleBase = z.infer<typeof RoleResponseBaseSchema>;
 export type RoleResponse = z.infer<typeof RoleResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('CreateRole', CreateRoleSchema);
-	registry.register('UpdateRole', UpdateRoleSchema);
 	registry.register('RoleResponseBase', RoleResponseBaseSchema);
 	registry.register('RoleResponse', RoleResponseSchema);
 }

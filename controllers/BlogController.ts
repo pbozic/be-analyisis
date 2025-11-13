@@ -525,7 +525,7 @@ export async function createBlogImageByUrl(req: ValidatedRequest<{ url: string }
 			public: true,
 		});
 
-		res.status(201).json(newImage.url || newImage.file_url || newImage.s3_url);
+		res.status(201).json(newImage.url);
 	} catch (error) {
 		console.error('Failed to create image from URL:', error);
 		res.status(500).json({ message: 'Error creating image', error });

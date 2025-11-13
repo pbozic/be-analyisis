@@ -1,5 +1,6 @@
 import prisma from '../prisma/prisma.js';
-import { StoreDetail, toStoreDetail } from '../schemas/dto/Stores/store.dto.js';
+import { StoreDetail } from '../schemas/dto/Stores/store.dto.js';
+import { toStoreDetail } from '../schemas/dto/Stores/store.mappers.js';
 /**
  * Set store online or offline
  *

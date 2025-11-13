@@ -6,7 +6,7 @@ import { toUserAddressResponse } from '../schemas/dto/UserAddress/userAddress.ma
 import type { AddressDefaultPrisma } from '../prisma/includes/address.js';
 import type { UserAddressDefaultPrisma } from '../prisma/includes/userAddress.js';
 import type { UserAddressResponse } from '../types/users/UserAddress.js';
-import { BusinessAddress, AddressResponse } from '../schemas/dto/common/Address.dto.js';
+import { BusinessAddress, AddressResponse } from '../schemas/dto/Address/index.js';
 /**
  * Upsert an address by unique coordinates and address string.
  *
@@ -240,7 +240,7 @@ async function deleteUserAddress(user_id: UUID, address_id: UUID): Promise<UserA
  * @param {string} address_id - Address ID.
  * @returns {Promise<object>} The upserted user_address record.
  */
-async function addUserAddress(user_id: UUID, address_id: UUID): Promise<UserAddressResponse | Error> {
+async function addUserAddress(user_id: UUID, address_id: UUID): Promise<UserAddressResponse> {
 	try {
 		let primary = false;
 		let addresses = await prisma.user_address.findMany({
@@ -262,7 +262,7 @@ async function addUserAddress(user_id: UUID, address_id: UUID): Promise<UserAddr
 
 		return toUserAddressResponse(row as UserAddressDefaultPrisma);
 	} catch (error) {
-		return new Error(error instanceof Error ? error.message : String(error));
+		throw new Error(error instanceof Error ? error.message : String(error));
 	}
 }
 /**

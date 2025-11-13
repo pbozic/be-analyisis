@@ -14,7 +14,7 @@ import {
 	RegisterUserSchema,
 	RequestPasswordResetSchema,
 } from '../../schemas/dto/Auth/AuthRequest.dto.js';
-import { UpdateUserLanguageSchema } from '../../schemas/dto/User/UserRequest.dto.js';
+import { UpdateUserLanguageSchema } from '../../schemas/dto/User/user.validators.js';
 
 dotenv.config();
 const router = express.Router();

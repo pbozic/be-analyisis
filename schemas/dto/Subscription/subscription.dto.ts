@@ -123,96 +123,7 @@ export const SubscriptionResponseSchema = SubscriptionBaseSchema.extend({
 
 export type SubscriptionResponse = z.infer<typeof SubscriptionResponseSchema>;
 
-// ===== REQUEST SCHEMAS =====
-
-// Create Subscription Schema - for createSubscription function
-export const CreateSubscriptionSchema = z
-	.object({
-		module: ModuleTypeSchema,
-		name: z.string().min(1).describe('Name of the subscription bundle'),
-		price_cents: z.number().int().nonnegative().describe('Price in cents'),
-		stripe_price_id: z.string().min(1).describe('Stripe price ID for billing'),
-		stripe_product_id: z.string().min(1).describe('Stripe product ID').optional(),
-	})
-	.openapi({
-		title: 'CreateSubscription',
-		description: 'Schema for creating new subscription bundle',
-	});
-
-export type CreateSubscription = z.infer<typeof CreateSubscriptionSchema>;
-
-// Update Subscription Schema - for updateSubscription function
-export const UpdateSubscriptionSchema = z
-	.object({
-		subscription_id: UUID,
-		data: z
-			.object({
-				module: ModuleTypeSchema.optional(),
-				name: z.string().min(1).optional(),
-				price_cents: z.number().int().nonnegative().optional(),
-				stripe_price_id: z.string().min(1).optional(),
-			})
-			.openapi({
-				title: 'UpdateSubscriptionData',
-				description: 'Fields that can be updated in subscription',
-			}),
-	})
-	.openapi({
-		title: 'UpdateSubscription',
-		description: 'Schema for updating subscription bundle',
-	});
-
-export type UpdateSubscription = z.infer<typeof UpdateSubscriptionSchema>;
-
-// ===== QUERY SCHEMAS =====
-
-// Get Subscription by ID Query - for getSubscriptionById function
-export const GetSubscriptionByIdQuerySchema = z
-	.object({
-		subscription_id: UUID,
-	})
-	.openapi({
-		title: 'GetSubscriptionByIdQuery',
-		description: 'Query parameters for getting subscription by ID',
-	});
-
-export type GetSubscriptionByIdQuery = z.infer<typeof GetSubscriptionByIdQuerySchema>;
-
-// Get Subscription by Name Query - for getSubscriptionByName function
-export const GetSubscriptionByNameQuerySchema = z
-	.object({
-		name: z.string().min(1),
-	})
-	.openapi({
-		title: 'GetSubscriptionByNameQuery',
-		description: 'Query parameters for getting subscription by name',
-	});
-
-export type GetSubscriptionByNameQuery = z.infer<typeof GetSubscriptionByNameQuerySchema>;
-
-// List Subscriptions by Module Query - for listSubscriptionsByModule function
-export const ListSubscriptionsByModuleQuerySchema = z
-	.object({
-		module: ModuleTypeSchema,
-	})
-	.openapi({
-		title: 'ListSubscriptionsByModuleQuery',
-		description: 'Query parameters for getting subscriptions by module',
-	});
-
-export type ListSubscriptionsByModuleQuery = z.infer<typeof ListSubscriptionsByModuleQuerySchema>;
-
-// Delete Subscription Schema - for deleteSubscription function
-export const DeleteSubscriptionSchema = z
-	.object({
-		subscription_id: UUID,
-	})
-	.openapi({
-		title: 'DeleteSubscription',
-		description: 'Schema for deleting subscription bundle',
-	});
-
-export type DeleteSubscription = z.infer<typeof DeleteSubscriptionSchema>;
+// Request schemas moved to subscription.validators.ts
 
 // ===== LIST RESPONSE SCHEMAS =====
 
@@ -287,44 +198,7 @@ export const AddonRefSchema = z
 
 export type AddonRef = z.infer<typeof AddonRefSchema>;
 
-// Create Addon Schema
-export const CreateAddonSchema = z
-	.object({
-		module: ModuleTypeSchema,
-		name: z.string().min(1),
-		price_cents: z.number().int().nonnegative(),
-		stripe_price_id: z.string().min(1),
-		stripe_product_id: z.string().min(1).optional(),
-	})
-	.openapi({
-		title: 'CreateAddon',
-		description: 'Schema for creating new addon',
-	});
-
-export type CreateAddon = z.infer<typeof CreateAddonSchema>;
-
-// Update Addon Schema
-export const UpdateAddonSchema = z
-	.object({
-		addon_id: UUID,
-		data: z
-			.object({
-				module: ModuleTypeSchema.optional(),
-				name: z.string().min(1).optional(),
-				price_cents: z.number().int().nonnegative().optional(),
-				stripe_price_id: z.string().min(1).optional(),
-			})
-			.openapi({
-				title: 'UpdateAddonData',
-				description: 'Fields that can be updated in addon',
-			}),
-	})
-	.openapi({
-		title: 'UpdateAddon',
-		description: 'Schema for updating addon',
-	});
-
-export type UpdateAddon = z.infer<typeof UpdateAddonSchema>;
+// Addon request schemas moved to subscription.validators.ts
 
 // ===== BUSINESS USAGE SCHEMAS =====
 
@@ -361,20 +235,7 @@ export const BusinessUsageRefSchema = z
 
 export type BusinessUsageRef = z.infer<typeof BusinessUsageRefSchema>;
 
-// Create Business Usage Schema
-export const CreateBusinessUsageSchema = z
-	.object({
-		action_id: UUID,
-		used: z.number().int().nonnegative(),
-		reset_date: Timestamp.nullable().optional(),
-		reservation_module_id: UUID.nullable().optional(),
-	})
-	.openapi({
-		title: 'CreateBusinessUsage',
-		description: 'Schema for creating business usage tracking',
-	});
-
-export type CreateBusinessUsage = z.infer<typeof CreateBusinessUsageSchema>;
+// Business Usage request schemas moved to subscription.validators.ts
 
 // ===== REGISTRATION FUNCTION =====
 
@@ -395,18 +256,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('AddonRef', AddonRefSchema);
 	registry.register('BusinessUsageRef', BusinessUsageRefSchema);
 
-	// Register request schemas
-	registry.register('CreateSubscription', CreateSubscriptionSchema);
-	registry.register('UpdateSubscription', UpdateSubscriptionSchema);
-	registry.register('DeleteSubscription', DeleteSubscriptionSchema);
-	registry.register('CreateAddon', CreateAddonSchema);
-	registry.register('UpdateAddon', UpdateAddonSchema);
-	registry.register('CreateBusinessUsage', CreateBusinessUsageSchema);
-
-	// Register query schemas
-	registry.register('GetSubscriptionByIdQuery', GetSubscriptionByIdQuerySchema);
-	registry.register('GetSubscriptionByNameQuery', GetSubscriptionByNameQuerySchema);
-	registry.register('ListSubscriptionsByModuleQuery', ListSubscriptionsByModuleQuerySchema);
+	// Request schemas registered in subscription.validators.ts
 
 	// Register response schemas
 	registry.register('ActionBundleActionResponse', ActionBundleActionResponseSchema);

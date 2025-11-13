@@ -1,9 +1,12 @@
-// GroupUser DTOs
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+
+// === Group DTOs (Response) ===
 export {
 	GroupUserBaseSchema,
 	GroupUserRefSchema,
 	GroupUserResponseSchema,
 	GroupUserWithParentResponseSchema,
+	GroupUserWithChildResponseSchema,
 	GroupUserWithAllowanceResponseSchema,
 	GroupUserDetailResponseSchema,
 	GroupUserListResponseSchema,
@@ -11,13 +14,14 @@ export {
 	type GroupUserRef,
 	type GroupUserResponse,
 	type GroupUserWithParentResponse,
+	type GroupUserWithChildResponse,
 	type GroupUserWithAllowanceResponse,
 	type GroupUserDetailResponse,
 	type GroupUserListResponse,
-	registerSchemas as registerGroupUserSchemas,
+	registerSchemas as registerGroupSchemas,
 } from './groupUser.js';
 
-// GroupUser Request DTOs
+// === Group Validators (Request Body, Query, Params) ===
 export {
 	CreateGroupUserRequestSchema,
 	UpdateGroupUserEnabledRequestSchema,
@@ -25,4 +29,14 @@ export {
 	type CreateGroupUserRequest,
 	type UpdateGroupUserEnabledRequest,
 	type UpdateGroupUserAllowanceRequest,
-} from './requests.js';
+	registerSchemas as registerGroupValidatorSchemas,
+} from './group.validators.js';
+
+// === Group Mappers ===
+export * from './group.mappers.js';
+
+// === Schema Registration ===
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registerGroupSchemas(registry);
+	registerGroupValidatorSchemas(registry);
+}

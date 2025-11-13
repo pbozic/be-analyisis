@@ -11,22 +11,7 @@ import { ReservationModuleResponseBaseSchema } from '../reservations/Reservation
 
 extendZodWithOpenApi(z);
 
-export const CreateUserPermissionSchema = z
-	.object({
-		user_id: z.string().uuid(),
-		action_id: z.string().uuid().optional(),
-		name: z.string().optional(),
-		module: z.nativeEnum(MODULE_TYPE),
-		limit: z.number().int().optional(),
-		scope: z.nativeEnum(PERMISSION_SCOPE).default(PERMISSION_SCOPE.GLOBAL),
-		is_blocked: z.boolean().default(false),
-	})
-	.openapi('CreateUserPermission');
-
-export const UpdateUserPermissionSchema = CreateUserPermissionSchema.partial().openapi('UpdateUserPermission');
-
-export type CreateUserPermissionInput = z.infer<typeof CreateUserPermissionSchema>;
-export type UpdateUserPermissionInput = z.infer<typeof UpdateUserPermissionSchema>;
+// Request schemas moved to userpermission.validators.ts
 
 export const UserPermissionResponseBaseSchema = z
 	.object({
@@ -53,8 +38,6 @@ export type UserPermissionBase = z.infer<typeof UserPermissionResponseBaseSchema
 export type UserPermissionResponse = z.infer<typeof UserPermissionResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('CreateUserPermission', CreateUserPermissionSchema);
-	registry.register('UpdateUserPermission', UpdateUserPermissionSchema);
 	registry.register('UserPermissionResponseBase', UserPermissionResponseBaseSchema);
 	registry.register('UserPermissionResponse', UserPermissionResponseSchema);
 }

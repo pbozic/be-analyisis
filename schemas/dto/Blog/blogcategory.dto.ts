@@ -3,7 +3,8 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 extendZodWithOpenApi(z);
 
-import type { BlogPost } from './blogpost.dto';
+// BlogCategory types - moved to blog.dto.ts
+// This file kept for backward compatibility but types are in blog.dto.ts
 // blog_categories.ts
 export type BlogCategory = {
 	blog_categories_id: string;

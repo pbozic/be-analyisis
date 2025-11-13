@@ -1,7 +1,8 @@
 import prisma from '../prisma/prisma.js';
 import { TAXI_ORDER_STATUS } from '../lib/constants.js';
-import type { TaxiOrderBase, TaxiOrderDetail, CreateTaxiOrder } from '../schemas/dto/TaxiOrders/taxiOrder.dto.js';
-import { toTaxiOrderDetail } from '../schemas/dto/TaxiOrders/taxiOrder.dto.js';
+import type { TaxiOrderBase, TaxiOrderDetail } from '../schemas/dto/TaxiOrders/taxiOrder.dto.js';
+import { CreateTaxiOrder } from '../schemas/dto/TaxiOrders/taxiOrder.validators.js';
+import { toTaxiOrderDetail } from '../schemas/dto/TaxiOrders/taxiOrder.mappers.js';
 
 /**
  * List taxi orders with provided Prisma args and standard includes.

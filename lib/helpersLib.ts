@@ -10,7 +10,7 @@ import prisma from '../prisma/prisma.js';
 import { DeliveryOrderBase } from '../schemas/dto/DeliveryOrders/deliveryOrder.dto.js';
 import { BusinessBase } from '../schemas/dto/Business/business.js';
 import { TaxiOrderBase } from '../schemas/dto/TaxiOrders/taxiOrder.dto.js';
-import { DriverDetail } from '../schemas/dto/Drivers/driver.dto.js';
+import { DriverDetail } from '../schemas/dto/Driver/index.js';
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

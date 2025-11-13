@@ -6,7 +6,7 @@ import CategoriesController from '../../controllers/CategoriesController.js';
 import {
 	CreateCategoryRequestSchema,
 	UpdateCategoryRequestSchema,
-} from '../../schemas/dto/Categories/categories.dto.js';
+} from '../../schemas/dto/Category/category.validators.js';
 const router = express.Router();
 router.get('/', CategoriesController.getCategories);
 router.get('/:category_type', CategoriesController.getCategoriesByType);

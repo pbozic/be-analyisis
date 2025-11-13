@@ -1,5 +1,6 @@
 import prisma from '../prisma/prisma.js';
-import type { VehicleCreateInput, VehicleDetail, VehicleUpdateInput } from '../schemas/dto/Vehicles/vehicle.dto.js';
+import { VehicleDetail } from '../schemas/dto/Vehicles/vehicle.dto.js';
+import { VehicleCreateInput, VehicleUpdateInput } from '../schemas/dto/Vehicles/vehicle.validators.js';
 import { VehicleDriver } from '../types/drivers/VehicleDriver.js';
 
 /**

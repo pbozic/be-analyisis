@@ -9,21 +9,7 @@ import { ActionBaseSchema } from '../Subscription/index.ts';
 
 extendZodWithOpenApi(z);
 
-export const CreatePermissionSchema = z
-	.object({
-		role_id: z.string().uuid(),
-		action_id: z.string().uuid().optional(), // optional for non-action permissions
-		name: z.string().optional(), // non-action identifier
-		module: z.nativeEnum(MODULE_TYPE),
-		limit: z.number().int().optional(),
-		scope: z.nativeEnum(PERMISSION_SCOPE).default(PERMISSION_SCOPE.GLOBAL),
-	})
-	.openapi('CreatePermission');
-
-export const UpdatePermissionSchema = CreatePermissionSchema.partial().openapi('UpdatePermission');
-
-export type CreatePermissionInput = z.infer<typeof CreatePermissionSchema>;
-export type UpdatePermissionInput = z.infer<typeof UpdatePermissionSchema>;
+// Request schemas moved to permission.validators.ts
 
 export const PermissionResponseBaseSchema = z
 	.object({
@@ -48,8 +34,6 @@ export type PermissionBase = z.infer<typeof PermissionResponseBaseSchema>;
 export type PermissionResponse = z.infer<typeof PermissionResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('CreatePermission', CreatePermissionSchema);
-	registry.register('UpdatePermission', UpdatePermissionSchema);
 	registry.register('PermissionResponseBase', PermissionResponseBaseSchema);
 	registry.register('PermissionResponse', PermissionResponseSchema);
 }

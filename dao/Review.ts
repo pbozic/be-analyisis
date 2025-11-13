@@ -171,6 +171,26 @@ export async function getReviewById(review_id: string): Promise<ReviewResponse |
 	return review ? toReviewResponse(review) : null;
 }
 
+export async function getReviewsForDriver(driver_id: string): Promise<ReviewResponse[]> {
+	try {
+		const reviews = (await prisma.reviews.findMany({
+			where: {
+				review_items: {
+					some: {
+						subject_id: driver_id,
+						subject_type: REVIEW_SUBJECT.DRIVER,
+					},
+				},
+			},
+			include: reviewsWithItemsInclude,
+		})) as ReviewsWithItemsInclude[];
+		return toReviewResponseList(reviews);
+	} catch (error) {
+		console.error('Error getting reviews for driver:', error);
+		throw error;
+	}
+}
+
 export default {
 	getReviewsForSubject,
 	getReviewsForTaxiOrder,

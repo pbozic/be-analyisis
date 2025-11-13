@@ -3,8 +3,8 @@ import UserDao from './User.js';
 import BusinessDao from './Business.ts';
 import { createCustomer } from '../lib/stripe.js';
 import { SERVICE_TYPE } from '../lib/constants.js';
-import type { DriverBase, DriverDetail } from '../schemas/dto/Drivers/index.js';
-import { toDriverDetail } from '../schemas/dto/Drivers/index.js';
+import type { DriverBase, DriverDetail } from '../schemas/dto/Driver/index.js';
+import { toDriverDetail } from '../schemas/dto/Driver/index.js';
 
 // Define common query arg types
 interface FindManyArgs {
