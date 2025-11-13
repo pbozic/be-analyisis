@@ -654,6 +654,22 @@ export type BookingsAndEmployeesWithSlotsResponse = z.infer<typeof BookingsAndEm
 
 // ===== EXPORTED TYPES =====
 export type BookingBase = z.infer<typeof BookingBaseSchema>;
+
+/**
+ * BookingBasePrismaResult - represents raw Prisma booking result with Date objects
+ * Use this type for mappers that receive direct Prisma query results
+ */
+export type BookingBasePrismaResult = Omit<
+	BookingBase,
+	'created_at' | 'updated_at' | 'start_time' | 'end_time' | 'deleted_at'
+> & {
+	created_at: Date;
+	updated_at: Date;
+	start_time: Date | null;
+	end_time: Date | null;
+	deleted_at: Date | null;
+};
+
 export type BookingRef = z.infer<typeof BookingRefSchema>;
 export type BookingWithRelations = z.infer<typeof BookingWithRelationsSchema>;
 export type CreateBookingRequest = z.infer<typeof CreateBookingRequestSchema>;

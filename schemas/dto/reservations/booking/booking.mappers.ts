@@ -3,6 +3,7 @@ import type {
 	BookingCourseDAOResponse,
 	BookingForAnalyticsDAOResponse,
 	BookingCoursesDAOResponse,
+	BookingBasePrismaResult,
 } from './booking.dto';
 import {
 	BookingDAOResponseSchema,
@@ -138,7 +139,7 @@ function mapBookingCourseParticipantWithCustomer(
  * Map Prisma booking to BookingDAOResponse (base fields only, no includes)
  * Use this when the booking was created/updated without includes
  */
-export function toBookingDAOResponseBase(row: BookingBasePrisma): BookingDAOResponse {
+export function toBookingDAOResponseBase(row: BookingBasePrismaResult): BookingDAOResponse {
 	const r = row;
 
 	const dto: BookingDAOResponse = {
