@@ -59,7 +59,7 @@ import type {
 	AssignBusinessForDailyMealsToDriverRequest,
 	CreateElectronicDeviceForPremiseRequest,
 	UpdateDeviceAssignmentRequest,
-} from '../schemas/dto/Driver/DriverRequest.dto.js';
+} from '../schemas/dto/Driver/driver.validators.js';
 
 config();
 const { io } = socket;

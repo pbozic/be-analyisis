@@ -178,7 +178,7 @@ export async function getReviewsForDriver(driver_id: string): Promise<ReviewResp
 				review_items: {
 					some: {
 						subject_id: driver_id,
-						subject_type: REVIEW_SUBJECT.DRIVER,
+						subject_type: 'DRIVER' as REVIEW_SUBJECT, //TODO: fix into constants
 					},
 				},
 			},
