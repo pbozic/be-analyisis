@@ -1,6 +1,8 @@
 import z from 'zod';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID, Email, PhoneNumber } from '../../primitives';
+extendZodWithOpenApi(z);
 
 // =======================
 // Create Business Client - POST /business-clients
@@ -32,3 +34,9 @@ export const UpdateBusinessClientSchema = z
 	})
 	.openapi('UpdateBusinessClient');
 export type UpdateBusinessClientInput = z.infer<typeof UpdateBusinessClientSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	// Register base schemas
+	registry.register('CreateBusinessClient', CreateBusinessClientSchema);
+	registry.register('UpdateBusinessClient', UpdateBusinessClientSchema);
+}

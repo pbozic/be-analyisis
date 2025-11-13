@@ -3,7 +3,6 @@ import express from 'express';
 import DeliveryOrderController from '../../../controllers/DeliveryOrderController.js';
 import { validate } from '../../../middleware/zod.ts';
 import {
-	CreateDeliveryOrderSchema,
 	StartOrderSchema,
 	MerchantAcceptOrderSchema,
 	MerchantConfirmOrderReadySchema,
@@ -22,6 +21,7 @@ import {
 	DispatcherRevokeOrderSchema,
 	addToDeliveryOrderTimelineSchema,
 } from '../../../schemas/dto/DeliveryOrder/DeliveryOrderRequest.dto';
+import { DeliveryOrderCreateRequestSchema } from '../../../schemas/dto/DeliveryOrders/index.ts';
 
 const router = express.Router();
 
@@ -40,7 +40,7 @@ router.get('/business/:business_id', DeliveryOrderController.getDeliveryOrdersBy
 router.get('/:daily_meals', DeliveryOrderController.getDeliveryOrders);
 
 router.post('/daily_meals', DeliveryOrderController.startDailyMeals);
-router.post('/order', validate(CreateDeliveryOrderSchema), DeliveryOrderController.createOrder);
+router.post('/order', validate(DeliveryOrderCreateRequestSchema), DeliveryOrderController.createOrder);
 router.post('/order/start', validate(StartOrderSchema), DeliveryOrderController.startOrder);
 router.post('/order/merchant_accept', validate(MerchantAcceptOrderSchema), DeliveryOrderController.merchantAcceptOrder);
 router.post(

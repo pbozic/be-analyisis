@@ -6,6 +6,7 @@ import {
 	toBusinessTeamList,
 } from '../schemas/dto/BusinessTeam/businessTeam.mappers.js';
 import type { BusinessTeamWithUsersPrisma, BusinessTeamDefaultPrisma } from '../prisma/includes/businessTeam.js';
+import { CreateBusinessTeamInput } from '../schemas/dto/BusinessTeam/BusinessTeam.validation.ts';
 
 const cropped_user_columns = {
 	first_name: true,
@@ -18,11 +19,11 @@ const cropped_user_columns = {
  * @param {Object} data - The business team data
  * @returns {Promise<BusinessTeamResponse>} Created business team
  */
-export async function createBusinessTeam(data: Record<string, any>): Promise<BusinessTeamResponse> {
+export async function createBusinessTeam(data: CreateBusinessTeamInput): Promise<BusinessTeamWithUsersResponse> {
 	try {
-		const row = await prisma.business_teams.create({ data });
+		const row = await prisma.business_teams.create({ data, include: { users: { select: cropped_user_columns } } });
 
-		return toBusinessTeamResponse(row as BusinessTeamDefaultPrisma);
+		return toBusinessTeamWithUsersResponse(row as BusinessTeamWithUsersPrisma);
 	} catch (error) {
 		console.error('Error creating business team:', error);
 		throw error;
@@ -103,6 +104,54 @@ export async function addUserToTeam(
 }
 
 /**
+ * Add a user to a business team
+ * @param {string} business_teams_id - The ID of the business team
+ * @param {string[]} user_ids - The IDs of the users to add
+ * @returns {Promise<BusinessTeamWithUsersResponse>} Updated user
+ */
+export async function addUManyUsersToTeam(
+	business_teams_id: string,
+	user_ids: string[]
+): Promise<BusinessTeamWithUsersResponse> {
+	try {
+		// First check if user exists and isn't already in a team
+		const users = await prisma.users.findMany({
+			where: { user_id: { in: user_ids } },
+			select: { business_teams_id: true },
+		});
+
+		if (!users || users.length !== user_ids.length) {
+			throw new Error('User not found');
+		}
+
+		// if (users.some(user  => user.business_teams_id)) {
+		// 	throw new Error('User is already assigned to a business team');
+		// }
+
+		// Check if business team exists
+		const team = await prisma.business_teams.findUnique({
+			where: { business_teams_id },
+		});
+
+		if (!team) {
+			throw new Error('Business team not found');
+		}
+
+		// Connect user to business team using Prisma's connect
+		const row = await prisma.business_teams.update({
+			where: { business_teams_id },
+			data: { users: { connect: user_ids.map((id) => ({ user_id: id })) } },
+			include: { users: { select: cropped_user_columns } },
+		});
+
+		return toBusinessTeamWithUsersResponse(row as BusinessTeamWithUsersPrisma);
+	} catch (error) {
+		console.error('Error adding user to business team:', error);
+		throw error;
+	}
+}
+
+/**
  * Remove a user from a business team
  * @param {string} user_id - The ID of the user to remove
  * @returns {Promise<BusinessTeamWithUsersResponse>} Updated business team
@@ -127,6 +176,44 @@ export async function removeUserFromTeam(user_id: string): Promise<BusinessTeamW
 		const row = await prisma.business_teams.update({
 			where: { business_teams_id: user.business_teams_id },
 			data: { users: { disconnect: { user_id } } },
+			include: { users: { select: cropped_user_columns } },
+		});
+
+		return toBusinessTeamWithUsersResponse(row as BusinessTeamWithUsersPrisma);
+	} catch (error) {
+		console.error('Error removing user from business team:', error);
+		throw error;
+	}
+}
+
+/**
+ * Remove a user from a business team
+ * @param {string} user_id - The ID of the user to remove
+ * @returns {Promise<BusinessTeamWithUsersResponse>} Updated business team
+ */
+export async function removeManyUserFromTeam(
+	business_teams_id: string,
+	user_ids: string[]
+): Promise<BusinessTeamWithUsersResponse> {
+	try {
+		// Check if user exists and is in a team
+		const user = await prisma.users.findUnique({
+			where: { user_id: { in: user_ids } },
+			select: { business_teams_id: true },
+		});
+
+		if (!user) {
+			throw new Error('User not found');
+		}
+
+		if (!user.business_teams_id) {
+			throw new Error('User is not assigned to any business team');
+		}
+
+		// Disconnect user from business team using Prisma's disconnect
+		const row = await prisma.business_teams.update({
+			where: { business_teams_id },
+			data: { users: { disconnect: user_ids.map((id) => ({ user_id: id })) } },
 			include: { users: { select: cropped_user_columns } },
 		});
 
@@ -271,7 +358,9 @@ export default {
 	createBusinessTeam,
 	updateBusinessTeam,
 	addUserToTeam,
+	addUManyUsersToTeam,
 	removeUserFromTeam,
+	removeManyUserFromTeam,
 	moveUserToTeam,
 	getBusinessTeamById,
 	getBusinessTeamsForBusinessId,

@@ -6,8 +6,9 @@ import {
 } from './employee.dto';
 import type { EmployeeBasePrisma, EmployeeWithSlotsPrisma } from '../../../../prisma/includes/reservation/employee';
 
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
+function toIso(d: Date | string | null | undefined): string | undefined {
+	if (!d) return undefined;
+	return d instanceof Date ? d.toISOString() : new Date(d).toISOString();
 }
 
 /**
@@ -32,6 +33,14 @@ export function toEmployeeDAOResponse(row: EmployeeBasePrisma): EmployeeDAORespo
 					business_users_id: r.business_user.business_users_id,
 					business_id: r.business_user.business_id,
 					user_id: r.business_user.user_id ?? null,
+					users: r.business_user.users
+						? {
+								user_id: r.business_user.users.user_id,
+								email: r.business_user.users.email ?? null,
+								first_name: r.business_user.users.first_name ?? null,
+								last_name: r.business_user.users.last_name ?? null,
+							}
+						: null,
 				}
 			: null,
 	};
@@ -61,6 +70,14 @@ export function toEmployeeByIdDAOResponse(row: EmployeeBasePrisma): EmployeeById
 					business_users_id: r.business_user.business_users_id,
 					business_id: r.business_user.business_id,
 					user_id: r.business_user.user_id ?? null,
+					users: r.business_user.users
+						? {
+								user_id: r.business_user.users.user_id,
+								email: r.business_user.users.email ?? null,
+								first_name: r.business_user.users.first_name ?? null,
+								last_name: r.business_user.users.last_name ?? null,
+							}
+						: null,
 				}
 			: null,
 	};
@@ -115,6 +132,14 @@ export function toEmployeeWithSlotsDAOResponse(row: EmployeeWithSlotsPrisma): Em
 					business_users_id: r.business_user.business_users_id,
 					business_id: r.business_user.business_id,
 					user_id: r.business_user.user_id ?? null,
+					users: r.business_user.users
+						? {
+								user_id: r.business_user.users.user_id,
+								email: r.business_user.users.email ?? null,
+								first_name: r.business_user.users.first_name ?? null,
+								last_name: r.business_user.users.last_name ?? null,
+							}
+						: null,
 				}
 			: null,
 		schedule_slots,

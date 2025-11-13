@@ -84,7 +84,7 @@ export const BusinessTeamResponseSchema = BusinessTeamBaseSchema;
 
 // BusinessTeam with Users - all DAO functions include users
 export const BusinessTeamWithUsersResponseSchema = BusinessTeamResponseSchema.extend({
-	users: z.array(MinimumUserSchema).nullable(),
+	users: z.array(MinimumUserSchema),
 });
 
 // BusinessTeam List Response - for paginated/bulk endpoints

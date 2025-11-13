@@ -1,32 +1,35 @@
 import type { NotificationMessageResponse } from './notification-message.dto';
 import { NotificationMessageResponseSchema } from './notification-message.dto';
+import type { NotificationMessageBasePrisma } from '../../../../prisma/includes/reservation/notification-message';
 
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
+function toIso(d: Date | string | null | undefined): string | undefined {
+	if (!d) return undefined;
+	return d instanceof Date ? d.toISOString() : new Date(d).toISOString();
 }
 
 /**
  * Map Prisma notification_message to NotificationMessageResponse
  */
-export function toNotificationMessageResponse(row: any): NotificationMessageResponse {
+export function toNotificationMessageResponse(row: NotificationMessageBasePrisma): NotificationMessageResponse {
 	const r = row;
 
 	const dto = {
 		notification_message_id: r.notification_message_id,
-		template_version_id: r.template_version_id,
-		recipient: r.recipient,
+		reservation_module_id: r.reservation_module_id,
+		notification_event_id: r.notification_event_id,
 		channel: r.channel,
-		status: r.status ?? 'pending',
-		sent_at: toIso(r.sent_at) ?? null,
-		delivered_at: toIso(r.delivered_at) ?? null,
-		opened_at: toIso(r.opened_at) ?? null,
-		failed_at: toIso(r.failed_at) ?? null,
-		error_message: r.error_message ?? null,
-		retry_count: r.retry_count ?? 0,
-		metadata: r.metadata ?? null,
+		notification_template_id: r.notification_template_id ?? null,
+		template_version: r.template_version ?? null,
+		to_address: r.to_address ?? null,
+		subject: r.subject ?? null,
+		body_text: r.body_text ?? null,
+		body_html: r.body_html ?? null,
+		variables: r.variables,
+		rendered_at: toIso(r.rendered_at) ?? '',
+		provider_message_id: r.provider_message_id ?? null,
+		status: r.status,
+		error: r.error ?? null,
 		created_at: toIso(r.created_at) ?? '',
-		template_version: r.template_version ?? undefined,
-		notification_message_events: r.notification_message_events ?? undefined,
 	};
 
 	return NotificationMessageResponseSchema.parse(dto);
@@ -35,7 +38,7 @@ export function toNotificationMessageResponse(row: any): NotificationMessageResp
 /**
  * Map list of notification messages
  */
-export function toNotificationMessageList(rows: any[]): NotificationMessageResponse[] {
+export function toNotificationMessageList(rows: NotificationMessageBasePrisma[]): NotificationMessageResponse[] {
 	return rows.map(toNotificationMessageResponse);
 }
 

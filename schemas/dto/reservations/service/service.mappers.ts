@@ -2,8 +2,9 @@ import type { ServiceDAOResponse } from './service.dto';
 import { ServiceDAOResponseSchema } from './service.dto';
 import type { ServiceBasePrisma, ServiceWithLocationsPrisma } from '../../../../prisma/includes/reservation/service';
 
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
+function toIso(d: Date | string | null | undefined): string | undefined {
+	if (!d) return undefined;
+	return d instanceof Date ? d.toISOString() : new Date(d).toISOString();
 }
 
 /**
@@ -25,7 +26,7 @@ export function toServiceDAOResponse(row: ServiceBasePrisma): ServiceDAOResponse
 		duration_minutes: r.duration_minutes,
 		available_online: r.available_online ?? false,
 		skd_codes: r.skd_codes ?? [],
-		created_at: toIso(r.created_at),
+		created_at: toIso(r.created_at) ?? '',
 		tax_rate_id: r.tax_rate_id ?? null,
 		course: r.course ?? false,
 		people_allowed: r.people_allowed ?? null,
@@ -38,7 +39,7 @@ export function toServiceDAOResponse(row: ServiceBasePrisma): ServiceDAOResponse
 /**
  * Map ServiceWithLocationsPrisma - returns service with locations
  */
-export function toServiceWithLocations(row: ServiceWithLocationsPrisma): any {
+export function toServiceWithLocations(row: ServiceWithLocationsPrisma) {
 	const r = row;
 
 	const service_locations = (r.service_locations || []).map((sl) => ({
@@ -61,7 +62,7 @@ export function toServiceWithLocations(row: ServiceWithLocationsPrisma): any {
 		duration_minutes: r.duration_minutes,
 		available_online: r.available_online ?? false,
 		skd_codes: r.skd_codes ?? [],
-		created_at: toIso(r.created_at),
+		created_at: toIso(r.created_at) ?? '',
 		tax_rate_id: r.tax_rate_id ?? null,
 		course: r.course ?? false,
 		people_allowed: r.people_allowed ?? null,

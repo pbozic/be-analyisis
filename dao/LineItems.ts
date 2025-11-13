@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client';
+
 import prisma from '../prisma/prisma.js';
 import {
 	UpdateLineItemBody,
@@ -7,24 +9,33 @@ import {
 } from '../schemas/dto/LineItems/line-items.dto.js';
 import lineItemsDefaultInclude from '../prisma/includes/lineItems.js';
 import type { LineItemsWithIncludesPrisma } from '../prisma/includes/lineItems.js';
+import { UUID } from '../schemas/primitives.js';
 /**
  * Create many line items.
  *
- * @param {LineItemData} items
+ * @param {LineItemData[]} items
+ * @param {UUID} order_id
+ * @param {Prisma.TransactionClient} tx
  * @returns {Promise<LineItemDetail[]>}
  */
-export async function createManyLineItems(items: LineItemData[]): Promise<LineItemDetail[]> {
+export async function createManyLineItems(
+	items: LineItemData[],
+	order_id: UUID,
+	tx: Prisma.TransactionClient
+): Promise<LineItemDetail[]> {
 	try {
+		const PrismaClient = tx || prisma;
 		// Prisma.createMany does not return created rows. Create items individually so we can return full details.
 		const created = await Promise.all(
 			(items || []).map(async (it) => {
-				// Normalize potential nested menu_item_id shape { menu_item_id }
-				const menu_item_id =
-					(it as any).menu_item_id && typeof (it as any).menu_item_id === 'object'
-						? (it as any).menu_item_id.menu_item_id
-						: (it as any).menu_item_id;
-				const data: any = { ...it, menu_item_id };
-				const row = await prisma.line_items.create({ data });
+				const row = await PrismaClient.line_items.create({
+					data: {
+						quantity: it.quantity,
+						comment: it.comment ?? null,
+						order: { connect: { order_id } },
+						menu_item_version: { connect: { menu_item_version_id: it.menu_item_version_id } },
+					},
+				});
 				return row.line_item_id;
 			})
 		);
@@ -32,7 +43,7 @@ export async function createManyLineItems(items: LineItemData[]): Promise<LineIt
 		const rows = await Promise.all(
 			created.map(
 				async (id) =>
-					await prisma.line_items.findUnique({
+					await PrismaClient.line_items.findUnique({
 						where: { line_item_id: id },
 						include: lineItemsDefaultInclude,
 					})

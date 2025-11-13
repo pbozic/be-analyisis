@@ -3,6 +3,7 @@ import type {
 	BookingCourseDAOResponse,
 	BookingForAnalyticsDAOResponse,
 	BookingCoursesDAOResponse,
+	BookingBasePrismaResult,
 } from './booking.dto';
 import {
 	BookingDAOResponseSchema,
@@ -17,12 +18,13 @@ import type {
 	BookingCoursesSimplePrisma,
 } from '../../../../prisma/includes/reservation/booking';
 
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
+function toIso(d: Date | string | null | undefined): string | undefined {
+	if (!d) return undefined;
+	return d instanceof Date ? d.toISOString() : new Date(d).toISOString();
 }
 
 // Helper to map customer relation (CustomerDetailSchema - without reservation_module_id)
-function mapCustomerDetail(customer: any) {
+function mapCustomerDetail(customer: BookingBasePrisma['customer']) {
 	return customer
 		? {
 				customer_id: customer.customer_id,
@@ -39,7 +41,7 @@ function mapCustomerDetail(customer: any) {
 }
 
 // Helper to map location relation (LocationRefSchema)
-function mapLocationRef(location: any) {
+function mapLocationRef(location: BookingBasePrisma['location']) {
 	return location
 		? {
 				location_id: location.location_id,
@@ -50,8 +52,10 @@ function mapLocationRef(location: any) {
 		: undefined;
 }
 
-// Helper to map employee relation (EmployeeDetailSchema)
-function mapEmployeeDetail(employee: any) {
+// Helper to map employee relation (EmployeeLightSchema)
+// Uses the lightweight BusinessUserLightSchema since the Prisma include (employeeBase)
+// only has a limited select of business_user fields with nested users
+function mapEmployeeDetail(employee: BookingBasePrisma['employee']) {
 	return employee
 		? {
 				employee_id: employee.employee_id,
@@ -69,11 +73,14 @@ function mapEmployeeDetail(employee: any) {
 							business_users_id: employee.business_user.business_users_id,
 							business_id: employee.business_user.business_id,
 							user_id: employee.business_user.user_id,
-							company_role: employee.business_user.company_role ?? null,
-							online: employee.business_user.online ?? false,
-							operating_address_id: employee.business_user.operating_address_id ?? null,
-							created_at: toIso(employee.business_user.created_at) ?? '',
-							updated_at: toIso(employee.business_user.updated_at) ?? '',
+							users: employee.business_user.users
+								? {
+										user_id: employee.business_user.users.user_id,
+										email: employee.business_user.users.email ?? null,
+										first_name: employee.business_user.users.first_name ?? null,
+										last_name: employee.business_user.users.last_name ?? null,
+									}
+								: undefined,
 						}
 					: undefined,
 			}
@@ -81,7 +88,7 @@ function mapEmployeeDetail(employee: any) {
 }
 
 // Helper to map service relation (ServiceRefSchema)
-function mapServiceRef(service: any) {
+function mapServiceRef(service: BookingBasePrisma['service']) {
 	return service
 		? {
 				service_id: service.service_id,
@@ -95,7 +102,7 @@ function mapServiceRef(service: any) {
 }
 
 // Helper to map booking history log (BookingHistoryLogRefSchema)
-function mapBookingHistoryLogRef(log: any) {
+function mapBookingHistoryLogRef(log: BookingWithHistoryPrisma['booking_history_log'][number]) {
 	return {
 		booking_history_id: log.booking_history_id,
 		status: log.status,
@@ -104,7 +111,7 @@ function mapBookingHistoryLogRef(log: any) {
 }
 
 // Helper to map booking course time (BookingCourseTimeRefSchema)
-function mapBookingCourseTimeRef(time: any) {
+function mapBookingCourseTimeRef(time: BookingWithCourseDetailsPrisma['booking_course_time'][number]) {
 	return {
 		booking_course_time_id: time.booking_course_time_id,
 		booking_id: time.booking_id,
@@ -117,7 +124,9 @@ function mapBookingCourseTimeRef(time: any) {
 }
 
 // Helper to map booking course participant (BookingCourseParticipantRefSchema with customer)
-function mapBookingCourseParticipantWithCustomer(participant: any) {
+function mapBookingCourseParticipantWithCustomer(
+	participant: BookingWithCourseDetailsPrisma['booking_course_participant'][number]
+) {
 	return {
 		booking_course_participant_id: participant.booking_course_participant_id,
 		customer_id: participant.customer_id,
@@ -130,7 +139,7 @@ function mapBookingCourseParticipantWithCustomer(participant: any) {
  * Map Prisma booking to BookingDAOResponse (base fields only, no includes)
  * Use this when the booking was created/updated without includes
  */
-export function toBookingDAOResponseBase(row: any): BookingDAOResponse {
+export function toBookingDAOResponseBase(row: BookingBasePrismaResult): BookingDAOResponse {
 	const r = row;
 
 	const dto: BookingDAOResponse = {
@@ -279,7 +288,7 @@ export function toBookingCourseDAOResponse(row: BookingWithCourseDetailsPrisma):
  * Map Prisma booking to BookingForAnalyticsDAOResponse
  * Used by getBookingsForAnalytics
  */
-export function toBookingForAnalyticsDAOResponse(row: any): BookingForAnalyticsDAOResponse {
+export function toBookingForAnalyticsDAOResponse(row: BookingBasePrisma): BookingForAnalyticsDAOResponse {
 	const r = row;
 
 	const dto: BookingForAnalyticsDAOResponse = {
@@ -327,7 +336,7 @@ export function toBookingCourseDAOList(rows: BookingWithCourseDetailsPrisma[]): 
 /**
  * Map list of bookings to BookingForAnalyticsDAOResponse array
  */
-export function toBookingForAnalyticsDAOList(rows: any[]): BookingForAnalyticsDAOResponse[] {
+export function toBookingForAnalyticsDAOList(rows: BookingBasePrisma[]): BookingForAnalyticsDAOResponse[] {
 	return rows.map(toBookingForAnalyticsDAOResponse);
 }
 

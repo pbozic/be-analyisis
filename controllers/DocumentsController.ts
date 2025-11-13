@@ -25,7 +25,7 @@ import {
  * @description Retrieves all documents in the system. Intended for admin usage.
  * @operationId getDocuments
  * @response 200 - Successful operation, returns all documents
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentListResponse} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
@@ -47,7 +47,7 @@ export async function listDocuments(req: Request, res: Response): Promise<void> 
  * @operationId getDocumentById
  * @pathParam {string} document_id - The ID of the document to retrieve
  * @response 200 - Successful operation, returns the document
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentResponse} 200.application/json
  * @response 400 - Error retrieving the document
  * @prisma_model documents
  */
@@ -77,7 +77,7 @@ export async function getDocumentById(
  * @operationId getDocumentsForBusiness
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - Successful operation, returns documents
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentListResponse} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
@@ -103,7 +103,7 @@ export async function getDocumentsForBusiness(
  * @operationId getDocumentsForDriver
  * @pathParam {string} driver_id - The ID of the driver
  * @response 200 - Successful operation, returns documents
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentListResponse} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
@@ -129,7 +129,7 @@ export async function getDocumentsForDriver(
  * @operationId getDocumentsForVehicle
  * @pathParam {string} vehicle_id - The ID of the vehicle
  * @response 200 - Successful operation, returns documents
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentListResponse} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
@@ -155,7 +155,7 @@ export async function getDocumentsForVehicle(
  * @operationId getDocumentsByDocumentType
  * @pathParam {string} document_type - The type of the documents to retrieve
  * @response 200 - Successful operation, returns documents
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentListResponse} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
@@ -182,7 +182,7 @@ export async function getDocumentsByDocumentType(
  * @pathParam {string} business_id - The ID of the business
  * @pathParam {string} document_type - The type of the documents
  * @response 200 - Successful operation, returns documents
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentListResponse} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
@@ -209,7 +209,7 @@ export async function getDocumentsForBusinessByDocumentType(
  * @pathParam {string} driver_id - The ID of the driver
  * @pathParam {string} document_type - The type of the documents
  * @response 200 - Successful operation, returns documents
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentListResponse} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
@@ -236,7 +236,7 @@ export async function getDocumentsForDriverByDocumentType(
  * @pathParam {string} vehicle_id - The ID of the vehicle
  * @pathParam {string} document_type - The type of the documents
  * @response 200 - Successful operation, returns documents
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentListResponse} 200.application/json
  * @response 400 - Error retrieving documents
  * @prisma_model documents
  */
@@ -261,10 +261,10 @@ export async function getDocumentsForVehicleByDocumentType(
  * @description Creates a new document and links it to a specific business.
  * @operationId createBusinessDocument
  * @pathParam {string} business_id - The ID of the business
- * @bodyContent {object} application/json
+ * @bodyContent {CreateDocumentBody} application/json
  * @bodyRequired
  * @response 201 - Document created and linked successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {DocumentResponse} 201.application/json
  * @response 400 - Error creating or linking the document
  * @prisma_model documents
  * @prisma_model files
@@ -296,10 +296,10 @@ export async function createBusinessDocument(
  * @description Creates a new document and links it to a specific driver.
  * @operationId createDriverDocument
  * @pathParam {string} driver_id - The ID of the driver
- * @bodyContent {object} application/json
+ * @bodyContent {CreateDocumentBody} application/json
  * @bodyRequired
  * @response 201 - Document created and linked successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {DocumentResponse} 201.application/json
  * @response 400 - Error creating or linking the document
  * @prisma_model documents
  * @prisma_model files
@@ -331,10 +331,10 @@ export async function createDriverDocument(
  * @description Creates a new document and links it to a specific vehicle.
  * @operationId createVehicleDocument
  * @pathParam {string} vehicle_id - The ID of the vehicle
- * @bodyContent {object} application/json
+ * @bodyContent {CreateDocumentBody} application/json
  * @bodyRequired
  * @response 201 - Document created and linked successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {DocumentResponse} 201.application/json
  * @response 400 - Error creating or linking the document
  * @prisma_model documents
  * @prisma_model files
@@ -369,10 +369,10 @@ export async function createVehicleDocument(
  * @description Updates the expiration date of a specific document.
  * @operationId updateDocumentExpirationDate
  * @pathParam {string} document_id - The ID of the document to update
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateDocumentExpirationInput} application/json
  * @bodyRequired
  * @response 200 - Document expiration date updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentResponse} 200.application/json
  * @response 400 - Error updating document's expiration date
  * @prisma_model documents
  */
@@ -397,10 +397,10 @@ export async function updateDocumentExpirationDate(
  * @description Updates the issue date of a specific document.
  * @operationId updateDocumentIssueDate
  * @pathParam {string} document_id - The ID of the document to update
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateDocumentIssueInput} application/json
  * @bodyRequired
  * @response 200 - Document issue date updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentResponse} 200.application/json
  * @response 400 - Error updating document's issue date
  * @prisma_model documents
  */
@@ -425,10 +425,10 @@ export async function updateDocumentIssueDate(
  * @description Updates the files associated with a specific document.
  * @operationId updateDocumentFiles
  * @pathParam {string} document_id - The ID of the document to update
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateDocumentFilesInput} application/json
  * @bodyRequired
  * @response 200 - Document files updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentResponse} 200.application/json
  * @response 400 - Error updating document's files
  * @prisma_model documents
  * @prisma_model files
@@ -451,10 +451,10 @@ export async function updateDocumentFiles(req: ValidatedRequest<UpdateDocumentFi
  * @description Updates the additional information of a specific document.
  * @operationId updateDocumentAdditionalInfo
  * @pathParam {string} document_id - The ID of the document to update
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateDocumentAdditionalInfoInput} application/json
  * @bodyRequired
  * @response 200 - Document additional info updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentResponse} 200.application/json
  * @response 400 - Error updating document's additional info
  * @prisma_model documents
  */

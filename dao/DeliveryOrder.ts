@@ -4,8 +4,8 @@ import { JsonArray } from '@prisma/client/runtime/library.js';
 import prisma from '../prisma/prisma.js';
 import { DELIVERY_ORDER_STATUS, DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
 import type {
+	CreateDeliveryOrderDaoInput,
 	DeliveryOrderDetail,
-	CreateDeliveryOrder,
 	UpdateDeliveryOrder,
 } from '../schemas/dto/DeliveryOrders/index.js';
 import { toDeliveryOrderDetail } from '../schemas/dto/DeliveryOrders/index.js';
@@ -14,6 +14,7 @@ import { delivery_order_sent } from '../prisma/schemas/interfaces.js';
 import { UserBase } from '../schemas/dto/User/index.js';
 import type { DriverDetail } from '../schemas/dto/Drivers/index.js';
 import { DeliveryOrderSent } from '../types/deliveryOrders/DeliveryOrderSent.js';
+import { LineItemCreateInputData } from '../schemas/dto/LineItems/line-items.dto.js';
 /**
  * Add an entry to delivery order timeline
  */
@@ -183,7 +184,7 @@ export async function getDeliveryOrdersIfNotCompleted(user_id: UUID): Promise<De
 /**
  * Create a new delivery order.
  */
-export async function createOrder(order: CreateDeliveryOrder, user_id: UUID): Promise<DeliveryOrderDetail> {
+export async function createOrder(order: CreateDeliveryOrderDaoInput, user_id: UUID): Promise<DeliveryOrderDetail> {
 	let orderData = { ...order };
 	try {
 		const result = await prisma.$transaction(async (tx: any) => {
@@ -229,24 +230,77 @@ export async function createOrder(order: CreateDeliveryOrder, user_id: UUID): Pr
 
 			const order_number = (foodDrinksCount + storesCount) % 10000;
 
-			return tx.delivery_orders.create({
+			function mapLineItemForCreate(item: LineItemCreateInputData): any {
+				return {
+					menu_item_version_id: item.menu_item_version_id,
+					quantity: item.quantity,
+					comment: item.comment ?? null,
+					replacement_id: item.replacement_id ?? null,
+					replaces_id: item.replaces_id ?? null,
+					parent_side_id: item.parent_side_id ?? null,
+					parent_extra_id: item.parent_extra_id ?? null,
+					removed: item.removed ?? false,
+					// Nested sides
+					sides: item.sides?.length
+						? {
+								create: item.sides.map(mapLineItemForCreate),
+							}
+						: undefined,
+					// Nested extras
+					extras: item.extras?.length
+						? {
+								create: item.extras.map(mapLineItemForCreate),
+							}
+						: undefined,
+				};
+			}
+
+			// Usage in your order creation:
+			const new_order = await tx.delivery_orders.create({
 				data: {
 					...orderData,
 					order_number: order_number,
 					user: {
-						connect: {
-							user_id: user_id,
-						},
+						connect: { user_id },
 					},
 					...moduleConnectObj,
+					items: {
+						create: order.items.map(mapLineItemForCreate),
+					},
 				},
 				include: {
 					driver: true,
 					user: true,
 					food_drinks_module: true,
 					stores_module: true,
+					items: {
+						include: {
+							sides: {
+								include: {
+									sides: true,
+									extras: true,
+									replacement: true,
+								},
+							},
+							extras: {
+								include: {
+									sides: true,
+									extras: true,
+									replacement: true,
+								},
+							},
+							replacement: {
+								include: {
+									sides: true,
+									extras: true,
+									replacement: true,
+								},
+							},
+						},
+					},
 				},
 			});
+			return new_order;
 		});
 
 		return toDeliveryOrderDetail(result);

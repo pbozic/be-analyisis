@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { JsonValue } from '@prisma/client/runtime/library';
 
 import { CreateMenuItemSchema, GetMenuItemsByIdsRequestSchema } from './menu.dto.ts';
 import { UUID, Timestamp } from '../../primitives.ts';
@@ -168,6 +169,14 @@ export type RemoveMenuItemFromCategoryInput = z.infer<typeof RemoveMenuItemFromC
 
 // POST /business/search/menu-items/extras-sides/:business_id body
 export const MenuItemsIdsBodySchema = z.object({ ids: z.array(UUID).min(1) }).openapi('MenuItemsIdsBody');
+
+export type PrismaMenuItemVersion = {
+	menu_item_version_id: UUID;
+	menu_item_id: UUID;
+	version: number;
+	snapshot: JsonValue;
+	created_at: Date;
+};
 
 // Register MenuItem DAO schemas
 export function registerMenuItemDaoSchemas(registry: OpenAPIRegistry) {

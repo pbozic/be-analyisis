@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID } from '../../primitives';
+import { PositiveInt, UUID } from '../../primitives';
+import { PrismaMenuItemVersion } from '../Menu';
 
 extendZodWithOpenApi(z);
 
@@ -11,21 +12,21 @@ extendZodWithOpenApi(z);
 
 export const LineItemDataSchema = z
 	.object({
-		menu_item_id: z.object({ menu_item_id: UUID }),
-		quantity: z.number().int().min(1),
+		menu_item_version_id: UUID,
+		quantity: PositiveInt,
 		comment: z.string().nullable().optional(),
 	})
 	.openapi('LineItemData');
 export type LineItemData = z.infer<typeof LineItemDataSchema>;
 
 export const CreateManyLineItemsBodySchema = z
-	.object({ items: z.array(LineItemDataSchema).min(1) })
+	.object({ items: z.array(LineItemDataSchema).min(1), order_id: UUID })
 	.openapi('CreateManyLineItemsBody');
 export type CreateManyLineItemsBody = z.infer<typeof CreateManyLineItemsBodySchema>;
 
 export const UpdateLineItemBodySchema = z
 	.object({
-		quantity: z.number().int().min(1).optional(),
+		quantity: PositiveInt.optional(),
 		comment: z.string().nullable().optional(),
 		removed: z.boolean().optional(),
 	})
@@ -35,7 +36,6 @@ export type UpdateLineItemBody = z.infer<typeof UpdateLineItemBodySchema>;
 export const LineItemBaseSchema = z
 	.object({
 		line_item_id: UUID,
-		menu_item_id: UUID,
 		menu_item_version_id: UUID,
 		order_id: UUID,
 		quantity: z.number().int(),
@@ -75,25 +75,33 @@ export const LineItemDetailSchema: z.ZodType<LineItemDetail, z.ZodTypeDef, unkno
 	)
 	.openapi('LineItemDetail');
 
+export const LineItemCreateInputDataSchema = LineItemBaseSchema.omit({ line_item_id: true })
+	.extend({
+		sides: z.array(z.lazy(() => LineItemDetailSchema)).optional(),
+		extras: z.array(z.lazy(() => LineItemDetailSchema)).optional(),
+	})
+	.openapi('LineItemCreateInputData');
+export type LineItemCreateInputData = z.infer<typeof LineItemCreateInputDataSchema>;
+
 // ===============
 // Mappers
 // ===============
 type PrismaLineItem = {
-	line_item_id: string;
-	menu_item_id: string;
-	menu_item_version_id: string;
-	order_id: string;
+	line_item_id: UUID;
+	menu_item_version_id: UUID;
+	order_id: UUID;
 	quantity: number;
 	comment?: string | null;
-	replacement_id?: string | null;
-	replaces_id?: string | null;
-	parent_side_id?: string | null;
-	parent_extra_id?: string | null;
+	replacement_id?: UUID | null;
+	replaces_id?: UUID | null;
+	parent_side_id?: UUID | null;
+	parent_extra_id?: UUID | null;
 	removed?: boolean;
 	sides?: PrismaLineItem[];
 	extras?: PrismaLineItem[];
 	replacement?: PrismaLineItem | null;
 	replaces?: PrismaLineItem | null;
+	menu_item_version?: PrismaMenuItemVersion;
 };
 
 export function toLineItemRef(row: unknown): LineItemRef {
@@ -105,7 +113,6 @@ export function toLineItemDetail(row: unknown): LineItemDetail {
 	const r = row as PrismaLineItem;
 	return LineItemDetailSchema.parse({
 		line_item_id: r.line_item_id,
-		menu_item_id: r.menu_item_id,
 		menu_item_version_id: r.menu_item_version_id,
 		order_id: r.order_id,
 		quantity: r.quantity,

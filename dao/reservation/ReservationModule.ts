@@ -10,6 +10,7 @@ import type {
 	UpdateReservationModuleRequest,
 	UpdateReservationSettingsRequest,
 } from '../../schemas/dto/reservations/reservation-module/reservation-module.dto.js';
+import { toReservationModuleResponse } from '../../schemas/dto/reservations/reservation-module/reservation-module.mappers.js';
 /**
  * Generates a unique reservation hash.
  *
@@ -50,7 +51,7 @@ export async function getReservationModuleById(
 ): Promise<ReservationModuleDAOResponse | null> {
 	const prisma_client = tx || prisma;
 	try {
-		return await prisma_client.reservation_module.findUnique({
+		const result = await prisma_client.reservation_module.findUnique({
 			where: { reservation_module_id: reservationModuleId },
 			include: {
 				business: true,
@@ -59,6 +60,7 @@ export async function getReservationModuleById(
 				employees: true,
 			},
 		});
+		return result ? toReservationModuleResponse(result) : null;
 	} catch {
 		throw new Error('Error retrieving reservation module');
 	}
@@ -77,10 +79,11 @@ export async function getReservationModuleByBusinessId(
 ): Promise<ReservationModuleDAOResponse | null> {
 	const prisma_client = tx || prisma;
 	try {
-		return await prisma_client.reservation_module.findUnique({
+		const result = await prisma_client.reservation_module.findUnique({
 			where: { business_id: businessId },
 			include: { business: true },
 		});
+		return result ? toReservationModuleResponse(result) : null;
 	} catch {
 		throw new Error('Error retrieving reservation module by business ID');
 	}
@@ -99,12 +102,13 @@ export async function createReservationModule(
 ): Promise<ReservationModuleDAOResponse> {
 	const prisma_client = tx || prisma;
 	try {
-		return await prisma_client.reservation_module.create({
+		const result = await prisma_client.reservation_module.create({
 			data: {
 				public_link_hash: await generateUniqueReservationHash(tx || null),
 				business: { connect: { business_id } },
 			},
 		});
+		return toReservationModuleResponse(result);
 	} catch {
 		throw new Error('Error creating reservation module');
 	}
@@ -135,10 +139,11 @@ export async function updateReservationModule(
 		if (data.subscription_expires_at !== undefined)
 			updateData.subscription_expires_at = data.subscription_expires_at;
 
-		return await prisma_client.reservation_module.update({
+		const result = await prisma_client.reservation_module.update({
 			where: { reservation_module_id: reservationModuleId },
 			data: updateData,
 		});
+		return toReservationModuleResponse(result);
 	} catch {
 		throw new Error('Error updating reservation module');
 	}
@@ -159,7 +164,7 @@ export async function updateReservationModuleSettings(
 ): Promise<ReservationModuleDAOResponse> {
 	const prisma_client = tx || prisma;
 	try {
-		return await prisma_client.reservation_module.update({
+		const result = await prisma_client.reservation_module.update({
 			where: { reservation_module_id: reservationModuleId },
 			data: {
 				hours_before_reschedule: data.hours_before_reschedule,
@@ -167,6 +172,7 @@ export async function updateReservationModuleSettings(
 				publicly_visible: data.publicly_visible,
 			},
 		});
+		return toReservationModuleResponse(result);
 	} catch {
 		throw new Error('Error updating reservation module');
 	}
@@ -206,10 +212,11 @@ export async function disableReservations(
 ): Promise<ReservationModuleDAOResponse> {
 	const prisma_client = tx || prisma;
 	try {
-		return await prisma_client.reservation_module.update({
+		const result = await prisma_client.reservation_module.update({
 			where: { reservation_module_id: reservationModuleId },
 			data: { publicly_visible: false },
 		});
+		return toReservationModuleResponse(result);
 	} catch {
 		throw new Error('Error disabling reservation module');
 	}
@@ -228,10 +235,11 @@ export async function enableReservations(
 ): Promise<ReservationModuleDAOResponse> {
 	const prisma_client = tx || prisma;
 	try {
-		return await prisma_client.reservation_module.update({
+		const result = await prisma_client.reservation_module.update({
 			where: { reservation_module_id: reservationModuleId },
 			data: { publicly_visible: true },
 		});
+		return toReservationModuleResponse(result);
 	} catch {
 		throw new Error('Error enabling reservation module');
 	}

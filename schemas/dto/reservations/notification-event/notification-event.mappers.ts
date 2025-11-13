@@ -1,26 +1,18 @@
 import type { NotificationEventResponse } from './notification-event.dto';
 import { NotificationEventResponseSchema } from './notification-event.dto';
-
-function toIso(d: unknown): string | undefined {
-	return d ? new Date(d as any).toISOString() : undefined;
-}
+import type { NotificationEventBasePrisma } from '../../../../prisma/includes/reservation/notification-event';
 
 /**
  * Map Prisma notification_event to NotificationEventResponse
  */
-export function toNotificationEventResponse(row: any): NotificationEventResponse {
+export function toNotificationEventResponse(row: NotificationEventBasePrisma): NotificationEventResponse {
 	const r = row;
 
 	const dto = {
 		notification_event_id: r.notification_event_id,
-		event_name: r.event_name,
-		display_name: r.display_name ?? null,
+		key: r.key,
+		name: r.name,
 		description: r.description ?? null,
-		is_active: r.is_active ?? true,
-		created_at: toIso(r.created_at) ?? '',
-		updated_at: toIso(r.updated_at) ?? '',
-		notification_templates: r.notification_templates ?? undefined,
-		notification_message_events: r.notification_message_events ?? undefined,
 	};
 
 	return NotificationEventResponseSchema.parse(dto);
@@ -29,7 +21,7 @@ export function toNotificationEventResponse(row: any): NotificationEventResponse
 /**
  * Map list of notification events
  */
-export function toNotificationEventList(rows: any[]): NotificationEventResponse[] {
+export function toNotificationEventList(rows: NotificationEventBasePrisma[]): NotificationEventResponse[] {
 	return rows.map(toNotificationEventResponse);
 }
 

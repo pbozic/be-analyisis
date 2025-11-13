@@ -4,6 +4,10 @@ import type {
 	UpdateScheduleSlotExceptionRequest,
 	ScheduleSlotExceptionResponse,
 } from '../../schemas/dto/reservations/schedule-slot-exception/schedule-slot-exception.dto.js';
+import {
+	toScheduleSlotExceptionResponse,
+	toScheduleSlotExceptionList,
+} from '../../schemas/dto/reservations/schedule-slot-exception/schedule-slot-exception.mappers.js';
 
 /**
  * Retrieves all exceptions for a given schedule slot ID.
@@ -16,7 +20,7 @@ export async function getExceptionsByScheduleSlotId(scheduleSlotId: string): Pro
 		const records = await prisma.schedule_slot_exceptions.findMany({
 			where: { schedule_slot_id: scheduleSlotId },
 		});
-		return records;
+		return toScheduleSlotExceptionList(records);
 	} catch (error) {
 		throw new Error('Error retrieving schedule slot exceptions');
 	}
@@ -42,7 +46,7 @@ export async function createScheduleSlotException(
 				type: data.type,
 			},
 		});
-		return record;
+		return toScheduleSlotExceptionResponse(record);
 	} catch (error) {
 		throw new Error('Error creating schedule slot exception');
 	}
@@ -71,7 +75,7 @@ export async function updateScheduleSlotException(
 				type: data.type,
 			},
 		});
-		return record;
+		return toScheduleSlotExceptionResponse(record);
 	} catch (error) {
 		throw new Error('Error updating schedule slot exception');
 	}
@@ -104,7 +108,7 @@ export async function getScheduleSlotExceptionById(id: string): Promise<Schedule
 		const record = await prisma.schedule_slot_exceptions.findUnique({
 			where: { schedule_slot_exception_id: id },
 		});
-		return record;
+		return record ? toScheduleSlotExceptionResponse(record) : null;
 	} catch (error) {
 		throw new Error('Error retrieving schedule slot exception');
 	}

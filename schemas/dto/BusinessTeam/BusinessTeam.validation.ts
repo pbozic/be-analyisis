@@ -1,7 +1,9 @@
 import z from 'zod';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID } from '../../primitives';
 
+extendZodWithOpenApi(z);
 // =======================
 // Create Business Team - POST /create
 // =======================
@@ -88,3 +90,12 @@ export const MoveUserToTeamSchema = z
 	})
 	.openapi('MoveUserToTeam');
 export type MoveUserToTeamInput = z.infer<typeof MoveUserToTeamSchema>;
+
+export function registerSchemas(registry: OpenAPIRegistry) {
+	// Register base schemas
+	registry.register('CreateBusinessTeam', CreateBusinessTeamSchema);
+	registry.register('SetBusinessTeamLimit', SetBusinessTeamLimitSchema);
+	registry.register('SetBusinessTeamName', SetBusinessTeamNameSchema);
+	registry.register('AddUserToTeam', AddUserToTeamSchema);
+	registry.register('MoveUserToTeam', MoveUserToTeamSchema);
+}
