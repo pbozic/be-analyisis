@@ -1,11 +1,41 @@
 import { Prisma } from '@prisma/client';
 
 export const employeeBase = Prisma.validator<Prisma.employeeInclude>()({
-	business_user: true,
+	reservation_module: true,
+	business_user: {
+		select: {
+			business_users_id: true,
+			business_id: true,
+			user_id: true,
+			users: {
+				select: {
+					user_id: true,
+					email: true,
+					first_name: true,
+					last_name: true,
+				},
+			},
+		},
+	},
 } as const);
 
 export const employeeWithSlots = Prisma.validator<Prisma.employeeInclude>()({
-	business_user: true,
+	reservation_module: true,
+	business_user: {
+		select: {
+			business_users_id: true,
+			business_id: true,
+			user_id: true,
+			users: {
+				select: {
+					user_id: true,
+					email: true,
+					first_name: true,
+					last_name: true,
+				},
+			},
+		},
+	},
 	schedule_slots: {
 		include: {
 			booking_slots: true,

@@ -4,6 +4,7 @@ import type {
 	ScheduleDAOResponse,
 	UpdateScheduleRequest,
 } from '../../schemas/dto/reservations/schedule/schedule.dto.js';
+import { toScheduleDAOResponse, toScheduleDAOList } from '../../schemas/dto/reservations/schedule/schedule.mappers.js';
 
 /**
  * Retrieves all schedules for a given business ID.
@@ -13,7 +14,7 @@ import type {
  */
 export async function getSchedulesByLocationId(): Promise<ScheduleDAOResponse[]> {
 	try {
-		let schedules = await prisma.schedule.findMany({
+		const schedules = await prisma.schedule.findMany({
 			// where: {
 			// 	location_id: locationId,
 			// },
@@ -21,7 +22,7 @@ export async function getSchedulesByLocationId(): Promise<ScheduleDAOResponse[]>
 				location: true,
 			},
 		});
-		return schedules;
+		return toScheduleDAOList(schedules);
 	} catch (error) {
 		throw new Error('Error retrieving schedules');
 	}
@@ -35,7 +36,7 @@ export async function getSchedulesByLocationId(): Promise<ScheduleDAOResponse[]>
  */
 export async function createSchedule(scheduleData: CreateScheduleRequest): Promise<ScheduleDAOResponse> {
 	try {
-		let schedule = await prisma.schedule.create({
+		const schedule = await prisma.schedule.create({
 			data: {
 				name: scheduleData.name,
 				color: scheduleData.color,
@@ -44,7 +45,7 @@ export async function createSchedule(scheduleData: CreateScheduleRequest): Promi
 				end_date: scheduleData.end_date,
 			},
 		});
-		return schedule;
+		return toScheduleDAOResponse(schedule);
 	} catch (error) {
 		throw new Error('Error creating schedule');
 	}
@@ -62,7 +63,7 @@ export async function updateSchedule(
 	scheduleData: UpdateScheduleRequest
 ): Promise<ScheduleDAOResponse> {
 	try {
-		let schedule = await prisma.schedule.update({
+		const schedule = await prisma.schedule.update({
 			where: { schedule_id: scheduleId },
 			data: {
 				name: scheduleData.name,
@@ -72,7 +73,7 @@ export async function updateSchedule(
 				end_date: scheduleData.end_date,
 			},
 		});
-		return schedule;
+		return toScheduleDAOResponse(schedule);
 	} catch (error) {
 		throw new Error('Error updating schedule');
 	}
@@ -102,14 +103,14 @@ export async function deleteSchedule(scheduleId: string): Promise<void> {
  */
 export async function getScheduleById(scheduleId: string): Promise<ScheduleDAOResponse | null> {
 	try {
-		let schedule = await prisma.schedule.findUnique({
+		const schedule = await prisma.schedule.findUnique({
 			where: { schedule_id: scheduleId },
 			include: {
 				location: true,
 				schedule_employees: true,
 			},
 		});
-		return schedule;
+		return schedule ? toScheduleDAOResponse(schedule) : null;
 	} catch (error) {
 		throw new Error('Error retrieving schedule');
 	}

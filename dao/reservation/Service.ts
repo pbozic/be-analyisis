@@ -4,6 +4,7 @@ import type {
 	UpdateServiceRequest,
 	ServiceDAOResponse,
 } from '../../schemas/dto/reservations/service/service.dto.js';
+import { toServiceDAOResponse, toServiceDAOList } from '../../schemas/dto/reservations/service/service.mappers.js';
 /**
  * Retrieves all services for a given business ID.
  * @param {string} businessId - The ID of the business to retrieve services for.
@@ -12,7 +13,7 @@ import type {
  */
 export async function getServicesByReservationModuleId(reservationModuleId: string): Promise<ServiceDAOResponse[]> {
 	try {
-		let services = await prisma.service.findMany({
+		const services = await prisma.service.findMany({
 			where: {
 				reservation_module_id: reservationModuleId,
 			},
@@ -22,7 +23,7 @@ export async function getServicesByReservationModuleId(reservationModuleId: stri
 				assigned_employees: true,
 			},
 		});
-		return services;
+		return toServiceDAOList(services);
 	} catch (error) {
 		throw new Error('Error retrieving services');
 	}
@@ -39,7 +40,7 @@ export async function createService(
 	reservationModuleId: string
 ): Promise<ServiceDAOResponse> {
 	try {
-		let service = await prisma.service.create({
+		const service = await prisma.service.create({
 			data: {
 				name: serviceData.name,
 				description: serviceData.description,
@@ -62,7 +63,7 @@ export async function createService(
 				},
 			},
 		});
-		return service;
+		return toServiceDAOResponse(service);
 	} catch (error) {
 		throw new Error('Error creating service');
 	}
@@ -84,7 +85,7 @@ export async function updateService(serviceId: string, serviceData: UpdateServic
 
 		const shouldUpdateRelation = current?.service_category_id !== serviceData.service_category_id;
 
-		let service = await prisma.service.update({
+		const service = await prisma.service.update({
 			where: { service_id: serviceId },
 			data: {
 				...serviceData,
@@ -95,7 +96,7 @@ export async function updateService(serviceId: string, serviceData: UpdateServic
 				}),
 			},
 		});
-		return service;
+		return toServiceDAOResponse(service);
 	} catch (error) {
 		throw new Error('Error updating service');
 	}
@@ -125,7 +126,7 @@ export async function deleteService(serviceId: string): Promise<void> {
  */
 export async function getServiceById(serviceId: string): Promise<ServiceDAOResponse | null> {
 	try {
-		let service = await prisma.service.findUnique({
+		const service = await prisma.service.findUnique({
 			where: { service_id: serviceId },
 			include: {
 				service_category: true,
@@ -133,7 +134,7 @@ export async function getServiceById(serviceId: string): Promise<ServiceDAORespo
 				assigned_employees: true,
 			},
 		});
-		return service;
+		return service ? toServiceDAOResponse(service) : null;
 	} catch (error) {
 		throw new Error('Error retrieving service');
 	}
@@ -151,7 +152,7 @@ export async function connectServiceToCategory(
 	serviceCategoryId: string
 ): Promise<ServiceDAOResponse> {
 	try {
-		let service = await prisma.service.update({
+		const service = await prisma.service.update({
 			where: { service_id: serviceId },
 			data: {
 				service_category: {
@@ -159,7 +160,7 @@ export async function connectServiceToCategory(
 				},
 			},
 		});
-		return service;
+		return toServiceDAOResponse(service);
 	} catch (error) {
 		throw new Error('Error connecting service to category');
 	}
@@ -173,7 +174,7 @@ export async function connectServiceToCategory(
  */
 export async function disconnectServiceFromCategory(serviceId: string): Promise<ServiceDAOResponse> {
 	try {
-		let service = await prisma.service.update({
+		const service = await prisma.service.update({
 			where: { service_id: serviceId },
 			data: {
 				service_category: {
@@ -181,7 +182,7 @@ export async function disconnectServiceFromCategory(serviceId: string): Promise<
 				},
 			},
 		});
-		return service;
+		return toServiceDAOResponse(service);
 	} catch (error) {
 		throw new Error('Error disconnecting service from category');
 	}
@@ -202,7 +203,7 @@ export async function getServicesByCategoryId(serviceCategoryId: string): Promis
 				assigned_employees: true,
 			},
 		});
-		return services;
+		return toServiceDAOList(services);
 	} catch (error) {
 		throw new Error('Error retrieving services by category');
 	}
@@ -217,7 +218,7 @@ export async function getServicesByCategoryId(serviceCategoryId: string): Promis
  */
 export async function createServiceAssigment(employee_id: string, service_id: string): Promise<ServiceDAOResponse> {
 	try {
-		let serviceAssignment = await prisma.service_assignment.create({
+		const serviceAssignment = await prisma.service_assignment.create({
 			data: {
 				employee: {
 					connect: {
@@ -231,7 +232,7 @@ export async function createServiceAssigment(employee_id: string, service_id: st
 				},
 			},
 		});
-		return serviceAssignment;
+		return serviceAssignment as ServiceDAOResponse;
 	} catch (error) {
 		throw new Error('Error creating service assignment');
 	}
@@ -268,7 +269,7 @@ export async function deleteServiceAssigment(employee_id: string, service_id: st
  */
 export async function getServicesByReservationId(reservationModuleId: string): Promise<ServiceDAOResponse[]> {
 	try {
-		let services = await prisma.service.findMany({
+		const services = await prisma.service.findMany({
 			where: {
 				reservation_module_id: reservationModuleId,
 			},
@@ -277,7 +278,7 @@ export async function getServicesByReservationId(reservationModuleId: string): P
 				assigned_employees: true,
 			},
 		});
-		return services;
+		return toServiceDAOList(services);
 	} catch (error) {
 		throw new Error('Error retrieving services');
 	}
