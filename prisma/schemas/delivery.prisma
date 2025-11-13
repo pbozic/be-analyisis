@@ -21,8 +21,8 @@ model stores_module {
     menu                     menus?
     overwhelmed              Boolean                    @default(false)
     online                   Boolean                    @default(false)
-    business_details_id String?  @db.Uuid @unique
-    business_details    business_details? @relation("stores_business_details", fields: [business_details_id], references: [business_details_id])
+    business_details_id      String?                    @unique @db.Uuid
+    business_details         business_details?          @relation("stores_business_details", fields: [business_details_id], references: [business_details_id])
     working_hours            Json?
 
     scoring_points scoring_points[] @relation("scoring_points_to_store")
@@ -51,11 +51,11 @@ model food_drinks_module {
     minimum_order       Int               @default(0)
     menu                menus?
 
-    overwhelmed   Boolean @default(false)
-    online        Boolean @default(false)
-    business_details_id String?  @db.Uuid @unique
+    overwhelmed         Boolean           @default(false)
+    online              Boolean           @default(false)
+    business_details_id String?           @unique @db.Uuid
     business_details    business_details? @relation("food_drinks_business_details", fields: [business_details_id], references: [business_details_id])
-    working_hours Json?
+    working_hours       Json?
 
     scoring_points scoring_points[] @relation("scoring_points_to_food_drinks")
     late_events    late_events[]    @relation("late_events_to_food_drinks")
@@ -161,8 +161,8 @@ model daily_meals_module {
     daily_meal_drivers       daily_meals_drivers[]
     daily_meal_categories    daily_meal_categories[]
     daily_meal_subscriptions daily_meal_subscriptions[]
-    business_details_id String?  @db.Uuid @unique
-    business_details    business_details? @relation("daily_meals_business_details", fields: [business_details_id], references: [business_details_id])
+    business_details_id      String?                    @unique @db.Uuid
+    business_details         business_details?          @relation("daily_meals_business_details", fields: [business_details_id], references: [business_details_id])
 }
 
 /// @summary Drivers assigned to daily meals deliveries.
@@ -370,7 +370,6 @@ model menu_items {
     weight_quantity             Float? // Quantity for weighted items
     stock                       Float?                    @default(1) // Stock for the item, if applicable 
     stock_movements             menu_item_stock_change[]
-    line_items                  line_items[]
     latest_version_id           String?                   @db.Uuid
     versions                    menu_item_versions[]
 
@@ -385,12 +384,10 @@ model menu_items {
 /// @erd DeliveryOrders
 model line_items {
     line_item_id         String             @id @default(uuid()) @db.Uuid
-    menu_item_id         String             @db.Uuid
     menu_item_version_id String             @db.Uuid
     order_id             String             @db.Uuid
     quantity             Int
     comment              String?
-    menu_item            menu_items         @relation(fields: [menu_item_id], references: [menu_item_id])
     menu_item_version    menu_item_versions @relation(fields: [menu_item_version_id], references: [menu_item_version_id])
     order                delivery_orders    @relation(fields: [order_id], references: [order_id])
     replacement_id       String?            @db.Uuid
@@ -446,12 +443,12 @@ model menu_item_stock_change {
 /// @namespace TableReservations
 /// @erd FoodDrinks
 model table_reservations_module {
-    id           String         @id @default(uuid()) @db.Uuid
-    business_id  String         @unique @db.Uuid
-    seats        Int?
-    business     business       @relation(fields: [business_id], references: [business_id])
-    reservations reservations[]
-    business_details_id String?  @db.Uuid @unique
+    id                  String            @id @default(uuid()) @db.Uuid
+    business_id         String            @unique @db.Uuid
+    seats               Int?
+    business            business          @relation(fields: [business_id], references: [business_id])
+    reservations        reservations[]
+    business_details_id String?           @unique @db.Uuid
     business_details    business_details? @relation("table_reservations_business_details", fields: [business_details_id], references: [business_details_id])
 }
 
