@@ -11,7 +11,6 @@ import { ListBookingsParams, BookingsAnalyticsParams } from '../../types/reserva
 import { GetSchedulesWithSlotsInput } from '../../types/reservations/Schedule.ts';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 import { calcBookings } from './BookingController.ts';
-import { BusinessUser } from '../../types/businessUsers/BusinessUser.ts';
 
 /**
  * GET /reservation/employees
@@ -58,9 +57,9 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 			return;
 		}
 		let reservation_module_id = req.user?.reservation_module_id as string;
-		let userExists = await UserDao.getUserByEmail(employeeData.email, {});
+		let userExists = await UserDao.getUserByEmail(employeeData.email);
 		if (!userExists) {
-			userExists = await UserDao.getUserByTelephone(employeeData.telephone, {});
+			userExists = await UserDao.getUserByTelephone(employeeData.telephone);
 		}
 		const { businessUser } = await BusinessUsersDao.createBusinessUser(
 			{

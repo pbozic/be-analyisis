@@ -1519,9 +1519,7 @@ async function authenticateRegistrationSession(
 			return res.status(400).json({ error: 'Email and password are required.' });
 		}
 
-		const user = await UserDao.getUserByEmailOrTelephone(email.toLowerCase(), {
-			select: { user_id: true, password: true },
-		});
+		const user = await UserDao.getUserByEmailOrTelephone(email.toLowerCase());
 
 		if (!user) {
 			return res.status(400).json({ error: 'Wrong email / password combination.' });

@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { SERVICE_TYPE } from './constants.js';
 import BusinessDao, { getStripeIdsForAllBusinesses } from '../dao/Business.js';
 import prisma from '../prisma/prisma.js';
-import { UserWithFavouritesResponse } from '../schemas/dto/User/index.js';
+import { UserWithBusinessUsersResponse } from '../schemas/dto/User/index.js';
 
 dotenv.config();
 
@@ -125,7 +125,7 @@ export async function updateCustomerPhone(customerId: string, telephone: string)
  * @returns {Promise<PaymentSheetCredentials>}
  */
 export async function generatePaymentSheetCredentials(
-	user: UserWithFavouritesResponse
+	user: UserWithBusinessUsersResponse
 ): Promise<PaymentSheetCredentials> {
 	if (!user.stripe_customer_id) throw new Error('User does not have a stripe customer id');
 	const ephemeralKey = await stripe.ephemeralKeys.create(

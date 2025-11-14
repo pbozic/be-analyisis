@@ -10,7 +10,6 @@ export function toUserAddressResponse(row: UserAddressDefaultPrisma): UserAddres
 		details: row.details,
 		type: row.type,
 		// relations may be included by DAO callers; keep them as-is if present
-		users: (row as any).users,
 		address: (row as any).address,
 	};
 

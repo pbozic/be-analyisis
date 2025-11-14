@@ -3,8 +3,10 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, Email, PhoneNumber } from '../../primitives.js';
 import { UserAddressRefSchema } from '../Address/index.js';
-import { BusinessUserRefSchema } from '../BusinessUser/index.js';
+import { BusinessUserRefSchema, BusinessUserWithBusinessResponseSchema } from '../BusinessUser/index.js';
 import { TransactionRefSchema } from './transaction.js';
+import { DriverBaseSchema } from '../Driver';
+import { FileRefSchema } from '../Files/file.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -136,12 +138,19 @@ export const UserRefSchema = z.object({
 export type UserRef = z.infer<typeof UserRefSchema>;
 
 // User Response Schema - Base with embedded refs (no password)
-export const UserResponseSchema = UserBaseSchema.omit({ password: true });
+export const UserResponseSchema = UserBaseSchema.omit({ password: true })
+	.extend({
+		business_users: z.array(BusinessUserRefSchema).nullable().optional(),
+		addresses: z.array(UserAddressRefSchema).nullable().optional(),
+		driver: DriverBaseSchema.nullable().optional(),
+		profile_picture: FileRefSchema.nullable().optional(),
+	})
+	.openapi('UserResponse');
 export const UserPasswordSchema = UserBaseSchema.pick({ password: true, user_id: true });
 
 // User with Business Users - for getUserById with business_users include
 export const UserWithBusinessUsersResponseSchema = UserResponseSchema.extend({
-	business_users: z.array(BusinessUserRefSchema).nullable(),
+	business_users: z.array(BusinessUserWithBusinessResponseSchema).nullable(),
 });
 
 // User with Addresses - for functions that include addresses

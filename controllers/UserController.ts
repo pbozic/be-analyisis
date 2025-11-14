@@ -3,15 +3,13 @@ import type { Response } from 'express';
 import bcrypt from 'bcrypt';
 import { FUNDS_TYPE } from '@prisma/client';
 
-import prisma from '../prisma/prisma.js';
 import GroupDao from '../dao/Group.js';
+import ReviewsDao from '../dao/Review.ts';
 import UserDao from '../dao/User';
 import userDataRequestDefaultInclude from '../prisma/includes/userDataRequest';
 import type { ValidatedRequest } from '../types/validatedRequest.ts';
-import BusinessDao from '../dao/Business.js';
 import TokenDao from '../dao/Token.js';
 import AddressDao from '../dao/Address.js';
-import FileDao from '../dao/File.js';
 import DriverDao from '../dao/Driver.js';
 import WalletFundsDao from '../dao/WalletFunds.js';
 import TaxiOrderDao from '../dao/TaxiOrder.ts';
@@ -21,11 +19,9 @@ import CashbackDao from '../dao/Cashback.ts';
 import TableReservationDao from '../dao/TableReservation.ts';
 import SMS from '../lib/SMS.js';
 import stripe from '../lib/stripe.js';
-import S3Helper from '../lib/s3.js';
 import {
 	TAXI_ORDER_STATUS,
 	DELIVERY_ORDER_STATUS,
-	USER_ROLE,
 	CREDITS,
 	CASHBACK_TYPE,
 	ACCOUNT_ACTIONS_REASON,
@@ -54,7 +50,6 @@ import {
 	UpdateNotificationPreferencesRequest,
 	UpdateOneSignalIdRequest,
 	UpdatePasswordRequest,
-	UpdateProfilePictureRequest,
 	UpdateRadioPreferencesRequest,
 	UpdateSpicyPreferencesRequest,
 	UpdateTaxiPreferencesRequest,
@@ -68,6 +63,7 @@ import {
 	UpdateWalletBalanceRequest,
 	VerifyPhoneRequest,
 } from '../schemas/dto/User/user.validators.ts';
+import { UserBase } from '../schemas/dto/User/index.ts';
 
 config();
 
@@ -90,23 +86,15 @@ config();
  */
 async function getUserById(req: ValidatedRequest<never, { user_id: string }>, res: Response): Promise<void> {
 	try {
-		let user = await UserDao.getUserById(req.params.user_id, {
-			include: {
-				addresses: {
-					include: {
-						address: true,
-					},
-				},
-				child_users: { include: { child_user: true } },
-				parent_user: { include: { parent_user: true } },
-				profile_picture: true,
-			},
-		});
+		let user = await UserDao.getUserById(req.params.user_id);
 		if (user) {
-			delete (user as any)['password'];
+			if (!user.profile_picture_id) {
+				res.status(404).json({ error: 'Profile picture not found' });
+				return;
+			}
 			const userWithProfilePic = {
 				...user,
-				profile_picture: (user as any).profile_picture?.url || null,
+				profile_picture: user.profile_picture?.url || null,
 			};
 			res.status(200).json(userWithProfilePic);
 		} else {
@@ -147,96 +135,24 @@ async function me(req: ValidatedRequest<never>, res: Response): Promise<void> {
 		return;
 	}
 	try {
-		let user = await UserDao.getUserById(req.user.user_id, {
-			include: {
-				addresses: {
-					include: {
-						address: true,
-					},
-				},
-				driver: {
-					include: {
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										current_driver: true,
-									},
-								},
-							},
-						},
-						current_vehicle: true,
-						activity_logs: {
-							orderBy: {
-								started_at: 'desc',
-							},
-						},
-					},
-				},
-				delivery_driver: true,
-				child_users: {
-					include: {
-						child_user: { select: { user_id: true, first_name: true, last_name: true } },
-						allowance: true,
-					},
-				},
-				parent_user: {
-					include: {
-						parent_user: { select: { user_id: true, first_name: true, user_role: true } },
-						allowance: true,
-					},
-				},
-				referrals_made: true,
-				referral: { include: { referrer: { select: { first_name: true, last_name: true } } } },
-				user_favorite_businesses: true,
-				business_users: {
-					include: {
-						business: {
-							include: {
-								address: true,
-								delivery_address: true,
-								business_local_locations: {
-									where: {
-										time: {
-											gte: new Date(),
-										},
-									},
-									include: {
-										local_location: {
-											include: {
-												address: true,
-											},
-										},
-									},
-									orderBy: {
-										time: 'asc',
-									},
-								},
-							},
-						},
-						operating_address: true,
-					},
-				},
-				profile_picture: true,
-			},
-		});
-
-		if ((user as any)?.driver) {
-			(user as any).driver.business = await BusinessDao.getBusinessById((user as any).driver.business_id);
+		let user = await UserDao.getUserById(req.user.user_id);
+		if (!user) {
+			res.status(404).json({ error: 'User not found!' });
+			return;
 		}
 
 		console.log('/me user: ', user?.user_id);
 
 		if (user) {
 			let payment_methods: any[] = [];
-			if ((user as any).stripe_customer_id) {
-				payment_methods = await stripe.getPaymentMethods((user as any).stripe_customer_id);
+			if (user.stripe_customer_id) {
+				payment_methods = await stripe.getPaymentMethods(user.stripe_customer_id);
 			}
 
-			console.log((user as any).business_users, 'business_users from this user');
-			if ((user as any).business_users) {
-				for (const businessUser of (user as any).business_users) {
-					if (businessUser.business) {
+			console.log(user.business_users, 'business_users from this user');
+			if (user.business_users) {
+				for (const businessUser of user.business_users) {
+					if (businessUser.business && businessUser.business.stripe_customer_id) {
 						const paymentMethods = await stripe.getPaymentMethods(businessUser.business.stripe_customer_id);
 						console.log(businessUser.business.stripe_customer_id, 'business_id');
 						if (paymentMethods && paymentMethods.length > 0) {
@@ -246,10 +162,8 @@ async function me(req: ValidatedRequest<never>, res: Response): Promise<void> {
 				}
 			}
 
-			delete (user as any)['password'];
 			const userWithPayments = {
 				...user,
-				profile_picture: (user as any).profile_picture?.url || null,
 				payment_methods,
 			};
 			res.status(200).json(userWithPayments);
@@ -284,7 +198,7 @@ async function updateMe(req: ValidatedRequest<UpdateMeRequest>, res: Response): 
 		}
 		const user = await UserDao.updateUser(req.user.user_id, req.body);
 		if (user) {
-			if ((req as any).userSocket) (req as any).userSocket.emit('updateUser', user);
+			if (req.userSocket) req.userSocket.emit('updateUser', user);
 			res.status(200).json(user);
 		} else {
 			res.status(400).json({ error: 'Error updating user information' });
@@ -603,7 +517,11 @@ async function updateTelephone(req: ValidatedRequest<UpdateTelephoneRequest>, re
 		}
 		let user = await UserDao.updateTelephone(req.user.user_id, req.body);
 		user = await UserDao.updateUserTelephoneVerified(req.user.user_id, false);
-		await stripe.updateCustomerPhone((user as any).stripe_customer_id, req.body.telephone);
+		if (!user.stripe_customer_id) {
+			res.status(400).json({ error: "User doesn't have stripe customer id" });
+			return;
+		}
+		await stripe.updateCustomerPhone(user.stripe_customer_id, req.body.telephone);
 		if (user) {
 			res.status(200).json(user);
 		} else {
@@ -627,15 +545,19 @@ async function updateTelephone(req: ValidatedRequest<UpdateTelephoneRequest>, re
  */
 async function requestSMSVerification(req: ValidatedRequest<never>, res: Response): Promise<void> {
 	try {
-		if (!req.user) {
+		if (!req.user?.user_id) {
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
 		}
-		const token = await TokenDao.generateSMSVerificationToken(req.user);
+		const token = await TokenDao.generateSMSVerificationToken(req.user.user_id);
 		const user = await UserDao.getUserById(req.user.user_id);
-		await SMS.sendSMSVerification((user as any).telephone, (token as any).token, (user as any).country_code);
+		if (!user) {
+			res.status(400).json({ error: 'Error obtaining user information' });
+			return;
+		}
+		await SMS.sendSMSVerification(user.telephone, token.token, user.country_code);
 		if (token) {
-			res.status(200).json({ message: 'Token sent', telephone: (user as any).telephone });
+			res.status(200).json({ message: 'Token sent', telephone: user.telephone });
 		} else {
 			res.status(400).json({ error: 'Error obtaining user information' });
 		}
@@ -673,9 +595,9 @@ async function verifyMe(req: ValidatedRequest<VerifyPhoneRequest>, res: Response
 		}
 		const token = await TokenDao.getActiveSMSToken(user);
 		console.info(token);
-		if (token && (token as any).token === req.body.token && (token as any).user_id === req.user.user_id) {
-			await TokenDao.updateToken((token as any).token_id, { active: false });
-			await UserDao.updateUser(req.user.user_id, { phone_verified: true } as any);
+		if (token && token.token_id && token.token === req.body.token && token.user_id === req.user.user_id) {
+			await TokenDao.updateToken(token.token_id, { active: false });
+			await UserDao.updateUser(req.user.user_id, { phone_verified: true });
 			res.status(200).json({ message: 'Phone verified successfully.' });
 		} else {
 			res.status(400).json({ error: 'Invalid token' });
@@ -707,7 +629,7 @@ async function oneSignalId(req: ValidatedRequest<UpdateOneSignalIdRequest>, res:
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
 		}
-		const user = await UserDao.updateUser(req.user.user_id, { one_signal_id: req.body.player_id } as any);
+		const user = await UserDao.updateUser(req.user.user_id, { one_signal_id: req.body.player_id });
 		if (user) {
 			res.status(200).json(user);
 		} else {
@@ -1030,8 +952,13 @@ async function requestToAddFundsToWallet(
 	res: Response
 ): Promise<void> {
 	try {
-		if (!req.user) {
+		if (!req.user?.user_id) {
 			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
+		const user = await UserDao.getUserById(req.user.user_id);
+		if (!user || !user.stripe_customer_id) {
+			res.status(400).json({ error: 'Error obtaining user information' });
 			return;
 		}
 		const { amount, currency, payment_method_id, return_url } = req.body;
@@ -1039,17 +966,12 @@ async function requestToAddFundsToWallet(
 			res.status(400).json({ error: 'Error requesting to add funds to wallet: Invalid parameters!' });
 			return;
 		}
-		const availableWalletFunds = await WalletFundsDao.getAvailableWalletFunds(req.user.user_id, FUNDS_TYPE.FUNDS);
-		const user = (availableWalletFunds as any)?.user;
-		if (!user) {
-			res.status(400).json({ error: 'Error obtaining user information' });
-			return;
-		}
+		const availableWalletFunds = await WalletFundsDao.getAvailableWalletFunds(user.user_id, FUNDS_TYPE.FUNDS);
 		let sum = 0;
 		const included_wallet_funds = [];
-		for (let i = 0; i < (availableWalletFunds as any).length; i++) {
-			sum += (availableWalletFunds as any)[i].amount;
-			included_wallet_funds.push((availableWalletFunds as any)[i]);
+		for (let i = 0; i < availableWalletFunds.length; i++) {
+			sum += availableWalletFunds[i]?.amount ?? 0;
+			included_wallet_funds.push(availableWalletFunds[i]);
 			if (sum >= MAX_WALLET_FUNDS) {
 				break;
 			}
@@ -1102,10 +1024,14 @@ async function requestPaymentIntent(req: ValidatedRequest<RequestPaymentIntentRe
 			return;
 		}
 		const user = await UserDao.getUserById(req.user.user_id);
+		if (!user || !user.stripe_customer_id) {
+			res.status(400).json({ error: 'Error obtaining user information' });
+			return;
+		}
 		const paymentIntent = await stripe.createPaymentIntentForPlatform(
 			Math.round(amount * 100),
 			currency,
-			(user as any).stripe_customer_id,
+			user.stripe_customer_id,
 			{
 				user_id: req.user.user_id,
 				type: 'wallet_topup',
@@ -1165,17 +1091,7 @@ async function getSelfScheduledOrders(req: ValidatedRequest<never>, res: Respons
  */
 async function listUsers(req: ValidatedRequest<never>, res: Response): Promise<void> {
 	try {
-		const users = await UserDao.getUsers({
-			include: {
-				addresses: {
-					include: {
-						address: true,
-					},
-				},
-				child_users: { include: { child_user: true } },
-				parent_user: { include: { parent_user: true } },
-			},
-		});
+		const users = await UserDao.getAllUsersWithAddressesAndConnections();
 		if (users) {
 			res.status(200).json(users);
 		} else {
@@ -1205,20 +1121,8 @@ async function listUsers(req: ValidatedRequest<never>, res: Response): Promise<v
  */
 async function listPersonalUsers(req: ValidatedRequest<never>, res: Response): Promise<void> {
 	try {
-		const users = await UserDao.getUsers({
-			where: {
-				user_role: USER_ROLE.PERSONAL,
-				parent_user: null,
-				disabled: false,
-			},
-			include: {
-				addresses: {
-					include: {
-						address: true,
-					},
-				},
-			},
-		});
+		// TODO: Change to USER_ROLES.PERSONAL when possible
+		const users = await UserDao.getPersonalUsers('PERSONAL', null, false);
 		if (users) {
 			res.status(200).json(users);
 		} else {
@@ -1282,13 +1186,12 @@ async function updatePassword(req: ValidatedRequest<UpdatePasswordRequest>, res:
 			return;
 		}
 		const postData = req.body;
-		const userCheck = await UserDao.getUserById(req.user.user_id, {
-			include: undefined,
-			select: {
-				password: true,
-			},
-		});
-		const correctPw = await bcrypt.compare(postData.password, (userCheck as any).password);
+		const userPassword = await UserDao.getPasswordByUserId(req.user.user_id);
+		if (!userPassword) {
+			res.status(400).json({ error: 'Error retrieving old password' });
+			return;
+		}
+		const correctPw = await bcrypt.compare(postData.password, userPassword);
 		if (!correctPw) {
 			res.status(400).json({ error: 'Wrong password..' });
 			return;
@@ -1332,15 +1235,18 @@ async function updateEmail(req: ValidatedRequest<UpdateEmailRequest>, res: Respo
 			return;
 		}
 		const updated_user = await UserDao.updateEmail(req.user.user_id, req.body.email);
-		if (!(updated_user as any).stripe_customer_id) {
-			const stripe_customer = (await stripe.createCustomer(
-				(updated_user as any).email,
-				(updated_user as any).first_name + ' ' + (updated_user as any).last_name,
-				(updated_user as any).telephone
-			)) as any;
+		if (!updated_user.stripe_customer_id && updated_user.email) {
+			const stripe_customer = await stripe.createCustomer(
+				updated_user.email,
+				updated_user.first_name + ' ' + updated_user.last_name,
+				updated_user.telephone
+			);
 			await UserDao.updateStripeCustomerId(req.user.user_id, stripe_customer.id);
 		} else {
-			await stripe.updateCustomerEmail((updated_user as any).stripe_customer_id, req.body.email);
+			if (!updated_user.stripe_customer_id) {
+				throw new Error('Missing stripe customer id.');
+			}
+			await stripe.updateCustomerEmail(updated_user.stripe_customer_id, req.body.email);
 		}
 		if (updated_user) {
 			res.status(200).json(updated_user);
@@ -1350,43 +1256,6 @@ async function updateEmail(req: ValidatedRequest<UpdateEmailRequest>, res: Respo
 	} catch (e) {
 		console.log(e);
 		res.status(400).json({ error: 'Error updating user information', e });
-	}
-}
-
-/**
- * PATCH /me/profile_picture
- * @tag Users
- * @summary Updates the current user's profile picture
- * @operationId updateProfilePicture
- * @response 200 - Profile picture updated successfully
- * @responseContent {object} 200.application/json - Updated user details
- * @response 400 - Error updating profile picture
- * @prisma_model documents (see ./prisma/schemas/base.prisma)
- * @prisma_model files (see ./prisma/schemas/base.prisma)
- * @prisma_model users (see ./prisma/schemas/user.prisma)
- */
-async function updateProfilePicture(req: ValidatedRequest<UpdateProfilePictureRequest>, res: Response): Promise<void> {
-	if (!req.user) {
-		res.status(401).json({ error: 'Unauthorized' });
-		return;
-	}
-	const userId = req.user.user_id;
-	const { image } = req.body;
-	try {
-		for (const file of image.files) {
-			const base64 = file.base64;
-			delete (file as any).base64;
-			const fileData = await FileDao.createFile(file.file_type, file.mime_type, true);
-			const key = S3Helper.getFileKey((fileData as any).file_id, file.mime_type);
-			await S3Helper.SaveObject(key, base64, file.mime_type, { users: [userId] }, fileData, true);
-			await UserDao.updateUser(userId, {
-				profile_picture: { connect: { profile_picture_id: (fileData as any).file_id } },
-			} as any);
-		}
-		res.status(200).json({ message: 'Profile picture created successfully' });
-	} catch (error) {
-		console.error('Error updating profile picture:', error);
-		res.status(400).json({ error: 'Error updating profile picture', detail: (error as Error).message });
 	}
 }
 
@@ -1446,7 +1315,7 @@ async function addAddress(req: ValidatedRequest<AddAddressRequest>, res: Respons
 			return;
 		}
 		const address = await AddressDao.addAddress(req.body);
-		const userAddress = await AddressDao.addUserAddress(req.user.user_id, (address as any).address_id);
+		const userAddress = await AddressDao.addUserAddress(req.user.user_id, address.address_id);
 		if (userAddress) {
 			res.status(200).json(address);
 		} else {
@@ -1542,25 +1411,16 @@ async function ping(req: ValidatedRequest<never>, res: Response): Promise<void> 
 		res.status(401).json({ error: 'Unauthorized' });
 		return;
 	}
-	const user = await UserDao.getUserById(req.user.user_id, {
-		include: {
-			driver: true,
-			delivery_driver: true,
-		},
-	});
-	if (!user) {
-		res.status(400).json({ error: 'Error obtaining user information' });
+	const user_driver = await DriverDao.getDriverByUserId(req.user.user_id);
+	if (!user_driver) {
+		res.status(400).json({ error: 'User is not a driver' });
 		return;
 	}
-	if ((user as any).driver) {
-		await DriverDao.updateDriver((user as any).driver.driver_id, {
-			last_ping_at: new Date().toISOString(),
-			is_inactive: false,
-		});
-		res.status(200).json({ message: 'Driver is online' });
-	} else {
-		res.status(400).json({ error: 'User is not a driver' });
-	}
+	await DriverDao.updateDriver(user_driver.driver_id, {
+		last_ping_at: new Date().toISOString(),
+		is_inactive: false,
+	});
+	res.status(200).json({ message: 'Driver is online' });
 }
 
 /**
@@ -1602,6 +1462,7 @@ async function ping(req: ValidatedRequest<never>, res: Response): Promise<void> 
  * @prisma_model account_actions
  */
 async function requestData(req: ValidatedRequest<never>, res: any) {
+	// TODO: DEPRECATED FUNCTION
 	try {
 		if (!req.user) {
 			res.status(401).json({ error: 'Unauthorized' });
@@ -1618,7 +1479,7 @@ async function requestData(req: ValidatedRequest<never>, res: any) {
 				},
 				include: userDataRequestDefaultInclude,
 			};
-			let userData = await UserDao.getUserById(user_id, usersStoredData);
+			let userData = await UserDao.getUserById(user_id);
 			if (userData) {
 				// delete userData.password; // Ensure password is not sent
 				// // Simplify delivery order items to only include essential items data (only slovenian translation, not all of them)
@@ -1669,83 +1530,7 @@ async function getMyReviews(req: ValidatedRequest<never>, res: Response): Promis
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
 		}
-		const user = await UserDao.getUserById(req.user.user_id);
-		if (!user || !(user as any).reviewable_id) {
-			res.status(200).json([]);
-			return;
-		}
-		const reviews = await prisma.reviews.findMany({
-			where: {
-				reviewable_id: (user as any).reviewable_id,
-			},
-			include: {
-				author: {
-					select: {
-						first_name: true,
-						last_name: true,
-						user_id: true,
-						user_role: true,
-						documents: {
-							where: {
-								document_type: 'PROFILE_PICTURE',
-							},
-							select: {
-								files: true,
-								document_type: true,
-							},
-						},
-					},
-				},
-				reviewable: {
-					include: {
-						business: {
-							select: {
-								name: true,
-								business_id: true,
-								documents: {
-									where: {
-										document_type: 'PROFILE_PICTURE',
-									},
-									select: {
-										files: true,
-										document_type: true,
-									},
-								},
-							},
-						},
-						user: {
-							select: {
-								first_name: true,
-								last_name: true,
-								user_id: true,
-								user_role: true,
-								documents: {
-									where: {
-										document_type: 'PROFILE_PICTURE',
-									},
-									select: {
-										files: true,
-										document_type: true,
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-			orderBy: {
-				created_at: 'desc',
-			},
-		});
-		for (const review of reviews as any[]) {
-			if (review.reviewable.user.length > 0) {
-				review.target = review.reviewable.user[0];
-			}
-			if (review.reviewable.business.length > 0) {
-				review.target = review.reviewable.business[0];
-			}
-			review.reviewable = undefined;
-		}
+		const reviews = await ReviewsDao.getReviewsByUserId(req.user.user_id);
 		res.status(200).json(reviews);
 	} catch (e) {
 		console.log('UserController', e);
@@ -1772,179 +1557,8 @@ async function getMyReviews(req: ValidatedRequest<never>, res: Response): Promis
  */
 async function getReviewsByUserId(req: ValidatedRequest<never, { user_id: string }>, res: Response): Promise<void> {
 	try {
-		console.log(req.params);
-		// Check if the user_id corresponds to a driver
-		const driver = await DriverDao.getDriverByUserId(req.params.user_id);
-		if (driver) {
-			// Fetch business associated with the driver
-			const business = await prisma.business.findUnique({
-				where: {
-					business_id: (driver as any).business_id,
-				},
-			});
-			if (!business?.reviewable_id) {
-				res.status(200).json([]);
-				return;
-			}
-			// Fetch reviews for the business
-			const reviews = await prisma.reviews.findMany({
-				where: {
-					reviewable_id: business.reviewable_id,
-				},
-				include: {
-					author: {
-						select: {
-							first_name: true,
-							last_name: true,
-							user_id: true,
-							user_role: true,
-							documents: {
-								where: {
-									document_type: 'PROFILE_PICTURE',
-								},
-								select: {
-									files: true,
-									document_type: true,
-								},
-							},
-						},
-					},
-					reviewable: {
-						include: {
-							business: {
-								select: {
-									name: true,
-									business_id: true,
-									documents: {
-										where: {
-											document_type: 'PROFILE_PICTURE',
-										},
-										select: {
-											files: true,
-											document_type: true,
-										},
-									},
-								},
-							},
-							user: {
-								select: {
-									first_name: true,
-									last_name: true,
-									user_id: true,
-									user_role: true,
-									documents: {
-										where: {
-											document_type: 'PROFILE_PICTURE',
-										},
-										select: {
-											files: true,
-											document_type: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				orderBy: {
-					created_at: 'desc',
-				},
-			});
-			for (const review of reviews as any[]) {
-				if (review.reviewable.user.length > 0) {
-					review.target = review.reviewable.user[0];
-				}
-				if (review.reviewable.business.length > 0) {
-					review.target = review.reviewable.business[0];
-				}
-				review.reviewable = undefined;
-			}
-			res.status(200).json(reviews);
-		} else {
-			// If not a driver, assume it's a regular user and fetch their reviews
-			const user = await prisma.users.findUnique({
-				where: {
-					user_id: req.params.user_id,
-				},
-			});
-			if (!user) {
-				res.status(404).json({ error: 'User not found' });
-				return;
-			}
-			const reviews = await prisma.reviews.findMany({
-				where: {
-					OR: [{ author_id: user.user_id }, { reviewable: { user: { some: { user_id: user.user_id } } } }],
-				},
-				include: {
-					author: {
-						select: {
-							first_name: true,
-							last_name: true,
-							user_id: true,
-							user_role: true,
-							documents: {
-								where: {
-									document_type: 'PROFILE_PICTURE',
-								},
-								select: {
-									files: true,
-									document_type: true,
-								},
-							},
-						},
-					},
-					reviewable: {
-						include: {
-							business: {
-								select: {
-									name: true,
-									business_id: true,
-									documents: {
-										where: {
-											document_type: 'PROFILE_PICTURE',
-										},
-										select: {
-											files: true,
-											document_type: true,
-										},
-									},
-								},
-							},
-							user: {
-								select: {
-									first_name: true,
-									last_name: true,
-									user_id: true,
-									user_role: true,
-									documents: {
-										where: {
-											document_type: 'PROFILE_PICTURE',
-										},
-										select: {
-											files: true,
-											document_type: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				orderBy: {
-					created_at: 'desc',
-				},
-			});
-			for (const review of reviews as any[]) {
-				if (review.reviewable.user.length > 0) {
-					review.target = review.reviewable.user[0];
-				}
-				if (review.reviewable.business.length > 0) {
-					review.target = review.reviewable.business[0];
-				}
-				review.reviewable = undefined;
-			}
-			res.status(200).json(reviews);
-		}
+		const reviews = await ReviewsDao.getReviewsByUserId(req.params.user_id);
+		res.status(200).json(reviews);
 	} catch (e) {
 		console.error('UserController', e);
 		res.status(500).json({ error: 'Internal server error' });
@@ -2094,24 +1708,20 @@ async function getFamilyWalletBalanceAndType(
 		}
 		if (group_user) {
 			console.log(group_user);
-			if ((group_user as any).enabled) {
+			if (group_user.enabled) {
 				const parent_wallet_balance = await WalletFundsDao.getAvailableWalletBalance(
-					(group_user as any).parent_user.user_id
+					group_user.parent_user.user_id
 				);
 				res.status(200).json({
 					parent_wallet_balance: parent_wallet_balance,
-					allowance: (group_user as any).allowance,
-					family_wallet_type: (group_user as any).parent_user.user_role.startsWith('BUSINESS')
-						? 'BUSINESS'
-						: 'FAMILY',
+					allowance: group_user.allowance,
+					family_wallet_type: group_user.parent_user.user_role.startsWith('BUSINESS') ? 'BUSINESS' : 'FAMILY',
 				});
 			} else {
 				res.status(200).json({
 					parent_wallet_balance: 0,
 					allowance: 0,
-					family_wallet_type: (group_user as any).parent_user.user_role.startsWith('BUSINESS')
-						? 'BUSINESS'
-						: 'FAMILY',
+					family_wallet_type: group_user.parent_user.user_role.startsWith('BUSINESS') ? 'BUSINESS' : 'FAMILY',
 				});
 			}
 		} else {
@@ -2273,22 +1883,22 @@ async function redeemReferralCode(req: ValidatedRequest<RedeemReferralCodeReques
 			return;
 		}
 		// Prevent referral by user referrals
-		const referrerReferral = await ReferralDao.getReferralByReferredUserId((referrer as any).user_id);
-		if ((referrerReferral as any)?.referrer_user_id === user_id) {
+		const referrerReferral = await ReferralDao.getReferralByReferredUserId((referrer as UserBase).user_id);
+		if (referrerReferral?.referrer_user_id === user_id) {
 			res.status(400).json({ errorCustom: 'Cannot get referred by one of your referrals' });
 			return;
 		}
 		// Prevent self-referral
-		if ((referrer as any).user_id === user_id) {
+		if (referrer.user_id === user_id) {
 			res.status(400).json({ errorCustom: 'Cannot use own referral code' });
 			return;
 		}
 		// Referrer can only refer up to 10 people
-		if ((referrer as any).referrals_made?.length >= 10) {
+		if (referrer.referrals_made?.length >= 10) {
 			res.status(400).json({ errorCustom: 'This user has already referred 10 people' });
 			return;
 		}
-		const referral = await ReferralDao.createReferral((referrer as any).user_id, user_id, referral_code);
+		const referral = await ReferralDao.createReferral(referrer.user_id, user_id, referral_code);
 		res.status(200).json({ message: 'Referral code redeemed successfully', referral });
 	} catch (error) {
 		res.status(400).json({ error: (error as Error).message || 'Error redeeming referral code' });
@@ -2322,7 +1932,7 @@ async function claimReward(req: ValidatedRequest<ClaimRewardRequest>, res: Respo
 			return;
 		}
 		const alreadyClaimed = await ReferralDao.getReferralByReferralId(referral_id);
-		if ((alreadyClaimed as any)?.reward_claimed) {
+		if (alreadyClaimed?.reward_claimed) {
 			res.status(400).json({ error: 'Reward already claimed!' });
 			return;
 		}
@@ -2330,12 +1940,13 @@ async function claimReward(req: ValidatedRequest<ClaimRewardRequest>, res: Respo
 		expiryDate.setDate(expiryDate.getDate() + 30);
 		expiryDate.setHours(23, 59, 59, 999);
 		await WalletFundsDao.createCredit({
-			expires_at: expiryDate,
+			transaction_type: TRANSACTION_TYPE.REFERRAL_REWARD, // TODO: Find type
+			expires_at: expiryDate.toISOString(),
 			user_id: req.user.user_id,
 			amount: CREDITS.REFERRAL,
 			type: FUNDS_TYPE.CREDITS_ANY,
 			referral_id: referral_id,
-		} as any);
+		});
 		const referral = await ReferralDao.updateReferralRewardClaimed(referral_id, true);
 		if (!referral) {
 			res.status(400).json({ error: 'Error claiming reward' });
@@ -2413,10 +2024,8 @@ async function getMyActiveOrders(req: ValidatedRequest<never>, res: Response): P
 			TableReservationDao.getReservationIfNotCompleted(user_id),
 		]);
 		res.status(200).json({
-			delivery_orders: (delivery_orders as any[]).filter(
-				(order) =>
-					!(order as any).is_daily_meal ||
-					(order as any).timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED)
+			delivery_orders: delivery_orders.filter(
+				(order) => !order.is_daily_meal || order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED)
 			),
 			taxi_orders,
 			transfer_orders,
@@ -2654,8 +2263,8 @@ async function updateFavoriteServices(req: ValidatedRequest<UpdateFavoriteServic
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
 		}
-		const { service_ids } = req.body;
-		const updatedFavs = await UserDao.updateFavoriteServices(user_id, service_ids as any);
+		const { services } = req.body;
+		const updatedFavs = await UserDao.updateFavoriteServices(user_id, services);
 		res.json(updatedFavs);
 	} catch (e) {
 		res.status(500).json({ error: (e as Error).message });
@@ -2693,7 +2302,6 @@ export { updateMe };
 export { updateUserByUserId };
 export { updatePassword };
 export { updateEmail };
-export { updateProfilePicture };
 export { updateUserTaxiPreferences };
 export { updateUserNotificationPreferences };
 export { updateUserTaxiPushNotifications };
@@ -2755,7 +2363,6 @@ export default {
 	updateUserByUserId,
 	updatePassword,
 	updateEmail,
-	updateProfilePicture,
 	updateUserTaxiPreferences,
 	updateUserNotificationPreferences,
 	updateUserTaxiPushNotifications,

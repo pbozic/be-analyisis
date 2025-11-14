@@ -10,6 +10,13 @@ import {
 } from '../schemas/dto/Reviews/review.mapper.js';
 import { ReviewResponse, ReviewItemResponse } from '../schemas/dto/Reviews/review.dto.js';
 
+/**
+ * Get review items for a specific subject (e.g., driver, business, vehicle).
+ *
+ * @param {string} subject_id - Subject ID.
+ * @param {REVIEW_SUBJECT} review_subject - Subject type.
+ * @returns {Promise<ReviewItemResponse[]>} Review items.
+ */
 export async function getReviewsForSubject(
 	subject_id: string,
 	review_subject: REVIEW_SUBJECT
@@ -24,6 +31,16 @@ export async function getReviewsForSubject(
 	return toReviewItemResponseList(items as ReviewItemsBaseInclude[]);
 }
 
+/**
+ * Create a review for a taxi order with review items in a transaction.
+ *
+ * @param {string} author_id - Author user ID (driver).
+ * @param {string} taxi_order_id - Taxi order ID.
+ * @param {REVIEWER_ROLE} reviewer_role - Reviewer role.
+ * @param {{ rating: number; subject_type: REVIEW_SUBJECT; subject_id: string; type: REVIEW_TYPE }[]} reviewItems - Review items array.
+ * @param {string} [comment] - Optional comment.
+ * @returns {Promise<ReviewResponse>} Created review.
+ */
 export async function createReviewForTaxiOrder(
 	author_id: string,
 	taxi_order_id: string,
@@ -64,6 +81,16 @@ export async function createReviewForTaxiOrder(
 	}
 }
 
+/**
+ * Create a review for a delivery order with review items in a transaction.
+ *
+ * @param {string} author_id - Author user ID (customer).
+ * @param {string} delivery_order_id - Delivery order ID.
+ * @param {REVIEWER_ROLE} reviewer_role - Reviewer role.
+ * @param {{ rating: number; subject_type: REVIEW_SUBJECT; subject_id: string; type: REVIEW_TYPE }[]} reviewItems - Review items array.
+ * @param {string} [comment] - Optional comment.
+ * @returns {Promise<ReviewResponse>} Created review.
+ */
 export async function createReviewForDeliveryOrder(
 	author_id: string,
 	delivery_order_id: string,
@@ -104,6 +131,12 @@ export async function createReviewForDeliveryOrder(
 	}
 }
 
+/**
+ * Get all reviews for a taxi order.
+ *
+ * @param {string} taxi_order_id - Taxi order ID.
+ * @returns {Promise<ReviewResponse[]>} Reviews for the taxi order.
+ */
 export async function getReviewsForTaxiOrder(taxi_order_id: string): Promise<ReviewResponse[]> {
 	const reviews = (await prisma.reviews.findMany({
 		where: { taxi_order_id },
@@ -112,6 +145,12 @@ export async function getReviewsForTaxiOrder(taxi_order_id: string): Promise<Rev
 	return toReviewResponseList(reviews);
 }
 
+/**
+ * Get all reviews for a delivery order.
+ *
+ * @param {string} delivery_order_id - Delivery order ID.
+ * @returns {Promise<ReviewResponse[]>} Reviews for the delivery order.
+ */
 export async function getReviewsForDeliveryOrder(delivery_order_id: string): Promise<ReviewResponse[]> {
 	const reviews = (await prisma.reviews.findMany({
 		where: { delivery_order_id },
@@ -120,6 +159,12 @@ export async function getReviewsForDeliveryOrder(delivery_order_id: string): Pro
 	return toReviewResponseList(reviews);
 }
 
+/**
+ * Delete a review and its associated review items in a transaction.
+ *
+ * @param {string} review_id - Review ID.
+ * @returns {Promise<ReviewResponse>} Deleted review.
+ */
 export async function deleteReview(review_id: string): Promise<ReviewResponse> {
 	const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 		// Delete review items first
@@ -136,6 +181,13 @@ export async function deleteReview(review_id: string): Promise<ReviewResponse> {
 	return result;
 }
 
+/**
+ * Delete all reviews and review items for a specific subject in a transaction.
+ *
+ * @param {string} subject_id - Subject ID.
+ * @param {REVIEW_SUBJECT} subject_type - Subject type.
+ * @returns {Promise<void>} Promise that resolves when deletion is complete.
+ */
 export async function deleteReviewsForSubject(subject_id: string, subject_type: REVIEW_SUBJECT): Promise<void> {
 	await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 		const items = await tx.review_items.findMany({
@@ -163,6 +215,12 @@ export async function deleteReviewsForSubject(subject_id: string, subject_type: 
 	// successful -> void
 }
 
+/**
+ * Get a review by ID.
+ *
+ * @param {string} review_id - Review ID.
+ * @returns {Promise<ReviewResponse | null>} Review or null if not found.
+ */
 export async function getReviewById(review_id: string): Promise<ReviewResponse | null> {
 	const review = (await prisma.reviews.findUnique({
 		where: { review_id },
@@ -171,6 +229,12 @@ export async function getReviewById(review_id: string): Promise<ReviewResponse |
 	return review ? toReviewResponse(review) : null;
 }
 
+/**
+ * Get all reviews for a driver (where driver is the subject of review items).
+ *
+ * @param {string} driver_id - Driver ID.
+ * @returns {Promise<ReviewResponse[]>} Reviews for the driver.
+ */
 export async function getReviewsForDriver(driver_id: string): Promise<ReviewResponse[]> {
 	try {
 		const reviews = (await prisma.reviews.findMany({
@@ -191,6 +255,22 @@ export async function getReviewsForDriver(driver_id: string): Promise<ReviewResp
 	}
 }
 
+/**
+ * Get all reviews authored by a specific user.
+ *
+ * @param {string} user_id - User ID.
+ * @returns {Promise<ReviewResponse[]>} Reviews authored by the user.
+ */
+export async function getReviewsByUserId(user_id: string): Promise<ReviewResponse[]> {
+	const reviews = (await prisma.reviews.findMany({
+		where: {
+			author_id: user_id,
+		},
+		include: reviewsWithItemsInclude,
+	})) as ReviewsWithItemsInclude[];
+	return toReviewResponseList(reviews);
+}
+
 export default {
 	getReviewsForSubject,
 	getReviewsForTaxiOrder,
@@ -200,4 +280,5 @@ export default {
 	createReviewForDeliveryOrder,
 	deleteReview,
 	deleteReviewsForSubject,
+	getReviewsByUserId,
 };

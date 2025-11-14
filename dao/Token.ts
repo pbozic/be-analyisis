@@ -167,7 +167,7 @@ export const savePasswordResetToken = async (token: {
  * @param {object} user - User object with user_id.
  * @returns {Promise<any>} Created token.
  */
-export async function generateSMSVerificationToken(user: { user_id: string }): Promise<any> {
+export async function generateSMSVerificationToken(user_id: string): Promise<any> {
 	let tokenObj = {
 		user_id: user.user_id,
 		token: (Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000).toString(),

@@ -4,7 +4,6 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import type { User } from './User.js';
 import type { Address } from '../addresses/Address.js';
-import { UserResponseSchema } from './User';
 import { AddressResponseBaseSchema } from '../addresses/Address';
 
 extendZodWithOpenApi(z);
@@ -37,7 +36,6 @@ export const UserAddressResponseBaseSchema = z
 	.openapi('UserAddressResponseBase');
 
 export const UserAddressResponseSchema = UserAddressResponseBaseSchema.extend({
-	users: UserResponseSchema,
 	address: AddressResponseBaseSchema,
 }).openapi('UserAddressResponse');
 

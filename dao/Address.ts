@@ -14,7 +14,7 @@ import { AddAddressDaoInput, BusinessAddress, AddressResponse, UpdateUserAddress
  * @param {object} address - Address payload (address, latitude, longitude, etc.).
  * @returns {Promise<object>} The created or updated address record.
  */
-async function addAddress(address: AddAddressDaoInput): Promise<AddressResponse | Error> {
+async function addAddress(address: AddAddressDaoInput): Promise<AddressResponse> {
 	// delete address.name;
 	// delete address.icon;
 	try {
@@ -33,7 +33,7 @@ async function addAddress(address: AddAddressDaoInput): Promise<AddressResponse 
 		return toAddressResponse(row as AddressDefaultPrisma);
 	} catch (error) {
 		//console.log(error);
-		return new Error(error instanceof Error ? error.message : String(error));
+		throw new Error(error instanceof Error ? error.message : String(error));
 	}
 }
 

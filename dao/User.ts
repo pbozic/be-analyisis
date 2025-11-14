@@ -6,16 +6,37 @@ import { createDocument, linkDocumentToTransaction } from './Document.js';
 import { addFileToDocument } from './File.js';
 import S3Helper from '../lib/s3.js';
 import { USER_ROLE, ACCOUNT_ACTIONS } from '../lib/constants.js';
+import { USER_ROLES } from '../prisma/schemas/interfaces.js';
 import WalletFundsDao from './WalletFunds.js';
 import type {
 	UserBase,
+	UserListResponse,
 	UserResponse,
 	UserWithAddressesResponse,
-	UserWithFavouritesResponse,
+	UserWithBusinessUsersResponse,
 } from '../schemas/dto/User/index.js';
 import type { TransactionResponse } from '../schemas/dto/User/index.js';
 import { UserPassword } from '../schemas/dto/User/user.js';
 import { UserLoginResponse } from '../schemas/dto/Auth/AuthResponse.dto.js';
+import {
+	userAddressesInclude,
+	userCreationInclude,
+	userLoginInclude,
+	tokenWithUserInclude,
+	userAddressesAndConnectionsInclude,
+	UserAddressesPrisma,
+	UserAddressesAndConnectionsCreationPrisma,
+	UserLoginPrisma,
+	userAllInclude,
+	UserPrisma,
+} from '../prisma/includes/user.js';
+import {
+	toUserWithAddressesResponse,
+	toUserLoginResponse,
+	toUsersListResponse,
+	toUserWithAddressesResponseList,
+	toUserResponse,
+} from '../schemas/dto/User/user.mappers.js';
 
 declare const process: {
 	env: {
@@ -26,77 +47,102 @@ declare const process: {
 
 type PrismaTransactionClient = any; // Prisma.$transaction callback parameter
 
-// Define common query arg types based on controller usage
-interface FindManyArgs {
-	where?: any;
-	include?: any;
-	orderBy?: any;
-	skip?: number;
-	take?: number;
-}
-
 interface FindUniqueArgs {
 	where?: any;
 	include?: any;
 	select?: any;
 }
 
-interface FindFirstArgs {
-	where?: any;
-	include?: any;
-	orderBy?: any;
-	select?: any;
-}
-
 /**
- * Get users with optional prisma args and child/parent includes.
+ * Get personal users by user role, parent user, and disabled status.
  *
- * @param {FindManyArgs} args - Prisma findMany args.
- * @returns {Promise<UserResponse[]>} Users.
+ * @param {USER_ROLES} user_role - User role.
+ * @param {string | null} parent_user - Parent user ID.
+ * @param {boolean} disabled - Disabled status.
+ * @returns {Promise<UserResponse[]>} Personal users.
  */
-const getUsers = async (args?: FindManyArgs): Promise<UserResponse[]> => {
+const getPersonalUsers = async (
+	user_role: USER_ROLES,
+	parent_user: string | null,
+	disabled: boolean
+): Promise<UserResponse[]> => {
 	try {
-		return (await prisma.users.findMany({
-			...args,
-			include: {
-				child_users: true,
-				parent_user: true,
-				...args?.include,
+		const users = (await prisma.users.findMany({
+			where: {
+				user_role,
+				parent_user,
+				disabled,
 			},
-		})) as UserResponse[];
+			include: userAddressesInclude,
+		})) as UserAddressesPrisma[];
+		return toUserWithAddressesResponseList(users);
 	} catch (error) {
-		throw new Error(error instanceof Error ? error.message : 'Failed to get users');
+		throw new Error(error instanceof Error ? error.message : 'Failed to get personal users');
+	}
+};
+
+// /**
+//  * Get a user by id including business user and address info.
+//  *
+//  * @param {string} user_id - User ID.
+//  * @param {FindUniqueArgs} args - Additional Prisma args to merge.
+//  * @returns {Promise<UserWithFavouritesResponse | null>} User or null.
+//  */
+// const getUserById = async (user_id: string, args?: FindUniqueArgs): Promise<UserWithFavouritesResponse | null> => {
+// 	try {
+// 		return (await prisma.users.findUnique({
+// 			where: {
+// 				user_id: user_id,
+// 			},
+// 			include: {
+// 				business_users: {
+// 					include: {
+// 						business: {
+// 							include: {
+// 								address: true,
+// 							},
+// 						},
+// 					},
+// 				},
+// 			},
+// 			...args,
+// 		})) as UserWithFavouritesResponse | null;
+// 	} catch (error) {
+// 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID');
+// 	}
+// };
+
+const getUserById = async (user_id: string): Promise<UserWithBusinessUsersResponse | null> => {
+	try {
+		const user = (await prisma.users.findUnique({
+			where: {
+				user_id,
+			},
+			include: userAllInclude,
+		})) as UserPrisma;
+		return toUserResponse(user);
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID');
 	}
 };
 
 /**
- * Get a user by id including business user and address info.
+ * Retrieve a user by their unique user ID, including associated business user and address information.
  *
- * @param {string} user_id - User ID.
- * @param {FindUniqueArgs} args - Additional Prisma args to merge.
- * @returns {Promise<UserWithFavouritesResponse | null>} User or null.
+ * @param {string} user_id - The unique identifier of the user to retrieve.
+ * @param {FindUniqueArgs} [args] - Optional Prisma arguments to customize the query (e.g., for including extra relations).
+ * @returns {Promise<UserListResponse | null>} The user object with business_users and business address included, or null if not found.
+ * @throws {Error} Throws if the query fails or if there is an issue retrieving the user data.
  */
-const getUserById = async (user_id: string, args?: FindUniqueArgs): Promise<UserWithFavouritesResponse | null> => {
+
+const getAllUsersWithAddressesAndConnections = async (): Promise<UserListResponse> => {
 	try {
-		return (await prisma.users.findUnique({
-			where: {
-				user_id: user_id,
-			},
-			include: {
-				business_users: {
-					include: {
-						business: {
-							include: {
-								address: true,
-							},
-						},
-					},
-				},
-			},
-			...args,
-		})) as UserWithFavouritesResponse | null;
+		const users = (await prisma.users.findMany({
+			include: userAddressesAndConnectionsInclude,
+		})) as UserAddressesAndConnectionsCreationPrisma[];
+		return toUsersListResponse(users);
 	} catch (error) {
-		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID');
+		throw new Error(error instanceof Error ? error.message : 'Failed to get users with addresses and connections');
 	}
 };
 
@@ -108,81 +154,34 @@ const getUserById = async (user_id: string, args?: FindUniqueArgs): Promise<User
  */
 const getUserByIdForLogin = async (user_id: string): Promise<UserLoginResponse | null> => {
 	try {
+		const user = (await prisma.users.findUnique({
+			where: {
+				user_id: user_id,
+			},
+			include: userLoginInclude,
+		})) as UserLoginPrisma | null;
+		return user ? toUserLoginResponse(user) : null;
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID');
+	}
+};
+
+/**
+ * Get a user's password by user ID.
+ *
+ * @param {string} user_id - User ID.
+ * @returns {Promise<string | null>} Password or null.
+ */
+const getPasswordByUserId = async (user_id: string): Promise<string | null> => {
+	try {
 		return (await prisma.users.findUnique({
 			where: {
 				user_id: user_id,
 			},
-			include: {
-				addresses: {
-					include: {
-						address: true,
-					},
-				},
-				driver: {
-					select: {
-						driver_id: true,
-						transport_module_id: true,
-						ride_requirements: true,
-						user_id: true,
-						transfer_requirements: true,
-						taxi_orders_toggled: true,
-						transfer_orders_toggled: true,
-						delivery_orders_toggled: true,
-						cargo_orders_toggled: true,
-						vehicles: {
-							select: {
-								vehicle_drivers_id: true,
-								vehicle_id: true,
-								can_drive: true,
-								vehicle: {
-									select: {
-										vehicle_id: true,
-										business_id: true,
-										active: true,
-										class: true,
-										category: true,
-										make: true,
-										model: true,
-										color: true,
-										license_plate: true,
-										current_driver: true,
-									},
-								},
-							},
-						},
-						last_used_vehicle_id: true,
-						current_vehicle: true,
-						activity_logs: {
-							orderBy: {
-								started_at: 'desc',
-							},
-						},
-					},
-				},
-				child_users: { include: { child_user: true } },
-				parent_user: { include: { parent_user: true } },
-				referrals_made: true,
-				referral: { include: { referrer: { select: { first_name: true, last_name: true } } } },
-				user_roles: true,
-				user_favorite_businesses: true,
-				business_users: {
-					include: {
-						business: {
-							include: {
-								address: true,
-								delivery_address: true,
-								reservation_module: true,
-							},
-						},
-						operating_address: true,
-					},
-				},
-				profile_picture: true,
-				user_favorite_drivers: true,
-			},
-		})) as UserLoginResponse | null;
+			select: { password: true },
+		})) as string | null;
 	} catch (error) {
-		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID');
+		throw new Error(error instanceof Error ? error.message : 'Failed to get password by user ID');
 	}
 };
 
@@ -193,13 +192,12 @@ const getUserByIdForLogin = async (user_id: string): Promise<UserLoginResponse |
  * @param {FindUniqueArgs} args - Additional Prisma args.
  * @returns {Promise<UserResponse | null>} User or null.
  */
-const getUserByReferralCode = async (code: string, args?: FindUniqueArgs): Promise<UserResponse | null> => {
+const getUserByReferralCode = async (code: string): Promise<UserResponse | null> => {
 	try {
 		return (await prisma.users.findUnique({
 			where: {
 				referral_code: code,
 			},
-			...args,
 		})) as UserResponse | null;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by referral code');
@@ -228,18 +226,14 @@ const getScheduledUsers = async (): Promise<UserWithAddressesResponse[]> => {
 			sortingScheduledUsers = merchantBusiness.daily_users_sorted as string[] | null;
 		}
 
-		const scheduledUsers = (await prisma.users.findMany({
+		const scheduledUsersRaw = (await prisma.users.findMany({
 			where: {
 				subscribed_to_daily_meals: true,
 			},
-			include: {
-				addresses: {
-					include: {
-						address: true,
-					},
-				},
-			},
-		})) as UserWithAddressesResponse[];
+			include: userAddressesInclude,
+		})) as UserAddressesPrisma[];
+
+		const scheduledUsers = toUserWithAddressesResponseList(scheduledUsersRaw);
 
 		if (sortingScheduledUsers && sortingScheduledUsers.length !== 0) {
 			// Map user_id to user object for easy lookup
@@ -284,7 +278,7 @@ const getUserPassword = async (query: string): Promise<UserPassword> => {
  * @param {FindFirstArgs} args - Additional Prisma args.
  * @returns {Promise<UserResponse | null>} User or null.
  */
-const getUserByEmailOrTelephone = async (query: string, args?: FindFirstArgs): Promise<UserResponse | null> => {
+const getUserByEmailOrTelephone = async (query: string): Promise<UserResponse | null> => {
 	try {
 		return (await prisma.users.findFirst({
 			where: {
@@ -297,7 +291,6 @@ const getUserByEmailOrTelephone = async (query: string, args?: FindFirstArgs): P
 					},
 				],
 			},
-			...args,
 		})) as UserResponse | null;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by email or telephone');
@@ -311,13 +304,12 @@ const getUserByEmailOrTelephone = async (query: string, args?: FindFirstArgs): P
  * @param {FindFirstArgs} args - Additional Prisma args.
  * @returns {Promise<UserResponse | null>} User or null.
  */
-const getUserByEmail = async (query: string, args?: FindFirstArgs): Promise<UserResponse | null> => {
+const getUserByEmail = async (query: string): Promise<UserResponse | null> => {
 	try {
 		return (await prisma.users.findFirst({
 			where: {
 				email: query,
 			},
-			...args,
 		})) as UserResponse | null;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by email');
@@ -331,14 +323,13 @@ const getUserByEmail = async (query: string, args?: FindFirstArgs): Promise<User
  * @param {FindFirstArgs} args - Additional Prisma args.
  * @returns {Promise<UserResponse | null>} User or null.
  */
-const getUserByTelephone = async (query: string, args?: FindFirstArgs): Promise<UserResponse | null> => {
+const getUserByTelephone = async (query: string): Promise<UserResponse | null> => {
 	try {
 		console.log('getUserByTelephone called with query:', query);
 		const user = (await prisma.users.findFirst({
 			where: {
 				telephone: query,
 			},
-			...args,
 		})) as UserResponse | null;
 		console.log('User found by telephone:', user);
 		return user;
@@ -354,16 +345,13 @@ const getUserByTelephone = async (query: string, args?: FindFirstArgs): Promise<
  * @param {FindUniqueArgs} args - Additional Prisma args.
  * @returns {Promise<any>} Token row or null.
  */
-const getUserByResetToken = async (resetToken: string, args?: FindUniqueArgs): Promise<any> => {
+const getUserByResetToken = async (resetToken: string): Promise<any> => {
 	try {
 		return await prisma.tokens.findUnique({
 			where: {
 				token: resetToken,
 			},
-			include: {
-				users: true,
-			},
-			...args,
+			include: tokenWithUserInclude,
 		});
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by reset token');
@@ -371,30 +359,10 @@ const getUserByResetToken = async (resetToken: string, args?: FindUniqueArgs): P
 };
 
 /**
- * Get a user by unique email.
- *
- * @param {string} email - Email.
- * @param {FindUniqueArgs} args - Additional Prisma args.
- * @returns {Promise<UserResponse | null>} User or null.
- */
-const getUser = async (email: string, args?: FindUniqueArgs): Promise<UserResponse | null> => {
-	try {
-		return (await prisma.users.findUnique({
-			where: {
-				email: email,
-			},
-			...args,
-		})) as UserResponse | null;
-	} catch (error) {
-		throw new Error(error instanceof Error ? error.message : 'Failed to get user');
-	}
-};
-
-/**
  * Update user general fields (excludes email, password, telephone, addresses, role).
  *
  * @param {string} user_id - User ID.
- * @param {Partial<UserBase>} user - Fields to update.
+ * @param {Partial<UpdateUserRequest>} user - Fields to update.
  * @returns {Promise<UserResponse>} Updated user.
  */
 const updateUser = async (user_id: string, user: Partial<UserBase>): Promise<UserResponse> => {
@@ -430,19 +398,14 @@ const updateUser = async (user_id: string, user: Partial<UserBase>): Promise<Use
  */
 const updateScheduledUser = async (user_id: string, user: Partial<UserBase>): Promise<UserWithAddressesResponse> => {
 	try {
-		return (await prisma.users.update({
+		const updatedUser = (await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
 			data: user,
-			include: {
-				addresses: {
-					include: {
-						address: true,
-					},
-				},
-			},
-		})) as UserWithAddressesResponse;
+			include: userAddressesInclude,
+		})) as UserAddressesPrisma;
+		return toUserWithAddressesResponse(updatedUser);
 	} catch (error) {
 		console.log(error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update scheduled user');
@@ -846,12 +809,7 @@ const createNewUser = async (
 		// Create the user with the potentially hashed password
 		return (await tx.users.create({
 			data: newUser,
-			include: {
-				child_users: true,
-				parent_user: true,
-				user_roles: true,
-				addresses: true,
-			},
+			include: userCreationInclude,
 		})) as UserResponse;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to create new user.');
@@ -1188,13 +1146,12 @@ const updateFavoriteServices = async (user_id: string, services: SERVICES[]): Pr
 	}
 };
 
-export { getUsers };
+export { getPasswordByUserId };
 export { getUserByReferralCode };
 export { getUserById };
 export { getUserByIdForLogin };
 export { getUserPassword };
 export { getUserByEmailOrTelephone };
-export { getUser };
 export { updateUser };
 export { updateEmail };
 export { updateUserLanguage };
@@ -1231,15 +1188,15 @@ export { updateUserAdsPersonalization };
 export { updateUserNewsletter };
 export { linkRolesToUser };
 export { updateFavoriteServices };
-
+export { getPersonalUsers };
+export { getAllUsersWithAddressesAndConnections };
 export default {
-	getUsers,
+	getPersonalUsers,
 	getUserByReferralCode,
 	getUserById,
 	getUserByIdForLogin,
 	getUserPassword,
 	getUserByEmailOrTelephone,
-	getUser,
 	updateUser,
 	updateEmail,
 	updateUserLanguage,
@@ -1276,4 +1233,6 @@ export default {
 	updateUserNewsletter,
 	linkRolesToUser,
 	updateFavoriteServices,
+	getAllUsersWithAddressesAndConnections,
+	getPasswordByUserId,
 };

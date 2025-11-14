@@ -50,7 +50,7 @@ export async function createWalletFunds(
  */
 export async function getAvailableWalletFunds(userId: string, funds_type: FUNDS_TYPE): Promise<WalletFundsResponse[]> {
 	try {
-		return await prisma.wallet_funds.findMany({
+		return (await prisma.wallet_funds.findMany({
 			where: {
 				user_id: userId,
 				reserved_order: null,
@@ -59,7 +59,7 @@ export async function getAvailableWalletFunds(userId: string, funds_type: FUNDS_
 			},
 			include: { user: true },
 			orderBy: [{ expires_at: { sort: 'asc', nulls: 'last' } }, { created_at: 'asc' }],
-		});
+		})) as WalletFundsResponse[];
 	} catch (error) {
 		console.error('Error retrieving available wallet funds:', error);
 		throw error;

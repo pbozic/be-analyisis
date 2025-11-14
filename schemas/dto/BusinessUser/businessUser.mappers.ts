@@ -13,7 +13,7 @@ import type {
 	BusinessUserWithBusinessPrisma,
 	BusinessUserDefaultPrisma,
 } from '../../../prisma/includes/businessUsers.js';
-
+import { toPaymentList } from '../Payments/payments.mappers.js';
 function toIso(d: unknown) {
 	return d ? new Date(d as any).toISOString() : undefined;
 }
@@ -51,6 +51,8 @@ export function toBusinessUserWithBusinessResponse(
 		created_at: toIso(r.created_at) ?? new Date().toISOString(),
 		updated_at: toIso(r.updated_at) ?? new Date().toISOString(),
 		users: (r as any).users,
+		stripe_customer_id: r.stripe_customer_id ?? null,
+		payment_methods: toPaymentList(r.payment_methods ?? []),
 		allowance: (r as any).allowance ?? null,
 		operating_address: (r as any).operating_address ?? null,
 		business: (r as any).business ?? null,

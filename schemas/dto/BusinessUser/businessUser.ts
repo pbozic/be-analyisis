@@ -4,6 +4,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { UUID } from '../../primitives.js';
 import { AddressRefSchema } from '../Address/address.js';
 import { UserResponseSchema, AllowanceResponseSchema } from '../User/index.js';
+import { PaymentMethodSchema } from '../Payments/payment.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -98,6 +99,8 @@ export const BusinessUserWithBusinessResponseSchema = BusinessUserBaseSchema.ext
 			business_users: z.array(BusinessUserRefSchema).optional(),
 			business_clients: z.array(z.any()).optional(), // TODO: Add proper BusinessClient schema when available
 			business_local_locations: z.array(z.any()).optional(), // TODO: Add proper LocalLocation schema when available
+			stripe_customer_id: z.string().nullable(),
+			payment_methods: PaymentMethodSchema.array().optional(),
 		})
 		.optional(),
 });

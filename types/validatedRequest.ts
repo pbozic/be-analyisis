@@ -14,7 +14,7 @@ export type ValidatedRequest<TBody = unknown, TParams = unknown, TQuery = unknow
 	any,
 	TBody,
 	TQuery
-> & { user?: AuthUser; file?: Express.Multer.File };
+> & { user?: AuthUser; file?: Express.Multer.File; userSocket?: any };
 
 export type AuthenticatedRequest<TBody = unknown, TParams = unknown, TQuery = unknown> = Request<
 	TParams,
@@ -23,4 +23,5 @@ export type AuthenticatedRequest<TBody = unknown, TParams = unknown, TQuery = un
 	TQuery
 > & {
 	user?: AuthUser;
+	userSocket?: any;
 };

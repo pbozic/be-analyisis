@@ -603,7 +603,7 @@ export const AcceptFamilyInvitationSchema = z
  * Update favorite services schema
  */
 export const UpdateFavoriteServicesBodySchema = z
-	.object({ service_ids: z.array(z.nativeEnum(SERVICES)) })
+	.object({ services: z.array(z.nativeEnum(SERVICES)) })
 	.openapi('UpdateFavoriteServicesBody');
 export type UpdateFavoriteServicesBody = z.infer<typeof UpdateFavoriteServicesBodySchema>;
 
@@ -669,6 +669,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateRadioPreferencesRequest', UpdateRadioPreferencesSchema);
 	registry.register('UpdateAllergiesPreferencesRequest', UpdateAllergiesPreferencesSchema);
 
+	registry.register('UpdateUserRequest', UpdateUserSchema);
 	// Profile picture schema
 	registry.register('UpdateProfilePictureRequest', UpdateProfilePictureSchema);
 
@@ -711,6 +712,5 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	// Family invitation schemas
 	registry.register('InviteFamilyMemberRequest', InviteFamilyMemberSchema);
 	registry.register('AcceptFamilyInvitationRequest', AcceptFamilyInvitationSchema);
-
 	registry.register('UpdateFavoriteServicesBody', UpdateFavoriteServicesBodySchema);
 }
