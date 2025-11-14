@@ -4,6 +4,9 @@ import { MODULE } from '@prisma/client';
 
 import { Timestamp, UUID } from '../../primitives.js';
 import { LineItemDetailSchema } from '../LineItems/index.js';
+import { UserBaseSchema } from '../User/index.js';
+import { BusinessBaseSchema } from '../Business/business.js';
+import { DriverBaseSchema } from '../Driver/driver.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -237,10 +240,9 @@ export type DeliveryOrderRef = z.infer<typeof DeliveryOrderRefSchema>;
 // Detail Schema (extends Base with relations)
 // ===============
 export const DeliveryOrderDetailSchema = DeliveryOrderBaseSchema.extend({
-	user: z.record(z.any()).nullable().optional(),
-	business: z.record(z.any()).nullable().optional(),
-	delivery_driver: z.record(z.any()).nullable().optional(),
-	driver: z.record(z.any()).nullable().optional(),
+	user: UserBaseSchema.nullable().optional(),
+	business: BusinessBaseSchema.nullable().optional(),
+	driver: DriverBaseSchema.nullable().optional(),
 	items: z.array(LineItemDetailSchema).optional(),
 }).openapi('DeliveryOrderDetail');
 

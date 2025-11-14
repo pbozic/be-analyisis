@@ -6,11 +6,20 @@ import UserDao from '../../dao/User.js';
 import ScheduleDao from '../../dao/reservation/Schedule.ts';
 import BookingDao from '../../dao/reservation/Booking.ts';
 import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee.ts';
-import { CreateEmployeeInput, UpdateEmployeeInput } from '../../types/reservations/Employee.ts';
+import type {
+	CreateEmployeeRequest,
+	UpdateEmployeeRequest,
+} from '../../schemas/dto/reservations/employee/employee.dto';
+import type { EmployeeByIdWithSchedulesDAOResponse } from '../../schemas/dto/reservations/employee/employee.dto';
+import type { CreateBusinessUserWithPassword } from '../../schemas/dto/BusinessUser/businessUser';
 import { ListBookingsParams, BookingsAnalyticsParams } from '../../types/reservations/Booking.ts';
-import { GetSchedulesWithSlotsInput } from '../../types/reservations/Schedule.ts';
+import type { GetSchedulesWithSlots } from '../../schemas/dto/reservations/schedule/schedule.dto';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 import { calcBookings } from './BookingController.ts';
+
+// Import DTO types for API documentation
+//import type { EmployeeDAOResponse, EmployeeByIdDAOResponse, EmployeeWithSlotsDAOResponse } from '../../schemas/dto/reservations/employee/employee.dto.js';
+//import type { ScheduleDetailSchema } from '../../schemas/dto/reservations/schedule/schedule.dto.js';
 
 /**
  * GET /reservation/employees
@@ -19,7 +28,7 @@ import { calcBookings } from './BookingController.ts';
  * @description Retrieves all reservation employees.
  * @operationId getReservationEmployees
  * @response 200 - Reservation employees retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {EmployeeDAOResponse[]} 200.application/json
  * @response 500 - Error retrieving employees
  * @prisma_model employee
  */
@@ -39,16 +48,16 @@ export async function getEmployees(req: ValidatedRequest, res: Response): Promis
  * @summary Create a new reservation employee
  * @description Creates a new reservation employee.
  * @operationId createReservationEmployee
- * @bodyContent {object} application/json
+ * @bodyContent {CreateEmployeeRequest} application/json
  * @response 201 - Employee created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {EmployeeDAOResponse} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating employee
  * @prisma_model employee
  * @prisma_model business_users
  * @prisma_model users
  */
-export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>, res: Response): Promise<void> {
+export async function createEmployee(req: ValidatedRequest<CreateEmployeeRequest>, res: Response): Promise<void> {
 	try {
 		let employeeData = req.body;
 		let businessId = req.user?.business_id as string;
@@ -61,18 +70,17 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 		if (!userExists) {
 			userExists = await UserDao.getUserByTelephone(employeeData.telephone);
 		}
+		const businessUserData: CreateBusinessUserWithPassword = {
+			email: employeeData.email,
+			password: employeeData.password,
+			first_name: employeeData.first_name,
+			last_name: employeeData.last_name,
+			telephone: employeeData.telephone,
+			telephone_code: employeeData.telephone_code,
+			company_role: 'EMPLOYEE',
+		};
 		const { businessUser } = await BusinessUsersDao.createBusinessUser(
-			{
-				data: {
-					email: employeeData.email,
-					password: employeeData.password,
-					first_name: employeeData.first_name,
-					last_name: employeeData.last_name,
-					telephone: employeeData.telephone,
-					telephone_code: employeeData.telephone_code,
-					// telephone_number: employeeData.telephone_number,
-				},
-			},
+			businessUserData as any, // TODO: BusinessUsersDao expects CreateBusinessUser but we pass extended type with password
 			businessId,
 			!userExists
 		);
@@ -123,15 +131,15 @@ export async function deleteEmployee(req: Request, res: Response): Promise<void>
  * @description Updates a reservation employee by its ID.
  * @operationId updateReservationEmployee
  * @pathParam {string} employee_id - The ID of the employee to update.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateEmployeeRequest} application/json
  * @response 200 - Employee updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {EmployeeDAOResponse} 200.application/json
  * @response 404 - Employee not found
  * @response 500 - Error updating employee
  * @prisma_model employee
  */
 export async function updateEmployee(
-	req: ValidatedRequest<UpdateEmployeeInput, { employee_id: string }>,
+	req: ValidatedRequest<UpdateEmployeeRequest, { employee_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -152,7 +160,7 @@ export async function updateEmployee(
  * @operationId getReservationEmployeeById
  * @pathParam {string} employee_id - The ID of the employee to retrieve.
  * @response 200 - Employee retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {EmployeeByIdDAOResponse} 200.application/json
  * @response 404 - Employee not found
  * @response 500 - Error retrieving employee
  * @prisma_model employee
@@ -178,15 +186,15 @@ export async function getEmployeeById(req: Request, res: Response): Promise<void
  * @summary Get all reservation employees with schedule slots
  * @description Retrieves all reservation employees with their schedule slots.
  * @operationId getEmployeesWithScheduleSlots
- * @bodyContent {object} application/json
+ * @bodyContent {GetSchedulesWithSlots} application/json
  * @response 200 - Reservation employees with schedule slots retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {{employees: EmployeeWithSlotsDAOResponse[], schedule: ScheduleDetailSchema}} 200.application/json
  * @response 500 - Error retrieving employees with schedule slots
  * @prisma_model employee
  * @prisma_model schedule_slot
  */
 export async function getEmployeesWithScheduleSlots(
-	req: ValidatedRequest<GetSchedulesWithSlotsInput>,
+	req: ValidatedRequest<GetSchedulesWithSlots>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -228,9 +236,9 @@ export async function getEmployeesWithScheduleSlots(
  * @description Retrieves a reservation employee by its ID with schedules and booking analytics.
  * @operationId getReservationEmployeeWithSchedules
  * @pathParam {string} employee_id - The ID of the employee to retrieve.
- * @bodyContent {object} application/json
+ * @bodyContent {BookingsAnalyticsParams} application/json
  * @response 200 - Employee retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {EmployeeByIdWithSchedulesDAOResponse} 200.application/json
  * @response 404 - Employee not found
  * @response 500 - Error retrieving employee
  * @prisma_model employee
@@ -249,7 +257,9 @@ export async function getEmployeeByIdWithSchedules(
 			res.status(400).json({ message: 'User has no reservation module' });
 			return;
 		}
-		let employeeData = await EmployeeDao.getEmployeeByIdWithSchedules(employeeId);
+		let employeeData = (await EmployeeDao.getEmployeeByIdWithSchedules(
+			employeeId
+		)) as EmployeeByIdWithSchedulesDAOResponse | null;
 		if (!employeeData) {
 			res.status(404).json({ message: 'Employee not found' });
 			return;

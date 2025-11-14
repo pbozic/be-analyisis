@@ -34,16 +34,16 @@ interface CreateGroupUserData {
  * Get group_users row by parent user id.
  *
  * @param {string} parent_id - Parent user ID.
- * @returns {Promise<GroupUserResponse | null>} group_users row or null.
+ * @returns {Promise<GroupUserResponse[] | null>} group_users row or null.
  */
-const getGroupUsersByParentId = async (parent_id: string): Promise<GroupUserResponse | null> => {
+const getGroupUsersByParentId = async (parent_id: string): Promise<GroupUserResponse[]> => {
 	try {
-		const row = await prisma.group_users.findUnique({
+		const rows: GroupUsersWithIncludesPrisma[] = await prisma.group_users.findMany({
 			where: { parent_user_id: parent_id },
 			include: groupUsersDefaultInclude,
 		});
-		if (!row) return null;
-		return toGroupUserResponse(row as GroupUsersWithIncludesPrisma);
+		if (!rows) return [];
+		return rows.map((row) => toGroupUserResponse(row as GroupUsersWithIncludesPrisma));
 	} catch (error) {
 		console.error('Error retrieving group_users by parent_id:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get group users by parent ID');

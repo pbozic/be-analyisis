@@ -5,7 +5,6 @@ import { PAYMENT_METHOD } from '@prisma/client';
 import prisma from '../prisma/prisma.js';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
 import { PhoneNumber, Timestamp, UUID } from '../schemas/primitives.js';
-import type { DailyMealSubscriptionResponse } from '../types/dailymeal/DailyMealSubscription.js';
 import type { DailyMealSubscriptionWithIncludesPrisma } from '../prisma/includes/dailyMealSubscriptions.js';
 import dailyMealInstanceDefaultInclude from '../prisma/includes/dailyMealInstance.js';
 import type { DailyMealInstanceWithIncludesPrisma } from '../prisma/includes/dailyMealInstance.js';
@@ -19,6 +18,7 @@ import {
 } from '../schemas/dto/DailyMealSubscription/dailyMealSubscription.mappers.js';
 //=========== repair from deletion
 import type { DailyMealInstanceResponse } from '../schemas/dto/DailyMealInstance/dailyMealInstance.dto.js';
+import { DailyMealSubscriptionDetail } from '../schemas/dto/DailyMeal/dailymeal.dto.js';
 export const DailyMealsCartPersonSchema = z.object({
 	first_name: z.string(),
 	last_name: z.string(),
@@ -128,12 +128,12 @@ const defaultIncludeObj = {
  * Get active daily meal subscriptions by daily_meal_module_id
  * @param {UUID} daily_meal_module_id
  * @param {Prisma.daily_meal_subscriptionsWhereInput} args
- * @returns daily_meal_subscriptions[]
+ * @returns {DailyMealSubscriptionDetail[]}
  */
 export async function getDailyMealSubscriptionsByModuleId(
 	daily_meal_module_id: UUID,
 	args: Prisma.daily_meal_subscriptionsWhereInput = {}
-): Promise<DailyMealSubscriptionResponse[]> {
+): Promise<DailyMealSubscriptionDetail[]> {
 	const rows = await prisma.daily_meal_subscriptions.findMany({
 		where: {
 			daily_meal_module_id,
@@ -157,12 +157,12 @@ export async function getDailyMealSubscriptionsByModuleId(
  * Get active daily meal subscriptions by daily_meal_module_id and optional start_date.
  * @param {UUID} daily_meal_module_id
  * @param {Timestamp} [start_date]
- * @returns {Promise<daily_meal_subscriptions[]>}
+ * @returns {Promise<DailyMealSubscriptionDetail[]>}
  */
 export async function getActiveDailyMealSubscriptionsByModuleId(
 	daily_meal_module_id: UUID,
 	start_date?: Timestamp
-): Promise<DailyMealSubscriptionResponse[]> {
+): Promise<DailyMealSubscriptionDetail[]> {
 	const normalizedDate = start_date ? new Date(new Date(start_date).setUTCHours(0, 0, 0, 0)) : null;
 	const rows = await prisma.daily_meal_subscriptions.findMany({
 		where: {
@@ -195,12 +195,12 @@ export async function getActiveDailyMealSubscriptionsByModuleId(
  * Get daily meal subscriptions by user_id and optional start_date.
  * @param {UUID} user_id
  * @param {Timestamp} [start_date]
- * @returns {Promise<daily_meal_subscriptions[]>}
+ * @returns {Promise<DailyMealSubscriptionDetail[]>}
  */
 export async function getDailyMealSubscriptionsByUserId(
 	user_id: UUID,
 	start_date?: Timestamp
-): Promise<DailyMealSubscriptionResponse[]> {
+): Promise<DailyMealSubscriptionDetail[]> {
 	const normalizedDate = start_date ? new Date(new Date(start_date).setUTCHours(0, 0, 0, 0)) : null;
 
 	const rows = await prisma.daily_meal_subscriptions.findMany({
@@ -244,11 +244,11 @@ export async function getDailyMealSubscriptionsByUserId(
 /**
  * Get today's daily meal subscriptions by daily_meal_module_id.
  * @param {UUID} daily_meal_module_id
- * @returns {Promise<daily_meal_subscriptions[]>}
+ * @returns {Promise<DailyMealSubscriptionDetail[]>}
  */
 export async function getTodayDailyMealSubscriptionsByModuleId(
 	daily_meal_module_id: UUID
-): Promise<DailyMealSubscriptionResponse[]> {
+): Promise<DailyMealSubscriptionDetail[]> {
 	const todayStart = new Date();
 	todayStart.setHours(0, 0, 0, 0);
 	const todayEnd = new Date();
@@ -301,9 +301,9 @@ export async function getTodayDailyMealSubscriptionsByModuleId(
 /**
  * Get daily meal subscriptions by grouped_id.
  * @param {UUID} grouped_id
- * @returns {Promise<daily_meal_subscriptions[]>}
+ * @returns {Promise<DailyMealSubscriptionDetail[]>}
  */
-export async function getDailyMealSubscriptionById(id: UUID): Promise<DailyMealSubscriptionResponse[]> {
+export async function getDailyMealSubscriptionById(id: UUID): Promise<DailyMealSubscriptionDetail[]> {
 	const rows = await prisma.daily_meal_subscriptions.findMany({
 		where: { id },
 		include: {
@@ -337,7 +337,7 @@ export async function getDailyMealSubscriptionById(id: UUID): Promise<DailyMealS
  * @param {Array<{ intended_date: Date | string; delivery_date: Date | string; }>} [days]
  * @param {Array<{ intended_weekday: number; delivery_weekday: number; }>} [weekdays]
  * @param {string | null} [courier_comment]
- * @returns {Promise<daily_meal_subscriptions>}
+ * @returns {Promise<DailyMealSubscriptionDetail>}
  */
 export async function createDailyMealSubscription(
 	user_id: UUID,
@@ -356,7 +356,7 @@ export async function createDailyMealSubscription(
 		delivery_weekday: number;
 	}>,
 	courier_comment?: string | null
-): Promise<DailyMealSubscriptionResponse> {
+): Promise<DailyMealSubscriptionDetail> {
 	try {
 		const row = await prisma.daily_meal_subscriptions.create({
 			data: {
@@ -438,12 +438,12 @@ export async function createDailyMealSubscription(
  *
  * @param {UUID} id
  * @param {Prisma.daily_meal_subscriptionsInclude} [includeObj]
- * @returns {Promise<daily_meal_subscriptions | null>}
+ * @returns {Promise<DailyMealSubscriptionDetail | null>}
  */
 export async function getSubscriptionById(
 	id: UUID,
 	includeObj?: Prisma.daily_meal_subscriptionsInclude
-): Promise<DailyMealSubscriptionResponse | null> {
+): Promise<DailyMealSubscriptionDetail | null> {
 	const row = await prisma.daily_meal_subscriptions.findUnique({
 		where: { id },
 		include: includeObj || defaultIncludeObj,
@@ -463,13 +463,13 @@ export async function getSubscriptionById(
  * @param {UUID} id
  * @param {SUBSCRIPTION_STATUS} status
  * @param {Prisma.daily_meal_subscriptionsInclude} [includeObj]
- * @returns {Promise<daily_meal_subscriptions>}
+ * @returns {Promise<DailyMealSubscriptionDetail>}
  */
 export async function updateSubscriptionStatus(
 	id: UUID,
 	status: SUBSCRIPTION_STATUS,
 	includeObj?: Prisma.daily_meal_subscriptionsInclude
-): Promise<DailyMealSubscriptionResponse> {
+): Promise<DailyMealSubscriptionDetail> {
 	const row = await prisma.daily_meal_subscriptions.update({
 		where: { id },
 		data: { status: status },
@@ -488,13 +488,13 @@ export async function updateSubscriptionStatus(
  * @param {UUID} id
  * @param {UUID} driver_id
  * @param {Prisma.daily_meal_subscriptionsInclude} [includeObj]
- * @returns {Promise<daily_meal_subscriptions>}
+ * @returns {Promise<DailyMealSubscriptionDetail>}
  */
 export async function connectSubscriptionWithDriver(
 	id: UUID,
 	driver_id: UUID,
 	includeObj?: Prisma.daily_meal_subscriptionsInclude
-): Promise<DailyMealSubscriptionResponse> {
+): Promise<DailyMealSubscriptionDetail> {
 	const row = await prisma.daily_meal_subscriptions.update({
 		where: { id },
 		data: {

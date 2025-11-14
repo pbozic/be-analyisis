@@ -1,47 +1,8 @@
 import z from 'zod';
-import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID, Email, PhoneNumber } from '../../primitives';
-
-// =======================
-// Create Business User - POST /business-users
-// =======================
-export const CreateBusinessUserSchema = z.object({
-	business_id: UUID,
-	userData: z.object({
-		first_name: z.string().min(1),
-		last_name: z.string().min(1),
-		email: Email,
-		telephone: PhoneNumber,
-		date_of_birth: z.string().datetime().optional(),
-		user_roles: z
-			.array(
-				z.object({
-					role: z.string(),
-					primary: z.boolean(),
-				})
-			)
-			.optional(),
-		user_role: z.string().optional(),
-		address: z
-			.object({
-				street: z.string(),
-				city: z.string(),
-				postal_code: z.string(),
-				country: z.string(),
-			})
-			.optional(),
-		operating_address: z
-			.object({
-				street: z.string(),
-				city: z.string(),
-				postal_code: z.string(),
-				country: z.string(),
-			})
-			.optional(),
-	}),
-});
-export type CreateBusinessUserInput = z.infer<typeof CreateBusinessUserSchema>;
+extendZodWithOpenApi(z);
 
 // =======================
 // Update Allowance - PATCH /business-users/allowance
@@ -95,7 +56,6 @@ export type AcceptBusinessInvitationInput = z.infer<typeof AcceptBusinessInvitat
 
 // === OpenAPI Registry ===
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('CreateBusinessUser', CreateBusinessUserSchema);
 	registry.register('UpdateAllowance', UpdateAllowanceSchema);
 	registry.register('UpdateCompanyRole', UpdateCompanyRoleSchema);
 	registry.register('UpdateOnlineStatus', UpdateOnlineStatusSchema);

@@ -118,6 +118,14 @@ export type StripeEventBase = z.infer<typeof StripeEventBaseSchema>;
 export type StripeEventRef = z.infer<typeof StripeEventRefSchema>;
 export type StripeEventResponse = z.infer<typeof StripeEventResponseSchema>;
 
+// handleWebhook response
+export const StripeWebhookResponseSchema = z
+	.object({
+		received: z.boolean(),
+	})
+	.openapi('StripeWebhookResponse');
+export type StripeWebhookResponse = z.infer<typeof StripeWebhookResponseSchema>;
+
 /* Mapper helpers - validate payloads */
 
 export function parseSetupIntent(payload: unknown): SetupIntentResponse {
@@ -141,4 +149,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('StripeEventBase', StripeEventBaseSchema);
 	registry.register('StripeEventRef', StripeEventRefSchema);
 	registry.register('StripeEventResponse', StripeEventResponseSchema);
+
+	registry.register('StripeWebhookResponse', StripeWebhookResponseSchema);
 }

@@ -224,10 +224,14 @@ async function createVehicle(req: ValidatedRequest<CreateVehicleRequest>, res: R
 					const document = await DocumentDao.createDocument(doc.documentData);
 					for (const file of doc.files) {
 						let base64 = file.base64;
-						delete file.base64;
-						delete file.name;
-						delete file.document_type;
-						let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
+						delete (file as any).base64;
+						delete (file as any).name;
+						delete (file as any).document_type;
+						let fileData = await FileDao.addFileToDocument(
+							document.document_id,
+							file,
+							(document as any).public
+						);
 						let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
 						S3Helper.SaveObject(
 							key,
@@ -235,10 +239,10 @@ async function createVehicle(req: ValidatedRequest<CreateVehicleRequest>, res: R
 							file.mime_type,
 							{
 								users: [],
-								businesses: [vehicle.business_id],
+								businesses: [vehicle.transport_module_id as string],
 							},
 							fileData,
-							document.public
+							(document as any).public
 						);
 					}
 					await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
@@ -279,15 +283,19 @@ async function updateVehicle(
 		if (vehicle) {
 			if (req.body.documents && req.body.documents.length > 0) {
 				for (const doc of req.body.documents) {
-					const documentId = doc.document_id;
+					const documentId = (doc as any).document_id;
 					const updatedDoc = await updateDocumentByDocumentId(documentId, doc.documentData);
 					for (const file of doc.files) {
-						if (updatedDoc.document_id !== file.document_id) {
-							const base64 = file.base64;
-							delete file.base64;
-							delete file.document_type;
-							delete file.name;
-							const newFile = await addFileToDocument(updatedDoc.document_id, file, updatedDoc.public);
+						if (updatedDoc.document_id !== (file as any).document_id) {
+							const base64 = (file as any).base64;
+							delete (file as any).base64;
+							delete (file as any).document_type;
+							delete (file as any).name;
+							const newFile = await addFileToDocument(
+								updatedDoc.document_id,
+								file,
+								(updatedDoc as any).public
+							);
 							const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 							await S3Helper.SaveObject(
 								key,
@@ -295,10 +303,10 @@ async function updateVehicle(
 								file.mime_type,
 								{
 									users: [],
-									// businesses: [vehicle.business_id],
+									businesses: [vehicle.transport_module_id as string],
 								},
 								newFile,
-								updatedDoc.public
+								(updatedDoc as any).public
 							);
 						}
 					}

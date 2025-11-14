@@ -5,7 +5,6 @@ import { AddAddressSchema } from '../../schemas/dto/Business/business.validators
 import { validate } from '../../middleware/zod.js';
 import {
 	AcceptBusinessInvitationSchema,
-	CreateBusinessUserSchema,
 	InviteBusinessUserSchema,
 	UpdateAllowanceSchema,
 	UpdateCompanyRoleSchema,
@@ -16,13 +15,11 @@ const router = express.Router();
 router.get('/', BusinessUsersController.getAllBusinessUsers);
 router.get('/:user_id', BusinessUsersController.getBusinessUserByUserId);
 router.get('/business/:business_id', BusinessUsersController.getBusinessUsersByBusinessId);
-router.get('/type/:type', BusinessUsersController.getBusinessUsersByBusinessType);
 // router.get('/business/group_user/:business_id', BusinessUsersController.getBusinessGroupsByBusinessId);
 router.get(
 	'/business/:business_id/company-role/:company_role',
 	BusinessUsersController.getAllBusinessUsersForBusinessByCompanyRole
 );
-router.post('/', validate(CreateBusinessUserSchema), BusinessUsersController.createBusinessUser);
 router.post('/address/operating', validate(AddAddressSchema), BusinessUsersController.addOperatingAddress);
 /**
  *    * @module finances

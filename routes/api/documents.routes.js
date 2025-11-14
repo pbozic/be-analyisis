@@ -2,7 +2,7 @@ import express from 'express';
 
 import { validate } from '../../middleware/zod.ts';
 import DocumentsController from '../../controllers/DocumentsController.js';
-import { deleteDocumentsAndFilesByDocumentId } from '../../controllers/MenuController.js';
+import { deleteDocumentsAndFilesByDocumentId } from '../../controllers/MenuController.ts';
 import {
 	CreateDocumentBodySchema,
 	UpdateDocumentExpirationInputSchema,

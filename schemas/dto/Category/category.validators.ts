@@ -1,9 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { CATEGORY_TYPE } from '@prisma/client';
 
 import { UUID } from '../../primitives.js';
-import { TranslationItemSchema } from '../Word/word.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -41,10 +39,7 @@ export const CreateCategoryRequestSchema = z
 			.array(z.string())
 			.optional()
 			.openapi({ example: ['cola', 'fizzy'] }),
-		parent_categories_id: z
-			.array(z.string().uuid())
-			.optional()
-			.openapi({ example: ['550e8400-e29b-41d4-a716-446655440000'] }),
+		parent_categories_id: UUID.optional(),
 		iconFileData: CategoryIconFileDataSchema.optional(),
 	})
 	.openapi('CreateCategoryRequest');
@@ -59,7 +54,7 @@ export const UpdateCategoryRequestSchema = z
 			.openapi({ example: { name: 'drinks' } }),
 		translations: z.array(CategoryTranslationSchema).optional(),
 		subcategories: z.array(z.any()).optional(),
-		parent_categories_id: z.array(z.string().uuid()).optional(),
+		parent_categories_id: UUID.optional(),
 		iconFileData: CategoryIconFileDataSchema.optional(),
 	})
 	.openapi('UpdateCategoryRequest');
@@ -71,7 +66,7 @@ export type UpdateCategoryRequest = z.infer<typeof UpdateCategoryRequestSchema>;
 // =======================
 export const CategoryIdParamsSchema = z
 	.object({
-		id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		id: UUID,
 	})
 	.openapi('CategoryIdParams');
 
@@ -99,7 +94,7 @@ export type CreateCategoryDaoInput = z.infer<typeof CreateCategoryDaoInputSchema
 
 export const UpdateCategoryDaoInputSchema = z
 	.object({
-		id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		id: UUID,
 		categoryData: z.any().optional(),
 		translations: z.array(CategoryTranslationSchema).optional(),
 		subcategories: z.array(z.string().uuid()).optional(),
@@ -112,7 +107,7 @@ export type UpdateCategoryDaoInput = z.infer<typeof UpdateCategoryDaoInputSchema
 
 export const DeleteCategoryDaoInputSchema = z
 	.object({
-		id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		id: UUID,
 	})
 	.openapi('DeleteCategoryDaoInput');
 

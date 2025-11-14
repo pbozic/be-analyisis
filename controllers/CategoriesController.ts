@@ -12,7 +12,7 @@ import { CreateCategoryRequest, UpdateCategoryRequest } from '../schemas/dto/Cat
  * @description Retrieves all categories.
  * @operationId getCategories
  * @response 200 - Categories retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {CategoryResponse[]} 200.application/json
  * @response 500 - Server error fetching categories
  * @prisma_model categories
  */
@@ -34,7 +34,7 @@ async function getCategories(req: AuthenticatedRequest, res: Response): Promise<
  * @operationId getCategoriesByType
  * @pathParam {string} category_type - The category type
  * @response 200 - Categories retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {CategoryResponse[]} 200.application/json
  * @response 500 - Server error fetching category by type
  * @prisma_model categories
  */
@@ -58,10 +58,10 @@ async function getCategoriesByType(
  * @description Creates a category with translations, subcategories and optional icon.
  * @operationId createCategory
  * @bodyDescription Category payload
- * @bodyContent {object} application/json
+ * @bodyContent {CreateCategoryRequest} application/json
  * @bodyRequired
  * @response 201 - Category created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {CategoryResponse} 201.application/json
  * @response 500 - Error creating category
  * @prisma_model categories
  * @prisma_model category_translations
@@ -69,7 +69,6 @@ async function getCategoriesByType(
  */
 async function createCategory(req: ValidatedRequest<CreateCategoryRequest>, res: Response): Promise<void> {
 	try {
-		const user_id = req.user!.user_id;
 		const { categoryData, translations, subcategories, words, parent_categories_id, iconFileData } = req.body;
 
 		let tag = categoryData.name.replace(/\s/g, '-').toLowerCase();
@@ -90,7 +89,7 @@ async function createCategory(req: ValidatedRequest<CreateCategoryRequest>, res:
 			translations,
 			subcategories,
 			words,
-			parent_categories_id as string[],
+			parent_categories_id,
 			iconFileData
 		);
 
@@ -114,10 +113,10 @@ async function createCategory(req: ValidatedRequest<CreateCategoryRequest>, res:
  * @operationId updateCategory
  * @pathParam {string} id - The category id
  * @bodyDescription Category update payload
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateCategoryRequest} application/json
  * @bodyRequired
  * @response 200 - Category updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {CategoryResponse} 200.application/json
  * @response 500 - Error updating category
  * @prisma_model categories
  * @prisma_model category_translations
@@ -134,7 +133,7 @@ async function updateCategory(
 		const category = await CategoriesDao.updateCategory(
 			req.params.id,
 			categoryData,
-			translations,
+			translations as { language: string; translation: string }[],
 			subcategories,
 			parent_categories_id,
 			iconFileData
@@ -181,7 +180,7 @@ async function deleteCategory(req: ValidatedRequest<never, { id: string }>, res:
  * @operationId getCategoryById
  * @pathParam {string} id - The category id
  * @response 200 - Category retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {CategoryResponse} 200.application/json
  * @response 500 - Error fetching category
  * @prisma_model categories
  */

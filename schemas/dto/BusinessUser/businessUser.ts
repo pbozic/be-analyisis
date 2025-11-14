@@ -19,6 +19,12 @@ export const CreateBusinessUserSchema = z.object({
 });
 export type CreateBusinessUser = z.infer<typeof CreateBusinessUserSchema>;
 
+// Extended schema for employee creation with password
+export const CreateBusinessUserWithPasswordSchema = CreateBusinessUserSchema.extend({
+	password: z.string().min(6, 'Password must be at least 6 characters long'),
+});
+export type CreateBusinessUserWithPassword = z.infer<typeof CreateBusinessUserWithPasswordSchema>;
+
 // BusinessUser Base Schema - scalars only, no relations
 export const BusinessUserBaseSchema = z.object({
 	business_users_id: UUID,

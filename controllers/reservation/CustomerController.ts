@@ -2,7 +2,13 @@ import { Response } from 'express';
 
 import CustomerDao from '../../dao/reservation/Customer.ts';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
-import { CreateCustomerInput, UpdateCustomerInput } from '../../types/reservations/Customer';
+import type {
+	CreateCustomerRequest,
+	UpdateCustomerRequest,
+} from '../../schemas/dto/reservations/customer/customer.dto';
+
+// Import DTO types for API documentation
+//import type { CustomerDAOResponse, CustomerByCodeDAOResponse } from '../../schemas/dto/reservations/customer/customer.dto.js';
 /**
  * GET /reservation/customers
  * @tag Reservation
@@ -10,7 +16,7 @@ import { CreateCustomerInput, UpdateCustomerInput } from '../../types/reservatio
  * @description Retrieves all reservation customers for a specific business.
  * @operationId getReservationCustomers
  * @response 200 - Reservation customers retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {CustomerDAOResponse[]} 200.application/json
  * @response 500 - Error retrieving customers
  * @prisma_model customers
  */
@@ -34,14 +40,14 @@ export async function getCustomers(req: ValidatedRequest, res: Response): Promis
  * @summary Create a new reservation customer
  * @description Creates a new reservation customer.
  * @operationId createReservationCustomer
- * @bodyContent {object} application/json
+ * @bodyContent {CreateCustomerRequest} application/json
  * @response 201 - Customer created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {CustomerDAOResponse} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating customer
  * @prisma_model customers
  */
-export async function createCustomer(req: ValidatedRequest<CreateCustomerInput>, res: Response): Promise<void> {
+export async function createCustomer(req: ValidatedRequest<CreateCustomerRequest>, res: Response): Promise<void> {
 	try {
 		let customerData = req.body;
 		let reservationModuleId = req.user?.reservation_module_id as string;
@@ -63,16 +69,16 @@ export async function createCustomer(req: ValidatedRequest<CreateCustomerInput>,
  * @description Updates an existing reservation customer.
  * @operationId updateReservationCustomer
  * @pathParam {string} customer_id - The ID of the customer to update.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateCustomerRequest} application/json
  * @response 200 - Customer updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {CustomerDAOResponse} 200.application/json
  * @response 400 - Invalid input data
  * @response 404 - Customer not found
  * @response 500 - Error updating customer
  * @prisma_model customers
  */
 export async function updateCustomer(
-	req: ValidatedRequest<UpdateCustomerInput, { customer_id: string }>,
+	req: ValidatedRequest<UpdateCustomerRequest, { customer_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -121,7 +127,7 @@ export async function deleteCustomer(
  * @operationId getReservationCustomerById
  * @pathParam {string} customer_id - The ID of the customer to retrieve.
  * @response 200 - Customer retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {CustomerDAOResponse} 200.application/json
  * @response 404 - Customer not found
  * @response 500 - Error retrieving customer
  * @prisma_model customers
@@ -152,7 +158,7 @@ export async function getCustomerById(
  * @operationId getReservationCustomerByCode
  * @pathParam {string} code - Customer code from booking link.
  * @response 200 - Customer retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {CustomerByCodeDAOResponse} 200.application/json
  * @response 404 - Customer not found
  * @response 500 - Error retrieving customer
  * @prisma_model customers

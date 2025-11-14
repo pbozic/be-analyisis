@@ -1,6 +1,6 @@
 import express from 'express';
 
-import MenuController from '../../controllers/MenuController.js';
+import MenuController from '../../controllers/MenuController.ts';
 import { validate } from '../../middleware/zod.js';
 import {
 	CreateMenuSchema,
@@ -12,7 +12,8 @@ import {
 	UpdateMenuItemEnabledSchema,
 	UpdateMenuItemPriceSchema,
 	SetActiveMenuInputSchema,
-} from '../../schemas/dto/Menu/menu.dto.js';
+	DailyMenuByBusinessIdBodySchema,
+} from '../../schemas/dto/Menu/index.js';
 import {
 	AddMenuCategoryIdToOrderInputSchema,
 	RemoveMenuCategoryIdFromOrderInputSchema,
@@ -59,7 +60,11 @@ router.patch(
  *    * @module business
  *
  */
-router.post('/daily/business/:business_id', MenuController.getDailyMenuByBusinessId);
+router.post(
+	'/daily/business/:business_id',
+	validate(DailyMenuByBusinessIdBodySchema),
+	MenuController.getDailyMenuByBusinessId
+);
 // Menu Category routes
 router.get('/menu-categories/:menu_id', MenuController.getMenuCategoriesByMenuId);
 router.post('/menu-categories/create', validate(CreateMenuCategorySchema), MenuController.createMenuCategory);

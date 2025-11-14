@@ -948,7 +948,7 @@ const getBusinessStoreAndFoodDrinksModulesById = async (business_id: string): Pr
  * @returns {Promise<any|null>} Promise resolving to the selected nested module object (as returned by Prisma)
  *                             or null if the business/module is not found.
  */
-const getModuleIdByBusinessId = async (business_id: UUID, module: MODULE) => {
+const getModuleIdByBusinessId = async (business_id: UUID, module: MODULE): Promise<string> => {
 	try {
 		let moduleCondition;
 		if (module === MODULE.STORES) {

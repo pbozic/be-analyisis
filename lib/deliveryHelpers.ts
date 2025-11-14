@@ -39,11 +39,10 @@ import {
 } from './constants.js';
 import { sendDeliveryOrderNotifications } from './notifications.js';
 import WalletFundsHelpers from './WalletFundsHelpers.js';
-// @ts-ignore - legacy JS module without types yet
 import stripe from './stripe.js';
 import { handleStockSync } from '../controllers/DeliveryOrderController.js';
-import { LocationWithAddress } from '../schemas/dto/common/Location.dto.ts';
-import { OrderItem } from '../schemas/dto/common/Order.dto.ts';
+import { LocationWithAddress } from '../schemas/dto/Address/address.ts';
+import { OrderItem } from '../schemas/dto/DeliveryOrders/deliveryOrder.dto.ts';
 
 const NUMBER_OF_DRIVERS_TO_SEND = 3;
 const MAX_ORDER_FIND_ATTEMPTS = 0;
@@ -185,7 +184,7 @@ async function calculateDriverScore(
  * @param {DeliveryOrderWithAttempts} order - The delivery order to evaluate.
  * @returns {Promise<CandidateDriver[]>} List of candidate drivers sorted by score.
  */
-async function selectDeliveryOrderDrivers(order: DeliveryOrderWithAttempts): Promise<CandidateDriver[]> {
+export async function selectDeliveryOrderDrivers(order: DeliveryOrderWithAttempts): Promise<CandidateDriver[]> {
 	const eligible: CandidateDriver[] = [];
 	const now = new Date();
 	const readyRaw = order.details?.ready_for_pickup_at;
@@ -372,7 +371,10 @@ export function CalculateOrderLobbyOrderDetails(
  * @param {CandidateDriver} delivery_driver - The driver object to notify.
  * @returns {Promise<void>}
  */
-async function sendDeliveryOrderToDriver(order: DeliveryOrderWithAttempts, driver: CandidateDriver): Promise<void> {
+export async function sendDeliveryOrderToDriver(
+	order: DeliveryOrderWithAttempts,
+	driver: CandidateDriver
+): Promise<void> {
 	try {
 		if (await DeliveryOrderDao.isOrderSent(order.order_id, driver)) return;
 		const sock = UserSockets.get(driver.user_id);
@@ -645,7 +647,7 @@ export function generateItemsFromPreferences(preferences: any, menuItem: any) {
  * @param {string} [orderType='order'] - The type used for wallet reservation lookup.
  * @returns {Promise<{DRIVER_CREDIT_CUT:number, MERCHANT_CREDIT_CUT:number, PLATFORM_CREDIT_CUT:number, DRIVER_CUT:number, MERCHANT_CUT:number, PLATFORM_CUT:number}>}
  */
-async function calculateDeliveryOrderPaymentCuts(order: any, orderType = 'order') {
+export async function calculateDeliveryOrderPaymentCuts(order: any, orderType = 'order') {
 	const { details, user_id, order_id } = order;
 	const TOTAL_PRICE_CENTS = Math.round(details.total_price * 100); // already includes delivery cost
 
@@ -692,7 +694,7 @@ async function calculateDeliveryOrderPaymentCuts(order: any, orderType = 'order'
  * Handles payment failure by canceling a payment intent if necessary and releasing any reserved wallet funds.
  * @param {Object} order - the order object for which the payment failed.
  */
-async function handlePaymentCleanup(order: any) {
+export async function handlePaymentCleanup(order: any) {
 	try {
 		if (order?.payment?.type === 'CARD' && order.payment_intent_id) {
 			await stripe.client.paymentIntents.cancel(order.payment_intent_id);
@@ -707,7 +709,7 @@ async function handlePaymentCleanup(order: any) {
  * @param {object} order - The order to refund, including payment info and details.
  * @returns {Promise<void>}
  */
-async function handlePaymentRefund(order: any) {
+export async function handlePaymentRefund(order: any) {
 	const WF_reserved = await WalletFundsDao.getReservedWalletFunds(order.user_id, order.order_id);
 	const { credits_wf_amount_reserved, regular_wf_amount_reserved } = WF_reserved.reduce(
 		(acc, wf) => {
@@ -1176,7 +1178,7 @@ export function calculateDistanceBetweenTwoPoints(
  * @param {boolean} is_student - Whether student pricing applies (may waive delivery for student meals).
  * @returns {number} Delivery cost in currency units.
  */
-function calculateOrderDeliveryCost(orderData: any, is_student: boolean): number {
+export function calculateOrderDeliveryCost(orderData: any, is_student: boolean): number {
 	if (orderData?.details?.type === 'delivery' && !is_student) {
 		const distance = haversineDistance(
 			orderData.delivery_location?.coordinates,
@@ -1274,7 +1276,7 @@ export async function verifyOrderCosts(orderData: any): Promise<boolean> {
  * @param {string} [return_url] - Optional return URL for payment redirection flows.
  * @returns {Promise<{order: object, payment_intent?: object}>} The created order and optional payment intent.
  */
-async function generateOrder(
+export async function generateOrder(
 	orderBody: any,
 	user_id: string,
 	return_url?: string
