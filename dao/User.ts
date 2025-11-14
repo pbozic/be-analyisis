@@ -36,6 +36,7 @@ interface FindManyArgs {
 interface FindUniqueArgs {
 	where?: any;
 	include?: any;
+	select?: any;
 }
 
 interface FindFirstArgs {

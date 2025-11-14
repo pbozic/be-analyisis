@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import express from 'express';
 
-import UserController from '../../controllers/UserController.js';
+import UserController from '../../controllers/UserController.ts';
 import StripeController from '../../controllers/StripeController.js';
 import FavoriteDriversController from '../../controllers/FavoriteDriversController.ts';
 import TutorialsController from '../../controllers/TutorialsController.ts';

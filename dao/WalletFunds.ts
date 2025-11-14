@@ -468,7 +468,7 @@ export const findCreditsExpiringInDays = async (days: number): Promise<WalletFun
  * @param {string} type
  * @returns {Promise<WalletFundsBase[]>}
  */
-export const getAvailableCreditsByType = async (userId: string, type: string): Promise<WalletFundsBase[]> => {
+export const getAvailableCreditsByType = async (userId: string, type: FUNDS_TYPE): Promise<WalletFundsBase[]> => {
 	try {
 		return await prisma.wallet_funds.findMany({
 			where: {

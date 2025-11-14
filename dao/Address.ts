@@ -7,13 +7,14 @@ import type { AddressDefaultPrisma } from '../prisma/includes/address.js';
 import type { UserAddressDefaultPrisma } from '../prisma/includes/userAddress.js';
 import type { AddressResponse } from '../types/addresses/Address.js';
 import type { UserAddressResponse } from '../types/users/UserAddress.js';
+import { AddAddressDaoInput } from '../schemas/dto/Address';
 /**
  * Upsert an address by unique coordinates and address string.
  *
  * @param {object} address - Address payload (address, latitude, longitude, etc.).
  * @returns {Promise<object>} The created or updated address record.
  */
-async function addAddress(address: CreateAddressInput): Promise<AddressResponse | Error> {
+async function addAddress(address: AddAddressDaoInput): Promise<AddressResponse | Error> {
 	// delete address.name;
 	// delete address.icon;
 	try {

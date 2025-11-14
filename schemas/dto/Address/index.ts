@@ -1,25 +1,13 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 // === Address DTOs ===
-export {
-	AddressBaseSchema,
-	AddressRefSchema,
-	AddressResponseSchema,
-	type AddressBase,
-	type AddressRef,
-	type AddressResponse,
-} from './address.js';
+export * from './address.js';
 
 // === UserAddress DTOs ===
-export {
-	UserAddressBaseSchema,
-	UserAddressRefSchema,
-	UserAddressResponseSchema,
-	type UserAddressBase,
-	type UserAddressRef,
-	type UserAddressResponse,
-} from './userAddress.js';
+export * from './userAddress.js';
 
+export * from './Address.dao.dto.ts';
+export * from './userAddress.ts';
 // === Schema Registration ===
 import { registerSchemas as registerAddressSchemas } from './address.js';
 import { registerSchemas as registerUserAddressSchemas } from './userAddress.js';

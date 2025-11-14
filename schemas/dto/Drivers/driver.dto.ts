@@ -40,6 +40,7 @@ export const DriverBaseSchema = z
 		last_used_vehicle_id: UUID.nullable().optional(),
 		created_at: Timestamp.optional(),
 		updated_at: Timestamp.optional(),
+		is_inactive: z.boolean().optional(),
 	})
 	.openapi('DriverBase');
 export type DriverBase = z.infer<typeof DriverBaseSchema>;

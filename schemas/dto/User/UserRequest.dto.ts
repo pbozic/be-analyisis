@@ -291,8 +291,8 @@ export const AddAddressSchema = z
 		city: z.string().min(1),
 		postal_code: z.string().min(1),
 		country: z.string().length(2).default('SI'),
-		latitude: z.number().optional(),
-		longitude: z.number().optional(),
+		latitude: z.number(),
+		longitude: z.number(),
 		details: z.record(z.any()).optional(), // TODO: Define specific structure if available
 	})
 	.openapi({
