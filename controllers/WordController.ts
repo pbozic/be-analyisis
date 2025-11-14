@@ -17,10 +17,10 @@ import {
  * @summary Create a new word
  * @description Creates a word with category and translations.
  * @operationId createWord
- * @bodyContent {object} application/json
+ * @bodyContent {CreateWordRequest} application/json
  * @bodyRequired
  * @response 201 - Word created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {WordDetail} 201.application/json
  * @response 500 - Error creating word
  * @prisma_model words
  * @prisma_model translations
@@ -44,9 +44,9 @@ async function createWord(req: ValidatedRequest<CreateWordRequest>, res: Respons
  * @description Updates word value, category, and translations.
  * @operationId updateWord
  * @pathParam {string} id - The word ID
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateWordRequest} application/json
  * @response 200 - Word updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {WordDetail} 200.application/json
  * @response 404 - Word not found
  * @response 500 - Error updating word
  * @prisma_model words
@@ -59,7 +59,8 @@ async function updateWord(req: ValidatedRequest<UpdateWordRequest, { id: string 
 		const { wordData, translations } = req.body;
 		const result = await WordDao.updateWord(id, wordData.word, wordData.categories_id, translations);
 		if (!result) {
-			return res.status(404).json({ error: 'Word not found' });
+			res.status(404).json({ error: 'Word not found' });
+			return;
 		}
 		res.status(200).json(result);
 	} catch (error) {
@@ -76,7 +77,7 @@ async function updateWord(req: ValidatedRequest<UpdateWordRequest, { id: string 
  * @operationId deleteWord
  * @pathParam {string} id - The word ID
  * @response 200 - Word deleted successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {SuccessMessage} 200.application/json
  * @response 404 - Word not found
  * @response 500 - Error deleting word
  * @prisma_model words
@@ -86,7 +87,8 @@ async function deleteWord(req: ValidatedRequest<never, { id: string }>, res: Res
 		const { id } = req.params;
 		const result = await WordDao.deleteWord(id);
 		if (!result) {
-			return res.status(404).json({ error: 'Word not found' });
+			res.status(404).json({ error: 'Word not found' });
+			return;
 		}
 		res.status(200).json({ message: 'Word deleted successfully' });
 	} catch (error) {
@@ -103,7 +105,7 @@ async function deleteWord(req: ValidatedRequest<never, { id: string }>, res: Res
  * @operationId getWordById
  * @pathParam {string} id - The word ID
  * @response 200 - Word retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {WordDetail} 200.application/json
  * @response 404 - Word not found
  * @response 500 - Error fetching word
  * @prisma_model words
@@ -115,7 +117,8 @@ async function getWordById(req: ValidatedRequest<never, { id: string }>, res: Re
 		const { id } = req.params;
 		const result = await WordDao.getWordById(id);
 		if (!result) {
-			return res.status(404).json({ error: 'Word not found' });
+			res.status(404).json({ error: 'Word not found' });
+			return;
 		}
 		res.status(200).json(result);
 	} catch (error) {
@@ -131,7 +134,7 @@ async function getWordById(req: ValidatedRequest<never, { id: string }>, res: Re
  * @description Retrieves all words with translations and categories.
  * @operationId getAllWords
  * @response 200 - Words retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {WordDetail[]} 200.application/json
  * @response 500 - Error fetching words
  * @prisma_model words
  * @prisma_model translations
@@ -155,7 +158,7 @@ async function getAllWords(req: AuthenticatedRequest, res: Response): Promise<vo
  * @operationId removeCategoryFromWord
  * @pathParam {string} id - The word ID
  * @response 200 - Category removed successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {SuccessMessage} 200.application/json
  * @response 404 - Word not found
  * @response 500 - Error removing category from word
  * @prisma_model words
@@ -166,7 +169,8 @@ async function removeCategoryFromWord(req: ValidatedRequest<never, { id: string 
 		const { id } = req.params;
 		const result = await WordDao.removeCategoryFromWord(id);
 		if (!result) {
-			return res.status(404).json({ error: 'Word not found' });
+			res.status(404).json({ error: 'Word not found' });
+			return;
 		}
 		res.status(200).json({ message: 'Category removed successfully' });
 	} catch (error) {
@@ -181,10 +185,11 @@ async function removeCategoryFromWord(req: ValidatedRequest<never, { id: string 
  * @summary Create word buy subscription items
  * @description Creates word buy entries and ensures a Stripe subscription is active or updated.
  * @operationId createWordBuy
- * @bodyContent {object} application/json
+ * @bodyContent {CreateWordBuyRequest} application/json
  * @bodyRequired
  * @response 200 - Word buy created successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {CreateWordBuySubscriptionResponse} 200.application/json
+ * @response 401 - Unauthorized
  * @response 500 - Error creating word buy
  * @prisma_model word_buy
  * @prisma_model business
@@ -194,6 +199,10 @@ async function createWordBuy(req: ValidatedRequest<CreateWordBuyRequest>, res: R
 	try {
 		const { words, business_id } = req.body;
 		const userId = req.user?.user_id;
+		if (!userId) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
 		const result = await WordDao.createWordBuySubscription(words, business_id, userId);
 		res.status(200).json(result);
 	} catch (error) {
@@ -210,7 +219,7 @@ async function createWordBuy(req: ValidatedRequest<CreateWordBuyRequest>, res: R
  * @operationId getWordBuyById
  * @pathParam {string} id - The word buy ID
  * @response 200 - Word buy retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {WordBuyItemDetail} 200.application/json
  * @response 404 - Word buy not found
  * @response 500 - Error fetching word buy
  * @prisma_model word_buy
@@ -220,7 +229,8 @@ async function getWordBuyById(req: ValidatedRequest<never, { id: string }>, res:
 		const { id } = req.params;
 		const result = await WordDao.getWordBuyById(id);
 		if (!result) {
-			return res.status(404).json({ error: 'Word buy not found' });
+			res.status(404).json({ error: 'Word buy not found' });
+			return;
 		}
 		res.status(200).json(result);
 	} catch (error) {
@@ -236,7 +246,7 @@ async function getWordBuyById(req: ValidatedRequest<never, { id: string }>, res:
  * @description Retrieves all word buys.
  * @operationId getAllWordBuys
  * @response 200 - Word buys retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {WordBuyItemDetail[]} 200.application/json
  * @response 500 - Error fetching word buys
  * @prisma_model word_buy
  */
@@ -258,7 +268,8 @@ async function getAllWordBuys(req: AuthenticatedRequest, res: Response): Promise
  * @operationId deleteWordBuy
  * @pathParam {string} id - The word buy ID
  * @response 200 - Word buy deleted successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {SuccessMessage} 200.application/json
+ * @response 401 - Unauthorized
  * @response 500 - Error deleting word buy
  * @prisma_model word_buy
  * @prisma_model business
@@ -266,8 +277,13 @@ async function getAllWordBuys(req: AuthenticatedRequest, res: Response): Promise
 async function deleteWordBuy(req: ValidatedRequest<never, { id: string }>, res: Response): Promise<void> {
 	try {
 		const { id } = req.params;
+		const user_id = req.user?.user_id;
+		if (!user_id) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
 		const result = await WordDao.deleteWordBuy(id);
-		await updateUserSubscription(req.user?.user_id);
+		await updateUserSubscription(user_id);
 		res.status(200).json({ message: 'Word buy subscription id deleted successfully', result });
 	} catch (error) {
 		console.error('Error deleting word buy:', error);
@@ -282,9 +298,9 @@ async function deleteWordBuy(req: ValidatedRequest<never, { id: string }>, res: 
  * @description Updates fields on a word buy, such as price.
  * @operationId updateWordBuy
  * @pathParam {string} id - The word buy ID
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateSingleWordBuyRequest} application/json
  * @response 200 - Word buy updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {WordBuyItem} 200.application/json
  * @response 404 - Word buy not found
  * @response 500 - Error updating word buy
  * @prisma_model word_buy
@@ -298,7 +314,8 @@ async function updateWordBuy(
 		const { price } = req.body;
 		const result = await WordDao.updateWordBuy(id, { price });
 		if (!result) {
-			return res.status(404).json({ error: 'Word buy not found' });
+			res.status(404).json({ error: 'Word buy not found' });
+			return;
 		}
 		res.status(200).json(result);
 	} catch (error) {
@@ -313,9 +330,10 @@ async function updateWordBuy(
  * @summary Bulk create/update word buys
  * @description Creates or updates multiple word buys and updates Stripe subscription accordingly.
  * @operationId updateWordBuys
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateWordBuysRequest} application/json
  * @response 200 - Word buys updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {CreateWordBuySubscriptionResponse} 200.application/json
+ * @response 401 - Unauthorized
  * @response 500 - Error updating word buys
  * @prisma_model word_buy
  * @prisma_model business
@@ -323,6 +341,10 @@ async function updateWordBuy(
 async function updateWordBuys(req: ValidatedRequest<UpdateWordBuysRequest>, res: Response): Promise<void> {
 	try {
 		const user_id = req.user?.user_id;
+		if (!user_id) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
 		const { word_buys, business_id } = req.body;
 		const result = await WordDao.createWordBuySubscription(word_buys, business_id, user_id);
 		res.status(200).json(result);
@@ -340,7 +362,7 @@ async function updateWordBuys(req: ValidatedRequest<UpdateWordBuysRequest>, res:
  * @operationId getWordBuysByBusiness
  * @pathParam {string} business_id - The business ID
  * @response 200 - Active word buys retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {WordBuyItemDetail[]} 200.application/json
  * @response 500 - Error fetching word buys by business
  * @prisma_model word_buy
  * @prisma_model business

@@ -10,6 +10,7 @@ import {
 	TRANSFER_GROUP_STATUS,
 	SPLIT_TYPE,
 	FUNDS_TYPE,
+	TRANSACTION_TYPE,
 } from '@prisma/client';
 import { type Stripe as TStripe } from 'stripe';
 
@@ -20,6 +21,7 @@ import WalletFundsDao from '../dao/WalletFunds.js';
 import UserDao from '../dao/User.js';
 import stripe from './stripe.js';
 import prisma from '../prisma/prisma.js';
+import { PaymentResponse } from '../schemas/dto/Payments/payments.dto.ts';
 
 /**
  * Generates payment splits from a combination of fixed-amount and value-based splits.
@@ -648,10 +650,10 @@ export async function refundRemainingPayment(payment_id: string): Promise<paymen
  * Also restores credits or wallet funds if needed, based on payment splits.
  * Updates split status to 'REFUNDED' or 'CANCELED' depending on transfer state.
  * Works with the Payments system.
- * @param payment - The payment object (must include payment_splits relation).
+ * @param {PaymentResponse} payment - The payment object (must include payment_splits relation).
  */
-export async function handlePaymentRefund(payment: payments & { payment_splits: payment_splits[] }) {
-	for (const split of payment.payment_splits) {
+export async function handlePaymentRefund(payment: PaymentResponse): Promise<void> {
+	for (const split of payment.payment_splits || []) {
 		// If split was already transferred, we need to create new wallet credits for the user
 		// If not transferred, just release reserved credits
 		if (split.amount_credits > 0) {
@@ -661,6 +663,7 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
 					user_id: payment.user_id,
 					amount: split.amount_credits,
 					type: FUNDS_TYPE.CREDITS_DELIVERY,
+					transaction_type: TRANSACTION_TYPE.CREDIT,
 				});
 			} else if (split.status === SPLIT_STATUS.RESERVED) {
 				await WalletFundsHelpers.releaseReservedWalletFundsForOrder(

@@ -14,7 +14,7 @@ router.get('/type/:type', PromoController.getAllPromoBannersByType);
 router.get('/size/:size', PromoController.getAllPromoBannersBySize);
 router.get('/ad/:ad', PromoController.getAllPromoBannersByAd);
 // router.get('/section/:section', PromoController.getAllPromoBannersBySection);
-router.get('/serviceType/:serviceType', PromoController.getPromoBannersByServiceType);
+// router.get('/serviceType/:serviceType', PromoController.getPromoBannersByServiceType);
 router.post('/', validate(CreatePromoBannerRequestSchema), PromoController.createPromoBanner);
 router.put('/:id', validate(UpdatePromoBannerRequestSchema), PromoController.updatePromoBanner);
 router.delete('/:id', PromoController.deletePromoBanner);

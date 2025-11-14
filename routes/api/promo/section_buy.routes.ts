@@ -6,7 +6,6 @@ import {
 	CreatePaymentIntentForPromoBuyRequestSchema,
 	CreatePromoSectionBuyRequestSchema,
 	UpdatePromoSectionBuyRequestSchema,
-	AddStripeSubToPromoSectionBuyRequestSchema,
 } from '../../../schemas/dto/Promo/promo-section.dto.ts';
 
 const router = express.Router();
@@ -20,15 +19,15 @@ router.post(
 router.get('/section/:section', PromoController.getAllPromoSectionBuysBySection);
 router.get('/business/:business_id', PromoController.getAllPromoSectionBuysByBusiness);
 router.get('/tier/:tier', PromoController.getAllPromoSectionBuysByTier);
-router.get('/stripeSub/:stripe_subscription_id', PromoController.getAllPromoSectionBuysByStripeSub);
+// router.get('/stripeSub/:stripe_subscription_id', PromoController.getAllPromoSectionBuysByStripeSub);
 router.post('/', validate(CreatePromoSectionBuyRequestSchema), PromoController.createPromoSectionBuy);
 router.put('/:id', validate(UpdatePromoSectionBuyRequestSchema), PromoController.updatePromoSectionBuy);
-router.delete('/:id', PromoController.deletePromoSectionBuy);
+// router.delete('/:id', PromoController.deletePromoSectionBuy);
 router.get('/:id', PromoController.getPromoSectionBuyById);
-router.post(
-	'/stripeSub/:id',
-	validate(AddStripeSubToPromoSectionBuyRequestSchema),
-	PromoController.addStripeSubToPromoSectionBuy
-);
+// router.post(
+// 	'/stripeSub/:id',
+// 	validate(AddStripeSubToPromoSectionBuyRequestSchema),
+// 	PromoController.addStripeSubToPromoSectionBuy
+// );
 
 export default router;

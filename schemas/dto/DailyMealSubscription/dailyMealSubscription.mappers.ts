@@ -1,6 +1,5 @@
-import { DailyMealSubscriptionResponseSchema } from '../../../types/dailymeal/DailyMealSubscription';
-import type { DailyMealSubscriptionResponse } from '../../../types/dailymeal/DailyMealSubscription';
 import type { DailyMealSubscriptionWithIncludesPrisma } from '../../../prisma/includes/dailyMealSubscriptions.js';
+import { DailyMealSubscriptionDetail, DailyMealSubscriptionDetailSchema } from '../DailyMeal/dailymeal.dto.js';
 
 function toIso(d: unknown) {
 	return d ? new Date(d as any).toISOString() : undefined;
@@ -8,10 +7,10 @@ function toIso(d: unknown) {
 
 export function toDailyMealSubscriptionResponse(
 	row: DailyMealSubscriptionWithIncludesPrisma | any
-): DailyMealSubscriptionResponse {
+): DailyMealSubscriptionDetail {
 	const r = row as any;
 
-	return DailyMealSubscriptionResponseSchema.parse({
+	return DailyMealSubscriptionDetailSchema.parse({
 		id: r.id,
 		user_id: r.user_id,
 		daily_meals_id: r.daily_meals_id,
@@ -39,7 +38,7 @@ export function toDailyMealSubscriptionResponse(
 
 export function toDailyMealSubscriptionList(
 	rows: (DailyMealSubscriptionWithIncludesPrisma | any)[]
-): DailyMealSubscriptionResponse[] {
+): DailyMealSubscriptionDetail[] {
 	return (rows || []).map((r) => toDailyMealSubscriptionResponse(r));
 }
 

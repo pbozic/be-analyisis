@@ -133,6 +133,13 @@ export const CreatePaymentIntentForPromoBuyRequestSchema = z
 	.openapi('CreatePaymentIntentForPromoBuyRequest');
 export type CreatePaymentIntentForPromoBuyRequest = z.infer<typeof CreatePaymentIntentForPromoBuyRequestSchema>;
 
+export const PromoBuyClientSecretResponseSchema = z
+	.object({
+		clientSecret: z.string().min(1),
+	})
+	.openapi('PromoBuyClientSecretResponse');
+export type PromoBuyClientSecretResponse = z.infer<typeof PromoBuyClientSecretResponseSchema>;
+
 export const PromoSectionBuyItemSchema = z
 	.object({
 		promo_sections_id: UUID,
@@ -148,6 +155,11 @@ export const CreatePromoSectionBuyRequestSchema = z
 	})
 	.openapi('CreatePromoSectionBuyRequest');
 export type CreatePromoSectionBuyRequest = z.infer<typeof CreatePromoSectionBuyRequestSchema>;
+
+export const CreatePromoSectionBuyResponseSchema = PromoBuyClientSecretResponseSchema.extend({
+	promo_section_buy_ids: z.array(UUID).min(1),
+}).openapi('CreatePromoSectionBuyResponse');
+export type CreatePromoSectionBuyResponse = z.infer<typeof CreatePromoSectionBuyResponseSchema>;
 
 export const UpdatePromoSectionBuyRequestSchema = CreatePromoSectionBuyRequestSchema.extend({
 	active_at: z.string().datetime().optional(),
@@ -273,8 +285,10 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('PromoSectionDetail', PromoSectionDetailSchema);
 	registry.register('PromoSectionPaymentIntentItem', PromoSectionPaymentIntentItemSchema);
 	registry.register('CreatePaymentIntentForPromoBuyRequest', CreatePaymentIntentForPromoBuyRequestSchema);
+	registry.register('PromoBuyClientSecretResponse', PromoBuyClientSecretResponseSchema);
 	registry.register('PromoSectionBuyItem', PromoSectionBuyItemSchema);
 	registry.register('CreatePromoSectionBuyRequest', CreatePromoSectionBuyRequestSchema);
+	registry.register('CreatePromoSectionBuyResponse', CreatePromoSectionBuyResponseSchema);
 	registry.register('UpdatePromoSectionBuyRequest', UpdatePromoSectionBuyRequestSchema);
 	registry.register('AddStripeSubToPromoSectionBuyRequest', AddStripeSubToPromoSectionBuyRequestSchema);
 	registry.register('PromoSectionBuyBase', PromoSectionBuyBaseSchema);

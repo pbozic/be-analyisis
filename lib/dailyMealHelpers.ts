@@ -27,6 +27,7 @@ import BusinessDao from '../dao/Business.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import { DAILY_MEAL_DELIVERY_COST_CENTS } from './constants.js';
 import { DriverBase } from '../schemas/dto/Driver/index.js';
+import { DailyMealSubscriptionDetail } from '../schemas/dto/DailyMeal/dailymeal.dto.js';
 
 /**
  * Convert JavaScript's weekday (Sunday=0) to our system's weekday (Monday=0)
@@ -721,7 +722,7 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 	}
 	console.info(JSON.stringify(dailyMealInstanceCreateData, null, 2));
 	try {
-		const created_instances = await prisma.daily_meal_instances.createMany({
+		await prisma.daily_meal_instances.createMany({
 			data: dailyMealInstanceCreateData,
 		});
 	} catch (e) {
@@ -736,7 +737,7 @@ export async function generateInstancesForSubscription(subscription_id: string) 
  * @param {string} subscription_id - The ID of the subscription to activate.
  * @returns {Promise<daily_meal_subscriptions | null>} The updated subscription or null if not found.
  */
-export async function activateSubscriptionById(subscription_id: string) {
+export async function activateSubscriptionById(subscription_id: string): Promise<DailyMealSubscriptionDetail | null> {
 	try {
 		await generateInstancesForSubscription(subscription_id);
 		const updated_subscription = await DailyMealDao.updateSubscriptionStatus(

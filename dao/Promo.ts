@@ -205,8 +205,8 @@ async function getAllPromoSectionsByServiceType(type: string): Promise<PromoSect
  */
 async function createPromoAd(
 	promoAdData: PromoAdData,
-	categories_ids: string[],
-	promo_banners_ids: string[]
+	categories_ids: string[] | null,
+	promo_banners_ids: string[] | null
 ): Promise<PromoAdBase> {
 	return await prisma.promo_ads.create({
 		data: {
@@ -241,8 +241,8 @@ async function createPromoAd(
 async function updatePromoAd(
 	id: string,
 	promoAdData: PromoAdData,
-	categories_ids: string[],
-	promo_banners_ids: string[]
+	categories_ids: string[] | null,
+	promo_banners_ids: string[] | null
 ): Promise<PromoAdBase> {
 	return await prisma.promo_ads.update({
 		where: { promo_ads_id: id },
@@ -271,11 +271,11 @@ async function updatePromoAd(
  * @param {string} id - promo_ads_id.
  * @returns {Promise<[{ count: number }, PromoAdBase]>} Transaction results.
  */
-async function deletePromoAd(id: string): Promise<[{ count: number }, PromoAdBase]> {
-	return (await prisma.$transaction([
+async function deletePromoAd(id: string): Promise<void> {
+	await prisma.$transaction([
 		prisma.promo_ads_category.deleteMany({ where: { promo_ads_id: id } }),
 		prisma.promo_ads.delete({ where: { promo_ads_id: id } }),
-	])) as [{ count: number }, PromoAdBase];
+	]);
 }
 
 /**
@@ -405,8 +405,13 @@ async function updatePromoBanner(
  * @param {string} id - promo_banners_id.
  * @returns {Promise<object>} Deleted banner.
  */
-async function deletePromoBanner(id: string): Promise<object> {
-	return await prisma.promo_banners.delete({ where: { promo_banners_id: id } });
+async function deletePromoBanner(id: string): Promise<void> {
+	try {
+		await prisma.promo_banners.delete({ where: { promo_banners_id: id } });
+	} catch (error: any) {
+		console.error('Error deleting promo banner:', error);
+		throw new Error('Failed to delete promo banner: ' + error.message);
+	}
 }
 
 /**
@@ -490,17 +495,17 @@ async function getAllPromoBannersByAd(ad: string): Promise<PromoBannerDetail[]> 
 async function createPromoSectionBuy(
 	business_id: string,
 	promo_sections_id: string,
-	active_at: string | Date | undefined,
-	expires_at: string | Date | undefined,
-	tier: number
+	tier: number,
+	active_at?: string | Date | undefined,
+	expires_at?: string | Date | undefined
 ): Promise<PromoSectionBuyDetail> {
-	const data: any = {
+	const data = {
 		business: { connect: { business_id: business_id } },
 		promo_section: { connect: { promo_sections_id: promo_sections_id } },
+		active_at: active_at ?? undefined,
+		expires_at: expires_at ?? undefined,
 		tier: tier,
 	};
-	if (active_at) data.active_at = active_at;
-	if (expires_at) data.expires_at = expires_at;
 	const row = await prisma.promo_sections_buy.create({ data });
 	return toPromoSectionBuyDetail(row);
 }
@@ -580,7 +585,7 @@ async function getAllPromoSectionBuysByTier(tier: number): Promise<PromoSectionB
  * @returns {Promise<PromoSectionBuyDetail>} Updated row.
  */
 async function updatePromoSectionBuy(id: string, args: UpdatePromoSectionBuyRequest): Promise<PromoSectionBuyDetail> {
-	const row = await prisma.promo_sections_buy.update({ where: { promo_sections_buy_id: id }, data: args as any });
+	const row = await prisma.promo_sections_buy.update({ where: { promo_sections_buy_id: id }, data: args });
 	return toPromoSectionBuyDetail(row);
 }
 
@@ -657,4 +662,5 @@ export default {
 	getAllPromoSectionBuysByBusiness,
 	getAllPromoSectionBuysByTier,
 	updatePromoSectionBuy,
+	getPromoSectionBuyByPaymentIntentId,
 };
