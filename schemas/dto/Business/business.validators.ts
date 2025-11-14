@@ -447,6 +447,7 @@ export type CreatePaymentIntentInput = z.infer<typeof CreatePaymentIntentSchema>
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	// Register request schemas
+	registry.register('AddAddress', AddAddressSchema);
 	registry.register('CreateBusiness', CreateBusinessSchema);
 	registry.register('UpdateBusiness', UpdateBusinessSchema);
 	registry.register('SearchBusinessesByName', SearchBusinessesByNameSchema);

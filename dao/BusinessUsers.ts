@@ -112,24 +112,6 @@ const getBusinessUsersByBusinessId = async (business_id: string): Promise<Busine
 };
 
 /**
- * List businesses of a given type including their business users.
- *
- * @param {string} type - The business type.
- * @returns {Promise<any[]>} A promise resolving to businesses with nested business_users and users.
- */
-const getBusinessUsersByBusinessType = async (type: string): Promise<any[]> => {
-	try {
-		return await prisma.business.findMany({
-			where: { type },
-			include: { business_users: { include: { users: true } } },
-		});
-	} catch (error) {
-		console.error('Error retrieving business users by business type:', error);
-		throw new Error(error instanceof Error ? error.message : 'Failed to get business users by business type');
-	}
-};
-
-/**
  * Get all business users for a business filtered by company role.
  *
  * @param {string} business_id - The business ID.
@@ -282,12 +264,12 @@ const addOperatingAddress = async (business_users_id: string, address_id: string
  *
  * @param {string} business_users_id - The relation ID.
  * @param {boolean} online - New online flag value.
- * @returns {Promise<BusinessUserResponse>} The updated business_user record with business included.
+ * @returns {Promise<BusinessUserWithBusinessResponse>} The updated business_user record with business included.
  */
 const updateBusinessUserOnlineStatus = async (
 	business_users_id: string,
 	online: boolean
-): Promise<BusinessUserResponse> => {
+): Promise<BusinessUserWithBusinessResponse> => {
 	try {
 		const row = await prisma.business_users.update({
 			where: { business_users_id },
@@ -364,7 +346,6 @@ const updateAllowance = async (
 export { getAllBusinessUsers };
 export { getBusinessUserByUserId };
 export { getBusinessUsersByBusinessId };
-export { getBusinessUsersByBusinessType };
 export { getAllBusinessUsersForBusinessByCompanyRole };
 export { createBusinessUser };
 export { removeBusinessUser };
@@ -378,7 +359,6 @@ export default {
 	getAllBusinessUsers,
 	getBusinessUserByUserId,
 	getBusinessUsersByBusinessId,
-	getBusinessUsersByBusinessType,
 	getAllBusinessUsersForBusinessByCompanyRole,
 	createBusinessUser,
 	removeBusinessUser,
