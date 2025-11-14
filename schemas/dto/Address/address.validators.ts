@@ -85,6 +85,9 @@ export const FindAddressDaoSchema = z
 	.openapi('FindAddressDao');
 export type FindAddressDaoInput = z.infer<typeof FindAddressDaoSchema>;
 
+export const UpdateUserAddressSchema = AddUserAddressDaoSchema.partial();
+export type UpdateUserAddressInput = z.infer<typeof UpdateUserAddressSchema>;
+
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('AddAddressDao', AddAddressDaoSchema);
 	registry.register('DeleteUserAddressDao', DeleteUserAddressDaoSchema);
@@ -93,4 +96,5 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('SetPrimaryUserAddressDao', SetPrimaryUserAddressDaoSchema);
 	registry.register('UpdateAddressByAddressIdDao', UpdateAddressByAddressIdDaoSchema);
 	registry.register('FindAddressDao', FindAddressDaoSchema);
+	registry.register('UpdateUserAddress', UpdateUserAddressSchema);
 }

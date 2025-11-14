@@ -67,7 +67,7 @@ import {
 	UpdateUserLanguageRequest,
 	UpdateWalletBalanceRequest,
 	VerifyPhoneRequest,
-} from '../schemas/dto/User/UserRequest.dto.ts';
+} from '../schemas/dto/User/user.validators.ts';
 
 config();
 
@@ -1952,169 +1952,100 @@ async function getReviewsByUserId(req: ValidatedRequest<never, { user_id: string
 }
 
 // TODO: Check these routes for childUser if they existed before
-/**
- * POST /users/me/group_user/register-child
- * @tag GroupUser
- * @summary Register a new child user - new user and connected group_user entry
- * @description This endpoint is used to register a new user and create group_user entry .
- * @operationId registerNewUser
- * @bodyDescription The required data to register a new user
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - User registered successfully. Returns user info and tokens.
- * @responseContent {object} 200.application/json
- * @responseHeader {string} 200.Authorization - The newly generated access token.
- * @response 400 - Error something went wrong.
- */
-async function registerChildUser(req: ValidatedRequest<ChildUserBody>, res: Response): Promise<void> {
-	const user_data = { ...req.body };
-	const parent_user_id = (user_data as any).parent_user_id;
-	delete (user_data as any)['parent_user_id'];
-	try {
-		if (!(user_data as any).email) {
-			(user_data as any).email = '';
-		}
-		(user_data as any).email = (user_data as any).email.toLowerCase();
-		const UserExistsPhone = await UserDao.getUserByTelephone((user_data as any).telephone);
-		if (UserExistsPhone) {
-			res.status(400).json({ error: 'Telephone already in use!' });
-			return;
-		}
-		const UserExistsEmail = await UserDao.getUserByEmail((user_data as any).email);
-		if (UserExistsEmail) {
-			res.status(400).json({ error: 'Email already in use!' });
-			return;
-		}
-		const hash = await bcrypt.hash((user_data as any).password, Number(process.env.BCRYPT_SALT_ROUNDS));
-		const stripeCustomer = (await stripe.createCustomer(
-			(user_data as any).email,
-			(user_data as any).first_name + ' ' + (user_data as any).last_name,
-			(user_data as any).telephone
-		)) as any;
-		const userRole = (user_data as any).user_role || 'PERSONAL';
-		const userObj = {
-			...user_data,
-			date_of_birth: new Date((user_data as any).date_of_birth),
-			password: hash,
-			user_role: userRole,
-			stripe_customer_id: stripeCustomer.id,
-			reviewable: {
-				create: {},
-			},
-		};
-		delete (userObj as any)['confirm_password'];
-		delete (userObj as any).user_roles;
-		let user = await UserDao.createNewUser(userObj as any);
-		delete (user as any)['password'];
-		const userRoles = (user_data as any).user_roles || [{ role: userRole, primary: true }];
-		await UserDao.linkRolesToUser(user?.user_id, userRoles);
-		//create and connect group_user entry
-		const group_user_data = {
-			parent_user_id: parent_user_id,
-			child_user_id: user.user_id,
-		};
-		const group_user_entry = await GroupDao.createGroupUser(group_user_data);
-		res.status(200).json({ user, group_user_entry });
-	} catch (e) {
-		console.log(e);
-		res.status(400).json({ error: 'Error something went wrong..', e });
-	}
-}
+// /**
+//  * PATCH /users/me/group_user/status
+//  * @tag Users
+//  * @summary Updates the enabled field of the given child_user_id
+//  * @description This endpoint is used to update enabled field of the given child_user_id
+//  * @operationId updateChildUser
+//  * @bodyDescription The child's group_user_id and value to set for the child user's enabled field
+//  * @bodyContent {object} application/json
+//  * @bodyRequired
+//  * @response 200 - User updated successfully. Returns the updated group_user.
+//  * @responseContent {object} 200.application/json
+//  * @response 400 - Error updating group user enabled status.
+//  */
+// async function updateChildUserEnabledByGroupUserId(
+// 	req: ValidatedRequest<GroupUserStatusBody>,
+// 	res: Response
+// ): Promise<void> {
+// 	const { group_user_id, value } = req.body;
+// 	if (!group_user_id || typeof value !== 'boolean') {
+// 		res.status(400).json({ error: 'Invalid input. Please provide a valid group_user_id and a boolean value.' });
+// 		return;
+// 	}
+// 	try {
+// 		const group_user = await GroupDao.updateGroupUserEnabled(group_user_id, value);
+// 		if (group_user) {
+// 			res.status(200).json(group_user);
+// 		} else {
+// 			res.status(400).json({ error: 'Error updating group user enabled status' });
+// 		}
+// 	} catch (e) {
+// 		console.log(e);
+// 		res.status(400).json({ error: 'Error updating group user enabled status', e });
+// 	}
+// }
 
-/**
- * PATCH /users/me/group_user/status
- * @tag Users
- * @summary Updates the enabled field of the given child_user_id
- * @description This endpoint is used to update enabled field of the given child_user_id
- * @operationId updateChildUser
- * @bodyDescription The child's group_user_id and value to set for the child user's enabled field
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - User updated successfully. Returns the updated group_user.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating group user enabled status.
- */
-async function updateChildUserEnabledByGroupUserId(
-	req: ValidatedRequest<GroupUserStatusBody>,
-	res: Response
-): Promise<void> {
-	const { group_user_id, value } = req.body;
-	if (!group_user_id || typeof value !== 'boolean') {
-		res.status(400).json({ error: 'Invalid input. Please provide a valid group_user_id and a boolean value.' });
-		return;
-	}
-	try {
-		const group_user = await GroupDao.updateGroupUserEnabled(group_user_id, value);
-		if (group_user) {
-			res.status(200).json(group_user);
-		} else {
-			res.status(400).json({ error: 'Error updating group user enabled status' });
-		}
-	} catch (e) {
-		console.log(e);
-		res.status(400).json({ error: 'Error updating group user enabled status', e });
-	}
-}
+// /**
+//  * PATCH /users/me/group_user/allowance
+//  * @tag Users
+//  * @summary Updates the allowance of the given child_user_id for the given service_type
+//  * @description This endpoint is used to update the allowance of the given child_user_id for the given service_type
+//  * @operationId updateChildUserAllowance
+//  * @bodyDescription The child's group_user_id and value to set for the child user's allowance for the given service type
+//  * @bodyContent {object} application/json
+//  * @bodyRequired
+//  * @response 200 - User allowance updated successfully. Returns the updated group_user.
+//  * @responseContent {object} 200.application/json
+//  * @response 400 - Error updating group user enabled status.
+//  */
+// async function updateChildUserAllowanceByGroupUserId(
+// 	req: ValidatedRequest<GroupUserAllowanceBody>,
+// 	res: Response
+// ): Promise<void> {
+// 	const { group_user_id, value, type } = req.body;
+// 	try {
+// 		const group_user = await GroupDao.updateGroupUserAllowance(group_user_id, value, type);
+// 		if (group_user) {
+// 			res.status(200).json(group_user);
+// 		} else {
+// 			res.status(400).json({ error: 'Error updating group user allowance' });
+// 		}
+// 	} catch (e) {
+// 		console.log(e);
+// 		res.status(400).json({ error: 'Error updating group user allowance', e });
+// 	}
+// }
 
-/**
- * PATCH /users/me/group_user/allowance
- * @tag Users
- * @summary Updates the allowance of the given child_user_id for the given service_type
- * @description This endpoint is used to update the allowance of the given child_user_id for the given service_type
- * @operationId updateChildUserAllowance
- * @bodyDescription The child's group_user_id and value to set for the child user's allowance for the given service type
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - User allowance updated successfully. Returns the updated group_user.
- * @responseContent {object} 200.application/json
- * @response 400 - Error updating group user enabled status.
- */
-async function updateChildUserAllowanceByGroupUserId(
-	req: ValidatedRequest<GroupUserAllowanceBody>,
-	res: Response
-): Promise<void> {
-	const { group_user_id, value, type } = req.body;
-	try {
-		const group_user = await GroupDao.updateGroupUserAllowance(group_user_id, value, type);
-		if (group_user) {
-			res.status(200).json(group_user);
-		} else {
-			res.status(400).json({ error: 'Error updating group user allowance' });
-		}
-	} catch (e) {
-		console.log(e);
-		res.status(400).json({ error: 'Error updating group user allowance', e });
-	}
-}
-
-/**
- * DELETE /users/me/group_user/delete/:group_user_id
- * @tag Users
- * @summary Deletes a group_user by their ID
- * @description This endpoint is used to delete a child user from the system by their group_user ID.
- * @operationId deleteChildUserByGroupUserId
- * @pathParam {string} group_user_id - The ID of the child user to delete
- * @response 200 - User deleted successfully.
- * @response 400 - Error deleting user.
- * @response 404 - User not found.
- */
-async function deleteChildUserByGroupUserId(
-	req: ValidatedRequest<any, { group_user_id: string }>,
-	res: Response
-): Promise<void> {
-	const group_user_id = req.params.group_user_id;
-	try {
-		const group_user = await GroupDao.deleteGroupUser(group_user_id);
-		if (group_user) {
-			res.status(200).json(group_user);
-		} else {
-			res.status(400).json({ error: 'Error deleting group user' });
-		}
-	} catch (e) {
-		console.log(e);
-		res.status(400).json({ error: 'Error deleting group user', e });
-	}
-}
+// /**
+//  * DELETE /users/me/group_user/delete/:group_user_id
+//  * @tag Users
+//  * @summary Deletes a group_user by their ID
+//  * @description This endpoint is used to delete a child user from the system by their group_user ID.
+//  * @operationId deleteChildUserByGroupUserId
+//  * @pathParam {string} group_user_id - The ID of the child user to delete
+//  * @response 200 - User deleted successfully.
+//  * @response 400 - Error deleting user.
+//  * @response 404 - User not found.
+//  */
+// async function deleteChildUserByGroupUserId(
+// 	req: ValidatedRequest<any, { group_user_id: string }>,
+// 	res: Response
+// ): Promise<void> {
+// 	const group_user_id = req.params.group_user_id;
+// 	try {
+// 		const group_user = await GroupDao.deleteGroupUser(group_user_id);
+// 		if (group_user) {
+// 			res.status(200).json(group_user);
+// 		} else {
+// 			res.status(400).json({ error: 'Error deleting group user' });
+// 		}
+// 	} catch (e) {
+// 		console.log(e);
+// 		res.status(400).json({ error: 'Error deleting group user', e });
+// 	}
+// }
 
 /**
  * GET /users/:user_id/wallet
@@ -2734,10 +2665,9 @@ async function updateFavoriteServices(req: ValidatedRequest<UpdateFavoriteServic
 // Add these exports at the end
 export { getMyReviews };
 export { getReviewsByUserId };
-export { registerChildUser };
-export { updateChildUserEnabledByGroupUserId };
+/* export { updateChildUserEnabledByGroupUserId };
 export { updateChildUserAllowanceByGroupUserId };
-export { deleteChildUserByGroupUserId };
+export { deleteChildUserByGroupUserId }; */
 export { getAvailableWalletBalance };
 export { getFamilyWalletBalanceAndType };
 export { updateWalletBalance };
@@ -2797,10 +2727,9 @@ export { requestData };
 export default {
 	getMyReviews,
 	getReviewsByUserId,
-	registerChildUser,
-	updateChildUserEnabledByGroupUserId,
-	updateChildUserAllowanceByGroupUserId,
-	deleteChildUserByGroupUserId,
+	// updateChildUserEnabledByGroupUserId,
+	// updateChildUserAllowanceByGroupUserId,
+	// deleteChildUserByGroupUserId,
 	getAvailableWalletBalance,
 	getFamilyWalletBalanceAndType,
 	updateWalletBalance,

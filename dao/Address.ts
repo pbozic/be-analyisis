@@ -6,7 +6,7 @@ import { toUserAddressResponse } from '../schemas/dto/UserAddress/userAddress.ma
 import type { AddressDefaultPrisma } from '../prisma/includes/address.js';
 import type { UserAddressDefaultPrisma } from '../prisma/includes/userAddress.js';
 import type { UserAddressResponse } from '../types/users/UserAddress.js';
-import { AddAddressDaoInput, BusinessAddress, AddressResponse } from '../schemas/dto/Address';
+import { AddAddressDaoInput, BusinessAddress, AddressResponse, UpdateUserAddressInput } from '../schemas/dto/Address';
 
 /**
  * Upsert an address by unique coordinates and address string.
@@ -277,7 +277,7 @@ async function addUserAddress(user_id: UUID, address_id: UUID): Promise<UserAddr
 async function editUserAddress(
 	user_id: UUID,
 	address_id: UUID,
-	data: UpdateAddressInput
+	data: UpdateUserAddressInput
 ): Promise<UserAddressResponse | Error> {
 	try {
 		const row = await prisma.user_address.update({
