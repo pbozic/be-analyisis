@@ -3,7 +3,13 @@ import { Response } from 'express';
 import LocationDao from '../../dao/reservation/Location.ts';
 import AddressDao from '../../dao/Address.js';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
-import { CreateLocationInput, UpdateLocationInput } from '../../types/reservations/Location';
+import type {
+	CreateLocationRequest,
+	UpdateLocationRequest,
+} from '../../schemas/dto/reservations/location/location.dto';
+
+// Import DTO types for API documentation
+//import type { LocationDAOResponse, LocationWithSchedulesDAOResponse } from '../../schemas/dto/reservations/location/location.dto.js';
 
 /**
  * GET /reservation/locations
@@ -12,7 +18,7 @@ import { CreateLocationInput, UpdateLocationInput } from '../../types/reservatio
  * @description Retrieves all reservation locations for a specific business.
  * @operationId getReservationLocations
  * @response 200 - Reservation locations retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {LocationDAOResponse[]} 200.application/json
  * @response 500 - Error retrieving locations
  * @prisma_model location
  */
@@ -36,33 +42,38 @@ export async function getLocations(req: ValidatedRequest, res: Response): Promis
  * @summary Create a new reservation location
  * @description Creates a new reservation location.
  * @operationId createReservationLocation
- * @bodyContent {object} application/json
+ * @bodyContent {CreateLocationRequest} application/json
  * @response 201 - Location created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {LocationDAOResponse} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating location
  * @prisma_model location
  * @prisma_model address
  */
-export async function createLocation(req: ValidatedRequest<CreateLocationInput>, res: Response): Promise<void> {
+export async function createLocation(req: ValidatedRequest<CreateLocationRequest>, res: Response): Promise<void> {
 	try {
 		let locationData = req.body;
 		let reservationModuleId = req.user?.reservation_module_id as string;
-		let address = await AddressDao.findAddress(locationData.address.latitude, locationData.address.longitude);
-		if (!address) {
-			let newAddress = await AddressDao.addAddress({
-				address: locationData.address.address,
-				latitude: locationData.address.latitude,
-				longitude: locationData.address.longitude,
-			});
-			locationData.address_id = newAddress.address_id;
-			let location = await LocationDao.createLocation(locationData, reservationModuleId);
-			res.status(201).json(location);
-		} else {
-			locationData.address_id = address.address_id;
-			let location = await LocationDao.createLocation(locationData, reservationModuleId);
-			res.status(201).json(location);
+
+		if (locationData.address) {
+			const addressInfo = locationData.address;
+			let address = await AddressDao.findAddress(addressInfo.latitude, addressInfo.longitude);
+			if (!address || address instanceof Error) {
+				let newAddress = await AddressDao.addAddress({
+					address: addressInfo.address,
+					latitude: addressInfo.latitude,
+					longitude: addressInfo.longitude,
+				});
+				if (!(newAddress instanceof Error)) {
+					locationData.address_id = newAddress.address_id;
+				}
+			} else {
+				locationData.address_id = address.address_id;
+			}
 		}
+
+		let location = await LocationDao.createLocation(locationData, reservationModuleId);
+		res.status(201).json(location);
 	} catch (error) {
 		res.status(500).json({ message: 'Error creating location', error });
 	}
@@ -75,42 +86,41 @@ export async function createLocation(req: ValidatedRequest<CreateLocationInput>,
  * @description Updates an existing reservation location.
  * @operationId updateReservationLocation
  * @pathParam {string} location_id - The ID of the location to update.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateLocationRequest} application/json
  * @response 200 - Location updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {LocationDAOResponse} 200.application/json
  * @response 404 - Location not found
  * @response 500 - Error updating location
  * @prisma_model location
  * @prisma_model address
  */
 export async function updateLocation(
-	req: ValidatedRequest<UpdateLocationInput, { location_id: string }>,
+	req: ValidatedRequest<UpdateLocationRequest, { location_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
 		let locationId = req.params.location_id;
 		let locationData = req.body;
-		let check = locationData?.address ? locationData?.address : false;
-		if (check) {
-			let address = await AddressDao.findAddress(check?.latitude, check?.longitude);
-			if (!address) {
+
+		if (locationData.address) {
+			const addressInfo = locationData.address;
+			let address = await AddressDao.findAddress(addressInfo.latitude, addressInfo.longitude);
+			if (!address || address instanceof Error) {
 				let newAddress = await AddressDao.addAddress({
-					address: check.address,
-					latitude: check.latitude,
-					longitude: check.longitude,
+					address: addressInfo.address,
+					latitude: addressInfo.latitude,
+					longitude: addressInfo.longitude,
 				});
-				locationData.address_id = newAddress.address_id;
-				let location = await LocationDao.updateLocation(locationId, locationData);
-				res.status(200).json(location);
+				if (!(newAddress instanceof Error)) {
+					locationData.address_id = newAddress.address_id;
+				}
 			} else {
 				locationData.address_id = address.address_id;
-				let location = await LocationDao.updateLocation(locationId, locationData);
-				res.status(200).json(location);
 			}
-		} else {
-			let location = await LocationDao.updateLocation(locationId, locationData);
-			res.status(200).json(location);
 		}
+
+		let location = await LocationDao.updateLocation(locationId, locationData);
+		res.status(200).json(location);
 	} catch (error) {
 		res.status(500).json({ message: 'Error updating location', error });
 	}
@@ -148,7 +158,7 @@ export async function deleteLocation(
  * @operationId getReservationLocationById
  * @pathParam {string} location_id - The ID of the location to retrieve.
  * @response 200 - Location retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {LocationDAOResponse} 200.application/json
  * @response 404 - Location not found
  * @response 500 - Error retrieving location
  * @prisma_model location
@@ -178,7 +188,7 @@ export async function getLocationById(
  * @description Retrieves all reservation locations with their schedules.
  * @operationId getLocationsWithSchedules
  * @response 200 - Reservation locations with schedules retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {LocationWithSchedulesDAOResponse[]} 200.application/json
  * @response 500 - Error retrieving locations with schedules
  * @prisma_model location
  * @prisma_model schedule

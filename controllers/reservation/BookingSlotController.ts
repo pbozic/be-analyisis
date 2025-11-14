@@ -2,15 +2,21 @@ import { Response } from 'express';
 
 import BookingSlotDao from '../../dao/reservation/BookingSlot';
 import { ValidatedRequest } from '../../types/validatedRequest';
-import {
-	CreateBookingSlotInput,
-	UpdateBookingSlotSchemaInput,
-	CreateOrUpdateBookingSlotInput,
-	CreateScheduleSlotWithBookingSlotsInput,
-	UpdateScheduleSlotWithBookingSlotsInput,
-} from '../../types/reservations/Schedule';
+import type {
+	CreateBookingSlotRequest,
+	UpdateBookingSlotRequest,
+} from '../../schemas/dto/reservations/booking-slot/booking-slot.dto';
+import type {
+	CreateOrUpdateBookingSlot,
+	CreateScheduleSlotWithBookingSlots,
+	UpdateScheduleSlotWithBookingSlots,
+} from '../../schemas/dto/reservations/schedule/schedule.dto';
 import ScheduleSlotDao from '../../dao/reservation/ScheduleSlot';
 import { splitByBookingId } from '../../lib/bookingHelpers';
+
+// Import DTO types for API documentation
+//import type { BookingSlotResponse } from '../../schemas/dto/reservations/booking-slot/booking-slot.dto.js';
+//import type { ScheduleSlotResponse } from '../../schemas/dto/reservations/schedule-slot/schedule-slot.dto.js';
 
 /**
  * GET /reservation/booking-slots/list/:schedule_slot_id
@@ -20,7 +26,7 @@ import { splitByBookingId } from '../../lib/bookingHelpers';
  * @operationId getBookingSlotsByScheduleSlot
  * @pathParam {string} schedule_slot_id - The ID of the schedule slot.
  * @response 200 - Booking slots retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingSlotResponse[]} 200.application/json
  * @response 500 - Error retrieving booking slots
  * @prisma_model booking_slots
  */
@@ -44,14 +50,14 @@ export async function getBookingSlotsByScheduleSlotId(
  * @summary Create a new booking slot
  * @description Creates a new booking slot.
  * @operationId createBookingSlot
- * @bodyContent {object} application/json
+ * @bodyContent {CreateBookingSlotRequest} application/json
  * @response 201 - Booking slot created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {BookingSlotResponse} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating booking slot
  * @prisma_model booking_slots
  */
-export async function createBookingSlot(req: ValidatedRequest<CreateBookingSlotInput>, res: Response): Promise<void> {
+export async function createBookingSlot(req: ValidatedRequest<CreateBookingSlotRequest>, res: Response): Promise<void> {
 	try {
 		const record = await BookingSlotDao.createBookingSlot(req.body);
 		res.status(201).json(record);
@@ -70,13 +76,13 @@ export async function createBookingSlot(req: ValidatedRequest<CreateBookingSlotI
  * @pathParam {string} id - The ID of the booking slot to update.
  * @bodyContent {object} application/json
  * @response 200 - Booking slot updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingSlotResponse} 200.application/json
  * @response 404 - Booking slot not found
  * @response 500 - Error updating booking slot
  * @prisma_model booking_slots
  */
 export async function updateBookingSlot(
-	req: ValidatedRequest<UpdateBookingSlotSchemaInput, { id: string }>,
+	req: ValidatedRequest<UpdateBookingSlotRequest, { id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -118,7 +124,7 @@ export async function deleteBookingSlot(req: ValidatedRequest<null, { id: string
  * @operationId getBookingSlotById
  * @pathParam {string} id - The ID of the booking slot to retrieve.
  * @response 200 - Booking slot retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BookingSlotResponse} 200.application/json
  * @response 404 - Booking slot not found
  * @response 500 - Error retrieving booking slot
  * @prisma_model booking_slots
@@ -143,15 +149,15 @@ export async function getBookingSlotById(req: ValidatedRequest<null, { id: strin
  * @summary Create a new booking slot or update an existing one
  * @description Creates a new booking slot or updates an existing one if it already exists.
  * @operationId updateOrCreateBookingSlots
- * @requestBody {CreateOrUpdateBookingSlotInput} requestBody - The booking slot data to create or update.
+ * @requestBody {CreateOrUpdateBookingSlot} requestBody - The booking slot data to create or update.
  * @response 201 - Booking slots created or updated successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {{updatedSlots: BookingSlotResponse[], createdSlots: BookingSlotResponse[], removedSlots: void[]}} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating booking slot
  * @prisma_model booking_slots
  */
 export async function updateOrCreateBookingSlots(
-	req: ValidatedRequest<CreateOrUpdateBookingSlotInput>,
+	req: ValidatedRequest<CreateOrUpdateBookingSlot>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -194,16 +200,16 @@ export async function updateOrCreateBookingSlots(
  * @summary Create a new schedule slot with booking slots
  * @description Creates a new schedule slot and associated booking slots.
  * @operationId createScheduleSlotWithBookingSlots
- * @bodyContent {object} application/json
+ * @bodyContent {CreateScheduleSlotWithBookingSlots} application/json
  * @response 201 - Schedule slot with booking slots created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {{schedule_slot: ScheduleSlotResponse & {booking_slots: BookingSlotResponse[]}}} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating schedule slot with booking slots
  * @prisma_model schedule_slot
  * @prisma_model booking_slots
  */
 export async function createScheduleSlotWithBookingSlots(
-	req: ValidatedRequest<CreateScheduleSlotWithBookingSlotsInput>,
+	req: ValidatedRequest<CreateScheduleSlotWithBookingSlots>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -243,16 +249,16 @@ export async function createScheduleSlotWithBookingSlots(
  * @summary Update a schedule slot with booking slots
  * @description Updates schedule slot and associated booking slots.
  * @operationId updateScheduleSlotWithBookingSlots
- * @requestBody {UpdateScheduleSlotWithBookingSlotsInput} requestBody - The schedule slot and booking slots data to update.
+ * @requestBody {UpdateScheduleSlotWithBookingSlots} requestBody - The schedule slot and booking slots data to update.
  * @response 201 - Schedule slot with booking slots updated successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {{schedule_slot: ScheduleSlotResponse, booking_slots: (BookingSlotResponse | void)[]}} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error updating schedule slot with booking slots
  * @prisma_model schedule_slot
  * @prisma_model booking_slots
  */
 export async function updateScheduleSlotWithBookingSlots(
-	req: ValidatedRequest<UpdateScheduleSlotWithBookingSlotsInput, { id: string }>,
+	req: ValidatedRequest<UpdateScheduleSlotWithBookingSlots, { id: string }>,
 	res: Response
 ): Promise<void> {
 	try {

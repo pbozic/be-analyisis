@@ -139,13 +139,28 @@ export const EmployeeDAOResponseSchema = EmployeeBaseSchema.extend({
 	description: 'Employee response from DAO with reservation module and business user',
 });
 
-// DAO response for getEmployeeById and getEmployeeByIdWithSchedules
+// DAO response for getEmployeeById
 export const EmployeeByIdDAOResponseSchema = EmployeeBaseSchema.extend({
 	reservation_module: ReservationModuleRefSchema.optional(),
 	business_user: BusinessUserDetailSchema.nullable().optional(),
 }).openapi({
 	title: 'EmployeeByIdDAOResponse',
 	description: 'Employee response from getEmployeeById with user information',
+});
+
+// DAO response for getEmployeeByIdWithSchedules (includes schedules array)
+export const EmployeeByIdWithSchedulesDAOResponseSchema = EmployeeByIdDAOResponseSchema.extend({
+	schedules: z
+		.array(
+			z.object({
+				schedule_employee_id: UUID,
+				schedule: ScheduleDetailSchema,
+			})
+		)
+		.optional(),
+}).openapi({
+	title: 'EmployeeByIdWithSchedulesDAOResponse',
+	description: 'Employee response from getEmployeeByIdWithSchedules with schedules array',
 });
 
 // DAO response for getEmployeesByReservationModuleIdWithSlots
@@ -194,6 +209,7 @@ export type DeleteEmployeeRequest = z.infer<typeof DeleteEmployeeRequestSchema>;
 export type EmployeeResponse = z.infer<typeof EmployeeResponseSchema>;
 export type EmployeeDAOResponse = z.infer<typeof EmployeeDAOResponseSchema>;
 export type EmployeeByIdDAOResponse = z.infer<typeof EmployeeByIdDAOResponseSchema>;
+export type EmployeeByIdWithSchedulesDAOResponse = z.infer<typeof EmployeeByIdWithSchedulesDAOResponseSchema>;
 export type EmployeeWithSlotsDAOResponse = z.infer<typeof EmployeeWithSlotsDAOResponseSchema>;
 export type EmployeeScheduleSlotsDAOResponse = z.infer<typeof EmployeeScheduleSlotsDAOResponseSchema>;
 
@@ -215,6 +231,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('EmployeeResponse', EmployeeResponseSchema);
 	registry.register('EmployeeDAO', EmployeeDAOResponseSchema);
 	registry.register('EmployeeByIdDAO', EmployeeByIdDAOResponseSchema);
+	registry.register('EmployeeByIdWithSchedulesDAO', EmployeeByIdWithSchedulesDAOResponseSchema);
 	registry.register('EmployeeWithSlotsDAO', EmployeeWithSlotsDAOResponseSchema);
 	registry.register('EmployeeScheduleSlotsDAO', EmployeeScheduleSlotsDAOResponseSchema);
 }
