@@ -20,8 +20,7 @@ export const CreateMenuSchema = z
 
 export const CreateDailyMealMenuSchema = z
 	.object({
-		food_drinks_id: UUID.optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
-		stores_id: UUID.optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		business_id: UUID.openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
 		date: Timestamp.openapi({ example: '2025-01-15T00:00:00Z' }),
 		menu_category: z
 			.any()
@@ -29,6 +28,8 @@ export const CreateDailyMealMenuSchema = z
 			.openapi({ example: { name: { en: 'Lunch' }, price: 5.5 } }),
 	})
 	.openapi('CreateDailyMealMenu');
+
+export type CreateDailyMealMenu = z.infer<typeof CreateDailyMealMenuSchema>;
 
 export const SetActiveMenuInputSchema = z
 	.object({
@@ -50,7 +51,7 @@ export type UpdateMenuOrderInput = z.infer<typeof UpdateMenuOrderInputSchema>;
 
 export const DailyMenuByBusinessIdBodySchema = z
 	.object({
-		start_date: Timestamp.openapi({ example: '2025-01-15T00:00:00Z' }),
+		start_date: z.date().openapi({ example: '2025-01-15T00:00:00Z' }),
 	})
 	.openapi('DailyMenuByBusinessIdBody');
 
