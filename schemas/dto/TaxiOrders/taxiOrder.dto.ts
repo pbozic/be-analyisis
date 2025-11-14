@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, Timestamp } from '../../primitives.js';
+import { UUID, Timestamp, PhoneNumber } from '../../primitives.js';
 
 extendZodWithOpenApi(z);
 
@@ -50,6 +50,9 @@ export const TaxiOrderBaseSchema = z
 		preferences: z.record(z.any()).nullable().optional(),
 		created_at: Timestamp.optional(),
 		updated_at: Timestamp.optional(),
+		first_name: z.string().nullable().optional(),
+		last_name: z.string().nullable().optional(),
+		telephone: PhoneNumber.nullable().optional(),
 	})
 	.openapi('TaxiOrderBase');
 
@@ -85,6 +88,14 @@ export const TaxiOrderDetailSchema = TaxiOrderBaseSchema.extend({
 
 export type TaxiOrderDetail = z.infer<typeof TaxiOrderDetailSchema>;
 
+export const ActiveTaxiOrdersResponseSchema = z
+	.object({
+		active_orders: z.array(TaxiOrderDetailSchema),
+		pending_orders: z.array(TaxiOrderDetailSchema),
+	})
+	.openapi('ActiveTaxiOrdersResponse');
+export type ActiveTaxiOrdersResponse = z.infer<typeof ActiveTaxiOrdersResponseSchema>;
+
 // ===============
 // OpenAPI Registration
 // ===============
@@ -92,4 +103,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('TaxiOrderBase', TaxiOrderBaseSchema);
 	registry.register('TaxiOrderRef', TaxiOrderRefSchema);
 	registry.register('TaxiOrderDetail', TaxiOrderDetailSchema);
+
+	// Responses
+	registry.register('ActiveTaxiOrdersResponse', ActiveTaxiOrdersResponseSchema);
 }

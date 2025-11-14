@@ -10,7 +10,7 @@ import { CreateRoleInput, UpdateRoleInput } from '../../types/userRoles/Role.ts'
  * @summary Get all roles for the current business
  * @operationId getBusinessRoles
  * @response 200 - Roles retrieved
- * @responseContent {object} 200.application/json
+ * @responseContent {RoleResponseBase[]} 200.application/json
  * @response 500 - Error retrieving roles
  */
 export async function getRoles(req: ValidatedRequest, res: Response): Promise<void> {
@@ -30,7 +30,7 @@ export async function getRoles(req: ValidatedRequest, res: Response): Promise<vo
  * @operationId createReservationRole
  * @requestBody {CreateRoleInput} requestBody
  * @response 201 - Role created
- * @responseContent {object} 201.application/json
+ * @responseContent {RoleResponseBase} 201.application/json
  * @response 500 - Error creating role
  */
 export async function createRole(req: ValidatedRequest<CreateRoleInput>, res: Response): Promise<void> {
@@ -43,14 +43,14 @@ export async function createRole(req: ValidatedRequest<CreateRoleInput>, res: Re
 }
 
 /**
- * PUT /roles/roles/{role_id}
+ * PUT /roles/roles/:role_id
  * @tag Reservation
  * @summary Update a role
  * @operationId updateReservationRole
  * @pathParam {string} role_id
  * @requestBody {UpdateRoleInput} requestBody
  * @response 200 - Role updated
- * @responseContent {object} 200.application/json
+ * @responseContent {RoleResponseBase} 200.application/json
  * @response 500 - Error updating role
  */
 export async function updateRole(
@@ -66,7 +66,7 @@ export async function updateRole(
 }
 
 /**
- * DELETE /roles/roles/{role_id}
+ * DELETE /roles/roles/:role_id
  * @tag Reservation
  * @summary Delete a role
  * @operationId deleteReservationRole

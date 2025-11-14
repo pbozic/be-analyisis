@@ -3,8 +3,9 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { Timestamp, UUID } from '../../primitives.js';
 import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.js';
-import { BasicUserDataSchema } from '../common/User.dto.js';
 import { DriverBaseSchema } from '../Driver/index.js';
+import { UserBaseSchema } from '../User/index.js';
+import { PaymentIntentSchema } from '../Payments/payment.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -24,6 +25,7 @@ export const LocationSchema = z
 		coordinates: CoordinatesSchema.optional(),
 	})
 	.openapi('TaxiLocation');
+export type TaxiLocation = z.infer<typeof LocationSchema>;
 
 export const FileUploadSchema = z
 	.object({
@@ -72,14 +74,43 @@ export const TaxiOrderRefSchema = z
 export type TaxiOrderRef = z.infer<typeof TaxiOrderRefSchema>;
 
 export const TaxiOrderDetailSchema = TaxiOrderBaseSchema.extend({
-	user: BasicUserDataSchema.nullable().optional(),
+	user: UserBaseSchema.nullable().optional(),
 	driver: DriverBaseSchema.nullable().optional(),
 	vehicle: VehicleBaseSchema.nullable().optional(),
 	grouped_orders: z.array(TaxiOrderRefSchema).optional(),
 }).openapi('TaxiOrderDetail');
 export type TaxiOrderDetail = z.infer<typeof TaxiOrderDetailSchema>;
 
-// Mappers moved to taxiOrder.mappers.ts
+// -----------------------
+// Responses
+// -----------------------
+export const TaxiOrderResponseSchema = z
+	.object({
+		order: TaxiOrderDetailSchema,
+		payment_intent: PaymentIntentSchema.optional(),
+		vehicle_transfer_order: TaxiOrderBaseSchema.optional(),
+	})
+	.openapi('CreateTaxiOrderResponse');
+export type CreateTaxiOrderResponse = z.infer<typeof TaxiOrderResponseSchema>;
+
+export const TaxiOrdersTodayResponseSchema = z
+	.object({
+		orders: z.number().openapi({ example: 15 }),
+		amount: z.number().openapi({ example: 123.45 }),
+	})
+	.openapi('TaxiOrdersTodayResponse');
+export type TaxiOrdersTodayResponse = z.infer<typeof TaxiOrdersTodayResponseSchema>;
+
+export const IdsArraySchema = z
+	.object({
+		order_ids: z.array(UUID),
+	})
+	.openapi('TaxiOrderIdsArray');
+export type TaxiOrderIdsArray = z.infer<typeof IdsArraySchema>;
+
+// -----------------------
+// OpenAPI Registration
+// -----------------------
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('TaxiCoordinates', CoordinatesSchema);
@@ -89,4 +120,8 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('TaxiOrderBase', TaxiOrderBaseSchema);
 	registry.register('TaxiOrderRef', TaxiOrderRefSchema);
 	registry.register('TaxiOrderDetail', TaxiOrderDetailSchema);
+	// Responses
+	registry.register('CreateTaxiOrderResponse', TaxiOrderResponseSchema);
+	registry.register('TaxiOrdersTodayResponse', TaxiOrdersTodayResponseSchema);
+	registry.register('TaxiOrderIdsArray', IdsArraySchema);
 }

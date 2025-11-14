@@ -31,8 +31,8 @@ async function lobbySocketOrNotification(user_id: string, event: string, order_l
 	} else {
 		const user = await UserDao.getUserById(user_id);
 		if (user) {
-			const l10nNotification = getLocalisedTexts('USER_NOTIFICATIONS', user);
-			const l10nHeading = getLocalisedTexts('HEADING', user);
+			const l10nNotification = getLocalisedTexts('USER_NOTIFICATIONS', user.language);
+			const l10nHeading = getLocalisedTexts('HEADING', user.language);
 			let notification_title = '';
 			let notification_content = '';
 			switch (event) {

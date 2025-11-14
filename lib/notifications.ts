@@ -6,24 +6,24 @@ import { UserBase } from '../schemas/dto/User/index.js';
 /**
  * Send order status notifications to user and driver based on order status.
  *
- * @param {object} user
- * @param {object} driver
+ * @param {string} userLang
+ * @param {string} driverLang
  * @param {string} user_id
  * @param {string} driver_id
  * @param {string} status
  * @returns {Promise<void>}
  */
 async function sendOrderNotifications(
-	user: UserBase,
-	driver: UserBase,
+	userLang: string,
+	driverLang: string,
 	user_id: string | null,
 	driver_id: string | null,
 	status: string
 ): Promise<void> {
-	const l10nTextUser = getLocalisedTexts('USER_NOTIFICATIONS', user);
-	const l10nTextDriver = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver);
-	const l10nTextHeadingUser = getLocalisedTexts('HEADING', user);
-	const l10nTextHeadingDriver = getLocalisedTexts('HEADING', driver);
+	const l10nTextUser = getLocalisedTexts('USER_NOTIFICATIONS', userLang);
+	const l10nTextDriver = getLocalisedTexts('DRIVER_NOTIFICATIONS', driverLang);
+	const l10nTextHeadingUser = getLocalisedTexts('HEADING', userLang);
+	const l10nTextHeadingDriver = getLocalisedTexts('HEADING', driverLang);
 
 	const notifications: Record<string, { user: string | null; driver: string | null }> = {
 		PENDING: { user: null, driver: null },
@@ -52,24 +52,24 @@ async function sendOrderNotifications(
 /**
  * Send delivery order status notifications to user and driver based on order status.
  *
- * @param {object} user
- * @param {object} driver
+ * @param {string} userLang
+ * @param {string} driverLang
  * @param {string} user_id
  * @param {string} driver_user_id
  * @param {string} status
  * @returns {Promise<void>}
  */
 async function sendDeliveryOrderNotifications(
-	user: UserBase,
-	driver: UserBase,
+	userLang: string,
+	driverLang: string,
 	user_id: string | null,
 	driver_user_id: string | null,
 	status: string
 ): Promise<void> {
-	const l10nTextUser = getLocalisedTexts('DELIVERY_NOTIFICATIONS', user);
-	const l10nTextDriver = getLocalisedTexts('DELIVERY_DRIVER_NOTIFICATIONS', driver);
-	const l10nTextHeadingUser = getLocalisedTexts('HEADING', user);
-	const l10nTextHeadingDriver = getLocalisedTexts('HEADING', driver);
+	const l10nTextUser = getLocalisedTexts('DELIVERY_NOTIFICATIONS', userLang);
+	const l10nTextDriver = getLocalisedTexts('DELIVERY_DRIVER_NOTIFICATIONS', driverLang);
+	const l10nTextHeadingUser = getLocalisedTexts('HEADING', userLang);
+	const l10nTextHeadingDriver = getLocalisedTexts('HEADING', driverLang);
 
 	const notifications: Record<string, { user: string | null; driver: string | null }> = {
 		MERCHANT_ACCEPTED: { user: l10nTextUser.accepted, driver: null },
@@ -92,18 +92,24 @@ async function sendDeliveryOrderNotifications(
 		await sendNotificationToUser(l10nTextHeadingDriver?.delivery || '', specD.driver || '', driver_user_id);
 	}
 }
-
+/**
+ * Sends credit expiration notifications to the user.
+ * @param {UserBase} user
+ */
 async function sendCreditExpirationNotifications(user: UserBase): Promise<void> {
-	const l10nText = getLocalisedTexts('CREDIT_NOTIFICATIONS', user);
-	const l10nTextHeading = getLocalisedTexts('HEADING', user);
+	const l10nText = getLocalisedTexts('CREDIT_NOTIFICATIONS', user.language);
+	const l10nTextHeading = getLocalisedTexts('HEADING', user.language);
 	if (user && user.user_id) {
 		await sendNotificationToUser(l10nTextHeading?.creditExpiry || '', l10nText?.creditExpiry || '', user.user_id);
 	}
 }
-
+/**
+ * Sends referral notifications to the user.
+ * @param {UserBase} user
+ */
 async function sendReferralNotifications(user: UserBase): Promise<void> {
-	const l10nText = getLocalisedTexts('REFERRAL_NOTIFICATIONS', user);
-	const l10nTextHeading = getLocalisedTexts('HEADING', user);
+	const l10nText = getLocalisedTexts('REFERRAL_NOTIFICATIONS', user.language);
+	const l10nTextHeading = getLocalisedTexts('HEADING', user.language);
 	if (user && user.user_id) {
 		await sendNotificationToUser(l10nTextHeading?.referral || '', l10nText?.referral || '', user.user_id);
 	}

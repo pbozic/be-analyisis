@@ -1,34 +1,33 @@
-import { randomUUID } from 'crypto';
-
 import moment from 'moment';
+import { Response, Request } from 'express';
+import {
+	TAXI_ORDER_STATUS,
+	VEHICLE_CLASS,
+	ORDER_TYPE,
+	ORDER_SUBTYPE,
+	SCORING_POINTS_REASON,
+	CASHBACK_SOURCE,
+	FUNDS_TYPE,
+} from '@prisma/client';
+import { Socket } from 'socket.io';
 
 import TaxiOrderDao from '../dao/TaxiOrder.js';
 import DriverDao from '../dao/Driver.js';
 import UsersDao from '../dao/User.js';
-import FlagDao from '../dao/Flags.js';
 import BusinessUsersDao from '../dao/BusinessUsers.js';
 import CashbackDao from '../dao/Cashback.js';
 import WalletFundsDao from '../dao/WalletFunds.js';
 import socket from '../socket.js';
 import gApi from '../lib/gApis.js';
-import TaxiHelper from '../lib/taxiHelpers.js';
-import {
-	TAXI_ORDER_STATUS,
-	VEHICLE_CAPACITY,
-	VEHICLE_CLASS,
-	DRIVE_FEE,
-	CARGO_TRANSFER_FEE,
-	ORDER_TYPE,
-	CREDITS,
-	CASHBACK_SOURCE,
-	USER_ROLE,
-	SCORING_POINTS_REASON,
-	FUNDS_TYPE,
-	SERVICE_TYPE,
-	VEHICLE_CATEGORY,
-	ORDER_SUBTYPE,
-} from '../lib/constants.js';
+import TaxiHelper, {
+	cleanedCreateOrderHelper,
+	getActiveOrdersHelper,
+	handlePaymentForTransferOrder,
+} from '../lib/taxiHelpers.js';
+import { VEHICLE_CAPACITY, DRIVE_FEE, CARGO_TRANSFER_FEE, CREDITS, USER_ROLE, SERVICE_TYPE } from '../lib/constants.js';
 import { sendOrderNotifications } from '../lib/notifications.js';
+import { ValidatedRequest, AuthenticatedRequest } from '../types/validatedRequest.js';
+import type { UpdateTaxiOrder, CreateDispatchOrder } from '../schemas/dto/TaxiOrders/taxiOrder.validators.js';
 import { todaysEarnings } from '../lib/helpersLib.js';
 import prisma from '../prisma/prisma.js';
 import BusinessDao from '../dao/Business.js';
@@ -40,9 +39,26 @@ import ScoringPointsDao from '../dao/ScoringPoints.js';
 import LateEventsDao from '../dao/LateEvents.js';
 import stripe from '../lib/stripe.js';
 import { calculateTransferOrderPaymentCuts } from '../lib/taxiHelpers.js';
-import ReviewsDao from '../dao/Review.js';
 import FileDao from '../dao/File.js';
 import S3Helper from '../lib/s3.js';
+import {
+	CancelGroupedTaxiOrder,
+	CancelTaxiOrder,
+	CreateTaxiOrder,
+	RejectGroupedTaxiOrder,
+	TaxiFileBody,
+	TaxiIdAndDriver,
+	TaxiOrderId,
+	TransferPriceRequest,
+	UpdateTaxiOrderCompleteRoute,
+	UpdateTaxiOrderDeliveryLocation,
+	UpdateTaxiOrderPayment,
+	UpdateTaxiOrderPickupLocation,
+	UpdateTaxiOrderPreferences,
+	UpdateTaxiOrderRoute,
+	UpdateTaxiOrderTimeline,
+} from '../schemas/dto/Taxi/taxiOrder.validators.js';
+import { TaxiLocation } from '../schemas/dto/Taxi/taxiOrder.dto.js';
 // DOCUMENT_TYPE not needed here; keep constants lean
 
 const { UserSockets, io, SocketStore } = socket;
@@ -53,16 +69,21 @@ const { UserSockets, io, SocketStore } = socket;
  * @summary Get order details.
  * @description This fetches the order details using the given order id.
  * @operationId getOrder
- * @pathParam {integer} orderId - The ID of the taxi order to retrieve
+ * @pathParam {string} order_id - The ID of the taxi order to retrieve
  * @response 200 - Successful operation. Returns order details in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
+ * @response 404 - Order not found. Returns error message "Order not found" if the specified order does not exist.
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getOrder(req, res) {
+async function getOrder(req: ValidatedRequest<never, { order_id: string }>, res: Response): Promise<void> {
 	const { order_id } = req.params;
 	try {
 		const order = await TaxiOrderDao.getOrder(order_id);
+		if (!order) {
+			res.status(404).json({ message: 'Order not found' });
+			return;
+		}
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
@@ -77,11 +98,14 @@ async function getOrder(req, res) {
  * @description This fetches all completed orders for a specific user.
  * @operationId getCompletedDeliveryOrders
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getActiveTaxiOrders(req, res) {
+async function getActiveTaxiOrders(
+	req: ValidatedRequest<never, { user_id: string; type: string }>,
+	res: Response
+): Promise<void> {
 	const { user_id, type } = req.params;
 	try {
 		const activeOrders = await getActiveOrdersHelper(user_id, type);
@@ -99,12 +123,16 @@ async function getActiveTaxiOrders(req, res) {
  * @description This fetches all completed orders for a specific user.
  * @operationId getCompletedDeliveryOrders
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-export async function getMyActiveTaxiOrders(req, res) {
-	const { user_id } = req.user;
+export async function getMyActiveTaxiOrders(req: AuthenticatedRequest, res: Response): Promise<void> {
+	const user_id = req.user?.user_id;
+	if (!user_id) {
+		res.status(401).json({ message: 'Unauthorized' });
+		return;
+	}
 	try {
 		const businessUser = await BusinessUsersDao.getBusinessUserByUserId(user_id);
 		const activeOrders = await getActiveOrdersHelper(user_id, undefined, !!businessUser);
@@ -115,88 +143,30 @@ export async function getMyActiveTaxiOrders(req, res) {
 	}
 }
 
-async function getActiveOrdersHelper(user_id, type, isBusinessUser = false) {
-	try {
-		const activeOrders = await TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, type, isBusinessUser);
-		if (activeOrders) {
-			for (const activeOrder of activeOrders) {
-				if (activeOrder && activeOrder.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
-					const driver = activeOrder.driver;
-					const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(
-						activeOrder.pickup_location.coordinates,
-						driver.location.coordinates,
-						'driving',
-						new Date(),
-						'best_guess'
-					);
-					console.log('ROES:', result, result?.rows[0], result?.rows[0]?.elements[0]);
-					console.log('ROES DISTANCE:', distance);
-					console.log('ROES DURATION:', duration);
-					if (
-						result &&
-						result.rows &&
-						result.rows[0] &&
-						result.rows[0].elements &&
-						result.rows[0].elements[0]
-					) {
-						activeOrder.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
-						const estimatedPickupTime = new Date();
-						estimatedPickupTime.setSeconds(
-							estimatedPickupTime.getSeconds() + result.rows[0].elements[0].duration.value
-						);
-						activeOrder.estimates.pickup_time = estimatedPickupTime;
-					} else {
-						if (duration && distance) {
-							const estimatedPickupTime = new Date();
-							estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + duration);
-							activeOrder.estimates.pickup_time = estimatedPickupTime;
-						}
-						console.log('Invalid response structure from distanceBetweenTwoPoints');
-						activeOrder.estimates.pickup_time_in_seconds = -1;
-						activeOrder.estimates.pickup_time = null;
-					}
-					// Update the order with the new estimates
-					await TaxiOrderDao.updateOrder(activeOrder.order_id, {
-						estimates: activeOrder.estimates,
-					});
-					const userSocket = UserSockets.get(activeOrder.user_id);
-					console.log('userSocket: ', !!userSocket);
-					if (userSocket) {
-						io.emit('active_order_updated__taxi', {
-							...activeOrder,
-						});
-					}
-				}
-			}
-		}
-		return activeOrders;
-		//res.status(200).json(activeOrders);
-	} catch {
-		throw new Error('Error fetching active orders');
-	}
-}
-
 /**
  * GET /taxi/orders/active/driver/:driver_id
  * @tag Taxi
  * @summary Get active taxi orders for a driver.
  * @description This fetches all active (not completed AND not pending) orders for a specific driver.
  * @operationId getActiveTaxiOrdersByDriverId
- * @pathParam {integer} driver_id - The ID of the driver to retrieve active orders for
+ * @pathParam {string} driver_id - The ID of the driver to retrieve active orders for
  * @response 200 - Successful operation. Returns a list of active orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {ActiveTaxiOrdersResponse} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getActiveTaxiOrdersByDriverId(req, res) {
+async function getActiveTaxiOrdersByDriverId(
+	req: ValidatedRequest<never, { driver_id: string }>,
+	res: Response
+): Promise<void> {
 	const { driver_id } = req.params;
 	try {
 		const activeOrders = await TaxiOrderDao.getActiveOrdersByDriverId(driver_id);
 		let pendingOrders = [];
-		const sentOrders = await TaxiOrderDao.getAlreadySentOrdersByDriverId(driver_id);
-		for (let sentOrder of sentOrders) {
-			const order = await TaxiOrderDao.getOrder(sentOrder.order.order_id);
-			if (order.status !== TAXI_ORDER_STATUS.PENDING) {
+		const sentOrderIds = await TaxiOrderDao.getAlreadySentOrdersByDriverId(driver_id);
+		for (let sentOrderId of sentOrderIds) {
+			const order = await TaxiOrderDao.getOrder(sentOrderId);
+			if (order?.status !== TAXI_ORDER_STATUS.PENDING) {
 				continue;
 			}
 			console.info('Re-sending pending order: ', order.order_id, ' to driver: ', driver_id);
@@ -219,11 +189,14 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedTaxiOrders
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getTaxiOrdersByDriverId(req, res) {
+async function getTaxiOrdersByDriverId(
+	req: ValidatedRequest<never, { driver_id: string }>,
+	res: Response
+): Promise<void> {
 	const { driver_id } = req.params;
 	try {
 		const orders = await TaxiOrderDao.getOrders({
@@ -245,11 +218,14 @@ async function getTaxiOrdersByDriverId(req, res) {
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedTaxiOrders
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getCompletedTaxiOrders(req, res) {
+async function getCompletedTaxiOrders(
+	req: ValidatedRequest<never, { driver_id: string }>,
+	res: Response
+): Promise<void> {
 	const { driver_id } = req.params;
 	try {
 		const completedOrders = await TaxiOrderDao.getOrders({
@@ -272,11 +248,14 @@ async function getCompletedTaxiOrders(req, res) {
  * @description This fetches all canceled orders for a specific driver.
  * @operationId getCanceledTaxiOrders
  * @response 200 - Successful operation. Returns a list of canceled orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getCanceledTaxiOrders(req, res) {
+async function getCanceledTaxiOrders(
+	req: ValidatedRequest<never, { driver_id: string }>,
+	res: Response
+): Promise<void> {
 	const { driver_id } = req.params;
 	try {
 		const canceledOrders = await TaxiOrderDao.getOrders({
@@ -299,11 +278,14 @@ async function getCanceledTaxiOrders(req, res) {
  * @description This fetches all rejected orders for a specific driver.
  * @operationId getRejectedTaxiOrders
  * @response 200 - Successful operation. Returns a list of rejected orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getRejectedTaxiOrders(req, res) {
+async function getRejectedTaxiOrders(
+	req: ValidatedRequest<never, { driver_id: string }>,
+	res: Response
+): Promise<void> {
 	const { driver_id } = req.params;
 	try {
 		const rejectedOrders = await TaxiOrderDao.getOrders({
@@ -326,11 +308,11 @@ async function getRejectedTaxiOrders(req, res) {
  * @description This fetches all taxi orders.
  * @operationId getTaxiOrders
  * @response 200 - Successful operation. Returns a list of all taxi orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getTaxiOrders(req, res) {
+async function getTaxiOrders(req: Request, res: Response): Promise<void> {
 	try {
 		const orders = await prisma.taxi_orders.findMany({
 			include: {
@@ -359,11 +341,14 @@ async function getTaxiOrders(req, res) {
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedTaxiOrdersByUserId
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getCompletedTaxiOrdersByUserId(req, res) {
+async function getCompletedTaxiOrdersByUserId(
+	req: ValidatedRequest<never, { user_id: string }>,
+	res: Response
+): Promise<void> {
 	const { user_id } = req.params;
 	try {
 		const completedOrders = await TaxiOrderDao.getOrders({
@@ -389,13 +374,13 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 			},
 		});
 
-		const reviews = await ReviewsDao.getReviewsByUserId(user_id);
-		const joinReviews = completedOrders.map((order) => {
-			const review = reviews.find((r) => r.feedback?.order_id === order.order_id);
-			return { ...order, review };
-		});
+		// const reviews = await ReviewsDao.getReviewsByUserId(user_id);
+		// const joinReviews = completedOrders.map((order) => {
+		// 	const review = reviews.find((r) => r.feedback?.order_id === order.order_id);
+		// 	return { ...order, review };
+		// });
 
-		res.status(200).json(joinReviews);
+		res.status(200).json(completedOrders);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
 		res.status(500).json(e);
@@ -409,20 +394,27 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
  * @description This fetches all completed orders for a business.
  * @operationId getCompletedTaxiOrdersByBusinessId
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getCompletedTaxiOrdersByBusinessId(req, res) {
+async function getCompletedTaxiOrdersByBusinessId(
+	req: ValidatedRequest<never, { business_id: string }>,
+	res: Response
+): Promise<void> {
 	const { business_id } = req.params;
 	try {
 		const business = await BusinessDao.getBusinessById(business_id);
-		let userIds = business.business_users?.map((businessUser) => businessUser.user_id) || [];
-		userIds = [...userIds, ...(business.business_clients?.map((client) => client.user_id) || [])];
+		const businessUserIds = business?.business_users?.map((businessUser) => businessUser.business_users_id) || [];
+		const businessClientIds =
+			business?.crm_module?.business_clients?.map((client) => client.business_clients_id) || [];
 		const completedOrders = await TaxiOrderDao.getOrders({
 			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
-				user_id: { in: userIds },
+				OR: [
+					{ business_users_id: { in: businessUserIds } },
+					{ business_clients_id: { in: businessClientIds } },
+				],
 			},
 		});
 		res.status(200).json(completedOrders);
@@ -439,11 +431,14 @@ async function getCompletedTaxiOrdersByBusinessId(req, res) {
  * @description This fetches all canceled orders for a specific driver.
  * @operationId getCanceledTaxiOrders
  * @response 200 - Successful operation. Returns a list of canceled orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getCanceledTaxiOrdersByUserId(req, res) {
+async function getCanceledTaxiOrdersByUserId(
+	req: ValidatedRequest<never, { user_id: string }>,
+	res: Response
+): Promise<void> {
 	const { user_id } = req.params;
 	try {
 		const completedOrders = await TaxiOrderDao.getOrders({
@@ -459,449 +454,30 @@ async function getCanceledTaxiOrdersByUserId(req, res) {
 	}
 }
 
-function preprocessOrderData(orderData) {
-	const cleanedOrderData = {
-		// user_id: orderData.user_id,
-		// driver_id: orderData.driver.driver_id,
-		// driver: orderData.driver,
-		// vehicle_id: orderData.vehicle_id,
-		allow_credits_usage: orderData.allow_credits_usage,
-		cargo_preferences: orderData.cargo_preferences,
-		creating_user_id: orderData.creating_user_id,
-		customer_note: orderData.customer_note,
-		delivery_location: orderData.delivery_location,
-		estimates: orderData.estimates,
-		flags: orderData.flags,
-		first_name: orderData.first_name,
-		last_name: orderData.last_name,
-		parent_user_type: orderData.parent_user_type,
-		payment: orderData.payment,
-		pickup_location: orderData.pickup_location,
-		preferences: orderData.preferences,
-		route: orderData.route,
-		status: orderData.status,
-		subtype: orderData.subtype,
-		telephone: orderData.telephone,
-		type: orderData.type,
-	};
-	const prefs = cleanedOrderData.preferences;
-	const is_repeat =
-		prefs.repeat_ride?.length > 0 && !prefs.repeat_ride.some((item) => item.value === 'do_not_repeat');
-	if (prefs.vehicle_class === VEHICLE_CLASS.CARGO_VAN) {
-		cleanedOrderData.payment = {
-			...cleanedOrderData.payment,
-			extras: {
-				price:
-					CARGO_TRANSFER_FEE.CARGO_FEE +
-					cleanedOrderData.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE,
-				type: 'CARGO_TRANSFER_FEE',
-			},
-		};
-	}
-	cleanedOrderData.is_scheduled = prefs.departure_date != null;
-	cleanedOrderData.route = cleanedOrderData.route.map((r_i) => ({ ...r_i, id: randomUUID(), locked: false }));
-	cleanedOrderData.route[0] = { ...cleanedOrderData.route[0], locked: true };
-	if (cleanedOrderData.pickup_location) {
-		cleanedOrderData.pickup_location = {
-			address: cleanedOrderData.pickup_location.address,
-			coordinates: cleanedOrderData.pickup_location.coordinates,
-		};
-	}
-	if (cleanedOrderData.delivery_location) {
-		cleanedOrderData.delivery_location = {
-			address: cleanedOrderData.delivery_location.address,
-			coordinates: cleanedOrderData.delivery_location.coordinates,
-		};
-	}
-	let orderDataArray = [];
-	if (is_repeat) {
-		orderDataArray = generateOrdersForRepeatOrder(
-			cleanedOrderData,
-			prefs.repeat_ride,
-			prefs.repeat_duration.length > 0 ? prefs.repeat_duration[0].value : 0
-		);
-	} else {
-		orderDataArray.push(cleanedOrderData);
-	}
-	return orderDataArray;
-}
-
-async function generateVehicleTransferOrder(orderData, userId, businessUserId, businessClientId) {
-	const vehicleTransferOrderData = {
-		...orderData,
-		type: ORDER_TYPE.VEHICLE_TRANSFER_COMBO,
-		preferences: {
-			...orderData.preferences,
-			adults: 0,
-			children_under_140: 0,
-			ride_requirements: {
-				traveling_with_pet: false,
-				air_conditioning: false,
-				child_seats: false,
-				quiet_ride: false,
-				luggage: false,
-				wheelchair_accessibility: false,
-				language_en: false,
-				language_it: false,
-				language_de: false,
-				language_es: false,
-				language_hr: false,
-				language_fr: false,
-				language_ru: false,
-				language_ua: false,
-			},
-			vehicle_class: VEHICLE_CLASS.ANY,
-			vehicle_category: VEHICLE_CATEGORY.ANY,
-		},
-		payment: {
-			...orderData.payment,
-			extras: null,
-			status: 'PAID',
-		},
-	};
-	const vehicle_transfer_order = await makeOrder(
-		vehicleTransferOrderData,
-		userId,
-		null,
-		null,
-		businessUserId,
-		businessClientId
-	);
-	return vehicle_transfer_order;
-}
-
-function subdivideOrder(vehicle_class, vehicle_category, n_adults, n_children) {
-	let splits = [];
-	let num_orders;
-	let unassigned_adults = n_adults;
-	let unassigned_children = n_children;
-	let total_seats = unassigned_adults + unassigned_children;
-	if (vehicle_class === VEHICLE_CLASS.ANY) {
-		if (total_seats > 4) {
-			let defaultNumSeats = vehicle_category === VEHICLE_CATEGORY.STANDARD ? 4 : 3;
-			num_orders = Math.ceil(total_seats / defaultNumSeats);
-		} else {
-			num_orders = 1;
-		}
-	} else {
-		num_orders = Math.ceil(total_seats / VEHICLE_CAPACITY[vehicle_class]);
-	}
-	console.log('num_orders', num_orders);
-	for (let i = 0; i < num_orders; i++) {
-		let availableSeats = VEHICLE_CAPACITY[vehicle_class];
-		let adults_seated = 0;
-		let children_seated = 0;
-		for (let i = 0; i < availableSeats; i++) {
-			if (unassigned_adults > 0) {
-				adults_seated++;
-				unassigned_adults--;
-			} else if (unassigned_children > 0) {
-				children_seated++;
-				unassigned_children--;
-			} else {
-				break;
-			}
-		}
-		splits.push({
-			adults_seated,
-			children_seated,
-		});
-	}
-	return splits;
-}
-
-async function makeOrder(cleanOrderData, userId, parentOrderId, driverId, businessUserId, businessClientId) {
-	const orderPayload = {
-		...cleanOrderData,
-		user: {
-			connect: {
-				user_id: userId,
-			},
-		},
-	};
-	if (parentOrderId) {
-		orderPayload.parent_order = {
-			connect: {
-				order_id: parentOrderId,
-			},
-		};
-	}
-	if (driverId) {
-		orderPayload.driver = {
-			connect: {
-				driver_id: driverId,
-			},
-		};
-	}
-	if (businessUserId) {
-		orderPayload.business_users = {
-			connect: {
-				business_users_id: businessUserId,
-			},
-		};
-	}
-	if (businessClientId) {
-		orderPayload.business_clients = {
-			connect: {
-				business_clients_id: businessClientId,
-			},
-		};
-	}
-	const order = await TaxiOrderDao.createOrder(orderPayload);
-	return order;
-}
-
-async function buildOrder(cleanOrderData, userId, parentOrderId, driverId, businessUserId, businessClientId) {
-	const { vehicle_class, vehicle_category, adults, children_under_140 } = cleanOrderData.preferences;
-	const splits = subdivideOrder(vehicle_class, vehicle_category, adults, children_under_140);
-	let firstOrderId = parentOrderId;
-	for (let i = 0; i < splits.length; i++) {
-		const { adults_seated, children_seated } = splits[i];
-		cleanOrderData.preferences.adults = adults_seated;
-		cleanOrderData.preferences.children_under_140 = children_seated;
-		const order = await makeOrder(
-			cleanOrderData,
-			userId,
-			parentOrderId,
-			driverId,
-			businessUserId,
-			businessClientId
-		);
-		if (!firstOrderId) {
-			firstOrderId = order.order_id;
-		}
-	}
-	return firstOrderId;
-}
 /**
  * POST /taxi/auth/transfer_price
  * @tag Taxi
  * @summary Request transfer order price.
  * @description This endpoint calculates and returns the price for a transfer order based on the provided route and vehicle category.
  * @operationId requestTransferOrderPrice
- * @requestBody {object} request.body.required - The request body containing route and vehicle category.
+ * @requestBody {TransferPriceRequest} request.body.required - The request body containing route and vehicle category.
  * @requestBodyContent {object} application/json
  * @response 200 - Successful operation. Returns the calculated price for the transfer order.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderBase} 200.application/json
  * @response 500 - Server error. Returns error message "Internal Server Error" if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function requestTransferOrderPrice(req, res) {
+async function requestTransferOrderPrice(req: ValidatedRequest<TransferPriceRequest>, res: Response): Promise<void> {
 	try {
 		const { route, vehicle_category } = req.body;
-		let priceData = await TaxiHelper.calculateTransferRidePrice(route, vehicle_category);
+		let priceData = await TaxiHelper.calculateTransferRidePrice(
+			route as TaxiLocation[],
+			vehicle_category as string
+		);
 		res.status(200).json(priceData);
 	} catch (e) {
 		console.error(e);
-		res.status(500);
-	}
-}
-
-async function cleanedCreateOrderHelper(orderData) {
-	try {
-		const user_id = orderData.user_id;
-		const driver_id = orderData?.driver_id || orderData?.driver?.driver_id;
-		const businessUserId = orderData.business_user?.business_users_id;
-		const businessClientId = orderData.business_client?.business_clients_id;
-		console.log('ORDER DATA DRIVER', orderData.driver);
-		const cleanedOrderDataArray = preprocessOrderData(orderData);
-		let firstOrderId = null;
-		for (const cleanOrderData of cleanedOrderDataArray) {
-			firstOrderId = await buildOrder(
-				cleanOrderData,
-				user_id,
-				firstOrderId,
-				driver_id,
-				businessUserId,
-				businessClientId
-			);
-		}
-		let order;
-		let vehicle_transfer_order;
-		if (firstOrderId) {
-			order = await TaxiOrderDao.getOrder(firstOrderId, {
-				include: {
-					grouped_orders: true,
-				},
-			});
-			console.log('parentOrderId', firstOrderId);
-			console.log('fetched grouped_orders', order.grouped_orders);
-			if (order && order.preferences.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
-				vehicle_transfer_order = await generateVehicleTransferOrder(
-					cleanedOrderDataArray[0],
-					user_id,
-					businessUserId,
-					businessClientId
-				);
-			}
-		}
-		return { order, vehicle_transfer_order };
-	} catch (error) {
-		console.error('TaxiOrderController', error);
-		throw new Error('Error in cleanedCreateOrderHelper!');
-	}
-}
-
-async function handlePaymentForTransferOrder(order, return_url) {
-	try {
-		let user;
-		if (order.creating_user_id) {
-			user = await UsersDao.getUserById(order.creating_user_id);
-		} else {
-			user = await UsersDao.getUserById(order.user_id);
-		}
-		let payment_intent = null;
-		//CALCULATE IN CENTS
-		const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100);
-		const EXTRAS_COST_CENTS = Math.round(
-			parseFloat(
-				[VEHICLE_CLASS.PRIVATE_DRIVER, VEHICLE_CLASS.CARGO_VAN].includes(order.preferences?.vehicle_class)
-					? order.payment.extras?.price ||
-							order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
-								CARGO_TRANSFER_FEE.CARGO_FEE
-					: 0
-			) * 100
-		);
-		const TOTAL_COST_CENTS = PRICE_CENTS + EXTRAS_COST_CENTS;
-		const INITIAL_PLATFORM_CUT = Math.round(PRICE_CENTS * DRIVE_FEE) + EXTRAS_COST_CENTS;
-		const INITIAL_DRIVER_CUT = TOTAL_COST_CENTS - INITIAL_PLATFORM_CUT;
-		//Handle automatic credits spending ~ use credits to pay platform cut first, to keep the driver cut mostly off stripe
-		const reservedCredits = order.allow_credits_usage
-			? await WalletFundsHelpers.reserveCreditsForOrder(
-					user.user_id,
-					TOTAL_COST_CENTS,
-					order.order_id,
-					FUNDS_TYPE.CREDITS_TAXI
-				)
-			: [];
-		const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
-		const DISCOUNTED_TOTAL_COST = TOTAL_COST_CENTS - CREDITS_AMOUNT_RESERVED;
-		const PLATFORM_CREDIT_CUT_CENTS = Math.min(INITIAL_PLATFORM_CUT, CREDITS_AMOUNT_RESERVED);
-		const DRIVER_CREDIT_CUT_CENTS =
-			CREDITS_AMOUNT_RESERVED > PLATFORM_CREDIT_CUT_CENTS
-				? CREDITS_AMOUNT_RESERVED - PLATFORM_CREDIT_CUT_CENTS
-				: 0;
-		order.payment.credit_discount = CREDITS_AMOUNT_RESERVED;
-		order.payment.credit_discount_details = {
-			taxi_driver: DRIVER_CREDIT_CUT_CENTS,
-			platform: PLATFORM_CREDIT_CUT_CENTS,
-		};
-		order = await TaxiOrderDao.updateTaxiOrderPayment(order.order_id, order.payment);
-		INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS;
-		INITIAL_DRIVER_CUT - DRIVER_CREDIT_CUT_CENTS;
-		// if(PLATFORM_CREDIT_CUT_CENTS>0) {
-		// 	const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
-		// }
-		// if(DRIVER_CREDIT_CUT_CENTS>0) {
-		// 	const transferedCreditsDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CREDIT_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
-		// }
-		const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user.user_id);
-		if (DISCOUNTED_TOTAL_COST > 0) {
-			if (order.payment.type === 'WALLET') {
-				// handle wallet payment
-				if (available_wallet_balances['TAXI'] + available_wallet_balances[null] < DISCOUNTED_TOTAL_COST / 100) {
-					throw new Error('Insufficient funds');
-				}
-				// await UsersDao.removeWalletBalance(order.user_id, (DISCOUNTED_TOTAL_COST / 100), order.order_id, "taxi");
-				await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
-					user.user_id,
-					DISCOUNTED_TOTAL_COST,
-					order.order_id
-				);
-				order = await TaxiOrderDao.updateOrder(order.order_id, {
-					payment: {
-						...order.payment,
-						status: 'PAID',
-					},
-				});
-				order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
-			}
-			if (order.payment.type === 'FAMILY_WALLET') {
-				// handle wallet payment
-				let has_parent_user = user.parent_user;
-				if (!has_parent_user) {
-					throw new Error('User has no family wallet');
-				}
-				let parent_user = user.parent_user.parent_user;
-				const parent_available_wallet_balances = WalletFundsDao.getAvailableWalletBalanceGroupedByType(
-					parent_user.user_id
-				);
-				let is_businessUser = await BusinessUsersDao.getBusinessUserByUserId(parent_user.user_id);
-				let allowance = user.parent_user.allowance?.amount_taxi;
-				if (is_businessUser) {
-					allowance = allowance * 2;
-				}
-				// todo is parent business user?
-				if (allowance < DISCOUNTED_TOTAL_COST / 100) {
-					throw new Error('Insufficient allowance');
-				}
-				//TODO: Should this allow usage of credits from parent?
-				if (parent_available_wallet_balances[null] < DISCOUNTED_TOTAL_COST / 100) {
-					throw new Error('Insufficient funds');
-				}
-				// await UsersDao.removeWalletBalance(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id, "taxi");
-				await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
-					parent_user.user_id,
-					DISCOUNTED_TOTAL_COST,
-					order.order_id
-				);
-				const updateData = {};
-				if (order.type === ORDER_TYPE.TAXI) {
-					updateData.amount_taxi = { decrement: DISCOUNTED_TOTAL_COST / 100 };
-				} else {
-					updateData.amount_transfer = { decrement: DISCOUNTED_TOTAL_COST / 100 };
-				}
-				await prisma.allowances.update({
-					where: {
-						group_user_id: user.parent_user.group_user_id,
-					},
-					data: updateData,
-				});
-				order = await TaxiOrderDao.updateOrder(order.order_id, {
-					payment: {
-						...order.payment,
-						status: 'PAID',
-					},
-				});
-				order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
-			}
-			if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
-				payment_intent = await stripe.createSplittablePayment(
-					user.stripe_customer_id,
-					order.order_id,
-					order.payment.payment_method_id,
-					DISCOUNTED_TOTAL_COST,
-					order.type,
-					{},
-					return_url
-				);
-				console.info('payment_intent', payment_intent);
-				order = await TaxiOrderDao.updateTaxiOrderPayment(order.order_id, {
-					...order.payment,
-					payment_intent_id: payment_intent.id,
-				});
-			}
-		} else {
-			order = await TaxiOrderDao.updateOrder(order.order_id, {
-				payment: {
-					...order.payment,
-					status: 'PAID',
-				},
-			});
-			order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
-		}
-		return payment_intent;
-	} catch (e) {
-		await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.CUSTOMER_CANCELED);
-		await TaxiHelper.handlePaymentRefund(
-			order.order_id,
-			order.user_id,
-			order.payment,
-			order?.cargo_preferences?.additional_workers,
-			order?.preferences?.vehicle_class,
-			true
-		);
-		throw new Error('Error when handling payment: ', e);
+		res.status(500).json({ error: 'Internal Server Error' });
 	}
 }
 
@@ -912,38 +488,48 @@ async function handlePaymentForTransferOrder(order, return_url) {
  * @description This creates a new taxi order with the provided details from the request body. Returns the created order if successful.
  * @operationId createOrder
  * @bodyDescription Request body must include necessary order details.
- * @bodyContent {object} application/json
+ * @bodyContent {CreateTaxiOrder} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the newly created order in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {CreateTaxiOrderResponse} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  * @prisma_model business_clients
  * @prisma_model municipalities
  */
-async function createOrder(req, res) {
+async function createOrder(req: ValidatedRequest<CreateTaxiOrder>, res: Response): Promise<void> {
 	try {
 		const { return_url } = req.body;
 		delete req.body.return_url;
-		let user = await UsersDao.getUserById(req.user.user_id);
+		const user_id = req.user?.user_id;
+		if (!user_id) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
+		let user = await UsersDao.getUserById(user_id);
+		if (!user) {
+			res.status(404).json({ error: 'User not found' });
+			return;
+		}
 		let orderData = {
 			...req.body,
-			user_id: req.body?.user_id || user.user_id,
-			first_name: req.body?.first_name || user.first_name,
-			last_name: req.body?.last_name || user.last_name,
-			telephone: req.body?.telephone || user.telephone,
+			user_id: req.body.user_id || user.user_id,
+			first_name: req.body.first_name || user.first_name,
+			last_name: req.body.last_name || user.last_name,
+			telephone: req.body.telephone || user.telephone,
 			is_scheduled: req.body.preferences?.departure_date,
+			status: TAXI_ORDER_STATUS.PENDING,
 		};
 		let coordinates = orderData?.pickup_location?.coordinates || orderData?.route?.[0]?.coordinates;
 		let region = null;
 		if (coordinates) {
 			const pointWKT = `SRID=4326;POINT(${coordinates.longitude} ${coordinates.latitude})`;
 			region = await prisma.$queryRaw`
-                SELECT municipalities_id,
-                       name,
-                       requires_license
-                FROM municipalities
-                WHERE ST_Contains(geom_generated, ST_GeomFromText(${pointWKT})) LIMIT 1;
+				SELECT municipalities_id,
+					   name,
+					   requires_license
+				FROM municipalities
+				WHERE ST_Contains(geom_generated, ST_GeomFromText(${pointWKT})) LIMIT 1;
 			`;
 		}
 		console.log('REGION', region);
@@ -982,41 +568,38 @@ async function createOrder(req, res) {
 		console.info('USER TELEPHONE', orderData.telephone);
 		console.info('USER ID', orderData.user_id);
 		console.info('dep date', req.body.preferences?.departure_date);
-		let flags = await FlagDao.getFlags();
-		let flagsObj = {};
-		flags.map((flag) => {
-			flagsObj[flag.name] = flag.status;
-		});
-		orderData.flags = flagsObj;
-		orderData.status = TAXI_ORDER_STATUS.PENDING;
 		if (orderData.type === ORDER_TYPE.TRANSFER_PRIVATE) {
 			const { route, preferences } = orderData;
-			let { price } = await TaxiHelper.calculateTransferRidePrice(route, preferences.vehicle_category);
-			if (price > 25 && price !== orderData.payment.price) {
-				console.error(`Price mismatch, got ${orderData.payment.price}, calculated ${price}`);
-				return res.status(400).json({ error: 'Price mismatch' });
+			let { price } = await TaxiHelper.calculateTransferRidePrice(
+				route as TaxiLocation[],
+				preferences?.vehicle_category as string
+			);
+			if (price > 25 && price !== orderData?.payment?.price) {
+				console.error(`Price mismatch, got ${orderData?.payment?.price}, calculated ${price}`);
+				res.status(400).json({ error: 'Price mismatch' });
+				return;
 			}
-			if (orderData.payment.price >= 25) {
+			if ((orderData?.payment?.price as number) >= 25) {
 				orderData.status = TAXI_ORDER_STATUS.AWAITING_PAYMENT;
 				if (
-					VEHICLE_CAPACITY[orderData.preferences.vehicle_class] <
-					orderData.preferences.adults + orderData.preferences.children_under_140
+					(VEHICLE_CAPACITY[orderData?.preferences?.vehicle_class || 'ANY'] || 4) <
+					(orderData?.preferences?.adults || 1) + (orderData?.preferences?.children_under_140 || 0)
 				) {
 					throw new Error('Number of requested seats exceeds vehicle capacity!');
 				}
 				if (
-					orderData.preferences.repeat_ride?.length > 0 &&
-					!orderData.preferences.repeat_ride.some((item) => item.value === 'do_not_repeat')
+					orderData?.preferences?.repeat_ride?.length &&
+					!orderData?.preferences?.repeat_ride?.some((item) => item.value === 'do_not_repeat')
 				) {
 					throw new Error(`Repeating orders not allowed for transfer orders above ${25}€!`);
 				}
 				let user = await UsersDao.getUserById(orderData.user_id);
-				const customer_acc = user.stripe_customer_id;
+				const customer_acc = user?.stripe_customer_id;
 				const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(
 					orderData.user_id
 				);
-				if (orderData.payment.type === 'WALLET') {
-					const TOTAL_PRICE_CENT = Math.round(orderData.payment.price * 100);
+				if (orderData?.payment?.type === 'WALLET') {
+					const TOTAL_PRICE_CENT = Math.round((orderData?.payment?.price || 0) * 100);
 					if (
 						available_wallet_balances[SERVICE_TYPE.TAXI] + available_wallet_balances[null] <
 						TOTAL_PRICE_CENT / 100
@@ -1024,7 +607,7 @@ async function createOrder(req, res) {
 						throw new Error('Insufficient funds');
 					}
 				}
-				if (orderData.payment.type === 'CARD') {
+				if (orderData?.payment?.type === 'CARD') {
 					if (!customer_acc) {
 						throw new Error('Missing stripe_customer_id');
 					}
@@ -1034,16 +617,17 @@ async function createOrder(req, res) {
 		const orderCreated = await cleanedCreateOrderHelper(orderData);
 		let order = orderCreated?.order;
 		if (!order) {
-			return res.status(500).json({ error: 'Failed to create order' });
+			res.status(400).json({ error: 'Failed to create order' });
+			return;
 		}
 		//TODO: payment management for order
 		let payment_intent =
-			orderData.status === TAXI_ORDER_STATUS.AWAITING_PAYMENT
+			order.status === TAXI_ORDER_STATUS.AWAITING_PAYMENT
 				? await handlePaymentForTransferOrder(order, return_url)
 				: null;
 		console.info('ORDER: ', order);
 		console.info('PAYMENT_INTENT: ', payment_intent);
-		if (!order?.creating_user_id) SocketStore.addUserToRoom(req.user.user_id, 'order_' + order.order_id);
+		if (!order?.creating_user_id) SocketStore.addUserToRoom(user_id, 'order_' + order.order_id);
 		//console.log("create taxi order", order)
 		const userSocket = UserSockets.get(order.user_id);
 		if (userSocket && order.creating_user_id && order.creating_user_id !== order.user_id) {
@@ -1063,73 +647,6 @@ async function createOrder(req, res) {
 	}
 }
 
-function getDayIndex(dayName) {
-	// Map day names to their corresponding indices
-	const daysOfWeek = {
-		Sunday: 0,
-		Monday: 1,
-		Tuesday: 2,
-		Wednesday: 3,
-		Thursday: 4,
-		Friday: 5,
-		Saturday: 6,
-	};
-	return daysOfWeek[dayName]; // Return the index of the day
-}
-
-function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
-	try {
-		console.log('rd', repeatDuration);
-		const orders = [];
-		const currentDate = new Date();
-		// Get the hours and minutes from the departure time
-		const departureTime = new Date(orderData.preferences.departure_time);
-		const departureHours = departureTime.getHours();
-		const departureMinutes = departureTime.getMinutes();
-		// Get current week's day number
-		const currentDay = currentDate.getDay();
-		for (let week = 0; week < repeatDuration; week++) {
-			for (let day of repeatData) {
-				console.log('day', day);
-				const dayIndex = getDayIndex(day.value); // Get day index from day name
-				console.log('dayIndex', dayIndex);
-				const daysUntilNextOccurrence = ((dayIndex - currentDay + 7) % 7) + week * 7; // Calculate days until the next occurrence of this weekday
-				console.log('daysUntilNextOccurrence', dayIndex);
-				const orderDate = new Date(currentDate); // Create a copy of the current date
-				console.log('orderDate', orderDate);
-				orderDate.setDate(orderDate.getDate() + daysUntilNextOccurrence); // Add the days to reach the next occurrence of this day
-				// Set the time for the order
-				console.log('orderDate added', orderDate);
-				orderDate.setHours(departureHours);
-				orderDate.setMinutes(departureMinutes);
-				orderDate.setSeconds(0);
-				orderDate.setMilliseconds(0);
-				// Format the date and time
-				const formattedDepartureDate = new Intl.DateTimeFormat('en-US', {
-					day: '2-digit',
-					month: 'long',
-					year: 'numeric',
-				}).format(orderDate);
-				const formattedDepartureTime = orderDate.toISOString().slice(0, -1);
-				// Generate an order for this day
-				let order = {
-					...orderData,
-					preferences: {
-						...orderData.preferences,
-						departure_date: formattedDepartureDate, // Format as "DD MMMM YYYY"
-						departure_time: formattedDepartureTime, // Format as "YYYY-MM-DDTHH:mm:ss.sss"
-					},
-				};
-				orders.push(order); // Add to orders list
-			}
-		}
-		return orders; // Return generated orders
-	} catch (error) {
-		console.log('TaxiOrderController', error);
-		throw new Error(error);
-	}
-}
-
 /**
  * POST /taxi/dispatch-order
  * @tag Taxi
@@ -1140,16 +657,21 @@ function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the newly created order in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function createDispatchOrder(req, res) {
+async function createDispatchOrder(req: ValidatedRequest<CreateDispatchOrder>, res: Response): Promise<void> {
 	try {
+		const user_id = req.user?.user_id;
+		if (!user_id) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
 		let orderData = {
 			...req.body,
-			status: 'PENDING',
-			user_id: req.user.user_id,
+			status: TAXI_ORDER_STATUS.PENDING,
+			user_id: user_id,
 			telephone: req.body.telephone,
 		};
 		let order = await cleanedCreateOrderHelper(orderData);
@@ -1170,33 +692,37 @@ async function createDispatchOrder(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the accepted order in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  * @prisma_model drivers
  */
-async function acceptOrder(req, res) {
+async function acceptOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Response): Promise<void> {
 	const { order_id } = req.body;
 	try {
-		const user = req.user;
-		if (!user.user_id) {
-			return res.status(400).json({ error: 'User error.' });
+		const user_id = req.user?.user_id;
+		if (!user_id) {
+			res.status(400).json({ error: 'User error.' });
+			return;
 		}
-		let driver = await DriverDao.getDriverByUserId(user.user_id);
-		if (!driver.online) {
-			return res.status(400).json({ error: 'Driver is offline.', errorType: 'ERR_DRIVER_OFFLINE' });
+		let driver = await DriverDao.getDriverByUserId(user_id);
+		if (!driver?.online) {
+			res.status(400).json({ error: 'Driver is offline.', errorType: 'ERR_DRIVER_OFFLINE' });
+			return;
 		} else if (driver.on_order) {
-			return res.status(400).json({ error: 'Driver is already on order.', errorType: 'ERR_DRIVER_ON_ORDER' });
+			res.status(400).json({ error: 'Driver is already on order.', errorType: 'ERR_DRIVER_ON_ORDER' });
+			return;
 		}
 		let order = await TaxiOrderDao.getOrder(order_id);
 		if (order.status === TAXI_ORDER_STATUS.CUSTOMER_CANCELED) {
-			return res
-				.status(400)
-				.json({ error: 'Order has been canceled by customer.', errorType: 'ERR_ORDER_ALREADY_CANCELED' });
+			res.status(400).json({
+				error: 'Order has been canceled by customer.',
+				errorType: 'ERR_ORDER_ALREADY_CANCELED',
+			});
+			return;
 		} else if (order.status !== TAXI_ORDER_STATUS.PENDING) {
-			return res
-				.status(400)
-				.json({ error: 'Order is already accepted.', errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
+			res.status(400).json({ error: 'Order is already accepted.', errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
+			return;
 		}
 		if (order.is_scheduled) {
 			let isSent = await TaxiOrderDao.isOrderSent(order.order_id, driver);
@@ -1205,11 +731,11 @@ async function acceptOrder(req, res) {
 			}
 		}
 		await TaxiOrderDao.acceptTaxiOrderWithRawLock(order, driver);
-		driver.vehicle = driver.current_vehicle;
-		order.driver = driver;
-		const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(
+		// driver.vehicle = driver.current_vehicle;
+		// order.driver = driver;
+		const { result, distance, duration, durationS } = await gApi.distanceBetweenTwoPoints(
 			order.pickup_location.coordinates,
-			driver.location.coordinates,
+			driver?.location?.coordinates as { latitude: number; longitude: number },
 			'driving',
 			new Date(),
 			'best_guess'
@@ -1226,9 +752,9 @@ async function acceptOrder(req, res) {
 			);
 			order.estimates.pickup_time = estimatedPickupTime;
 		} else {
-			if (duration && distance) {
+			if (durationS && distance) {
 				const estimatedPickupTime = new Date();
-				estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + duration);
+				estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + durationS);
 				order.estimates.pickup_time = estimatedPickupTime;
 			}
 			console.log('Invalid response structure from distanceBetweenTwoPoints');
@@ -1243,15 +769,15 @@ async function acceptOrder(req, res) {
 		console.log('LALA, user_id', order.user_id);
 		console.log('order accepted', order);
 		if (userSocket) {
-			io.to('order_' + order.order_id).emit('order_accepted__taxi', order);
-			io.emit('driver_unavailable', order.driver_id);
+			(io as Socket).to('order_' + order.order_id).emit('order_accepted__taxi', order);
+			(io as Socket).emit('driver_unavailable', order.driver_id);
 			console.log('userSocket', !!userSocket);
 		}
 		SocketStore.addUserToRoom(driver.user_id, `order_${order.order_id}`);
 		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO)
 			sendOrderNotifications(
-				order?.user,
-				driver?.user,
+				order?.user?.language ?? 'en',
+				driver?.user?.language ?? 'en',
 				order.user_id,
 				driver.driver_id,
 				TAXI_ORDER_STATUS.TAXI_ACCEPTED
@@ -1274,17 +800,23 @@ async function acceptOrder(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the completed order in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  * @prisma_model taxi_orders
  * @prisma_model allowances
  */
-async function completeOrder(req, res) {
+async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Response): Promise<void> {
 	try {
+		const user_id = req.user?.user_id;
+		if (!user_id) {
+			res.status(400).json({ error: 'User error.' });
+			return;
+		}
 		let order = await TaxiOrderDao.getOrder(req.body.order_id);
-		let driver = await DriverDao.getDriverByUserId(req.user?.user_id);
+		let driver = await DriverDao.getDriverByUserId(user_id);
 		if (!driver) {
-			return res.status(400).json({ error: 'Driver not found.' });
+			res.status(400).json({ error: 'Driver not found.' });
+			return;
 		}
 		let driver_business = await BusinessDao.getBusinessById(driver.business_id);
 		//assign penalties for being late
@@ -1309,7 +841,7 @@ async function completeOrder(req, res) {
 			if (late_seconds > allowed_leeway) {
 				await LateEventsDao.createLateEvent({
 					driver_id: driver.driver_id,
-					order_id: order.order_id,
+					taxi_order_id: order.order_id,
 					seconds: late_seconds - allowed_leeway,
 				});
 			}
@@ -1324,8 +856,8 @@ async function completeOrder(req, res) {
 		}
 		let user = order.user;
 		if (order.type === ORDER_TYPE.VEHICLE_TRANSFER_COMBO) {
-			const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', order.user);
-			const l10nTextHeading = getLocalisedTexts('HEADING', order.user);
+			const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', order.user.language);
+			const l10nTextHeading = getLocalisedTexts('HEADING', order.user.language);
 			await sendNotificationToUser(l10nTextHeading?.completed, l10nText?.vehicleTransferCompleted, order.user_id);
 			order = await TaxiOrderDao.completeOrder(req.body.order_id);
 		} else {
@@ -1348,7 +880,7 @@ async function completeOrder(req, res) {
 				if (DRIVER_CREDIT_CUT > 0) {
 					await WalletFundsHelpers.transferReservedCreditsForOrder(
 						user.user_id,
-						driver_business.stripe_account_id,
+						driver_business?.stripe_account_id as string,
 						DRIVER_CREDIT_CUT,
 						order.order_id,
 						SERVICE_TYPE.TAXI
@@ -1359,7 +891,11 @@ async function completeOrder(req, res) {
 						const paymentIntent = await stripe.client.paymentIntents.retrieve(
 							order.payment.payment_intent_id
 						);
-						stripe.splitCutFromPaymentIntent(paymentIntent, driver_business.stripe_account_id, DRIVER_CUT);
+						stripe.splitCutFromPaymentIntent(
+							paymentIntent,
+							driver_business?.stripe_account_id as string,
+							DRIVER_CUT
+						);
 					}
 				} else if (order.payment.type === 'WALLET') {
 					if (PLATFORM_CUT > 0) {
@@ -1374,7 +910,7 @@ async function completeOrder(req, res) {
 					if (DRIVER_CUT > 0) {
 						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							order.user_id,
-							driver_business.stripe_account_id,
+							driver_business?.stripe_account_id as string,
 							DRIVER_CUT,
 							order.order_id,
 							SERVICE_TYPE.TAXI
@@ -1414,7 +950,7 @@ async function completeOrder(req, res) {
 					if (DRIVER_CUT > 0) {
 						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							parent_user_id,
-							driver_business.stripe_account_id,
+							driver_business?.stripe_account_id as string,
 							DRIVER_CUT,
 							order.order_id,
 							SERVICE_TYPE.TAXI
@@ -1476,7 +1012,7 @@ async function completeOrder(req, res) {
 				if (DRIVER_CREDIT_CUT_CENTS > 0) {
 					await WalletFundsHelpers.transferReservedCreditsForOrder(
 						user.user_id,
-						driver_business.stripe_account_id,
+						driver_business?.stripe_account_id as string,
 						DRIVER_CREDIT_CUT_CENTS,
 						order.order_id,
 						SERVICE_TYPE.TAXI
@@ -1517,7 +1053,7 @@ async function completeOrder(req, res) {
 							order.order_id
 						);
 						if (businessUser) {
-							const updateData = {};
+							const updateData: { [key: string]: { decrement: number } } = {};
 							if (any) {
 								updateData.amount_any_wallet = { decrement: DISCOUNTED_TOTAL_COST / 100 };
 							} else {
@@ -1538,7 +1074,7 @@ async function completeOrder(req, res) {
 						// const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
 						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							businessUser ? businessUser.user_id : user.user_id,
-							driver_business.stripe_account_id,
+							driver_business?.stripe_account_id as string,
 							DRIVER_CUT_CENTS,
 							order.order_id,
 							SERVICE_TYPE.TAXI
@@ -1579,7 +1115,7 @@ async function completeOrder(req, res) {
 							DISCOUNTED_TOTAL_COST,
 							order.order_id
 						);
-						const updateData = {};
+						const updateData: { [key: string]: { decrement: number } } = {};
 						if (any) {
 							updateData.amount_any_wallet = { decrement: DISCOUNTED_TOTAL_COST / 100 };
 						} else {
@@ -1597,7 +1133,7 @@ async function completeOrder(req, res) {
 						});
 						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							parent_user.user_id,
-							driver_business.stripe_account_id,
+							driver_business?.stripe_account_id as string,
 							DRIVER_CUT_CENTS,
 							order.order_id,
 							SERVICE_TYPE.TAXI
@@ -1619,7 +1155,7 @@ async function completeOrder(req, res) {
 						if (allowance < DISCOUNTED_TOTAL_COST / 100) {
 							throw new Error('Insufficient allowance');
 						}
-						const updateData = {};
+						const updateData: { [key: string]: { decrement: number } } = {};
 						if (any) {
 							updateData.amount_any_purchase_order = { decrement: DISCOUNTED_TOTAL_COST / 100 };
 						} else {
@@ -1688,12 +1224,12 @@ async function completeOrder(req, res) {
 			order = await TaxiOrderDao.completeOrder(req.body.order_id);
 			await handleReferral(orderingUser.user_id);
 		}
-		io.emit('driver_available', driver);
-		// io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
-		io.to('order_' + order.order_id).emit('order_completed__taxi', order);
+		(io as Socket).emit('driver_available', driver);
+		// (io as Socket).to("order_" + order.order_id).emit('order_status_change__taxi', order);
+		(io as Socket).to('order_' + order.order_id).emit('order_completed__taxi', order);
 		SocketStore.closeRoom('order_' + order.order_id);
 		console.log('order_completed__taxi ', req.body.order_id);
-		//io.emit("driver_available", driver);
+		//(io as Socket).emit("driver_available", driver);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
@@ -1711,15 +1247,15 @@ async function completeOrder(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  * @prisma_model drivers
  */
-async function updateOrderStatus(req, res) {
+async function updateOrderStatus(req: ValidatedRequest<UpdateTaxiOrder>, res: Response) {
 	try {
 		let order = await TaxiOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
-		io.to('order_' + order.order_id).emit('order_status_change__taxi', order);
+		(io as Socket).to('order_' + order.order_id).emit('order_status_change__taxi', order);
 		let user_id = order?.user_id;
 		let driver_id = order?.driver?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
@@ -1738,7 +1274,7 @@ async function updateOrderStatus(req, res) {
 		// 		},
 		// 	});
 		// }
-		if (order.is_scheduled && !driver.on_order) {
+		if (order.is_scheduled && !driver?.on_order) {
 			await prisma.drivers.update({
 				where: {
 					driver_id: driver_id,
@@ -1749,6 +1285,7 @@ async function updateOrderStatus(req, res) {
 			});
 		}
 		if (
+			user &&
 			order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO &&
 			order.status !== TAXI_ORDER_STATUS.TAXI_DRIVING && //Dont send TAXI_DRIVING notification
 			// !(//only send "your driver is on his way" notification once in order lifespan
@@ -1763,7 +1300,13 @@ async function updateOrderStatus(req, res) {
 				)
 			)
 		)
-			sendOrderNotifications(user, driver?.user, user_id, driver_id, req.body.status);
+			sendOrderNotifications(
+				user.language ?? 'en',
+				driver?.user?.language ?? 'en',
+				user_id,
+				driver_id,
+				req.body.status as string
+			);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
@@ -1778,14 +1321,15 @@ async function updateOrderStatus(req, res) {
  * @description Updates the vehicle preferences of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateTaxiOrderPreferences
  * @bodyDescription Request body must include 'order_id' to identify the order and 'vehicle_category' and 'vehicle_class' to specify the new vehicle preferences.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateTaxiOrderPreferences} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
+ * @response 404 - Order not found. Returns error message if the specified order does not exist.
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function updateTaxiOrderPreferences(req, res) {
+async function updateTaxiOrderPreferences(req: ValidatedRequest<UpdateTaxiOrderPreferences>, res: Response) {
 	try {
 		const { order_id, vehicle_category, vehicle_class, ride_requirements } = req.body;
 		// Fetch the current order details
@@ -1803,7 +1347,7 @@ async function updateTaxiOrderPreferences(req, res) {
 		order = await TaxiOrderDao.updateOrder(order.order_id, {
 			preferences: updatedPreferences,
 		});
-		io.to('order_' + order.order_id).emit('order_preferences_change__taxi', order);
+		(io as Socket).to('order_' + order.order_id).emit('order_preferences_change__taxi', order);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
@@ -1818,35 +1362,40 @@ async function updateTaxiOrderPreferences(req, res) {
  * @description Cancels a taxi order with the provided order ID, status, and cancellation reason from the request body. Returns the cancelled order if successful and emits a 'order_cancelled' event.
  * @operationId cancelOrder
  * @bodyDescription Request body must include 'order_id', 'status', and 'cancellation_reason'.
- * @bodyContent {object} application/json
+ * @bodyContent {CancelTaxiOrder} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the cancelled order in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  * @prisma_model taxi_orders
  */
-async function cancelOrder(req, res) {
+async function cancelOrder(req: ValidatedRequest<CancelTaxiOrder>, res: Response): Promise<void> {
 	const { order_id, status, cancellation_reason } = req.body;
 	console.info('TaxiOrderController', 'CANCEL ORDER', req.body);
 	try {
+		const userId = req.user?.user_id;
+		if (!userId) {
+			res.status(400).json({ error: 'User error.' });
+			return;
+		}
 		if (!order_id || !status) {
-			console.error('Order ID and status are required.');
-			return res.status(400).json({ error: 'Order ID and status are required.' });
+			res.status(400).json({ error: 'Order ID and status are required.' });
+			return;
 		}
 		let order = await TaxiOrderDao.getOrder(order_id);
 		if (!order) {
-			console.error(`Order not found for order_id: ${order_id}`);
-			return res.status(400).json({ error: `Order not found for order_id: ${order_id}` });
+			res.status(404).json({ error: `Order not found for order_id: ${order_id}` });
+			return;
 		}
 		console.info('TaxiOrderController', 'GET ORDER BY ID', order);
 		let user_id = order?.user_id;
 		let driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
 		let driver = driver_id ? await DriverDao.getDriverById(driver_id) : null;
-		const skip_cancellation_fee = order.type === 'TAXI' || req.user.user_id !== order?.user_id;
-		if (req.user.user_id === driver?.user?.user_id) {
+		const skip_cancellation_fee = order.type === 'TAXI' || user_id !== order?.user_id;
+		if (user_id === driver?.user_id) {
 			await ScoringPointsDao.createScoringPoints({
-				driver_id: driver.driver_id,
+				driver_id: driver_id,
 				taxi_order_id: order.order_id,
 				points: 1,
 				isPenalty: true,
@@ -1854,9 +1403,9 @@ async function cancelOrder(req, res) {
 			});
 		}
 		console.log('user console.log', user?.user_id);
-		console.log('Driver console.log', driver?.user?.user_id);
+		console.log('Driver console.log', driver?.user_id);
 		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO)
-			sendOrderNotifications(user, driver?.user, user_id, driver_id, status);
+			sendOrderNotifications(user?.language ?? 'en', driver?.user?.language ?? 'en', user_id, driver_id, status);
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 		// Determine the cancellation reason
 		let reason = '';
@@ -1872,8 +1421,8 @@ async function cancelOrder(req, res) {
 		// 			for (let or of parentOrder.grouped_orders) {
 		// 				await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
 		// 				await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
-		// 				io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
-		// 				io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
+		// 				(io as Socket).to("order_" + or.order_id).emit("order_status_change__taxi", or);
+		// 				(io as Socket).to("order_" + or.order_id).emit("order_cancelled__taxi", or);
 		// 			}
 		// 		}
 		// 	}
@@ -1881,8 +1430,8 @@ async function cancelOrder(req, res) {
 		// 		for (let or of order.grouped_orders) {
 		// 			await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
 		// 			await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
-		// 			io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
-		// 			io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
+		// 			(io as Socket).to("order_" + or.order_id).emit("order_status_change__taxi", or);
+		// 			(io as Socket).to("order_" + or.order_id).emit("order_cancelled__taxi", or);
 		// 		}
 		// 	}
 		// }
@@ -1896,10 +1445,12 @@ async function cancelOrder(req, res) {
 							disconnect: true,
 						},
 					});
-					io.emit('driver_available', driver);
+					(io as Socket).emit('driver_available', driver);
 				}
 				await TaxiHelper.revokeTaxiOrderFromDrivers(vehicle_transfer_order.order_id);
-				io.to('order_' + vehicle_transfer_order.order_id).emit('order_cancelled__taxi', vehicle_transfer_order);
+				(io as Socket)
+					.to('order_' + vehicle_transfer_order.order_id)
+					.emit('order_cancelled__taxi', vehicle_transfer_order);
 				if (vehicle_transfer_order.driver_id) {
 					let driver = await DriverDao.getDriverById(vehicle_transfer_order.driver_id);
 					await TaxiOrderDao.updateOrder(order_id, {
@@ -1907,7 +1458,7 @@ async function cancelOrder(req, res) {
 							disconnect: true,
 						},
 					});
-					io.emit('driver_available', driver);
+					(io as Socket).emit('driver_available', driver);
 					SocketStore.removeUserFromRoom(driver?.user_id, `order_${order_id}`);
 				}
 			}
@@ -1933,10 +1484,10 @@ async function cancelOrder(req, res) {
 					disconnect: true,
 				},
 			});
-			io.emit('driver_available', driver);
+			(io as Socket).emit('driver_available', driver);
 			SocketStore.removeUserFromRoom(driver?.user_id, `order_${order_id}`);
 		}
-		io.to('order_' + order.order_id).emit('order_cancelled__taxi', order);
+		(io as Socket).to('order_' + order.order_id).emit('order_cancelled__taxi', order);
 		SocketStore.removeUserFromRoom(order?.user_id, `order_${order_id}`);
 		res.status(200).json(order);
 	} catch (e) {
@@ -1952,34 +1503,47 @@ async function cancelOrder(req, res) {
  * @description Rejects a taxi order with the provided order ID, status, and rejection reason from the request body. Returns the rejected order if successful and emits a 'order_rejected' event.
  * @operationId rejectOrder
  * @bodyDescription Request body must include 'order_id', 'status', and 'rejection_reason'.
- * @bodyContent {object} application/json
+ * @bodyContent {CancelTaxiOrder} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the rejected order in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  * @prisma_model taxi_orders
  * @prisma_model taxi_order_sent
  */
-async function rejectOrder(req, res) {
+async function rejectOrder(req: ValidatedRequest<CancelTaxiOrder>, res: Response): Promise<void> {
 	const { order_id, status, cancellation_reason } = req.body;
 	console.info('TaxiOrderController', 'REJECT ORDER', req.body);
 	let new_status = status;
 	try {
+		const user_id = req.user?.user_id;
+		if (!user_id) {
+			res.status(400).json({ error: 'User error.' });
+			return;
+		}
 		let order = await TaxiOrderDao.getOrder(order_id);
 		if (order?.status === TAXI_ORDER_STATUS.CUSTOMER_CANCELED) {
-			return res
-				.status(410)
-				.json({ error: 'Order was already canceled by customer.', error_type: 'ERR_ORDER_ALREADY_CANCELED' });
+			res.status(410).json({
+				error: 'Order was already canceled by customer.',
+				error_type: 'ERR_ORDER_ALREADY_CANCELED',
+			});
+			return;
 		}
 		let customer_user_id = order?.user_id;
 		let order_driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(customer_user_id);
 		let orderDriver = order_driver_id ? await DriverDao.getDriverById(order_driver_id) : null;
-		let rejectingDriver = await DriverDao.getDriverByUserId(req.user.user_id);
+		let rejectingDriver = await DriverDao.getDriverByUserId(user_id);
 		console.log('user console.log', user?.user_id);
-		console.log('Driver console.log', orderDriver?.user?.user_id);
-		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO && rejectingDriver.driver_id === order.driver_id)
-			sendOrderNotifications(user, rejectingDriver?.user, customer_user_id, order_driver_id, status);
+		console.log('Driver console.log', orderDriver?.user_id);
+		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO && rejectingDriver?.driver_id === order.driver_id)
+			sendOrderNotifications(
+				user?.language ?? 'en',
+				rejectingDriver?.user?.language ?? 'en',
+				customer_user_id,
+				order_driver_id,
+				status
+			);
 		if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
 			new_status = TAXI_ORDER_STATUS.PENDING;
 			await TaxiOrderDao.updateOrder(order_id, {
@@ -2032,10 +1596,12 @@ async function rejectOrder(req, res) {
 					disconnect: true,
 				},
 			});
-			io.emit('driver_available', driver);
+			(io as Socket).emit('driver_available', driver);
 		}
-		io.to('order_' + order.order_id).emit('order_rejected__taxi', { order, driver_id: order_driver_id });
-		io.to('order_' + order.order_id).emit('order_status_change__taxi', order);
+		(io as Socket)
+			.to('order_' + order.order_id)
+			.emit('order_rejected__taxi', { order, driver_id: order_driver_id });
+		(io as Socket).to('order_' + order.order_id).emit('order_status_change__taxi', order);
 		// let userActiveOrders = await TaxiOrderDao.userActiveOrders(order.user_id);
 		// let pending = false;
 		// for (let or of userActiveOrders) {
@@ -2063,17 +1629,17 @@ async function rejectOrder(req, res) {
  * @description Updates the route of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateTaxiOrderRoute
  * @bodyDescription Request body must include 'order_id' and the new 'route' details.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateTaxiOrderRoute} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new route in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function updateTaxiOrderRoute(req, res) {
+async function updateTaxiOrderRoute(req: ValidatedRequest<UpdateTaxiOrderRoute>, res: Response): Promise<void> {
 	try {
 		let order = await TaxiOrderDao.updateTaxiOderRoute(req.body.order_id, req.body.route);
-		io.to('order_' + order.order_id).emit('order_route_change', order);
+		(io as Socket).to('order_' + order.order_id).emit('order_route_change', order);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
@@ -2088,17 +1654,20 @@ async function updateTaxiOrderRoute(req, res) {
  * @description Updates the pickup location of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateTaxiOrderPickupLocation
  * @bodyDescription Request body must include 'order_id' and the new 'pickup_location' details.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateTaxiOrderPickupLocation} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new pickup location in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function updateTaxiOrderPickupLocation(req, res) {
+async function updateTaxiOrderPickupLocation(
+	req: ValidatedRequest<UpdateTaxiOrderPickupLocation>,
+	res: Response
+): Promise<void> {
 	try {
 		let order = await TaxiOrderDao.updateTaxiOrderPickupLocation(req.body.order_id, req.body.pickup_location);
-		io.to('order_' + order.order_id).emit('order_pickup_location_change', order);
+		(io as Socket).to('order_' + order.order_id).emit('order_pickup_location_change', order);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
@@ -2113,17 +1682,20 @@ async function updateTaxiOrderPickupLocation(req, res) {
  * @description Updates the delivery location of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateTaxiOrderDeliveryLocation
  * @bodyDescription Request body must include 'order_id' and the new 'delivery_location' details.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateTaxiOrderDeliveryLocation} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new delivery location in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function updateTaxiOrderDeliveryLocation(req, res) {
+async function updateTaxiOrderDeliveryLocation(
+	req: ValidatedRequest<UpdateTaxiOrderDeliveryLocation>,
+	res: Response
+): Promise<void> {
 	try {
 		let order = await TaxiOrderDao.updateTaxiOrderDeliveryLocation(req.body.order_id, req.body.delivery_location);
-		io.to('order_' + order.order_id).emit('order_delivery_location_change', order);
+		(io as Socket).to('order_' + order.order_id).emit('order_delivery_location_change', order);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
@@ -2138,18 +1710,21 @@ async function updateTaxiOrderDeliveryLocation(req, res) {
  * @description Updates the complete route of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateCompleteTaxiRoute
  * @bodyDescription Request body must include 'order_id', and the new 'route' details.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateTaxiOrderCompleteRoute} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new complete route in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function updateCompleteTaxiRoute(req, res) {
+async function updateCompleteTaxiRoute(
+	req: ValidatedRequest<UpdateTaxiOrderCompleteRoute>,
+	res: Response
+): Promise<void> {
 	const { order_id, route } = req.body;
 	try {
 		let order = await TaxiOrderDao.updateCompleteTaxiRoute(order_id, route);
-		io.to('order_' + order.order_id).emit('order_complete_route_change', order);
+		(io as Socket).to('order_' + order.order_id).emit('order_complete_route_change', order);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
@@ -2164,19 +1739,19 @@ async function updateCompleteTaxiRoute(req, res) {
  * @description Updates the timeline of a taxi order.
  * @operationId updateTaxiOrderTimeline
  * @bodyDescription Request body must include 'order_id', and the new 'timeline' details.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateTaxiOrderTimeline} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new timeline in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function updateTaxiOrderTimeline(req, res) {
+async function updateTaxiOrderTimeline(req: ValidatedRequest<UpdateTaxiOrderTimeline>, res: Response): Promise<void> {
 	const { order_id, timeline } = req.body;
 	console.info('TaxiOrderController', 'UPDATE ORDER TIMELINE', req.body);
 	try {
 		let order = await TaxiOrderDao.updateTaxiOrderTimeline(order_id, timeline);
-		io.to('order_' + order.order_id).emit('order_timeline_change', order);
+		(io as Socket).to('order_' + order.order_id).emit('order_timeline_change', order);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
@@ -2191,14 +1766,14 @@ async function updateTaxiOrderTimeline(req, res) {
  * @description Updates the payment details of the order.
  * @operationId updateTaxiOrderPayment
  * @bodyDescription Request body must include 'order_id', and the new 'route' details.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateTaxiOrderPayment} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new payment details.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function updateTaxiOrderPayment(req, res) {
+async function updateTaxiOrderPayment(req: ValidatedRequest<UpdateTaxiOrderPayment>, res: Response): Promise<void> {
 	const { order_id, payment } = req.body;
 	try {
 		let order = await TaxiOrderDao.getOrder(order_id);
@@ -2206,7 +1781,7 @@ async function updateTaxiOrderPayment(req, res) {
 			throw new Error('Cant update paid payment.');
 		}
 		order = await TaxiOrderDao.updateTaxiOrderPayment(order_id, payment);
-		io.to('order_' + order.order_id).emit('order_payment_change__taxi', order);
+		(io as Socket).to('order_' + order.order_id).emit('order_payment_change__taxi', order);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
@@ -2221,26 +1796,31 @@ async function updateTaxiOrderPayment(req, res) {
  * @description Reserves wallet funds (personal, family or business wallet) and marks the order as PAID, then moves it to PENDING.
  * @operationId confirmWalletPayment
  * @bodyDescription Body must contain order_id.
- * @bodyContent {object} application/json
+ * @bodyContent {TaxiOrderId} application/json
  * @bodyRequired
  * @response 200 - Updated order with payment.status=PAID and status=PENDING
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 400 - Bad request (wrong status/type or insufficient funds)
  * @response 500 - Server error
  * @prisma_model wallet_funds
  * @prisma_model allowances
  * @prisma_model taxi_orders
  */
-async function confirmWalletPayment(req, res) {
+async function confirmWalletPayment(req: ValidatedRequest<TaxiOrderId>, res: Response): Promise<void> {
 	const { order_id } = req.body;
 	try {
 		let order = await TaxiOrderDao.getOrder(order_id);
-		if (!order) return res.status(404).json({ error: 'Order not found' });
+		if (!order) {
+			res.status(404).json({ error: 'Order not found' });
+			return;
+		}
 		if (order.status !== TAXI_ORDER_STATUS.AWAITING_PAYMENT) {
-			return res.status(400).json({ error: 'Order is not awaiting payment' });
+			res.status(400).json({ error: 'Order is not awaiting payment' });
+			return;
 		}
 		if (!order.payment || !['WALLET', 'FAMILY_WALLET'].includes(order.payment.type)) {
-			return res.status(400).json({ error: 'Only wallet payments can be confirmed' });
+			res.status(400).json({ error: 'Only wallet payments can be confirmed' });
+			return;
 		}
 		const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100);
 		const EXTRAS_COST_CENTS = Math.round(
@@ -2258,13 +1838,16 @@ async function confirmWalletPayment(req, res) {
 			let walletUserId = order.user_id;
 			if (order.payment.type === 'FAMILY_WALLET') {
 				const user = order.user || (await UsersDao.getUserById(order.user_id));
-				if (!user?.parent_user?.parent_user_id)
-					return res.status(400).json({ error: 'User has no family wallet' });
+				if (!user?.parent_user?.parent_user_id) {
+					res.status(400).json({ error: 'User has no family wallet' });
+					return;
+				}
 				walletUserId = user.parent_user.parent_user_id;
 			}
 			const available = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(walletUserId);
 			if ((available['TAXI'] || 0) + (available[null] || 0) < discounted / 100) {
-				return res.status(400).json({ error: 'Insufficient wallet funds' });
+				res.status(400).json({ error: 'Insufficient wallet funds' });
+				return;
 			}
 			await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(walletUserId, discounted, order.order_id);
 		}
@@ -2272,9 +1855,9 @@ async function confirmWalletPayment(req, res) {
 			payment: { ...order.payment, status: 'PAID' },
 			status: TAXI_ORDER_STATUS.PENDING,
 		});
-		io.to('order_' + order.order_id).emit('order_payment_change__taxi', order);
-		io.to('order_' + order.order_id).emit('order_status_change__taxi', order);
-		return res.status(200).json(order);
+		(io as Socket).to('order_' + order.order_id).emit('order_payment_change__taxi', order);
+		(io as Socket).to('order_' + order.order_id).emit('order_status_change__taxi', order);
+		res.status(200).json(order);
 	} catch (e) {
 		console.error('TaxiOrderController.confirmWalletPayment', e);
 		res.status(500).json(e);
@@ -2289,28 +1872,35 @@ async function confirmWalletPayment(req, res) {
  * @operationId uploadTaxiOrderSignature
  * @pathParam {string} order_id - Taxi order id
  * @bodyDescription Body must contain file.base64 and file.mime_type
- * @bodyContent {object} application/json
+ * @bodyContent {TaxiFileBody} application/json
  * @bodyRequired
  * @response 200 - Updated order with new timeline entry
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 400 - Missing file data or order not found
  * @prisma_model files
  * @prisma_model taxi_orders
  */
-async function uploadTaxiOrderSignature(req, res) {
+async function uploadTaxiOrderSignature(
+	req: ValidatedRequest<TaxiFileBody, { order_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		const { order_id } = req.params;
 		const { file } = req.body || {};
 		if (!file?.base64 || !file?.mime_type) {
-			return res.status(400).json({ error: 'Missing file data' });
+			res.status(400).json({ error: 'Missing file data' });
+			return;
 		}
 		const order = await TaxiOrderDao.getOrder(order_id);
-		if (!order) return res.status(404).json({ error: 'Order not found' });
+		if (!order) {
+			res.status(404).json({ error: 'Order not found' });
+			return;
+		}
 		const file_type = file.mime_type.startsWith('image/') ? 'IMAGE' : 'DOCUMENT';
 		const newFile = await FileDao.createFile(file_type, file.mime_type, true);
 		const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 		await S3Helper.SaveObject(key, file.base64, file.mime_type, {}, newFile, true);
-		const savedFile = await FileDao.getFile(newFile.file_id);
+		const savedFile: any = await FileDao.getFile(newFile.file_id);
 		const entry = [
 			{
 				status: 'ORDER_SIGNATURE',
@@ -2319,11 +1909,11 @@ async function uploadTaxiOrderSignature(req, res) {
 			},
 		];
 		const updated = await TaxiOrderDao.updateTaxiOrderTimeline(order_id, entry);
-		io.to('order_' + updated.order_id).emit('order_timeline_change', updated);
-		return res.status(200).json(updated);
+		(io as Socket).to('order_' + updated.order_id).emit('order_timeline_change', updated);
+		res.status(200).json(updated);
 	} catch (e) {
 		console.error('TaxiOrderController.uploadTaxiOrderSignature', e);
-		return res.status(500).json(e);
+		res.status(500).json(e);
 	}
 }
 
@@ -2335,28 +1925,35 @@ async function uploadTaxiOrderSignature(req, res) {
  * @operationId uploadTaxiOrderPhoto
  * @pathParam {string} order_id - Taxi order id
  * @bodyDescription Body must contain file.base64 and file.mime_type
- * @bodyContent {object} application/json
+ * @bodyContent {TaxiFileBody} application/json
  * @bodyRequired
  * @response 200 - Updated order with new timeline entry
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 400 - Missing file data or order not found
  * @prisma_model files
  * @prisma_model taxi_orders
  */
-async function uploadTaxiOrderPhoto(req, res) {
+async function uploadTaxiOrderPhoto(
+	req: ValidatedRequest<TaxiFileBody, { order_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
 		const { order_id } = req.params;
 		const { file } = req.body || {};
 		if (!file?.base64 || !file?.mime_type) {
-			return res.status(400).json({ error: 'Missing file data' });
+			res.status(400).json({ error: 'Missing file data' });
+			return;
 		}
 		const order = await TaxiOrderDao.getOrder(order_id);
-		if (!order) return res.status(404).json({ error: 'Order not found' });
+		if (!order) {
+			res.status(404).json({ error: 'Order not found' });
+			return;
+		}
 		const file_type = file.mime_type.startsWith('image/') ? 'IMAGE' : 'DOCUMENT';
 		const newFile = await FileDao.createFile(file_type, file.mime_type, true);
 		const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 		await S3Helper.SaveObject(key, file.base64, file.mime_type, {}, newFile, true);
-		const savedFile = await FileDao.getFile(newFile.file_id);
+		const savedFile: any = await FileDao.getFile(newFile.file_id);
 		const entry = [
 			{
 				status: 'ORDER_PHOTO',
@@ -2365,11 +1962,11 @@ async function uploadTaxiOrderPhoto(req, res) {
 			},
 		];
 		const updated = await TaxiOrderDao.updateTaxiOrderTimeline(order_id, entry);
-		io.to('order_' + updated.order_id).emit('order_timeline_change', updated);
-		return res.status(200).json(updated);
+		(io as Socket).to('order_' + updated.order_id).emit('order_timeline_change', updated);
+		res.status(200).json(updated);
 	} catch (e) {
 		console.error('TaxiOrderController.uploadTaxiOrderPhoto', e);
-		return res.status(500).json(e);
+		res.status(500).json(e);
 	}
 }
 
@@ -2380,14 +1977,14 @@ async function uploadTaxiOrderPhoto(req, res) {
  * @description Append driver to taxi order.
  * @operationId appendTaxiDriver
  * @bodyDescription Request body must include 'order_id', and 'driver_id'
- * @bodyContent {object} application/json
+ * @bodyContent {TaxiIdAndDriver} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new driver details.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function appendTaxiDriver(req, res) {
+async function appendTaxiDriver(req: ValidatedRequest<TaxiIdAndDriver>, res: Response) {
 	const { order_id, driver_id } = req.body;
 	try {
 		console.info(order_id, driver_id);
@@ -2400,7 +1997,7 @@ async function appendTaxiDriver(req, res) {
 		});
 		await TaxiHelper.revokeTaxiOrderFromOtherDrivers(order_id, driver_id);
 		const driver = await DriverDao.getDriverById(driver_id);
-		await TaxiHelper.sendTaxiOrderToDriver(order, driver, true);
+		if (driver) await TaxiHelper.sendTaxiOrderToDriver(order, driver, true);
 		res.status(200).json({ message: 'driver selected' });
 	} catch (e) {
 		console.info('appendTaxiDriver', e);
@@ -2414,11 +2011,11 @@ async function appendTaxiDriver(req, res) {
  * @description This fetches all scheduled taxi orders.
  * @operationId getScheduledOrders
  * @response 200 - Successful operation. Returns a list of scheduled taxi orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getScheduledOrders(req, res) {
+async function getScheduledOrders(req: Request, res: Response): Promise<void> {
 	try {
 		const orders = await TaxiOrderDao.getOrders({
 			where: {
@@ -2441,11 +2038,11 @@ async function getScheduledOrders(req, res) {
  * @operationId getAcceptedScheduledOrders
  * @pathParam {string} driver_id - Driver id
  * @response 200 - Successful operation. Returns a list of accepted scheduled taxi orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getAcceptedScheduledOrders(req, res) {
+async function getAcceptedScheduledOrders(req: Request, res: Response): Promise<void> {
 	try {
 		const orders = await TaxiOrderDao.getOrders({
 			where: {
@@ -2469,11 +2066,14 @@ async function getAcceptedScheduledOrders(req, res) {
  * @operationId getScheduledOrdersByUserId
  * @pathParam {string} user_id - User id
  * @response 200 - Successful operation. Returns a list of scheduled taxi orders in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getScheduledOrdersByUserId(req, res) {
+async function getScheduledOrdersByUserId(
+	req: ValidatedRequest<never, { user_id: string }>,
+	res: Response
+): Promise<void> {
 	const { user_id } = req.params;
 	try {
 		const orders = await TaxiOrderDao.getOrders({
@@ -2497,15 +2097,20 @@ async function getScheduledOrdersByUserId(req, res) {
  * @operationId getDriversForOrder
  * @pathParam {string} order_id - Taxi order id
  * @response 200 - Successful operation. Returns a list of available drivers in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail[]} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model drivers
  * @prisma_model taxi_order_sent
  */
-async function getDriversForOrder(req, res) {
+async function getDriversForOrder(req: ValidatedRequest<never, { order_id: string }>, res: Response): Promise<void> {
 	try {
-		const drivers = await DriverDao.getAvailableDrivers();
 		const order_id = req.params.order_id;
+		const order = await TaxiOrderDao.getOrder(order_id);
+		if (!order) {
+			res.status(404).json({ error: 'Order not found' });
+			return;
+		}
+		const drivers = await DriverDao.getAvailableDrivers(order.type);
 		let availableDrivers = [];
 		for (let driver of drivers) {
 			let isSent = await TaxiOrderDao.isOrderSent(order_id, driver);
@@ -2520,41 +2125,42 @@ async function getDriversForOrder(req, res) {
 	}
 }
 
-/**
- * GET /taxi/orders/pagination
- * @tag Taxi
- * @summary Get taxi orders with pagination.
- * @description This fetches orders with pagination.
- * @operationId getTaxiOrdersWithPagination
- * @response 200 - Successful operation. Returns a list of orders in the response body.
- * @responseContent {object} 200.application/json
- * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
- * @prisma_model taxi_orders
- */
-async function getTaxiOrdersWithPagination(req, res) {
-	const { where, orderBy } = req.body;
-	const page = req.body.page ? parseInt(req.body.page) : 1;
-	const take = req.body.take ? parseInt(req.body.take) : 8;
-	try {
-		const skip = (page - 1) * take;
-		const [data, total] = await Promise.all([
-			prisma.taxi_orders.findMany({
-				take: take,
-				skip: skip,
-				where,
-				orderBy: orderBy ? orderBy : { created_at: 'desc' },
-				include: { user: true, vehicle: true, driver: { include: { user: true } } },
-			}),
-			prisma.taxi_orders.count({
-				where, // Ensure the count matches the filtered results
-			}),
-		]);
-		res.status(200).json({ data, total });
-	} catch (error) {
-		console.error('TaxiOrderController', error);
-		res.status(500).json({ message: 'Error something went wrong...' });
-	}
-}
+// DEPRECATED!
+// /**
+//  * GET /taxi/orders/pagination
+//  * @tag Taxi
+//  * @summary Get taxi orders with pagination.
+//  * @description This fetches orders with pagination.
+//  * @operationId getTaxiOrdersWithPagination
+//  * @response 200 - Successful operation. Returns a list of orders in the response body.
+//  * @responseContent {object} 200.application/json
+//  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+//  * @prisma_model taxi_orders
+//  */
+// async function getTaxiOrdersWithPagination(req, res) {
+// 	const { where, orderBy } = req.body;
+// 	const page = req.body.page ? parseInt(req.body.page) : 1;
+// 	const take = req.body.take ? parseInt(req.body.take) : 8;
+// 	try {
+// 		const skip = (page - 1) * take;
+// 		const [data, total] = await Promise.all([
+// 			prisma.taxi_orders.findMany({
+// 				take: take,
+// 				skip: skip,
+// 				where,
+// 				orderBy: orderBy ? orderBy : { created_at: 'desc' },
+// 				include: { user: true, vehicle: true, driver: { include: { user: true } } },
+// 			}),
+// 			prisma.taxi_orders.count({
+// 				where, // Ensure the count matches the filtered results
+// 			}),
+// 		]);
+// 		res.status(200).json({ data, total });
+// 	} catch (error) {
+// 		console.error('TaxiOrderController', error);
+// 		res.status(500).json({ message: 'Error something went wrong...' });
+// 	}
+// }
 
 /**
  * GET /taxi/today
@@ -2563,11 +2169,11 @@ async function getTaxiOrdersWithPagination(req, res) {
  * @description This fetches all taxi orders for today and earnings.
  * @operationId getTaxiOrdersToday
  * @response 200 - Successful operation. Returns a list of all taxi orders today and earnings in the response body.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrdersTodayResponse} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function getTaxiOrdersToday(req, res) {
+async function getTaxiOrdersToday(req: Request, res: Response): Promise<void> {
 	try {
 		const orders = await prisma.taxi_orders.findMany({
 			where: {
@@ -2576,10 +2182,13 @@ async function getTaxiOrdersToday(req, res) {
 			},
 		});
 		if (orders) {
-			return res
-				.status(200)
-				.json({ orders: orders.length, amount: todaysEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED) });
+			res.status(200).json({
+				orders: orders.length,
+				amount: todaysEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED),
+			});
+			return;
 		}
+		res.status(204).json({ orders: 0, amount: 0 });
 	} catch (e) {
 		console.log('TaxiOrderController', e);
 		res.status(500).json(e);
@@ -2592,15 +2201,23 @@ async function getTaxiOrdersToday(req, res) {
  * @description Cancels all orders in a grouped taxi order based on the provided parent order ID.
  * @operationId cancelGroupedOrderByParentId
  * @bodyDescription Request body must include 'parent_order_id', 'status', and 'cancellation_reason'.
- * @bodyContent {object} application/json
+ * @bodyContent {CancelGroupedTaxiOrder} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns a list of all canceled taxi order IDs.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderIdsArray} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function cancelGroupedOrderByParentId(req, res) {
+async function cancelGroupedOrderByParentId(
+	req: ValidatedRequest<CancelGroupedTaxiOrder>,
+	res: Response
+): Promise<void> {
 	console.info('TaxiOrderController', 'CANCEL GROUP ORDER', req.body);
+	const user_id = req.user?.user_id;
+	if (!user_id) {
+		res.status(401).json({ error: 'Unauthorized' });
+		return;
+	}
 	const { parent_order_id, status, cancellation_reason } = req.body;
 	let reason = '';
 	if (Array.isArray(cancellation_reason) && cancellation_reason.length > 0) {
@@ -2613,13 +2230,13 @@ async function cancelGroupedOrderByParentId(req, res) {
 		await TaxiHelper.revokeTaxiOrderFromDrivers(parent_order_id);
 		let parent_order = await TaxiOrderDao.getOrder(parent_order_id);
 		console.info(parent_order.grouped_orders);
-		const skip_cancellation_fee = parent_order.type === 'TAXI' || req.user.user_id !== parent_order?.user_id;
+		const skip_cancellation_fee = parent_order.type === 'TAXI' || user_id !== parent_order?.user_id;
 		for (let order of parent_order.grouped_orders) {
 			console.info('TaxiOrderController', 'CANCELLING CHILD ORDER', order);
 			const { order_id, user_id, driver_id } = order;
 			const user = await UsersDao.getUserById(user_id);
 			const driver = driver_id ? await DriverDao.getDriverById(driver_id) : null;
-			sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
+			sendOrderNotifications(user?.language ?? 'en', driver?.user?.language ?? 'en', user_id, driver_id, STATUS);
 			await TaxiHelper.revokeTaxiOrderFromDrivers(order_id);
 			const canceled_order = await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
 			await TaxiHelper.handlePaymentRefund(
@@ -2630,8 +2247,8 @@ async function cancelGroupedOrderByParentId(req, res) {
 				order?.preferences?.vehicle_class,
 				skip_cancellation_fee
 			);
-			io.to('order_' + order_id).emit('order_status_change__taxi', canceled_order);
-			io.to('order_' + order_id).emit('order_cancelled__taxi', canceled_order);
+			(io as Socket).to('order_' + order_id).emit('order_status_change__taxi', canceled_order);
+			(io as Socket).to('order_' + order_id).emit('order_cancelled__taxi', canceled_order);
 			SocketStore.removeUserFromRoom(user_id, `order_${order_id}`);
 			if (driver) {
 				SocketStore.removeUserFromRoom(driver.user_id, `order_${order_id}`);
@@ -2640,17 +2257,17 @@ async function cancelGroupedOrderByParentId(req, res) {
 						disconnect: true,
 					},
 				});
-				io.emit('driver_available', driver);
+				(io as Socket).emit('driver_available', driver);
 			}
 		}
 		console.info('TaxiOrderController', 'CANCELLING PARENT ORDER', parent_order);
 		const { order_id, user_id, driver_id } = parent_order;
 		const user = await UsersDao.getUserById(user_id);
 		const driver = driver_id ? await DriverDao.getDriverById(driver_id) : null;
-		sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
+		sendOrderNotifications(user?.language ?? 'en', driver?.user?.language ?? 'en', user_id, driver_id, STATUS);
 		const canceled_order = await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
-		io.to('order_' + order_id).emit('order_status_change__taxi', canceled_order);
-		io.to('order_' + order_id).emit('order_cancelled__taxi', canceled_order);
+		(io as Socket).to('order_' + order_id).emit('order_status_change__taxi', canceled_order);
+		(io as Socket).to('order_' + order_id).emit('order_cancelled__taxi', canceled_order);
 		SocketStore.removeUserFromRoom(user_id, `order_${order_id}`);
 		if (driver) {
 			SocketStore.removeUserFromRoom(driver.user_id, `order_${order_id}`);
@@ -2659,7 +2276,7 @@ async function cancelGroupedOrderByParentId(req, res) {
 					disconnect: true,
 				},
 			});
-			io.emit('driver_available', driver);
+			(io as Socket).emit('driver_available', driver);
 		}
 		res.status(200).json([parent_order_id, ...parent_order.grouped_orders.map((order) => order.order_id)]);
 	} catch (e) {
@@ -2674,15 +2291,23 @@ async function cancelGroupedOrderByParentId(req, res) {
  * @description Rejects all orders in a grouped taxi order based on the provided parent order ID.
  * @operationId rejectGroupedOrderByParentId
  * @bodyDescription Request body must include 'parent_order_id' and 'rejection_reason'.
- * @bodyContent {object} application/json
+ * @bodyContent {RejectGroupedTaxiOrder} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns a list of all rejected taxi order IDs.
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderIdsArray} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function rejectGroupedOrderByParentId(req, res) {
+async function rejectGroupedOrderByParentId(
+	req: ValidatedRequest<RejectGroupedTaxiOrder>,
+	res: Response
+): Promise<void> {
 	console.info('TaxiOrderController', 'REJECT GROUP ORDER', req.body);
+	const user_id = req.user?.user_id;
+	if (!user_id) {
+		res.status(401).json({ error: 'Unauthorized' });
+		return;
+	}
 	const { parent_order_id, rejection_reason } = req.body;
 	let reason = '';
 	if (Array.isArray(rejection_reason) && rejection_reason.length > 0) {
@@ -2700,9 +2325,9 @@ async function rejectGroupedOrderByParentId(req, res) {
 			const { order_id, user_id, driver_id } = order;
 			//const user = await UsersDao.getUserById(user_id);
 			const driver = driver_id ? await DriverDao.getDriverById(driver_id) : null;
-			const userDriver = await DriverDao.getDriverByUserId(req.user.user_id);
+			const userDriver = await DriverDao.getDriverByUserId(user_id);
 			//sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
-			if (order.driver_id === userDriver.driver_id) {
+			if (order.driver_id === userDriver?.driver_id) {
 				order = await TaxiOrderDao.updateOrder(order_id, {
 					status: TAXI_ORDER_STATUS.PENDING,
 					last_sent_at: null,
@@ -2730,18 +2355,24 @@ async function rejectGroupedOrderByParentId(req, res) {
 					});
 				}
 			}
-			io.to('order_' + order_id).emit('order_status_change__taxi', order);
-			if (driver && userDriver.driver_id === driver.driver_id) {
-				io.to('order_' + order_id).emit('order_rejected__taxi', order);
+			(io as Socket).to('order_' + order_id).emit('order_status_change__taxi', order);
+			if (driver && userDriver?.driver_id === driver.driver_id) {
+				(io as Socket).to('order_' + order_id).emit('order_rejected__taxi', order);
 				const user = await UsersDao.getUserById(user_id);
-				sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
+				sendOrderNotifications(
+					user?.language ?? 'en',
+					driver?.user?.language ?? 'en',
+					user_id,
+					driver_id,
+					STATUS
+				);
 				await TaxiOrderDao.updateOrder(order_id, {
 					driver: {
 						disconnect: true,
 					},
 				});
 				SocketStore.removeUserFromRoom(driver?.user_id, `order_${order_id}`);
-				io.emit('driver_available', driver);
+				(io as Socket).emit('driver_available', driver);
 			}
 		}
 		let userActiveOrders = await TaxiOrderDao.userActiveOrders(parent_order.user_id);
@@ -2804,38 +2435,38 @@ async function rejectGroupedOrderByParentId(req, res) {
 // 		res.status(500).json(e);
 // 	}
 // }
-/**
- * POST /taxi/auth/calculate_transfer_price
- * @tag Taxi
- * @summary Calculate transfer ride price.
- * @description Calculates the price for a transfer ride based on pickup and delivery locations and departure time.
- * @operationId calculateTransferPrice
- * @bodyDescription Request body must include 'pickup_location', 'delivery_location', and 'departure_time'.
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Successful operation. Returns the calculated price data in the response body.
- * @responseContent {object} 200.application/json
- * @response 400 - Bad request. Returns error message if price could not be calculated.
- * @response 500 - Server error. Returns error message if any exception is encountered during execution.
- * @prisma_model taxi_orders
- */
-async function calculateTransferPrice(req, res) {
-	const { pickup_location, delivery_location, departure_time } = req.body;
-	try {
-		let priceData = await TaxiHelper.calculateTransferRidePrice(
-			pickup_location.coordinates,
-			delivery_location.coordinates,
-			departure_time
-		);
-		if (!priceData) {
-			return res.status(400).json({ message: 'Price could not be calculated' });
-		}
-		res.status(200).json(priceData);
-	} catch (e) {
-		console.log('TaxiOrderController', e);
-		res.status(500).json(e);
-	}
-}
+// /**
+//  * POST /taxi/auth/calculate_transfer_price
+//  * @tag Taxi
+//  * @summary Calculate transfer ride price.
+//  * @description Calculates the price for a transfer ride based on pickup and delivery locations and departure time.
+//  * @operationId calculateTransferPrice
+//  * @bodyDescription Request body must include 'pickup_location', 'delivery_location', and 'departure_time'.
+//  * @bodyContent {object} application/json
+//  * @bodyRequired
+//  * @response 200 - Successful operation. Returns the calculated price data in the response body.
+//  * @responseContent {object} 200.application/json
+//  * @response 400 - Bad request. Returns error message if price could not be calculated.
+//  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+//  * @prisma_model taxi_orders
+//  */
+// async function calculateTransferPrice(req, res) {
+// 	const { pickup_location, delivery_location, departure_time } = req.body;
+// 	try {
+// 		let priceData = await TaxiHelper.calculateTransferRidePrice(
+// 			pickup_location.coordinates,
+// 			delivery_location.coordinates,
+// 			departure_time
+// 		);
+// 		if (!priceData) {
+// 			return res.status(400).json({ message: 'Price could not be calculated' });
+// 		}
+// 		res.status(200).json(priceData);
+// 	} catch (e) {
+// 		console.log('TaxiOrderController', e);
+// 		res.status(500).json(e);
+// 	}
+// }
 
 export { getTaxiOrders };
 export { getTaxiOrdersToday };
@@ -2873,8 +2504,6 @@ export { getScheduledOrders };
 export { getDriversForOrder };
 export { getAcceptedScheduledOrders };
 export { getScheduledOrdersByUserId };
-export { getTaxiOrdersWithPagination };
-export { calculateTransferPrice };
 export { requestTransferOrderPrice };
 export default {
 	getTaxiOrders,
@@ -2913,8 +2542,6 @@ export default {
 	getDriversForOrder,
 	getAcceptedScheduledOrders,
 	getScheduledOrdersByUserId,
-	getTaxiOrdersWithPagination,
-	calculateTransferPrice,
 	requestTransferOrderPrice,
 	getMyActiveTaxiOrders,
 };

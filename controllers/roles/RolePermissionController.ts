@@ -8,8 +8,17 @@ import {
 	RolePermissionsMatrixBody,
 } from '../../types/userRoles/RolePermission';
 
+/**
+ * GET /roles/:role_id/permissions
+ * @tag RolePermissions
+ * @summary Get all permissions assigned to a specific role by role ID
+ * @operationId getRolePermissionsForRoleId
+ * @response 201 - Role created
+ * @responseContent {RolePermissionResponseBase[]} 201.application/json
+ * @response 500 - Error creating role
+ */
 export async function getRolePermissionsForRoleId(
-	req: ValidatedRequest<null, { role_id: string }>,
+	req: ValidatedRequest<never, { role_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -21,8 +30,17 @@ export async function getRolePermissionsForRoleId(
 	}
 }
 
+/**
+ * PUT /roles/:role_id/permissions/:permission_id
+ * @tag RolePermissions
+ * @summary Assign a permission to a role (idempotent)
+ * @operationId upsertRolePermission
+ * @response 200 - Permission assigned to role
+ * @responseContent {RolePermissionResponseBase} 200.application/json
+ * @response 500 - Error assigning role permission
+ */
 export async function upsertRolePermission(
-	req: ValidatedRequest<null, UpsertRolePermissionParams>,
+	req: ValidatedRequest<never, UpsertRolePermissionParams>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -34,8 +52,16 @@ export async function upsertRolePermission(
 	}
 }
 
+/**
+ * DELETE /roles/:role_id/permissions/:permission_id
+ * @tag RolePermissions
+ * @summary Remove a permission assignment from a role
+ * @operationId deleteRolePermission
+ * @response 204 - Permission removed from role
+ * @response 500 - Error removing role permission
+ */
 export async function deleteRolePermission(
-	req: ValidatedRequest<null, DeleteRolePermissionParams>,
+	req: ValidatedRequest<never, DeleteRolePermissionParams>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -47,6 +73,16 @@ export async function deleteRolePermission(
 	}
 }
 
+/**
+ * POST /roles/permissions/matrix
+ * @tag RolePermissions
+ * @summary Get role-permissions matrix for multiple role IDs
+ * @operationId getRolePermissionsMatrix
+ * @bodyContent {RolePermissionsMatrixBody} application/json
+ * @response 200 - Role-permissions matrix retrieved
+ * @responseContent {RolePermissionResponseBase[]} 200.application/json
+ * @response 500 - Error retrieving role-permissions matrix
+ */
 export async function getRolePermissionsMatrix(
 	req: ValidatedRequest<RolePermissionsMatrixBody>,
 	res: Response

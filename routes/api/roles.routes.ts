@@ -5,15 +5,17 @@ import RoleController from '../../controllers/roles/RolesController';
 import UserRoleController from '../../controllers/roles/UserRolesController';
 import RolePermissionController from '../../controllers/roles/RolePermissionController';
 import { validate } from '../../middleware/zod';
-import { CreateUserPermissionSchema, UpdateUserPermissionSchema } from '../../schemas/dto/UserRoles/userpermission.dto';
-import { CreateRoleSchema, UpdateRoleSchema } from '../../schemas/dto/UserRoles/role.dto';
-import { CreateUserRoleSchema } from '../../schemas/dto/UserRoles/userrole.dto';
 import {
-	GetRolePermissionsParamsSchema,
-	UpsertRolePermissionParamsSchema,
+	CreateRoleSchema,
+	CreateUserPermissionSchema,
+	CreateUserRoleSchema,
 	DeleteRolePermissionParamsSchema,
+	GetRolePermissionsParamsSchema,
 	RolePermissionsMatrixBodySchema,
-} from '../../schemas/dto/UserRoles/rolepermission.dto';
+	UpdateRoleSchema,
+	UpdateUserPermissionSchema,
+	UpsertRolePermissionParamsSchema,
+} from '../../schemas/dto/UserRoles';
 
 const router: Router = express.Router();
 
@@ -38,25 +40,25 @@ router.delete('/roles/:role_id', RoleController.deleteRole);
 
 // ----- ROLE PERMISSIONS (nested RESTful) -----
 router.get(
-	'/roles/:role_id/permissions',
+	'/:role_id/permissions',
 	validate(GetRolePermissionsParamsSchema, 'params'),
 	RolePermissionController.getRolePermissionsForRoleId
 );
 // Assign permission to role (idempotent)
 router.put(
-	'/roles/:role_id/permissions/:permission_id',
+	'/:role_id/permissions/:permission_id',
 	validate(UpsertRolePermissionParamsSchema, 'params'),
 	RolePermissionController.upsertRolePermission
 );
 // Remove assignment
 router.delete(
-	'/roles/:role_id/permissions/:permission_id',
+	'/:role_id/permissions/:permission_id',
 	validate(DeleteRolePermissionParamsSchema, 'params'),
 	RolePermissionController.deleteRolePermission
 );
 // Bulk fetch role-permissions by role_ids
 router.post(
-	'/roles/permissions/matrix',
+	'/permissions/matrix',
 	validate(RolePermissionsMatrixBodySchema),
 	RolePermissionController.getRolePermissionsMatrix
 );

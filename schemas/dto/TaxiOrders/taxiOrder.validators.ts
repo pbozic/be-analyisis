@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, Timestamp } from '../../primitives.js';
 import { TaxiOrderBaseSchema } from './taxiOrder.dto.js';
 
 extendZodWithOpenApi(z);
@@ -19,7 +18,6 @@ export type CreateTaxiOrder = z.infer<typeof CreateTaxiOrderSchema>;
 
 export const UpdateTaxiOrderSchema = TaxiOrderBaseSchema.partial()
 	.omit({
-		order_id: true,
 		created_at: true,
 	})
 	.openapi('UpdateTaxiOrder');

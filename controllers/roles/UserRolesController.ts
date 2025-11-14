@@ -12,7 +12,7 @@ import { AssignUserRoleInput } from '../../types/userRoles/UserRole';
  * @operationId getUserRoles
  * @pathParam {string} user_id - The ID of the user.
  * @response 200 - Roles retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {UserRoleResponseBase[]} 200.application/json
  * @response 500 - Error retrieving roles
  */
 export async function getUserRoles(req: ValidatedRequest<null, { user_id: string }>, res: Response): Promise<void> {
@@ -32,8 +32,9 @@ export async function getUserRoles(req: ValidatedRequest<null, { user_id: string
  * @description Assigns a role to the user, optionally scoped to a reservation module.
  * @operationId assignUserRole
  * @pathParam {string} user_id - The ID of the user.
- * @requestBody {AssignUserRoleInput} requestBody - The role assignment data
+ * @bodyContent {AssignUserRoleInput} application/json
  * @response 201 - Role assigned successfully
+ * @responseContent {UserRoleResponseBase} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error assigning role
  */
@@ -50,7 +51,7 @@ export async function assignUserRole(req: ValidatedRequest<AssignUserRoleInput>,
 }
 
 /**
- * DELETE /roles/user-roles/{user_id}/roles/{role_id}
+ * DELETE /roles/user-roles/:user_id/roles/:role_id
  * @tag UserRoles
  * @summary Remove a role from a user
  * @description Removes the specified role from the user.

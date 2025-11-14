@@ -1,9 +1,9 @@
 // --- Controller: reservation/UserPermissionController.ts ---
 
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 import UserPermissionDao from '../../dao/roles/UserPermissions';
-import { ValidatedRequest } from '../../types/validatedRequest';
+import { AuthenticatedRequest, ValidatedRequest } from '../../types/validatedRequest';
 import { CreateUserPermissionInput, UpdateUserPermissionInput } from '../../types/userRoles/UserPermission';
 
 /**
@@ -15,7 +15,7 @@ import { CreateUserPermissionInput, UpdateUserPermissionInput } from '../../type
  * @responseContent {object} 200.application/json
  * @response 500 - Failed to fetch user permissions
  */
-export async function getUserPermissions(req: ValidatedRequest, res: Response): Promise<void> {
+export async function getUserPermissions(req: AuthenticatedRequest, res: Response): Promise<void> {
 	try {
 		const reservationModuleId = req.user?.reservation_module_id || null;
 		const userPermissions = await UserPermissionDao.getUserPermissions(reservationModuleId);
@@ -32,7 +32,7 @@ export async function getUserPermissions(req: ValidatedRequest, res: Response): 
  * @operationId createUserPermission
  * @requestBody {CreateUserPermissionInput} requestBody
  * @response 201 - User permission created
- * @responseContent {object} 201.application/json
+ * @responseContent {UserPermissionResponseBase} 201.application/json
  * @response 500 - Failed to create user permission
  */
 export async function createUserPermission(
@@ -48,14 +48,14 @@ export async function createUserPermission(
 }
 
 /**
- * PUT /roles/user-permissions/{user_permission_id}
+ * PUT /roles/user-permissions/:user_permission_id
  * @tag Reservation
  * @summary Update a user permission
  * @operationId updateUserPermission
  * @pathParam {string} user_permission_id - ID of the user permission
  * @requestBody {UpdateUserPermissionInput} requestBody
  * @response 200 - User permission updated
- * @responseContent {object} 200.application/json
+ * @responseContent {UserPermissionResponseBase} 200.application/json
  * @response 500 - Failed to update user permission
  */
 export async function updateUserPermission(
@@ -71,7 +71,7 @@ export async function updateUserPermission(
 }
 
 /**
- * DELETE /roles/user-permissions/{user_permission_id}
+ * DELETE /roles/user-permissions/:user_permission_id
  * @tag Reservation
  * @summary Delete a user permission
  * @operationId deleteUserPermission
@@ -97,10 +97,10 @@ export async function deleteUserPermission(
  * @summary Get all permissions definitions (used for UI assignment)
  * @operationId getAllPermissions
  * @response 200 - List of defined permissions
- * @responseContent {object} 200.application/json
+ * @responseContent {UserPermissionResponseBase[]} 200.application/json
  * @response 500 - Failed to fetch permissions
  */
-export async function getAllPermissions(_req: ValidatedRequest, res: Response): Promise<void> {
+export async function getAllPermissions(_req: Request, res: Response): Promise<void> {
 	try {
 		const permissions = await UserPermissionDao.getAllPermissions();
 		res.status(200).json(permissions);

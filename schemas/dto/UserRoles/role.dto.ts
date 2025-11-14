@@ -2,12 +2,12 @@ import { z } from 'zod';
 import { MODULE_TYPE } from '@prisma/client';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import type { Business } from '../business/Business.js';
 import type { RolePermission } from './rolepermission.dto.js';
 import type { UserRole } from './userrole.dto.js';
 import { RolePermissionResponseBaseSchema } from './rolepermission.dto.js';
 import { UserRoleResponseBaseSchema } from './userrole.dto.js';
-import { BusinessResponseBaseSchema } from '../business/Business.js';
+import { Business } from '../../../types/business/Business.js';
+import { BusinessBaseSchema } from '../Business/business.js';
 
 extendZodWithOpenApi(z);
 
@@ -26,7 +26,7 @@ export const RoleResponseBaseSchema = z
 export const RoleResponseSchema = RoleResponseBaseSchema.extend({
 	permissions: z.array(RolePermissionResponseBaseSchema),
 	users: z.array(UserRoleResponseBaseSchema),
-	business: BusinessResponseBaseSchema.nullable().optional(),
+	business: BusinessBaseSchema.nullable().optional(),
 }).openapi('RoleResponse');
 
 export type RoleBase = z.infer<typeof RoleResponseBaseSchema>;

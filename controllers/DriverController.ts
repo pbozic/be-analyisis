@@ -1669,6 +1669,7 @@ async function sendComeToWorkNotification(
 			where: {
 				online: false,
 			},
+			include: { user: { select: { language: true } } },
 		});
 		for (let driver of drivers) {
 			if (
@@ -1676,8 +1677,8 @@ async function sendComeToWorkNotification(
 				moment(driver.come_to_work_last_sent_at).isBefore(moment().subtract(3, 'hours'))
 			) {
 				//TODO: early hours what to do?
-				const l10nTextDriver = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver.user);
-				const l10nTextHeadingDriver = getLocalisedTexts('HEADING', driver.user);
+				const l10nTextDriver = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver.user.language);
+				const l10nTextHeadingDriver = getLocalisedTexts('HEADING', driver.user.language);
 				sendNotificationToUser(l10nTextHeadingDriver.driver, l10nTextDriver.comeToWork, driver.user_id);
 				DriverDao.updateDriver(driver.driver_id, { come_to_work_last_sent_at: new Date() });
 			}

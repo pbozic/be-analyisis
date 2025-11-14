@@ -2,12 +2,12 @@ import { z } from 'zod';
 import { MODULE_TYPE, PERMISSION_SCOPE } from '@prisma/client';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import type { User } from '../users/User.js';
-import type { Action } from '../subscriptions/Action.js';
-import type { ReservationModule } from '../reservations/ReservationModule.js';
-import { UserResponseBaseSchema } from '../users/User';
-import { ActionResponseBaseSchema } from '../subscriptions/Action';
-import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule';
+import { User } from '../../../types/users/User';
+import { Action } from '../../../types/subscriptions/Action';
+import { ReservationModule } from '../../../types/reservations/ReservationModule';
+import { UserBaseSchema } from '../User';
+import { ActionBaseSchema } from '../Action';
+import { ReservationModuleBaseSchema } from '../reservations';
 
 extendZodWithOpenApi(z);
 
@@ -29,9 +29,9 @@ export const UserPermissionResponseBaseSchema = z
 	.openapi('UserPermissionResponseBase');
 
 export const UserPermissionResponseSchema = UserPermissionResponseBaseSchema.extend({
-	user: UserResponseBaseSchema,
-	action: ActionResponseBaseSchema.nullable().optional(),
-	reservation_module: ReservationModuleResponseBaseSchema.nullable().optional(),
+	user: UserBaseSchema.optional(),
+	action: ActionBaseSchema.nullable().optional(),
+	reservation_module: ReservationModuleBaseSchema.nullable().optional(),
 }).openapi('UserPermissionResponse');
 
 export type UserPermissionBase = z.infer<typeof UserPermissionResponseBaseSchema>;

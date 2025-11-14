@@ -12,6 +12,7 @@ import { UserRefSchema } from '../User/index.js';
 import { FileRefSchema } from '../Files/file.dto.js';
 import { UUID } from '../../primitives';
 import { DriverBaseSchema } from '../Driver/index.js';
+import { BusinessUserDetailSchema } from '../BusinessUser/businessUser.js';
 extendZodWithOpenApi(z);
 
 // TODO: Fix dto after deleting menu from prisma model etc...
@@ -110,6 +111,10 @@ export const CrmModuleRefSchema = z
 	})
 	.openapi('CrmModuleRef');
 
+export const CrmModuleFullSchema = CrmModuleRefSchema.extend({
+	business_clients: z.array(BusinessClientBaseSchema).optional(),
+});
+
 // Menu Ref (simplified)
 export const MenuRefSchema = z
 	.object({
@@ -178,25 +183,7 @@ export const BusinessWithCrmResponseDto = BusinessResponseDto.extend({
 	crm_module: CrmModuleRefSchema.nullable().optional(),
 }).openapi('BusinessWithCrmResponse');
 
-// =======================
-// Business Response with All Modules
-// =======================
-
-// Business with all modules connected
-export const BusinessWithAllModulesResponseDto = BusinessResponseDto.extend({
-	transport_module: TransportModuleRefSchema.nullable().optional(),
-	food_drinks_module: FoodDrinksModuleRefSchema.nullable().optional(),
-	stores_module: StoresModuleRefSchema.nullable().optional(),
-	reservation_module: ReservationModuleRefSchema.nullable().optional(),
-	crm_module: CrmModuleRefSchema.nullable().optional(),
-	menus: z.array(MenuRefSchema).optional(),
-	menu_items: z.array(MenuItemRefSchema).optional(),
-	menu_categories: z.array(MenuCategoryRefSchema).optional(),
-	daily_meals: DailyMealsRefSchema.nullable().optional(),
-}).openapi('BusinessWithAllModulesResponse');
-
 // Business Ref Schema - minimal identity for embedding elsewhere
-
 export const BusinessRefSchema = z
 	.object({
 		business_id: z.string().uuid().openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
@@ -228,13 +215,7 @@ export const BusinessWithIncludesResponseDto = BusinessResponseDto.extend({
 	// includes from getBusinessesInclude
 	address: AddressRefSchema.nullable().optional(),
 	delivery_address: AddressRefSchema.nullable().optional(),
-	business_users: z
-		.array(
-			z.object({
-				users: UserRefSchema.optional(),
-			})
-		)
-		.optional(),
+	business_users: z.array(BusinessUserDetailSchema).optional(),
 	parent_business: BusinessRefSchema.nullable().optional(),
 	child_businesses: z.array(BusinessRefSchema).optional(),
 }).openapi('BusinessWithIncludesResponse');
@@ -255,6 +236,23 @@ export const BusinessSearchResponseDto = z
 	})
 	.openapi('BusinessSearchResponse');
 
+// =======================
+// Business Response with All Modules
+// =======================
+
+// Business with all modules connected
+export const BusinessWithAllModulesResponseDto = BusinessWithIncludesResponseDto.extend({
+	transport_module: TransportModuleRefSchema.nullable().optional(),
+	food_drinks_module: FoodDrinksModuleRefSchema.nullable().optional(),
+	stores_module: StoresModuleRefSchema.nullable().optional(),
+	reservation_module: ReservationModuleRefSchema.nullable().optional(),
+	crm_module: CrmModuleFullSchema.nullable().optional(),
+	menus: z.array(MenuRefSchema).optional(),
+	menu_items: z.array(MenuItemRefSchema).optional(),
+	menu_categories: z.array(MenuCategoryRefSchema).optional(),
+	daily_meals: DailyMealsRefSchema.nullable().optional(),
+}).openapi('BusinessWithAllModulesResponse');
+
 // exported TS types
 export type BusinessCreateDto = z.infer<typeof BusinessCreateDto>;
 export type BusinessResponseDto = z.infer<typeof BusinessResponseDto>;
@@ -268,6 +266,10 @@ export type BusinessWithStoresResponseDto = z.infer<typeof BusinessWithStoresRes
 export type BusinessWithReservationResponseDto = z.infer<typeof BusinessWithReservationResponseDto>;
 export type BusinessWithCrmResponseDto = z.infer<typeof BusinessWithCrmResponseDto>;
 export type BusinessWithAllModulesResponseDto = z.infer<typeof BusinessWithAllModulesResponseDto>;
+
+export type BusinessWithAddressAndUsersResponseDto = z.infer<typeof BusinessWithAddressAndUsersResponseDto>;
+export type BusinessWithIncludesResponseDto = z.infer<typeof BusinessWithIncludesResponseDto>;
+export type BusinessSearchResponseDto = z.infer<typeof BusinessSearchResponseDto>;
 
 // Module ref types
 // Re-export module types for convenience

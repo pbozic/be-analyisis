@@ -1,7 +1,7 @@
 import { languageTexts } from './texts.js';
 // Modified function to accept user data directly
-const getLocalisedTexts = (routeName, user) => {
-	const langSelected = user?.language;
+const getLocalisedTexts = (routeName, userLang) => {
+	const langSelected = userLang;
 	const texts = languageTexts[langSelected ? langSelected.toLowerCase() : 'en'];
 	console.info(`\nGot texts: ${texts}\nfor route: ${routeName} and language: ${langSelected}`);
 	if (!texts) {

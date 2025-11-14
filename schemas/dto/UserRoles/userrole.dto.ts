@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import type { User } from '../users/User.js';
-import type { Role } from './role.dto.js';
-import type { ReservationModule } from '../reservations/ReservationModule.js';
-import { UserResponseBaseSchema } from '../users/User.js';
-import { RoleResponseBaseSchema } from './role.dto.js';
-import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule.js';
+import { UserBase } from '../../../types/users/User';
+import { Role } from '../../../types/userRoles/Role';
+import { ReservationModule } from '../../../types/reservations/ReservationModule';
+import { UserBaseSchema } from '../User';
+import { RoleResponseBaseSchema } from './role.dto';
+import { ReservationModuleBaseSchema } from '../reservations';
 
 extendZodWithOpenApi(z);
 
@@ -21,9 +21,9 @@ export const UserRoleResponseBaseSchema = z
 	.openapi('UserRoleResponseBase');
 
 export const UserRoleResponseSchema = UserRoleResponseBaseSchema.extend({
-	user: UserResponseBaseSchema,
+	user: UserBaseSchema,
 	role: RoleResponseBaseSchema,
-	reservation_module: ReservationModuleResponseBaseSchema.nullable().optional(),
+	reservation_module: ReservationModuleBaseSchema.nullable().optional(),
 }).openapi('UserRoleResponse');
 
 export type UserRoleBase = z.infer<typeof UserRoleResponseBaseSchema>;
@@ -38,7 +38,7 @@ export type UserRole = {
 	user_id: string;
 	role_id: string;
 	reservation_module_id?: string | null;
-	user?: User;
+	user?: UserBase;
 	role?: Role;
 	reservation_module?: ReservationModule | null;
 };

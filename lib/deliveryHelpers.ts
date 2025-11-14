@@ -380,8 +380,8 @@ export async function sendDeliveryOrderToDriver(
 		const sock = UserSockets.get(driver.user_id);
 		if (!sock) throw new Error(`UserSocket not found for driver ${driver.user_id}`);
 		await DeliveryOrderDao.createOrderSent(order.order_id, driver);
-		const l10nText = getLocalisedTexts('DELIVERY_DRIVER_NOTIFICATIONS', driver as any);
-		const l10nTextHeading = getLocalisedTexts('HEADING', driver as any);
+		const l10nText = getLocalisedTexts('DELIVERY_DRIVER_NOTIFICATIONS', driver.user.language);
+		const l10nTextHeading = getLocalisedTexts('HEADING', driver.user.language);
 		sendNotificationToUser(l10nTextHeading?.pending_delivery, l10nText?.accepted, driver.user_id);
 		sock.emit('new_order__delivery', order);
 	} catch (e) {

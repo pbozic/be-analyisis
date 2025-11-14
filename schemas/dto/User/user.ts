@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, Email, PhoneNumber } from '../../primitives.js';
+import { UUID, Email, PhoneNumber, LanguageCode } from '../../primitives.js';
 import { UserAddressRefSchema } from '../Address/index.js';
 import { BusinessUserRefSchema, BusinessUserWithBusinessResponseSchema } from '../BusinessUser/index.js';
 import { TransactionRefSchema } from './transaction.js';
@@ -31,6 +31,7 @@ export const BasicUserDataSchema = z
 		telephone: PhoneNumber.optional(),
 		telephone_code: z.string().optional(),
 		date_of_birth: z.string().date().optional(),
+		language: LanguageCode.optional(),
 	})
 	.openapi({
 		title: 'BasicUserData',

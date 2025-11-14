@@ -14,7 +14,7 @@ import DriverDao from '../dao/Driver.js';
 import socket from '../socket.js';
 import { TAXI_STARTING_FEE, COST_PER_KM, DRIVE_FEE, CARGO_TRANSFER_FEE, SERVICE_TYPE } from './constants.js';
 import prisma from '../prisma/prisma.js';
-import gApi, { LatLng } from './gApis.js';
+import gApi from './gApis.js';
 import { UserSockets as UserSockets$0 } from '../socket.js';
 import { sendNotificationToUser } from './oneSignal.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
@@ -24,6 +24,8 @@ import stripe from './stripe.js';
 import WalletFundsHelpers from './WalletFundsHelpers.js';
 import type { TaxiOrderDetail } from '../schemas/dto/TaxiOrders/taxiOrder.dto.ts';
 import { CandidateDriver } from './deliveryHelpers.ts';
+import { TaxiLocation } from '../schemas/dto/Taxi/taxiOrder.dto.ts';
+import { DriverDetail } from '../schemas/dto/Driver/driver.dto.ts';
 
 const { io, SocketStore } = socket;
 const NUMBER_OF_DRIVERS_TO_SEND = 3;
@@ -74,8 +76,8 @@ async function scheduledOrdersNotificationsHandler(): Promise<boolean | void> {
 		});
 		console.log('DayOrders', DayOrders?.length, 'HourOrders', HourOrders?.length);
 		for (let order of DayOrders) {
-			const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', order.user);
-			const l10nTextHeading = getLocalisedTexts('HEADING', order.user);
+			const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', order.user.language);
+			const l10nTextHeading = getLocalisedTexts('HEADING', order.user.language);
 			await sendNotificationToUser(
 				l10nTextHeading?.scheduled_tomorrow,
 				l10nText?.scheduled_tomorrow +
@@ -98,8 +100,8 @@ async function scheduledOrdersNotificationsHandler(): Promise<boolean | void> {
 			);
 		}
 		for (let order of HourOrders) {
-			const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', order.user);
-			const l10nTextHeading = getLocalisedTexts('HEADING', order.user);
+			const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', order.user.language);
+			const l10nTextHeading = getLocalisedTexts('HEADING', order.user.language);
 			await sendNotificationToUser(l10nTextHeading?.scheduled_hour, l10nText?.scheduled_hour, order.user_id);
 			await sendNotificationToUser(
 				l10nTextHeading?.scheduled_hour,
@@ -337,12 +339,12 @@ async function selectTaxiOrderDrivers(order: TaxiOrderDetail): Promise<Candidate
 }
 /**
  * Send a taxi order to a specific driver via socket and push notification.
- * @param {object} order - Taxi order entity.
- * @param {object} driver - Driver entity.
+ * @param {TaxiOrderDetail} order - Taxi order entity.
+ * @param {DriverDetail} driver - Driver entity.
  * @param {boolean} [force=false] - Force resending even if rejected.
- * @returns {Promise<void>|void}
+ * @returns {Promise<void>}
  */
-async function sendTaxiOrderToDriver(order: Record<string, any>, driver: Record<string, any>, force = false) {
+async function sendTaxiOrderToDriver(order: TaxiOrderDetail, driver: DriverDetail, force = false): Promise<void> {
 	let isSent = await TaxiOrderDao.isOrderSent(order.order_id, driver.driver_id);
 	if (isSent && !force && isSent.rejected === true) {
 		return;
@@ -362,8 +364,8 @@ async function sendTaxiOrderToDriver(order: Record<string, any>, driver: Record<
 	console.log('Sending order: ', order.order_id, ' to driver: ', driver.user_id);
 	if (!order_sent) {
 		await TaxiOrderDao.createOrderSent(order.order_id, driver.driver_id);
-		const l10nText = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver.user);
-		const l10nTextHeading = getLocalisedTexts('HEADING', driver.user);
+		const l10nText = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver.user.language);
+		const l10nTextHeading = getLocalisedTexts('HEADING', driver.user.language);
 		await sendNotificationToUser(l10nTextHeading?.pending, l10nText?.pending, driver.user_id);
 	} else {
 		if (order_sent.taxi_order_sent_id) {
@@ -457,8 +459,8 @@ async function revokeTaxiOrderFromDriver(order_id: string, driver_id: string, or
 	UserSockets.get(driver.user_id).emit('order_revoked__taxi', order_id);
 	if (order?.user) {
 		const freshOrder = await TaxiOrderDao.getOrder(order_id);
-		const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', freshOrder?.user);
-		const l10nTextHeading = getLocalisedTexts('HEADING', freshOrder?.user);
+		const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', freshOrder?.user.language);
+		const l10nTextHeading = getLocalisedTexts('HEADING', freshOrder?.user.language);
 		await sendNotificationToUser(l10nTextHeading?.taxi, l10nText?.revoked, freshOrder?.user_id);
 	}
 }
@@ -563,7 +565,7 @@ async function closeScheduledOrders(): Promise<void> {
  * @param {string} vehicleCategory - One of VEHICLE_CATEGORY.STANDARD|PREMIUM.
  * @returns {Promise<{price:number,reasons:string[]|null,distance:number,durationS:number,duration:number}>}
  */
-async function calculateTransferRidePrice(route: Array<{ coordinates: LatLng }>, vehicleCategory: string) {
+async function calculateTransferRidePrice(route: TaxiLocation[], vehicleCategory: string) {
 	if (vehicleCategory !== VEHICLE_CATEGORY.STANDARD && vehicleCategory !== VEHICLE_CATEGORY.PREMIUM) {
 		throw new Error(`Invalid vehicle category, got ${vehicleCategory}. Only STANDARD and PREMIUM are allowed.`);
 	}
@@ -730,6 +732,582 @@ async function handlePaymentRefund(
 	}
 }
 
+export async function getActiveOrdersHelper(
+	user_id: string,
+	type?: string,
+	isBusinessUser: boolean = false
+): Promise<TaxiOrderDetail[]> {
+	try {
+		const activeOrders = await TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, type, isBusinessUser);
+		if (activeOrders) {
+			for (const activeOrder of activeOrders) {
+				if (activeOrder && activeOrder.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
+					const driver = activeOrder.driver;
+					const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(
+						activeOrder.pickup_location.coordinates,
+						driver.location.coordinates,
+						'driving',
+						new Date(),
+						'best_guess'
+					);
+					console.log('ROES:', result, result?.rows[0], result?.rows[0]?.elements[0]);
+					console.log('ROES DISTANCE:', distance);
+					console.log('ROES DURATION:', duration);
+					if (
+						result &&
+						result.rows &&
+						result.rows[0] &&
+						result.rows[0].elements &&
+						result.rows[0].elements[0]
+					) {
+						activeOrder.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
+						const estimatedPickupTime = new Date();
+						estimatedPickupTime.setSeconds(
+							estimatedPickupTime.getSeconds() + result.rows[0].elements[0].duration.value
+						);
+						activeOrder.estimates.pickup_time = estimatedPickupTime;
+					} else {
+						if (duration && distance) {
+							const estimatedPickupTime = new Date();
+							estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + duration);
+							activeOrder.estimates.pickup_time = estimatedPickupTime;
+						}
+						console.log('Invalid response structure from distanceBetweenTwoPoints');
+						activeOrder.estimates.pickup_time_in_seconds = -1;
+						activeOrder.estimates.pickup_time = null;
+					}
+					// Update the order with the new estimates
+					await TaxiOrderDao.updateOrder(activeOrder.order_id, {
+						estimates: activeOrder.estimates,
+					});
+					const userSocket = UserSockets.get(activeOrder.user_id);
+					console.log('userSocket: ', !!userSocket);
+					if (userSocket) {
+						io.emit('active_order_updated__taxi', {
+							...activeOrder,
+						});
+					}
+				}
+			}
+		}
+		return activeOrders;
+		//res.status(200).json(activeOrders);
+	} catch {
+		throw new Error('Error fetching active orders');
+	}
+}
+
+function preprocessOrderData(orderData: any): any[] {
+	const cleanedOrderData = {
+		// user_id: orderData.user_id,
+		// driver_id: orderData.driver.driver_id,
+		// driver: orderData.driver,
+		// vehicle_id: orderData.vehicle_id,
+		allow_credits_usage: orderData.allow_credits_usage,
+		cargo_preferences: orderData.cargo_preferences,
+		creating_user_id: orderData.creating_user_id,
+		customer_note: orderData.customer_note,
+		delivery_location: orderData.delivery_location,
+		estimates: orderData.estimates,
+		flags: orderData.flags,
+		first_name: orderData.first_name,
+		last_name: orderData.last_name,
+		parent_user_type: orderData.parent_user_type,
+		payment: orderData.payment,
+		pickup_location: orderData.pickup_location,
+		preferences: orderData.preferences,
+		route: orderData.route,
+		status: orderData.status,
+		subtype: orderData.subtype,
+		telephone: orderData.telephone,
+		type: orderData.type,
+	};
+	const prefs = cleanedOrderData.preferences;
+	const is_repeat =
+		prefs.repeat_ride?.length > 0 && !prefs.repeat_ride.some((item) => item.value === 'do_not_repeat');
+	if (prefs.vehicle_class === VEHICLE_CLASS.CARGO_VAN) {
+		cleanedOrderData.payment = {
+			...cleanedOrderData.payment,
+			extras: {
+				price:
+					CARGO_TRANSFER_FEE.CARGO_FEE +
+					cleanedOrderData.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE,
+				type: 'CARGO_TRANSFER_FEE',
+			},
+		};
+	}
+	cleanedOrderData.is_scheduled = prefs.departure_date != null;
+	cleanedOrderData.route = cleanedOrderData.route.map((r_i) => ({ ...r_i, id: randomUUID(), locked: false }));
+	cleanedOrderData.route[0] = { ...cleanedOrderData.route[0], locked: true };
+	if (cleanedOrderData.pickup_location) {
+		cleanedOrderData.pickup_location = {
+			address: cleanedOrderData.pickup_location.address,
+			coordinates: cleanedOrderData.pickup_location.coordinates,
+		};
+	}
+	if (cleanedOrderData.delivery_location) {
+		cleanedOrderData.delivery_location = {
+			address: cleanedOrderData.delivery_location.address,
+			coordinates: cleanedOrderData.delivery_location.coordinates,
+		};
+	}
+	let orderDataArray = [];
+	if (is_repeat) {
+		orderDataArray = generateOrdersForRepeatOrder(
+			cleanedOrderData,
+			prefs.repeat_ride,
+			prefs.repeat_duration.length > 0 ? prefs.repeat_duration[0].value : 0
+		);
+	} else {
+		orderDataArray.push(cleanedOrderData);
+	}
+	return orderDataArray;
+}
+
+async function generateVehicleTransferOrder(orderData, userId, businessUserId, businessClientId) {
+	const vehicleTransferOrderData = {
+		...orderData,
+		type: ORDER_TYPE.VEHICLE_TRANSFER_COMBO,
+		preferences: {
+			...orderData.preferences,
+			adults: 0,
+			children_under_140: 0,
+			ride_requirements: {
+				traveling_with_pet: false,
+				air_conditioning: false,
+				child_seats: false,
+				quiet_ride: false,
+				luggage: false,
+				wheelchair_accessibility: false,
+				language_en: false,
+				language_it: false,
+				language_de: false,
+				language_es: false,
+				language_hr: false,
+				language_fr: false,
+				language_ru: false,
+				language_ua: false,
+			},
+			vehicle_class: VEHICLE_CLASS.ANY,
+			vehicle_category: VEHICLE_CATEGORY.ANY,
+		},
+		payment: {
+			...orderData.payment,
+			extras: null,
+			status: 'PAID',
+		},
+	};
+	const vehicle_transfer_order = await makeOrder(
+		vehicleTransferOrderData,
+		userId,
+		null,
+		null,
+		businessUserId,
+		businessClientId
+	);
+	return vehicle_transfer_order;
+}
+
+function subdivideOrder(
+	vehicle_class: string,
+	vehicle_category: string,
+	n_adults: number,
+	n_children: number
+): Array<{ adults_seated: number; children_seated: number }> {
+	let splits = [];
+	let num_orders;
+	let unassigned_adults = n_adults;
+	let unassigned_children = n_children;
+	let total_seats = unassigned_adults + unassigned_children;
+	if (vehicle_class === VEHICLE_CLASS.ANY) {
+		if (total_seats > 4) {
+			let defaultNumSeats = vehicle_category === VEHICLE_CATEGORY.STANDARD ? 4 : 3;
+			num_orders = Math.ceil(total_seats / defaultNumSeats);
+		} else {
+			num_orders = 1;
+		}
+	} else {
+		num_orders = Math.ceil(total_seats / VEHICLE_CAPACITY[vehicle_class]);
+	}
+	console.log('num_orders', num_orders);
+	for (let i = 0; i < num_orders; i++) {
+		let availableSeats = VEHICLE_CAPACITY[vehicle_class];
+		let adults_seated = 0;
+		let children_seated = 0;
+		for (let i = 0; i < availableSeats; i++) {
+			if (unassigned_adults > 0) {
+				adults_seated++;
+				unassigned_adults--;
+			} else if (unassigned_children > 0) {
+				children_seated++;
+				unassigned_children--;
+			} else {
+				break;
+			}
+		}
+		splits.push({
+			adults_seated,
+			children_seated,
+		});
+	}
+	return splits;
+}
+
+async function makeOrder(
+	cleanOrderData: Record<string, unknown>,
+	userId: string,
+	parentOrderId: string | null,
+	driverId: string | null,
+	businessUserId?: string,
+	businessClientId?: string
+): Promise<TaxiOrderDetail> {
+	const orderPayload = {
+		...cleanOrderData,
+		user: {
+			connect: {
+				user_id: userId,
+			},
+		},
+	};
+	if (parentOrderId) {
+		orderPayload.parent_order = {
+			connect: {
+				order_id: parentOrderId,
+			},
+		};
+	}
+	if (driverId) {
+		orderPayload.driver = {
+			connect: {
+				driver_id: driverId,
+			},
+		};
+	}
+	if (businessUserId) {
+		orderPayload.business_users = {
+			connect: {
+				business_users_id: businessUserId,
+			},
+		};
+	}
+	if (businessClientId) {
+		orderPayload.business_clients = {
+			connect: {
+				business_clients_id: businessClientId,
+			},
+		};
+	}
+	const order = await TaxiOrderDao.createOrder(orderPayload);
+	return order;
+}
+
+async function buildOrder(
+	cleanOrderData: any,
+	userId: string,
+	parentOrderId: string | null,
+	driverId: string | null,
+	businessUserId?: string,
+	businessClientId?: string
+): Promise<string | null> {
+	const { vehicle_class, vehicle_category, adults, children_under_140 } = cleanOrderData.preferences;
+	const splits = subdivideOrder(vehicle_class, vehicle_category, adults, children_under_140);
+	let firstOrderId = parentOrderId;
+	for (let i = 0; i < splits.length; i++) {
+		const split = splits[i];
+		const { adults_seated, children_seated } = split;
+		cleanOrderData.preferences.adults = adults_seated;
+		cleanOrderData.preferences.children_under_140 = children_seated;
+		const order = await makeOrder(
+			cleanOrderData,
+			userId,
+			parentOrderId,
+			driverId,
+			businessUserId,
+			businessClientId
+		);
+		if (!firstOrderId) {
+			firstOrderId = order.order_id;
+		}
+	}
+	return firstOrderId;
+}
+
+function getDayIndex(dayName) {
+	// Map day names to their corresponding indices
+	const daysOfWeek = {
+		Sunday: 0,
+		Monday: 1,
+		Tuesday: 2,
+		Wednesday: 3,
+		Thursday: 4,
+		Friday: 5,
+		Saturday: 6,
+	};
+	return daysOfWeek[dayName]; // Return the index of the day
+}
+
+function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
+	try {
+		console.log('rd', repeatDuration);
+		const orders = [];
+		const currentDate = new Date();
+		// Get the hours and minutes from the departure time
+		const departureTime = new Date(orderData.preferences.departure_time);
+		const departureHours = departureTime.getHours();
+		const departureMinutes = departureTime.getMinutes();
+		// Get current week's day number
+		const currentDay = currentDate.getDay();
+		for (let week = 0; week < repeatDuration; week++) {
+			for (let day of repeatData) {
+				console.log('day', day);
+				const dayIndex = getDayIndex(day.value); // Get day index from day name
+				console.log('dayIndex', dayIndex);
+				const daysUntilNextOccurrence = ((dayIndex - currentDay + 7) % 7) + week * 7; // Calculate days until the next occurrence of this weekday
+				console.log('daysUntilNextOccurrence', dayIndex);
+				const orderDate = new Date(currentDate); // Create a copy of the current date
+				console.log('orderDate', orderDate);
+				orderDate.setDate(orderDate.getDate() + daysUntilNextOccurrence); // Add the days to reach the next occurrence of this day
+				// Set the time for the order
+				console.log('orderDate added', orderDate);
+				orderDate.setHours(departureHours);
+				orderDate.setMinutes(departureMinutes);
+				orderDate.setSeconds(0);
+				orderDate.setMilliseconds(0);
+				// Format the date and time
+				const formattedDepartureDate = new Intl.DateTimeFormat('en-US', {
+					day: '2-digit',
+					month: 'long',
+					year: 'numeric',
+				}).format(orderDate);
+				const formattedDepartureTime = orderDate.toISOString().slice(0, -1);
+				// Generate an order for this day
+				let order = {
+					...orderData,
+					preferences: {
+						...orderData.preferences,
+						departure_date: formattedDepartureDate, // Format as "DD MMMM YYYY"
+						departure_time: formattedDepartureTime, // Format as "YYYY-MM-DDTHH:mm:ss.sss"
+					},
+				};
+				orders.push(order); // Add to orders list
+			}
+		}
+		return orders; // Return generated orders
+	} catch (error) {
+		console.log('TaxiOrderController', error);
+		throw new Error(error);
+	}
+}
+
+export async function cleanedCreateOrderHelper(orderData) {
+	try {
+		const user_id = orderData.user_id;
+		const driver_id = orderData?.driver_id || orderData?.driver?.driver_id;
+		const businessUserId = orderData.business_user?.business_users_id;
+		const businessClientId = orderData.business_client?.business_clients_id;
+		console.log('ORDER DATA DRIVER', orderData.driver);
+		const cleanedOrderDataArray = preprocessOrderData(orderData);
+		let firstOrderId = null;
+		for (const cleanOrderData of cleanedOrderDataArray) {
+			firstOrderId = await buildOrder(
+				cleanOrderData,
+				user_id,
+				firstOrderId,
+				driver_id,
+				businessUserId,
+				businessClientId
+			);
+		}
+		let order;
+		let vehicle_transfer_order;
+		if (firstOrderId) {
+			order = await TaxiOrderDao.getOrder(firstOrderId, {
+				include: {
+					grouped_orders: true,
+				},
+			});
+			console.log('parentOrderId', firstOrderId);
+			console.log('fetched grouped_orders', order.grouped_orders);
+			if (order && order.preferences.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
+				vehicle_transfer_order = await generateVehicleTransferOrder(
+					cleanedOrderDataArray[0],
+					user_id,
+					businessUserId,
+					businessClientId
+				);
+			}
+		}
+		return { order, vehicle_transfer_order };
+	} catch (error) {
+		console.error('TaxiOrderController', error);
+		throw new Error('Error in cleanedCreateOrderHelper!');
+	}
+}
+
+export async function handlePaymentForTransferOrder(order, return_url) {
+	try {
+		let user;
+		if (order.creating_user_id) {
+			user = await UsersDao.getUserById(order.creating_user_id);
+		} else {
+			user = await UsersDao.getUserById(order.user_id);
+		}
+		let payment_intent = null;
+		//CALCULATE IN CENTS
+		const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100);
+		const EXTRAS_COST_CENTS = Math.round(
+			parseFloat(
+				[VEHICLE_CLASS.PRIVATE_DRIVER, VEHICLE_CLASS.CARGO_VAN].includes(order.preferences?.vehicle_class)
+					? order.payment.extras?.price ||
+							order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
+								CARGO_TRANSFER_FEE.CARGO_FEE
+					: 0
+			) * 100
+		);
+		const TOTAL_COST_CENTS = PRICE_CENTS + EXTRAS_COST_CENTS;
+		const INITIAL_PLATFORM_CUT = Math.round(PRICE_CENTS * DRIVE_FEE) + EXTRAS_COST_CENTS;
+		// const INITIAL_DRIVER_CUT = TOTAL_COST_CENTS - INITIAL_PLATFORM_CUT; // intentionally unused (kept for historical parity)
+		//Handle automatic credits spending ~ use credits to pay platform cut first, to keep the driver cut mostly off stripe
+		const reservedCredits = order.allow_credits_usage
+			? await WalletFundsHelpers.reserveCreditsForOrder(
+					user.user_id,
+					TOTAL_COST_CENTS,
+					order.order_id,
+					FUNDS_TYPE.CREDITS_TAXI
+				)
+			: [];
+		const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
+		const DISCOUNTED_TOTAL_COST = TOTAL_COST_CENTS - CREDITS_AMOUNT_RESERVED;
+		const PLATFORM_CREDIT_CUT_CENTS = Math.min(INITIAL_PLATFORM_CUT, CREDITS_AMOUNT_RESERVED);
+		const DRIVER_CREDIT_CUT_CENTS =
+			CREDITS_AMOUNT_RESERVED > PLATFORM_CREDIT_CUT_CENTS
+				? CREDITS_AMOUNT_RESERVED - PLATFORM_CREDIT_CUT_CENTS
+				: 0;
+		order.payment.credit_discount = CREDITS_AMOUNT_RESERVED;
+		order.payment.credit_discount_details = {
+			taxi_driver: DRIVER_CREDIT_CUT_CENTS,
+			platform: PLATFORM_CREDIT_CUT_CENTS,
+		};
+		order = await TaxiOrderDao.updateTaxiOrderPayment(order.order_id, order.payment);
+		// Preserve original noop arithmetic (historical context, previously unused expressions)
+		// (INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS);
+		// (INITIAL_DRIVER_CUT - DRIVER_CREDIT_CUT_CENTS);
+		// if(PLATFORM_CREDIT_CUT_CENTS>0) {
+		// 	const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
+		// }
+		// if(DRIVER_CREDIT_CUT_CENTS>0) {
+		// 	const transferedCreditsDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CREDIT_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
+		// }
+		const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user.user_id);
+		if (DISCOUNTED_TOTAL_COST > 0) {
+			if (order.payment.type === 'WALLET') {
+				// handle wallet payment
+				if (available_wallet_balances['TAXI'] + available_wallet_balances[null] < DISCOUNTED_TOTAL_COST / 100) {
+					throw new Error('Insufficient funds');
+				}
+				// await UsersDao.removeWalletBalance(order.user_id, (DISCOUNTED_TOTAL_COST / 100), order.order_id, "taxi");
+				await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
+					user.user_id,
+					DISCOUNTED_TOTAL_COST,
+					order.order_id
+				);
+				order = await TaxiOrderDao.updateOrder(order.order_id, {
+					payment: {
+						...order.payment,
+						status: 'PAID',
+					},
+				});
+				order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
+			}
+			if (order.payment.type === 'FAMILY_WALLET') {
+				// handle wallet payment
+				let has_parent_user = user.parent_user;
+				if (!has_parent_user) {
+					throw new Error('User has no family wallet');
+				}
+				let parent_user = user.parent_user.parent_user;
+				const parent_available_wallet_balances = WalletFundsDao.getAvailableWalletBalanceGroupedByType(
+					parent_user.user_id
+				);
+				let is_businessUser = await BusinessUsersDao.getBusinessUserByUserId(parent_user.user_id);
+				let allowance = user.parent_user.allowance?.amount_taxi;
+				if (is_businessUser) {
+					allowance = allowance * 2;
+				}
+				// todo is parent business user?
+				if (allowance < DISCOUNTED_TOTAL_COST / 100) {
+					throw new Error('Insufficient allowance');
+				}
+				//TODO: Should this allow usage of credits from parent?
+				if (parent_available_wallet_balances[null] < DISCOUNTED_TOTAL_COST / 100) {
+					throw new Error('Insufficient funds');
+				}
+				// await UsersDao.removeWalletBalance(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id, "taxi");
+				await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
+					parent_user.user_id,
+					DISCOUNTED_TOTAL_COST,
+					order.order_id
+				);
+				const updateData = {};
+				if (order.type === ORDER_TYPE.TAXI) {
+					updateData.amount_taxi = { decrement: DISCOUNTED_TOTAL_COST / 100 };
+				} else {
+					updateData.amount_transfer = { decrement: DISCOUNTED_TOTAL_COST / 100 };
+				}
+				await prisma.allowances.update({
+					where: {
+						group_user_id: user.parent_user.group_user_id,
+					},
+					data: updateData,
+				});
+				order = await TaxiOrderDao.updateOrder(order.order_id, {
+					payment: {
+						...order.payment,
+						status: 'PAID',
+					},
+				});
+				order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
+			}
+			if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
+				payment_intent = await stripe.createSplittablePayment(
+					user.stripe_customer_id,
+					order.order_id,
+					order.payment.payment_method_id,
+					DISCOUNTED_TOTAL_COST,
+					order.type,
+					{},
+					return_url
+				);
+				console.info('payment_intent', payment_intent);
+				order = await TaxiOrderDao.updateTaxiOrderPayment(order.order_id, {
+					...order.payment,
+					payment_intent_id: payment_intent.id,
+				});
+			}
+		} else {
+			order = await TaxiOrderDao.updateOrder(order.order_id, {
+				payment: {
+					...order.payment,
+					status: 'PAID',
+				},
+			});
+			order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
+		}
+		return payment_intent;
+	} catch (e) {
+		await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.CUSTOMER_CANCELED);
+		await TaxiHelper.handlePaymentRefund(
+			order.order_id,
+			order.user_id,
+			order.payment,
+			order?.cargo_preferences?.additional_workers,
+			order?.preferences?.vehicle_class,
+			true
+		);
+		throw new Error('Error when handling payment: ', e);
+	}
+}
+
 export { checkIfOrdersNeedSending };
 export { findTaxiOrderDrivers };
 export { resendPendingOrdersToDriver };
@@ -765,4 +1343,7 @@ export default {
 	calculateTransferRidePrice,
 	calculateTransferOrderPaymentCuts,
 	handlePaymentRefund,
+	getActiveOrdersHelper,
+	cleanedCreateOrderHelper,
+	handlePaymentForTransferOrder,
 };
