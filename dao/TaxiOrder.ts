@@ -1,7 +1,9 @@
+import { validate as isUuid } from 'uuid';
+import { Prisma, TAXI_ORDER_STATUS, ORDER_TYPE as PrismaOrderType } from '@prisma/client';
+
 import prisma from '../prisma/prisma.js';
-import { TAXI_ORDER_STATUS } from '../lib/constants.js';
-import type { TaxiOrderBase, TaxiOrderDetail } from '../schemas/dto/TaxiOrders/taxiOrder.dto.js';
-import { CreateTaxiOrder } from '../schemas/dto/TaxiOrders/taxiOrder.validators.js';
+import { TIME_LIMIT, ORDER_TYPE, ORDER_SUBTYPE } from '../lib/constants.js';
+import type { TaxiOrderDetail } from '../schemas/dto/TaxiOrders/taxiOrder.dto.js';
 import { toTaxiOrderDetail } from '../schemas/dto/TaxiOrders/taxiOrder.mappers.js';
 
 /**
@@ -10,23 +12,18 @@ import { toTaxiOrderDetail } from '../schemas/dto/TaxiOrders/taxiOrder.mappers.j
  * @param args - Prisma findMany args (where/orderBy/etc.).
  * @returns Array of orders.
  */
-export async function getOrders(args: any): Promise<TaxiOrderDetail[]> {
+async function getOrders(args?: Prisma.taxi_ordersFindManyArgs): Promise<TaxiOrderDetail[]> {
 	try {
-		const mergedArgs = {
-			...args,
+		const mergedArgs: Prisma.taxi_ordersFindManyArgs = {
+			where: args?.where,
+			orderBy: args?.orderBy,
+			take: args?.take,
+			skip: args?.skip,
 			include: {
-				user: true,
+				customer: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
+						user: true,
 						current_vehicle: true,
 					},
 				},
@@ -34,10 +31,10 @@ export async function getOrders(args: any): Promise<TaxiOrderDetail[]> {
 			},
 		};
 		const results = await prisma.taxi_orders.findMany(mergedArgs);
-		return results.map((result: any) => toTaxiOrderDetail(result));
-	} catch (e) {
-		console.error('Error fetching orders:', e);
-		throw new Error(String(e));
+		return results.map((result: unknown) => toTaxiOrderDetail(result));
+	} catch (error) {
+		console.error('Error fetching orders:', error);
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
 	}
 }
 
@@ -47,15 +44,154 @@ export async function getOrders(args: any): Promise<TaxiOrderDetail[]> {
  * @param order_id - Order ID.
  * @returns The order or null.
  */
-export async function getOrder(order_id: string): Promise<TaxiOrderDetail | null> {
+async function getOrder(order_id: string): Promise<TaxiOrderDetail | null> {
 	try {
 		const result = await prisma.taxi_orders.findFirst({
 			where: { order_id },
 			include: {
+				customer: true,
+				driver: {
+					include: {
+						user: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
+						vehicles: true,
+						current_vehicle: true,
+					},
+				},
+				grouped_orders: true,
+			},
+		});
+		return result ? toTaxiOrderDetail(result) : null;
+	} catch (error) {
+		console.error('Error fetching order by ID:', error);
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Get non-completed taxi orders for a user (optionally business-user aware) and optional type.
+ *
+ * @param user_id - User ID.
+ * @param type - Optional order type filter.
+ * @param isBusinessUser - If true, include orders created by the user for a business.
+ * @returns Matching orders.
+ */
+async function getTaxiOrdersIfNotCompleted(
+	user_id: string,
+	type?: string,
+	isBusinessUser: boolean = false
+): Promise<TaxiOrderDetail[]> {
+	try {
+		const whereClause: Prisma.taxi_ordersWhereInput = {
+			...(type ? { type: type as PrismaOrderType } : {}),
+			status: {
+				notIn: [
+					TAXI_ORDER_STATUS.TAXI_CANCELED as TAXI_ORDER_STATUS,
+					TAXI_ORDER_STATUS.TAXI_COMPLETED as TAXI_ORDER_STATUS,
+					TAXI_ORDER_STATUS.CUSTOMER_CANCELED as TAXI_ORDER_STATUS,
+					TAXI_ORDER_STATUS.TAXI_REJECTED as TAXI_ORDER_STATUS,
+					//TODO: Should exclude status AWAITING_PAYMENT or not?
+					TAXI_ORDER_STATUS.AWAITING_PAYMENT as TAXI_ORDER_STATUS,
+				],
+			},
+		};
+		const results = await prisma.taxi_orders.findMany({
+			where: {
+				...whereClause,
+				...(isBusinessUser
+					? {
+							OR: [{ user_id: user_id }, { creating_user_id: user_id }],
+						}
+					: {
+							user_id: user_id,
+							subtype: ORDER_SUBTYPE.CREATED_BY_USER,
+							OR: [{ creating_user_id: null }, { creating_user_id: { not: user_id } }],
+						}),
+			},
+			include: {
+				customer: true,
+				driver: {
+					include: {
+						user: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
+						vehicles: true,
+						current_vehicle: true,
+					},
+				},
+				grouped_orders: true,
+			},
+		});
+		return results.map((result: unknown) => toTaxiOrderDetail(result));
+	} catch (error) {
+		console.error('Error fetching taxi order:', error);
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Get currently active (non-pending/completed/canceled) orders for a driver; includes scheduled cutoff logic.
+ *
+ * @param driver_id - Driver ID.
+ * @returns Active orders for the driver.
+ */
+async function getActiveOrdersByDriverId(driver_id: string): Promise<TaxiOrderDetail[]> {
+	const thirtyMinutesInMs = TIME_LIMIT.START_DRIVE * 60000;
+	const currentTime = new Date();
+	const timezoneOffset = currentTime.getTimezoneOffset() * 60000;
+	const comparisonTime = new Date(currentTime.getTime() - timezoneOffset + thirtyMinutesInMs)
+		.toISOString()
+		.slice(0, -1);
+	try {
+		const results = await prisma.taxi_orders.findMany({
+			where: {
+				driver_id: driver_id,
+				status: {
+					notIn: [
+						TAXI_ORDER_STATUS.TAXI_CANCELED,
+						TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+						TAXI_ORDER_STATUS.TAXI_COMPLETED,
+						TAXI_ORDER_STATUS.PENDING,
+						TAXI_ORDER_STATUS.TAXI_REJECTED,
+						TAXI_ORDER_STATUS.AWAITING_PAYMENT,
+					],
+				},
+				OR: [
+					{ is_scheduled: false },
+					{
+						AND: [
+							{ is_scheduled: true },
+							{
+								preferences: {
+									path: ['departure_time'],
+									lte: comparisonTime,
+								},
+							},
+						],
+					},
+				],
+			},
+			include: {
 				user: {
 					include: {
-						addresses: true,
-						group_user: true,
+						documents: {
+							include: {
+								files: true,
+							},
+						},
 					},
 				},
 				driver: {
@@ -69,1052 +205,223 @@ export async function getOrder(order_id: string): Promise<TaxiOrderDetail | null
 								},
 							},
 						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
-				vehicle: true,
-				grouped_orders: {
-					include: {
-						user: true,
-						driver: {
-							include: {
-								user: true,
-								current_vehicle: true,
-							},
-						},
-					},
-				},
+				grouped_orders: true,
 			},
 		});
-
-		return result ? toTaxiOrderDetail(result) : null;
-	} catch (e) {
-		console.error('Error fetching order:', e);
-		throw new Error(String(e));
+		return results.map((result: unknown) => toTaxiOrderDetail(result));
+	} catch (error) {
+		console.error('Error fetching taxi order:', error);
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
 	}
 }
 
 /**
- * Create a new taxi order.
+ * Get delivery orders (non-taxi) for a driver with optional filters.
  *
- * @param data - Order creation data.
- * @returns The created order.
- */
-export async function createOrder(data: CreateTaxiOrder): Promise<TaxiOrderDetail> {
-	try {
-		const orderData = {
-			user_id: data.user_id,
-			status: TAXI_ORDER_STATUS.PENDING,
-			type: data.type,
-			subtype: data.subtype,
-			pickup_location: data.pickup_location,
-			delivery_location: data.delivery_location,
-			preferences: data.preferences,
-			special_instructions: data.special_instructions,
-			scheduled_time: data.scheduled_time,
-			payment_method: data.payment_method,
-			price: data.price,
-			business_id: data.business_id,
-			timeline: [],
-		};
-
-		const result = await prisma.taxi_orders.create({
-			data: orderData,
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-
-		return toTaxiOrderDetail(result);
-	} catch (e) {
-		console.error('Error creating order:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Update taxi order status.
- *
- * @param order_id - Order ID.
- * @param status - New status.
- * @param additional_data - Additional data to update.
- * @returns Updated order.
- */
-export async function updateOrderStatus(
-	order_id: string,
-	status: string,
-	additional_data?: Partial<TaxiOrderBase>
-): Promise<TaxiOrderDetail | null> {
-	try {
-		const updateData = {
-			status,
-			...additional_data,
-			updated_at: new Date(),
-		};
-
-		const result = await prisma.taxi_orders.update({
-			where: { order_id },
-			data: updateData,
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-
-		return toTaxiOrderDetail(result);
-	} catch (e) {
-		console.error('Error updating order status:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Accept a taxi order by driver.
- *
- * @param order_id - Order ID.
  * @param driver_id - Driver ID.
- * @param vehicle_id - Vehicle ID.
- * @returns Updated order.
+ * @param args - Additional where filters.
+ * @returns Delivery orders.
  */
-export async function acceptOrder(
-	order_id: string,
+async function getDeliveryOrdersByDriverId(
 	driver_id: string,
-	vehicle_id: string
-): Promise<TaxiOrderDetail | null> {
-	try {
-		const timeline_entry = {
-			action: 'accepted',
-			driver_id,
-			timestamp: new Date().toISOString(),
-		};
-
-		return await prisma.taxi_orders.update({
-			where: { order_id },
-			data: {
-				status: TAXI_ORDER_STATUS.TAXI_ACCEPTED,
-				driver_id,
-				vehicle_id,
-				timeline: {
-					push: timeline_entry,
-				},
-				updated_at: new Date(),
-			},
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-	} catch (e) {
-		console.error('Error accepting order:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Complete a taxi order.
- *
- * @param order_id - Order ID.
- * @param completion_data - Completion data (price, duration, etc.).
- * @returns Updated order.
- */
-export async function completeOrder(
-	order_id: string,
-	completion_data: {
-		price?: number;
-		actual_duration?: number;
-		actual_distance?: number;
-		drop_off_time?: string;
-	}
-): Promise<TaxiOrderDetail | null> {
-	try {
-		const timeline_entry = {
-			action: 'completed',
-			timestamp: new Date().toISOString(),
-			...completion_data,
-		};
-
-		return await prisma.taxi_orders.update({
-			where: { order_id },
-			data: {
-				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
-				price: completion_data.price,
-				actual_duration: completion_data.actual_duration,
-				actual_distance: completion_data.actual_distance,
-				drop_off_time: completion_data.drop_off_time,
-				timeline: {
-					push: timeline_entry,
-				},
-				updated_at: new Date(),
-			},
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-	} catch (e) {
-		console.error('Error completing order:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Cancel a taxi order.
- *
- * @param order_id - Order ID.
- * @param cancellation_reason - Reason for cancellation.
- * @param cancelled_by - Who cancelled the order (user/driver/admin).
- * @returns Updated order.
- */
-export async function cancelOrder(
-	order_id: string,
-	cancellation_reason?: string,
-	cancelled_by?: string
-): Promise<TaxiOrderDetail | null> {
-	try {
-		const timeline_entry = {
-			action: 'cancelled',
-			timestamp: new Date().toISOString(),
-			reason: cancellation_reason,
-			cancelled_by,
-		};
-
-		return await prisma.taxi_orders.update({
-			where: { order_id },
-			data: {
-				status: TAXI_ORDER_STATUS.TAXI_CANCELED,
-				timeline: {
-					push: timeline_entry,
-				},
-				updated_at: new Date(),
-			},
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-	} catch (e) {
-		console.error('Error cancelling order:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Get active taxi orders for a user.
- *
- * @param user_id - User ID.
- * @param type - Order type filter.
- * @returns Array of active orders.
- */
-export async function getActiveOrdersByUserId(user_id: string, type?: string): Promise<TaxiOrderDetail[]> {
-	try {
-		const where: any = {
-			user_id,
-			status: {
-				in: [TAXI_ORDER_STATUS.PENDING, TAXI_ORDER_STATUS.TAXI_ACCEPTED, TAXI_ORDER_STATUS.TAXI_DRIVING],
-			},
-		};
-
-		if (type) {
-			where.type = type;
-		}
-
-		return await getOrders({ where });
-	} catch (e) {
-		console.error('Error fetching active orders:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Get active taxi orders for a driver.
- *
- * @param driver_id - Driver ID.
- * @returns Array of active orders.
- */
-export async function getActiveOrdersByDriverId(driver_id: string): Promise<TaxiOrderDetail[]> {
-	try {
-		const where = {
-			driver_id,
-			status: {
-				in: [TAXI_ORDER_STATUS.TAXI_ACCEPTED, TAXI_ORDER_STATUS.TAXI_DRIVING],
-			},
-		};
-
-		return await getOrders({ where });
-	} catch (e) {
-		console.error('Error fetching driver active orders:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Get completed taxi orders for a user.
- *
- * @param user_id - User ID.
- * @param limit - Number of orders to return.
- * @returns Array of completed orders.
- */
-export async function getCompletedOrdersByUserId(user_id: string, limit: number = 50): Promise<TaxiOrderDetail[]> {
-	try {
-		const where = {
-			user_id,
-			status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
-		};
-
-		return await getOrders({
-			where,
-			orderBy: { created_at: 'desc' },
-			take: limit,
-		});
-	} catch (e) {
-		console.error('Error fetching completed orders:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Update taxi order route information.
- *
- * @param order_id - Order ID.
- * @param route_data - Route data to update.
- * @returns Updated order.
- */
-export async function updateOrderRoute(
-	order_id: string,
-	route_data: {
-		route?: Record<string, unknown>;
-		estimated_duration?: number;
-		estimated_distance?: number;
-		pickup_time?: string;
-	}
-): Promise<TaxiOrderDetail | null> {
-	try {
-		return await prisma.taxi_orders.update({
-			where: { order_id },
-			data: {
-				...route_data,
-				updated_at: new Date(),
-			},
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-	} catch (e) {
-		console.error('Error updating order route:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Get taxi orders if not completed for a user.
- *
- * @param user_id - User ID.
- * @param type - Order type filter.
- * @param isBusinessUser - Whether user is a business user.
- * @returns Array of taxi orders.
- */
-export async function getTaxiOrdersIfNotCompleted(
-	user_id: string,
-	type?: string,
-	isBusinessUser: boolean = false
+	args?: Prisma.delivery_ordersFindManyArgs
 ): Promise<TaxiOrderDetail[]> {
 	try {
-		const whereCondition: any = {
-			user_id,
-			status: {
-				notIn: [
-					TAXI_ORDER_STATUS.TAXI_COMPLETED,
-					TAXI_ORDER_STATUS.TAXI_CANCELED,
-					TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
-				],
-			},
+		const whereClause: Prisma.delivery_ordersWhereInput = {
+			driver_id: driver_id,
+			...(args?.where || {}),
 		};
-
-		if (type) {
-			whereCondition.type = type;
-		}
-
-		if (isBusinessUser) {
-			whereCondition.business_id = { not: null };
-		}
-
-		return await prisma.taxi_orders.findMany({
-			where: whereCondition,
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-				business: true,
-			},
-			orderBy: {
-				created_at: 'desc',
-			},
-		});
-	} catch (e) {
-		console.error('Error getting taxi orders if not completed:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Get delivery orders by driver ID.
- *
- * @param driver_id - Driver ID.
- * @param args - Additional query arguments.
- * @returns Array of delivery orders.
- */
-export async function getDeliveryOrdersByDriverId(driver_id: string, args: any = {}): Promise<TaxiOrderDetail[]> {
-	try {
-		const whereCondition = {
-			driver_id,
-			type: 'DELIVERY',
-			...args.where,
-		};
-
-		return await prisma.taxi_orders.findMany({
+		const results = await prisma.delivery_orders.findMany({
 			...args,
-			where: whereCondition,
+			where: whereClause,
 			include: {
 				user: true,
 				driver: {
 					include: {
-						user: true,
+						user: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
-				vehicle: true,
-				business: true,
 			},
 		});
-	} catch (e) {
-		console.error('Error getting delivery orders by driver ID:', e);
-		throw new Error(String(e));
+		// Note: delivery_orders are mapped to TaxiOrderDetail for compatibility
+		return results.map((result: unknown) => toTaxiOrderDetail(result));
+	} catch (error) {
+		console.error('Error getting orders by driver ID:', error);
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
 	}
 }
 
 /**
- * Get orders by driver ID with additional arguments.
+ * Get taxi orders for a driver with optional filters.
  *
  * @param driver_id - Driver ID.
- * @param args - Additional query arguments.
- * @returns Array of taxi orders.
+ * @param args - Additional where filters.
+ * @returns Taxi orders.
  */
-export async function getOrdersByDriverId(driver_id: string, args: any = {}): Promise<TaxiOrderDetail[]> {
+async function getOrdersByDriverId(
+	driver_id: string,
+	args?: Prisma.taxi_ordersFindManyArgs
+): Promise<TaxiOrderDetail[]> {
 	try {
-		const whereCondition = {
-			driver_id,
-			...args.where,
+		const whereClause: Prisma.taxi_ordersWhereInput = {
+			driver_id: driver_id,
+			...(args?.where || {}),
 		};
-
-		return await prisma.taxi_orders.findMany({
-			...args,
-			where: whereCondition,
+		const results = await prisma.taxi_orders.findMany({
+			where: whereClause,
+			orderBy: args?.orderBy,
+			take: args?.take,
+			skip: args?.skip,
 			include: {
-				user: true,
+				customer: true,
 				driver: {
 					include: {
 						user: true,
+						vehicles: true,
 						current_vehicle: true,
 					},
 				},
-				vehicle: true,
-				business: true,
 			},
 		});
-	} catch (e) {
-		console.error('Error getting orders by driver ID:', e);
-		throw new Error(String(e));
+		return results.map((result: unknown) => toTaxiOrderDetail(result));
+	} catch (error) {
+		console.error('Error getting orders by driver ID:', error);
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
 	}
 }
 
 /**
- * Create an order sent record.
+ * Create a taxi order with an auto-incrementing mod-10000 order_number.
  *
- * @param order_id - Order ID.
- * @param driver - Driver object with user_id.
- * @returns Created order sent record.
+ * @param order - Order payload to insert.
+ * @returns Created order.
  */
-export async function createOrderSent(order_id: string, driver: { user_id: string; driver_id?: string }): Promise<any> {
+async function createOrder(order: Prisma.taxi_ordersCreateInput): Promise<TaxiOrderDetail> {
 	try {
-		return await prisma.taxi_order_sent.create({
-			data: {
-				order_id,
-				driver_id: driver.driver_id || driver.user_id,
-				sent_at: new Date(),
-			},
-		});
-	} catch (e) {
-		console.error('Error creating order sent:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Check if order is sent to a driver.
- *
- * @param order_id - Order ID.
- * @param driver - Driver object with user_id.
- * @returns Order sent record or null.
- */
-export async function isOrderSent(order_id: string, driver: { user_id: string; driver_id?: string }): Promise<any> {
-	try {
-		return await prisma.taxi_order_sent.findFirst({
-			where: {
-				order_id,
-				driver_id: driver.driver_id || driver.user_id,
-			},
-		});
-	} catch (e) {
-		console.error('Error checking if order is sent:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Get already sent orders by driver ID.
- *
- * @param driver_id - Driver ID.
- * @returns Array of order IDs.
- */
-export async function getAlreadySentOrdersByDriverId(driver_id: string): Promise<string[]> {
-	try {
-		const sentOrders = await prisma.taxi_order_sent.findMany({
-			where: {
-				driver_id,
-			},
-			select: {
-				order_id: true,
-			},
-		});
-
-		return sentOrders.map((order: { order_id: string }) => order.order_id);
-	} catch (e) {
-		console.error('Error getting already sent orders by driver ID:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Cancel vehicle transfer order.
- *
- * @param user_id - User ID.
- * @param status - Cancellation status.
- * @param cancellation_reason - Cancellation reason.
- * @returns Updated order.
- */
-export async function cancelVehicleTransferOrder(
-	user_id: string,
-	status: string,
-	cancellation_reason?: string
-): Promise<TaxiOrderDetail | null> {
-	try {
-		return await prisma.taxi_orders.updateMany({
-			where: {
-				user_id,
-				type: 'VEHICLE_TRANSFER',
-				status: {
-					notIn: [
-						TAXI_ORDER_STATUS.TAXI_COMPLETED,
-						TAXI_ORDER_STATUS.TAXI_CANCELED,
-						TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
-					],
+		const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+			const lastOrder = await tx.taxi_orders.findFirst({
+				orderBy: { created_at: 'desc' },
+				select: { order_number: true },
+			});
+			const order_number = lastOrder ? (lastOrder.order_number + 1) % 10000 : 0;
+			const created = await tx.taxi_orders.create({
+				data: {
+					...order,
+					order_number: order_number,
 				},
-			},
-			data: {
-				status,
-				notes: cancellation_reason,
-				updated_at: new Date(),
-			},
+			});
+			return created;
 		});
-	} catch (e) {
-		console.error('Error canceling vehicle transfer order:', e);
-		throw new Error(String(e));
+		return toTaxiOrderDetail(result as unknown);
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
 	}
 }
 
 /**
- * Accept order sent (mark as accepted).
+ * Create a taxi_order_sent record for an order and driver.
  *
  * @param order_id - Order ID.
- * @param driver_id - Driver ID.
- * @returns Updated order sent record.
+ * @param driver - Driver object containing driver_id and location.
+ * @returns Created taxi_order_sent record.
  */
-export async function acceptOrderSent(order_id: string, driver_id: string): Promise<any> {
+async function createOrderSent(
+	order_id: string,
+	driver: { driver_id: string; location?: Prisma.InputJsonValue }
+): Promise<Prisma.taxi_order_sentGetPayload<{ include: { order: true; driver: true } }>> {
 	try {
-		return await prisma.taxi_order_sent.updateMany({
+		return prisma.taxi_order_sent.create({
+			data: {
+				order: {
+					connect: {
+						order_id,
+					},
+				},
+				driver: {
+					connect: {
+						driver_id: driver.driver_id,
+					},
+				},
+				location: driver.location,
+				accepted: false,
+			},
+		});
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Check whether a given order has already been sent to a driver.
+ *
+ * @param order_id - Order ID.
+ * @param driver - Driver object containing driver_id.
+ * @returns Sent record or null.
+ */
+async function isOrderSent(
+	order_id: string,
+	driver: { driver_id: string }
+): Promise<Prisma.taxi_order_sentGetPayload<{ include: { order: true; driver: true } }> | null> {
+	try {
+		return prisma.taxi_order_sent.findFirst({
 			where: {
 				order_id,
-				driver_id,
-			},
-			data: {
-				accepted_at: new Date(),
+				driver_id: driver.driver_id,
 			},
 		});
-	} catch (e) {
-		console.error('Error accepting order sent:', e);
-		throw new Error(String(e));
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
 	}
 }
 
 /**
- * Get sent drivers for an order.
+ * Get pending (not accepted/rejected) sent orders for a driver where order is still pending.
  *
- * @param order_id - Order ID.
- * @returns Array of drivers the order was sent to.
+ * @param driver_id - Driver ID.
+ * @returns Array of taxi_order_sent with order included.
  */
-export async function getSentDrivers(order_id: string): Promise<any[]> {
+async function getAlreadySentOrdersByDriverId(
+	driver_id: string
+): Promise<Prisma.taxi_order_sentGetPayload<{ include: { order: true } }>[]> {
 	try {
 		return await prisma.taxi_order_sent.findMany({
 			where: {
-				order_id,
-			},
-			include: {
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-			},
-		});
-	} catch (e) {
-		console.error('Error getting sent drivers:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Update order last sent at timestamp.
- *
- * @param order_id - Order ID.
- * @returns Updated order.
- */
-export async function updateOrderLastSentAt(order_id: string): Promise<TaxiOrderDetail | null> {
-	try {
-		return await prisma.taxi_orders.update({
-			where: { order_id },
-			data: {
-				last_sent_at: new Date(),
-			},
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-	} catch (e) {
-		console.error('Error updating order last sent at:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Update taxi order route.
- *
- * @param order_id - Order ID.
- * @param route - Route data.
- * @returns Updated order.
- */
-export async function updateTaxiOderRoute(
-	order_id: string,
-	route: Record<string, unknown>
-): Promise<TaxiOrderDetail | null> {
-	try {
-		return await prisma.taxi_orders.update({
-			where: { order_id },
-			data: {
-				route,
-				updated_at: new Date(),
-			},
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-	} catch (e) {
-		console.error('Error updating taxi order route:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Update taxi order pickup location.
- *
- * @param order_id - Order ID.
- * @param pickupLocation - Pickup location data.
- * @returns Updated order.
- */
-export async function updateTaxiOrderPickupLocation(
-	order_id: string,
-	pickupLocation: Record<string, unknown>
-): Promise<TaxiOrderDetail | null> {
-	try {
-		return await prisma.taxi_orders.update({
-			where: { order_id },
-			data: {
-				pickup_location: pickupLocation,
-				updated_at: new Date(),
-			},
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-	} catch (e) {
-		console.error('Error updating taxi order pickup location:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Update taxi order delivery location.
- *
- * @param order_id - Order ID.
- * @param deliveryLocation - Delivery location data.
- * @returns Updated order.
- */
-export async function updateTaxiOrderDeliveryLocation(
-	order_id: string,
-	deliveryLocation: Record<string, unknown>
-): Promise<TaxiOrderDetail | null> {
-	try {
-		return await prisma.taxi_orders.update({
-			where: { order_id },
-			data: {
-				drop_off_location: deliveryLocation,
-				updated_at: new Date(),
-			},
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-	} catch (e) {
-		console.error('Error updating taxi order delivery location:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Update complete taxi route.
- *
- * @param order_id - Order ID.
- * @param route - Complete route data array.
- * @returns Updated order.
- */
-export async function updateCompleteTaxiRoute(
-	order_id: string,
-	route: Array<Record<string, unknown>>
-): Promise<TaxiOrderDetail | null> {
-	try {
-		return await prisma.taxi_orders.update({
-			where: { order_id },
-			data: {
-				complete_route: route,
-				updated_at: new Date(),
-			},
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-	} catch (e) {
-		console.error('Error updating complete taxi route:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Update taxi order timeline.
- *
- * @param order_id - Order ID.
- * @param newTimelineEntries - New timeline entries to add.
- * @returns Updated order.
- */
-export async function updateTaxiOrderTimeline(
-	order_id: string,
-	newTimelineEntries: Array<Record<string, unknown>>
-): Promise<TaxiOrderDetail | null> {
-	try {
-		const order = await prisma.taxi_orders.findUnique({
-			where: { order_id },
-		});
-
-		if (!order) {
-			throw new Error('Order not found');
-		}
-
-		const currentTimeline = (order.timeline as Array<Record<string, unknown>>) || [];
-		const updatedTimeline = [...currentTimeline, ...newTimelineEntries];
-
-		return await prisma.taxi_orders.update({
-			where: { order_id },
-			data: {
-				timeline: updatedTimeline,
-				updated_at: new Date(),
-			},
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-	} catch (e) {
-		console.error('Error updating taxi order timeline:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Update taxi order payment information.
- *
- * @param order_id - Order ID.
- * @param payment - Payment data.
- * @returns Updated order.
- */
-export async function updateTaxiOrderPayment(
-	order_id: string,
-	payment: {
-		payment_method?: string;
-		is_paid?: boolean;
-		price?: number;
-		tip_amount?: number;
-		service_fee?: number;
-		tax_fee?: number;
-		commission_fee?: number;
-		discount?: number;
-	}
-): Promise<TaxiOrderDetail | null> {
-	try {
-		return await prisma.taxi_orders.update({
-			where: { order_id },
-			data: {
-				...payment,
-				updated_at: new Date(),
-			},
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-	} catch (e) {
-		console.error('Error updating taxi order payment:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Update order with generic data.
- *
- * @param order_id - Order ID.
- * @param order - Order data to update.
- * @returns Updated order.
- */
-export async function updateOrder(order_id: string, order: Record<string, unknown>): Promise<TaxiOrderDetail | null> {
-	try {
-		return await prisma.taxi_orders.update({
-			where: { order_id },
-			data: {
-				...order,
-				updated_at: new Date(),
-			},
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-			},
-		});
-	} catch (e) {
-		console.error('Error updating order:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Get accepted orders.
- *
- * @returns Array of accepted orders.
- */
-export async function getAcceptedOrders(): Promise<TaxiOrderDetail[]> {
-	try {
-		return await prisma.taxi_orders.findMany({
-			where: {
-				status: TAXI_ORDER_STATUS.TAXI_ACCEPTED,
-			},
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-				business: true,
-			},
-			orderBy: {
-				created_at: 'desc',
-			},
-		});
-	} catch (e) {
-		console.error('Error getting accepted orders:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Get active orders for a user.
- *
- * @param user_id - User ID.
- * @returns Array of active orders.
- */
-export async function userActiveOrders(user_id: string): Promise<TaxiOrderDetail[]> {
-	try {
-		return await prisma.taxi_orders.findMany({
-			where: {
-				user_id,
-				status: {
-					notIn: [
-						TAXI_ORDER_STATUS.TAXI_COMPLETED,
-						TAXI_ORDER_STATUS.TAXI_CANCELED,
-						TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
-					],
+				driver_id: driver_id,
+				accepted: false,
+				rejected: false,
+				order: {
+					status: TAXI_ORDER_STATUS.PENDING,
 				},
 			},
 			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
-				vehicle: true,
-				business: true,
-			},
-			orderBy: {
-				created_at: 'desc',
+				order: true,
 			},
 		});
-	} catch (e) {
-		console.error('Error getting user active orders:', e);
-		throw new Error(String(e));
+	} catch (error) {
+		console.error('Error fetching pending orders for driver:', error);
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
 	}
 }
 
 /**
- * Delete order sent record.
+ * Accept a taxi order using a raw row-level lock to prevent race conditions.
  *
- * @param order_id - Order ID.
- * @param taxi_order_sent_id - Taxi order sent ID.
- * @returns Deleted record.
- */
-export async function deleteOrderSent(order_id: string, taxi_order_sent_id: string): Promise<any> {
-	try {
-		return await prisma.taxi_order_sent.delete({
-			where: {
-				taxi_order_sent_id,
-			},
-		});
-	} catch (e) {
-		console.error('Error deleting order sent:', e);
-		throw new Error(String(e));
-	}
-}
-
-/**
- * Accept taxi order with raw lock to prevent race conditions.
- *
- * @param order - Order object with order_id and is_scheduled.
- * @param driver - Driver object with driver_id and current_vehicle.
+ * @param order - Order object containing order_id and is_scheduled.
+ * @param driver - Driver with driver_id and current_vehicle.
  * @returns Updated taxi order.
  */
 export async function acceptTaxiOrderWithRawLock(
@@ -1124,13 +431,12 @@ export async function acceptTaxiOrderWithRawLock(
 	const { order_id: orderId, is_scheduled } = order;
 	const driverId = driver.driver_id;
 
-	// Basic UUID format validation (simple regex check)
-	const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-	if (!uuidRegex.test(orderId)) {
+	// Validate UUID format to prevent SQL injection
+	if (!isUuid(orderId)) {
 		throw new Error(`Invalid order_id format: ${orderId}`);
 	}
 
-	return prisma.$transaction(async (tx: any) => {
+	return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 		// 1) Acquire a row-level lock on the taxi_orders row
 		await tx.$executeRawUnsafe(
 			`SELECT 1
@@ -1166,16 +472,10 @@ export async function acceptTaxiOrderWithRawLock(
 				vehicle: { connect: { vehicle_id: driver.current_vehicle.vehicle_id } },
 			},
 			include: {
-				user: true,
+				customer: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: { files: true },
-								},
-							},
-						},
+						user: true,
 						vehicles: true,
 						current_vehicle: true,
 					},
@@ -1188,37 +488,793 @@ export async function acceptTaxiOrderWithRawLock(
 	});
 }
 
+/**
+ * Accept a taxi order (without raw locking); marks sent as accepted, sets driver and vehicle.
+ *
+ * @param order - Order object containing order_id and is_scheduled.
+ * @param driver - Driver with driver_id and current_vehicle.
+ * @returns Updated taxi order.
+ */
+async function acceptOrder(
+	order: { order_id: string; is_scheduled?: boolean },
+	driver: { driver_id: string; current_vehicle: { vehicle_id: string } }
+): Promise<TaxiOrderDetail> {
+	const order_id = order.order_id;
+	try {
+		const taxi_order_sent = await prisma.taxi_order_sent.update({
+			where: {
+				taxi_order_sent_driver_unique: {
+					order_id,
+					driver_id: driver.driver_id,
+				},
+			},
+			data: {
+				accepted: true,
+			},
+		});
+		console.log('taxi_order_sent', taxi_order_sent);
+		await prisma.drivers.update({
+			where: {
+				driver_id: driver.driver_id,
+			},
+			data: {
+				on_order: !order.is_scheduled,
+			},
+		});
+		const result = await prisma.taxi_orders.update({
+			where: {
+				order_id,
+			},
+			data: {
+				status: 'TAXI_ACCEPTED',
+				driver: {
+					connect: {
+						driver_id: driver.driver_id,
+					},
+				},
+				vehicle: {
+					connect: {
+						vehicle_id: driver.current_vehicle.vehicle_id,
+					},
+				},
+			},
+			include: {
+				user: true,
+				driver: {
+					include: {
+						user: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
+						vehicles: true,
+						current_vehicle: true,
+					},
+				},
+			},
+		});
+		return toTaxiOrderDetail(result);
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Update the status of a taxi order by ID, returning nested relations.
+ *
+ * @param order_id - Order ID.
+ * @param status - New status.
+ * @returns Updated taxi order.
+ */
+async function updateOrderStatus(order_id: string, status: string): Promise<TaxiOrderDetail> {
+	try {
+		const result = await prisma.taxi_orders.update({
+			where: {
+				order_id,
+			},
+			data: {
+				status,
+			},
+			include: {
+				user: true,
+				driver: {
+					include: {
+						user: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
+						vehicles: true,
+						current_vehicle: true,
+					},
+				},
+			},
+		});
+		return toTaxiOrderDetail(result);
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Mark an order as completed and set driver.on_order to false.
+ *
+ * @param order_id - Order ID.
+ * @returns Updated taxi order.
+ */
+async function completeOrder(order_id: string): Promise<TaxiOrderDetail> {
+	try {
+		const taxi_order = await prisma.taxi_orders.update({
+			where: {
+				order_id,
+			},
+			data: {
+				status: 'TAXI_COMPLETED',
+			},
+			include: {
+				user: true,
+				driver: {
+					include: {
+						user: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
+						vehicles: true,
+						current_vehicle: true,
+					},
+				},
+			},
+		});
+		await prisma.drivers.update({
+			where: {
+				driver_id: taxi_order.driver_id || '',
+			},
+			data: {
+				on_order: false,
+			},
+		});
+		return toTaxiOrderDetail(taxi_order);
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Cancel an order with a specific status and reason; sets driver.on_order to false if assigned.
+ *
+ * @param order_id - Order ID.
+ * @param status - Cancellation status.
+ * @param cancellation_reason - Reason text.
+ * @returns Updated taxi order.
+ */
+async function cancelOrder(order_id: string, status: string, cancellation_reason: string): Promise<TaxiOrderDetail> {
+	try {
+		const taxi_order = await prisma.taxi_orders.update({
+			where: {
+				order_id,
+			},
+			data: {
+				status: status,
+				cancellation_reason: cancellation_reason,
+			},
+			include: {
+				user: true,
+				driver: {
+					include: {
+						user: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
+						vehicles: true,
+						current_vehicle: true,
+					},
+				},
+			},
+		});
+		if (taxi_order.driver_id) {
+			await prisma.drivers.update({
+				where: {
+					driver_id: taxi_order.driver_id,
+				},
+				data: {
+					on_order: false,
+				},
+			});
+		}
+		return toTaxiOrderDetail(taxi_order);
+	} catch (error) {
+		console.error('Error cancelling order:', error);
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Cancel an active vehicle transfer combo order for a user, if present.
+ *
+ * @param user_id - User ID.
+ * @param status - Cancellation status.
+ * @param cancellation_reason - Reason text.
+ * @returns Updated order or null if not found.
+ */
+async function cancelVehicleTransferOrder(
+	user_id: string,
+	status: string,
+	cancellation_reason: string
+): Promise<TaxiOrderDetail | null> {
+	try {
+		let taxi_order = await prisma.taxi_orders.findFirst({
+			where: {
+				user_id: user_id,
+				type: ORDER_TYPE.VEHICLE_TRANSFER_COMBO,
+				status: {
+					notIn: [
+						TAXI_ORDER_STATUS.TAXI_COMPLETED,
+						TAXI_ORDER_STATUS.TAXI_CANCELED,
+						TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+					],
+				},
+			},
+		});
+		if (!taxi_order) {
+			console.info(`Vehicle transfer order for user: ${user_id} not found`);
+			return null;
+		}
+		taxi_order = await prisma.taxi_orders.update({
+			where: {
+				order_id: taxi_order.order_id,
+			},
+			data: {
+				status: status,
+				cancellation_reason: cancellation_reason,
+			},
+			include: {
+				user: true,
+				driver: {
+					include: {
+						user: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
+						vehicles: true,
+						current_vehicle: true,
+					},
+				},
+			},
+		});
+		if (taxi_order.driver_id) {
+			await prisma.drivers.update({
+				where: {
+					driver_id: taxi_order.driver_id,
+				},
+				data: {
+					on_order: false,
+				},
+			});
+		}
+		return toTaxiOrderDetail(taxi_order);
+	} catch (error) {
+		console.error('Error cancelling vehicle transfer order:', error);
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Mark a taxi_order_sent as accepted for a specific order and driver.
+ *
+ * @param order_id - Order ID.
+ * @param driver_id - Driver ID.
+ * @returns Updated taxi_order_sent record.
+ */
+async function acceptOrderSent(
+	order_id: string,
+	driver_id: string
+): Promise<Prisma.taxi_order_sentGetPayload<{ include: { order: true; driver: true } }>> {
+	console.log('order sent accept', order_id, driver_id);
+	try {
+		return prisma.taxi_order_sent.update({
+			where: {
+				order_id,
+				driver_id,
+			},
+			data: {
+				accepted: true,
+			},
+		});
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Get drivers to whom an order has been sent.
+ *
+ * @param order_id - Order ID.
+ * @returns Sent entries with nested driver and user docs.
+ */
+async function getSentDrivers(order_id: string): Promise<
+	Prisma.taxi_order_sentGetPayload<{
+		include: { driver: { include: { user: true } } };
+	}>[]
+> {
+	try {
+		return prisma.taxi_order_sent.findMany({
+			where: {
+				order_id,
+			},
+			include: {
+				driver: {
+					include: {
+						user: true,
+					},
+				},
+			},
+		});
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Update order's last_sent_at timestamp to now.
+ *
+ * @param order_id - Order ID.
+ * @returns Updated order.
+ */
+async function updateOrderLastSentAt(order_id: string): Promise<TaxiOrderDetail> {
+	try {
+		const result = await prisma.taxi_orders.update({
+			where: {
+				order_id,
+			},
+			data: {
+				last_sent_at: new Date(),
+			},
+		});
+		return toTaxiOrderDetail(result);
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Update a taxi order's route array.
+ *
+ * @param order_id - Order ID.
+ * @param route - Array of route waypoints.
+ * @returns Updated order.
+ */
+async function updateTaxiOderRoute(order_id: string, route: Prisma.InputJsonValue): Promise<TaxiOrderDetail> {
+	try {
+		const result = await prisma.taxi_orders.update({
+			where: {
+				order_id,
+			},
+			data: {
+				route: route,
+			},
+		});
+		return toTaxiOrderDetail(result);
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Update pickup_location for a taxi order.
+ *
+ * @param order_id - Order ID.
+ * @param pickupLocation - Location object.
+ * @returns Updated order.
+ */
+async function updateTaxiOrderPickupLocation(
+	order_id: string,
+	pickupLocation: Prisma.InputJsonValue
+): Promise<TaxiOrderDetail> {
+	try {
+		const result = await prisma.taxi_orders.update({
+			where: {
+				order_id,
+			},
+			data: {
+				pickup_location: pickupLocation,
+			},
+		});
+		return toTaxiOrderDetail(result);
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Update delivery_location for a taxi order.
+ *
+ * @param order_id - Order ID.
+ * @param deliveryLocation - Location object.
+ * @returns Updated order.
+ */
+async function updateTaxiOrderDeliveryLocation(
+	order_id: string,
+	deliveryLocation: Prisma.InputJsonValue
+): Promise<TaxiOrderDetail> {
+	try {
+		const result = await prisma.taxi_orders.update({
+			where: {
+				order_id,
+			},
+			data: {
+				delivery_location: deliveryLocation,
+			},
+		});
+		return toTaxiOrderDetail(result);
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Update full route array and compute pickup/delivery from endpoints.
+ *
+ * @param order_id - Order ID.
+ * @param route - Route waypoints.
+ * @returns Updated order with relations included.
+ */
+async function updateCompleteTaxiRoute(
+	order_id: string,
+	route: Array<{ address: string; coordinates: [number, number] }>
+): Promise<TaxiOrderDetail> {
+	try {
+		if (route.length === 0) {
+			throw new Error('Route array cannot be empty');
+		}
+		const firstRoute = route[0];
+		if (!firstRoute) {
+			throw new Error('First route point is required');
+		}
+		const data: Prisma.taxi_ordersUpdateInput = {
+			route: route as Prisma.InputJsonValue,
+			pickup_location: {
+				address: firstRoute.address,
+				coordinates: firstRoute.coordinates,
+			} as Prisma.InputJsonValue,
+		};
+		if (route.length > 1) {
+			const lastRoute = route[route.length - 1];
+			if (lastRoute) {
+				data.delivery_location = {
+					address: lastRoute.address,
+					coordinates: lastRoute.coordinates,
+				} as Prisma.InputJsonValue;
+			}
+		}
+		const result = await prisma.taxi_orders.update({
+			where: {
+				order_id,
+			},
+			data: data,
+			include: {
+				grouped_orders: true,
+				customer: true,
+				driver: {
+					include: {
+						user: true,
+						vehicles: true,
+						current_vehicle: true,
+					},
+				},
+			},
+		});
+		return toTaxiOrderDetail(result);
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Append entries to the order timeline array.
+ *
+ * @param order_id - Order ID.
+ * @param newTimelineEntries - Timeline entries to append.
+ * @returns Updated order with relations.
+ */
+async function updateTaxiOrderTimeline(
+	order_id: string,
+	newTimelineEntries: Array<Record<string, unknown>>
+): Promise<TaxiOrderDetail> {
+	try {
+		const order = await prisma.taxi_orders.findUnique({
+			where: {
+				order_id,
+			},
+			select: {
+				timeline: true,
+			},
+		});
+		if (!order) {
+			throw new Error(`Order with ID ${order_id} not found`);
+		}
+		const updatedTimeline = [...(order.timeline as Array<Record<string, unknown>>), ...newTimelineEntries];
+		const updated_order = await prisma.taxi_orders.update({
+			where: {
+				order_id,
+			},
+			data: {
+				timeline: updatedTimeline as Prisma.InputJsonValue,
+			},
+			include: {
+				grouped_orders: true,
+				user: true,
+				driver: {
+					include: {
+						user: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
+						vehicles: true,
+						current_vehicle: true,
+					},
+				},
+			},
+		});
+		return toTaxiOrderDetail(updated_order);
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Update the payment object for a taxi order and include business_users.
+ *
+ * @param order_id - Order ID.
+ * @param payment - Payment payload.
+ * @returns Updated order.
+ */
+async function updateTaxiOrderPayment(
+	order_id: string,
+	payment: Prisma.InputJsonValue
+): Promise<Prisma.taxi_ordersGetPayload<{ include: { business_users: true } }>> {
+	try {
+		return prisma.taxi_orders.update({
+			where: {
+				order_id,
+			},
+			data: {
+				payment: payment,
+			},
+			include: {
+				business_users: true,
+			},
+		});
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Update arbitrary fields on a taxi order and return nested relations.
+ *
+ * @param order_id - Order ID.
+ * @param order - Fields to update.
+ * @returns Updated order.
+ */
+async function updateOrder(order_id: string, order: Prisma.taxi_ordersUpdateInput): Promise<TaxiOrderDetail> {
+	try {
+		const result = await prisma.taxi_orders.update({
+			where: {
+				order_id,
+			},
+			data: order,
+			include: {
+				grouped_orders: true,
+				user: {
+					include: {
+						documents: {
+							include: {
+								files: true,
+							},
+						},
+					},
+				},
+				driver: {
+					include: {
+						user: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
+						vehicles: true,
+						current_vehicle: true,
+					},
+				},
+			},
+		});
+		return toTaxiOrderDetail(result);
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Get orders in accepted/active states (non-pending/canceled/completed/awaiting payment).
+ *
+ * @returns Active accepted orders.
+ */
+async function getAcceptedOrders(): Promise<TaxiOrderDetail[]> {
+	try {
+		const results = await prisma.taxi_orders.findMany({
+			where: {
+				status: {
+					notIn: [
+						TAXI_ORDER_STATUS.TAXI_CANCELED,
+						TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+						TAXI_ORDER_STATUS.TAXI_COMPLETED,
+						TAXI_ORDER_STATUS.PENDING,
+						TAXI_ORDER_STATUS.TAXI_REJECTED,
+						TAXI_ORDER_STATUS.AWAITING_PAYMENT,
+					],
+				},
+			},
+			include: {
+				user: true,
+				driver: {
+					include: {
+						user: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
+						vehicles: true,
+						current_vehicle: true,
+					},
+				},
+			},
+		});
+		return results.map((result: unknown) => toTaxiOrderDetail(result));
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Get active orders for a user.
+ *
+ * @param user_id - User ID.
+ * @returns Active orders for the user.
+ */
+async function userActiveOrders(user_id: string): Promise<TaxiOrderDetail[]> {
+	try {
+		const results = await prisma.taxi_orders.findMany({
+			where: {
+				user_id,
+				status: {
+					notIn: [
+						TAXI_ORDER_STATUS.TAXI_CANCELED,
+						TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+						TAXI_ORDER_STATUS.TAXI_COMPLETED,
+						TAXI_ORDER_STATUS.TAXI_REJECTED,
+						TAXI_ORDER_STATUS.AWAITING_PAYMENT, //TODO: Should we consider AWAIITING_PAYMENT as active order in the user's eyes?
+					],
+				},
+			},
+		});
+		return results.map((result: unknown) => toTaxiOrderDetail(result));
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+/**
+ * Delete a taxi_order_sent entry by its ID.
+ *
+ * @param order_id - Order ID (unused, kept for signature consistency).
+ * @param taxi_order_sent_id - Sent record ID to delete.
+ * @returns Deleted record.
+ */
+async function deleteOrderSent(
+	order_id: string,
+	taxi_order_sent_id: string
+): Promise<Prisma.taxi_order_sentGetPayload<{ include: { order: true; driver: true } }>> {
+	try {
+		return prisma.taxi_order_sent.delete({
+			where: {
+				taxi_order_sent_id: taxi_order_sent_id,
+			},
+		});
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
+export { getOrder };
+export { getOrdersByDriverId };
+export { createOrder };
+export { acceptOrder };
+export { createOrderSent };
+export { getOrders };
+export { getSentDrivers };
+export { updateOrder };
+export { updateOrderLastSentAt };
+export { completeOrder };
+export { cancelOrder };
+export { cancelVehicleTransferOrder };
+export { updateOrderStatus };
+export { isOrderSent };
+export { updateTaxiOderRoute };
+export { updateTaxiOrderPickupLocation };
+export { updateTaxiOrderDeliveryLocation };
+export { updateCompleteTaxiRoute };
+export { updateTaxiOrderPayment };
+export { updateTaxiOrderTimeline };
+export { getTaxiOrdersIfNotCompleted };
+export { getAlreadySentOrdersByDriverId };
+export { getActiveOrdersByDriverId };
+export { getAcceptedOrders };
+export { userActiveOrders };
+export { getDeliveryOrdersByDriverId };
+export { deleteOrderSent };
 export default {
-	getOrders,
 	getOrder,
+	getOrdersByDriverId,
 	createOrder,
-	updateOrderStatus,
 	acceptOrder,
+	createOrderSent,
+	getOrders,
+	getSentDrivers,
+	updateOrder,
+	updateOrderLastSentAt,
 	completeOrder,
 	cancelOrder,
-	getActiveOrdersByUserId,
-	getActiveOrdersByDriverId,
-	getCompletedOrdersByUserId,
-	updateOrderRoute,
-	getTaxiOrdersIfNotCompleted,
-	getDeliveryOrdersByDriverId,
-	getOrdersByDriverId,
-	createOrderSent,
-	isOrderSent,
-	getAlreadySentOrdersByDriverId,
 	cancelVehicleTransferOrder,
-	acceptOrderSent,
-	getSentDrivers,
-	updateOrderLastSentAt,
+	updateOrderStatus,
+	isOrderSent,
 	updateTaxiOderRoute,
 	updateTaxiOrderPickupLocation,
 	updateTaxiOrderDeliveryLocation,
 	updateCompleteTaxiRoute,
-	updateTaxiOrderTimeline,
 	updateTaxiOrderPayment,
-	updateOrder,
+	updateTaxiOrderTimeline,
+	getTaxiOrdersIfNotCompleted,
+	getAlreadySentOrdersByDriverId,
+	getActiveOrdersByDriverId,
 	getAcceptedOrders,
 	userActiveOrders,
+	getDeliveryOrdersByDriverId,
 	deleteOrderSent,
 	acceptTaxiOrderWithRawLock,
+	acceptOrderSent,
 };
