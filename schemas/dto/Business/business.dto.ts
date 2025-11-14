@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { OpenAPIRegistry, extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 
 import { TransportModuleRefSchema } from '../Transport/transport.dto.js';
-import { FoodDrinksModuleRefSchema } from '../FoodDrinks/food-drinks.dto.js';
+import { FoodDrinksModuleRefSchema } from '../FoodDrinks/index.js';
 import { StoresModuleRefSchema } from '../Stores/store.dto.js';
 import { ReservationModuleRefSchema } from '../reservations/reservation-module/reservation-module.dto.js';
 import { BusinessClientBaseSchema } from '../BusinessClient/businessClient.dto.js';
@@ -11,7 +11,7 @@ import { AddressRefSchema } from '../Address/index.js';
 import { UserRefSchema } from '../User/index.js';
 import { FileRefSchema } from '../Files/file.dto.js';
 import { UUID } from '../../primitives';
-import { DriverBaseSchema } from '../Drivers/driver.dto.ts';
+import { DriverBaseSchema } from '../Driver/index.js';
 extendZodWithOpenApi(z);
 
 // TODO: Fix dto after deleting menu from prisma model etc...

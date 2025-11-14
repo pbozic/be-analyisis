@@ -8,14 +8,14 @@ export * from './userAddress.js';
 
 export * from './Address.dao.dto.ts';
 export * from './userAddress.ts';
-// === Schema Registration ===
+// Import registerSchemas functions with aliases
 import { registerSchemas as registerAddressSchemas } from './address.js';
 import { registerSchemas as registerUserAddressSchemas } from './userAddress.js';
+import { registerSchemas as registerAddressValidatorSchemas } from './address.validators.js';
 
+// === Schema Registration ===
 export function registerSchemas(registry: OpenAPIRegistry) {
-	// Register address schemas
 	registerAddressSchemas(registry);
-
-	// Register user address schemas
 	registerUserAddressSchemas(registry);
+	registerAddressValidatorSchemas(registry);
 }

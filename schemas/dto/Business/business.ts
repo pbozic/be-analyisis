@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { BUSINESS_TYPE } from '@prisma/client';
 
-import { UUID } from '../../primitives.js';
+import { Timestamp, UUID } from '../../primitives.js';
 import { AddressRefSchema } from '../Address/address.js';
 import { BusinessUserRefSchema } from '../BusinessUser/businessUser.js';
-import { BusinessTypeRefSchema } from './businessType.js';
 
 extendZodWithOpenApi(z);
 
@@ -23,28 +23,29 @@ export const BusinessBaseSchema = z.object({
 	telephone_code: z.string(),
 	website_url: z.string().nullable(),
 	working_hours: z.record(z.any()).nullable(),
-	popular: z.boolean(),
-	new: z.boolean(),
+	// popular: z.boolean(),
+	// new: z.boolean(),
 	parent_business_id: UUID.nullable(),
 	stripe_account_id: z.string().nullable(),
 	stripe_customer_id: z.string().nullable(),
 	word_buy_stripe_subscription_id: z.string().nullable(),
-	first_activated_at: z.string().datetime().nullable(),
+	first_activated_at: Timestamp.nullable(),
 	active: z.boolean(),
 	sales_representative_id: z.string().nullable(),
-	created_at: z.string().datetime(),
-	updated_at: z.string().datetime(),
+	created_at: Timestamp,
+	updated_at: Timestamp.nullable(),
+	types: z.array(z.nativeEnum(BUSINESS_TYPE)).optional(),
 });
 
 export type BusinessBase = z.infer<typeof BusinessBaseSchema>;
 
 // Business Ref Schema - minimal identity for embedding elsewhere
+// Updated to match common/Business.dto.ts format (includes logo and banner)
 export const BusinessRefSchema = z.object({
 	business_id: UUID,
-	name: z.string(),
-	email: z.string().email(),
-	telephone: z.string(),
-	active: z.boolean(),
+	name: z.string().nullable().optional(),
+	logo: z.string().url().nullable().optional(),
+	banner: z.string().url().nullable().optional(),
 });
 
 export type BusinessRef = z.infer<typeof BusinessRefSchema>;
@@ -55,7 +56,6 @@ export const BusinessResponseSchema = BusinessBaseSchema.extend({
 	parent_business: BusinessBaseSchema.nullable(),
 	child_businesses: z.array(BusinessBaseSchema).optional(),
 	business_users: z.array(BusinessUserRefSchema).optional(),
-	types: z.array(BusinessTypeRefSchema).optional(),
 	// Additional computed fields that might be added in controllers
 	paymentMethods: z.array(z.any()).optional(),
 });

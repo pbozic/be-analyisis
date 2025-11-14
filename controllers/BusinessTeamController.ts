@@ -9,7 +9,7 @@ import {
 	MoveUserToTeamInput,
 	SetBusinessTeamLimitInput,
 	SetBusinessTeamNameInput,
-} from '../schemas/dto/BusinessTeam/BusinessTeam.validation.ts';
+} from '../schemas/dto/BusinessTeam/businessTeam.validators.js';
 
 /**
  * GET /business-teams/:business_id

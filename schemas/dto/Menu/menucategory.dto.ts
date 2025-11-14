@@ -1,10 +1,38 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { MenuCategoryDataSchema } from './menu.dto.ts';
-
 extendZodWithOpenApi(z);
 
+export const MenuCategoryDataSchema = z
+	.object({
+		name_translatable_id: z.string().uuid().optional(),
+		names: z
+			.record(z.string())
+			.optional()
+			.openapi({ example: { en: 'Starters', sl: 'Predjedi' } }),
+		description_translatable_id: z.string().uuid().optional(),
+		description: z.record(z.string()).optional(),
+		categories: z
+			.array(z.string())
+			.optional()
+			.openapi({ example: ['salads', 'vegan'] }),
+		food_drinks_id: z.string().uuid().optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
+		stores_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: z.string().uuid(),
+		order: z.number().int().optional(),
+		price: z.number().optional(),
+	})
+	.passthrough()
+	.openapi('MenuCategoryData');
+
+export const CreateMenuCategorySchema = z
+	.object({
+		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		data: MenuCategoryDataSchema,
+	})
+	.openapi('CreateMenuCategory');
+
+export type MenuCategory = z.infer<typeof MenuCategoryDataSchema>;
 // -----------------------
 // MenuCategory DAO-level input schemas
 // -----------------------
@@ -144,7 +172,45 @@ export const UpdateMenuCategoriesWithNewPriceInputSchema = z
 	})
 	.openapi('UpdateMenuCategoriesWithNewPriceInput');
 export type UpdateMenuCategoriesWithNewPriceInput = z.infer<typeof UpdateMenuCategoriesWithNewPriceInputSchema>;
+// =======================
+// Category Base Schema (from categories table)
+// =======================
+export const CategoryBaseSchema = z
+	.object({
+		categories_id: z.string().uuid(),
+		name: z.string(),
+		description: z.string().nullable().optional(),
+		tag: z.string(),
+		icon_file_id: z.string().uuid().nullable().optional(),
+		icon: z.any().nullable().optional(),
+		category_type: z.string(),
+		parent_categories_id: z.string().uuid().nullable().optional(),
+		parent_category: z.any().nullable().optional(),
+		sub_categories: z.array(z.any()).nullable().optional(),
+		translatable_id: z.string().uuid(),
+		translatable: z.any().nullable().optional(),
+		words: z.array(z.any()).nullable().optional(),
+		created_at: z.string().datetime(),
+		updated_at: z.string().datetime(),
+		deleted_at: z.string().datetime().nullable().optional(),
+		daily_meal_categories: z.array(z.any()).nullable().optional(),
+	})
+	.passthrough()
+	.openapi('CategoryBase');
 
+export type CategoryBase = z.infer<typeof CategoryBaseSchema>;
+// =======================
+// MenuCategoryCategory (junction table) Schema
+// =======================
+export const MenuCategoryCategorySchema = z
+	.object({
+		menu_categories_id: z.string().uuid(),
+		categories_id: z.string().uuid(),
+		category: CategoryBaseSchema.nullable().optional(),
+	})
+	.openapi('MenuCategoryCategory');
+
+export type MenuCategoryCategory = z.infer<typeof MenuCategoryCategorySchema>;
 // Register MenuCategory DAO schemas
 export function registerMenuCategoryDaoSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateMenuCategoryInput', CreateMenuCategoryInputSchema);
@@ -164,4 +230,8 @@ export function registerMenuCategoryDaoSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateDailyMealMenuPriceInput', UpdateDailyMealMenuPriceInputSchema);
 	registry.register('GetMenuCategoryByIdParams', GetMenuCategoryByIdParamsSchema);
 	registry.register('UpdateMenuCategoriesWithNewPriceInput', UpdateMenuCategoriesWithNewPriceInputSchema);
+	registry.register('MenuCategoryCategory', MenuCategoryCategorySchema);
+	registry.register('CategoryBase', CategoryBaseSchema);
+	registry.register('MenuCategory', MenuCategoryDataSchema);
+	registry.register('CreateMenuCategory', CreateMenuCategorySchema);
 }

@@ -1,10 +1,133 @@
-import z from 'zod';
+import { z } from 'zod';
 import { ACCOUNT_ACTIONS_REASON, MODULE } from '@prisma/client';
-import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { Email, PhoneNumber, PositiveInt, Timestamp, UUID } from '../../primitives';
 import { CreateAddressSchema } from '../../../types/addresses/Address';
 import { UpdateBusinessSchema as UpdateBusinessSchemaType } from '../../../types/business/Business';
+import { VehicleEntityBaseSchema } from '../Vehicles/vehicle.validators.js';
+import { DocumentWithFilesSchema } from '../Document/document.dto.js';
+
+extendZodWithOpenApi(z);
+
+// === Business Registration Schemas (moved from common/Business.dto.ts) ===
+// === Business Registration Data ===
+export const BusinessRegistrationDataSchema = z
+	.object({
+		business_id: UUID.optional(),
+		name: z.string().min(1),
+		email: Email,
+		telephone: PhoneNumber,
+		telephone_code: z.string(),
+		type: z.string(),
+		tax_id: z.string().optional(),
+		registration_id: z.string().optional(),
+		working_hours: z.record(z.any()).optional(),
+	})
+	.openapi({
+		title: 'BusinessRegistrationData',
+		description: 'Core business registration data with contact and legal information',
+	});
+
+// === Vehicle Information ===
+export const VehicleInformationSchema = VehicleEntityBaseSchema.openapi({
+	title: 'VehicleInformation',
+	description: 'Complete vehicle information for registration',
+});
+
+// === User Registration Data ===
+export const UserRegistrationDataSchema = z
+	.object({
+		first_name: z.string().min(1),
+		last_name: z.string().min(1),
+		email: Email,
+		telephone: PhoneNumber,
+		telephone_code: z.string(),
+		telephone_number: z.string().optional(),
+		password: z.string().min(8),
+		confirm_password: z.string().min(8),
+		date_of_birth: z.string().datetime(),
+		user_role: z.string(),
+		user_roles: z
+			.array(
+				z.object({
+					role: z.string(),
+					primary: z.boolean(),
+				})
+			)
+			.optional(),
+	})
+	.refine((data) => data.password === data.confirm_password, {
+		message: 'Passwords do not match',
+	})
+	.openapi({
+		title: 'UserRegistrationData',
+		description: 'Complete user registration data with roles',
+	});
+
+// === Driver Data ===
+export const DriverDataSchema = z
+	.object({
+		online: z.boolean().default(false),
+		working_hours: z.record(z.any()).optional(),
+		ride_requirements: z.record(z.any()).optional(),
+		transfer_requirements: z.record(z.any()).optional(),
+		regions: z.array(z.string()).optional(),
+		delivers_daily_meals: z.boolean().default(false),
+	})
+	.openapi({
+		title: 'DriverData',
+		description: 'Driver-specific data including availability, requirements, and service areas',
+	});
+
+// === Complete Driver Registration ===
+export const DriverRegistrationSchema = z
+	.object({
+		user: z.object({
+			data: UserRegistrationDataSchema,
+			documents: z.array(DocumentWithFilesSchema).optional(),
+			addresses: z.array(z.record(z.any())).optional(),
+		}),
+		driver: z.object({
+			data: DriverDataSchema,
+			regions: z.array(z.string()).optional(),
+			documents: z.array(DocumentWithFilesSchema).optional(),
+		}),
+		vehicles: z
+			.array(
+				z.object({
+					data: VehicleInformationSchema,
+					documents: z.array(DocumentWithFilesSchema).optional(),
+				})
+			)
+			.optional(),
+	})
+	.openapi({
+		title: 'DriverRegistration',
+		description: 'Complete driver registration including user, driver data, documents and optional vehicles',
+	});
+
+// === Vehicle Registration ===
+export const VehicleRegistrationSchema = z
+	.object({
+		data: z.object({
+			vehicle_information: VehicleInformationSchema,
+			drivers: z.array(z.string()).optional(), // Array of driver emails
+			documents: z.array(DocumentWithFilesSchema).optional(),
+		}),
+	})
+	.openapi({
+		title: 'VehicleRegistration',
+		description: 'Vehicle registration with information, assigned drivers, and documents',
+	});
+
+// === Type exports ===
+export type BusinessRegistrationData = z.infer<typeof BusinessRegistrationDataSchema>;
+export type VehicleInformation = z.infer<typeof VehicleInformationSchema>;
+export type UserRegistrationData = z.infer<typeof UserRegistrationDataSchema>;
+export type DriverData = z.infer<typeof DriverDataSchema>;
+export type DriverRegistration = z.infer<typeof DriverRegistrationSchema>;
+export type VehicleRegistration = z.infer<typeof VehicleRegistrationSchema>;
 
 export const SetBusinessTypesSchema = z
 	.object({

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ValidatedRequest } from '../types/validatedRequest.ts';
 import type { CreateBlogPostInput, UpdateBlogPostInput, SearchBlogPostsInput } from '../types/blog/BlogPost.ts';
 import { CreateBlogCategoryInput, UpdateBlogCategoryInput } from '../types/blog/BlogCategory.ts';
-import { CreateBlogTagInput, DeleteBlogTagInput, UpdateBlogTagInput } from '../types/blog/BlogTag.ts';
+import { CreateBlogTagInput, UpdateBlogTagInput } from '../types/blog/BlogTag.ts';
 import { createFileHelper } from './FilesController.js';
 import BlogDao from '../dao/Blog.ts';
 import FileDao from '../dao/File.js';
@@ -16,18 +16,10 @@ import FileDao from '../dao/File.js';
  * @description Retrieves a list of blog posts based on search criteria.
  * @operationId searchBlogPosts
  * @bodyDescription Search criteria for blog posts.
- * @bodyContent {
-    "page": 1,
-    "limit": 10,
-    "query": "string",
-    "tag_ids": ["uuid"],
-    "category_ids": ["uuid"],
-    "year": 2024,
-    "month": 5
-  } application/json
+ * @bodyContent {SearchBlogPostsInput} application/json
  * @bodyRequired
  * @response 200 - Blog posts retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BlogPost[]} 200.application/json
  * @response 500 - Error retrieving blog posts
  * @prisma_model blog_posts
  */
@@ -56,11 +48,12 @@ export async function searchBlogPosts(req: ValidatedRequest<SearchBlogPostsInput
  * @description Retrieves a single blog post by its unique ID.
  * @operationId getBlogPostById
  * @response 200 - Blog post retrieved successfully
- * @responseContent {object} 200.application/json* @response 404 - Blog post not found
+ * @responseContent {BlogPost | null} 200.application/json
+ * @response 404 - Blog post not found
  * @response 500 - Error retrieving blog post
  * @prisma_model blog_posts
  */
-export async function getBlogPostById(req: Request, res: Response): Promise<void> {
+export async function getBlogPostById(req: ValidatedRequest<never, { id: string }>, res: Response): Promise<void> {
 	try {
 		const { id } = req.params;
 		if (!id) {
@@ -87,12 +80,12 @@ export async function getBlogPostById(req: Request, res: Response): Promise<void
  * @description Retrieves a single blog post by its unique slug.
  * @operationId getBlogPostBySlug
  * @response 200 - Blog post retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BlogPost | null} 200.application/json
  * @response 404 - Blog post not found
  * @response 500 - Error retrieving blog post
  * @prisma_model blog_posts
  */
-export async function getBlogPostBySlug(req: Request, res: Response): Promise<void> {
+export async function getBlogPostBySlug(req: ValidatedRequest<never, { slug: string }>, res: Response): Promise<void> {
 	try {
 		const { slug } = req.params;
 		if (!slug) {
@@ -119,19 +112,10 @@ export async function getBlogPostBySlug(req: Request, res: Response): Promise<vo
  * @description Creates a new blog post with the provided details.
  * @operationId createBlogPost
  * @bodyDescription The details of the blog post to create.
- * @bodyContent {
-    "slug": "string",
-    "title": "string",
-    "short_content": "string",
-    "image_file_id": "uuid",
-    "content": {},
-    "author_id": "uuid",
-    "category_id": "uuid",
-    "publish_at": "2024-05-29T00:00:00.000Z"
-  } application/json
+ * @bodyContent {CreateBlogPost} application/json
  * @bodyRequired
  * @response 201 - Blog post created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {BlogPost} 201.application/json
  * @response 500 - Error creating blog post
  * @prisma_model blog_posts
  */
@@ -167,17 +151,10 @@ export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>,
  * @description Updates an existing blog post by ID.
  * @operationId updateBlogPost
  * @bodyDescription The details of the blog post to update.
- * @bodyContent {
-    "title": "string",
-    "short_content": "string",
-    "content": {},
-    "category_id": "uuid",
-    "image_file_id": "uuid",
-    "publish_at": "2024-05-29T00:00:00.000Z"
-  } application/json
+ * @bodyContent {UpdateBlogPost} application/json
  * @bodyRequired
  * @response 200 - Blog post updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BlogPost} 200.application/json
  * @response 500 - Error updating blog post
  * @prisma_model blog_posts
  */
@@ -216,12 +193,12 @@ export async function updateBlogPost(
  * @description Deletes a blog post by its unique ID.
  * @operationId deleteBlogPost
  * @response 200 - Blog post deleted successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BlogPost} 200.application/json
  * @response 404 - Blog post not found
  * @response 500 - Error deleting blog post
  * @prisma_model blog_posts
  */
-export async function deleteBlogPost(req: Request, res: Response): Promise<void> {
+export async function deleteBlogPost(req: ValidatedRequest<never, { id: string }>, res: Response): Promise<void> {
 	try {
 		const { id } = req.params;
 		if (!id) {
@@ -248,7 +225,7 @@ export async function deleteBlogPost(req: Request, res: Response): Promise<void>
  * @description Retrieves all blog posts.
  * @operationId getBlogPosts
  * @response 200 - Blog posts retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BlogPost[]} 200.application/json
  * @response 500 - Error retrieving blog posts
  * @prisma_model blog_posts
  */
@@ -268,7 +245,7 @@ export async function getBlogPosts(req: Request, res: Response): Promise<void> {
  * @description Retrieves all blog categories.
  * @operationId getBlogCategories
  * @response 200 - Blog categories retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BlogCategory[]} 200.application/json
  * @response 500 - Error retrieving blog categories
  * @prisma_model blog_categories
  */
@@ -288,13 +265,10 @@ export async function getBlogCategories(req: Request, res: Response): Promise<vo
  * @description Creates a new blog category.
  * @operationId createBlogCategory
  * @bodyDescription The details of the blog category to create.
- * @bodyContent {
-    "name": "string",
-    "description": "string"
-  } application/json
+ * @bodyContent {CreateBlogCategoryInput} application/json
  * @bodyRequired
  * @response 201 - Blog category created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {BlogCategory} 201.application/json
  * @response 500 - Error creating blog category
  * @prisma_model blog_categories
  */
@@ -315,7 +289,7 @@ export async function createBlogCategory(req: ValidatedRequest<CreateBlogCategor
  * @description Deletes a blog category by its unique ID.
  * @operationId deleteBlogCategory
  * @response 200 - Blog category deleted successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BlogCategory} 200.application/json
  * @response 404 - Blog category not found
  * @response 500 - Error deleting blog category
  * @prisma_model blog_categories
@@ -347,13 +321,10 @@ export async function deleteBlogCategory(req: ValidatedRequest<object, { id: str
  * @description Updates an existing blog category by ID.
  * @operationId updateBlogCategory
  * @bodyDescription The details of the blog category to update.
- * @bodyContent {
-    "name": "string",
-    "description": "string"
-  } application/json
+ * @bodyContent {UpdateBlogCategoryInput} application/json
  * @bodyRequired
  * @response 200 - Blog category updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BlogCategory} 200.application/json
  * @response 404 - Blog category not found
  * @response 500 - Error updating blog category
  * @prisma_model blog_categories
@@ -383,13 +354,13 @@ export async function updateBlogCategory(
 }
 
 /**
- * GET /blog/tags
+ * GET /blog/tag
  * @tag Blog
  * @summary Get all blog tags
  * @description Retrieves all blog tags.
  * @operationId getBlogTags
  * @response 200 - Blog tags retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BlogTag[]} 200.application/json
  * @response 500 - Error retrieving blog tags
  * @prisma_model blog_tags
  */
@@ -403,19 +374,16 @@ export async function getBlogTags(req: Request, res: Response): Promise<void> {
 }
 
 /**
- * POST /blog/tags
+ * POST /blog/tag
  * @tag Blog
  * @summary Create a new blog tag
  * @description Creates a new blog tag.
  * @operationId createBlogTag
  * @bodyDescription The details of the blog tag to create.
- * @bodyContent {
-    "name": "string",
-    "description": "string"
-  } application/json
+ * @bodyContent {CreateBlogTagInput} application/json
  * @bodyRequired
  * @response 201 - Blog tag created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {BlogTag} 201.application/json
  * @response 400 - Error creating blog tag
  * @response 500 - Error creating blog tag
  * @prisma_model blog_tags
@@ -437,21 +405,18 @@ export async function createBlogTag(req: ValidatedRequest<CreateBlogTagInput>, r
 }
 
 /**
- * DELETE /blog/tags/:id
+ * DELETE /blog/tag/:id
  * @tag Blog
  * @summary Delete a blog tag
  * @description Deletes a blog tag by its unique ID.
  * @operationId deleteBlogTag
  * @response 200 - Blog tag deleted successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {BlogTag} 200.application/json
  * @response 404 - Blog tag not found
  * @response 500 - Error deleting blog tag
  * @prisma_model blog_tags
  */
-export async function deleteBlogTag(
-	req: ValidatedRequest<DeleteBlogTagInput, { id: string }>,
-	res: Response
-): Promise<void> {
+export async function deleteBlogTag(req: ValidatedRequest<never, { id: string }>, res: Response): Promise<void> {
 	try {
 		const { id } = req.params;
 		if (!id) {
@@ -472,19 +437,20 @@ export async function deleteBlogTag(
 }
 
 /**
- * PATCH /blog/tags/:id
+ * PATCH /blog/tag/:id
  * @tag Blog
  * @summary Update a blog tag
  * @description Updates an existing blog tag by ID.
  * @operationId updateBlogTag
  * @bodyDescription The details of the blog tag to update.
- * @bodyContent {
-    "name": "string",
-    "description": "string"
-  } application/json
+ * @bodyContent {UpdateBlogTagInput} application/json
  * @bodyRequired
  * @response 200 - Blog tag updated successfully
-*/
+ * @responseContent {BlogTag} 200.application/json
+ * @response 404 - Blog tag not found
+ * @response 500 - Error updating blog tag
+ * @prisma_model blog_tags
+ */
 export async function updateBlogTag(
 	req: ValidatedRequest<UpdateBlogTagInput, { id: string }>,
 	res: Response
@@ -521,8 +487,10 @@ export async function updateBlogTag(
   } application/json
  * @bodyRequired
  * @response 201 - Image created successfully
- * @responseContent {object} 201.application/json
-   }
+ * @responseContent {string | null} 201.application/json
+ * @responseExample {
+ * 	 "url": "https://s3.amazonaws.com/your-bucket/image.jpg"
+ * } 201.application/json
  * @response 400 - Invalid image URL
  * @response 500 - Error creating image
  * @prisma_model files
@@ -557,7 +525,7 @@ export async function createBlogImageByUrl(req: ValidatedRequest<{ url: string }
 			public: true,
 		});
 
-		res.status(201).json(newImage.url || newImage.file_url || newImage.s3_url);
+		res.status(201).json(newImage.url);
 	} catch (error) {
 		console.error('Failed to create image from URL:', error);
 		res.status(500).json({ message: 'Error creating image', error });
@@ -574,8 +542,7 @@ export async function createBlogImageByUrl(req: ValidatedRequest<{ url: string }
  * @bodyContent {object} multipart/form-data
  * @bodyRequired
  * @response 201 - Image created successfully
- * @responseContent {object} 201.application/json
-   }
+ * @responseContent {FileResponse | null} 201.application/json
  * @response 400 - Invalid image file
  * @response 500 - Error creating image
  * @prisma_model files

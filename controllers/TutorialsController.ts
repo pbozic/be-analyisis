@@ -2,7 +2,8 @@ import { Response } from 'express';
 
 import * as TutorialsDao from '../dao/Tutorials.ts';
 import { ValidatedRequest } from '../types/validatedRequest.ts';
-import { SetTutorialStatusBody, TutorialDetail, UserTutorialBase } from '../schemas/dto/Tutorials/tutorials.dto.ts';
+import { TutorialDetail, UserTutorialBase } from '../schemas/dto/Tutorials/tutorials.dto.ts';
+import { SetTutorialStatusBody } from '../schemas/dto/Tutorials/tutorials.validators.ts';
 
 /**
  * GET /users/me/tutorials

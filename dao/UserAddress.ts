@@ -1,5 +1,5 @@
 import prisma from '../prisma/prisma.js';
-import { UpdateUserAddress } from '../schemas/dto/UserAddress/userAddress.dto.js';
+import { UpdateUserAddress } from '../schemas/dto/UserAddress/userAddress.validators.js';
 import { UUID } from '../schemas/primitives.js';
 import { CreateAddressInput } from '../types/addresses/Address.js';
 import { toUserAddressResponse } from '../schemas/dto/UserAddress/userAddress.mappers.js';

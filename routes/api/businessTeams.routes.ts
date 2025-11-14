@@ -10,7 +10,7 @@ import {
 	SetBusinessTeamLimitSchema,
 	SetBusinessTeamNameSchema,
 	UpdateBusinessTeamSchema,
-} from '../../schemas/dto/BusinessTeam/BusinessTeam.validation.ts';
+} from '../../schemas/dto/BusinessTeam/businessTeam.validators.js';
 import { validate } from '../../middleware/zod.js';
 const router = express.Router();
 router.post('/create', validate(CreateBusinessTeamSchema), BusinessTeamsController.createBusinessTeam);

@@ -4,7 +4,7 @@ import BusinessClientController from '../../controllers/BusinessClient.js';
 import {
 	CreateBusinessClientSchema,
 	UpdateBusinessClientSchema,
-} from '../../schemas/dto/BusinessClient/BusinessClient.validation.ts';
+} from '../../schemas/dto/BusinessClient/businessClient.validators.js';
 import { validate } from '../../middleware/zod.js';
 const router = express.Router();
 // Get all business clients

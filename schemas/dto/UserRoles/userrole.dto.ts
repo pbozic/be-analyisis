@@ -2,45 +2,15 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import type { User } from '../users/User.js';
-import type { Role } from './Role.js';
+import type { Role } from './role.dto.js';
 import type { ReservationModule } from '../reservations/ReservationModule.js';
-import { UserResponseBaseSchema } from '../users/User';
-import { RoleResponseBaseSchema } from './Role';
-import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule';
+import { UserResponseBaseSchema } from '../users/User.js';
+import { RoleResponseBaseSchema } from './role.dto.js';
+import { ReservationModuleResponseBaseSchema } from '../reservations/ReservationModule.js';
 
 extendZodWithOpenApi(z);
 
-// --- SCHEMAS ---
-
-/**
- * CreateUserRoleSchema - Assigns a role to a user within the current reservation module
- */
-export const CreateUserRoleSchema = z
-	.object({
-		user_id: z.string().uuid(),
-		role_id: z.string().uuid(),
-	})
-	.openapi('CreateUserRole');
-
-/**
- * UpdateUserRoleSchema - Reassigns an existing role to a new one (within same module)
- */
-export const UpdateUserRoleSchema = z
-	.object({
-		user_id: z.string().uuid(),
-		role_id: z.string().uuid(), // current role
-		new_role_id: z.string().uuid().optional(),
-	})
-	.openapi('UpdateUserRole');
-
-// Optional: backward-compatible alias if you still use "assign/remove" terminology
-export const AssignUserRoleSchema = CreateUserRoleSchema;
-
-// --- TYPES ---
-
-export type CreateUserRoleInput = z.infer<typeof CreateUserRoleSchema>;
-export type UpdateUserRoleInput = z.infer<typeof UpdateUserRoleSchema>;
-export type AssignUserRoleInput = z.infer<typeof AssignUserRoleSchema>;
+// Request schemas moved to userrole.validators.ts
 
 export const UserRoleResponseBaseSchema = z
 	.object({
@@ -60,8 +30,6 @@ export type UserRoleBase = z.infer<typeof UserRoleResponseBaseSchema>;
 export type UserRoleResponse = z.infer<typeof UserRoleResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('CreateUserRole', CreateUserRoleSchema);
-	registry.register('UpdateUserRole', UpdateUserRoleSchema);
 	registry.register('UserRoleResponseBase', UserRoleResponseBaseSchema);
 	registry.register('UserRoleResponse', UserRoleResponseSchema);
 }

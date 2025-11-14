@@ -14,7 +14,7 @@ import {
 	CreateVehicleRequest,
 	UpdateVehicleRequest,
 	VehicleDriverAssignment,
-} from '../schemas/dto/Vehicles/vehicle.dto.js';
+} from '../schemas/dto/Vehicles/vehicle.validators.js';
 config();
 /**
  * GET /vehicles

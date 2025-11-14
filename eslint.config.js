@@ -44,7 +44,7 @@ export default [
 					'newlines-between': 'always',
 				},
 			],
-			'no-unused-vars': 'warn',
+			'no-unused-vars': ['warn', { ignoreRestSiblings: true }],
 			'no-undef': 'warn',
 			'no-async-promise-executor': 'warn',
 			'@typescript-eslint/no-explicit-any': 'off',

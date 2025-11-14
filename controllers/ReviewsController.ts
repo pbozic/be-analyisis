@@ -2,7 +2,7 @@ import { Response } from 'express';
 
 import * as ReviewsDao from '../dao/Review.js';
 import { ValidatedRequest } from '../types/validatedRequest.ts';
-import { ReviewBody } from '../schemas/dto/Reviews/review.dto.ts';
+import { ReviewBody } from '../schemas/dto/Reviews/review.validators.ts';
 import { REVIEW_SUBJECT } from '../prisma/schemas/interfaces.ts';
 
 /**

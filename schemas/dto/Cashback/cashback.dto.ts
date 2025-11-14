@@ -3,7 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { CASHBACK_TYPE, CASHBACK_SOURCE, CASHBACK_STATUS } from '@prisma/client';
 
 import { UUID, Timestamp } from '../../primitives.js';
-import { OrderRefSchema, OrderRef } from '../common/Order.dto.ts';
+import { OrderRefSchema, OrderRef } from '../DeliveryOrders/deliveryOrder.dto.js';
 
 extendZodWithOpenApi(z);
 

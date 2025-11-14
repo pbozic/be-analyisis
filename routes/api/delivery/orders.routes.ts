@@ -20,7 +20,7 @@ import {
 	DispatcherCancelOrderSchema,
 	DispatcherRevokeOrderSchema,
 	addToDeliveryOrderTimelineSchema,
-} from '../../../schemas/dto/DeliveryOrder/DeliveryOrderRequest.dto';
+} from '../../../schemas/dto/DeliveryOrders/deliveryOrder.validators.js';
 import { DeliveryOrderCreateRequestSchema } from '../../../schemas/dto/DeliveryOrders/index.ts';
 
 const router = express.Router();

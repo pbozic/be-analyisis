@@ -1,5 +1,5 @@
-import { BusinessMoneyFlowResponseSchema } from '../../../types/payments/BusinessMoneyFlow.js';
-import type { BusinessMoneyFlowResponse } from '../../../types/payments/BusinessMoneyFlow.js';
+import { BusinessMoneyFlowResponseSchema } from './businessMoneyFlow.dto.js';
+import type { BusinessMoneyFlowResponse } from './businessMoneyFlow.dto.js';
 import type {
 	BusinessMoneyFlowWithBusinessPrisma,
 	BusinessMoneyFlowDefaultPrisma,

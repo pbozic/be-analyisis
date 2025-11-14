@@ -37,6 +37,11 @@ export const GroupUserWithParentResponseSchema = GroupUserResponseSchema.extend(
 	parent_user: UserRefSchema,
 });
 
+// GroupUser with Child User - for getGroupUserByParentId function
+export const GroupUserWithChildResponseSchema = GroupUserResponseSchema.extend({
+	child_user: UserRefSchema,
+});
+
 // GroupUser with Allowance - for updateGroupUserAllowance function
 export const GroupUserWithAllowanceResponseSchema = GroupUserResponseSchema.extend({
 	allowance: AllowanceRefSchema.nullable(),
@@ -58,6 +63,7 @@ export const GroupUserListResponseSchema = z.object({
 
 export type GroupUserResponse = z.infer<typeof GroupUserResponseSchema>;
 export type GroupUserWithParentResponse = z.infer<typeof GroupUserWithParentResponseSchema>;
+export type GroupUserWithChildResponse = z.infer<typeof GroupUserWithChildResponseSchema>;
 export type GroupUserWithAllowanceResponse = z.infer<typeof GroupUserWithAllowanceResponseSchema>;
 export type GroupUserDetailResponse = z.infer<typeof GroupUserDetailResponseSchema>;
 export type GroupUserListResponse = z.infer<typeof GroupUserListResponseSchema>;

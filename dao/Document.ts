@@ -1,10 +1,10 @@
 import { Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-import type { DocumentResponse } from '../schemas/dto/Document/document.dto.js';
+import type { DocumentResponse } from '../schemas/dto/Document/index.js';
 import documentsDefaultInclude from '../prisma/includes/document.js';
 import type { DocumentWithIncludesPrisma } from '../prisma/includes/document.js';
-import { toDocumentList, toDocumentResponse } from '../schemas/dto/Document/document.mappers.js';
+import { toDocumentList, toDocumentResponse } from '../schemas/dto/Document/index.js';
 
 type DocumentListResponse = DocumentResponse[];
 
@@ -358,10 +358,11 @@ const findDocumentByTypeAndDriverId = async (
  */
 const createDocument = async (
 	documentData: Record<string, unknown>,
-	filesData: Array<Record<string, unknown>> = []
+	filesData: Array<Record<string, unknown>> = [],
+	tx: any = prisma
 ): Promise<DocumentResponse> => {
 	try {
-		const document = await prisma.documents.create({
+		const document = await tx.documents.create({
 			data: { ...documentData, files: { create: filesData as any } },
 			include: documentsDefaultInclude,
 		});
@@ -409,10 +410,11 @@ const createUserDocument = async (userId: string, documentData: Record<string, u
  */
 const createBusinessDocument = async (
 	businessId: string,
-	documentData: Record<string, unknown>
+	documentData: Record<string, unknown>,
+	tx: any = prisma
 ): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.create({
+		const row = await tx.documents.create({
 			data: { ...documentData, business_id: businessId },
 			include: documentsDefaultInclude,
 		});
@@ -436,10 +438,11 @@ const createBusinessDocument = async (
  */
 const createDriverDocument = async (
 	driverId: string,
-	documentData: Record<string, unknown>
+	documentData: Record<string, unknown>,
+	tx: any = prisma
 ): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.create({
+		const row = await tx.documents.create({
 			data: { ...documentData, driver_id: driverId },
 			include: documentsDefaultInclude,
 		});
@@ -463,10 +466,11 @@ const createDriverDocument = async (
  */
 const createVehicleDocument = async (
 	vehicleId: string,
-	documentData: Record<string, unknown>
+	documentData: Record<string, unknown>,
+	tx: any = prisma
 ): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.create({
+		const row = await tx.documents.create({
 			data: { ...documentData, vehicle_id: vehicleId },
 			include: documentsDefaultInclude,
 		});
@@ -478,33 +482,6 @@ const createVehicleDocument = async (
 	} catch (error) {
 		console.error('Error creating vehicle document:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to create vehicle document');
-	}
-};
-
-/**
- * Create a delivery person document.
- *
- * @param {string} deliveryPersonId - Delivery person ID.
- * @param {any} documentData - Document data.
- * @returns {Promise<DocumentResponse>} Created document.
- */
-const createDeliveryPersonDocument = async (
-	deliveryPersonId: string,
-	documentData: Record<string, unknown>
-): Promise<DocumentResponse> => {
-	try {
-		const row = await prisma.documents.create({
-			data: { ...documentData, delivery_driver_id: deliveryPersonId },
-			include: documentsDefaultInclude,
-		});
-		try {
-			return toDocumentResponse(row as DocumentWithIncludesPrisma);
-		} catch (e: any) {
-			throw new Error('Failed to map created document to DTO: ' + (e?.message ?? String(e)));
-		}
-	} catch (error) {
-		console.error('Error creating delivery person document:', error);
-		throw new Error(error instanceof Error ? error.message : 'Failed to create delivery person document');
 	}
 };
 
@@ -648,9 +625,13 @@ const linkDocumentToTransaction = async (documentId: string, transactionId: stri
  * @param {string} vehicleId - Vehicle ID.
  * @returns {Promise<DocumentResponse>} Updated document.
  */
-const linkDocumentToVehicle = async (documentId: string, vehicleId: string): Promise<DocumentResponse> => {
+const linkDocumentToVehicle = async (
+	documentId: string,
+	vehicleId: string,
+	tx: any = prisma
+): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.update({
+		const row = await tx.documents.update({
 			where: { document_id: documentId },
 			data: { vehicle_id: vehicleId },
 			include: documentsDefaultInclude,
@@ -673,9 +654,13 @@ const linkDocumentToVehicle = async (documentId: string, vehicleId: string): Pro
  * @param {string} driverId - Driver ID.
  * @returns {Promise<DocumentResponse>} Updated document.
  */
-const linkDocumentToDriver = async (documentId: string, driverId: string): Promise<DocumentResponse> => {
+const linkDocumentToDriver = async (
+	documentId: string,
+	driverId: string,
+	tx: any = prisma
+): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.update({
+		const row = await tx.documents.update({
 			where: { document_id: documentId },
 			data: { driver_id: driverId },
 			include: documentsDefaultInclude,
@@ -698,9 +683,13 @@ const linkDocumentToDriver = async (documentId: string, driverId: string): Promi
  * @param {string} businessId - Business ID.
  * @returns {Promise<DocumentResponse>} Updated document.
  */
-const linkDocumentToBusiness = async (documentId: string, businessId: string): Promise<DocumentResponse> => {
+const linkDocumentToBusiness = async (
+	documentId: string,
+	businessId: string,
+	tx: any = prisma
+): Promise<DocumentResponse> => {
 	try {
-		const row = await prisma.documents.update({
+		const row = await tx.documents.update({
 			where: { document_id: documentId },
 			data: { business_id: businessId },
 			include: documentsDefaultInclude,
@@ -738,7 +727,50 @@ const deleteDocument = async (documentId: string): Promise<DocumentResponse> => 
 		throw new Error(error instanceof Error ? error.message : 'Failed to delete document');
 	}
 };
+/**
+ * Find a document by associated file ID.
+ *
+ * @param {string} fileId - File ID.
+ * @returns {Promise<DocumentResponse | null>} Document or null.
+ */
+export async function findDocumentByFileId(fileId: string): Promise<DocumentResponse | null> {
+	try {
+		const file = await prisma.files.findUnique({
+			where: { file_id: fileId },
+			include: { document: { include: documentsDefaultInclude } },
+		});
+		if (!file || !file.document) return null;
 
+		return toDocumentResponse(file.document as DocumentWithIncludesPrisma);
+	} catch (error) {
+		console.error('Error finding document by file ID:', error);
+		throw new Error(error instanceof Error ? error.message : 'Failed to find document by file ID');
+	}
+}
+/**
+ * Update a document by its document ID.
+ *
+ * @param {string} documentId - Document ID.
+ * @param {Record<string, unknown>} updateData - Data to update.
+ * @returns {Promise<DocumentResponse>} Updated document.
+ */
+export async function updateDocumentByDocumentId(
+	documentId: string,
+	updateData: Record<string, unknown>
+): Promise<DocumentResponse> {
+	try {
+		const row = await prisma.documents.update({
+			where: { document_id: documentId },
+			data: updateData,
+			include: documentsDefaultInclude,
+		});
+
+		return toDocumentResponse(row as DocumentWithIncludesPrisma);
+	} catch (error) {
+		console.error('Error updating document by document ID:', error);
+		throw new Error(error instanceof Error ? error.message : 'Failed to update document by document ID');
+	}
+}
 export { getDocuments };
 export { getDocumentById };
 export { getDocumentsForBusiness };
@@ -758,7 +790,6 @@ export { createUserDocument };
 export { createBusinessDocument };
 export { createDriverDocument };
 export { createVehicleDocument };
-export { createDeliveryPersonDocument };
 export { updateDocumentExpirationDate };
 export { updateDocumentIssueDate };
 export { updateDocumentFiles };
@@ -789,7 +820,6 @@ export default {
 	createBusinessDocument,
 	createDriverDocument,
 	createVehicleDocument,
-	createDeliveryPersonDocument,
 	updateDocumentExpirationDate,
 	updateDocumentIssueDate,
 	updateDocumentFiles,

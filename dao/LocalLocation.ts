@@ -2,9 +2,8 @@ import {
 	BusinessLocalLocationBase,
 	BusinessLocalLocationDetail,
 	LocalLocationDetail,
-	toLocalLocationDetail,
-	toBusinessLocalLocationDetail,
 } from '../schemas/dto/Stores/localLocation.dto.js';
+import { toLocalLocationDetail, toBusinessLocalLocationDetail } from '../schemas/dto/Stores/localLocation.mappers.js';
 import { Address } from '../types/addresses/Address.js';
 import prisma from '../prisma/prisma.js';
 import localLocationsDefaultInclude, {

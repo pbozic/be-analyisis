@@ -1,5 +1,5 @@
-import { ActionResponseSchema } from './action.js';
-import type { ActionResponse } from './action.js';
+import { ActionResponseSchema } from './action.dto.js';
+import type { ActionResponse } from './action.dto.js';
 import type { ActionDefaultPrisma } from '../../../prisma/includes/action';
 
 /**

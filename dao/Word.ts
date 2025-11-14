@@ -6,13 +6,11 @@ import {
 	TranslationItem,
 	WordDetail,
 	WordBase,
-	WordBuyItem,
-	UpdateSingleWordBuyRequest,
 	WordBuyItemDetail,
 	CreateWordBuySubscriptionResponse,
 	UpdateUserSubscriptionResponse,
 } from '../schemas/dto/Word/word.dto.js';
-
+import { WordBuyItem, UpdateSingleWordBuyRequest } from '../schemas/dto/Word/word.validators.js';
 /**
  * Create a new word with its translations.
  *

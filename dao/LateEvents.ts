@@ -1,5 +1,6 @@
 import prisma from '../prisma/prisma.js';
-import { LateEventsResponse, CreateLateEvents } from '../schemas/dto/LateEvents/lateEvents.dto.ts';
+import { LateEventsResponse } from '../schemas/dto/LateEvents/lateEvents.dto.ts';
+import { CreateLateEvents } from '../schemas/dto/LateEvents/lateEvents.validators.js';
 import lateEventsDefaultInclude from '../prisma/includes/lateEvents.js';
 import type { LateEventsWithIncludesPrisma } from '../prisma/includes/lateEvents.js';
 import { toLateEventsResponse, toLateEventsList } from '../schemas/dto/LateEvents/late-events.mappers.js';

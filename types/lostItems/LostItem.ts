@@ -58,7 +58,7 @@ export type LostItem = {
 	image_id?: string | null;
 	image?: File | null;
 	found?: boolean | null;
-	created_at: Date;
-	updated_at: Date;
+	created_at: string;
+	updated_at: string;
 	user?: User | null;
 };

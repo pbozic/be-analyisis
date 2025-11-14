@@ -5,7 +5,7 @@ import { UUID, Timestamp } from '../../primitives.js';
 import { DailyMealSubscriptionRefSchema } from '../DailyMeal/dailymeal.dto.js';
 import { DailyMealSubscriptionCustomerRefSchema } from '../DailyMealSubscriptionCustomer/dailyMealSubscriptionCustomer.dto.js';
 import { MenuCategoryRefSchema } from '../Menu/menu.dto.js';
-import { DailyMealCategoryPriceRefSchema } from '../DailyMealCategory/daily-meal-category.dto.js';
+import { DailyMealCategoryPriceRefSchema } from '../DailyMealCategory/dailyMealCategory.js';
 
 extendZodWithOpenApi(z);
 

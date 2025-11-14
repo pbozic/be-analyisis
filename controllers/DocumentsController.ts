@@ -16,7 +16,7 @@ import {
 	UpdateDocumentIssue,
 	UpdateDocumentFiles,
 	UpdateDocumentAdditionalInfo,
-} from '../schemas/dto/Documents/document.dto.ts';
+} from '../schemas/dto/Document/document.validators.js';
 
 /**
  * GET /documents

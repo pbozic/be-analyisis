@@ -17,6 +17,7 @@ import { BusinessUserResponseBaseSchema } from '../businessUsers/BusinessUser';
 import { DailyMealSubscriptionResponseSchema } from '../dailymeal/DailyMealSubscription';
 import { LocalLocationResponseBaseSchema } from '../stores/LocalLocation';
 import { LocationResponseBaseSchema } from '../reservations/Location';
+import { UUID } from '../../schemas/primitives.js';
 
 extendZodWithOpenApi(z);
 
@@ -24,7 +25,7 @@ extendZodWithOpenApi(z);
 
 export const CreateAddressSchema = z
 	.object({
-		address_id: z.string().uuid(),
+		address_id: UUID.optional(),
 		address: z.string(),
 		latitude: z.string(),
 		longitude: z.string(),
@@ -38,7 +39,11 @@ export const CreateAddressSchema = z
 
 export type CreateAddressInput = z.infer<typeof CreateAddressSchema>;
 
-export const UpdateAddressSchema = CreateAddressSchema.partial().openapi('UpdateAddress');
+export const UpdateAddressSchema = CreateAddressSchema.partial()
+	.extend({
+		address_id: UUID,
+	})
+	.openapi('UpdateAddress');
 export type UpdateAddressInput = z.infer<typeof UpdateAddressSchema>;
 
 export const AddressResponseBaseSchema = z

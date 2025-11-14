@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, Timestamp } from '../../primitives';
-import { ElectronicDeviceRefSchema } from '../ElectronicDevice';
+import { UUID, Timestamp } from '../../primitives.js';
+import { ElectronicDeviceRefSchema } from '../ElectronicDevice/index.js';
 
 extendZodWithOpenApi(z);
 
@@ -47,42 +47,10 @@ export const DeviceAssignmentResponseSchema = DeviceAssignmentBaseSchema.extend(
 export type DeviceAssignmentResponse = z.infer<typeof DeviceAssignmentResponseSchema>;
 
 // =======================
-// Request Schemas
-// =======================
-export const AssignDeviceToDriverRequestSchema = z
-	.object({
-		driver_id: UUID.openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
-		business_premise_id: UUID.openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
-		electronic_device_id: UUID.openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
-		valid_from: Timestamp.optional().openapi({ example: '2025-01-01T08:00:00.000Z' }),
-	})
-	.openapi('AssignDeviceToDriverRequest');
-
-export type AssignDeviceToDriverRequest = z.infer<typeof AssignDeviceToDriverRequestSchema>;
-
-export const EndDeviceAssignmentRequestSchema = z
-	.object({
-		driver_id: UUID.openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
-		business_premise_id: UUID.openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
-		electronic_device_id: UUID.openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
-	})
-	.openapi('EndDeviceAssignmentRequest');
-
-export type EndDeviceAssignmentRequest = z.infer<typeof EndDeviceAssignmentRequestSchema>;
-
-// =======================
 // OpenAPI Registration
 // =======================
-export function registerDeviceAssignmentSchemas(registry: OpenAPIRegistry) {
-	// Register base schemas
+export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('DeviceAssignmentBase', DeviceAssignmentBaseSchema);
 	registry.register('DeviceAssignmentRef', DeviceAssignmentRefSchema);
-
-	// Register request schemas
-	registry.register('AssignDeviceToDriverRequest', AssignDeviceToDriverRequestSchema);
-	registry.register('EndDeviceAssignmentRequest', EndDeviceAssignmentRequestSchema);
-
-	// Register response schemas
-	registry.register('DeviceAssignment', DeviceAssignmentResponseSchema);
 	registry.register('DeviceAssignmentResponse', DeviceAssignmentResponseSchema);
 }

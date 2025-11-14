@@ -6,7 +6,7 @@ import FileDao from '../dao/File.js';
 import S3Helper from '../lib/s3.js';
 import { ValidatedRequest } from '../types/validatedRequest.ts';
 import type { CreateLostItemInput, UpdateLostItemInput } from '../types/lostItems/LostItem.js';
-import { ReportFoundItemRequest } from '../schemas/dto/LostItems/lostitem.dto.ts';
+import { ReportFoundItemRequest } from '../schemas/dto/LostItems/lostitem.validators.ts';
 config();
 
 /**

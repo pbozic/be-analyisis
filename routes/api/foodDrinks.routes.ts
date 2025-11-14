@@ -2,10 +2,7 @@ import express from 'express';
 
 import FoodDrinksController from '../../controllers/FoodDrinksController.ts';
 import { validate } from '../../middleware/zod.ts';
-import {
-	FoodDrinksOnlineBodySchema,
-	FoodDrinksOverwhelmedBodySchema,
-} from '../../schemas/dto/FoodDrinks/food-drinks.dto.ts';
+import { FoodDrinksOnlineBodySchema, FoodDrinksOverwhelmedBodySchema } from '../../schemas/dto/FoodDrinks/index.js';
 
 const router = express.Router();
 

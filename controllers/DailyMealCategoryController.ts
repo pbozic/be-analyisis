@@ -6,7 +6,7 @@ import type {
 	CreateDailyMealCategoryWithPriceInput,
 	AddPriceToDailyMealCategoryInput,
 	DailyMealCategory,
-	DailyMealCategoryPrice,
+	DailyMealCategoryPriceBase,
 } from '../types/dailyMeals/DailyMealCategory.ts';
 import MenuCategory from '../dao/MenuCategory.js';
 import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
@@ -130,7 +130,7 @@ export async function getDailyMealCategoriesForBusiness(
  */
 export async function addPriceToDailyMealCategory(
 	req: ValidatedRequest<AddPriceToDailyMealCategoryInput, { dmc_id: string }>,
-	res: Response<DailyMealCategoryPrice | { message: string; error?: string }>
+	res: Response<DailyMealCategoryPriceBase | { message: string; error?: string }>
 ) {
 	try {
 		const { dmc_id } = req.params;

@@ -43,7 +43,7 @@ export type CreateVehicleInput = z.infer<typeof CreateVehicleSchema>;
 export const UpdateVehicleSchema = CreateVehicleSchema.partial().openapi('UpdateVehicle');
 export type UpdateVehicleInput = z.infer<typeof UpdateVehicleSchema>;
 
-export const VehicleResponseSchema = z
+const VehicleResponseSchemaBase = z
 	.object({
 		vehicle_id: z.string(),
 		transport_module_id: z.string().nullable().optional(),
@@ -67,6 +67,8 @@ export const VehicleResponseSchema = z
 		transport_module: TransportModuleResponseSchema.nullable().optional(),
 	})
 	.openapi('VehicleResponse');
+
+export const VehicleResponseSchema: z.ZodType<any> = VehicleResponseSchemaBase;
 
 export type VehicleResponse = z.infer<typeof VehicleResponseSchema>;
 

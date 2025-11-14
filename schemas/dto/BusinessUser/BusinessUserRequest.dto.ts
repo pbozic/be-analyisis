@@ -3,9 +3,9 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { COMPANY_ROLE, USER_ROLES } from '@prisma/client';
 
 import { UUID, Email, PhoneNumber, Address } from '../../primitives.js';
-import { FullAddressSchema } from '../common/Address.dto.js';
-import { OnlineStatusUpdateSchema } from '../common/Status.dto.js';
-import { WalletUpdateSchema } from '../common/Payment.dto.js';
+import { FullAddressSchema } from '../Address/address.js';
+import { OnlineStatusUpdateSchema } from '../Driver/driver.dto.js';
+import { WalletUpdateSchema } from '../Payments/payment.dto.js';
 
 extendZodWithOpenApi(z);
 

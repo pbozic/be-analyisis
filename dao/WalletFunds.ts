@@ -2,12 +2,8 @@ import { Prisma, TRANSACTION_TYPE, FUNDS_TYPE, CREDIT_STATUS, CASHBACK_STATUS } 
 
 import prisma from '../prisma/prisma.js';
 import { SERVICE_TYPE } from '../lib/constants.js';
-import {
-	WalletFundsBase,
-	WalletFundsResponse,
-	CreateWalletFunds,
-	ConvertCashbacksToCredit,
-} from '../schemas/dto/WalletFunds/walletFunds.dto.js';
+import { WalletFundsBase, WalletFundsResponse } from '../schemas/dto/WalletFunds/walletFunds.dto.js';
+import { CreateWalletFunds, ConvertCashbacksToCredit } from '../schemas/dto/WalletFunds/walletFunds.validators.js';
 
 type ServiceType = keyof typeof SERVICE_TYPE;
 

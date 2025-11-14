@@ -1,0 +1,53 @@
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+
+// Import registerSchemas functions with aliases
+import { registerSchemas as registerStoreSchemas } from './store.dto.js';
+import { registerSchemas as registerStoreValidatorSchemas } from './store.validators.js';
+import { registerSchemas as registerLocalLocationSchemas } from './localLocation.dto.js';
+
+// === Stores DTOs (Response) ===
+export {
+	StoreBaseSchema,
+	StoresModuleRefSchema,
+	StoreDetailSchema,
+	type StoreBase,
+	type StoresModuleRef,
+	type StoreDetail,
+} from './store.dto.js';
+
+// === Stores Validators (Request Body, Query, Params) ===
+export {
+	StoreOnlineBodySchema,
+	StoreOverwhelmedBodySchema,
+	type StoreOnlineBody,
+	type StoreOverwhelmedBody,
+} from './store.validators.js';
+
+// === Stores Mappers ===
+export { toStoreDetail } from './store.mappers.js';
+
+// === LocalLocation DTOs (Response) ===
+export {
+	AddressRefSchema,
+	OrderRefSchema,
+	LocalLocationBaseSchema,
+	LocalLocationDetailSchema,
+	BusinessLocalLocationBaseSchema,
+	BusinessLocalLocationDetailSchema,
+	type AddressRef,
+	type OrderRef,
+	type LocalLocationBase,
+	type LocalLocationDetail,
+	type BusinessLocalLocationBase,
+	type BusinessLocalLocationDetail,
+} from './localLocation.dto.js';
+
+// === LocalLocation Mappers ===
+export { toAddressRef, toLocalLocationDetail, toBusinessLocalLocationDetail } from './localLocation.mappers.js';
+
+// === Schema Registration ===
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registerStoreSchemas(registry);
+	registerStoreValidatorSchemas(registry);
+	registerLocalLocationSchemas(registry);
+}

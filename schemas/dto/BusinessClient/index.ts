@@ -1,4 +1,6 @@
-// BusinessClient DTOs
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+
+// === BusinessClient DTOs (Response) ===
 export {
 	BusinessClientBaseSchema,
 	BusinessClientRefSchema,
@@ -17,10 +19,20 @@ export {
 	registerSchemas as registerBusinessClientSchemas,
 } from './businessClient.dto.js';
 
-// BusinessClient Request DTOs
+// === BusinessClient Validators (Request Body, Query, Params) ===
 export {
-	CreateBusinessClientRequestSchema,
-	UpdateBusinessClientRequestSchema,
-	type CreateBusinessClientRequest,
-	type UpdateBusinessClientRequest,
-} from './requests.js';
+	CreateBusinessClientSchema,
+	UpdateBusinessClientSchema,
+	type CreateBusinessClientInput,
+	type UpdateBusinessClientInput,
+	registerSchemas as registerBusinessClientValidatorSchemas,
+} from './businessClient.validators.js';
+
+// === BusinessClient Mappers ===
+export * from './businessClient.mappers.js';
+
+// === Schema Registration ===
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registerBusinessClientSchemas(registry);
+	registerBusinessClientValidatorSchemas(registry);
+}

@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { CATEGORY_TYPE } from '@prisma/client';
 
-import { UUID, LanguageCode, Timestamp } from '../../primitives';
-import { TranslationItemSchema } from '../Word/word.dto';
+import { UUID, LanguageCode, Timestamp } from '../../primitives.js';
+import { TranslationItemSchema } from '../Word/word.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -78,82 +78,6 @@ export const CategoryResponseSchema = CategoryBaseSchema.extend({
 export type CategoryResponse = z.infer<typeof CategoryResponseSchema>;
 
 // =======================
-// Request Schemas
-// =======================
-export const CreateCategoryRequestSchema = z
-	.object({
-		categoryData: z.object({
-			name: z.string().min(1).openapi({ example: 'Italian Cuisine' }),
-			description: z
-				.string()
-				.nullable()
-				.optional()
-				.openapi({ example: 'Traditional Italian dishes and flavors' }),
-			tag: z.string().min(1).openapi({ example: 'italian' }),
-			category_type: z.nativeEnum(CATEGORY_TYPE).openapi({ example: CATEGORY_TYPE.MENU }),
-		}),
-		translations: z
-			.array(TranslationItemSchema)
-			.min(1)
-			.openapi({
-				example: [
-					{ language: 'en', translation: 'Italian Cuisine' },
-					{ language: 'sl', translation: 'Italijanska kuhinja' },
-				],
-			}),
-		subcategories: z
-			.array(UUID)
-			.optional()
-			.default([])
-			.openapi({
-				example: ['3fa85f64-5717-4562-b3fc-2c963f66afa6'],
-			}),
-		parent_categories_id: UUID.nullable().optional().openapi({ example: null }),
-		iconFileData: z
-			.object({
-				file_type: z.string().openapi({ example: 'IMAGE' }),
-				mime_type: z.string().openapi({ example: 'image/png' }),
-			})
-			.optional(),
-	})
-	.openapi('CreateCategoryRequest');
-
-export type CreateCategoryRequest = z.infer<typeof CreateCategoryRequestSchema>;
-
-export const UpdateCategoryRequestSchema = z
-	.object({
-		categoryData: z
-			.object({
-				name: z.string().min(1).optional(),
-				description: z.string().nullable().optional(),
-				tag: z.string().min(1).optional(),
-				category_type: z.nativeEnum(CATEGORY_TYPE).optional(),
-			})
-			.optional(),
-		translations: z.array(TranslationItemSchema).optional(),
-		subcategories: z.array(UUID).nullable().optional(),
-		parent_categories_id: UUID.nullable().optional(),
-		iconFileData: z
-			.object({
-				file_type: z.string(),
-				mime_type: z.string(),
-			})
-			.nullable()
-			.optional(),
-	})
-	.openapi('UpdateCategoryRequest');
-
-export type UpdateCategoryRequest = z.infer<typeof UpdateCategoryRequestSchema>;
-
-export const GetCategoriesByTypeRequestSchema = z
-	.object({
-		category_type: z.nativeEnum(CATEGORY_TYPE).openapi({ example: CATEGORY_TYPE.MENU }),
-	})
-	.openapi('GetCategoriesByTypeRequest');
-
-export type GetCategoriesByTypeRequest = z.infer<typeof GetCategoriesByTypeRequestSchema>;
-
-// =======================
 // Response Lists
 // =======================
 export const CategoryListResponseSchema = z
@@ -173,15 +97,8 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CategoryBase', CategoryBaseSchema);
 	registry.register('CategoryRef', CategoryRefSchema);
 
-	// Register request schemas
-	registry.register('CreateCategoryRequest', CreateCategoryRequestSchema);
-	registry.register('UpdateCategoryRequest', UpdateCategoryRequestSchema);
-	registry.register('GetCategoriesByTypeRequest', GetCategoriesByTypeRequestSchema);
-
 	// Register response schemas
 	registry.register('Category', CategoryResponseSchema);
 	registry.register('CategoryListResponse', CategoryListResponseSchema);
-
-	// Responses
 	registry.register('CategoryResponse', CategoryResponseSchema);
 }

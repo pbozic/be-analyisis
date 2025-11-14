@@ -10,13 +10,7 @@ extendZodWithOpenApi(z);
 // Tutorials DTOs
 // =======================
 
-export const SetTutorialStatusBodySchema = z
-	.object({
-		status: z.nativeEnum(TUTORIAL_STATUS),
-		versionSeen: z.number().int().optional(),
-	})
-	.openapi('SetTutorialStatusBody');
-export type SetTutorialStatusBody = z.infer<typeof SetTutorialStatusBodySchema>;
+// Request schemas moved to tutorials.validators.ts
 
 export const TutorialBaseSchema = z
 	.object({
@@ -72,8 +66,6 @@ export type UserTutorialState = z.infer<typeof UserTutorialStateSchema>;
 // Please import mapper helpers from './tutorials.mappers.js'
 
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('SetTutorialStatusBody', SetTutorialStatusBodySchema);
-
 	registry.register('TutorialBase', TutorialBaseSchema);
 	registry.register('TutorialDetail', TutorialDetailSchema);
 	registry.register('UserTutorialBase', UserTutorialBaseSchema);

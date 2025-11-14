@@ -5,7 +5,7 @@ import OneSignal from './oneSignal.js';
 import sockets from '../socket.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
 import prisma from '../prisma/prisma.js';
-import type { DriverDetail } from '../schemas/dto/Drivers/index.js';
+import type { DriverDetail } from '../schemas/dto/Driver/index.js';
 import { DriverActivityLog } from '../types/drivers/DriverActivityLog.js';
 import { DriverActivitySetting } from '../types/drivers/DriverActivitySetting.js';
 

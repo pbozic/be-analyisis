@@ -31,7 +31,7 @@ import {
 	BusinessSearchSelectPrisma,
 } from '../prisma/includes/business.js';
 
-type PrismaTransactionClient = Prisma.TransactionClient;
+type PrismaTransactionClient = any;
 
 /**
  * Get a list of businesses with optional query/include arguments.
@@ -443,7 +443,8 @@ export type { BusinessFindManyArgs };
  */
 const updateBusiness = async (
 	business_id: string,
-	businessData: Partial<BusinessBase>
+	businessData: Partial<BusinessBase>,
+	tx: PrismaTransactionClient = prisma
 ): Promise<BusinessResponseDto> => {
 	try {
 		// Remove fields that shouldn't be updated directly
@@ -452,7 +453,7 @@ const updateBusiness = async (
 		delete updateData.created_at;
 		delete updateData.updated_at;
 
-		const updatedBusiness = await prisma.business.update({
+		const updatedBusiness = await tx.business.update({
 			where: { business_id },
 			data: updateData,
 			include: addressAndUsersInclude,
@@ -570,7 +571,7 @@ const updateBusinessWorkingHours = async (
 const createNewBusiness = async (business: Partial<BusinessBase>, tx: any = prisma): Promise<BusinessResponseDto> => {
 	try {
 		// Remove fields that shouldn't be set on creation
-		const createData = { ...business };
+		let { name, description, ...createData } = business;
 		delete createData.business_id;
 		delete createData.created_at;
 		delete createData.updated_at;
@@ -578,6 +579,14 @@ const createNewBusiness = async (business: Partial<BusinessBase>, tx: any = pris
 		const createdBusiness = await tx.business.create({
 			data: createData,
 			include: addressAndUsersInclude,
+		});
+
+		await tx.business_details.create({
+			data: {
+				business_id: createdBusiness.business_id,
+				name,
+				description,
+			},
 		});
 
 		return toBusinessWithAddressAndUsersResponse(createdBusiness);
@@ -615,7 +624,7 @@ const deleteBusiness = async (business_id: string): Promise<BusinessResponseDto>
 const removeParentBusiness = async (business_id: string): Promise<BusinessResponseDto> => {
 	try {
 		const updatedBusiness = await prisma.business.update({
-			where: { business_id: business_id },
+			where: { business_id },
 			data: { parent_business_id: null },
 			include: addressInclude,
 		});
@@ -982,9 +991,9 @@ const getModuleIdByBusinessId = async (business_id: UUID, module: MODULE) => {
 					},
 				},
 			};
-		} else if (module === MODULE.TABLE_RESERVATION) {
+		} else if (module === MODULE.TABLE_RESERVATIONS) {
 			moduleCondition = {
-				table_reservation_module: {
+				table_reservations_module: {
 					select: {
 						id: true,
 					},
@@ -1001,6 +1010,61 @@ const getModuleIdByBusinessId = async (business_id: UUID, module: MODULE) => {
 	} catch (error) {
 		console.error('Error getting module ID by business ID:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get module ID by business ID');
+	}
+};
+/**
+ * Link delivery modules to a business based on the types provided.
+ *
+ * @param {string} business_id - The ID of the business.
+ * @param {MODULE[]} businessTypes - Array of MODULE enum values representing the business types.
+ * @returns {Promise<void>} A promise that resolves when the operation is complete.
+ */
+const linkDeliveryModulesToBusiness = async (
+	business_id: string,
+	businessTypes: MODULE[],
+	tx: PrismaTransactionClient = prisma
+): Promise<void> => {
+	try {
+		if (businessTypes?.includes(MODULE.FOOD_DRINKS)) {
+			const existingFd = await tx.food_drinks_module.findFirst({
+				where: { business_id },
+			});
+			if (!existingFd) {
+				await tx.food_drinks_module.create({
+					data: { business: { connect: { business_id } } },
+				});
+			}
+		} else if (businessTypes?.includes(MODULE.STORES)) {
+			const existingStore = await tx.stores_module.findFirst({
+				where: { business_id },
+			});
+			if (!existingStore) {
+				await tx.stores_module.create({
+					data: { business: { connect: { business_id } } },
+				});
+			}
+		} else if (businessTypes?.includes(MODULE.DAILY_MEALS)) {
+			const existingDm = await tx.daily_meals_module.findFirst({
+				where: { business_id },
+			});
+			if (!existingDm) {
+				await tx.daily_meals_module.create({
+					data: { business: { connect: { business_id } } },
+				});
+			}
+		} else if (businessTypes?.includes(MODULE.TABLE_RESERVATIONS)) {
+			const existingRes = await tx.table_reservations_module.findFirst({
+				where: { business_id },
+			});
+			if (!existingRes) {
+				await tx.table_reservations_module.create({
+					data: { business: { connect: { business_id } } },
+				});
+			}
+		}
+	} catch (error) {
+		console.error('Error linking delivery modules to business:', error);
+		throw new Error(error instanceof Error ? error.message : 'Failed to link delivery modules to business');
 	}
 };
 
@@ -1036,6 +1100,7 @@ export { getPurchaseOrderLimit };
 export { getLocalBusinesses };
 export { getBusinessStoreAndFoodDrinksModulesById };
 export { getModuleIdByBusinessId };
+export { linkDeliveryModulesToBusiness };
 
 export default {
 	getBusinesses,
@@ -1070,4 +1135,5 @@ export default {
 	getLocalBusinesses,
 	getBusinessStoreAndFoodDrinksModulesById,
 	getModuleIdByBusinessId,
+	linkDeliveryModulesToBusiness,
 };

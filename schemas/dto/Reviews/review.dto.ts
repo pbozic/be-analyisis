@@ -64,32 +64,14 @@ export const ReviewResponseSchema = ReviewBaseSchema.merge(
 );
 export type ReviewResponse = z.infer<typeof ReviewResponseSchema>;
 
-export const ReviewBodySchema = z.object({
-	author_id: UUID,
-	taxi_order_id: UUID.optional(),
-	delivery_order_id: UUID.optional(),
-	reviewer_role: z.nativeEnum(REVIEWER_ROLE).openapi({ example: 'CUSTOMER' }), // changed to use Prisma enum
-	reviewItems: z
-		.array(
-			z.object({
-				rating: z.number(),
-				subject_type: z.nativeEnum(REVIEW_SUBJECT).openapi({ example: 'BUSINESS' }), // changed to use Prisma enum
-				subject_id: UUID,
-				type: z.nativeEnum(REVIEW_TYPE).openapi({ example: 'OVERALL' }), // changed to use Prisma enum
-			})
-		)
-		.openapi({ example: [{ rating: 5, subject_type: 'BUSINESS', subject_id: 'uuid', type: 'OVERALL' }] }),
-	comment: z.string().optional(),
-});
-export type ReviewBody = z.infer<typeof ReviewBodySchema>;
+// Request schemas moved to review.validators.ts
+
 // Register schemas with OpenAPI registry
-// export names as required by the project's registry pattern
 export function registerSchemas(registry: any /* OpenAPIRegistry */) {
-	// Request/response schemas
+	// Response schemas only
 	registry.register('ReviewItemBase', ReviewItemBaseSchema);
 	registry.register('ReviewItemRef', ReviewItemRefSchema);
 	registry.register('ReviewItemResponse', ReviewItemResponseSchema);
-	registry.register('ReviewBody', ReviewBodySchema);
 	registry.register('ReviewBase', ReviewBaseSchema);
 	registry.register('ReviewRef', ReviewRefSchema);
 	registry.register('ReviewResponse', ReviewResponseSchema);

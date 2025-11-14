@@ -14,6 +14,8 @@ import type {
 	UserWithFavouritesResponse,
 } from '../schemas/dto/User/index.js';
 import type { TransactionResponse } from '../schemas/dto/User/index.js';
+import { UserPassword } from '../schemas/dto/User/user.js';
+import { UserLoginResponse } from '../schemas/dto/Auth/AuthResponse.dto.js';
 
 declare const process: {
 	env: {
@@ -43,6 +45,7 @@ interface FindFirstArgs {
 	where?: any;
 	include?: any;
 	orderBy?: any;
+	select?: any;
 }
 
 /**
@@ -92,6 +95,92 @@ const getUserById = async (user_id: string, args?: FindUniqueArgs): Promise<User
 			},
 			...args,
 		})) as UserWithFavouritesResponse | null;
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID');
+	}
+};
+
+/**
+ * Get a user by id for login/registration.
+ *
+ * @param {string} user_id - User ID.
+ * @returns {Promise<UserWithFavouritesResponse | null>} User or null.
+ */
+const getUserByIdForLogin = async (user_id: string): Promise<UserLoginResponse | null> => {
+	try {
+		return (await prisma.users.findUnique({
+			where: {
+				user_id: user_id,
+			},
+			include: {
+				addresses: {
+					include: {
+						address: true,
+					},
+				},
+				driver: {
+					select: {
+						driver_id: true,
+						transport_module_id: true,
+						ride_requirements: true,
+						user_id: true,
+						transfer_requirements: true,
+						taxi_orders_toggled: true,
+						transfer_orders_toggled: true,
+						delivery_orders_toggled: true,
+						cargo_orders_toggled: true,
+						vehicles: {
+							select: {
+								vehicle_drivers_id: true,
+								vehicle_id: true,
+								can_drive: true,
+								vehicle: {
+									select: {
+										vehicle_id: true,
+										business_id: true,
+										active: true,
+										class: true,
+										category: true,
+										make: true,
+										model: true,
+										color: true,
+										license_plate: true,
+										current_driver: true,
+									},
+								},
+							},
+						},
+						last_used_vehicle_id: true,
+						current_vehicle: true,
+						activity_logs: {
+							orderBy: {
+								started_at: 'desc',
+							},
+						},
+					},
+				},
+				child_users: { include: { child_user: true } },
+				parent_user: { include: { parent_user: true } },
+				referrals_made: true,
+				referral: { include: { referrer: { select: { first_name: true, last_name: true } } } },
+				user_roles: true,
+				user_favorite_businesses: true,
+				business_users: {
+					include: {
+						business: {
+							include: {
+								address: true,
+								delivery_address: true,
+								reservation_module: true,
+							},
+						},
+						operating_address: true,
+					},
+				},
+				profile_picture: true,
+				user_favorite_drivers: true,
+			},
+		})) as UserLoginResponse | null;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID');
 	}
@@ -168,7 +257,26 @@ const getScheduledUsers = async (): Promise<UserWithAddressesResponse[]> => {
 		throw error;
 	}
 };
-
+const getUserPassword = async (query: string): Promise<UserPassword> => {
+	try {
+		const user = (await prisma.users.findFirst({
+			where: {
+				OR: [
+					{
+						email: query,
+					},
+					{
+						telephone: query,
+					},
+				],
+			},
+			select: { password: true, user_id: true },
+		})) as UserPassword;
+		return user;
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Failed to get user password');
+	}
+};
 /**
  * Find a user by matching email or telephone fields.
  *
@@ -742,6 +850,7 @@ const createNewUser = async (
 				child_users: true,
 				parent_user: true,
 				user_roles: true,
+				addresses: true,
 			},
 		})) as UserResponse;
 	} catch (error) {
@@ -1082,6 +1191,8 @@ const updateFavoriteServices = async (user_id: string, services: SERVICES[]): Pr
 export { getUsers };
 export { getUserByReferralCode };
 export { getUserById };
+export { getUserByIdForLogin };
+export { getUserPassword };
 export { getUserByEmailOrTelephone };
 export { getUser };
 export { updateUser };
@@ -1125,6 +1236,8 @@ export default {
 	getUsers,
 	getUserByReferralCode,
 	getUserById,
+	getUserByIdForLogin,
+	getUserPassword,
 	getUserByEmailOrTelephone,
 	getUser,
 	updateUser,

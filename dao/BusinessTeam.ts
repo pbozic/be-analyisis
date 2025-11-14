@@ -6,7 +6,7 @@ import {
 	toBusinessTeamList,
 } from '../schemas/dto/BusinessTeam/businessTeam.mappers.js';
 import type { BusinessTeamWithUsersPrisma, BusinessTeamDefaultPrisma } from '../prisma/includes/businessTeam.js';
-import { CreateBusinessTeamInput } from '../schemas/dto/BusinessTeam/BusinessTeam.validation.ts';
+import { CreateBusinessTeamInput } from '../schemas/dto/BusinessTeam/businessTeam.validators.js';
 
 const cropped_user_columns = {
 	first_name: true,

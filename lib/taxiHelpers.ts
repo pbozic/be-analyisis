@@ -20,10 +20,10 @@ import { sendNotificationToUser } from './oneSignal.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
 import { getPriceSurgeDataForTransferTrip } from './priceSurgeHelpers.js';
 import WalletFundsDao from '../dao/WalletFunds.js';
-// @ts-ignore
 import stripe from './stripe.js';
 import WalletFundsHelpers from './WalletFundsHelpers.js';
 import type { TaxiOrderDetail } from '../schemas/dto/TaxiOrders/taxiOrder.dto.ts';
+import { CandidateDriver } from './deliveryHelpers.ts';
 
 const { io, SocketStore } = socket;
 const NUMBER_OF_DRIVERS_TO_SEND = 3;
@@ -58,7 +58,7 @@ async function scheduledOrdersNotificationsHandler(): Promise<boolean | void> {
 		console.log('SCHEDULED ORDERS', scheduled?.length);
 		let startTimestamp = twentyFourHoursLater.getTime();
 		let endTimestamp = twentyFourHoursLaterEnd.getTime();
-		const DayOrders = scheduled.filter((o) => {
+		const DayOrders = scheduled.filter((o: TaxiOrderDetail) => {
 			const departureTime = o.preferences?.departure_time
 				? new Date(o.preferences.departure_time).getTime()
 				: null;
@@ -66,7 +66,7 @@ async function scheduledOrdersNotificationsHandler(): Promise<boolean | void> {
 		});
 		startTimestamp = oneHourLater.getTime();
 		endTimestamp = oneHourLaterEnd.getTime();
-		const HourOrders = scheduled.filter((o) => {
+		const HourOrders = scheduled.filter((o: TaxiOrderDetail) => {
 			const departureTime = o.preferences?.departure_time
 				? new Date(o.preferences.departure_time).getTime()
 				: null;
@@ -170,53 +170,46 @@ async function revokeAcceptedOrdersFromDriver(): Promise<void> {
  */
 async function findTaxiOrderDrivers(order: TaxiOrderDetail): Promise<void> {
 	console.log('hi');
-	return new Promise(async (resolve, reject) => {
-		let drivers: Array<Record<string, unknown>> = [];
-		console.log('Finding drivers for order: ', order.order_id);
-		if (order?.driver_id) {
-			const thresholdTime = new Date(Date.now() - 5 * 60 * 1000);
-			const expired = (order.created_at as unknown as Date) < thresholdTime;
-			console.log('Order created at:', order.created_at, 'Threshold time:', thresholdTime);
-			const driver = await DriverDao.getDriverById(order.driver_id);
-			if (driver?.on_order) {
-				await revokeTaxiOrderFromDriver(
-					order.order_id,
-					order.driver_id,
-					order as unknown as Record<string, unknown>
-				);
-			} else if (driver && !expired) {
-				drivers = [driver];
-			} else if (driver && expired) {
-				drivers = await selectTaxiOrderDrivers(order as unknown as Record<string, unknown>);
-			}
-		} else {
-			drivers = await selectTaxiOrderDrivers(order as unknown as Record<string, unknown>);
+	let drivers: Array<CandidateDriver> = [];
+	console.log('Finding drivers for order: ', order.order_id);
+	if (order?.driver_id) {
+		// If a specific driver is selected in the order creation, send the order only to that driver
+		// after x minutes, we can send it to other drivers
+		const thresholdTime = new Date(Date.now() - 5 * 60 * 1000);
+		const expired = new Date(order.created_at as string).getTime() < thresholdTime.getTime();
+		console.log('Order created at:', order.created_at, 'Threshold time:', thresholdTime);
+		const driver = await DriverDao.getDriverById(order.driver_id);
+		if (driver?.on_order) {
+			await revokeTaxiOrderFromDriver(order.order_id, order.driver_id, order);
+		} else if (driver && !expired) {
+			drivers = [driver as unknown as CandidateDriver];
+		} else if (driver && expired) {
+			drivers = (await selectTaxiOrderDrivers(order)) as CandidateDriver[];
 		}
-		console.log(
-			'Drivers found: ',
-			drivers?.map((d: any) => d.driver_id)
-		);
-		let pushDrivers: Array<Promise<void>> = [];
-		if (Array.isArray(drivers)) {
-			for (let driver of drivers) {
-				pushDrivers.push(sendTaxiOrderToDriver(order as unknown as Record<string, unknown>, driver));
-			}
+	} else {
+		drivers = (await selectTaxiOrderDrivers(order)) as CandidateDriver[];
+	}
+	console.log(
+		'Drivers found: ',
+		drivers?.map((d: any) => d.driver_id)
+	);
+	let pushDrivers: Array<Promise<void>> = [];
+	if (Array.isArray(drivers)) {
+		for (let driver of drivers) {
+			pushDrivers.push(sendTaxiOrderToDriver(order as unknown as Record<string, unknown>, driver));
 		}
-		if (pushDrivers.length !== 0) {
-			Promise.all(pushDrivers)
-				.then(() => {
-					TaxiOrderDao.updateOrderLastSentAt(order.order_id);
-					resolve();
-				})
-				.catch((e) => {
-					console.error('Find drivers error', e);
-					reject(e);
-				});
-		} else {
-			console.log('No drivers found for order: ', order.order_id);
-			resolve();
+	}
+	if (pushDrivers.length !== 0) {
+		try {
+			await Promise.all(pushDrivers);
+			await TaxiOrderDao.updateOrderLastSentAt(order.order_id);
+		} catch (e) {
+			console.error('Find drivers error', e);
+			throw e;
 		}
-	});
+	} else {
+		console.log('No drivers found for order: ', order.order_id);
+	}
 }
 /**
  * Compare durations (as numbers) for sorting.
@@ -240,10 +233,10 @@ async function getNumberPendingOrders(driver_id: string): Promise<number> {
 }
 /**
  * Select the best drivers for an order based on proximity, availability, and pending count.
- * @param {object} order - Taxi or transfer order.
+ * @param {TaxiOrderDetail} order - Taxi or transfer order.
  * @returns {Promise<object[]|void>} Array of eligible driver objects.
  */
-async function selectTaxiOrderDrivers(order: Record<string, any>): Promise<any[] | void> {
+async function selectTaxiOrderDrivers(order: TaxiOrderDetail): Promise<CandidateDriver[] | void> {
 	try {
 		let drivers: any[] = [];
 		let radius = 200;
@@ -450,14 +443,10 @@ async function revokeTaxiOrderFromDrivers(order_id: string, cron = false) {
  * Revoke an order from a specific driver and notify the user if the order has a user.
  * @param {string} order_id - Order ID.
  * @param {string} driver_id - Driver ID.
- * @param {object|null} [order=null] - Optional order object to localize messages.
+ * @param {TaxiOrderDetail|null} [order=null] - Optional order object to localize messages.
  * @returns {Promise<void>}
  */
-async function revokeTaxiOrderFromDriver(
-	order_id: string,
-	driver_id: string,
-	order: Record<string, any> | null = null
-) {
+async function revokeTaxiOrderFromDriver(order_id: string, driver_id: string, order: TaxiOrderDetail | null = null) {
 	let driver = await DriverDao.getDriverById(driver_id);
 	if (!driver) return;
 	console.log('Revoking order: ', order_id, ' from driver: ', driver.user_id);

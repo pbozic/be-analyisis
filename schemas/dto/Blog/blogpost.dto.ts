@@ -3,8 +3,8 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import type { users, files } from '@prisma/client';
 import { BLOG_POST_STATUS } from '@prisma/client';
 
-import type { BlogCategory } from './blogcategory.dto.ts';
-import { BlogTag } from './blogtag.dto.ts';
+// BlogPost types and schemas - moved to blog.dto.ts and blog.validators.ts
+// This file kept for backward compatibility but content is in blog.dto.ts and blog.validators.ts
 
 // Extend Zod with OpenAPI methods
 extendZodWithOpenApi(z);

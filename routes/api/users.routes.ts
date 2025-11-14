@@ -41,7 +41,7 @@ import {
 	AcceptFamilyInvitationSchema,
 	UpdateWalletBalanceSchema,
 	UpdateFavoriteServicesBodySchema,
-} from '../../schemas/dto/User/UserRequest.dto';
+} from '../../schemas/dto/User/user.validators.js';
 import { SetTutorialStatusBodySchema } from '../../schemas/dto/Tutorials/tutorials.dto.ts';
 
 config();

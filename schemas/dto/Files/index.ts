@@ -1,51 +1,50 @@
-import { z } from 'zod';
-import { FILE_TYPE } from '@prisma/client';
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-// =======================
-// File Base, Ref, and Response Schemas
-// =======================
+// === File DTOs (Response) ===
+export {
+	FileBaseSchema,
+	FileRefSchema,
+	FileResponseSchema,
+	type FileBase,
+	type FileRef,
+	type FileResponse,
+	registerSchemas as registerFileSchemas,
+} from './file.dto.js';
 
-/**
- * Base File schema with all scalar fields (no relations).
- */
-export const FileBaseSchema = z.object({
-	file_id: z.string().uuid(),
-	url: z.string().nullable(),
-	file_type: z.nativeEnum(FILE_TYPE),
-	public: z.boolean(),
-	mime_type: z.string(),
-	created_at: z.string().datetime(),
-	updated_at: z.string().datetime(),
-	document_id: z.string().uuid().nullable(),
-	user_id: z.string().uuid().nullable(),
-	driver_id: z.string().uuid().nullable(),
-	lost_item_id: z.string().uuid().nullable(),
-	delivery_order_id: z.string().uuid().nullable(),
-});
+// === File Validators (Request Body, Query, Params) ===
+export {
+	CreateFileDataSchema,
+	CreateFileBodySchema,
+	UpdateFileBodySchema,
+	AddFileToDocumentInputSchema,
+	AddFilesToDocumentInputSchema,
+	UpdateFileInDocumentInputSchema,
+	RemoveFileFromDocumentInputSchema,
+	RemoveAllFilesFromDocumentInputSchema,
+	GetFilesByDocumentIdParamsSchema,
+	CreateStandaloneFileInputSchema,
+	GetFileParamsSchema,
+	UpdateFileByIdInputSchema,
+	type CreateFileDataInput,
+	type CreateFileBody,
+	type UpdateFileBody,
+	type AddFileToDocumentInput,
+	type AddFilesToDocumentInput,
+	type UpdateFileInDocumentInput,
+	type RemoveFileFromDocumentInput,
+	type RemoveAllFilesFromDocumentInput,
+	type GetFilesByDocumentIdParams,
+	type CreateStandaloneFileInput,
+	type GetFileParams,
+	type UpdateFileByIdInput,
+	registerSchemas as registerFileValidatorSchemas,
+} from './file.validators.js';
 
-export type FileBase = z.infer<typeof FileBaseSchema>;
+// === File Mappers ===
+export * from './file.mappers.js';
 
-/**
- * File reference schema for embedding in other DTOs.
- */
-export const FileRefSchema = z.object({
-	file_id: z.string().uuid(),
-	url: z.string().nullable(),
-	file_type: z.nativeEnum(FILE_TYPE),
-	mime_type: z.string(),
-});
-
-export type FileRef = z.infer<typeof FileRefSchema>;
-
-/**
- * Full File response schema extending base with any computed fields.
- */
-export const FileResponseSchema = FileBaseSchema;
-
-export type FileResponse = z.infer<typeof FileResponseSchema>;
-
-// =======================
-// Export all schemas
-// =======================
-
-export * from './file.dto.js';
+// === Schema Registration ===
+export function registerSchemas(registry: OpenAPIRegistry) {
+	registerFileSchemas(registry);
+	registerFileValidatorSchemas(registry);
+}

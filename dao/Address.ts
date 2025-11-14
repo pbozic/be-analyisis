@@ -1,13 +1,13 @@
 import prisma from '../prisma/prisma.js';
 import { UUID } from '../schemas/primitives.js';
-import { CreateAddressInput, UpdateAddressInput } from '../types/addresses/Address.js';
+import { UpdateAddressInput } from '../types/addresses/Address.js';
 import { toAddressResponse } from '../schemas/dto/Address/address.mappers.js';
 import { toUserAddressResponse } from '../schemas/dto/UserAddress/userAddress.mappers.js';
 import type { AddressDefaultPrisma } from '../prisma/includes/address.js';
 import type { UserAddressDefaultPrisma } from '../prisma/includes/userAddress.js';
-import type { AddressResponse } from '../types/addresses/Address.js';
 import type { UserAddressResponse } from '../types/users/UserAddress.js';
-import { AddAddressDaoInput } from '../schemas/dto/Address';
+import { AddAddressDaoInput, BusinessAddress, AddressResponse } from '../schemas/dto/Address';
+
 /**
  * Upsert an address by unique coordinates and address string.
  *
@@ -46,13 +46,14 @@ async function addAddress(address: AddAddressDaoInput): Promise<AddressResponse 
  * @returns {Promise<object>} The created or linked address record.
  */
 async function addOrLinkAddress(
-	address: CreateAddressInput,
+	address: BusinessAddress,
 	linkType: string,
-	linkTarget: string
+	linkTarget: string,
+	tx: any = prisma
 ): Promise<AddressResponse | Error> {
 	try {
 		// Find or create the address
-		const addressRecord = await prisma.addresses.upsert({
+		const addressRecord = await tx.addresses.upsert({
 			where: {
 				uniqueAddressIdentifier: {
 					address: address.address,
@@ -65,7 +66,7 @@ async function addOrLinkAddress(
 		});
 
 		// Link the address to the specified module
-		await linkAddress(addressRecord.address_id, linkType, linkTarget);
+		await linkAddress(addressRecord.address_id, linkType, linkTarget, tx);
 
 		return toAddressResponse(addressRecord as AddressDefaultPrisma);
 	} catch (error) {
@@ -81,52 +82,52 @@ async function addOrLinkAddress(
  * @param {string} linkTarget - The ID of the target to link the address to.
  * @returns {Promise<void>} Resolves when the link is created.
  */
-async function linkAddress(addressId: UUID, linkType: string, linkTarget: string): Promise<void> {
+async function linkAddress(addressId: UUID, linkType: string, linkTarget: string, tx: any = prisma): Promise<void> {
 	try {
 		switch (linkType) {
 			case 'user_address':
-				await prisma.user_address.create({
+				await tx.user_address.create({
 					data: { user_id: linkTarget, address_id: addressId },
 				});
 				break;
 			case 'businesses':
-				await prisma.businesses.update({
+				await tx.businesses.update({
 					where: { business_id: linkTarget },
 					data: { address_id: addressId },
 				});
 				break;
 			case 'stores':
-				await prisma.stores_module.update({
+				await tx.stores_module.update({
 					where: { stores_id: linkTarget },
 					data: { delivery_address_id: addressId },
 				});
 				break;
 			case 'food_drinks':
-				await prisma.food_drinks_module.update({
+				await tx.food_drinks_module.update({
 					where: { food_drinks_id: linkTarget },
 					data: { delivery_address_id: addressId },
 				});
 				break;
 			case 'business_users':
-				await prisma.business_users.update({
+				await tx.business_users.update({
 					where: { business_user_id: linkTarget },
 					data: { operating_address_id: addressId },
 				});
 				break;
 			case 'daily_meals':
-				await prisma.daily_meal_subscriptions.update({
+				await tx.daily_meal_subscriptions.update({
 					where: { id: linkTarget },
 					data: { delivery_address_id: addressId },
 				});
 				break;
 			case 'local_locations':
-				await prisma.local_locations.update({
+				await tx.local_locations.update({
 					where: { id: linkTarget },
 					data: { address_id: addressId },
 				});
 				break;
 			case 'locations':
-				await prisma.locations.update({
+				await tx.locations.update({
 					where: { location_id: linkTarget },
 					data: { address_id: addressId },
 				});
@@ -240,7 +241,7 @@ async function deleteUserAddress(user_id: UUID, address_id: UUID): Promise<UserA
  * @param {string} address_id - Address ID.
  * @returns {Promise<object>} The upserted user_address record.
  */
-async function addUserAddress(user_id: UUID, address_id: UUID): Promise<UserAddressResponse | Error> {
+async function addUserAddress(user_id: UUID, address_id: UUID): Promise<UserAddressResponse> {
 	try {
 		let primary = false;
 		let addresses = await prisma.user_address.findMany({
@@ -262,7 +263,7 @@ async function addUserAddress(user_id: UUID, address_id: UUID): Promise<UserAddr
 
 		return toUserAddressResponse(row as UserAddressDefaultPrisma);
 	} catch (error) {
-		return new Error(error instanceof Error ? error.message : String(error));
+		throw new Error(error instanceof Error ? error.message : String(error));
 	}
 }
 /**

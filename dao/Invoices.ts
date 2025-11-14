@@ -1,13 +1,11 @@
 import { randomUUID } from 'crypto';
 
-import type {
-	business_premise as BusinessPremise,
-	electronic_device as ElectronicDevice,
-	device_assignment as DeviceAssignment,
-	vehicles as Vehicle,
-} from '@prisma/client';
 import { PREMISE_TYPE } from '@prisma/client';
 
+import type { BusinessPremiseResponse } from '../schemas/dto/BusinessPremise/index.js';
+import type { ElectronicDeviceResponse } from '../schemas/dto/ElectronicDevice/index.js';
+import type { DeviceAssignmentResponse } from '../schemas/dto/DeviceAssignment/index.js';
+import type { VehicleResponse } from '../types/vehicles/Vehicle.js';
 import prisma from '../prisma/prisma.js';
 import businessPremiseDefaultInclude from '../prisma/includes/businessPremise.js';
 import electronicDeviceDefaultInclude from '../prisma/includes/electronicDevice.js';
@@ -29,7 +27,7 @@ import type { VehicleWithIncludesPrisma } from '../prisma/includes/vehicles.js';
  *
  * @param {string} transport_module_id
  * @param {Partial<{ name: string | null; validity_date: Date | null; special_notes: string | null; premise_type: PREMISE_TYPE; }>} data
- * @returns {Promise<BusinessPremise>}
+ * @returns {Promise<BusinessPremiseResponse>}
  */
 export async function createBusinessPremise(
 	transport_module_id: string,
@@ -39,7 +37,7 @@ export async function createBusinessPremise(
 		special_notes: string | null;
 		premise_type: PREMISE_TYPE;
 	}> = {}
-): Promise<BusinessPremise> {
+): Promise<BusinessPremiseResponse> {
 	const payload = {
 		business_premise_id: randomUUID(),
 		transport_module_id,
@@ -54,19 +52,21 @@ export async function createBusinessPremise(
 		include: businessPremiseDefaultInclude,
 	});
 	if (!row) throw new Error('Failed to fetch created business premise');
-	return toBusinessPremiseResponse(row as BusinessPremiseWithIncludesPrisma) as BusinessPremise;
+	return toBusinessPremiseResponse(
+		row as unknown as BusinessPremiseWithIncludesPrisma
+	) as unknown as BusinessPremiseResponse;
 }
 /**
  * Create an electronic device.
  *
  * @param {string} business_premise_id
  * @param {Partial<{ electronic_device_id: string; name: string | null; active: boolean }>} data
- * @returns {Promise<ElectronicDevice>}
+ * @returns {Promise<ElectronicDeviceResponse>}
  */
 export async function createElectronicDevice(
 	business_premise_id: string,
 	data: Partial<{ electronic_device_id: string; name: string | null; active: boolean }> = {}
-): Promise<ElectronicDevice> {
+): Promise<ElectronicDeviceResponse> {
 	const electronic_device_id = data.electronic_device_id || randomUUID();
 	const payload = {
 		business_premise_id,
@@ -80,7 +80,9 @@ export async function createElectronicDevice(
 		include: electronicDeviceDefaultInclude,
 	});
 	if (!row) throw new Error('Failed to fetch created electronic device');
-	return toElectronicDeviceResponse(row as ElectronicDeviceWithIncludesPrisma) as ElectronicDevice;
+	return toElectronicDeviceResponse(
+		row as unknown as ElectronicDeviceWithIncludesPrisma
+	) as unknown as ElectronicDeviceResponse;
 }
 /**
  * Assign a device to a driver.
@@ -89,14 +91,14 @@ export async function createElectronicDevice(
  * @param {string} business_premise_id
  * @param {string} electronic_device_id
  * @param {Date} valid_from
- * @returns {Promise<DeviceAssignment>}
+ * @returns {Promise<DeviceAssignmentResponse>}
  */
 export async function assignDeviceToDriver(
 	driver_id: string,
 	business_premise_id: string,
 	electronic_device_id: string,
 	valid_from: Date = new Date()
-): Promise<DeviceAssignment> {
+): Promise<DeviceAssignmentResponse> {
 	const created = await prisma.device_assignment.create({
 		data: { driver_id, business_premise_id, electronic_device_id, valid_from },
 	});
@@ -105,40 +107,44 @@ export async function assignDeviceToDriver(
 		include: deviceAssignmentDefaultInclude,
 	});
 	if (!row) throw new Error('Failed to fetch created device assignment');
-	return toDeviceAssignmentResponse(row as DeviceAssignmentWithIncludesPrisma) as DeviceAssignment;
+	return toDeviceAssignmentResponse(
+		row as unknown as DeviceAssignmentWithIncludesPrisma
+	) as unknown as DeviceAssignmentResponse;
 }
 /**
  * Link a business premise to a vehicle.
  *
  * @param {string} vehicle_id
  * @param {string} business_premise_id
- * @returns {Promise<Vehicle>}
+ * @returns {Promise<VehicleResponse>}
  */
-export async function linkPremiseToVehicle(vehicle_id: string, business_premise_id: string): Promise<Vehicle> {
+export async function linkPremiseToVehicle(vehicle_id: string, business_premise_id: string): Promise<VehicleResponse> {
 	const updated = await prisma.vehicles.update({
 		where: { vehicle_id },
 		data: { business_premise_id },
 		include: vehiclesDefaultInclude,
 	});
-	return toVehicleResponse(updated as VehicleWithIncludesPrisma) as Vehicle;
+	return toVehicleResponse(updated as unknown as VehicleWithIncludesPrisma) as unknown as VehicleResponse;
 }
 /**
  * Disable an electronic device.
  *
  * @param {string} business_premise_id
  * @param {string} electronic_device_id
- * @returns {Promise<ElectronicDevice>}
+ * @returns {Promise<ElectronicDeviceResponse>}
  */
 export async function disableElectronicDevice(
 	business_premise_id: string,
 	electronic_device_id: string
-): Promise<ElectronicDevice> {
+): Promise<ElectronicDeviceResponse> {
 	const updated = await prisma.electronic_device.update({
 		where: { business_premise_id_electronic_device_id: { business_premise_id, electronic_device_id } },
 		data: { active: false },
 		include: electronicDeviceDefaultInclude,
 	});
-	return toElectronicDeviceResponse(updated as ElectronicDeviceWithIncludesPrisma) as ElectronicDevice;
+	return toElectronicDeviceResponse(
+		updated as unknown as ElectronicDeviceWithIncludesPrisma
+	) as unknown as ElectronicDeviceResponse;
 }
 /**
  * End a device assignment.
@@ -146,13 +152,13 @@ export async function disableElectronicDevice(
  * @param {string} driver_id
  * @param {string} business_premise_id
  * @param {string} electronic_device_id
- * @returns {Promise<DeviceAssignment>}
+ * @returns {Promise<DeviceAssignmentResponse>}
  */
 export async function endDeviceAssignment(
 	driver_id: string,
 	business_premise_id: string,
 	electronic_device_id: string
-): Promise<DeviceAssignment> {
+): Promise<DeviceAssignmentResponse> {
 	const latest = await prisma.device_assignment.findFirst({
 		where: { driver_id, business_premise_id, electronic_device_id, valid_to: null },
 		orderBy: { valid_from: 'desc' },
@@ -165,21 +171,25 @@ export async function endDeviceAssignment(
 		data: { valid_to: new Date() },
 		include: deviceAssignmentDefaultInclude,
 	});
-	return toDeviceAssignmentResponse(updated as DeviceAssignmentWithIncludesPrisma) as DeviceAssignment;
+	return toDeviceAssignmentResponse(
+		updated as unknown as DeviceAssignmentWithIncludesPrisma
+	) as unknown as DeviceAssignmentResponse;
 }
 /**
  * Confirm a business premise.
  *
  * @param {string} business_premise_id
- * @returns {Promise<BusinessPremise>}
+ * @returns {Promise<BusinessPremiseResponse>}
  */
-export async function confirmBusinessPremise(business_premise_id: string): Promise<BusinessPremise> {
+export async function confirmBusinessPremise(business_premise_id: string): Promise<BusinessPremiseResponse> {
 	const updated = await prisma.business_premise.update({
 		where: { business_premise_id },
 		data: { is_registered: true, registered_at: new Date() },
 		include: businessPremiseDefaultInclude,
 	});
-	return toBusinessPremiseResponse(updated as BusinessPremiseWithIncludesPrisma) as BusinessPremise;
+	return toBusinessPremiseResponse(
+		updated as unknown as BusinessPremiseWithIncludesPrisma
+	) as unknown as BusinessPremiseResponse;
 }
 
 export default {

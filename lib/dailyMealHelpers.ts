@@ -26,7 +26,7 @@ import DailyMealCategory from '../dao/DailyMealCategory.js';
 import BusinessDao from '../dao/Business.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import { DAILY_MEAL_DELIVERY_COST_CENTS } from './constants.js';
-import { DriverBase } from '../schemas/dto/Drivers/driver.dto.js';
+import { DriverBase } from '../schemas/dto/Driver/index.js';
 
 /**
  * Convert JavaScript's weekday (Sunday=0) to our system's weekday (Monday=0)

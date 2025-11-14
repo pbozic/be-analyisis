@@ -7,6 +7,17 @@ import { UserResponseSchema, AllowanceResponseSchema } from '../User/index.js';
 
 extendZodWithOpenApi(z);
 
+export const CreateBusinessUserSchema = z.object({
+	first_name: z.string().optional(),
+	last_name: z.string().optional(),
+	email: z.string().email(),
+	telephone: z.string().min(5),
+	telephone_code: z.string(),
+	company_role: z.string().default('ADMIN'),
+	date_of_birth: z.string().datetime().optional(),
+});
+export type CreateBusinessUser = z.infer<typeof CreateBusinessUserSchema>;
+
 // BusinessUser Base Schema - scalars only, no relations
 export const BusinessUserBaseSchema = z.object({
 	business_users_id: UUID,

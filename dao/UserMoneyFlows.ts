@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-import { toUserMoneyFlowResponse, toUserMoneyFlowList } from '../schemas/dto/payments/userMoneyFlow.mappers.js';
+import { toUserMoneyFlowResponse, toUserMoneyFlowList } from '../schemas/dto/Payments/userMoneyFlow.mappers.js';
 import type { UserMoneyFlowResponse } from '../types/payments/UserMoneyFlow.js';
 import type { UserMoneyFlowWithUserPrisma } from '../prisma/includes/userMoneyFlows.js';
 

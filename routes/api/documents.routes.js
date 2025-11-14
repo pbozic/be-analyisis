@@ -10,7 +10,7 @@ import {
 	UpdateDocumentFilesInputSchema,
 	UpdateDocumentAdditionalInfoInputSchema,
 	DeleteDocumentsAndFilesByFieldInputSchema,
-} from '../../schemas/dto/Documents/document.dto.ts';
+} from '../../schemas/dto/Document/document.validators.js';
 const router = express.Router();
 router.get('/', DocumentsController.listDocuments);
 router.get('/:documentId', DocumentsController.getDocumentById);
@@ -67,15 +67,15 @@ router.post(
 	validate(CreateDocumentBodySchema),
 	DocumentsController.createVehicleDocument
 );
-/**
- *    * @module transport
- *
- */
-router.post(
-	'/create/delivery_driver/:delivery_driver_id',
-	validate(CreateDocumentBodySchema),
-	DocumentsController.createDeliveryPersonDocument
-);
+// /**
+//  *    * @module transport
+//  *
+//  */
+// router.post(
+// 	'/create/delivery_driver/:delivery_driver_id',
+// 	validate(CreateDocumentBodySchema),
+// 	DocumentsController.createDeliveryPersonDocument
+// );
 router.patch(
 	'/expirationDate',
 	validate(UpdateDocumentExpirationInputSchema),
