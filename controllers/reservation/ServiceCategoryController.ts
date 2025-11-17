@@ -1,7 +1,13 @@
 import { Request, Response } from 'express';
 
 import ServiceCategoryDao from '../../dao/reservation/ServiceCategory.ts';
-import { CreateServiceCategoryInput, UpdateServiceCategoryInput } from '../../types/reservations/ServiceCategory.ts';
+import type {
+	CreateServiceCategoryRequest,
+	UpdateServiceCategoryRequest,
+	// Response types for JSDoc
+	// ServiceCategoryResponse,
+	// ServiceCategoryDAOResponse,
+} from '../../schemas/dto/reservations/service-category/service-category.dto';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 
 /**
@@ -11,7 +17,7 @@ import { ValidatedRequest } from '../../types/validatedRequest.ts';
  * @description Retrieves all reservation service categories.
  * @operationId getReservationServiceCategories
  * @response 200 - Reservation service categories retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ServiceCategoryDAOResponse} 200.application/json
  * @response 500 - Error retrieving service categories
  * @prisma_model service_category
  */
@@ -33,15 +39,15 @@ export async function getServiceCategories(req: ValidatedRequest, res: Response)
  * @summary Create a new reservation service category
  * @description Creates a new reservation service category.
  * @operationId createReservationServiceCategory
- * @bodyContent {object} application/json
+ * @bodyContent {CreateServiceCategoryRequest} application/json
  * @response 201 - Service category created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {ServiceCategoryResponse} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating service category
  * @prisma_model service_category
  */
 export async function createServiceCategory(
-	req: ValidatedRequest<CreateServiceCategoryInput>,
+	req: ValidatedRequest<CreateServiceCategoryRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -83,16 +89,16 @@ export async function deleteServiceCategory(req: Request, res: Response): Promis
  * @description Updates a reservation service category by its ID.
  * @operationId updateReservationServiceCategory
  * @pathParam {string} service_category_id - The ID of the service category to update.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateServiceCategoryRequest} application/json
  * @response 200 - Service category updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ServiceCategoryResponse} 200.application/json
  * @response 400 - Invalid input data
  * @response 404 - Service category not found
  * @response 500 - Error updating service category
  * @prisma_model service_category
  */
 export async function updateServiceCategory(
-	req: ValidatedRequest<UpdateServiceCategoryInput, { service_category_id: string }>,
+	req: ValidatedRequest<UpdateServiceCategoryRequest, { service_category_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -111,7 +117,7 @@ export async function updateServiceCategory(
  * @operationId getReservationServiceCategoryById
  * @pathParam {string} service_category_id - The ID of the service category to retrieve.
  * @response 200 - Service category retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ServiceCategoryDAOResponse} 200.application/json
  * @response 404 - Service category not found
  * @response 500 - Error retrieving service category
  * @prisma_model service_category

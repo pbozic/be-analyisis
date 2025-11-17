@@ -61,8 +61,8 @@ export async function createLocation(req: ValidatedRequest<CreateLocationRequest
 			if (!address || address instanceof Error) {
 				let newAddress = await AddressDao.addAddress({
 					address: addressInfo.address,
-					latitude: addressInfo.latitude,
-					longitude: addressInfo.longitude,
+					latitude: Number(addressInfo.latitude),
+					longitude: Number(addressInfo.longitude),
 				});
 				if (!(newAddress instanceof Error)) {
 					locationData.address_id = newAddress.address_id;
@@ -108,8 +108,8 @@ export async function updateLocation(
 			if (!address || address instanceof Error) {
 				let newAddress = await AddressDao.addAddress({
 					address: addressInfo.address,
-					latitude: addressInfo.latitude,
-					longitude: addressInfo.longitude,
+					latitude: Number(addressInfo.latitude),
+					longitude: Number(addressInfo.longitude),
 				});
 				if (!(newAddress instanceof Error)) {
 					locationData.address_id = newAddress.address_id;

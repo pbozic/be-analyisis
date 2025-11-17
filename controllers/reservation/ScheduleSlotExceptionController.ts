@@ -2,14 +2,18 @@ import { Response } from 'express';
 
 import ScheduleSlotExceptionDao from '../../dao/reservation/ScheduleSlotException';
 import { ValidatedRequest } from '../../types/validatedRequest';
-import {
-	CreateScheduleSlotExceptionInput,
-	UpdateScheduleSlotExceptionInput,
-	CreateOrUpdateExceptionsInput,
-	CreateOrUpdateExceptionsAndBookingsInput,
-	CreateScheduleSlotWithExceptionsAndBookingSlotsInput,
-	UpdateScheduleSlotWithBookingSlotsAndExceptionsInput,
-} from '../../types/reservations/Schedule';
+import type {
+	CreateScheduleSlotExceptionRequest,
+	UpdateScheduleSlotExceptionRequest,
+	CreateOrUpdateExceptionsRequest,
+	CreateOrUpdateExceptionsAndBookingsRequest,
+	// Response types for JSDoc
+	// ScheduleSlotExceptionResponse,
+} from '../../schemas/dto/reservations/schedule-slot-exception/schedule-slot-exception.dto';
+import type {
+	CreateScheduleSlotWithDataInput,
+	UpdateScheduleSlotWithDataInput,
+} from '../../schemas/dto/reservations/schedule-slot/schedule-slot.dto';
 import BookingSlotDao from '../../dao/reservation/BookingSlot';
 import ScheduleSlotDao from '../../dao/reservation/ScheduleSlot';
 import { splitByBookingId, splitByExceptionsId } from '../../lib/bookingHelpers';
@@ -22,7 +26,7 @@ import { splitByBookingId, splitByExceptionsId } from '../../lib/bookingHelpers'
  * @operationId getScheduleSlotExceptionsBySlot
  * @pathParam {string} schedule_slot_id - The ID of the schedule slot.
  * @response 200 - Exceptions retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ScheduleSlotExceptionResponse} 200.application/json
  * @response 500 - Error retrieving exceptions
  * @prisma_model schedule_slot_exceptions
  */
@@ -45,14 +49,14 @@ export async function getScheduleSlotExceptionsBySlotId(
  * @summary Create a new schedule slot exception
  * @description Creates a new exception for a schedule slot.
  * @operationId createScheduleSlotException
- * @bodyContent {object} application/json
+ * @bodyContent {CreateScheduleSlotExceptionRequest} application/json
  * @response 201 - Exception created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {ScheduleSlotExceptionResponse} 201.application/json
  * @response 500 - Error creating exception
  * @prisma_model schedule_slot_exceptions
  */
 export async function createScheduleSlotException(
-	req: ValidatedRequest<CreateScheduleSlotExceptionInput>,
+	req: ValidatedRequest<CreateScheduleSlotExceptionRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -71,15 +75,15 @@ export async function createScheduleSlotException(
  * @description Updates an existing schedule slot exception.
  * @operationId updateScheduleSlotException
  * @pathParam {string} id - The ID of the exception to update.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateScheduleSlotExceptionRequest} application/json
  * @response 200 - Exception updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ScheduleSlotExceptionResponse} 200.application/json
  * @response 404 - Exception not found
  * @response 500 - Error updating exception
  * @prisma_model schedule_slot_exceptions
  */
 export async function updateScheduleSlotException(
-	req: ValidatedRequest<UpdateScheduleSlotExceptionInput, { id: string }>,
+	req: ValidatedRequest<UpdateScheduleSlotExceptionRequest, { id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -123,7 +127,7 @@ export async function deleteScheduleSlotException(
  * @operationId getScheduleSlotExceptionById
  * @pathParam {string} id - The ID of the exception to retrieve.
  * @response 200 - Exception retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ScheduleSlotExceptionResponse} 200.application/json
  * @response 404 - Exception not found
  * @response 500 - Error retrieving exception
  * @prisma_model schedule_slot_exceptions
@@ -151,7 +155,7 @@ export async function getScheduleSlotExceptionById(
  * @summary Create a new schedule slot exception or update an existing one
  * @description Creates a new schedule slot exception or updates an existing one based on the provided data.
  * @operationId updateOrCreateScheduleSlotExceptions
- * @bodyContent {object} application/json
+ * @bodyContent {CreateOrUpdateExceptionsRequest} application/json
  * @response 201 - Schedule slot exceptions created or updated successfully
  * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
@@ -159,7 +163,7 @@ export async function getScheduleSlotExceptionById(
  * @prisma_model schedule_slot_exceptions
  */
 export async function updateOrCreateScheduleSlotExceptions(
-	req: ValidatedRequest<CreateOrUpdateExceptionsInput>,
+	req: ValidatedRequest<CreateOrUpdateExceptionsRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -205,7 +209,7 @@ export async function updateOrCreateScheduleSlotExceptions(
  * @summary Create a new schedule slot exception or update an existing one and also booking slots
  * @description Creates a new schedule slot exception or updates an existing one based on the provided data and also handles booking slots.
  * @operationId updateOrCreateScheduleSlotExceptionsAndBookingSlots
- * @bodyContent {object} application/json
+ * @bodyContent {CreateOrUpdateExceptionsAndBookingsRequest} application/json
  * @response 201 - Schedule slot exceptions created or updated successfully and booking slots created or updated
  * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
@@ -214,7 +218,7 @@ export async function updateOrCreateScheduleSlotExceptions(
  * @prisma_model booking_slots
  */
 export async function updateOrCreateScheduleSlotExceptionsAndBookingSlots(
-	req: ValidatedRequest<CreateOrUpdateExceptionsAndBookingsInput>,
+	req: ValidatedRequest<CreateOrUpdateExceptionsAndBookingsRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -294,7 +298,7 @@ export async function updateOrCreateScheduleSlotExceptionsAndBookingSlots(
  * @returns {Object} An object containing the created schedule slot, booking slots, and exceptions.
  * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
  */
-export async function createScheduleSlotWithData(data: CreateScheduleSlotWithExceptionsAndBookingSlotsInput) {
+export async function createScheduleSlotWithData(data: CreateScheduleSlotWithDataInput) {
 	try {
 		const { schedule, bookingSlots, exceptions } = data;
 		const createdScheduleSlot = await ScheduleSlotDao.createScheduleSlot(schedule);
@@ -349,7 +353,7 @@ export async function createScheduleSlotWithData(data: CreateScheduleSlotWithExc
  * @summary Create a new schedule slot with booking slots and exceptions
  * @description Creates a new schedule slot and associated booking slots and exceptions.
  * @operationId createScheduleSlotWithBookingSlotsAndExceptions
- * @bodyContent {object} application/json
+ * @bodyContent {CreateScheduleSlotWithDataInputSchema} application/json
  * @response 201 - Schedule slot with booking slots and exceptions created successfully
  * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
@@ -359,7 +363,7 @@ export async function createScheduleSlotWithData(data: CreateScheduleSlotWithExc
  * @prisma_model booking_slots
  */
 export async function createScheduleSlotWithBookingSlotsAndExceptions(
-	req: ValidatedRequest<CreateScheduleSlotWithExceptionsAndBookingSlotsInput>,
+	req: ValidatedRequest<CreateScheduleSlotWithDataInput>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -379,10 +383,7 @@ export async function createScheduleSlotWithBookingSlotsAndExceptions(
  * @returns {Object} An object containing the updated schedule slot, booking slots, and exceptions.
  * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
  */
-export async function updateScheduleSlotWithData(
-	data: UpdateScheduleSlotWithBookingSlotsAndExceptionsInput,
-	id: string
-) {
+export async function updateScheduleSlotWithData(data: UpdateScheduleSlotWithDataInput, id: string) {
 	try {
 		const { schedule, bookingSlots, exceptions } = data;
 		const record = Object.keys(schedule).length !== 0 ? await ScheduleSlotDao.updateScheduleSlot(id, schedule) : {};
@@ -461,7 +462,7 @@ export async function updateScheduleSlotWithData(
  * @summary Update a new schedule slot with booking slots and exceptions
  * @description Updates schedule slot with associated booking slots and exceptions.
  * @operationId updateScheduleSlotWithBookingSlotsAndExceptions
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateScheduleSlotWithDataInputSchema} application/json
  * @response 201 - Schedule slot with booking slots and exceptions updated successfully
  * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
@@ -471,7 +472,7 @@ export async function updateScheduleSlotWithData(
  * @prisma_model booking_slots
  */
 export async function updateScheduleSlotWithBookingSlotsAndExceptions(
-	req: ValidatedRequest<UpdateScheduleSlotWithBookingSlotsAndExceptionsInput, { id: string }>,
+	req: ValidatedRequest<UpdateScheduleSlotWithDataInput, { id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -480,7 +481,7 @@ export async function updateScheduleSlotWithBookingSlotsAndExceptions(
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
 		res.status(500).json({
-			message: 'Error updating on updating schedule slot with booking slots and exceptions',
+			message: message,
 			error,
 		});
 	}

@@ -2,7 +2,13 @@ import { Request, Response } from 'express';
 
 import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee';
 import { ValidatedRequest } from '../../types/validatedRequest';
-import { CreateScheduleEmployeeInput, UpdateScheduleEmployeeInput } from '../../types/reservations/Schedule';
+import type {
+	CreateScheduleEmployeeRequest,
+	UpdateScheduleEmployeeRequest,
+} from '../../schemas/dto/reservations/schedule-employee/schedule-employee.dto';
+
+// Import DTO types for API documentation
+//import type { ScheduleEmployeeDAOResponse, ScheduleEmployeeWithSlotsDAOResponse } from '../../schemas/dto/reservations/schedule-employee/schedule-employee.dto.js';
 
 /**
  * GET /reservation/schedule-employees/list/:schedule_id
@@ -12,7 +18,7 @@ import { CreateScheduleEmployeeInput, UpdateScheduleEmployeeInput } from '../../
  * @operationId getScheduleEmployeesBySchedule
  * @pathParam {string} schedule_id - The ID of the schedule.
  * @response 200 - Schedule-employee assignments retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ScheduleEmployeeDAOResponse[]} 200.application/json
  * @response 500 - Error retrieving schedule employees
  * @prisma_model schedule_employee
  */
@@ -36,15 +42,15 @@ export async function getScheduleEmployeesByScheduleId(
  * @summary Create a new schedule-employee assignment
  * @description Creates a new schedule-employee assignment.
  * @operationId createScheduleEmployee
- * @bodyContent {object} application/json
+ * @bodyContent {CreateScheduleEmployeeRequest} application/json
  * @response 201 - Schedule-employee assignment created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {ScheduleEmployeeDAOResponse} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating schedule employee
  * @prisma_model schedule_employee
  */
 export async function createScheduleEmployee(
-	req: ValidatedRequest<CreateScheduleEmployeeInput>,
+	req: ValidatedRequest<CreateScheduleEmployeeRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -63,15 +69,15 @@ export async function createScheduleEmployee(
  * @description Updates an existing schedule-employee assignment.
  * @operationId updateScheduleEmployee
  * @pathParam {string} id - The ID of the assignment to update.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateScheduleEmployeeRequest} application/json
  * @response 200 - Schedule-employee updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ScheduleEmployeeDAOResponse} 200.application/json
  * @response 404 - Schedule-employee not found
  * @response 500 - Error updating schedule employee
  * @prisma_model schedule_employee
  */
 export async function updateScheduleEmployee(
-	req: ValidatedRequest<UpdateScheduleEmployeeInput, { id: string }>,
+	req: ValidatedRequest<UpdateScheduleEmployeeRequest, { id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -116,7 +122,7 @@ export async function deleteScheduleEmployee(
  * @operationId getScheduleEmployeeById
  * @pathParam {string} id - The ID of the schedule-employee to retrieve.
  * @response 200 - Schedule-employee retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ScheduleEmployeeDAOResponse} 200.application/json
  * @response 404 - Schedule-employee not found
  * @response 500 - Error retrieving schedule employee
  * @prisma_model schedule_employee
@@ -146,7 +152,7 @@ export async function getScheduleEmployeeById(
  * @operationId getEmployeesByScheduleIdWithSlots
  * @pathParam {string} schedule_id - The ID of the schedule.
  * @response 200 - Employees with slots retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ScheduleEmployeeWithSlotsDAOResponse[]} 200.application/json
  * @response 500 - Error retrieving employees with slots
  * @prisma_model schedule_employee
  * @prisma_model schedule_slot

@@ -5,7 +5,10 @@ import { Response } from 'express';
 import elasticsearch from '../../elasticsearch/index.js';
 import ReservationModuleDao from '../../dao/reservation/ReservationModule.ts';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
-import { UpdateReservationSettingsInput } from '../../types/reservations/ReservationModule.ts';
+import type { UpdateReservationSettingsRequest } from '../../schemas/dto/reservations/reservation-module/reservation-module.dto';
+
+// Import DTO types for API documentation
+//import type { ReservationModuleDAOResponse, ReservationModulePublicDAOResponse } from '../../schemas/dto/reservations/reservation-module/reservation-module.dto.js';
 
 config();
 const businessIndex = elasticsearch.businessIndex as (business_id?: string | null, force?: boolean) => Promise<void>;
@@ -16,14 +19,14 @@ const businessIndex = elasticsearch.businessIndex as (business_id?: string | nul
  * @summary Update reservation settings
  * @description Director-only: updates reservation module settings for the current business.
  * @operationId updateReservationSettings
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateReservationSettingsRequest} application/json
  * @response 200 - Settings updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ReservationModuleDAOResponse} 200.application/json
  * @response 400 - Error updating business reservation settings
  * @prisma_model reservation_module
  */
 export async function updateReservationSettings(
-	req: ValidatedRequest<UpdateReservationSettingsInput>,
+	req: ValidatedRequest<UpdateReservationSettingsRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -56,7 +59,7 @@ export async function updateReservationSettings(
  * @operationId getReservationModuleByBusinessId
  * @pathParam {string} business_id - The ID of the business.
  * @response 200 - Reservation module retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ReservationModuleDAOResponse} 200.application/json
  * @response 400 - Error retrieving reservation module
  * @prisma_model reservation_module
  */
@@ -87,7 +90,7 @@ export async function getReservationModuleByBusinessId(
  * @operationId disableReservations
  * @pathParam {string} reservation_module_id - The ID of the reservation module to disable.
  * @response 200 - Module disabled
- * @responseContent {object} 200.application/json
+ * @responseContent {ReservationModuleDAOResponse} 200.application/json
  * @response 400 - Error disabling reservations
  * @prisma_model reservation_module
  */
@@ -114,7 +117,7 @@ export async function disableReservations(
  * @operationId enableReservations
  * @pathParam {string} reservation_module_id - The ID of the reservation module to enable.
  * @response 200 - Module enabled
- * @responseContent {object} 200.application/json
+ * @responseContent {ReservationModuleDAOResponse} 200.application/json
  * @response 400 - Error enabling reservations
  * @prisma_model reservation_module
  */
@@ -139,7 +142,7 @@ export async function enableReservations(
  * @summary Get public booking data by link hash or business ID
  * @description Retrieves reservation module data necessary for public booking flow by public link hash or business ID.
  * @operationId getReservationModuleBookingDataByHashOrBusinessId
- * @bodyContent {object} application/json
+ * @bodyContent {GetBookingDataRequest} application/json
  * @response 200 - Booking data retrieved successfully
  * @responseContent {object} 200.application/json
  * @response 400 - Error fetching booking data

@@ -4,12 +4,15 @@ import ServiceDao from '../../dao/reservation/Service.ts';
 import ServiceCategoryDao from '../../dao/reservation/ServiceCategory.ts';
 import EmployeeDao from '../../dao/reservation/Employee.ts';
 import TaxDao from '../../dao/Tax.ts';
-import {
-	CreateServiceInput,
-	UpdateServiceInput,
-	CreateServiceWithEmployeesInput,
-	UpdateServiceWithEmployeesInput,
-} from '../../types/reservations/Service.ts';
+import type {
+	CreateServiceRequest,
+	UpdateServiceRequest,
+	CreateServiceWithEmployees,
+	UpdateServiceWithEmployees,
+	// Response types for JSDoc
+	// ServiceResponse,
+	// ServiceDAOResponse,
+} from '../../schemas/dto/reservations/service/service.dto';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 
 /**
@@ -19,7 +22,7 @@ import { ValidatedRequest } from '../../types/validatedRequest.ts';
  * @description Retrieves all reservation services.
  * @operationId getReservationServices
  * @response 200 - Reservation services retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ServiceDAOResponse} 200.application/json
  * @response 500 - Error retrieving services
  * @prisma_model service
  */
@@ -39,15 +42,15 @@ export async function getServices(req: ValidatedRequest, res: Response): Promise
  * @summary Create a new reservation service
  * @description Creates a new reservation service.
  * @operationId createReservationService
- * @bodyContent {object} application/json
+ * @bodyContent {CreateServiceRequest} application/json
  * @response 201 - Service created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {ServiceResponse} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating service
  * @prisma_model service
  * @prisma_model reservation_module
  */
-export async function createService(req: ValidatedRequest<CreateServiceInput>, res: Response): Promise<void> {
+export async function createService(req: ValidatedRequest<CreateServiceRequest>, res: Response): Promise<void> {
 	try {
 		let serviceData = req.body;
 		let reservationModuleId = req.user?.reservation_module_id as string;
@@ -86,16 +89,16 @@ export async function deleteService(req: Request, res: Response): Promise<void> 
  * @description Updates a reservation service by its ID.
  * @operationId updateReservationService
  * @pathParam {string} service_id - The ID of the service to update.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateServiceRequest} application/json
  * @response 200 - Service updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ServiceResponse} 200.application/json
  * @response 400 - Invalid input data
  * @response 404 - Service not found
  * @response 500 - Error updating service
  * @prisma_model service
  */
 export async function updateService(
-	req: ValidatedRequest<UpdateServiceInput, { service_id: string }>,
+	req: ValidatedRequest<UpdateServiceRequest, { service_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -130,7 +133,7 @@ export async function getServiceById(req: Request, res: Response): Promise<void>
  * @operationId getServicesByCategoryId
  * @pathParam {string} service_category_id - The ID of the service category to retrieve services for.
  * @response 200 - Services retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ServiceDAOResponse} 200.application/json
  * @response 404 - No services found for this category
  * @response 500 - Error retrieving services by category
  * @prisma_model service
@@ -160,7 +163,7 @@ export async function getServicesByCategoryId(req: Request, res: Response): Prom
  * @pathParam {string} service_id - The ID of the service to connect.
  * @pathParam {string} service_category_id - The ID of the service category to connect to.
  * @response 200 - Service connected to category successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ServiceResponse} 200.application/json
  * @response 404 - Service or category not found
  * @response 500 - Error connecting service to category
  * @prisma_model service
@@ -187,7 +190,7 @@ export async function connectServiceToCategory(
  * @operationId disconnectServiceFromCategory
  * @pathParam {string} service_id - The ID of the service to disconnect.
  * @response 200 - Service disconnected from category successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ServiceResponse} 200.application/json
  * @response 404 - Service not found
  * @response 500 - Error disconnecting service from category
  * @prisma_model service
@@ -238,7 +241,7 @@ export async function getDataForServiceForm(req: ValidatedRequest, res: Response
  * @summary Create a new reservation service with employees
  * @description Creates a new reservation service along with its assigned employees.
  * @operationId createServiceWithData
- * @bodyContent {object} application/json
+ * @bodyContent {CreateServiceWithEmployees} application/json
  * @response 200 - Schedule created successfully
  * @responseContent {object} 200.application/json
  * @response 404 - Related entity not found
@@ -248,16 +251,16 @@ export async function getDataForServiceForm(req: ValidatedRequest, res: Response
  * @prisma_model employee
  */
 export async function createServiceWithData(
-	req: ValidatedRequest<CreateServiceWithEmployeesInput>,
+	req: ValidatedRequest<CreateServiceWithEmployees>,
 	res: Response
 ): Promise<void> {
 	try {
-		const { formData, added } = req.body;
+		const { formData, addedEmployees } = req.body;
 		let reservationModuleId = req.user?.reservation_module_id as string;
 		let service = await ServiceDao.createService(formData, reservationModuleId);
 		const serviceId = service.service_id;
 		const createdEmployees = await Promise.all(
-			added.map(async (el) => {
+			addedEmployees.map(async (el) => {
 				let data = await ServiceDao.createServiceAssigment(el, serviceId);
 				return data;
 			})
@@ -276,7 +279,7 @@ export async function createServiceWithData(
  * @description Updates a reservation service by its ID along with its assigned employees.
  * @operationId updateServiceWithData
  * @pathParam {string} service_id - The ID of the service to update.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateServiceWithEmployees} application/json
  * @response 200 - Service updated successfully
  * @responseContent {object} 200.application/json
  * @response 400 - Invalid input data
@@ -286,15 +289,15 @@ export async function createServiceWithData(
  * @prisma_model service_assignment
  */
 export async function updateServiceWithData(
-	req: ValidatedRequest<UpdateServiceWithEmployeesInput, { service_id: string }>,
+	req: ValidatedRequest<UpdateServiceWithEmployees, { service_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
 		let serviceId = req.params.service_id;
-		const { formData, added, removed } = req.body;
+		const { formData, addedEmployees, removedEmployees } = req.body;
 		let service = Object.keys(formData).length !== 0 ? await ServiceDao.updateService(serviceId, formData) : {};
-		const removedEmployees = await Promise.all(
-			removed.map(async (el) => {
+		const removedEmployeesResult = await Promise.all(
+			removedEmployees.map(async (el) => {
 				let data = await ServiceDao.deleteServiceAssigment(el, serviceId);
 				return {
 					data,
@@ -302,12 +305,12 @@ export async function updateServiceWithData(
 			})
 		);
 		const createdEmployees = await Promise.all(
-			added.map(async (el) => {
+			addedEmployees.map(async (el) => {
 				let data = await ServiceDao.createServiceAssigment(el, serviceId);
 				return data;
 			})
 		);
-		res.status(200).json({ service, createdEmployees, removedEmployees });
+		res.status(200).json({ service, createdEmployees, removedEmployees: removedEmployeesResult });
 	} catch (error) {
 		res.status(500).json({ message: 'Error updating service', error });
 	}

@@ -117,6 +117,7 @@ export const ScheduleEmployeeWithSlotsDAOResponseSchema = ScheduleEmployeeDAORes
 export type ScheduleEmployeeBase = z.infer<typeof ScheduleEmployeeBaseSchema>;
 export type ScheduleEmployeeRef = z.infer<typeof ScheduleEmployeeRefSchema>;
 export type CreateScheduleEmployeeRequest = z.infer<typeof CreateScheduleEmployeeRequestSchema>;
+export type UpdateScheduleEmployeeRequest = z.infer<typeof UpdateScheduleEmployeeRequestSchema>;
 export type ScheduleEmployeeResponse = z.infer<typeof ScheduleEmployeeResponseSchema>;
 export type ScheduleEmployeeDAOResponse = z.infer<typeof ScheduleEmployeeDAOResponseSchema>;
 export type ScheduleEmployeeWithSlotsDAOResponse = z.infer<typeof ScheduleEmployeeWithSlotsDAOResponseSchema>;
@@ -126,6 +127,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('ScheduleEmployeeBase', ScheduleEmployeeBaseSchema);
 	registry.register('ScheduleEmployeeRef', ScheduleEmployeeRefSchema);
 	registry.register('CreateScheduleEmployeeRequest', CreateScheduleEmployeeRequestSchema);
+	registry.register('UpdateScheduleEmployeeRequest', UpdateScheduleEmployeeRequestSchema);
 	registry.register('ScheduleEmployeeResponse', ScheduleEmployeeResponseSchema);
 	registry.register('ScheduleEmployeeDAO', ScheduleEmployeeDAOResponseSchema);
 	registry.register('ScheduleEmployeeWithSlotsDAO', ScheduleEmployeeWithSlotsDAOResponseSchema);

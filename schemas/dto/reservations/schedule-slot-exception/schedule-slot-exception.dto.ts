@@ -72,12 +72,79 @@ export const ScheduleSlotExceptionResponseSchema = ScheduleSlotExceptionBaseSche
 	description: 'Complete schedule slot exception response with related entities',
 });
 
+// ===== COMPLEX OPERATION SCHEMAS (imported from booking-slot for complex operations) =====
+import { CreateBookingSlotRequestSchema } from '../booking-slot/booking-slot.dto.js';
+
+// Extended schemas for complex operations that allow optional IDs
+export const ScheduleSlotExceptionWithOptionalIdsSchema = CreateScheduleSlotExceptionRequestSchema.extend({
+	schedule_slot_id: UUID.optional(),
+	schedule_slot_exception_id: UUID.optional(),
+}).openapi({
+	title: 'ScheduleSlotExceptionWithOptionalIds',
+	description: 'Schedule slot exception schema with optional IDs for update/create operations',
+});
+
+export const BookingSlotWithOptionalIdsSchema = CreateBookingSlotRequestSchema.extend({
+	schedule_slot_id: UUID.optional(),
+	booking_slot_id: UUID.optional(),
+}).openapi({
+	title: 'BookingSlotWithOptionalIds',
+	description: 'Booking slot schema with optional IDs for update/create operations',
+});
+
+// Schemas for batch exception operations
+export const CreateOrUpdateExceptionsRequestSchema = z
+	.object({
+		exceptions: z.object({
+			changes: z.array(ScheduleSlotExceptionWithOptionalIdsSchema),
+			removed: z.array(
+				z.object({
+					schedule_slot_exception_id: UUID,
+				})
+			),
+		}),
+	})
+	.openapi({
+		title: 'CreateOrUpdateExceptionsRequest',
+		description: 'Request schema for creating or updating exceptions',
+	});
+
+export const CreateOrUpdateExceptionsAndBookingsRequestSchema = z
+	.object({
+		exceptions: z.object({
+			changes: z.array(ScheduleSlotExceptionWithOptionalIdsSchema),
+			removed: z.array(
+				z.object({
+					schedule_slot_exception_id: UUID,
+				})
+			),
+		}),
+		bookingSlots: z.object({
+			newOrChanged: z.array(BookingSlotWithOptionalIdsSchema),
+			removed: z.array(
+				z.object({
+					booking_slot_id: UUID,
+				})
+			),
+		}),
+	})
+	.openapi({
+		title: 'CreateOrUpdateExceptionsAndBookingsRequest',
+		description: 'Request schema for creating or updating exceptions and booking slots',
+	});
+
 // ===== EXPORTED TYPES =====
 export type ScheduleSlotExceptionBase = z.infer<typeof ScheduleSlotExceptionBaseSchema>;
 export type ScheduleSlotExceptionRef = z.infer<typeof ScheduleSlotExceptionRefSchema>;
 export type CreateScheduleSlotExceptionRequest = z.infer<typeof CreateScheduleSlotExceptionRequestSchema>;
 export type UpdateScheduleSlotExceptionRequest = z.infer<typeof UpdateScheduleSlotExceptionRequestSchema>;
 export type ScheduleSlotExceptionResponse = z.infer<typeof ScheduleSlotExceptionResponseSchema>;
+export type ScheduleSlotExceptionWithOptionalIds = z.infer<typeof ScheduleSlotExceptionWithOptionalIdsSchema>;
+export type BookingSlotWithOptionalIds = z.infer<typeof BookingSlotWithOptionalIdsSchema>;
+export type CreateOrUpdateExceptionsRequest = z.infer<typeof CreateOrUpdateExceptionsRequestSchema>;
+export type CreateOrUpdateExceptionsAndBookingsRequest = z.infer<
+	typeof CreateOrUpdateExceptionsAndBookingsRequestSchema
+>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
@@ -86,4 +153,8 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateScheduleSlotExceptionRequest', CreateScheduleSlotExceptionRequestSchema);
 	registry.register('UpdateScheduleSlotExceptionRequest', UpdateScheduleSlotExceptionRequestSchema);
 	registry.register('ScheduleSlotExceptionResponse', ScheduleSlotExceptionResponseSchema);
+	registry.register('ScheduleSlotExceptionWithOptionalIds', ScheduleSlotExceptionWithOptionalIdsSchema);
+	registry.register('BookingSlotWithOptionalIds', BookingSlotWithOptionalIdsSchema);
+	registry.register('CreateOrUpdateExceptionsRequest', CreateOrUpdateExceptionsRequestSchema);
+	registry.register('CreateOrUpdateExceptionsAndBookingsRequest', CreateOrUpdateExceptionsAndBookingsRequestSchema);
 }

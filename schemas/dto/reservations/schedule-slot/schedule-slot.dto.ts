@@ -5,6 +5,8 @@ import { UUID, Timestamp } from '../../../primitives';
 import { EmployeeRefSchema } from '../employee/employee.dto.js';
 import { ScheduleRefSchema } from '../schedule/schedule.dto.js';
 import { LocationRefSchema } from '../location/location.dto.js';
+import { CreateBookingSlotRequestSchema } from '../booking-slot/booking-slot.dto.js';
+import { CreateScheduleSlotExceptionRequestSchema } from '../schedule-slot-exception/schedule-slot-exception.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -87,6 +89,97 @@ export const ScheduleSlotWithScheduleDAOResponseSchema = ScheduleSlotBaseSchema.
 	description: 'Schedule slot response from DAO with schedule and location details',
 });
 
+// ===== HELPER SCHEMAS FOR COMPLEX OPERATIONS =====
+// Extended schemas for multi-schedule operations that allow optional fields
+export const ScheduleSlotExceptionInputSchema = CreateScheduleSlotExceptionRequestSchema.extend({
+	schedule_slot_id: UUID.optional(),
+	schedule_slot_exception_id: UUID.optional(),
+}).openapi({
+	title: 'ScheduleSlotExceptionInput',
+	description: 'Extended schedule slot exception schema for multi-schedule operations with optional fields',
+});
+
+export const BookingSlotInputSchema = CreateBookingSlotRequestSchema.extend({
+	schedule_slot_id: UUID.optional(),
+	booking_slot_id: UUID.optional(),
+}).openapi({
+	title: 'BookingSlotInput',
+	description: 'Extended booking slot schema for multi-schedule operations with optional fields',
+});
+
+// ===== COMPLEX MULTI-SCHEDULE OPERATIONS =====
+export const CreateMultipleSchedulesRequestSchema = z
+	.object({
+		schedule: CreateScheduleSlotRequestSchema,
+		exceptions: z.array(ScheduleSlotExceptionInputSchema),
+		bookingSlots: z.array(BookingSlotInputSchema),
+		dates: z.array(z.string()),
+	})
+	.openapi({
+		title: 'CreateMultipleSchedulesRequest',
+		description: 'Request schema for creating multiple schedules with exceptions and booking slots',
+	});
+
+export const OverwriteMultipleSchedulesRequestSchema = z
+	.object({
+		schedule: CreateScheduleSlotRequestSchema,
+		exceptions: z.array(ScheduleSlotExceptionInputSchema),
+		bookingSlots: z.array(BookingSlotInputSchema),
+		dates: z.array(z.string()),
+		ids: z.array(z.string()),
+	})
+	.openapi({
+		title: 'OverwriteMultipleSchedulesRequest',
+		description: 'Request schema for overwriting multiple schedules',
+	});
+
+export const UpdateMultipleSchedulesRequestSchema = z
+	.object({
+		schedule: CreateScheduleSlotRequestSchema,
+		exceptions: z.array(ScheduleSlotExceptionInputSchema),
+		bookingSlots: z.array(BookingSlotInputSchema),
+		dates: z.array(z.string()),
+		update: z.boolean(),
+	})
+	.openapi({
+		title: 'UpdateMultipleSchedulesRequest',
+		description: 'Request schema for updating multiple schedules',
+	});
+
+// ===== COMPATIBILITY SCHEMAS FOR LEGACY FUNCTIONS =====
+// These schemas match the expected structure of the legacy ScheduleSlotExceptionController functions
+export const CreateScheduleSlotWithDataInputSchema = z.object({
+	schedule: CreateScheduleSlotRequestSchema,
+	exceptions: z.array(ScheduleSlotExceptionInputSchema),
+	bookingSlots: z.array(BookingSlotInputSchema),
+});
+
+export const UpdateScheduleSlotWithDataInputSchema = z.object({
+	schedule: UpdateScheduleSlotRequestSchema,
+	exceptions: z.object({
+		changes: z.array(
+			ScheduleSlotExceptionInputSchema.extend({
+				type: z.enum(['vacation', 'location_closed', 'other', 'health', 'break', 'lunch']),
+				schedule_slot_id: UUID,
+			})
+		),
+		removed: z.array(
+			ScheduleSlotExceptionInputSchema.extend({
+				type: z.enum(['vacation', 'location_closed', 'other', 'health', 'break', 'lunch']),
+				schedule_slot_exception_id: UUID,
+			})
+		),
+	}),
+	bookingSlots: z.object({
+		newOrChanged: z.array(BookingSlotInputSchema),
+		removed: z.array(
+			BookingSlotInputSchema.extend({
+				booking_slot_id: UUID,
+			})
+		),
+	}),
+});
+
 // ===== EXPORTED TYPES =====
 export type ScheduleSlotBase = z.infer<typeof ScheduleSlotBaseSchema>;
 export type ScheduleSlotRef = z.infer<typeof ScheduleSlotRefSchema>;
@@ -95,6 +188,19 @@ export type UpdateScheduleSlotRequest = z.infer<typeof UpdateScheduleSlotRequest
 export type ScheduleSlotResponse = z.infer<typeof ScheduleSlotResponseSchema>;
 export type ScheduleSlotDAOResponse = z.infer<typeof ScheduleSlotDAOResponseSchema>;
 export type ScheduleSlotWithScheduleDAOResponse = z.infer<typeof ScheduleSlotWithScheduleDAOResponseSchema>;
+
+// Helper types
+export type ScheduleSlotExceptionInput = z.infer<typeof ScheduleSlotExceptionInputSchema>;
+export type BookingSlotInput = z.infer<typeof BookingSlotInputSchema>;
+
+// Complex operation types
+export type CreateMultipleSchedulesRequest = z.infer<typeof CreateMultipleSchedulesRequestSchema>;
+export type OverwriteMultipleSchedulesRequest = z.infer<typeof OverwriteMultipleSchedulesRequestSchema>;
+export type UpdateMultipleSchedulesRequest = z.infer<typeof UpdateMultipleSchedulesRequestSchema>;
+
+// Compatibility types for legacy functions
+export type CreateScheduleSlotWithDataInput = z.infer<typeof CreateScheduleSlotWithDataInputSchema>;
+export type UpdateScheduleSlotWithDataInput = z.infer<typeof UpdateScheduleSlotWithDataInputSchema>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
@@ -105,4 +211,13 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('ScheduleSlotResponse', ScheduleSlotResponseSchema);
 	registry.register('ScheduleSlotDAO', ScheduleSlotDAOResponseSchema);
 	registry.register('ScheduleSlotWithScheduleDAO', ScheduleSlotWithScheduleDAOResponseSchema);
+
+	// Helper schemas
+	registry.register('ScheduleSlotExceptionInput', ScheduleSlotExceptionInputSchema);
+	registry.register('BookingSlotInput', BookingSlotInputSchema);
+
+	// Complex operations
+	registry.register('CreateMultipleSchedulesRequest', CreateMultipleSchedulesRequestSchema);
+	registry.register('OverwriteMultipleSchedulesRequest', OverwriteMultipleSchedulesRequestSchema);
+	registry.register('UpdateMultipleSchedulesRequest', UpdateMultipleSchedulesRequestSchema);
 }

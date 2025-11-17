@@ -2,16 +2,20 @@ import { Response } from 'express';
 
 import ScheduleSlotDao from '../../dao/reservation/ScheduleSlot';
 import { ValidatedRequest } from '../../types/validatedRequest';
-import {
-	CreateScheduleSlotInput,
-	UpdateScheduleSlotInput,
-	CreateMultipleSchedulesInput,
-	OverwriteMultipleSchedulesInput,
-	UpdateMultipleSchedulesInput,
-} from '../../types/reservations/Schedule';
+import type {
+	CreateScheduleSlotRequest,
+	UpdateScheduleSlotRequest,
+	CreateMultipleSchedulesRequest,
+	OverwriteMultipleSchedulesRequest,
+	UpdateMultipleSchedulesRequest,
+	UpdateScheduleSlotWithDataInput,
+} from '../../schemas/dto/reservations/schedule-slot/schedule-slot.dto';
 import { createScheduleSlotWithData, updateScheduleSlotWithData } from './ScheduleSlotExceptionController.ts';
 import { ScheduleSlotException } from '../../types/reservations/ScheduleSlotException.ts';
 import { BookingSlot } from '../../types/reservations/BookingSlot.ts';
+
+// Import DTO types for API documentation
+//import type { ScheduleSlotDAOResponse, ScheduleSlotWithScheduleDAOResponse } from '../../schemas/dto/reservations/schedule-slot/schedule-slot.dto.js';
 
 /**
  * GET /reservation/schedule-slots/list/:schedule_id
@@ -21,7 +25,7 @@ import { BookingSlot } from '../../types/reservations/BookingSlot.ts';
  * @operationId getScheduleSlotsBySchedule
  * @pathParam {string} schedule_id - The ID of the schedule.
  * @response 200 - Schedule slots retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ScheduleSlotDAOResponse[]} 200.application/json
  * @response 500 - Error retrieving schedule slots
  * @prisma_model schedule_slot
  */
@@ -45,14 +49,17 @@ export async function getScheduleSlotsByScheduleId(
  * @summary Create a new schedule slot
  * @description Creates a new schedule slot.
  * @operationId createScheduleSlot
- * @bodyContent {object} application/json
+ * @bodyContent {CreateScheduleSlotRequest} application/json
  * @response 201 - Schedule slot created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {ScheduleSlotDAOResponse} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating schedule slot
  * @prisma_model schedule_slot
  */
-export async function createScheduleSlot(req: ValidatedRequest<CreateScheduleSlotInput>, res: Response): Promise<void> {
+export async function createScheduleSlot(
+	req: ValidatedRequest<CreateScheduleSlotRequest>,
+	res: Response
+): Promise<void> {
 	try {
 		const record = await ScheduleSlotDao.createScheduleSlot(req.body);
 		res.status(201).json(record);
@@ -69,15 +76,15 @@ export async function createScheduleSlot(req: ValidatedRequest<CreateScheduleSlo
  * @description Updates an existing schedule slot.
  * @operationId updateScheduleSlot
  * @pathParam {string} id - The ID of the schedule slot to update.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateScheduleSlotRequest} application/json
  * @response 200 - Schedule slot updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ScheduleSlotDAOResponse} 200.application/json
  * @response 404 - Schedule slot not found
  * @response 500 - Error updating schedule slot
  * @prisma_model schedule_slot
  */
 export async function updateScheduleSlot(
-	req: ValidatedRequest<UpdateScheduleSlotInput, { id: string }>,
+	req: ValidatedRequest<UpdateScheduleSlotRequest, { id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -119,7 +126,7 @@ export async function deleteScheduleSlot(req: ValidatedRequest<null, { id: strin
  * @operationId getScheduleSlotById
  * @pathParam {string} id - The ID of the schedule slot to retrieve.
  * @response 200 - Schedule slot retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {ScheduleSlotDAOResponse} 200.application/json
  * @response 404 - Schedule slot not found
  * @response 500 - Error retrieving schedule slot
  * @prisma_model schedule_slot
@@ -149,7 +156,7 @@ function removeMatchingIsoDates(firstArray: string[], secondArray: string[]): st
  * @summary Create a new location schedules
  * @description Creates a new location schedules.
  * @operationId createLocationSchedule
- * @bodyContent {object} application/json
+ * @bodyContent {CreateMultipleSchedulesRequest} application/json
  * @response 201 - Schedule created successfully
  * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
@@ -159,7 +166,7 @@ function removeMatchingIsoDates(firstArray: string[], secondArray: string[]): st
  * @prisma_model booking_slots
  */
 export async function createMultipleSchedules(
-	req: ValidatedRequest<CreateMultipleSchedulesInput>,
+	req: ValidatedRequest<CreateMultipleSchedulesRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -168,7 +175,7 @@ export async function createMultipleSchedules(
 			schedule.employee_id,
 			dates
 		);
-		const existingDates = existingSchedules.map((el) => el.date.toISOString());
+		const existingDates = existingSchedules.map((el) => el.date);
 		const datesToCreate = removeMatchingIsoDates(existingDates, dates);
 
 		const schedules = await Promise.all(
@@ -214,7 +221,7 @@ export async function createMultipleSchedules(
  * @summary Overwrite multiple schedules with new data
  * @description Overwrites multiple schedules with new data based on the provided dates.
  * @operationId overwriteMultipleSchedules
- * @bodyContent {object} application/json
+ * @bodyContent {OverwriteMultipleSchedulesRequest} application/json
  * @response 201 - Schedule created successfully
  * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
@@ -224,7 +231,7 @@ export async function createMultipleSchedules(
  * @prisma_model booking_slots
  */
 export async function overwriteMultipleSchedules(
-	req: ValidatedRequest<OverwriteMultipleSchedulesInput>,
+	req: ValidatedRequest<OverwriteMultipleSchedulesRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -310,7 +317,7 @@ function updateUtcDateRetainTime(startTimeUtc: string, newDateUtc: string): stri
  * @description Updates existing schedules with new data and creates new schedules based on the provided dates.
  * @operationId updateMultipleSchedules
  * @pathParam {string} id - The ID of the schedule slot to update.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateMultipleSchedulesRequest} application/json
  * @response 201 - Schedule updated successfully and new schedules created
  * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
@@ -320,7 +327,7 @@ function updateUtcDateRetainTime(startTimeUtc: string, newDateUtc: string): stri
  * @prisma_model booking_slots
  */
 export async function updateMultipleSchedules(
-	req: ValidatedRequest<UpdateMultipleSchedulesInput, { id: string }>,
+	req: ValidatedRequest<UpdateMultipleSchedulesRequest, { id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -329,20 +336,29 @@ export async function updateMultipleSchedules(
 			schedule.employee_id,
 			dates
 		);
-		const existingDates = existingSchedules.map((el) => el.date.toISOString());
+		const existingDates = existingSchedules.map((el) => el.date);
 		const datesToCreate = removeMatchingIsoDates([...existingDates, schedule.date], dates);
 
 		const scheduleData = update
-			? { schedule, bookingSlots, exceptions }
-			: { schedule: {}, bookingSlots, exceptions };
-		const record = await updateScheduleSlotWithData(scheduleData, req.params.id);
+			? {
+					schedule,
+					bookingSlots: { newOrChanged: bookingSlots, removed: [] },
+					exceptions: { changes: exceptions, removed: [] },
+				}
+			: {
+					schedule: {},
+					bookingSlots: { newOrChanged: bookingSlots, removed: [] },
+					exceptions: { changes: exceptions, removed: [] },
+				};
+		const record = await updateScheduleSlotWithData(scheduleData as UpdateScheduleSlotWithDataInput, req.params.id);
 		if (record) {
 			const updatedSchedule = await ScheduleSlotDao.getScheduleSlotById(req.params.id);
 			if (updatedSchedule) {
-				const updatedScheduleData = updatedSchedule.schedule ?? schedule;
+				const updatedScheduleData = updatedSchedule;
 				const updatedScheduleDataExceptions: ScheduleSlotException[] =
-					updatedSchedule?.schedule_slot_exceptions ?? [];
-				const updatedScheduleDataBookingSlots: BookingSlot[] = updatedSchedule?.booking_slots ?? [];
+					(updatedSchedule?.schedule_slot_exceptions as ScheduleSlotException[]) ?? [];
+				const updatedScheduleDataBookingSlots: BookingSlot[] =
+					(updatedSchedule?.booking_slots as BookingSlot[]) ?? [];
 				const schedules = await Promise.all(
 					datesToCreate.map(async (el) => {
 						const updateSchedule = {
@@ -351,13 +367,8 @@ export async function updateMultipleSchedules(
 							start_time: updateUtcDateRetainTime(schedule.start_time, el),
 							end_time: updateUtcDateRetainTime(schedule.end_time, el),
 							schedule_employee_id:
-								'schedule_employee_id' in updatedScheduleData
-									? updatedScheduleData.schedule_employee_id
-									: schedule.schedule_employee_id,
-							employee_id:
-								'employee_id' in updatedScheduleData
-									? updatedScheduleData.employee_id
-									: schedule.employee_id,
+								updatedScheduleData.schedule_employee_id || schedule.schedule_employee_id,
+							employee_id: updatedScheduleData.employee_id || schedule.employee_id,
 						};
 						const updatedExceptions = updatedScheduleDataExceptions.map((exception) => ({
 							...exception,
