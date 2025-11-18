@@ -4,6 +4,7 @@ import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { SERVICES } from '@prisma/client';
 
 import { Email, PhoneNumber, UUID } from '../../primitives.js';
+import { ACCOUNT_ACTIONS_REASON } from '../../../lib/constants.js';
 
 extendZodWithOpenApi(z);
 
@@ -382,7 +383,7 @@ export const ConfirmPaymentIntentSchema = z
 export const UpdateUserActiveSchema = z
 	.object({
 		active: z.boolean(),
-		reason: z.string().min(1),
+		reason: z.nativeEnum(ACCOUNT_ACTIONS_REASON).openapi({ example: 'VIOLATION OF TERMS' }),
 	})
 	.openapi({
 		title: 'UpdateUserActiveRequest',
@@ -396,7 +397,7 @@ export const UpdateUserActiveSchema = z
 export const UpdateUserDisabledSchema = z
 	.object({
 		disabled: z.boolean(),
-		reason: z.string().min(1),
+		reason: z.nativeEnum(ACCOUNT_ACTIONS_REASON).openapi({ example: 'VIOLATION OF TERMS' }),
 	})
 	.openapi({
 		title: 'UpdateUserDisabledRequest',
@@ -409,7 +410,7 @@ export const UpdateUserDisabledSchema = z
  */
 export const SoftDeleteUserSchema = z
 	.object({
-		reason: z.string().min(1),
+		reason: z.nativeEnum(ACCOUNT_ACTIONS_REASON).openapi({ example: 'VIOLATION OF TERMS' }),
 	})
 	.openapi({
 		title: 'SoftDeleteUserRequest',

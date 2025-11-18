@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import type { Response } from 'express';
 import bcrypt from 'bcrypt';
-import { FUNDS_TYPE, USER_ROLES } from '@prisma/client';
+import { ACCOUNT_ACTIONS_REASON, FUNDS_TYPE, USER_ROLES } from '@prisma/client';
 
 import GroupDao from '../dao/Group.js';
 import ReviewsDao from '../dao/Review.ts';
@@ -19,14 +19,7 @@ import CashbackDao from '../dao/Cashback.ts';
 import TableReservationDao from '../dao/TableReservation.ts';
 import SMS from '../lib/SMS.js';
 import stripe from '../lib/stripe.js';
-import {
-	DELIVERY_ORDER_STATUS,
-	CREDITS,
-	CASHBACK_TYPE,
-	ACCOUNT_ACTIONS_REASON,
-	ORDER_TYPE,
-	MAX_WALLET_FUNDS,
-} from '../lib/constants.js';
+import { DELIVERY_ORDER_STATUS, CREDITS, CASHBACK_TYPE, ORDER_TYPE, MAX_WALLET_FUNDS } from '../lib/constants.js';
 import {
 	AcceptFamilyInvitationRequest,
 	AddAddressRequest,
@@ -721,10 +714,15 @@ async function updateUserActiveByUserId(
 		if (!req.user.user_id) {
 			throw new Error('Missing creator user_id.');
 		}
-		if (!user_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason)) {
+		if (!user_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason as ACCOUNT_ACTIONS_REASON)) {
 			throw new Error('Missing user_id or invalid reason.');
 		}
-		const updatedUser = await UserDao.updateUserActive(user_id, active, req.user.user_id, reason);
+		const updatedUser = await UserDao.updateUserActive(
+			user_id,
+			active,
+			req.user.user_id,
+			reason as ACCOUNT_ACTIONS_REASON
+		);
 		res.status(200).json({
 			message: 'User active field updated successfully.',
 			user: updatedUser,
@@ -763,10 +761,15 @@ async function updateUserDisabledByUserId(
 		if (!req.user.user_id) {
 			throw new Error('Missing creator user_id.');
 		}
-		if (!user_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason)) {
+		if (!user_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason as ACCOUNT_ACTIONS_REASON)) {
 			throw new Error('Missing user_id or invalid reason.');
 		}
-		const disabledUser = await UserDao.updateUserDisabled(user_id, disabled, req.user.user_id, reason);
+		const disabledUser = await UserDao.updateUserDisabled(
+			user_id,
+			disabled,
+			req.user.user_id,
+			reason as ACCOUNT_ACTIONS_REASON
+		);
 		res.status(200).json({
 			message: 'User disabled field updated successfully.',
 			user: disabledUser,
@@ -805,10 +808,10 @@ async function softDeleteUserByUserId(
 		if (!req.user.user_id) {
 			throw new Error('Missing creator user_id.');
 		}
-		if (!user_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason)) {
+		if (!user_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason as ACCOUNT_ACTIONS_REASON)) {
 			throw new Error('Missing user_id or invalid reason.');
 		}
-		await UserDao.updateUserDisabled(user_id, true, req.user.user_id, reason);
+		await UserDao.updateUserDisabled(user_id, true, req.user.user_id, reason as ACCOUNT_ACTIONS_REASON);
 		const wipedUser = await UserDao.wipeUserPersonalData(user_id);
 		res.status(200).json({
 			message: 'User "soft delete" successful.',
