@@ -1,17 +1,25 @@
 import { Response } from 'express';
+import { NOTIFICATION_CHANNEL } from '@prisma/client';
 
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 import * as RuntimeDao from '../../dao/reservationNotifications/NotificationRuntimeDao.ts';
-import {
-	CreateNotificationMessageInput,
-	UpdateNotificationMessageStatusInput,
-} from '../../types/reservationNotifications/NotificationMessage';
-import { CreateNotificationMessageEventInput } from '../../types/reservationNotifications/NotificationMessageEvent';
-import {
-	CreateNotificationProviderCredentialInput,
-	UpdateNotificationProviderCredentialInput,
-} from '../../types/reservationNotifications/NotificationProviderCredential';
-import { NotificationChannel } from '../../types/reservationNotifications/enums';
+import type {
+	CreateNotificationMessageRequest,
+	UpdateNotificationMessageStatusRequest,
+	// Response types for JSDoc
+	// NotificationMessageResponse,
+} from '../../schemas/dto/reservations/notification-message/notification-message.dto';
+import type {
+	CreateNotificationMessageEventRequest,
+	// Response types for JSDoc
+	// NotificationMessageEventResponse,
+} from '../../schemas/dto/reservations/notification-message-event/notification-message-event.dto';
+import type {
+	CreateNotificationProviderCredentialRequest,
+	UpdateNotificationProviderCredentialRequest,
+	// Response types for JSDoc
+	// NotificationProviderCredentialResponse,
+} from '../../schemas/dto/reservations/notification-provider-credential/notification-provider-credential.dto';
 
 /**
  * GET /reservation/notifications/messages/:notification_message_id
@@ -20,7 +28,7 @@ import { NotificationChannel } from '../../types/reservationNotifications/enums'
  * @operationId getNotificationMessage
  * @pathParam {string} notification_message_id
  * @response 200 - Message retrieved
- * @responseContent {object} 200.application/json
+ * @responseContent {NotificationMessageResponse} 200.application/json
  * @response 404 - Not found
  * @response 500 - Error
  * @prisma_model notification_message
@@ -52,7 +60,7 @@ export async function getNotificationMessage(
  * @property {number} [take=50]
  * @property {number} [skip=0]
  * @response 200 - Messages retrieved
- * @responseContent {object} 200.application/json
+ * @responseContent {NotificationMessageResponse[]} 200.application/json
  * @response 500 - Error
  * @prisma_model notification_message
  */
@@ -85,14 +93,14 @@ export async function listNotificationMessages(
  * @tag Notifications:Runtime
  * @summary Create a notification message (usually by renderer/worker)
  * @operationId createNotificationMessage
- * @bodyContent {object} application/json
+ * @bodyContent {CreateNotificationMessageRequest} application/json
  * @response 201 - Message created
- * @responseContent {object} 201.application/json
+ * @responseContent {NotificationMessageResponse} 201.application/json
  * @response 500 - Error
  * @prisma_model notification_message
  */
 export async function createNotificationMessage(
-	req: ValidatedRequest<CreateNotificationMessageInput>,
+	req: ValidatedRequest<CreateNotificationMessageRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -109,15 +117,15 @@ export async function createNotificationMessage(
  * @summary Update notification message status
  * @operationId updateNotificationMessageStatus
  * @pathParam {string} notification_message_id
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateNotificationMessageStatusRequest} application/json
  * @response 200 - Message updated
- * @responseContent {object} 200.application/json
+ * @responseContent {NotificationMessageResponse} 200.application/json
  * @response 500 - Error
  * @prisma_model notification_message
  */
 export async function updateNotificationMessageStatus(
 	req: ValidatedRequest<
-		Omit<UpdateNotificationMessageStatusInput, 'notification_message_id'>,
+		Omit<UpdateNotificationMessageStatusRequest, 'notification_message_id'>,
 		{ notification_message_id: string }
 	>,
 	res: Response
@@ -140,7 +148,7 @@ export async function updateNotificationMessageStatus(
  * @operationId listNotificationMessageEvents
  * @pathParam {string} notification_message_id
  * @response 200 - Events retrieved
- * @responseContent {object} 200.application/json
+ * @responseContent {NotificationMessageEventResponse[]} 200.application/json
  * @response 500 - Error
  * @prisma_model notification_message_event
  */
@@ -162,15 +170,15 @@ export async function listNotificationMessageEvents(
  * @summary Create message delivery/audit event
  * @operationId createNotificationMessageEvent
  * @pathParam {string} notification_message_id
- * @bodyContent {object} application/json
+ * @bodyContent {CreateNotificationMessageEventRequest} application/json
  * @response 201 - Event created
- * @responseContent {object} 201.application/json
+ * @responseContent {NotificationMessageEventResponse} 201.application/json
  * @response 500 - Error
  * @prisma_model notification_message_event
  */
 export async function createNotificationMessageEvent(
 	req: ValidatedRequest<
-		Omit<CreateNotificationMessageEventInput, 'notification_message_id'>,
+		Omit<CreateNotificationMessageEventRequest, 'notification_message_id'>,
 		{ notification_message_id: string }
 	>,
 	res: Response
@@ -191,14 +199,14 @@ export async function createNotificationMessageEvent(
  * @tag Notifications:Runtime
  * @summary List provider credentials for current module (optional channel)
  * @operationId listNotificationProviderCredentials
- * @queryParam {NotificationChannel} [channel]
+ * @queryParam {NOTIFICATION_CHANNEL} [channel]
  * @response 200 - Credentials retrieved
- * @responseContent {object} 200.application/json
+ * @responseContent {NotificationProviderCredentialResponse[]} 200.application/json
  * @response 500 - Error
  * @prisma_model notification_provider_credential
  */
 export async function listNotificationProviderCredentials(
-	req: ValidatedRequest<null, object, { channel?: NotificationChannel }>,
+	req: ValidatedRequest<null, object, { channel?: NOTIFICATION_CHANNEL }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -220,14 +228,14 @@ export async function listNotificationProviderCredentials(
  * @tag Notifications:Runtime
  * @summary Create provider credentials
  * @operationId createNotificationProviderCredential
- * @bodyContent {object} application/json
+ * @bodyContent {CreateNotificationProviderCredentialRequest} application/json
  * @response 201 - Credentials created
- * @responseContent {object} 201.application/json
+ * @responseContent {NotificationProviderCredentialResponse} 201.application/json
  * @response 500 - Error
  * @prisma_model notification_provider_credential
  */
 export async function createNotificationProviderCredential(
-	req: ValidatedRequest<CreateNotificationProviderCredentialInput>,
+	req: ValidatedRequest<CreateNotificationProviderCredentialRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -252,14 +260,14 @@ export async function createNotificationProviderCredential(
  * @summary Update provider credentials
  * @operationId updateNotificationProviderCredential
  * @pathParam {string} notification_provider_credential_id
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateNotificationProviderCredentialRequest} application/json
  * @response 200 - Credentials updated
- * @responseContent {object} 200.application/json
+ * @responseContent {NotificationProviderCredentialResponse} 200.application/json
  * @response 500 - Error
  * @prisma_model notification_provider_credential
  */
 export async function updateNotificationProviderCredential(
-	req: ValidatedRequest<UpdateNotificationProviderCredentialInput, { notification_provider_credential_id: string }>,
+	req: ValidatedRequest<UpdateNotificationProviderCredentialRequest, { notification_provider_credential_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -280,6 +288,7 @@ export async function updateNotificationProviderCredential(
  * @operationId deleteNotificationProviderCredential
  * @pathParam {string} notification_provider_credential_id
  * @response 204 - Credentials deleted
+ * @responseContent {void} 204.application/json
  * @response 500 - Error
  * @prisma_model notification_provider_credential
  */
