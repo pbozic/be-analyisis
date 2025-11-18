@@ -5,6 +5,7 @@ import { UUID, Timestamp } from '../../primitives.js';
 import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.js';
 import { BasicUserDataSchema } from '../User/user.js';
 import { LocationSchema } from '../Taxi/taxiorder.dto.js';
+import { DailyMealsModuleSchema } from '../Business/business.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -132,6 +133,7 @@ export const DriverBaseSchema = z
 		is_inactive: z.boolean().optional(),
 		delivery_timeline: z.array(LocationSchema).optional(),
 		scheduled_meals_route: z.array(LocationSchema).optional(),
+		come_to_work_last_sent_at: Timestamp.nullable().optional(),
 	})
 	.openapi('DriverBase');
 export type DriverBase = z.infer<typeof DriverBaseSchema>;
@@ -148,6 +150,16 @@ export const VehicleDriversSchema = z
 	.openapi('VehicleDrivers');
 export type VehicleDrivers = z.infer<typeof VehicleDriversSchema>;
 
+export const DailyMealsDriversSchema = z
+	.object({
+		id: UUID,
+		daily_meals_module_id: UUID,
+		created_at: Timestamp,
+		updated_at: Timestamp.optional(),
+		daily_meals_module: DailyMealsModuleSchema.optional(),
+	})
+	.openapi('DailyMealsDrivers');
+
 export const DriverDetailSchema = DriverBaseSchema.extend({
 	user: BasicUserDataSchema.optional(),
 	current_vehicle: VehicleBaseSchema.nullable().optional(),
@@ -159,9 +171,63 @@ export const DriverDetailSchema = DriverBaseSchema.extend({
 		)
 		.optional()
 		.default([]),
+	daily_meals: z.array(DailyMealsDriversSchema).nullable().optional(),
 	business_id: UUID.nullable().optional(),
 }).openapi('DriverDetail');
 export type DriverDetail = z.infer<typeof DriverDetailSchema>;
+
+export const DriverLocationsWithPerformanceSchema = z
+	.object({
+		locations: z.array(
+			z.object({
+				latitude: z.number(),
+				longitude: z.number(),
+				timestamp: Timestamp,
+				speed_kmh: z.number().nullable(),
+				performance_score: z.number().nullable(),
+			})
+		),
+		averageScore: z.number().nullable(),
+	})
+	.openapi('DriverLocationsWithPerformance');
+export type DriverLocationsWithPerformance = z.infer<typeof DriverLocationsWithPerformanceSchema>;
+
+export const DriverEarnings = z
+	.object({
+		driver_id: UUID,
+		is_online: z.boolean().nullable(),
+		license_plate: z.string().nullable(),
+		driver: z.string(),
+		total_earnings: z.string(),
+		number_of_rides: z.number(),
+		hourly_earnings: z.string(),
+		distance_travelled: z.string(),
+		time_travelled: z.string(),
+		earnings_fee: z.string(),
+	})
+	.openapi('DriverEarnings');
+export type DriverEarnings = z.infer<typeof DriverEarnings>;
+
+export const DriverTotalEarningsSchema = z
+	.object({
+		todaysEarnings: z.number(),
+		weeklyEarnings: z.number(),
+		monthlyEarnings: z.number(),
+		totalEarnings: z.number(),
+	})
+	.openapi('DriverTotalEarnings');
+export type DriverTotalEarnings = z.infer<typeof DriverTotalEarningsSchema>;
+
+export const DriverDailyEarningsBreakdownSchema = z
+	.object({
+		breakdown: z.record(z.number()), // key = YYYY-MM-DD, value = earnings for that day
+	})
+	.openapi('DriverDailyEarningsBreakdown');
+export type DriverDailyEarningsBreakdown = z.infer<typeof DriverDailyEarningsBreakdownSchema>;
+
+// =======================
+// Register Schemas
+// =======================
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	// Register common status schemas
@@ -178,4 +244,10 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('DriverBase', DriverBaseSchema);
 	registry.register('DriverDetail', DriverDetailSchema);
 	registry.register('VehicleDrivers', VehicleDriversSchema);
+
+	// Responses
+	registry.register('DriverLocationsWithPerformance', DriverLocationsWithPerformanceSchema);
+	registry.register('DriverEarnings', DriverEarnings);
+	registry.register('DriverTotalEarnings', DriverTotalEarningsSchema);
+	registry.register('DriverDailyEarningsBreakdown', DriverDailyEarningsBreakdownSchema);
 }

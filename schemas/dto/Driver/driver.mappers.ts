@@ -1,6 +1,7 @@
 import { DriverDetailSchema, type DriverDetail } from './driver.dto.js';
 import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.js';
 import { TransportModuleBase } from '../Transport/transport.dto.js';
+import { DailyMealsModule } from '../../../types/dailyMeals/DailyMealsModule.js';
 
 // ===============
 // Mappers
@@ -29,6 +30,7 @@ type PrismaDriver = {
 	user?: unknown;
 	vehicles?: Array<unknown>;
 	current_vehicle?: unknown | null;
+	daily_meals?: DailyMealsModule | null;
 };
 
 type VehicleLike = {
@@ -93,5 +95,6 @@ export function toDriverDetail(row: unknown, user?: unknown): DriverDetail {
 		user: user || (r as { user?: unknown }).user,
 		current_vehicle: currentVehicle,
 		vehicles,
+		daily_meals: r.daily_meals ?? undefined,
 	});
 }

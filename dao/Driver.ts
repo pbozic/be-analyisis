@@ -5,6 +5,9 @@ import { createCustomer } from '../lib/stripe.js';
 import { SERVICE_TYPE } from '../lib/constants.js';
 import type { DriverBase, DriverDetail } from '../schemas/dto/Driver/index.js';
 import { toDriverDetail } from '../schemas/dto/Driver/index.js';
+import { TaxiLocation } from '../schemas/dto/Taxi/taxiorder.dto.ts';
+import { DriverLocationsWithPerformance } from '../schemas/dto/Driver/driver.dto.ts';
+import { CreateUser } from '../schemas/dto/Auth/AuthRequest.dto.ts';
 
 // Define common query arg types
 interface FindManyArgs {
@@ -13,21 +16,6 @@ interface FindManyArgs {
 	orderBy?: any;
 	skip?: number;
 	take?: number;
-}
-
-interface CreateDriverData {
-	business_id?: string | null;
-	transport_module_id?: string | null;
-	daily_meal_business_id?: string | null;
-	[key: string]: any;
-}
-
-interface CreateUserData {
-	email: string;
-	first_name: string;
-	last_name: string;
-	telephone: string;
-	[key: string]: any;
 }
 
 /**
@@ -139,9 +127,9 @@ const getOnlineDrivers = async (args?: any): Promise<DriverDetail[]> => {
 const getDriversByDailyMealBusinessId = async (businessId: string): Promise<DriverDetail[]> => {
 	try {
 		const dailyMealBusiness = await BusinessDao.getBusinessById(businessId);
-		if (!dailyMealBusiness?.daily_meals_module_id) return [];
+		if (!dailyMealBusiness?.daily_meals_module?.id) return [];
 		const driverLinks = await prisma.daily_meals_drivers.findMany({
-			where: { daily_meals_module_id: dailyMealBusiness.daily_meals_module_id },
+			where: { daily_meals_module_id: dailyMealBusiness.daily_meals_module?.id },
 		});
 		const drivers = await prisma.drivers.findMany({
 			where: { driver_id: { in: driverLinks.map((d: { driver_id: string }) => d.driver_id) } },
@@ -188,7 +176,7 @@ const getDriverById = async (driver_id: string): Promise<DriverDetail | null> =>
 			},
 		});
 		if (!driver) return null;
-		const enriched = { ...driver, business_id: (driver as any)?.transport_module?.business_id || null };
+		const enriched = { ...driver, business_id: driver?.transport_module?.business_id || null };
 		return toDriverDetail(enriched);
 	} catch (error) {
 		console.error('Error retrieving driver by ID:', error);
@@ -214,7 +202,7 @@ const getDriverByUserId = async (user_id: string): Promise<DriverDetail | null> 
 			},
 		});
 		if (!driver) return null;
-		const enriched = { ...driver, business_id: (driver as any)?.transport_module?.business_id || null };
+		const enriched = { ...driver, business_id: driver?.transport_module?.business_id || null };
 		return toDriverDetail(enriched);
 	} catch (error) {
 		console.error('Error retrieving driver by user ID:', error);
@@ -226,9 +214,9 @@ const getDriverByUserId = async (user_id: string): Promise<DriverDetail | null> 
  * Get driver location by driver ID.
  *
  * @param {string} driver_id - Driver ID.
- * @returns {Promise<any | null>} Driver location or null.
+ * @returns {Promise<TaxiLocation | null>} Driver location or null.
  */
-const getDriverLocation = async (driver_id: string): Promise<any | null> => {
+const getDriverLocation = async (driver_id: string): Promise<TaxiLocation | null> => {
 	try {
 		const driver = await prisma.drivers.findUnique({
 			where: { driver_id },
@@ -327,7 +315,6 @@ const updateDriverLocation = async (driver_id: string, location: any): Promise<D
  *
  * @param {string} driver_id - Driver ID.
  * @param {any} location - Location object.
- * @param {string} status - Driver status.
  * @param {string} order_id - Order ID if applicable.
  * @param {string} type - Order type (taxi, delivery, etc.).
  * @returns {Promise<any>} Created location history entry.
@@ -335,7 +322,6 @@ const updateDriverLocation = async (driver_id: string, location: any): Promise<D
 const updateDriverLocationHistory = async (
 	driver_id: string,
 	location: any,
-	status: string,
 	order_id: string,
 	type: string
 ): Promise<any> => {
@@ -383,13 +369,13 @@ const updateDriver = async (driver_id: string, updateData: Partial<DriverBase>):
 /**
  * Create a new driver with user creation and Stripe customer setup.
  *
- * @param {CreateDriverData} driverData - Driver data.
- * @param {CreateUserData} userData - User data for driver.
+ * @param {Partial<DriverBase>} driverData - Driver data.
+ * @param {CreateUser} userData - User data for driver.
  * @returns {Promise<DriverDetail>} Created driver.
  */
 const createNewDriver = async (
-	driverData: CreateDriverData,
-	userData: CreateUserData,
+	driverData: Partial<DriverBase>,
+	userData: CreateUser,
 	tx: any = prisma
 ): Promise<DriverDetail> => {
 	try {
@@ -397,7 +383,7 @@ const createNewDriver = async (
 		const existingUser = await tx.users.findUnique({ where: { telephone: userData.telephone } });
 		if (!existingUser) {
 			const stripeCustomer = await createCustomer(
-				userData.email,
+				userData.email as string,
 				`${userData.first_name} ${userData.last_name}`,
 				userData.telephone
 			);
@@ -408,9 +394,9 @@ const createNewDriver = async (
 			);
 			if (!createdUser) throw new Error('Failed to create user for new driver');
 
-			const userRoles = userData.user_roles || [{ role: userData.user_role || 'DRIVER', primary: true }];
-			const result = await UserDao.linkRolesToUser(createdUser?.user_id, userRoles, tx);
-			console.log('User roles linked:', result);
+			// const userRoles = userData.user_roles || [{ role: userData.user_role || 'DRIVER', primary: true }];
+			// const result = await UserDao.linkRolesToUser(createdUser?.user_id, userRoles, tx);
+			// console.log('User roles linked:', result);
 			user = createdUser;
 		} else {
 			user = existingUser;
@@ -613,13 +599,13 @@ const getDriverLocations = async (
  * @param {string} driverId - Driver ID.
  * @param {string|Date} startTime - Start time inclusive.
  * @param {string|Date} endTime - End time inclusive.
- * @returns {Promise<{locations: any[], averageScore: number|null}>} Locations with average performance.
+ * @returns {Promise<DriverLocationsWithPerformance>} Locations with average performance.
  */
 const getDriverLocationsWithPerformance = async (
 	driverId: string,
 	startTime: string | Date,
 	endTime: string | Date
-): Promise<{ locations: any[]; averageScore: number | null }> => {
+): Promise<DriverLocationsWithPerformance> => {
 	try {
 		const rows = await prisma.driver_history_locations.findMany({
 			where: {

@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, Email, PhoneNumber, Timestamp, GeoPoint } from '../../primitives.js';
+import { UUID, Timestamp, GeoPoint } from '../../primitives.js';
 import { BasicUserDataSchema, UserRoleAssignmentSchema } from '../User/user.js';
-import { OnlineStatusUpdateSchema } from './driver.dto.js';
+import { DriverBaseSchema, OnlineStatusUpdateSchema } from './driver.dto.js';
 import { LocationUpdateSchema } from '../Address/address.js';
 import { DocumentDataSchema, FileUploadSchema } from '../Document/document.dto.js';
 import { OptionalFullAddressSchema } from '../Address/address.js';
@@ -15,33 +15,10 @@ extendZodWithOpenApi(z);
 // =======================
 
 // Used by: updateDriver (PATCH /drivers/update/:driver_id)
-export const UpdateDriverSchema = z
-	.object({
-		// Basic driver info
-		first_name: z.string().min(1).optional(),
-		last_name: z.string().min(1).optional(),
-		email: Email.optional(),
-		telephone: PhoneNumber.optional(),
-		date_of_birth: z.string().date().optional(),
-
-		// Driver settings
-		ride_requirements: z.string().optional(),
-		delivers_daily_meals: z.boolean().optional(),
-		handles_taxi: z.boolean().optional(),
-		handles_transfer: z.boolean().optional(),
-		handles_delivery: z.boolean().optional(),
-
-		// Status fields
-		online: z.boolean().optional(),
-		available: z.boolean().optional(),
-		on_order: z.boolean().optional(),
-
-		// Location and vehicle
-		current_vehicle_id: UUID.optional(),
-
-		// Additional fields
-		regions: z.array(z.string()).optional(),
-		business_id: UUID.optional(),
+export const UpdateDriverSchema = DriverBaseSchema.partial()
+	.omit({
+		driver_id: true,
+		user_id: true,
 	})
 	.openapi({
 		title: 'UpdateDriverRequest',
@@ -61,13 +38,14 @@ export const EditDriverSchema = z
 			}),
 		driver: z.object({
 			driver_id: UUID,
-			business_id: UUID.optional(),
-			ride_requirements: z.string().optional(),
+			transport_module_id: UUID,
+			ride_requirements: z.any().optional(),
 			regions: z.array(z.string()).optional(),
 			delivers_daily_meals: z.boolean().optional(),
-			handles_taxi: z.boolean().optional(),
-			handles_transfer: z.boolean().optional(),
-			handles_delivery: z.boolean().optional(),
+			handles_taxi_orders: z.boolean().optional(),
+			handles_transfer_orders: z.boolean().optional(),
+			handles_delivery_orders: z.boolean().optional(),
+			handles_cargo_orders: z.boolean().optional(),
 		}),
 		address: OptionalFullAddressSchema.extend({
 			address_id: UUID.optional(),
@@ -135,6 +113,7 @@ export const ToggleDriverOrdersSchema = z
 			taxi: z.boolean().optional(),
 			transfer: z.boolean().optional(),
 			delivery: z.boolean().optional(),
+			cargo: z.boolean().optional(),
 		}),
 	})
 	.openapi({
@@ -192,11 +171,13 @@ export const CreateDriverSchema = z
 		driver: z.object({
 			data: z.object({
 				business_id: UUID,
+				transport_module_id: UUID.optional(),
 				ride_requirements: z.string().optional(),
 				delivers_daily_meals: z.boolean().optional(),
-				handles_taxi: z.boolean().optional(),
-				handles_transfer: z.boolean().optional(),
-				handles_delivery: z.boolean().optional(),
+				handles_taxi_orders: z.boolean().optional(),
+				handles_transfer_orders: z.boolean().optional(),
+				handles_delivery_orders: z.boolean().optional(),
+				handles_cargo_orders: z.boolean().optional(),
 				online: z.boolean().optional(),
 				available: z.boolean().optional(),
 			}),
@@ -246,7 +227,7 @@ export type SendComeToWorkNotificationRequest = z.infer<typeof SendComeToWorkNot
 export const AssignBusinessForDailyMealsToDriverSchema = z
 	.object({
 		driver_id: UUID,
-		business_id: UUID,
+		daily_meals_module_id: UUID,
 	})
 	.openapi({
 		title: 'AssignBusinessForDailyMealsToDriverRequest',

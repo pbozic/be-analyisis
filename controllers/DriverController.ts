@@ -1,23 +1,25 @@
 import { config } from 'dotenv';
 import moment from 'moment';
 import { Response } from 'express';
+import { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, FILE_TYPE } from '@prisma/client';
+import { Socket } from 'socket.io';
 
 import prisma from '../prisma/prisma.js';
 import type { ValidatedRequest, AuthenticatedRequest } from '../types/validatedRequest.js';
 import * as DriverDao from '../dao/Driver.js';
 import * as VehicleDao from '../dao/Vehicle.js';
-import * as UserDao from '../dao/User.js';
 import socket from '../socket.js';
 import * as TaxiOrderDao from '../dao/TaxiOrder.js';
 import * as DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import * as ReviewsDao from '../dao/Review.js';
 import * as InvoicesDao from '../dao/Invoices.ts';
 import taxiHelpers from '../lib/taxiHelpers.js';
-import { updateAddressByAddressId, addAddress, addUserAddress } from '../dao/Address.js';
+import { addAddress, linkAddress } from '../dao/Address.js';
 import {
 	updateDocumentByDocumentId,
 	findDocumentByTypeAndDriverId,
 	createDocument,
+	createUserDocument,
 	linkDocumentToDriver,
 } from '../dao/Document.js';
 import { updateFileInDocument, addFileToDocument } from '../dao/File.js';
@@ -25,25 +27,18 @@ import * as FileDao from '../dao/File.js';
 import S3Helper from '../lib/s3.js';
 import * as DocumentDao from '../dao/Document.js';
 import {
-	TAXI_ORDER_STATUS,
-	DELIVERY_ORDER_STATUS,
-	DOCUMENT_TYPE,
 	ACTIVITY_TYPE,
 	TAXI_ORDER_AUTO_UPDATE_STATUS_DISTANCE,
 	DELIVERY_DRIVER_NEARBY_DISTANCE,
 } from '../lib/constants.js';
 import { calculateTotalEarnings, calculateDriversEarnings, calculateDistance } from '../lib/helpersLib.js';
 import deliveryHelpers from '../lib/deliveryHelpers.js';
-import stripe from '../lib/stripe.js';
-import SMSHelper from '../lib/SMS.js';
 import { sendNotificationToUser } from '../lib/oneSignal.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
 import { handleDriverStatusChange } from '../lib/driverHelpers.js';
 import { sendDeliveryOrderNotifications, sendOrderNotifications } from '../lib/notifications.js';
 import dailyMealHelpers from '../lib/dailyMealHelpers.js';
 import * as BusinessDao from '../dao/Business.ts';
-
-// Import DTOs
 import type {
 	UpdateDriverRequest,
 	EditDriverRequest,
@@ -60,6 +55,9 @@ import type {
 	CreateElectronicDeviceForPremiseRequest,
 	UpdateDeviceAssignmentRequest,
 } from '../schemas/dto/Driver/driver.validators.js';
+import { AddAddressDaoInput } from '../schemas/dto/Address/Address.dao.dto.ts';
+import { CreateUser } from '../schemas/dto/Auth/AuthRequest.dto.ts';
+import { DriverBase } from '../schemas/dto/Driver/driver.dto.ts';
 
 config();
 const { io } = socket;
@@ -71,7 +69,7 @@ const { io } = socket;
  * @description Returns a list of drivers along with their user and vehicle information.
  * @operationId getDrivers
  * @response 200 - Successful operation, returns a list of drivers
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail[]} 200.application/json
  * @response 400 - Error occurred while obtaining the driver list
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  * @prisma_model users (see ./prisma/schemas/user.prisma)
@@ -79,7 +77,7 @@ const { io } = socket;
  */
 async function listDrivers(req: AuthenticatedRequest, res: Response): Promise<void> {
 	try {
-		const drivers = await DriverDao.getDrivers({});
+		const drivers = await DriverDao.getDrivers();
 		res.status(200).json(drivers);
 	} catch (error) {
 		console.error('Error listing drivers:', error);
@@ -98,7 +96,7 @@ async function listDrivers(req: AuthenticatedRequest, res: Response): Promise<vo
  * @operationId getDriverReviews
  * @pathParam {string} driver_id - Driver id
  * @response 200 - Reviews list
- * @responseContent {object} 200.application/json
+ * @responseContent {ReviewResponse[]} 200.application/json
  * @response 404 - Driver not found
  * @prisma_model reviews
  */
@@ -126,6 +124,7 @@ async function getDriverReviews(req: ValidatedRequest<never, { driver_id: string
  * @operationId unlinkDriverFromBusiness
  * @pathParam {string} driver_id - Driver id to unlink
  * @response 200 - Unlinked successfully
+ * @responseContent {SuccessMessage} 200.application/json
  * @response 404 - Driver not found
  * @prisma_model drivers
  */
@@ -158,6 +157,7 @@ async function unlinkDriverFromBusiness(
  * @pathParam {string} driver_id - Driver id
  * @pathParam {string} vehicle_id - Vehicle id
  * @response 200 - Registration objects
+ * @responseContent {BusinessPremiseResponse} 200.application/json
  * @response 400 - Bad request or missing transport module
  * @prisma_model business_premise
  * @prisma_model electronic_device
@@ -198,10 +198,10 @@ async function registerVehicleInvoices(
  * @pathParam {string} driver_id - Driver id
  * @pathParam {string} business_premise_id - Business premise id
  * @bodyDescription Device details and optional assignment
- * @bodyContent {object} application/json
+ * @bodyContent {CreateElectronicDeviceForPremiseRequest} application/json
  * @bodyRequired
  * @response 200 - Device created (and assignment if requested)
- * @responseContent {object} 200.application/json
+ * @responseContent {ElectronicDeviceResponse} 200.application/json
  * @prisma_model electronic_device
  * @prisma_model device_assignment
  */
@@ -222,16 +222,16 @@ async function createElectronicDeviceForPremise(
 			active: typeof active === 'boolean' ? active : true,
 			electronic_device_id,
 		});
-		let assignment = null;
+		// let assignment = null;
 		if (assign_to_driver) {
-			assignment = await InvoicesDao.assignDeviceToDriver(
+			await InvoicesDao.assignDeviceToDriver(
 				driver.driver_id,
 				business_premise_id,
 				device.electronic_device_id,
 				valid_from ? new Date(valid_from) : new Date()
 			);
 		}
-		res.status(200).json({ device, assignment });
+		res.status(200).json(device);
 	} catch (e) {
 		console.error('DriverController.createElectronicDeviceForPremise', e);
 		res.status(500).json({ error: 'Error creating electronic device' });
@@ -248,6 +248,7 @@ async function createElectronicDeviceForPremise(
  * @pathParam {string} business_premise_id - Business premise id
  * @pathParam {string} electronic_device_id - Electronic device id
  * @response 200 - Device disabled
+ * @responseContent {ElectronicDeviceResponse} 200.application/json
  * @prisma_model electronic_device
  */
 async function disableElectronicDevice(
@@ -274,10 +275,10 @@ async function disableElectronicDevice(
  * @pathParam {string} business_premise_id - Business premise id
  * @pathParam {string} electronic_device_id - Electronic device id
  * @bodyDescription Action and optional valid_from
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateDeviceAssignmentRequest} application/json
  * @bodyRequired
  * @response 200 - Assignment changed
- * @responseContent {object} 200.application/json
+ * @responseContent {DeviceAssignmentResponse} 200.application/json
  * @prisma_model device_assignment
  */
 async function updateDeviceAssignment(
@@ -306,14 +307,14 @@ async function updateDeviceAssignment(
 				electronic_device_id,
 				valid_from ? new Date(valid_from) : new Date()
 			);
-			res.status(200).json({ action, assignment });
+			res.status(200).json(assignment);
 		} else {
 			const assignment = await InvoicesDao.endDeviceAssignment(
 				driver.driver_id,
 				business_premise_id,
 				electronic_device_id
 			);
-			res.status(200).json({ action, assignment });
+			res.status(200).json(assignment);
 		}
 	} catch (e) {
 		console.error('DriverController.updateDeviceAssignment', e);
@@ -328,7 +329,7 @@ async function updateDeviceAssignment(
  * @description Returns a list of drivers along with their user and vehicle information.
  * @operationId getDriversByBusinessId
  * @response 200 - Successful operation, returns a list of drivers
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail[]} 200.application/json
  * @response 400 - Error occurred while obtaining the driver list
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  * @prisma_model users (see ./prisma/schemas/user.prisma)
@@ -358,7 +359,7 @@ async function getDriversByBusinessId(
  * @description Returns a list of drivers along with their user and vehicle information.
  * @operationId getDriversFull
  * @response 200 - Successful operation, returns a list of drivers
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail[]} 200.application/json
  * @response 400 - Error occurred while obtaining the driver list
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  * @prisma_model users (see ./prisma/schemas/user.prisma)
@@ -385,7 +386,7 @@ async function listDriversFull(req: AuthenticatedRequest, res: Response): Promis
  * @description Returns a list of all drivers who are currently online.
  * @operationId getOnlineDrivers
  * @response 200 - Successful operation, returns a list of online drivers
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail[]} 200.application/json
  * @response 400 - Error occurred while obtaining the online driver list
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
@@ -409,7 +410,7 @@ async function listOnlineDrivers(req: AuthenticatedRequest, res: Response): Prom
  * @description Returns a list of available drivers based on the specified type.
  * @operationId getAvailableDrivers
  * @response 200 - Successful operation, returns a list of available drivers
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail[]} 200.application/json
  * @response 400 - Error occurred while obtaining the available drivers list
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
@@ -433,7 +434,17 @@ async function getAvailableDrivers(
 		});
 	}
 }
-
+/**
+ * GET /drivers/unavailable
+ * @tag Drivers
+ * @summary Get unavailable drivers
+ * @description Returns a list of drivers who are currently unavailable.
+ * @operationId getUnavailableDrivers
+ * @response 200 - Successful operation, returns a list of unavailable drivers
+ * @responseContent {DriverDetail[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the unavailable drivers list
+ * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
+ */
 async function getUnavailableDrivers(req: AuthenticatedRequest, res: Response): Promise<void> {
 	try {
 		const drivers = await DriverDao.getUnavailableDrivers();
@@ -455,7 +466,7 @@ async function getUnavailableDrivers(req: AuthenticatedRequest, res: Response): 
  * @operationId getDriverById
  * @pathParam {string} driver_id - The ID of the driver to retrieve
  * @response 200 - Successful operation, returns detailed driver information
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver information
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
@@ -485,17 +496,17 @@ async function getDriverById(req: ValidatedRequest<never, { driver_id: string }>
  * @operationId getDriverLocation
  * @pathParam {string} driver_id - The ID of the driver whose location is being retrieved
  * @response 200 - Successful operation, returns driver's location
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiLocation} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver's location
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
 async function getDriverLocation(req: ValidatedRequest<never, { driver_id: string }>, res: Response): Promise<void> {
 	try {
-		const driver = await DriverDao.getDriverLocation(req.params.driver_id);
-		if (driver) {
-			if (driver.location) {
-				res.status(200).json(driver.location);
+		const loc = await DriverDao.getDriverLocation(req.params.driver_id);
+		if (loc) {
+			if (loc) {
+				res.status(200).json(loc);
 			} else {
 				res.status(404).json({ error: 'Location for the specified driver not found' });
 			}
@@ -562,7 +573,7 @@ async function resendDelegatedOrdersToDriver(
  * @operationId getDriverByUserId
  * @pathParam {string} user_id - The ID of the user
  * @response 200 - Successful operation, returns detailed driver information
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver information
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
@@ -590,7 +601,7 @@ async function getDriverByUserId(req: ValidatedRequest<never, { user_id: string 
  * @description Retrieves a list of all drivers that offer daily meals.
  * @operationId listDriversWithDailyMeals
  * @response 200 - Successful operation, returns a list of drivers offering daily meals
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail[]} 200.application/json
  * @response 400 - Error occurred while obtaining the driver list
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
@@ -612,7 +623,7 @@ async function listDriversWithDailyMeals(req: AuthenticatedRequest, res: Respons
  * @operationId getDriversByDailyMealBusinessId
  * @pathParam {string} business_id - The ID of the daily meal business
  * @response 200 - Successful operation, returns drivers for the business
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail[]} 200.application/json
  * @response 404 - Drivers not found
  * @response 400 - Error retrieving drivers
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
@@ -644,10 +655,10 @@ async function getDriversByDailyMealBusinessId(
  * @description Connects or disconnects a driver's daily meal business and toggles delivers_daily_meals.
  * @operationId updateDriverDailyMealBusinesses
  * @pathParam {string} driver_id - The ID of the driver to update
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateDriverDailyMealBusinessRequest} application/json
  * @bodyRequired
  * @response 200 - Driver updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail} 200.application/json
  * @response 400 - Error updating driver
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  * @prisma_model business (see ./prisma/schemas/base.prisma)
@@ -660,7 +671,7 @@ async function updateDriverDailyMealBusinesses(
 	const { ids } = req.body;
 	try {
 		let driver = await DriverDao.getDriverById(driver_id);
-		const currentIds = driver.daily_meals.map((b: Record<string, string>) => b.daily_meals_module_id);
+		const currentIds = driver?.daily_meals?.map((dd) => dd.daily_meals_module_id) || [];
 		// Determine the id to connect or disconnect
 		for (const id of ids) {
 			if (!currentIds.includes(id)) {
@@ -703,10 +714,10 @@ async function updateDriverDailyMealBusinesses(
  * @summary Assign a business for daily meals to a driver
  * @description Assigns a business for daily meals to the specified driver.
  * @operationId assignBusinessForDailyMealsToDriver
- * @bodyContent {object} application/json
+ * @bodyContent {AssignBusinessForDailyMealsToDriverRequest} application/json
  * @bodyRequired
  * @response 200 - Business assigned for daily meals
- * @responseContent {object} 200.application/json
+ * @responseContent {SuccessMessage} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error assigning business for daily meals
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
@@ -716,16 +727,17 @@ async function assignBusinessForDailyMealsToDriver(
 	req: ValidatedRequest<AssignBusinessForDailyMealsToDriverRequest>,
 	res: Response
 ): Promise<void> {
-	const { driver_id, business_id } = req.body;
+	const { driver_id, daily_meals_module_id } = req.body;
 	try {
 		const driver = await DriverDao.getDriverById(driver_id);
 		if (!driver) {
 			res.status(404).json({ error: 'Driver not found' });
 			return;
 		}
-		await DriverDao.updateDriver(driver_id, {
-			daily_meal_business: {
-				connect: { business_id: business_id },
+		await prisma.daily_meals_drivers.create({
+			data: {
+				driver_id,
+				daily_meals_module_id,
 			},
 		});
 		res.status(200).json({ message: 'Business assigned for daily meals' });
@@ -745,10 +757,10 @@ async function assignBusinessForDailyMealsToDriver(
  * @description Updates information about a specific driver, excluding location.
  * @operationId updateDriver
  * @pathParam {string} driver_id - The ID of the driver to update
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateDriverRequest} application/json
  * @bodyRequired
  * @response 200 - Driver updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail} 200.application/json
  * @response 400 - Error updating driver
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
@@ -777,10 +789,10 @@ async function updateDriver(
  * @description Edits the data of specific driver.
  * @operationId editDriver
  * @pathParam {string} driver_id - The ID of the driver to edit
- * @bodyContent {object} application/json
+ * @bodyContent {EditDriverRequest} application/json
  * @bodyRequired
  * @response 200 - Driver edited successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail} 200.application/json
  * @response 400 - Error updating driver
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  * @prisma_model users (see ./prisma/schemas/user.prisma)
@@ -792,26 +804,25 @@ async function updateDriver(
 async function editDriver(req: ValidatedRequest<EditDriverRequest>, res: Response): Promise<void> {
 	const { user, driver, documents, files, address } = req.body;
 	console.log('editDriver', req.body);
-	const business_id = driver?.business_id;
-	const driver_id = driver?.driver_id;
-	const user_id = user?.user_id;
+	const transportModuleId = driver.transport_module_id;
+	const driverId = driver.driver_id;
+	const userId = user.user_id;
 
 	// Create mutable copies without id fields
-	const driverData = { driver_business_id: business_id, driver_id, ...driver };
-	const userData = { user_id, ...user };
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	let { driver_id, ...driverData } = driver;
 
-	let updatedAddress;
 	try {
-		const updatedDriver = await DriverDao.updateDriver(driver_id, driverData);
 		const regions = driverData.regions || [];
-		await DriverDao.addDriverMunicipalities(driver_id, regions);
-		let updatedUser = await UserDao.updateScheduledUser(user_id, userData);
-		if (address?.address_id) {
-			const address_id = address?.address_id;
-			updatedAddress = await updateAddressByAddressId(address_id, address);
-		} else if (address && Object.keys(address).length !== 0) {
-			const response = await addAddress(address);
-			await addUserAddress(user_id, response.address_id);
+		await DriverDao.addDriverMunicipalities(driverId, regions);
+		driverData.regions = undefined;
+		const updatedDriver = await DriverDao.updateDriver(driverId, driverData);
+		if (address && Object.keys(address).length !== 0) {
+			let id = address.address_id;
+			if (!address.address_id) {
+				id = (await addAddress(address as AddAddressDaoInput))?.address_id;
+			}
+			await linkAddress(id as string, 'user_address', userId);
 		}
 		if (documents && documents.length > 0) {
 			for (const doc of documents) {
@@ -823,98 +834,69 @@ async function editDriver(req: ValidatedRequest<EditDriverRequest>, res: Respons
 		if (files && files.length > 0) {
 			for (const file of files) {
 				if (file?.base64 && file?.file_id) {
-					let document = await DocumentDao.findDocumentByFileId(file.file_id);
-					const fileId = file.file_id;
-					const fileData = { ...file };
-					delete fileData.document_id;
-					delete fileData.file_id;
-					delete fileData.name;
-					let base64 = file.base64;
-					delete fileData.base64;
-					delete fileData.document_type;
-					await updateFileInDocument(fileId, fileData, document.public);
-					let key = S3Helper.getFileKey(fileId, file.mime_type);
+					// Update existing file record
+					const fileId = file.file_id as string;
+					const updateData: any = {};
+					if (file.mime_type) updateData.mime_type = file.mime_type;
+					if (file.file_type) updateData.file_type = file.file_type as unknown as FILE_TYPE;
+					const base64 = file.base64 as string;
+					const isPublic = !!file.public;
+					const updated = await updateFileInDocument(fileId, updateData, isPublic);
+					const key = S3Helper.getFileKey(fileId, file.mime_type);
 					await S3Helper.SaveObject(
 						key,
 						base64,
 						file.mime_type,
-						{
-							users: [user_id],
-							businesses: [business_id],
-						},
-						fileData,
-						document.public
+						{ users: [userId], businesses: [transportModuleId] },
+						updated,
+						isPublic
 					);
 				} else if (!file?.file_id) {
-					const existingDocument = await findDocumentByTypeAndDriverId(file.document_type!, driver_id);
+					// Create or attach to existing document by type
+					const existingDocument = await findDocumentByTypeAndDriverId(file.document_type!, driverId);
+					const base64 = file.base64 as string;
+					const createData: any = {};
+					if (file.mime_type) createData.mime_type = file.mime_type;
+					if (file.file_type) createData.file_type = file.file_type as unknown as FILE_TYPE;
+					const isPublic = !!file.public;
 					if (existingDocument) {
-						const base64 = file.base64;
-						const fileData = { ...file };
-						delete fileData.base64;
-						delete fileData.document_type;
-						delete fileData.name;
-						const newFile = await addFileToDocument(
-							existingDocument.document_id,
-							fileData,
-							existingDocument.public
-						);
+						const newFile = await addFileToDocument(existingDocument.document_id, createData, isPublic);
 						const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 						await S3Helper.SaveObject(
 							key,
-							base64!,
+							base64,
 							file.mime_type,
-							{
-								users: [user_id],
-								businesses: [business_id],
-							},
+							{ users: [userId], businesses: [transportModuleId] },
 							newFile,
-							existingDocument.public
+							isPublic
 						);
 					} else {
-						const documentData = {
-							document_type: file.document_type,
-						};
-						const newDocument = await createDocument(documentData);
-						const base64 = file.base64;
-						const document_type = file?.document_type;
-						const fileData = { ...file };
-						delete fileData.base64;
-						delete fileData.document_type;
-						delete fileData.name;
-						const newFile = await addFileToDocument(newDocument.document_id, fileData, newDocument.public);
+						const newDocument = await createDocument({ document_type: file.document_type });
+						const newFile = await addFileToDocument(newDocument.document_id, createData, isPublic);
 						const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 						await S3Helper.SaveObject(
 							key,
-							base64!,
+							base64,
 							file.mime_type,
-							{
-								users: [user_id],
-								businesses: [business_id],
-							},
+							{ users: [userId], businesses: [transportModuleId] },
 							newFile,
-							newDocument.public
+							isPublic
 						);
+						const document_type = file?.document_type;
 						if (
-							document_type === DOCUMENT_TYPE.PROFILE_PICTURE ||
-							document_type === DOCUMENT_TYPE.NATIONAL_ID ||
-							document_type === DOCUMENT_TYPE.PASSPORT
-						) {
-							await linkDocumentToUser(newDocument.document_id, user_id);
-						} else if (
 							document_type === DOCUMENT_TYPE.DRIVING_LICENSE ||
 							document_type === DOCUMENT_TYPE.TAXI_LICENCE ||
 							document_type === DOCUMENT_TYPE.PASSENGER_TRANSFER_LICENSE ||
 							document_type === DOCUMENT_TYPE.BACKGROUND_CHECK_REPORT ||
 							document_type === DOCUMENT_TYPE.HEALTH_DECLARATION
 						) {
-							console.log(file?.document_type);
-							await linkDocumentToDriver(newDocument.document_id, driver_id);
+							await linkDocumentToDriver(newDocument.document_id, driverId);
 						}
 					}
 				}
 			}
 		}
-		res.status(200).json({ updatedDriver, updatedUser, updatedAddress, files });
+		res.status(200).json(updatedDriver);
 	} catch (error) {
 		console.error('Error editing driver:', error);
 		res.status(400).json({
@@ -931,11 +913,12 @@ async function editDriver(req: ValidatedRequest<EditDriverRequest>, res: Respons
  * @description Updates the location of a specific driver.
  * @operationId updateDriverLocation
  * @pathParam {string} driver_id - The ID of the driver to update location for
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateDriverLocationRequest} application/json
  * @bodyRequired
  * @response 200 - Location updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail} 200.application/json
  * @response 400 - Error updating driver location
+ * @response 404 - Driver not found
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  * @prisma_model taxi_orders (see ./prisma/schemas/transport.prisma)
  * @prisma_model delivery_orders (see ./prisma/schemas/delivery.prisma)
@@ -946,14 +929,15 @@ async function updateDriverLocation(req: ValidatedRequest<UpdateDriverLocationRe
 		const userId = req.user!.user_id;
 		const locationData = req.body.location;
 		const driver = await DriverDao.getDriverByUserId(userId);
+		if (!driver) {
+			res.status(404).json({ error: 'Driver not found' });
+			return;
+		}
 		let driverUpdatedLocation = await DriverDao.updateDriverLocation(driver.driver_id, locationData);
 		// Emit the driver's updated location to each order's specific channel
 		const orders = await TaxiOrderDao.getActiveOrdersByDriverId(driver.driver_id);
 		const deliveryOrders = await DeliveryOrderDao.getActiveOrdersByDeliveryDriverId(driver.driver_id);
-		let allOrders: Array<Record<string, unknown>> = [...orders, ...deliveryOrders] as Array<
-			Record<string, unknown>
-		>;
-		let orderStatus: string | null = null;
+		let allOrders = [...orders, ...deliveryOrders];
 		let orderId: string | null = null;
 		let orderType: string | undefined;
 		if (driver?.on_order) {
@@ -966,23 +950,20 @@ async function updateDriverLocation(req: ValidatedRequest<UpdateDriverLocationRe
 			);
 			// If there's a most recently updated order, set its status
 			if (latestOrder) {
-				orderStatus = latestOrder.status as string;
 				orderId = latestOrder.order_id as string;
 				orderType = latestOrder?.type as string | undefined;
 			}
 		}
-		let acceptedOrder: Record<string, unknown> | undefined;
-		let acceptedDeliveryOrders: Array<Record<string, unknown>> = [];
+		let acceptedOrder;
+		let acceptedDeliveryOrders = [];
 		let onOrder = false;
 		for (let order of allOrders) {
 			if (order.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
 				acceptedOrder = order;
 			} else if (
-				[
-					TAXI_ORDER_STATUS.TAXI_WAITING,
-					TAXI_ORDER_STATUS.TAXI_DRIVING,
-					TAXI_ORDER_STATUS.TAXI_ARRIVED,
-				].includes(order.status as string)
+				order.status === TAXI_ORDER_STATUS.TAXI_WAITING ||
+				order.status === TAXI_ORDER_STATUS.TAXI_DRIVING ||
+				order.status === TAXI_ORDER_STATUS.TAXI_ARRIVED
 			) {
 				onOrder = true;
 			} else if (
@@ -992,7 +973,7 @@ async function updateDriverLocation(req: ValidatedRequest<UpdateDriverLocationRe
 				acceptedDeliveryOrders.push(order);
 			}
 			try {
-				io.to(`order_${order.order_id as string}`).emit('driver_location', {
+				(io as Socket).to(`order_${order.order_id as string}`).emit('driver_location', {
 					...driver,
 					driver_id: driver.driver_id,
 					location: locationData,
@@ -1007,8 +988,8 @@ async function updateDriverLocation(req: ValidatedRequest<UpdateDriverLocationRe
 			const distance = calculateDistance(
 				locationData?.coordinates?.latitude,
 				locationData?.coordinates?.longitude,
-				pickupLocation?.coordinates?.latitude,
-				pickupLocation?.coordinates?.longitude
+				pickupLocation?.coordinates?.latitude as number,
+				pickupLocation?.coordinates?.longitude as number
 			);
 			if (distance < TAXI_ORDER_AUTO_UPDATE_STATUS_DISTANCE) {
 				console.log('Driver is within 300 meters of pickup location, setting order status to waiting');
@@ -1024,14 +1005,17 @@ async function updateDriverLocation(req: ValidatedRequest<UpdateDriverLocationRe
 						},
 					},
 				]);
+				const driver = await DriverDao.getDriverById(acceptedOrder.driver_id as string);
 				sendOrderNotifications(
-					acceptedOrder?.user as Record<string, string>,
-					acceptedOrder?.driver as Record<string, string>,
+					acceptedOrder?.user?.language ?? 'en',
+					driver?.user?.language ?? 'en',
 					acceptedOrder?.user_id as string,
-					acceptedOrder?.driver_id as string,
+					driver?.driver_id as string,
 					TAXI_ORDER_STATUS.TAXI_WAITING
 				);
-				io.to(`order_${acceptedOrder.order_id as string}`).emit('order_status_change__taxi', updatedOrder);
+				(io as Socket)
+					.to(`order_${acceptedOrder.order_id as string}`)
+					.emit('order_status_change__taxi', updatedOrder);
 			} else {
 				console.log(`Driver is ${distance} km from pickup location, keeping order status as accepted`);
 			}
@@ -1041,16 +1025,17 @@ async function updateDriverLocation(req: ValidatedRequest<UpdateDriverLocationRe
 			const distance = calculateDistance(
 				locationData?.coordinates?.latitude,
 				locationData?.coordinates?.longitude,
-				deliveryLocation?.coordinates?.latitude,
-				deliveryLocation?.coordinates?.longitude
+				deliveryLocation?.coordinates?.latitude as number,
+				deliveryLocation?.coordinates?.longitude as number
 			);
 			if (distance < DELIVERY_DRIVER_NEARBY_DISTANCE) {
 				console.log('Driver is within 300 meters of delivery location!');
+				const driver = await DriverDao.getDriverById(acceptedOrder.driver_id as string);
 				sendDeliveryOrderNotifications(
-					acceptedOrder?.user as Record<string, string>,
-					acceptedOrder?.driver as Record<string, string>,
+					acceptedOrder?.user?.language ?? 'en',
+					driver?.user?.language ?? 'en',
 					acceptedOrder?.user_id as string,
-					acceptedOrder?.driver_id as string,
+					driver?.driver_id as string,
 					'DRIVER_NEARBY'
 				);
 				DeliveryOrderDao.updateDeliveryOrderTimeline(acceptedOrder.order_id as string, [
@@ -1070,13 +1055,18 @@ async function updateDriverLocation(req: ValidatedRequest<UpdateDriverLocationRe
 		}
 		if (!driver?.on_order) {
 			console.info('EMIT DRIVER_LOCATION');
-			io.emit('driver_location', {
+			(io as Socket).emit('driver_location', {
 				...driver,
 				driver_id: driver.driver_id,
 				location: locationData,
 			});
 		}
-		await DriverDao.updateDriverLocationHistory(driver.driver_id, locationData, orderStatus, orderId, orderType);
+		await DriverDao.updateDriverLocationHistory(
+			driver.driver_id,
+			locationData,
+			orderId as string,
+			orderType as string
+		);
 		res.status(200).json(driverUpdatedLocation);
 	} catch (error) {
 		console.error("Error updating driver's location:", error);
@@ -1094,10 +1084,10 @@ async function updateDriverLocation(req: ValidatedRequest<UpdateDriverLocationRe
  * @description This endpoint is used to update the current user's ride requirements.
  * @operationId updateDriverRideRequirements
  * @bodyDescription The new ride requirements of the driver.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateDriverRideRequirementsRequest} application/json
  * @bodyRequired
  * @response 200 - Ride requirements updated successfully. Returns the updated driver's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  */
@@ -1124,15 +1114,11 @@ async function updateDriverRideRequirements(
  * @description Sets the online status of a specific driver and emits appropriate socket events.
  * @operationId setDriverOnlineStatus
  * @pathParam {string} driver_id - The ID of the driver to update the online status for
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateDriverOnlineStatusRequest} application/json
  * @bodyRequired
  * @response 200 - Online status updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail} 200.application/json
  * @response 400 - Error updating online status
- *
- * Emits:
- * - "driver_available" event with driver object if online is true
- * - "driver_unavailable" event with driver_id if online is false
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
  * @prisma_model driver_activity_logs (see ./prisma/schemas/transport.prisma)
  * @prisma_model driver_activity_settings (see ./prisma/schemas/transport.prisma)
@@ -1144,6 +1130,10 @@ async function updateDriverOnlineStatus(
 	const { driver_id, online } = req.body;
 	try {
 		const driver = await DriverDao.getDriverById(driver_id);
+		if (!driver) {
+			res.status(404).json({ error: 'Driver not found' });
+			return;
+		}
 		if (driver.online === online) {
 			res.status(200).json(driver);
 			return;
@@ -1174,13 +1164,13 @@ async function updateDriverOnlineStatus(
 		const updatedDriver = await DriverDao.updateDriverOnlineStatus(driver_id, online);
 		if (online) {
 			console.log('Driver is now online:', driver_id);
-			io.emit('driver_available', updatedDriver);
+			(io as Socket).emit('driver_available', updatedDriver);
 			// Re-send pending orders to this driver
 			await taxiHelpers.resendPendingOrdersToDriver(updatedDriver);
 			// Send active orders to this driver
 			await taxiHelpers.sendActiveOrdersToDriver(updatedDriver);
 		} else {
-			io.emit('driver_unavailable', driver_id);
+			(io as Socket).emit('driver_unavailable', driver_id);
 		}
 		res.status(200).json(updatedDriver);
 	} catch (error) {
@@ -1198,10 +1188,10 @@ async function updateDriverOnlineStatus(
  * @summary Create a new driver
  * @description Adds a new driver to the database.
  * @operationId createNewDriver
- * @bodyContent {object} application/json
+ * @bodyContent {CreateDriverRequest} application/json
  * @bodyRequired
  * @response 201 - Driver created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {DriverDetail} 201.application/json
  * @response 400 - Error creating driver
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  * @prisma_model user_roles (see ./prisma/schemas/user.prisma)
@@ -1211,78 +1201,60 @@ async function updateDriverOnlineStatus(
  */
 async function createDriver(req: ValidatedRequest<CreateDriverRequest>, res: Response): Promise<void> {
 	try {
-		let stripeCustomer = await stripe.createCustomer(
-			req.body.user.data.email!,
-			req.body.user.data.first_name + ' ' + req.body.user.data.last_name,
-			req.body.user.data.telephone!
-		);
-		const phoneNumber = req.body.user.data.telephone;
-		const normalizedPhoneNumber = await SMSHelper.getParsedPhoneNumber(
-			req.body.user.data.telephone!,
-			req.body.user.data.telephone_code
-		);
-		let userObj = {
-			...req.body.user.data,
-			stripe_customer_id: stripeCustomer.id,
-		};
-		delete (userObj as Record<string, unknown>).telephone_number;
-		delete (userObj as Record<string, unknown>).user_roles;
-		const newUser = await UserDao.createNewUser(userObj, true);
-		const userRoles = req.body.user.data.user_roles || [{ role: newUser.user_role || 'DRIVER', primary: true }];
-		await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		let { user_roles, ...userObj } = req.body.user.data;
+		let { business_id, ...driverData } = req.body.driver.data;
+		const business = await BusinessDao.getBusinessById(business_id);
+		driverData.transport_module_id = business?.transport_module_id as string;
+		const driver = await DriverDao.createNewDriver(driverData as Partial<DriverBase>, userObj as CreateUser);
 		// Handle user documents
 		if (req.body.user.documents) {
 			for (const doc of req.body.user.documents) {
-				const document = await DocumentDao.createDocument(doc.documentData);
+				const document = await createUserDocument(driver.user_id, doc.documentData);
 				for (const file of doc.files) {
-					let base64 = file.base64;
-					const fileData = { ...file };
-					delete fileData.base64;
-					delete fileData.name;
-					delete fileData.document_type;
-					let fileRecord = await FileDao.addFileToDocument(document.document_id, fileData, document.public);
-					let key = S3Helper.getFileKey(fileRecord.file_id, file.mime_type);
+					const base64 = file.base64 as string;
+					const toCreate: any = {};
+					if (file.mime_type) toCreate.mime_type = file.mime_type;
+					if (file.file_type) toCreate.file_type = file.file_type as unknown as FILE_TYPE;
+					const isPublic = !!file.public;
+					const fileRecord = await FileDao.addFileToDocument(document.document_id, toCreate, isPublic);
+					const key = S3Helper.getFileKey(fileRecord.file_id, file.mime_type);
 					S3Helper.SaveObject(
 						key,
 						base64,
 						file.mime_type,
 						{
-							users: [newUser.user_id],
-							businesses: [req.body.driver.data.business_id],
+							users: [driver.user_id],
+							businesses: [business_id],
 						},
 						fileRecord,
-						document.public
+						isPublic
 					);
 				}
-				await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 			}
 		}
-		const driverData = { ...req.body.driver.data };
-		const business = await BusinessDao.getBusinessById(driverData.business_id);
-		driverData.transport_module_id = business?.transport_module_id;
-		const driver = await DriverDao.createNewDriver(driverData, newUser);
 		// Handle taxi documents
 		if (req.body.driver.documents) {
 			for (const doc of req.body.driver.documents) {
 				const document = await DocumentDao.createDocument(doc.documentData);
 				for (const file of doc.files) {
-					let base64 = file.base64;
-					const fileData = { ...file };
-					delete fileData.base64;
-					delete fileData.name;
-					delete fileData.document_type;
-					let fileRecord = await FileDao.addFileToDocument(document.document_id, fileData, document.public);
-					let key = S3Helper.getFileKey(fileRecord.file_id, file.mime_type);
-					S3Helper.SaveObject(
+					const base64 = file.base64 as string;
+					const toCreate: any = {};
+					if (file.mime_type) toCreate.mime_type = file.mime_type;
+					if (file.file_type) toCreate.file_type = file.file_type as unknown as FILE_TYPE;
+					const isPublic = !!file.public;
+					const fileRecord = await FileDao.addFileToDocument(document.document_id, toCreate, isPublic);
+					const key = S3Helper.getFileKey(fileRecord.file_id, file.mime_type);
+					await S3Helper.SaveObject(
 						key,
 						base64,
 						file.mime_type,
 						{
-							users: [newUser.user_id],
-							businesses: [req.body.driver.data.business_id],
+							users: [driver.user_id],
+							businesses: [business_id],
 						},
 						fileRecord,
-						document.public
+						isPublic
 					);
 				}
 				await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
@@ -1302,10 +1274,22 @@ async function createDriver(req: ValidatedRequest<CreateDriverRequest>, res: Res
 	}
 }
 
+/**
+ * POST /drivers/sos
+ * @tag Drivers
+ * @summary Handle SOS alert from driver
+ * @description Receives an SOS alert from a driver and emits it via socket.io to connected clients.
+ * @operationId handleSosAlert
+ * @bodyContent {HandleSosAlertRequest} application/json
+ * @bodyRequired
+ * @response 200 - SOS alert sent successfully
+ * @responseContent {HandleSosAlertRequest} 200.application/json
+ * @response 400 - Error sending SOS alert
+ */
 async function handleSosAlert(req: ValidatedRequest<HandleSosAlertRequest>, res: Response): Promise<void> {
 	const data = req.body;
 	try {
-		io.emit('sos_alert', data);
+		(io as Socket).emit('sos_alert', data);
 		res.status(200).json(data);
 	} catch (error) {
 		console.error('Error sending SOS alert:', error);
@@ -1323,7 +1307,7 @@ async function handleSosAlert(req: ValidatedRequest<HandleSosAlertRequest>, res:
  * @description Get history of locations for a driver with a given driver id and between specified time interval
  * @operationId getDriverLocationsController
  * @response 200 - Driver history locations fetched successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverLocationsWithPerformance} 200.application/json
  * @response 400 - Error fetching history locations for a particular driver
  * @prisma_model driver_history_locations (see ./prisma/schemas/transport.prisma)
  */
@@ -1361,7 +1345,7 @@ async function getDriverHistoryLocations(
  * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
  * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
  * @response 200 - Successful operation, returns driver's earnings
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverEarnings} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver's earnings
  * @prisma_model taxi_orders (see ./prisma/schemas/transport.prisma)
@@ -1379,6 +1363,10 @@ async function getDriverEarnings(
 	}
 	try {
 		const driver = await DriverDao.getDriverById(driver_id);
+		if (!driver) {
+			res.status(404).json({ error: 'Driver not found' });
+			return;
+		}
 		let driverOrders = await prisma.taxi_orders.findMany({
 			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
@@ -1391,7 +1379,7 @@ async function getDriverEarnings(
 		});
 		const deliveryOrders = await prisma.delivery_orders.findMany({
 			where: {
-				status: DELIVERY_ORDER_STATUS.SUCCESS,
+				status: DELIVERY_ORDER_STATUS.ORDER_FINISHED_SUCCESS,
 				driver_id: driver.driver_id,
 				updated_at: {
 					gte: new Date(start_date as string).toISOString(),
@@ -1423,7 +1411,7 @@ async function getDriverEarnings(
  * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
  * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
  * @response 200 - Successful operation, returns all drivers' earnings
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverEarnings[]} 200.application/json
  * @response 400 - Error retrieving all drivers' earnings
  * @prisma_model taxi_orders (see ./prisma/schemas/transport.prisma)
  * @prisma_model delivery_orders (see ./prisma/schemas/delivery.prisma)
@@ -1452,7 +1440,7 @@ async function getAllDriversEarnings(
 			});
 			const deliveryOrders = await prisma.delivery_orders.findMany({
 				where: {
-					status: DELIVERY_ORDER_STATUS.SUCCESS,
+					status: DELIVERY_ORDER_STATUS.ORDER_FINISHED_SUCCESS,
 					driver_id: driver.driver_id,
 					updated_at: {
 						gte: new Date(start_date as string).toISOString(),
@@ -1480,7 +1468,7 @@ async function getAllDriversEarnings(
  * @description Retrieves the total earnings of all drivers based on completed orders.
  * @operationId getTotalEarnings
  * @response 200 - Successful operation, returns total earnings for all drivers
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverTotalEarnings} 200.application/json
  * @response 400 - Error retrieving total earnings
  * @prisma_model taxi_orders (see ./prisma/schemas/transport.prisma)
  * @prisma_model delivery_orders (see ./prisma/schemas/delivery.prisma)
@@ -1494,7 +1482,7 @@ async function getTotalEarnings(req: AuthenticatedRequest, res: Response): Promi
 		});
 		const delivery_orders = await prisma.delivery_orders.findMany({
 			where: {
-				status: DELIVERY_ORDER_STATUS.SUCCESS,
+				status: DELIVERY_ORDER_STATUS.ORDER_FINISHED_SUCCESS,
 				driver_id: { not: null },
 			},
 		});
@@ -1517,7 +1505,7 @@ async function getTotalEarnings(req: AuthenticatedRequest, res: Response): Promi
  * @operationId getDriverTotalEarnings
  * @pathParam {string} driver_id - The ID of the driver whose total earnings are being retrieved
  * @response 200 - Successful operation, returns total earnings for the specified driver
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverTotalEarnings | DriverDailyEarningsBreakdown} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver's total earnings
  * @prisma_model taxi_orders (see ./prisma/schemas/transport.prisma)
@@ -1542,7 +1530,7 @@ async function getDriverTotalEarnings(
 		});
 		const delivery_orders = await prisma.delivery_orders.findMany({
 			where: {
-				status: DELIVERY_ORDER_STATUS.SUCCESS,
+				status: DELIVERY_ORDER_STATUS.ORDER_FINISHED_SUCCESS,
 				driver_id: driver_id,
 			},
 		});
@@ -1567,6 +1555,7 @@ async function getDriverTotalEarnings(
  * @pathParam {string} action - The action to perform (enable or disable)
  * @pathParam {string} type - The type of action (taxi, transfer, delivery)
  * @response 200 - Driver toggled successfully
+ * @responseContent {SuccessMessage} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error toggling driver
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
@@ -1600,10 +1589,10 @@ async function setDriverHandle(
  * @description This endpoint allows toggling the types of orders a specific driver can receive. The request body should contain an object specifying which order types (taxi, transfer, delivery) to toggle on or off.
  * @operationId toggleDriverOrders
  * @pathParam {string} driver_id - The ID of the driver to toggle
- * @bodyContent {object} application/json
+ * @bodyContent {ToggleDriverOrdersRequest} application/json
  * @bodyRequired
  * @response 200 - Driver orders toggled successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {SuccessMessage} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error toggling driver orders
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
@@ -1641,10 +1630,10 @@ async function toggleDriverOrders(
  * @summary Send notifications for drivers to come to work
  * @description This endpoint allows sending a "come to work" notifications to all drivers who are currently offline.
  * @operationId comeToWorkDrivers
- * @bodyContent {object} application/json
+ * @bodyContent {SendComeToWorkNotificationRequest} application/json
  * @bodyRequired
  * @response 200 - Notification sent out successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {SuccessMessage} 200.application/json
  * @response 404 - Problem sending notification
  * @response 400 - Problem sending notification
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
@@ -1677,10 +1666,10 @@ async function sendComeToWorkNotification(
 				moment(driver.come_to_work_last_sent_at).isBefore(moment().subtract(3, 'hours'))
 			) {
 				//TODO: early hours what to do?
-				const l10nTextDriver = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver.user.language);
-				const l10nTextHeadingDriver = getLocalisedTexts('HEADING', driver.user.language);
+				const l10nTextDriver = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver.user?.language);
+				const l10nTextHeadingDriver = getLocalisedTexts('HEADING', driver.user?.language);
 				sendNotificationToUser(l10nTextHeadingDriver.driver, l10nTextDriver.comeToWork, driver.user_id);
-				DriverDao.updateDriver(driver.driver_id, { come_to_work_last_sent_at: new Date() });
+				await DriverDao.updateDriver(driver.driver_id, { come_to_work_last_sent_at: new Date().toISOString() });
 			}
 		}
 		res.status(200).json({ message: 'Notifications sent out successfully' });
@@ -1702,10 +1691,10 @@ async function sendComeToWorkNotification(
  * @description This endpoint sets the current vehicle for a specific driver. It first checks that the vehicle belongs to the driver. If a vehicle was previously assigned, it will be disconnected. The request body should contain the new vehicle ID to assign.
  * @operationId setDriverCurrentVehicle
  * @pathParam {string} driver_id - The ID of the driver
- * @bodyContent {object} application/json
+ * @bodyContent {SetCurrentVehicleRequest} application/json
  * @bodyRequired
  * @response 200 - Driver vehicle updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DriverDetail} 200.application/json
  * @response 404 - Driver or vehicle not found
  * @response 400 - Invalid vehicle ID or error setting vehicle
  * @prisma_model drivers (see ./prisma/schemas/transport.prisma)
@@ -1731,7 +1720,7 @@ async function setCurrentVehicle(
 			res.status(200).json(driver);
 			return;
 		}
-		const driver_vehicle = driver.vehicles.find((v: Record<string, string>) => v.vehicle_id === vehicle_id);
+		const driver_vehicle = driver.vehicles.find((v) => v.vehicle_id === vehicle_id);
 		const vehicle = driver_vehicle?.vehicle_id ? await VehicleDao.getVehicleById(vehicle_id) : null;
 
 		if (!driver_vehicle?.can_drive || vehicle?.current_driver !== null) {

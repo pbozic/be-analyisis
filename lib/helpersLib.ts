@@ -7,10 +7,11 @@ import Holidays from 'date-holidays';
 import { TokenType, TAXI_ORDER_STATUS, VEHICLE_CLASS } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-import { DeliveryOrderBase } from '../schemas/dto/DeliveryOrders/deliveryOrder.dto.js';
+import { DeliveryOrderBase, DeliveryOrderDetail } from '../schemas/dto/DeliveryOrders/deliveryOrder.dto.js';
 import { BusinessBase } from '../schemas/dto/Business/business.js';
 import { TaxiOrderBase } from '../schemas/dto/TaxiOrders/taxiOrder.dto.js';
 import { DriverDetail } from '../schemas/dto/Driver/index.js';
+import { DriverEarnings, DriverTotalEarnings, DriverDailyEarningsBreakdown } from '../schemas/dto/Driver/driver.dto.js';
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -373,16 +374,16 @@ export function isBusinessOpen(working_hours: Record<string, string[][]>): boole
 
 /**
  * Summarizes business earnings and time/distance traveled from orders.
- * @param {DeliveryOrderBase[]} orders - Completed orders including items and timeline.
+ * @param {DeliveryOrderDetail[]} orders - Completed orders including items and timeline.
  * @param {BusinessBase} business - Business object for working hours and name.
  * @returns {object} Summary metrics for dashboards.
  */
-export function calculateBusinessEarnings(orders: DeliveryOrderBase[], business: BusinessBase) {
+export function calculateBusinessEarnings(orders: DeliveryOrderDetail[], business: BusinessBase) {
 	if (orders && orders.length > 0) {
 		const totalEarnings = orders.reduce((sum, order) => {
-			const totalItemsPrice = order.items.reduce((itemSum, item) => {
+			const totalItemsPrice = order.items?.reduce((itemSum, item) => {
 				return itemSum + parseFloat(String(item.price || 0));
-			}, 0);
+			}, 0) as number;
 			return sum + (totalItemsPrice - parseFloat(String(order.details?.delivery_cost)) || 0) || 0;
 		}, 0);
 		const totalDurationInMinutes = orders.reduce((sum, order) => {
@@ -437,7 +438,10 @@ export function calculateBusinessEarnings(orders: DeliveryOrderBase[], business:
  * @param {DriverDetail} driver - Driver object with user and vehicles.
  * @returns {object} Earnings summary.
  */
-export function calculateDriversEarnings(driverOrders: (TaxiOrderBase | DeliveryOrderBase)[], driver: DriverDetail) {
+export function calculateDriversEarnings(
+	driverOrders: (TaxiOrderBase | DeliveryOrderBase)[],
+	driver: DriverDetail
+): Partial<DriverEarnings> {
 	if (driverOrders && driverOrders.length > 0) {
 		const totalEarnings = driverOrders.reduce((sum, order) => {
 			if (order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED) {
@@ -506,9 +510,7 @@ export function calculateTotalEarnings(
 	completedOrders: (TaxiOrderBase | DeliveryOrderBase)[],
 	detailed: boolean = false,
 	business: boolean = false
-):
-	| { todaysEarnings: number; weeklyEarnings: number; monthlyEarnings: number; totalEarnings: number }
-	| Record<string, number> {
+): DriverTotalEarnings | DriverDailyEarningsBreakdown {
 	if (completedOrders && completedOrders.length > 0) {
 		let todaysEarnings = 0;
 		let weeklyEarnings = 0;
@@ -525,7 +527,7 @@ export function calculateTotalEarnings(
 			let orderAmount = 0;
 			if (order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED) {
 				orderAmount = parseFloat(String(order.payment?.price)) || 0;
-				if (order.preferences?.vehicle_class !== VEHICLE_CLASS.PRIVATE_DRIVER) {
+				if ((order as TaxiOrderBase).preferences?.vehicle_class !== VEHICLE_CLASS.PRIVATE_DRIVER) {
 					orderAmount += parseFloat(String(order.payment?.extras?.price)) || 0;
 				}
 			} else {
@@ -534,42 +536,23 @@ export function calculateTotalEarnings(
 			}
 			if (!detailed) {
 				totalEarnings += orderAmount;
-				if (orderDate >= startOfDay && orderDate <= endOfDay) {
-					todaysEarnings += orderAmount;
-				}
-				if (weeksDiff === 0) {
-					weeklyEarnings += orderAmount;
-				}
-				if (monthsDiff === 0) {
-					monthlyEarnings += orderAmount;
-				}
+				if (orderDate >= startOfDay && orderDate <= endOfDay) todaysEarnings += orderAmount;
+				if (weeksDiff === 0) weeklyEarnings += orderAmount;
+				if (monthsDiff === 0) monthlyEarnings += orderAmount;
 			} else {
 				const date = orderDate.toISOString().slice(0, 10);
-				if (!acc[date]) {
-					acc[date] = 0;
-				}
-				acc[date] += orderAmount;
+				acc[date] = (acc[date] || 0) + orderAmount;
 			}
 			return acc;
 		}, {});
 		return !detailed
-			? {
-					todaysEarnings,
-					weeklyEarnings,
-					monthlyEarnings,
-					totalEarnings,
-				}
-			: earningsByDate;
+			? { todaysEarnings, weeklyEarnings, monthlyEarnings, totalEarnings }
+			: { breakdown: earningsByDate };
 	}
 	console.log('Calculating total earnings, completed orders length:', completedOrders.length);
 	return !detailed
-		? {
-				todaysEarnings: 0,
-				weeklyEarnings: 0,
-				monthlyEarnings: 0,
-				totalEarnings: 0,
-			}
-		: {};
+		? { todaysEarnings: 0, weeklyEarnings: 0, monthlyEarnings: 0, totalEarnings: 0 }
+		: { breakdown: {} };
 }
 
 /**

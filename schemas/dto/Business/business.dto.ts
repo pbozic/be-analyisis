@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { OpenAPIRegistry, extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { SORTING_TYPE } from '@prisma/client';
 
 import { TransportModuleBaseSchema, TransportModuleRefSchema } from '../Transport/transport.dto.js';
 import { FoodDrinksBaseSchema, FoodDrinksModuleRefSchema } from '../FoodDrinks/index.js';
@@ -13,7 +14,7 @@ import { MenuItemRefSchema, MenuCategoryRefSchema } from '../Menu/menu.dto.js';
 import { AddressRefSchema } from '../Address/index.js';
 import { UserRefSchema } from '../User/index.js';
 import { FileRefSchema } from '../Files/file.dto.js';
-import { UUID } from '../../primitives';
+import { Timestamp, UUID } from '../../primitives';
 import { DriverBaseSchema } from '../Driver/index.js';
 import { BusinessUserDetailSchema } from '../BusinessUser/businessUser.js';
 extendZodWithOpenApi(z);
@@ -129,12 +130,19 @@ export const MenuRefSchema = z
 	.openapi('MenuRef');
 
 // Daily Meals subscription ref (simplified)
-export const DailyMealsRefSchema = z
+export const DailyMealsModuleSchema = z
 	.object({
-		subscription_count: z.number().int().optional(),
-		active_subscriptions: z.number().int().optional(),
+		id: UUID,
+		delivery_address_id: UUID.nullable().optional(),
+		daily_meals_days: z.array(z.any()).optional().default([]),
+		daily_meals_delivery_mapping: z.array(z.any()).optional().default([]),
+		maximum_daily_meals_subscribers: z.number().nullable().optional(),
+		daily_users_sorted: z.array(UUID).optional().default([]),
+		daily_users_sorting_type: z.nativeEnum(SORTING_TYPE).optional().default(SORTING_TYPE.AUTOMATIC),
+		created_at: Timestamp,
+		updated_at: Timestamp.optional(),
 	})
-	.openapi('DailyMealsRef');
+	.openapi('DailyMealsModule');
 
 // =======================
 // Business Response with Individual Modules
@@ -146,7 +154,7 @@ export const BusinessWithTransportResponseDto = BusinessResponseDto.extend({
 }).openapi('BusinessWithTransportResponse');
 
 export const BusinessWithDailyMealsResponseDto = BusinessResponseDto.extend({
-	daily_meals_module: DailyMealsRefSchema.extend({
+	daily_meals_module: DailyMealsModuleSchema.extend({
 		daily_meal_menus: z.array(MenuRefSchema).optional(),
 	})
 		.nullable()
@@ -168,7 +176,7 @@ export const BusinessWithFoodDrinksAndDailyMealsResponseDto = BusinessResponseDt
 	menus: z.array(MenuRefSchema).optional(),
 	menu_items: z.array(MenuItemRefSchema).optional(),
 	menu_categories: z.array(MenuCategoryRefSchema).optional(),
-	daily_meals_module: DailyMealsRefSchema.nullable().optional(),
+	daily_meals_module: DailyMealsModuleSchema.nullable().optional(),
 }).openapi('BusinessWithFoodDrinksAndDailyMealsResponse');
 
 // Business with Stores Module
@@ -253,7 +261,7 @@ export const BusinessWithAllModulesResponseDto = BusinessWithIncludesResponseDto
 	menus: z.array(MenuRefSchema).optional(),
 	menu_items: z.array(MenuItemRefSchema).optional(),
 	menu_categories: z.array(MenuCategoryRefSchema).optional(),
-	daily_meals: DailyMealsRefSchema.nullable().optional(),
+	daily_meals_module: DailyMealsModuleSchema.nullable().optional(),
 }).openapi('BusinessWithAllModulesResponse');
 
 // exported TS types
@@ -282,7 +290,7 @@ export type StoresModuleRef = z.infer<typeof StoresModuleRefSchema>;
 export type ReservationModuleRef = z.infer<typeof ReservationModuleRefSchema>;
 export type CrmModuleRef = z.infer<typeof CrmModuleRefSchema>;
 export type MenuRef = z.infer<typeof MenuRefSchema>;
-export type DailyMealsRef = z.infer<typeof DailyMealsRefSchema>;
+export type DailyMealsModule = z.infer<typeof DailyMealsModuleSchema>;
 
 // Re-export existing module types
 export type { MenuItemRef } from '../Menu/menu.dto.js';
@@ -406,7 +414,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('ReservationModuleRef', ReservationModuleRefSchema);
 	registry.register('CrmModuleRef', CrmModuleRefSchema);
 	registry.register('MenuRef', MenuRefSchema);
-	registry.register('DailyMealsRef', DailyMealsRefSchema);
+	registry.register('DailyMealsModule', DailyMealsModuleSchema);
 
 	// Note: MenuItemRef and MenuCategoryRef are registered in Menu/menu.dto.ts
 
