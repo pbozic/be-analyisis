@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
-import { SERVICES } from '@prisma/client';
+import { ACCOUNT_ACTIONS, ACCOUNT_ACTIONS_REASON, SERVICES, Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import { createDocument, linkDocumentToTransaction } from './Document.js';
 import { addFileToDocument } from './File.js';
 import S3Helper from '../lib/s3.js';
-import { USER_ROLE, ACCOUNT_ACTIONS } from '../lib/constants.js';
+import { USER_ROLE } from '../lib/constants.js';
 import { USER_ROLES } from '../prisma/schemas/interfaces.js';
 import WalletFundsDao from './WalletFunds.js';
 import type {
@@ -44,13 +44,11 @@ declare const process: {
 	};
 };
 
-type PrismaTransactionClient = any; // Prisma.$transaction callback parameter
-
-interface FindUniqueArgs {
-	where?: any;
-	include?: any;
-	select?: any;
-}
+// interface FindUniqueArgs {
+// 	where?: any;
+// 	include?: any;
+// 	select?: any;
+// }
 
 /**
  * Get personal users by user role, parent user, and disabled status.
@@ -551,10 +549,10 @@ const updateUserDisabled = async (
 	user_id: string,
 	disabled: boolean,
 	action_creator_user_id: string,
-	reason: string
+	reason: ACCOUNT_ACTIONS_REASON
 ): Promise<UserResponse> => {
 	try {
-		return (await prisma.$transaction(async (tx: PrismaTransactionClient) => {
+		return (await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 			const updatedUser = await tx.users.update({
 				where: { user_id },
 				data: { disabled },
@@ -766,13 +764,13 @@ const updateUserTelephoneVerified = async (user_id: string, telephoneVerified: b
  *
  * @param {Partial<UserBase>} user - User payload.
  * @param {boolean} [hashPassword=false] - Whether to hash user.password.
- * @param {PrismaTransactionClient} [tx=prisma] - Prisma transaction/client.
+ * @param {Prisma.TransactionClient} [tx=prisma] - Prisma transaction/client.
  * @returns {Promise<UserResponse>} Created user with relations.
  */
 const createNewUser = async (
 	user: Partial<UserBase>,
 	hashPassword: boolean = false,
-	tx: PrismaTransactionClient = prisma
+	tx: any = prisma
 ): Promise<UserResponse> => {
 	try {
 		let newUser = { ...user };
@@ -965,10 +963,10 @@ const updateUserActive = async (
 	user_id: string,
 	active: boolean,
 	action_creator_user_id: string,
-	reason: string
+	reason: ACCOUNT_ACTIONS_REASON
 ): Promise<UserResponse> => {
 	try {
-		return (await prisma.$transaction(async (tx: PrismaTransactionClient) => {
+		return (await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 			const updatedUser = await tx.users.update({
 				where: { user_id },
 				data: { active },
@@ -1102,10 +1100,10 @@ const updateUserNewsletter = async (user_id: string, data: boolean): Promise<Use
  *
  * @param {string} user_id - User ID.
  * @param {any[]} roles - Role payloads to create and link.
- * @param {PrismaTransactionClient} [tx=prisma] - Prisma transaction/client.
+ * @param {Prisma.TransactionClient} [tx=prisma] - Prisma transaction/client.
  * @returns {Promise<any[]>} Created role rows.
  */
-const linkRolesToUser = async (user_id: string, roles: any[], tx: PrismaTransactionClient = prisma): Promise<any[]> => {
+const linkRolesToUser = async (user_id: string, roles: any[], tx: any = prisma): Promise<any[]> => {
 	try {
 		if (Array.isArray(roles)) {
 			const user_roles = [];

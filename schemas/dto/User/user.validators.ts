@@ -669,7 +669,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UpdateRadioPreferencesRequest', UpdateRadioPreferencesSchema);
 	registry.register('UpdateAllergiesPreferencesRequest', UpdateAllergiesPreferencesSchema);
 
-	registry.register('UpdateUserRequest', UpdateUserSchema);
 	// Profile picture schema
 	registry.register('UpdateProfilePictureRequest', UpdateProfilePictureSchema);
 
