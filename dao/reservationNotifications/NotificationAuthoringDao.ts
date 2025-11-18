@@ -27,6 +27,27 @@ import type {
 	UpsertNotificationPreferenceRequest,
 	NotificationPreferenceResponse,
 } from '../../schemas/dto/reservations/notification-preference/notification-preference.dto.js';
+import { notificationTemplateVersionWithTemplate } from '../../prisma/includes/reservation/notification-template-version.js';
+import {
+	toNotificationTemplateVersionWithTemplateResponse,
+	toNotificationTemplateVersionResponse,
+} from '../../schemas/dto/reservations/notification-template-version/notification-template-version.mappers.js';
+import {
+	toNotificationEventResponse,
+	toNotificationEventList,
+} from '../../schemas/dto/reservations/notification-event/notification-event.mappers.js';
+import {
+	toNotificationTemplateResponse,
+	toNotificationTemplateList,
+} from '../../schemas/dto/reservations/notification-template/notification-template.mappers.js';
+import {
+	toNotificationMappingResponse,
+	toNotificationMappingList,
+} from '../../schemas/dto/reservations/notification-mapping/notification-mapping.mappers.js';
+import {
+	toNotificationPreferenceResponse,
+	toNotificationPreferenceList,
+} from '../../schemas/dto/reservations/notification-preference/notification-preference.mappers.js';
 
 /**
  * Retrieves all notification events ordered by key.
@@ -35,7 +56,8 @@ import type {
  */
 export async function listNotificationEvents(): Promise<NotificationEventResponse[]> {
 	try {
-		return await prisma.notification_event.findMany({ orderBy: { key: 'asc' } });
+		const results = await prisma.notification_event.findMany({ orderBy: { key: 'asc' } });
+		return toNotificationEventList(results);
 	} catch {
 		throw new Error('Error retrieving notification events');
 	}
@@ -51,7 +73,8 @@ export async function createNotificationEvent(
 	data: CreateNotificationEventRequest
 ): Promise<NotificationEventResponse> {
 	try {
-		return await prisma.notification_event.create({ data });
+		const result = await prisma.notification_event.create({ data });
+		return toNotificationEventResponse(result);
 	} catch {
 		throw new Error('Error creating notification event');
 	}
@@ -69,7 +92,8 @@ export async function updateNotificationEvent(
 	data: UpdateNotificationEventRequest
 ): Promise<NotificationEventResponse> {
 	try {
-		return await prisma.notification_event.update({ where: { notification_event_id }, data });
+		const result = await prisma.notification_event.update({ where: { notification_event_id }, data });
+		return toNotificationEventResponse(result);
 	} catch {
 		throw new Error('Error updating notification event');
 	}
@@ -99,10 +123,11 @@ export async function listNotificationTemplates(
 	reservation_module_id: string
 ): Promise<NotificationTemplateResponse[]> {
 	try {
-		return await prisma.notification_template.findMany({
+		const results = await prisma.notification_template.findMany({
 			where: { reservation_module_id },
 			orderBy: { key: 'asc' },
 		});
+		return toNotificationTemplateList(results);
 	} catch {
 		throw new Error('Error retrieving notification templates');
 	}
@@ -118,7 +143,8 @@ export async function createNotificationTemplate(
 	data: CreateNotificationTemplateRequest
 ): Promise<NotificationTemplateResponse> {
 	try {
-		return await prisma.notification_template.create({ data });
+		const result = await prisma.notification_template.create({ data });
+		return toNotificationTemplateResponse(result);
 	} catch {
 		throw new Error('Error creating notification template');
 	}
@@ -136,7 +162,8 @@ export async function updateNotificationTemplate(
 	data: UpdateNotificationTemplateRequest
 ): Promise<NotificationTemplateResponse> {
 	try {
-		return await prisma.notification_template.update({ where: { notification_template_id }, data });
+		const result = await prisma.notification_template.update({ where: { notification_template_id }, data });
+		return toNotificationTemplateResponse(result);
 	} catch {
 		throw new Error('Error updating notification template');
 	}
@@ -193,10 +220,11 @@ export async function updateNotificationTemplateVersionById(
 	data: UpdateNotificationTemplateVersionRequest
 ): Promise<NotificationTemplateVersionResponse> {
 	try {
-		return await prisma.notification_template_version.update({
+		const result = await prisma.notification_template_version.update({
 			where: { notification_template_version_id },
 			data,
 		});
+		return toNotificationTemplateVersionResponse(result);
 	} catch {
 		throw new Error('Error updating notification template version');
 	}
@@ -213,10 +241,11 @@ export async function updateNotificationTemplateVersionByComposite(
 ): Promise<NotificationTemplateVersionResponse> {
 	try {
 		const { notification_template_id, version, ...changes } = data;
-		return await prisma.notification_template_version.update({
+		const result = await prisma.notification_template_version.update({
 			where: { notification_template_id_version: { notification_template_id, version } },
 			data: changes,
 		});
+		return toNotificationTemplateVersionResponse(result);
 	} catch {
 		throw new Error('Error updating notification template version');
 	}
@@ -266,10 +295,11 @@ export async function listNotificationMappings(
 	reservation_module_id: string
 ): Promise<NotificationMappingWithTemplateVersionDAOResponse[]> {
 	try {
-		return await prisma.notification_mapping.findMany({
+		const results = await prisma.notification_mapping.findMany({
 			where: { reservation_module_id },
 			orderBy: { created_at: 'desc' },
 		});
+		return toNotificationMappingList(results);
 	} catch {
 		throw new Error('Error retrieving notification mappings');
 	}
@@ -285,7 +315,8 @@ export async function createNotificationMapping(
 	data: CreateNotificationMappingRequest
 ): Promise<NotificationMappingResponse> {
 	try {
-		return await prisma.notification_mapping.create({ data });
+		const result = await prisma.notification_mapping.create({ data });
+		return toNotificationMappingResponse(result);
 	} catch {
 		throw new Error('Error creating notification mapping');
 	}
@@ -303,7 +334,8 @@ export async function updateNotificationMapping(
 	data: UpdateNotificationMappingRequest
 ): Promise<NotificationMappingResponse> {
 	try {
-		return await prisma.notification_mapping.update({ where: { notification_mapping_id }, data });
+		const result = await prisma.notification_mapping.update({ where: { notification_mapping_id }, data });
+		return toNotificationMappingResponse(result);
 	} catch {
 		throw new Error('Error updating notification mapping');
 	}
@@ -323,7 +355,7 @@ export async function upsertActiveNotificationMapping(
 	notification_template_version_id: string
 ): Promise<NotificationMappingResponse> {
 	try {
-		return await prisma.notification_mapping.upsert({
+		const result = await prisma.notification_mapping.upsert({
 			where: {
 				reservation_module_id_notification_event_id: {
 					reservation_module_id,
@@ -338,6 +370,7 @@ export async function upsertActiveNotificationMapping(
 				is_active: true,
 			},
 		});
+		return toNotificationMappingResponse(result);
 	} catch {
 		throw new Error('Error setting active notification mapping');
 	}
@@ -353,10 +386,11 @@ export async function listNotificationPreferences(
 	reservation_module_id: string
 ): Promise<NotificationPreferenceResponse[]> {
 	try {
-		return await prisma.notification_preference.findMany({
+		const results = await prisma.notification_preference.findMany({
 			where: { reservation_module_id },
 			orderBy: [{ notification_event_id: 'asc' }, { channel: 'asc' }],
 		});
+		return toNotificationPreferenceList(results);
 	} catch {
 		throw new Error('Error retrieving notification preferences');
 	}
@@ -374,7 +408,7 @@ export async function upsertNotificationPreference(
 ): Promise<NotificationPreferenceResponse> {
 	try {
 		const { notification_event_id, channel, enabled } = data;
-		return await prisma.notification_preference.upsert({
+		const result = await prisma.notification_preference.upsert({
 			where: {
 				reservation_module_id_notification_event_id_channel: {
 					reservation_module_id,
@@ -385,6 +419,7 @@ export async function upsertNotificationPreference(
 			update: { enabled },
 			create: { reservation_module_id, notification_event_id, channel, enabled },
 		});
+		return toNotificationPreferenceResponse(result);
 	} catch {
 		throw new Error('Error upserting notification preference');
 	}
@@ -404,26 +439,14 @@ export async function getLatestTemplateForEvent(
 				},
 			},
 			include: {
-				version: { include: { template: true } },
+				version: notificationTemplateVersionWithTemplate,
 			},
 		});
 
 		const v = mapping?.version;
 		if (!v) return null;
 
-		return {
-			notification_template_version_id: v.notification_template_version_id,
-			notification_template_id: v.notification_template_id,
-			version: v.version,
-			status: v.status,
-			subject: v.subject,
-			body_text: v.body_text,
-			variables_json_schema: v.variables_json_schema,
-			compiled_artifacts: v.compiled_artifacts,
-			created_at: v.created_at,
-			template: v.template,
-			created_by_user_id: v.created_by_user_id,
-		};
+		return toNotificationTemplateVersionWithTemplateResponse(v);
 	} catch {
 		throw new Error('Error retrieving active template version for event');
 	}

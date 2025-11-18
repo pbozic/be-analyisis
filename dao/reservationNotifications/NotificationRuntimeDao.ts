@@ -14,6 +14,18 @@ import type {
 	NotificationProviderCredentialResponse,
 } from '../../schemas/dto/reservations/notification-provider-credential/notification-provider-credential.dto.js';
 import type { NotificationChannel } from '../../types/reservationNotifications/enums';
+import {
+	toNotificationMessageResponse,
+	toNotificationMessageList,
+} from '../../schemas/dto/reservations/notification-message/notification-message.mappers.js';
+import {
+	toNotificationMessageEventResponse,
+	toNotificationMessageEventList,
+} from '../../schemas/dto/reservations/notification-message-event/notification-message-event.mappers.js';
+import {
+	toNotificationProviderCredentialResponse,
+	toNotificationProviderCredentialList,
+} from '../../schemas/dto/reservations/notification-provider-credential/notification-provider-credential.mappers.js';
 
 /**
  * Retrieves a notification message by ID.
@@ -25,7 +37,9 @@ export async function getNotificationMessageById(
 	notification_message_id: string
 ): Promise<NotificationMessageResponse | null> {
 	try {
-		return await prisma.notification_message.findUnique({ where: { notification_message_id } });
+		const result = await prisma.notification_message.findUnique({ where: { notification_message_id } });
+		if (!result) return null;
+		return toNotificationMessageResponse(result);
 	} catch {
 		throw new Error('Error retrieving notification message');
 	}
@@ -51,7 +65,7 @@ export async function listNotificationMessages(params: {
 }): Promise<NotificationMessageResponse[]> {
 	try {
 		const { reservation_module_id, notification_event_id, status, take = 50, skip = 0 } = params;
-		return await prisma.notification_message.findMany({
+		const results = await prisma.notification_message.findMany({
 			where: {
 				reservation_module_id,
 				...(notification_event_id ? { notification_event_id } : {}),
@@ -61,6 +75,7 @@ export async function listNotificationMessages(params: {
 			take,
 			skip,
 		});
+		return toNotificationMessageList(results);
 	} catch {
 		throw new Error('Error retrieving notification messages');
 	}
@@ -76,7 +91,8 @@ export async function createNotificationMessage(
 	data: CreateNotificationMessageRequest
 ): Promise<NotificationMessageResponse> {
 	try {
-		return await prisma.notification_message.create({ data });
+		const result = await prisma.notification_message.create({ data });
+		return toNotificationMessageResponse(result);
 	} catch {
 		throw new Error('Error creating notification message');
 	}
@@ -93,10 +109,11 @@ export async function updateNotificationMessageStatus(
 ): Promise<NotificationMessageResponse> {
 	try {
 		const { notification_message_id, ...rest } = data;
-		return await prisma.notification_message.update({
+		const result = await prisma.notification_message.update({
 			where: { notification_message_id },
 			data: rest,
 		});
+		return toNotificationMessageResponse(result);
 	} catch {
 		throw new Error('Error updating notification message');
 	}
@@ -113,7 +130,8 @@ export async function createNotificationMessageEvent(
 ): Promise<NotificationMessageEventResponse> {
 	try {
 		const payload = { ...data, occurred_at: data.occurred_at ?? new Date() };
-		return await prisma.notification_message_event.create({ data: payload });
+		const result = await prisma.notification_message_event.create({ data: payload });
+		return toNotificationMessageEventResponse(result);
 	} catch {
 		throw new Error('Error creating notification message event');
 	}
@@ -129,10 +147,11 @@ export async function listNotificationMessageEvents(
 	notification_message_id: string
 ): Promise<NotificationMessageEventResponse[]> {
 	try {
-		return await prisma.notification_message_event.findMany({
+		const results = await prisma.notification_message_event.findMany({
 			where: { notification_message_id },
 			orderBy: { occurred_at: 'asc' },
 		});
+		return toNotificationMessageEventList(results);
 	} catch {
 		throw new Error('Error retrieving notification message events');
 	}
@@ -150,10 +169,11 @@ export async function listNotificationProviderCredentials(
 	channel?: NotificationChannel
 ): Promise<NotificationProviderCredentialResponse[]> {
 	try {
-		return await prisma.notification_provider_credential.findMany({
+		const results = await prisma.notification_provider_credential.findMany({
 			where: { reservation_module_id, ...(channel ? { channel } : {}) },
 			orderBy: [{ channel: 'asc' }, { created_at: 'desc' }],
 		});
+		return toNotificationProviderCredentialList(results);
 	} catch {
 		throw new Error('Error retrieving notification provider credentials');
 	}
@@ -169,7 +189,8 @@ export async function createNotificationProviderCredential(
 	data: CreateNotificationProviderCredentialRequest
 ): Promise<NotificationProviderCredentialResponse> {
 	try {
-		return await prisma.notification_provider_credential.create({ data });
+		const result = await prisma.notification_provider_credential.create({ data });
+		return toNotificationProviderCredentialResponse(result);
 	} catch {
 		throw new Error('Error creating notification provider credential');
 	}
@@ -187,10 +208,11 @@ export async function updateNotificationProviderCredential(
 	data: UpdateNotificationProviderCredentialRequest
 ): Promise<NotificationProviderCredentialResponse> {
 	try {
-		return await prisma.notification_provider_credential.update({
+		const result = await prisma.notification_provider_credential.update({
 			where: { notification_provider_credential_id },
 			data,
 		});
+		return toNotificationProviderCredentialResponse(result);
 	} catch {
 		throw new Error('Error updating notification provider credential');
 	}
