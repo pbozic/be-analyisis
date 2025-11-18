@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { FUNDS_TYPE, CREDIT_STATUS, TRANSACTION_TYPE } from '@prisma/client';
+import { FUNDS_TYPE, CREDIT_STATUS } from '@prisma/client';
 
 import { UUID, Timestamp } from '../../primitives.js';
 import { UserRefSchema } from '../User/user.js';
@@ -26,6 +26,7 @@ export const WalletFundsBaseSchema = z
 	.object({
 		wallet_funds_id: UUID,
 		user_id: UUID,
+		transaction_id: UUID.nullable(),
 		referral_id: UUID.nullable(),
 		charge_id: z.string().nullable(),
 		amount: z.number().int().describe('Amount in cents'),

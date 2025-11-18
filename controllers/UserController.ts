@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import type { Response } from 'express';
 import bcrypt from 'bcrypt';
-import { FUNDS_TYPE } from '@prisma/client';
+import { FUNDS_TYPE, USER_ROLES } from '@prisma/client';
 
 import GroupDao from '../dao/Group.js';
 import ReviewsDao from '../dao/Review.ts';
@@ -20,7 +20,6 @@ import TableReservationDao from '../dao/TableReservation.ts';
 import SMS from '../lib/SMS.js';
 import stripe from '../lib/stripe.js';
 import {
-	TAXI_ORDER_STATUS,
 	DELIVERY_ORDER_STATUS,
 	CREDITS,
 	CASHBACK_TYPE,
@@ -63,7 +62,6 @@ import {
 	UpdateWalletBalanceRequest,
 	VerifyPhoneRequest,
 } from '../schemas/dto/User/user.validators.ts';
-import { UserBase } from '../schemas/dto/User/index.ts';
 
 config();
 
@@ -75,7 +73,7 @@ config();
  * @operationId getUserById
  * @pathParam {string} user_id - The ID of the user to retrieve
  * @response 200 - Successful operation, returns detailed user information
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 404 - User not found
  * @response 400 - Error retrieving user information
  * @prisma_model users (see ./prisma/schemas/user.prisma)
@@ -114,9 +112,8 @@ async function getUserById(req: ValidatedRequest<never, { user_id: string }>, re
  * @security bearerAuth: []
  * @operationId retrieveUserInformation
  * @response 200 - Successful operation, returns user info.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserWithPayments} 200.application/json
  * @response 400 - Error obtaining user information.
- * @responseContent {object} 400.application/json
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  * @prisma_model business_users (see ./prisma/schemas/base.prisma)
  * @prisma_model business (see ./prisma/schemas/base.prisma)
@@ -183,10 +180,10 @@ async function me(req: ValidatedRequest<never>, res: Response): Promise<void> {
  * @description This endpoint is used to update the current user's details.
  * @operationId updateMe
  * @bodyDescription The data to update for the current user
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateMeRequest} application/json
  * @bodyRequired
  * @response 200 - User updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -216,10 +213,10 @@ async function updateMe(req: ValidatedRequest<UpdateMeRequest>, res: Response): 
  * @description This endpoint is used to update the current user's taxi preferences.
  * @operationId updateUserTaxiPreferences
  * @bodyDescription The new taxi preferences
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateTaxiPreferencesRequest} application/json
  * @bodyRequired
  * @response 200 - Taxi preferences updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -250,10 +247,10 @@ async function updateUserTaxiPreferences(
  * @description This endpoint is used to update the current user's notification preferences.
  * @operationId updateUserNotificationPreferences
  * @bodyDescription The new notification preferences
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateNotificationPreferencesRequest} application/json
  * @bodyRequired
  * @response 200 - Notification preferences updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -287,10 +284,10 @@ async function updateUserNotificationPreferences(
  * @description This endpoint is used to update the current user's push notification preferences.
  * @operationId updateUserTaxiPushNotifications
  * @bodyDescription The new push notification preferences
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateNotificationPreferencesRequest} application/json
  * @bodyRequired
  * @response 200 - Push notification preferences updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -321,10 +318,10 @@ async function updateUserTaxiPushNotifications(
  * @description This endpoint is used to update the current user's transfer push notification preferences.
  * @operationId updateUserTransferPushNotifications
  * @bodyDescription The new push notification preferences for transfers
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateTransferPushNotificationsRequest} application/json
  * @bodyRequired
  * @response 200 - Transfer push notification preferences updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -358,10 +355,10 @@ async function updateUserTransferPushNotifications(
  * @description This endpoint is used to update the current user's delivery push notification preferences.
  * @operationId updateUserDeliveryPushNotifications
  * @bodyDescription The new push notification preferences for deliveries
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateDeliveryPushNotificationsRequest} application/json
  * @bodyRequired
  * @response 200 - Delivery push notification preferences updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -395,10 +392,10 @@ async function updateUserDeliveryPushNotifications(
  * @description This endpoint is used to update the current user's spicy preferences.
  * @operationId updateUserSpicyPreferences
  * @bodyDescription The new spicy preferences
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateSpicyPreferencesRequest} application/json
  * @bodyRequired
  * @response 200 - Spicy preferences updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -429,10 +426,10 @@ async function updateUserSpicyPreferences(
  * @description This endpoint is used to update the current user's radio preferences.
  * @operationId updateUserRadioPreferences
  * @bodyDescription The new radio preferences
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateRadioPreferencesRequest} application/json
  * @bodyRequired
  * @response 200 - Radio preferences updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -463,10 +460,10 @@ async function updateUserRadioPreferences(
  * @description This endpoint is used to update the current user's allergies preferences.
  * @operationId updateUserAllergiesPreferences
  * @bodyDescription The new allergies preferences
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateAllergiesPreferencesRequest} application/json
  * @bodyRequired
  * @response 200 - Allergies preferences updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -497,10 +494,10 @@ async function updateUserAllergiesPreferences(
  * @description This endpoint is used to update the current user's telephone.
  * @operationId updateTelephone
  * @bodyDescription The new telephone
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateTelephoneRequest} application/json
  * @bodyRequired
  * @response 200 - Telephone updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -555,7 +552,7 @@ async function requestSMSVerification(req: ValidatedRequest<never>, res: Respons
 			res.status(400).json({ error: 'Error obtaining user information' });
 			return;
 		}
-		await SMS.sendSMSVerification(user.telephone, token.token, user.country_code);
+		await SMS.sendSMSVerification(user.telephone, token.token);
 		if (token) {
 			res.status(200).json({ message: 'Token sent', telephone: user.telephone });
 		} else {
@@ -574,7 +571,7 @@ async function requestSMSVerification(req: ValidatedRequest<never>, res: Respons
  * @description This endpoint is used to verify the current user via a token.
  * @operationId verifyMe
  * @bodyDescription The token to verify the user
- * @bodyContent {object} application/json
+ * @bodyContent {VerifyPhoneRequest} application/json
  * @bodyRequired
  * @response 200 - User verified successfully.
  * @response 400 - Invalid token or error obtaining user information.
@@ -615,10 +612,10 @@ async function verifyMe(req: ValidatedRequest<VerifyPhoneRequest>, res: Response
  * @description This endpoint is used to update the current user's OneSignal player ID.
  * @operationId updateOneSignalId
  * @bodyDescription The new OneSignal player ID
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateOneSignalIdRequest} application/json
  * @bodyRequired
  * @response 200 - OneSignal player ID updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -704,9 +701,9 @@ async function deleteUserByUserId(req: ValidatedRequest<never, { user_id: string
  * @operationId updateUserActiveByUserId
  * @pathParam {string} user_id - The ID of the user to disable
  * @bodyDescription The new value
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateUserActiveRequest} application/json
  * @response 200 - User active field updated successfully.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating active field.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -745,8 +742,10 @@ async function updateUserActiveByUserId(
  * @description This endpoint is used to disable a user's account by their user ID.
  * @operationId disableUserByUserId
  * @pathParam {string} user_id - The ID of the user to disable
+ * @bodyDescription The disabled status and reason
+ * @bodyContent {UpdateUserDisabledRequest} application/json
  * @response 200 - User disabled successfully.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error disabling user.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -785,8 +784,10 @@ async function updateUserDisabledByUserId(
  * @description This endpoint is used to "soft delete" a user's account by their user ID.
  * @operationId softDeleteUserByUserId
  * @pathParam {string} user_id - The ID of the user to disable
+ * @bodyDescription The reason for soft deletion
+ * @bodyContent {SoftDeleteUserRequest} application/json
  * @response 200 - User "soft delete" successful.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error soft deleting user.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -827,12 +828,11 @@ async function softDeleteUserByUserId(
  * @operationId editAddress
  * @pathParam {string} address_id - The ID of the address to edit
  * @bodyDescription The address to edit
- * @bodyContent {object} application/json
+ * @bodyContent {EditAddressRequest} application/json
  * @bodyRequired
- * @response 200 - Address edited successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @response 200 - Address edited successfully. Returns the updated user address.
+ * @responseContent {UserAddressResponse} 200.application/json
  * @response 400 - Error editing address.
- * @responseContent {object} 400.application/json
  * @prisma_model addresses (see ./prisma/schemas/base.prisma)
  * @prisma_model user_address (see ./prisma/schemas/base.prisma)
  */
@@ -845,8 +845,6 @@ async function editAddress(
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
 		}
-		// TODO: Try to create equaly types for address dao and
-		// passed body from this controller
 		const userAddress = await AddressDao.editUserAddress(req.user.user_id, req.params.address_id, req.body);
 		if (userAddress) {
 			res.status(200).json(userAddress);
@@ -939,10 +937,9 @@ async function getPaymentSheetCredentials(
  * @description Creates a Stripe Payment Intent to top up the user's wallet. Validates amount, currency, and payment method.
  * @operationId requestToAddFundsToWallet
  * @bodyDescription Amount, currency and payment method to use
- * @bodyContent {object} application/json
+ * @bodyContent {RequestToAddFundsRequest} application/json
  * @bodyRequired
  * @response 200 - Payment intent created
- * @responseContent {object} 200.application/json
  * @response 400 - Invalid parameters or error creating payment intent
  * @prisma_model users
  * @prisma_model wallet_funds
@@ -1005,10 +1002,9 @@ async function requestToAddFundsToWallet(
  * @description Creates a Stripe Payment Intent for a platform charge scoped to the current user.
  * @operationId requestPaymentIntent
  * @bodyDescription Amount and currency for the payment intent
- * @bodyContent {object} application/json
+ * @bodyContent {RequestPaymentIntentRequest} application/json
  * @bodyRequired
  * @response 200 - Payment intent created
- * @responseContent {object} 200.application/json
  * @response 400 - Invalid parameters or error creating payment intent
  * @prisma_model users
  */
@@ -1051,7 +1047,7 @@ async function requestPaymentIntent(req: ValidatedRequest<RequestPaymentIntentRe
  * @description Returns pending scheduled taxi orders for the current user.
  * @operationId getSelfScheduledOrders
  * @response 200 - List of scheduled orders
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxiOrderDetail[]} 200.application/json
  * @response 500 - Error fetching scheduled orders
  * @prisma_model taxi_orders
  */
@@ -1061,13 +1057,7 @@ async function getSelfScheduledOrders(req: ValidatedRequest<never>, res: Respons
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
 		}
-		const orders = await TaxiOrderDao.getOrders({
-			where: {
-				is_scheduled: true,
-				status: TAXI_ORDER_STATUS.PENDING,
-				user_id: req.user.user_id,
-			},
-		});
+		const orders = await TaxiOrderDao.getPendingScheduledOrdersByUserId(req.user.user_id);
 		res.status(200).json(orders);
 	} catch (e) {
 		console.info('TaxiOrderController', e);
@@ -1082,9 +1072,8 @@ async function getSelfScheduledOrders(req: ValidatedRequest<never>, res: Respons
  * @description Returns a list of users.
  * @operationId getUsers
  * @response 200 - successful operation
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse[]} 200.application/json
  * @response 400 - Error occurred while obtaining the user list
- * @responseContent {object} 400.application/json The error object
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  * @prisma_model addresses (see ./prisma/schemas/base.prisma)
  * @prisma_model user_address (see ./prisma/schemas/base.prisma)
@@ -1112,17 +1101,15 @@ async function listUsers(req: ValidatedRequest<never>, res: Response): Promise<v
  * @description Returns a list of personal users.
  * @operationId getPersonalUsers
  * @response 200 - successful operation
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse[]} 200.application/json
  * @response 400 - Error occurred while obtaining the user list
- * @responseContent {object} 400.application/json The error object
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  * @prisma_model addresses (see ./prisma/schemas/base.prisma)
  * @prisma_model user_address (see ./prisma/schemas/base.prisma)
  */
 async function listPersonalUsers(req: ValidatedRequest<never>, res: Response): Promise<void> {
 	try {
-		// TODO: Change to USER_ROLES.PERSONAL when possible
-		const users = await UserDao.getPersonalUsers('PERSONAL', null, false);
+		const users = await UserDao.getPersonalUsers(USER_ROLES.PERSONAL, null, false);
 		if (users) {
 			res.status(200).json(users);
 		} else {
@@ -1143,10 +1130,10 @@ async function listPersonalUsers(req: ValidatedRequest<never>, res: Response): P
  * @description This endpoint is used to update a user's details by user_id.
  * @operationId updateUserByUserId
  * @bodyDescription The user_id and data to update
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateUserByUserIdRequest} application/json
  * @bodyRequired
  * @response 200 - User updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -1172,10 +1159,10 @@ async function updateUserByUserId(req: ValidatedRequest<UpdateUserByUserIdReques
  * @description This endpoint is used to update the current user's password.
  * @operationId updatePassword
  * @bodyDescription The current password and the new password
- * @bodyContent {object} application/json
+ * @bodyContent {UpdatePasswordRequest} application/json
  * @bodyRequired
  * @response 200 - Password updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -1216,10 +1203,10 @@ async function updatePassword(req: ValidatedRequest<UpdatePasswordRequest>, res:
  * @description This endpoint is used to update the current user's email.
  * @operationId updateEmail
  * @bodyDescription The new email
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateEmailRequest} application/json
  * @bodyRequired
  * @response 200 - Email updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -1266,10 +1253,10 @@ async function updateEmail(req: ValidatedRequest<UpdateEmailRequest>, res: Respo
  * @description This endpoint is used to update the current user's transfer preferences.
  * @operationId updateUserTransferPreferences
  * @bodyDescription The new transfer preferences
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateTransferPreferencesRequest} application/json
  * @bodyRequired
  * @response 200 - Transfer preferences updated successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -1300,10 +1287,10 @@ async function updateUserTransferPreferences(
  * @description This endpoint is used to add an address to the current user.
  * @operationId addAddress
  * @bodyDescription The address to add
- * @bodyContent {object} application/json
+ * @bodyContent {AddAddressRequest} application/json
  * @bodyRequired
  * @response 200 - Address added successfully. Returns the updated user's details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserAddressResponse} 200.application/json
  * @response 400 - Error adding address.
  * @prisma_model addresses (see ./prisma/schemas/base.prisma)
  * @prisma_model user_address (see ./prisma/schemas/base.prisma)
@@ -1333,8 +1320,11 @@ async function addAddress(req: ValidatedRequest<AddAddressRequest>, res: Respons
  * @summary Disables the current user
  * @description This endpoint is used to disable the current user.
  * @operationId disableMe
+ * @bodyDescription The disabled status and reason
+ * @bodyContent {UpdateUserDisabledRequest} application/json
+ * @bodyRequired
  * @response 200 - User disabled successfully. Returns user.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user information.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -1371,10 +1361,9 @@ async function disableMe(req: ValidatedRequest<UpdateUserDisabledRequest>, res: 
  * @description Confirms a Stripe Payment Intent by id.
  * @operationId confirmPaymentIntent
  * @bodyDescription Payment intent id to confirm
- * @bodyContent {object} application/json
+ * @bodyContent {ConfirmPaymentIntentRequest} application/json
  * @bodyRequired
  * @response 200 - Payment intent confirmed
- * @responseContent {object} 200.application/json
  * @response 400 - Invalid parameters or error confirming payment intent
  */
 async function confirmPaymentIntent(req: ValidatedRequest<ConfirmPaymentIntentRequest>, res: Response): Promise<void> {
@@ -1399,7 +1388,7 @@ async function confirmPaymentIntent(req: ValidatedRequest<ConfirmPaymentIntentRe
  * @description Sets last_ping_at to now and marks driver or delivery driver as active based on current user.
  * @operationId ping
  * @response 200 - Driver/delivery driver online acknowledgement
- * @responseContent {object} 200.application/json
+ * @responseContent {string} 200.application/json
  * @response 400 - User is not a driver
  * @prisma_model users
  * @prisma_model driver
@@ -1516,7 +1505,7 @@ async function requestData(req: ValidatedRequest<never>, res: any) {
  * @description Returns reviews written for or by the current user, including author and target details.
  * @operationId getMyReviews
  * @response 200 - List of reviews
- * @responseContent {object} 200.application/json
+ * @responseContent {ReviewResponse[]} 200.application/json
  * @response 500 - Error fetching reviews
  * @prisma_model reviews
  * @prisma_model users
@@ -1546,7 +1535,7 @@ async function getMyReviews(req: ValidatedRequest<never>, res: Response): Promis
  * @operationId getReviewsByUserId
  * @pathParam {string} user_id - The user id
  * @response 200 - List of reviews
- * @responseContent {object} 200.application/json
+ * @responseContent {ReviewResponse[]} 200.application/json
  * @response 404 - User not found
  * @response 500 - Error fetching reviews
  * @prisma_model reviews
@@ -1690,7 +1679,9 @@ async function getAvailableWalletBalance(
  * @summary Get family wallet type and minimum between allowance and actual family wallet balance.
  * @description This endpoint is used to check wallet balance and type for a particular user.
  * @operationId getPaymentSheetCredentials
- * @response 200 - {family_wallet_balance:float,family_wallet_type:string}
+ * @pathParam {string} user_id - The ID of the child user
+ * @response 200 - Returning object with parent_wallet_balance, allowance and family_wallet_type
+ * @responseContent {FamilyWalletResponse} 200.application/json
  * @response 400 - Error checking wallet balances
  * @prisma_model wallet_funds (see ./prisma/schemas/base.prisma)
  * @prisma_model group_users (see ./prisma/schemas/user.prisma)
@@ -1741,11 +1732,11 @@ async function getFamilyWalletBalanceAndType(
  * @operationId updateWalletBalance
  * @pathParam {string} user_id - The ID of the user whose wallet balance is to be updated.
  * @bodyDescription The new wallet balance
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateWalletBalanceRequest} application/json
  * @bodyRequired
  * @response 200 - Wallet balance updated successfully.
- * @responseContent {object} 200.application/json
  * @response 400 - Error updating wallet balance.
+ * @responseContent {string} 200.application/json
  * @prisma_model wallet_funds (see ./prisma/schemas/base.prisma)
  * @prisma_model transactions (see ./prisma/schemas/base.prisma)
  */
@@ -1777,7 +1768,7 @@ async function updateWalletBalance(
  * @operationId getTransactions
  * @pathParam {string} user_id - The user id
  * @response 200 - List of transactions
- * @responseContent {object} 200.application/json
+ * @responseContent {TransactionResponse[]} 200.application/json
  * @response 400 - Error fetching transactions
  * @prisma_model transactions
  */
@@ -1803,10 +1794,10 @@ async function getTransactions(req: ValidatedRequest<never, { user_id: string }>
  * @description This endpoint is used to update the language preference for a particular user.
  * @operationId updateUserLanguage
  * @bodyDescription The user selected Language
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateUserLanguageRequest} application/json
  * @bodyRequired
  * @response 200 - Language updated successfully. Returns the updated user details.
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating user language.
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -1832,7 +1823,7 @@ async function updateUserLanguage(req: ValidatedRequest<UpdateUserLanguageReques
  * @operationId getUserByReferralCode
  * @pathParam {string} code - The referral code
  * @response 200 - User found
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error fetching user by referral code
  * @prisma_model users
  */
@@ -1855,10 +1846,11 @@ async function getUserByReferralCode(req: ValidatedRequest<never, { code: string
  * @summary Redeem a referral code for an existing user
  * @description This endpoint allows an existing user to redeem a referral code
  * @operationId redeemReferralCode
- * @bodyContent {object} application/json
+ * @bodyContent {RedeemReferralCodeRequest} application/json
  * @bodyRequired
  * @response 200 - Referral code redeemed successfully
  * @response 400 - Error redeeming referral code
+ * @responseContent {ReferralDetail} 200.application/json
  * @prisma_model referrals (see ./prisma/schemas/base.prisma)
  * @prisma_model users (see ./prisma/schemas/user.prisma)
  */
@@ -1883,7 +1875,7 @@ async function redeemReferralCode(req: ValidatedRequest<RedeemReferralCodeReques
 			return;
 		}
 		// Prevent referral by user referrals
-		const referrerReferral = await ReferralDao.getReferralByReferredUserId((referrer as UserBase).user_id);
+		const referrerReferral = await ReferralDao.getReferralByReferredUserId(referrer.user_id);
 		if (referrerReferral?.referrer_user_id === user_id) {
 			res.status(400).json({ errorCustom: 'Cannot get referred by one of your referrals' });
 			return;
@@ -1894,7 +1886,7 @@ async function redeemReferralCode(req: ValidatedRequest<RedeemReferralCodeReques
 			return;
 		}
 		// Referrer can only refer up to 10 people
-		if (referrer.referrals_made?.length >= 10) {
+		if (referrer.referrals_made?.length && referrer.referrals_made.length >= 10) {
 			res.status(400).json({ errorCustom: 'This user has already referred 10 people' });
 			return;
 		}
@@ -1912,11 +1904,11 @@ async function redeemReferralCode(req: ValidatedRequest<RedeemReferralCodeReques
  * @description Claims referral reward credits for the current user if eligible.
  * @operationId claimReward
  * @bodyDescription Referral id to claim
- * @bodyContent {object} application/json
+ * @bodyContent {ClaimRewardRequest} application/json
  * @bodyRequired
  * @response 200 - Reward claimed
- * @responseContent {object} 200.application/json
  * @response 400 - Reward already claimed or error
+ * @responseContent {ReferralBase} 200.application/json
  * @prisma_model referrals
  * @prisma_model wallet_funds
  */
@@ -1940,7 +1932,6 @@ async function claimReward(req: ValidatedRequest<ClaimRewardRequest>, res: Respo
 		expiryDate.setDate(expiryDate.getDate() + 30);
 		expiryDate.setHours(23, 59, 59, 999);
 		await WalletFundsDao.createCredit({
-			transaction_type: TRANSACTION_TYPE.REFERRAL_REWARD, // TODO: Find type
 			expires_at: expiryDate.toISOString(),
 			user_id: req.user.user_id,
 			amount: CREDITS.REFERRAL,
@@ -1966,7 +1957,7 @@ async function claimReward(req: ValidatedRequest<ClaimRewardRequest>, res: Respo
  * @operationId getUserCredits
  * @pathParam {string} service_type - Service type (e.g., taxi, delivery)
  * @response 200 - Credits and cashback data
- * @responseContent {object} 200.application/json
+ * @responseContent {UserCreditsResponse} 200.application/json
  * @response 400 - Error fetching user credits
  * @prisma_model wallet_funds
  * @prisma_model cashback
@@ -2004,7 +1995,7 @@ async function getUserCredits(
  * @description Returns current active delivery, taxi/transfer orders and first active reservation.
  * @operationId getMyActiveOrders
  * @response 200 - Active orders by type
- * @responseContent {object} 200.application/json
+ * @responseContent {MyActiveOrdersResponse} 200.application/json
  * @response 400 - Error fetching user active orders
  * @prisma_model delivery_orders
  * @prisma_model taxi_orders
@@ -2023,10 +2014,14 @@ async function getMyActiveOrders(req: ValidatedRequest<never>, res: Response): P
 			TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, ORDER_TYPE.TRANSFER_PRIVATE),
 			TableReservationDao.getReservationIfNotCompleted(user_id),
 		]);
+
+		const filteredDeliveryOrders = delivery_orders.filter((order) => {
+			if (!order.is_daily_meal) return true;
+			return order.timeline.some((entry) => entry.status === DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED);
+		});
+
 		res.status(200).json({
-			delivery_orders: delivery_orders.filter(
-				(order) => !order.is_daily_meal || order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED)
-			),
+			delivery_orders: filteredDeliveryOrders,
 			taxi_orders,
 			transfer_orders,
 			first_reservation,
@@ -2045,7 +2040,7 @@ async function getMyActiveOrders(req: ValidatedRequest<never>, res: Response): P
  * @description Returns the referral record associated with the current user, if any.
  * @operationId getReferral
  * @response 200 - Referral record
- * @responseContent {object} 200.application/json
+ * @responseContent {ReferralDetail} 200.application/json
  * @response 400 - Error fetching referral
  * @prisma_model referrals
  */
@@ -2073,10 +2068,10 @@ async function getReferral(req: ValidatedRequest<never>, res: Response): Promise
  * @description Updates the user's marketing notifications preference flags.
  * @operationId updateMarketingNotifications
  * @bodyDescription Preference payload
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateMarketingNotificationsRequest} application/json
  * @bodyRequired
  * @response 200 - Preferences updated
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating preferences
  * @prisma_model users
  */
@@ -2110,10 +2105,10 @@ async function updateMarketingNotifications(
  * @description Updates the user's ads personalization preference flags.
  * @operationId updateAdsPersonalization
  * @bodyDescription Preference payload
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateAdsPersonalizationRequest} application/json
  * @bodyRequired
  * @response 200 - Preferences updated
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating preferences
  * @prisma_model users
  */
@@ -2147,10 +2142,10 @@ async function updateAdsPersonalization(
  * @description Updates the user's newsletter preference flags.
  * @operationId updateNewsletter
  * @bodyDescription Preference payload
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateNewsletterRequest} application/json
  * @bodyRequired
  * @response 200 - Preferences updated
- * @responseContent {object} 200.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 400 - Error updating preferences
  * @prisma_model users
  */
@@ -2178,10 +2173,10 @@ async function updateNewsletter(req: ValidatedRequest<UpdateNewsletterRequest>, 
  * @description Sends an invitation to a family member via email or telephone.
  * @operationId inviteFamilyMember
  * @bodyDescription Invitation payload
- * @bodyContent {object} application/json
+ * @bodyContent {InviteFamilyMemberRequest} application/json
  * @bodyRequired
  * @response 200 - Invitation sent successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {string} 200.application/json
  * @response 400 - Missing user id or contact information
  * @response 500 - Error inviting family member
  */
@@ -2211,10 +2206,10 @@ async function inviteFamilyMember(req: ValidatedRequest<InviteFamilyMemberReques
  * @description Accepts a family invitation using the provided invitation code.
  * @operationId acceptFamilyInvitation
  * @bodyDescription Invitation acceptance payload
- * @bodyContent {object} application/json
+ * @bodyContent {AcceptFamilyInvitationRequest} application/json
  * @bodyRequired
  * @response 200 - Invitation accepted successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {string} 200.application/json
  * @response 400 - Missing user id or invitation code
  * @response 500 - Error accepting family invitation
  * @prisma_model users
@@ -2248,11 +2243,10 @@ async function acceptFamilyInvitation(
  * @summary Update the authenticated user's favorite service links
  * @description Updates user_favorite_service_links for the user.
  * @operationId updateFavoriteServices
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateFavoriteServicesBody} application/json
  * @response 200 - Favorites updated
- * @responseContent {object} 200.application/json
  * @response 400 - Invalid input data
- * @responseContent {object} 400.application/json
+ * @responseContent {UserResponse} 200.application/json
  * @response 500 - Error updating favorites
  * @prisma_model users
  */
@@ -2265,7 +2259,7 @@ async function updateFavoriteServices(req: ValidatedRequest<UpdateFavoriteServic
 		}
 		const { services } = req.body;
 		const updatedFavs = await UserDao.updateFavoriteServices(user_id, services);
-		res.json(updatedFavs);
+		res.status(200).json(updatedFavs);
 	} catch (e) {
 		res.status(500).json({ error: (e as Error).message });
 	}

@@ -1,14 +1,68 @@
 components:
   schemas:
-    UserResponse:
-      - type: object
-        properties:
-        id:
-          type: string
-          example: '78a2903f-fd11-4795-b891-eb623fc90408'
-        name:
-          type: string
-          example: Jani Kolani
-        age:
+    UserWithPayments:
+      type: object
+      properties:
+        user:
+          allOf:
+            - $ref: '#/components/schemas/UserResponse'
+        payment_methods:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentMethod'
+
+    FamilyWalletResponse:
+      type: object
+      properties:
+        parent_wallet_balance:
           type: number
-          example: 18
+          format: float
+          example: 150.75
+        family_wallet_type:
+          type: string
+          example: "FAMILY"
+        allowance:
+          allOf:
+            - $ref: '#/components/schemas/AllowanceRef'
+
+    UserCreditsResponse:
+      type: object
+      properties:
+        availableCredits:
+          type: array
+          items:
+            $ref: '#/components/schemas/WalletFundsBase'
+        expiredCredits:
+          type: array
+          items:
+            $ref: '#/components/schemas/WalletFundsBase'
+        cashbacks:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashbackDetail'
+
+    MyActiveOrdersResponse:
+      type: object
+      properties:
+        delivery_orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeliveryOrderDetail'
+        taxi_orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxiOrderDetail'
+        transfer_orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxiOrderDetail'
+        first_reservation:
+          allOf:
+            - $ref: '#/components/schemas/TableReservationDetail'
+          nullable: true
+
+
+
+
+        
+

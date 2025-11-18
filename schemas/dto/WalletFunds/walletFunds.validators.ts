@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { FUNDS_TYPE, CREDIT_STATUS, TRANSACTION_TYPE } from '@prisma/client';
+import { CREDIT_STATUS, TRANSACTION_TYPE } from '@prisma/client';
 
 import { UUID, Timestamp } from '../../primitives.js';
 import { FundsTypeSchema } from './walletFunds.dto.js';
@@ -13,7 +13,7 @@ export const CreateWalletFundsSchema = z
 		user_id: UUID,
 		amount: z.number().int().positive().describe('Amount in cents'),
 		charge_id: z.string().nullable().optional(),
-		transaction_type: z.nativeEnum(TRANSACTION_TYPE).default(TRANSACTION_TYPE.CREDIT),
+		transaction_type: z.nativeEnum(TRANSACTION_TYPE).default(TRANSACTION_TYPE.CREDIT).optional(),
 		type: FundsTypeSchema.default('FUNDS'),
 		status: z.nativeEnum(CREDIT_STATUS).optional(),
 		expires_at: Timestamp.nullable().optional(),

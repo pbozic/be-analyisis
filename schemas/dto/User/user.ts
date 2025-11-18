@@ -8,6 +8,7 @@ import { TransactionRefSchema } from './transaction.js';
 import { DriverBaseSchema } from '../Driver';
 import { FileRefSchema } from '../Files/file.dto.js';
 import { GroupUserDetailResponseSchema } from '../Group/groupUser.js';
+import { ReferralBaseSchema } from '../Referral';
 
 extendZodWithOpenApi(z);
 
@@ -142,7 +143,7 @@ export type UserRef = z.infer<typeof UserRefSchema>;
 // User Response Schema - Base with embedded refs (no password)
 export const UserResponseSchema = UserBaseSchema.omit({ password: true })
 	.extend({
-		business_users: z.array(BusinessUserRefSchema).nullable().optional(),
+		business_users: z.array(BusinessUserWithBusinessResponseSchema).nullable().optional(),
 		addresses: z.array(UserAddressRefSchema).nullable().optional(),
 		driver: DriverBaseSchema.nullable().optional(),
 		profile_picture: FileRefSchema.nullable().optional(),
@@ -153,6 +154,10 @@ export const UserPasswordSchema = UserBaseSchema.pick({ password: true, user_id:
 // User with Business Users - for getUserById with business_users include
 export const UserWithBusinessUsersResponseSchema = UserResponseSchema.extend({
 	business_users: z.array(BusinessUserWithBusinessResponseSchema).nullable(),
+});
+
+export const UserWithReferralsResponseSchema = UserResponseSchema.extend({
+	referrals_made: z.array(ReferralBaseSchema).nullable(),
 });
 
 // User with Addresses - for functions that include addresses
@@ -203,7 +208,11 @@ export type UserWithAddressesResponse = z.infer<typeof UserWithAddressesResponse
 export type UserDetailResponse = z.infer<typeof UserDetailResponseSchema>;
 export type UserWithTransactionsResponse = z.infer<typeof UserWithTransactionsResponseSchema>;
 export type UserListResponse = z.infer<typeof UserListResponseSchema>;
+export type UserWithReferralsResponse = z.infer<typeof UserWithReferralsResponseSchema>;
 
+// =======================
+// Registry
+// =======================
 export function registerSchemas(registry: OpenAPIRegistry) {
 	// Register common user schemas
 	registry.register('UserRoleAssignment', UserRoleAssignmentSchema);
@@ -223,6 +232,9 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('UserDetail', UserDetailResponseSchema);
 	registry.register('UserWithTransactions', UserWithTransactionsResponseSchema);
 	registry.register('UserList', UserListResponseSchema);
+	registry.register('UserWithParentUser', UserWithParentUserResponseSchema);
+	registry.register('UserWithFavourites', UserWithFavouritesResponseSchema);
+	registry.register('UserWithReferrals', UserWithReferralsResponseSchema);
 
 	// Responses
 	registry.register('UserResponse', UserResponseSchema);

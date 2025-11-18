@@ -94,7 +94,7 @@ export type BusinessUserResponse = z.infer<typeof BusinessUserResponseSchema>;
 // BusinessUser Complex Response Schema - for getBusinessUserByUserId with business context
 // This is used when returning business_user with full business details and related users
 export const BusinessUserWithBusinessResponseSchema = BusinessUserBaseSchema.extend({
-	users: UserResponseSchema.optional(),
+	//users: UserResponseSchema.optional(),
 	allowance: AllowanceResponseSchema.nullable().optional(),
 	operating_address: AddressRefSchema.nullable().optional(),
 	business: z
@@ -102,7 +102,7 @@ export const BusinessUserWithBusinessResponseSchema = BusinessUserBaseSchema.ext
 			business_id: UUID,
 			name: z.string(),
 			email: z.string().email(),
-			business_users: z.array(BusinessUserRefSchema).optional(),
+			//business_users: z.array(BusinessUserRefSchema).optional(),
 			business_clients: z.array(z.any()).optional(), // TODO: Add proper BusinessClient schema when available
 			business_local_locations: z.array(z.any()).optional(), // TODO: Add proper LocalLocation schema when available
 			stripe_customer_id: z.string().nullable(),

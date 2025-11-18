@@ -16,6 +16,7 @@ export {
 	UserDetailResponseSchema,
 	UserWithTransactionsResponseSchema,
 	UserListResponseSchema,
+	type UserWithReferralsResponse,
 	type UserBase,
 	type UserRef,
 	type UserResponse,

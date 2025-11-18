@@ -88,6 +88,7 @@ export const DocumentBaseSchema = z
 		document_type: z.string().optional(),
 		additional_info: z.any().nullable().optional(),
 		issue_date: Timestamp.nullable().optional(),
+		public: z.boolean().optional(),
 		expiration_date: Timestamp.nullable().optional(),
 		created_at: Timestamp.optional(),
 		updated_at: Timestamp.optional(),

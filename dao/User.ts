@@ -8,9 +8,15 @@ import S3Helper from '../lib/s3.js';
 import { USER_ROLE, ACCOUNT_ACTIONS } from '../lib/constants.js';
 import { USER_ROLES } from '../prisma/schemas/interfaces.js';
 import WalletFundsDao from './WalletFunds.js';
-import type { UserBase, UserListResponse, UserResponse, UserWithAddressesResponse } from '../schemas/dto/User/index.js';
+import type {
+	UserBase,
+	UserListResponse,
+	UserResponse,
+	UserWithAddressesResponse,
+	UserWithReferralsResponse,
+} from '../schemas/dto/User/index.js';
 import type { TransactionResponse } from '../schemas/dto/User/index.js';
-import { UserPassword, UserWithParentUserResponse } from '../schemas/dto/User/user.js';
+import { UserPassword } from '../schemas/dto/User/user.js';
 import { UserLoginResponse } from '../schemas/dto/Auth/AuthResponse.dto.js';
 import {
 	userAddressesInclude,
@@ -21,8 +27,6 @@ import {
 	UserAddressesPrisma,
 	UserAddressesAndConnectionsCreationPrisma,
 	UserLoginPrisma,
-	userAllInclude,
-	UserPrisma,
 } from '../prisma/includes/user.js';
 import {
 	toUserWithAddressesResponse,
@@ -31,6 +35,7 @@ import {
 	toUserWithAddressesResponseList,
 	toUserResponse,
 } from '../schemas/dto/User/user.mappers.js';
+import { WalletFundsBase } from '../schemas/dto/WalletFunds';
 
 declare const process: {
 	env: {
@@ -106,14 +111,13 @@ const getPersonalUsers = async (
 // 	}
 // };
 
-const getUserById = async (user_id: string): Promise<UserWithParentUserResponse | null> => {
+const getUserById = async (user_id: string): Promise<UserResponse | null> => {
 	try {
-		const user = (await prisma.users.findUnique({
+		const user = await prisma.users.findUnique({
 			where: {
 				user_id,
 			},
-			include: userAllInclude,
-		})) as UserPrisma;
+		});
 		return toUserResponse(user);
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID');
@@ -186,13 +190,13 @@ const getPasswordByUserId = async (user_id: string): Promise<string | null> => {
  * @param {FindUniqueArgs} args - Additional Prisma args.
  * @returns {Promise<UserResponse | null>} User or null.
  */
-const getUserByReferralCode = async (code: string): Promise<UserResponse | null> => {
+const getUserByReferralCode = async (code: string): Promise<UserWithReferralsResponse | null> => {
 	try {
 		return (await prisma.users.findUnique({
 			where: {
 				referral_code: code,
 			},
-		})) as UserResponse | null;
+		})) as UserWithReferralsResponse | null;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by referral code');
 	}
@@ -356,7 +360,7 @@ const getUserByResetToken = async (resetToken: string): Promise<any> => {
  * Update user general fields (excludes email, password, telephone, addresses, role).
  *
  * @param {string} user_id - User ID.
- * @param {Partial<UpdateUserRequest>} user - Fields to update.
+ * @param {Partial<UserBase>} user - Fields to update.
  * @returns {Promise<UserResponse>} Updated user.
  */
 const updateUser = async (user_id: string, user: Partial<UserBase>): Promise<UserResponse> => {
@@ -835,9 +839,9 @@ async function deleteUserByUserId(userId: string): Promise<UserResponse> {
  * @param {string} userId - User ID.
  * @param {number} amount - Amount in currency units (not cents).
  * @param {any[]} documents - Optional documents array with base64 files to persist.
- * @returns {Promise<TransactionResponse>} Created wallet funds transaction.
+ * @returns {Promise<WalletFundsBase>} Created wallet funds transaction.
  */
-const updateWalletBalance = async (userId: string, amount: number, documents?: any[]): Promise<TransactionResponse> => {
+const updateWalletBalance = async (userId: string, amount: number, documents?: any[]): Promise<WalletFundsBase> => {
 	try {
 		const newTransaction = await WalletFundsDao.createWalletFunds(userId, Math.round(amount * 100));
 
@@ -846,13 +850,14 @@ const updateWalletBalance = async (userId: string, amount: number, documents?: a
 				const documentData = {
 					document_type: file.document_type,
 				};
-				const newDocument = (await createDocument(documentData)) as any;
+				const newDocument = await createDocument(documentData);
+				if (!newTransaction.transaction_id) throw new Error('Transaction ID is missing');
 				await linkDocumentToTransaction(newDocument.document_id, newTransaction.transaction_id);
 				const base64 = file.base64;
 				delete file.base64;
 				delete file.document_type;
 				delete file.name;
-				const newFile = (await addFileToDocument(newDocument.document_id, file, newDocument.public)) as any;
+				const newFile = await addFileToDocument(newDocument.document_id, file, newDocument.public);
 				const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 				await S3Helper.SaveObject(
 					key,
@@ -867,7 +872,7 @@ const updateWalletBalance = async (userId: string, amount: number, documents?: a
 			}
 		}
 		console.log('Funds added to wallet successfully');
-		return newTransaction as TransactionResponse;
+		return newTransaction;
 	} catch (error) {
 		console.error('Error updating wallet balance:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to update wallet balance');

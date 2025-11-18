@@ -50,7 +50,7 @@ export function toBusinessUserWithBusinessResponse(
 		operating_address_id: r.operating_address_id ?? null,
 		created_at: toIso(r.created_at) ?? new Date().toISOString(),
 		updated_at: toIso(r.updated_at) ?? new Date().toISOString(),
-		users: (r as any).users,
+		//users: (r as any).users,
 		stripe_customer_id: r.stripe_customer_id ?? null,
 		payment_methods: toPaymentList(r.payment_methods ?? []),
 		allowance: (r as any).allowance ?? null,

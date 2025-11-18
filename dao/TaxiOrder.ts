@@ -40,6 +40,32 @@ async function getOrders(args?: Prisma.taxi_ordersFindManyArgs): Promise<TaxiOrd
 	}
 }
 
+async function getPendingScheduledOrdersByUserId(user_id: string): Promise<TaxiOrderDetail[]> {
+	try {
+		const results = await prisma.taxi_orders.findMany({
+			where: {
+				user_id: user_id,
+				is_scheduled: true,
+				status: TAXI_ORDER_STATUS.PENDING,
+			},
+			include: {
+				customer: true,
+				driver: {
+					include: {
+						user: true,
+						current_vehicle: true,
+					},
+				},
+				vehicle: true,
+			},
+		});
+		return results.map((result: unknown) => toTaxiOrderDetail(result));
+	} catch (error) {
+		console.error('Error fetching scheduled orders for user:', error);
+		throw new Error(error instanceof Error ? error.message : 'Unknown error');
+	}
+}
+
 /**
  * Get a taxi order by ID with nested user, driver, and grouped_orders.
  *
@@ -1246,6 +1272,7 @@ export { getAcceptedOrders };
 export { userActiveOrders };
 export { getDeliveryOrdersByDriverId };
 export { deleteOrderSent };
+export { getPendingScheduledOrdersByUserId };
 export default {
 	getOrder,
 	getOrdersByDriverId,
@@ -1276,4 +1303,5 @@ export default {
 	deleteOrderSent,
 	acceptTaxiOrderWithRawLock,
 	acceptOrderSent,
+	getPendingScheduledOrdersByUserId,
 };

@@ -8,13 +8,9 @@ config();
 
 type ParsedPhone = { number: string; countryCallingCode: string };
 
-const sendSMSVerification = async (
-	to: string,
-	token: string | number,
-	countryCode: string | null = null
-): Promise<AxiosResponse<string>> => {
+const sendSMSVerification = async (to: string, token: string | number): Promise<AxiosResponse<string>> => {
 	try {
-		const parsedPhoneNumber = await getParsedPhoneNumber(to, countryCode);
+		const parsedPhoneNumber = await getParsedPhoneNumber(to);
 		const params = {
 			un: process.env.SMS_API_USERNAME,
 			ps: process.env.SMS_API_PASSWORD,
