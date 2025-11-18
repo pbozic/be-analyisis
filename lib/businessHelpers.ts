@@ -4,6 +4,7 @@ import prisma from '../prisma/prisma.js';
 import BusinessUserDao from '../dao/BusinessUsers.js';
 import { SocketStore } from '../socket.js';
 import ScoringPointsDao from '../dao/ScoringPoints.js';
+import { Business } from '../types/business/Business.js';
 
 /**
  * Marks businesses as no longer new if they were first activated more than 14 days ago.
@@ -23,7 +24,7 @@ async function setNewBusinesses(): Promise<void> {
 		await prisma.businesses.updateMany({
 			where: {
 				business_id: {
-					in: businesses.map((business: any) => business.business_id),
+					in: businesses.map((business: Business) => business.business_id),
 				},
 			},
 			data: {
@@ -86,7 +87,7 @@ async function aggregateLateEvents(type: 'driver' | 'stores' | 'food_drinks'): P
 						scoring_points_id: null,
 					},
 					data: {
-						scoring_points: { connect: { scoring_points_id: newScoringPoints.scoring_points_id } },
+						scoring_points_id: newScoringPoints.scoring_points_id,
 					},
 				});
 			});

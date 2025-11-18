@@ -1,34 +1,19 @@
-import { PROMO_TYPE, ANALYTICS_TYPE } from '@prisma/client';
+import { PROMO_TYPE } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
+import {
+	LogPromoAnalyticsParamsSchema,
+	PromoAnalyticsLogResultSchema,
+	PromoAnalyticsRowInputSchema,
+	type LogPromoAnalyticsParams,
+	type PromoAnalyticsLogResult,
+	type PromoAnalyticsRowInput,
+} from '../schemas/dto/PromoAnalytics/promo-analytics.dto.ts';
 
 // Minutes to suppress duplicate analytics entries with the same fingerprint (set >0 to enable later)
 const PROMO_ANALYTICS_RATE_LIMIT_MINUTES = 0; // disabled per spec (log every impression)
 
-interface LogPromoAnalyticsParams {
-	searchQuery?: string;
-	wordIds?: string[];
-	promo_sections_id?: string;
-	promo_ads_id?: string;
-	business_id: string;
-	user_id?: string;
-	order_id?: string;
-	promo_type: PROMO_TYPE;
-	analytics_type: ANALYTICS_TYPE;
-	daily_meal_subscription_id?: string;
-}
-
-interface PromoAnalyticsRowInput {
-	promo_ads_id?: string;
-	promo_sections_id?: string;
-	word_id?: string;
-	order_id?: string;
-	business_id: string;
-	user_id?: string;
-	promo_type: PROMO_TYPE;
-	type: ANALYTICS_TYPE;
-	daily_meal_subscription_id?: string;
-}
+// Interfaces replaced by DTO types (LogPromoAnalyticsParams, PromoAnalyticsRowInput)
 /**
  * Creates multiple promo analytics entries in bulk.
  *
@@ -94,7 +79,9 @@ async function isDuplicate(_row: PromoAnalyticsRowInput): Promise<boolean> {
  * @param {ANALYTICS_TYPE} params.analytics_type
  * @returns {Promise<{created:number, skipped:number, details:Array<{word_id?:string, reason:string}>}>}
  */
-export async function logPromoAnalytics(params: LogPromoAnalyticsParams) {
+export async function logPromoAnalytics(rawParams: LogPromoAnalyticsParams): Promise<PromoAnalyticsLogResult> {
+	// Validate input params via DTO schema
+	const params = LogPromoAnalyticsParamsSchema.parse(rawParams);
 	const {
 		wordIds: explicitWordIds,
 		promo_sections_id,
@@ -105,20 +92,24 @@ export async function logPromoAnalytics(params: LogPromoAnalyticsParams) {
 		analytics_type,
 		order_id,
 		daily_meal_subscription_id,
-	} = params || {};
+	} = params;
 
 	if (!business_id || !promo_type || !analytics_type) {
-		return {
+		return PromoAnalyticsLogResultSchema.parse({
 			created: 0,
 			skipped: 1,
-			details: [{ reason: 'Missing core identifiers (business_id, user_id, promo_type, analytics_type).' }],
-		};
+			details: [{ reason: 'Missing core identifiers (business_id, promo_type, analytics_type).' }],
+		});
 	}
 
 	if (promo_type === PROMO_TYPE.WORD) {
-		let wordIds = Array.isArray(explicitWordIds) ? [...explicitWordIds] : [];
-		if (!wordIds.length) return { created: 0, skipped: 1, details: [{ reason: 'No word IDs found.' }] };
-
+		const wordIds = Array.isArray(explicitWordIds) ? [...explicitWordIds] : [];
+		if (!wordIds.length)
+			return PromoAnalyticsLogResultSchema.parse({
+				created: 0,
+				skipped: 1,
+				details: [{ reason: 'No word IDs found.' }],
+			});
 		const rows: PromoAnalyticsRowInput[] = [];
 		const details: Array<{ word_id?: string; reason: string }> = [];
 		for (const word_id of wordIds) {
@@ -129,7 +120,6 @@ export async function logPromoAnalytics(params: LogPromoAnalyticsParams) {
 				},
 			});
 			if (!wordBuy) continue;
-
 			const row: PromoAnalyticsRowInput = {
 				promo_ads_id,
 				promo_sections_id,
@@ -139,31 +129,45 @@ export async function logPromoAnalytics(params: LogPromoAnalyticsParams) {
 				user_id,
 				promo_type,
 				type: analytics_type,
+				daily_meal_subscription_id,
 			};
+			// Validate row shape (optional, ensures consistency)
+			PromoAnalyticsRowInputSchema.parse(row);
 			if (await isDuplicate(row)) {
 				details.push({ word_id, reason: 'Duplicate within rate-limit window. Skipped.' });
 				continue;
 			}
 			rows.push(row);
 		}
-		if (!rows.length) return { created: 0, skipped: details.length || 1, details };
+		if (!rows.length)
+			return PromoAnalyticsLogResultSchema.parse({
+				created: 0,
+				skipped: details.length || 1,
+				details,
+			});
 		const { created } = await createPromoAnalyticsEntries(rows);
-		return { created, skipped: details.length, details };
-	} else {
-		const row: PromoAnalyticsRowInput = {
-			promo_sections_id,
-			promo_ads_id,
-			business_id,
-			user_id,
-			order_id,
-			promo_type,
-			type: analytics_type,
-			daily_meal_subscription_id,
-		};
-		if (await isDuplicate(row)) {
-			return { created: 0, skipped: 1, details: [{ reason: 'Duplicate within rate-limit window. Skipped.' }] };
-		}
-		const { created } = await createPromoAnalyticsEntries([row]);
-		return { created, skipped: 0, details: [] };
+		return PromoAnalyticsLogResultSchema.parse({ created, skipped: details.length, details });
 	}
+
+	// Non-WORD promo analytics single row
+	const singleRow: PromoAnalyticsRowInput = {
+		promo_sections_id,
+		promo_ads_id,
+		business_id,
+		user_id,
+		order_id,
+		promo_type,
+		type: analytics_type,
+		daily_meal_subscription_id,
+	};
+	PromoAnalyticsRowInputSchema.parse(singleRow);
+	if (await isDuplicate(singleRow)) {
+		return PromoAnalyticsLogResultSchema.parse({
+			created: 0,
+			skipped: 1,
+			details: [{ reason: 'Duplicate within rate-limit window. Skipped.' }],
+		});
+	}
+	const { created } = await createPromoAnalyticsEntries([singleRow]);
+	return PromoAnalyticsLogResultSchema.parse({ created, skipped: 0, details: [] });
 }

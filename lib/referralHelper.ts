@@ -1,8 +1,10 @@
+import { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS } from '@prisma/client';
+
 import ReferralDao from '../dao/Referrals.ts';
 import WalletFundsDao from '../dao/WalletFunds.ts';
 import TaxiOrderDao from '../dao/TaxiOrder.ts';
 import DeliveryOrderDao from '../dao/DeliveryOrder.ts';
-import { CREDITS, TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS } from './constants.js';
+import { CREDITS } from './constants.js';
 import { sendReferralNotifications } from './notifications.js';
 import type { UserBase } from '../schemas/dto/User/index.js';
 import type { TaxiOrderDetail } from '../schemas/dto/TaxiOrders/taxiOrder.dto.js';
@@ -44,7 +46,7 @@ export async function handleReferral(userId: string): Promise<void> {
 
 	const referredUserDeliveryOrders = await DeliveryOrderDao.getOrders({
 		where: {
-			status: DELIVERY_ORDER_STATUS.SUCCESS,
+			status: DELIVERY_ORDER_STATUS.ORDER_FINISHED_SUCCESS,
 			user_id: referral.referred_user_id,
 		},
 	});
