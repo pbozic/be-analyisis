@@ -218,13 +218,14 @@ export async function searchBusinesses(req: AuthenticatedRequest, res: Response)
 		//TODO: determine type of module and return data for that specific module
 		const results = {
 			...esResults,
-			results: esResults.results?.map((esResult) => {
-				const business = businesses?.find((b) => b.business_id === esResult.business_id);
-				return {
-					...business,
-					...esResult,
-				};
-			}) || [],
+			results:
+				esResults.results?.map((esResult) => {
+					const business = businesses?.find((b) => b.business_id === esResult.business_id);
+					return {
+						...business,
+						...esResult,
+					};
+				}) || [],
 		};
 		if (results) {
 			for (const resItem of results.results) {
@@ -792,10 +793,7 @@ async function getBusinessesByNameSearch(
  * @response 400 - Error deleting business
  * @prisma_model businesses
  */
-async function deleteBusiness(
-	req: ValidatedRequest<never, { business_id: string }>,
-	res: Response
-): Promise<void> {
+async function deleteBusiness(req: ValidatedRequest<never, { business_id: string }>, res: Response): Promise<void> {
 	try {
 		await BusinessDao.deleteBusiness(req.params.business_id);
 		res.status(200).json({ message: 'Business deleted successfully' });
@@ -847,10 +845,7 @@ async function removeParentBusinessId(
  * @response 400 - Error creating payment intent.
  * @prisma_model users
  */
-async function createPaymentIntent(
-	req: ValidatedRequest<CreatePaymentIntentInput>,
-	res: Response
-): Promise<void> {
+async function createPaymentIntent(req: ValidatedRequest<CreatePaymentIntentInput>, res: Response): Promise<void> {
 	try {
 		const { amount, payment_method, user_id } = req.body;
 		const user = await UserDao.getUserById(user_id);
@@ -1227,12 +1222,15 @@ async function getBusinessReviewsById(
  */
 async function editBusiness(
 	req: ValidatedRequest<
-		UpdateBusinessInput & { business_id: string; address?: UpdateAddressInput; delivery_address?: UpdateAddressInput }
+		UpdateBusinessInput & {
+			business_id: string;
+			address?: UpdateAddressInput;
+			delivery_address?: UpdateAddressInput;
+		}
 	>,
 	res: Response
 ): Promise<void> {
-	const { business_group_name, email, telephone, address, delivery_address, working_hours, ...otherData } =
-		req.body;
+	const { business_group_name, email, telephone, address, delivery_address, working_hours, ...otherData } = req.body;
 	const business_id = otherData.business_id;
 	try {
 		// Update the business details
@@ -1357,16 +1355,13 @@ async function generateBusinessStripeByBusinessId(
 		});
 	}
 }
-async function onboardingEnd(
-	req: ValidatedRequest<never, { business_id: string }>,
-	res: Response
-): Promise<void> {
+async function onboardingEnd(req: ValidatedRequest<never, { business_id: string }>, res: Response): Promise<void> {
 	try {
 		const business_id = req.params.business_id;
 		const business = await BusinessDao.getBusinessById(business_id);
 		if (!business || !business.stripe_account_id) {
 			res.status(404).render('stripeOnboardingIncomplete', {
-				message: 'We couldn't find a valid Stripe account for this business.',
+				message: "We couldn't find a valid Stripe account for this business.",
 			});
 			return;
 		}
@@ -1406,10 +1401,7 @@ async function onboardingEnd(
  * @response 500 - Internal Server Error
  * @prisma_model delivery_orders
  */
-async function getBusynessFactorsBusinessIdList(
-	req: AuthenticatedRequest,
-	res: Response
-): Promise<void> {
+async function getBusynessFactorsBusinessIdList(req: AuthenticatedRequest, res: Response): Promise<void> {
 	const { business_ids } = req.query;
 	if (!business_ids) {
 		res.status(400).json({ error: 'business_ids parameter is required' });
