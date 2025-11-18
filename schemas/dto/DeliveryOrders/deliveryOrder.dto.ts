@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { MODULE } from '@prisma/client';
+import { DELIVERY_ORDER_STATUS, MODULE } from '@prisma/client';
 
 import { Timestamp, UUID } from '../../primitives.js';
 import { LineItemDetailSchema } from '../LineItems/index.js';
 import { UserBaseSchema } from '../User/index.js';
-import { BusinessBaseSchema } from '../Business/business.js';
 import { DriverBaseSchema } from '../Driver/driver.dto.js';
+import { BusinessResponseDto } from '../Business/business.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -73,6 +73,9 @@ export const OrderPricingSchema = z
 		total_price: z.number().min(0),
 		discount_savings: z.number().min(0).optional(),
 		credit_discount: z.number().min(0).optional(),
+		minimum_order_fee: z.number().min(0).optional(),
+		type: z.string().default('delivery'),
+		business_id: UUID,
 	})
 	.openapi({
 		title: 'OrderPricing',
@@ -110,9 +113,9 @@ export const OrderLocationSchema = z
 // === Timeline Entry ===
 export const TimelineEntrySchema = z
 	.object({
-		status: z.string().min(1),
+		status: z.nativeEnum(DELIVERY_ORDER_STATUS),
 		timestamp: Timestamp,
-		metadata: z.record(z.any()).optional(),
+		entry_data: z.record(z.any()).optional(),
 	})
 	.openapi({
 		title: 'TimelineEntry',
@@ -192,16 +195,16 @@ export const DeliveryOrderBaseSchema = z
 	.object({
 		order_id: UUID,
 		user_id: UUID,
+		business_id: UUID.optional(),
 		module_id: UUID,
 		module_type: z.union([z.literal(MODULE.STORES), z.literal(MODULE.FOOD_DRINKS)]),
-		delivery_driver_id: UUID.nullable().optional(),
 		driver_id: UUID.nullable().optional(),
 		order_number: z.number().optional(),
-		status: z.string(),
+		status: z.nativeEnum(DELIVERY_ORDER_STATUS),
 		details: z.record(z.any()).nullable().optional(),
 		timeline: z.array(z.record(z.any())).optional().default([]),
-		delivery_address: z.record(z.any()).nullable().optional(),
-		pickup_address: z.record(z.any()).nullable().optional(),
+		delivery_location: z.record(z.any()).nullable().optional(),
+		pickup_location: z.record(z.any()).nullable().optional(),
 		pickup_time: Timestamp.nullable().optional(),
 		delivery_time: Timestamp.nullable().optional(),
 		estimated_delivery_time: Timestamp.nullable().optional(),
@@ -212,10 +215,16 @@ export const DeliveryOrderBaseSchema = z
 		payment_method: z.string().nullable().optional(),
 		is_daily_meal: z.boolean().optional(),
 		special_instructions: z.string().nullable().optional(),
+		rejection_reason: z.string().nullable().optional(),
 		last_sent_at: Timestamp.nullable().optional(),
 		delivery_image: z.string().nullable().optional(),
 		created_at: Timestamp.optional(),
 		updated_at: Timestamp.optional(),
+		payment_intent_id: z.string().nullable().optional(),
+		scheduled_at: Timestamp.nullable().optional(),
+		find_drivers_attempts: z.number().optional(),
+		allow_credits_usage: z.boolean().optional(),
+		business_local_location_id: UUID.nullable().optional(),
 	})
 	.openapi('DeliveryOrderBase');
 
@@ -241,7 +250,7 @@ export type DeliveryOrderRef = z.infer<typeof DeliveryOrderRefSchema>;
 // ===============
 export const DeliveryOrderDetailSchema = DeliveryOrderBaseSchema.extend({
 	user: UserBaseSchema.nullable().optional(),
-	business: BusinessBaseSchema.nullable().optional(),
+	business: BusinessResponseDto.nullable().optional(),
 	driver: DriverBaseSchema.nullable().optional(),
 	items: z.array(LineItemDetailSchema).optional(),
 }).openapi('DeliveryOrderDetail');

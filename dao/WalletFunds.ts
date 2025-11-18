@@ -346,7 +346,7 @@ export async function getAvailableWalletBalanceGroupedByType(userId: string): Pr
 		});
 		const balances: Record<string, number> = {};
 		for (const row of result) {
-			balances[row.type] = row._sum.amount || 0;
+			balances[row.type ?? 'none'] = row._sum.amount || 0;
 		}
 		return balances;
 	} catch (error) {

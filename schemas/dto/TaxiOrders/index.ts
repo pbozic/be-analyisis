@@ -1,5 +1,3 @@
-import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-
 // === TaxiOrder DTOs (Response) ===
 export {
 	TaxiOrderBaseSchema,
@@ -28,9 +26,3 @@ export {
 
 // === TaxiOrder Mappers ===
 export { toTaxiOrderDetail, toTaxiOrderRef } from './taxiOrder.mappers.js';
-
-// === Schema Registration ===
-export function registerSchemas(registry: OpenAPIRegistry) {
-	registerTaxiOrderSchemas(registry);
-	registerTaxiOrderValidatorSchemas(registry);
-}

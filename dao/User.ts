@@ -8,15 +8,9 @@ import S3Helper from '../lib/s3.js';
 import { USER_ROLE, ACCOUNT_ACTIONS } from '../lib/constants.js';
 import { USER_ROLES } from '../prisma/schemas/interfaces.js';
 import WalletFundsDao from './WalletFunds.js';
-import type {
-	UserBase,
-	UserListResponse,
-	UserResponse,
-	UserWithAddressesResponse,
-	UserWithBusinessUsersResponse,
-} from '../schemas/dto/User/index.js';
+import type { UserBase, UserListResponse, UserResponse, UserWithAddressesResponse } from '../schemas/dto/User/index.js';
 import type { TransactionResponse } from '../schemas/dto/User/index.js';
-import { UserPassword } from '../schemas/dto/User/user.js';
+import { UserPassword, UserWithParentUserResponse } from '../schemas/dto/User/user.js';
 import { UserLoginResponse } from '../schemas/dto/Auth/AuthResponse.dto.js';
 import {
 	userAddressesInclude,
@@ -112,7 +106,7 @@ const getPersonalUsers = async (
 // 	}
 // };
 
-const getUserById = async (user_id: string): Promise<UserWithBusinessUsersResponse | null> => {
+const getUserById = async (user_id: string): Promise<UserWithParentUserResponse | null> => {
 	try {
 		const user = (await prisma.users.findUnique({
 			where: {

@@ -1,7 +1,9 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { TAXI_ORDER_STATUS } from '@prisma/client';
 
 import { TaxiOrderBaseSchema } from './taxiOrder.dto.js';
+import { UUID } from '../../primitives.js';
 
 extendZodWithOpenApi(z);
 
@@ -20,9 +22,20 @@ export const UpdateTaxiOrderSchema = TaxiOrderBaseSchema.partial()
 	.omit({
 		created_at: true,
 	})
+	.extend({
+		order_id: UUID,
+	})
 	.openapi('UpdateTaxiOrder');
 
 export type UpdateTaxiOrder = z.infer<typeof UpdateTaxiOrderSchema>;
+
+export const UpdateTaxiOrderStatusSchema = UpdateTaxiOrderSchema.pick({ order_id: true, status: true })
+	.extend({
+		status: z.nativeEnum(TAXI_ORDER_STATUS),
+	})
+	.openapi('UpdateTaxiOrderStatus');
+
+export type UpdateTaxiOrderStatus = z.infer<typeof UpdateTaxiOrderStatusSchema>;
 
 // Additional request schemas used in routes
 export const CreateDispatchOrderSchema = CreateTaxiOrderSchema.openapi('CreateDispatchOrder');
@@ -54,6 +67,7 @@ export type TransferPriceRequest = z.infer<typeof TransferPriceRequestSchema>;
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateTaxiOrder', CreateTaxiOrderSchema);
 	registry.register('UpdateTaxiOrder', UpdateTaxiOrderSchema);
+	registry.register('UpdateTaxiOrderStatus', UpdateTaxiOrderStatusSchema);
 	registry.register('CreateDispatchOrder', CreateDispatchOrderSchema);
 	registry.register('TaxiPagination', TaxiPaginationSchema);
 	registry.register('TransferPriceRequest', TransferPriceRequestSchema);

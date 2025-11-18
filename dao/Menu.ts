@@ -6,6 +6,7 @@ import type { MenuBase, DailyMealMenuBase } from '../schemas/dto/Menu/index.js';
 import menusDefaultInclude, { dailyMealMenuDefaultInclude } from '../prisma/includes/menus.js';
 import type { MenuWithIncludesPrisma } from '../prisma/includes/menus.js';
 import { toMenuList, toMenuResponse, toDailyMealMenuResponse } from '../schemas/dto/Menu/menu.mappers.js';
+import { MenuDetail } from '../schemas/dto/Menu/menu.dto.js';
 
 function getErrorMessage(err: unknown): string {
 	if (err instanceof Error) return err.message;
@@ -82,7 +83,7 @@ const createFoodDrinksMenu = async (module_id: string, tx: any = prisma): Promis
  * @param {Date|null} [startDate=null] - Start date for filtering daily meal menus.
  * @param {string|undefined} module_id - Module id for which it will fetch menu.
  * @param {'STORES'|'FOOD_DRINKS'|undefined} moduleType - Module type for which it will fetch menu.
- * @returns {Promise<MenuBase[]>} Array of menu records with categories and items.
+ * @returns {Promise<MenuDetail[]>} Array of menu records with categories and items.
  */
 const getMenuByBusinessId = async (
 	business_id: string,
@@ -90,7 +91,7 @@ const getMenuByBusinessId = async (
 	startDate: Date | null = null,
 	module_id?: string,
 	moduleType?: 'STORES' | 'FOOD_DRINKS'
-): Promise<MenuBase[]> => {
+): Promise<MenuDetail[]> => {
 	try {
 		let extraWhereArgs: Record<string, unknown> = {};
 		if (isDailyMeal) {

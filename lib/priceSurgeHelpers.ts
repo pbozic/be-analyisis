@@ -2,9 +2,7 @@ import moment from 'moment-timezone';
 
 import prisma from '../prisma/prisma.js';
 import { PRICE_SURGE_MULTIPLIERS } from './constants.js';
-
-type LatLng = { latitude: number; longitude: number };
-type RoutePoint = LatLng & Record<string, unknown>;
+import { TaxiLocation } from '../schemas/dto/Taxi/taxiorder.dto.js';
 
 type RainIntensity = 'none' | 'light' | 'moderate' | 'heavy';
 type RainPrediction = {
@@ -33,12 +31,12 @@ export type SurgeResult = { multiplier: number; reasons: string[] | null };
  * @returns {Promise<{multiplier:number,reasons:string[]|null}>} Final multiplier and contributing reasons.
  */
 export async function getPriceSurgeDataForTransferTrip(
-	route: RoutePoint[],
+	route: TaxiLocation[],
 	departureTime: Date | string | number,
 	// eslint-disable-next-line no-unused-vars
-	_trafficData: object,
+	_trafficData?: object,
 	// eslint-disable-next-line no-unused-vars
-	_demandData: object
+	_demandData?: object
 ): Promise<SurgeResult> {
 	const settlementId = (await prisma.settlements.checkIfAllPointsAreInSameSettlement(route)) as string | null;
 	if (!settlementId) {

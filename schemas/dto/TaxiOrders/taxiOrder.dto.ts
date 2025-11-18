@@ -2,6 +2,11 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID, Timestamp, PhoneNumber } from '../../primitives.js';
+import { DriverBaseSchema } from '../Driver/index.js';
+import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.js';
+import { BusinessBaseSchema } from '../Business/business.js';
+import { BusinessUserResponseSchema } from '../BusinessUser/businessUser.js';
+import { UserWithParentUserResponseSchema } from '../User/user.js';
 
 extendZodWithOpenApi(z);
 
@@ -15,6 +20,8 @@ export const TaxiOrderBaseSchema = z
 		driver_id: UUID.nullable().optional(),
 		vehicle_id: UUID.nullable().optional(),
 		business_id: UUID.nullable().optional(),
+		business_users_id: UUID.nullable().optional(),
+		business_clients_id: UUID.nullable().optional(),
 		status: z.string(),
 		type: z.string().optional(),
 		subtype: z.string().nullable().optional(),
@@ -48,11 +55,18 @@ export const TaxiOrderBaseSchema = z
 		is_grouped: z.boolean().optional(),
 		group_index: z.number().nullable().optional(),
 		preferences: z.record(z.any()).nullable().optional(),
-		created_at: Timestamp.optional(),
+		estimates: z.record(z.any()).nullable().optional(),
+		created_at: Timestamp,
 		updated_at: Timestamp.optional(),
 		first_name: z.string().nullable().optional(),
 		last_name: z.string().nullable().optional(),
 		telephone: PhoneNumber.nullable().optional(),
+		creating_user_id: UUID.nullable().optional(),
+		is_scheduled: z.boolean().optional(),
+		cargo_preferences: z.record(z.any()).nullable().optional(),
+		allow_credits_usage: z.boolean().optional(),
+		find_drivers_attempts: z.number().optional(),
+		parent_user_type: z.string().nullable().optional(),
 	})
 	.openapi('TaxiOrderBase');
 
@@ -79,11 +93,12 @@ export type TaxiOrderRef = z.infer<typeof TaxiOrderRefSchema>;
 // Detail Schema (extends Base with relations)
 // ===============
 export const TaxiOrderDetailSchema = TaxiOrderBaseSchema.extend({
-	user: z.record(z.any()).nullable().optional(),
-	driver: z.record(z.any()).nullable().optional(),
-	vehicle: z.record(z.any()).nullable().optional(),
-	business: z.record(z.any()).nullable().optional(),
-	grouped_orders: z.array(z.record(z.any())).optional().default([]),
+	user: UserWithParentUserResponseSchema.nullable().optional(),
+	driver: DriverBaseSchema.nullable().optional(),
+	vehicle: VehicleBaseSchema.nullable().optional(),
+	business: BusinessBaseSchema.nullable().optional(),
+	business_users: BusinessUserResponseSchema.nullable().optional(),
+	grouped_orders: z.array(TaxiOrderBaseSchema).optional().default([]),
 }).openapi('TaxiOrderDetail');
 
 export type TaxiOrderDetail = z.infer<typeof TaxiOrderDetailSchema>;

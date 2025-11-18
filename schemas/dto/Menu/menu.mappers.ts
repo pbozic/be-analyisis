@@ -5,7 +5,7 @@ import {
 	MenuBaseSchema,
 	MenuItemVersionResponseSchema,
 } from './menu.dto.js';
-import type { MenuItemResponse, DailyMealMenuBase, MenuBase, MenuItemVersionResponse } from './menu.dto.js';
+import type { MenuItemResponse, DailyMealMenuBase, MenuItemVersionResponse, MenuDetail } from './menu.dto.js';
 import type { MenuWithIncludesPrisma, DailyMealMenuWithIncludesPrisma } from '../../../prisma/includes/menus.js';
 
 // Derived payload types from the Prisma include payloads
@@ -82,7 +82,7 @@ export function toMenuCategoryResponse(category: CategoryPayload) {
 	};
 }
 
-export function toMenuResponse(payload: MenuPayload): MenuBase {
+export function toMenuResponse(payload: MenuPayload): MenuDetail {
 	const out = {
 		...payload,
 		created_at: toIso((payload as { created_at?: unknown }).created_at),
@@ -92,7 +92,7 @@ export function toMenuResponse(payload: MenuPayload): MenuBase {
 			: undefined,
 	};
 
-	return MenuBaseSchema.parse(out as unknown) as MenuBase;
+	return MenuBaseSchema.parse(out as unknown) as MenuDetail;
 }
 
 export function toDailyMealMenuResponse(payload: DailyMealMenuPayload): DailyMealMenuBase {

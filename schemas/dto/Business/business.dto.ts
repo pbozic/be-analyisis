@@ -1,10 +1,13 @@
 import { z } from 'zod';
 import { OpenAPIRegistry, extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 
-import { TransportModuleRefSchema } from '../Transport/transport.dto.js';
-import { FoodDrinksModuleRefSchema } from '../FoodDrinks/index.js';
-import { StoresModuleRefSchema } from '../Stores/store.dto.js';
-import { ReservationModuleRefSchema } from '../reservations/reservation-module/reservation-module.dto.js';
+import { TransportModuleBaseSchema, TransportModuleRefSchema } from '../Transport/transport.dto.js';
+import { FoodDrinksBaseSchema, FoodDrinksModuleRefSchema } from '../FoodDrinks/index.js';
+import { StoreBaseSchema, StoresModuleRefSchema } from '../Stores/store.dto.js';
+import {
+	ReservationModuleBaseSchema,
+	ReservationModuleRefSchema,
+} from '../reservations/reservation-module/reservation-module.dto.js';
 import { BusinessClientBaseSchema } from '../BusinessClient/businessClient.dto.js';
 import { MenuItemRefSchema, MenuCategoryRefSchema } from '../Menu/menu.dto.js';
 import { AddressRefSchema } from '../Address/index.js';
@@ -242,10 +245,10 @@ export const BusinessSearchResponseDto = z
 
 // Business with all modules connected
 export const BusinessWithAllModulesResponseDto = BusinessWithIncludesResponseDto.extend({
-	transport_module: TransportModuleRefSchema.nullable().optional(),
-	food_drinks_module: FoodDrinksModuleRefSchema.nullable().optional(),
-	stores_module: StoresModuleRefSchema.nullable().optional(),
-	reservation_module: ReservationModuleRefSchema.nullable().optional(),
+	transport_module: TransportModuleBaseSchema.nullable().optional(),
+	food_drinks_module: FoodDrinksBaseSchema.nullable().optional(),
+	stores_module: StoreBaseSchema.nullable().optional(),
+	reservation_module: ReservationModuleBaseSchema.nullable().optional(),
 	crm_module: CrmModuleFullSchema.nullable().optional(),
 	menus: z.array(MenuRefSchema).optional(),
 	menu_items: z.array(MenuItemRefSchema).optional(),

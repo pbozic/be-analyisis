@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { TAXI_ORDER_STATUS, VEHICLE_CATEGORY } from '@prisma/client';
 
-import { LocationSchema, FileUploadSchema } from './taxiOrder.dto.js';
+import { LocationSchema, FileUploadSchema } from './taxiorder.dto.js';
 import { UUID } from '../../primitives.js';
 
 extendZodWithOpenApi(z);
@@ -14,11 +15,7 @@ export const IdOnlySchema = z.object({ order_id: UUID }).openapi('TaxiOrderId');
 export const IdAndStatusSchema = z
 	.object({
 		order_id: UUID,
-		status: z.string().openapi({ example: 'TAXI_CANCELED' }),
-		cancellation_reason: z
-			.union([z.string(), z.array(z.object({ value: z.string() }))])
-			.optional()
-			.openapi({ example: 'User canceled due to schedule change' }),
+		status: z.nativeEnum(TAXI_ORDER_STATUS),
 	})
 	.openapi('TaxiIdAndStatus');
 
@@ -92,15 +89,14 @@ export const CreateDispatchOrderSchema = CreateTaxiOrderSchema.openapi('CreateDi
 // -----------------------
 // Cancel order
 // -----------------------
-export const CancelTaxiOrderSchema = IdAndStatusSchema.openapi('CancelTaxiOrder');
+export const CancelTaxiOrderSchema = IdAndStatusSchema.extend({
+	cancellation_reason: z.string().openapi({ example: 'User canceled due to schedule change' }),
+}).openapi('CancelTaxiOrder');
 export const CancelGroupedOrderSchema = CancelTaxiOrderSchema.extend({
 	parent_order_id: UUID,
 }).openapi('CancelGroupedTaxiOrder');
 export const RejectGroupedOrderSchema = CancelGroupedOrderSchema.extend({
-	rejection_reason: z
-		.union([z.string(), z.array(z.object({ value: z.string() }))])
-		.optional()
-		.openapi({ example: 'Driver unavailable' }),
+	rejection_reason: z.string().openapi({ example: 'Driver unavailable' }),
 }).openapi('RejectGroupedTaxiOrder');
 
 // -----------------------
@@ -194,7 +190,7 @@ export const TransferPriceRequestSchema = z
 		delivery_location: LocationSchema.optional(),
 		departure_time: z.string().optional(),
 		route: z.array(LocationSchema).optional(),
-		vehicle_category: z.string().optional(),
+		vehicle_category: z.nativeEnum(VEHICLE_CATEGORY).optional(),
 	})
 	.openapi('TaxiTransferPriceRequest');
 

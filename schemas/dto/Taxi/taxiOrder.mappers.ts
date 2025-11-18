@@ -1,5 +1,5 @@
-import { TaxiOrderRefSchema, TaxiOrderDetailSchema } from './taxiOrder.dto.js';
-import type { TaxiOrderRef, TaxiOrderDetail } from './taxiOrder.dto.js';
+import { TaxiOrderRefSchema, TaxiOrderDetailSchema } from './taxiorder.dto.js';
+import type { TaxiOrderRef, TaxiOrderDetail } from './taxiorder.dto.js';
 import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.js';
 import type { VehicleBase } from '../Vehicles/vehicle.dto.js';
 import { DriverBaseSchema, type DriverBase } from '../Driver/index.js';

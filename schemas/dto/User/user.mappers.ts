@@ -6,6 +6,7 @@ import {
 	UserDetailResponseSchema,
 	UserListResponseSchema,
 	UserWithFavouritesResponseSchema,
+	UserWithParentUserResponseSchema,
 } from './user.ts';
 import type {
 	UserResponse,
@@ -14,6 +15,7 @@ import type {
 	UserDetailResponse,
 	UserListResponse,
 	UserWithFavouritesResponse,
+	UserWithParentUserResponse,
 } from './user.ts';
 import { UserLoginResponseSchema } from '../Auth/AuthResponse.dto.ts';
 import type { UserLoginResponse } from '../Auth/AuthResponse.dto.ts';
@@ -49,10 +51,10 @@ function mapUserAddressRef(addressRow: any): any {
 /**
  * Map basic user from Prisma to UserResponse (no password, no relations).
  */
-export function toUserResponse(row: Prisma.usersGetPayload<object>): UserWithBusinessUsersResponse {
+export function toUserResponse(row: Prisma.usersGetPayload<object>): UserWithParentUserResponse {
 	const r = row as Record<string, any>;
 
-	return UserWithBusinessUsersResponseSchema.parse({
+	return UserWithParentUserResponseSchema.parse({
 		user_id: r.user_id,
 		first_name: r.first_name ?? null,
 		last_name: r.last_name ?? null,
@@ -89,6 +91,7 @@ export function toUserResponse(row: Prisma.usersGetPayload<object>): UserWithBus
 		driver: r.driver ? toDriverDetail(r.driver) : null,
 		profile_picture: r.profile_picture ? toFileResponse(r.profile_picture) : null,
 		business_users: toBusinessUserWithBusinessResponse(r.business_users ?? []),
+		parent_user: r.parent_user ?? null,
 		created_at: toIso(r.created_at) ?? new Date().toISOString(),
 		updated_at: toIso(r.updated_at) ?? new Date().toISOString(),
 	});

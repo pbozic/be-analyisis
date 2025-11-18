@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { MODULE, PAYMENT_METHOD } from '@prisma/client';
+import { DELIVERY_ORDER_STATUS, MODULE, PAYMENT_METHOD } from '@prisma/client';
 
 import { UUID, Timestamp, URL } from '../../primitives.js';
 import {
@@ -11,33 +11,30 @@ import {
 	OrderLocationSchema,
 } from './deliveryOrder.dto.js';
 import { TimelineEntrySchema } from './deliveryOrder.dto.js';
-import { LineItemBaseSchema } from '../LineItems/index.js';
 
 extendZodWithOpenApi(z);
 
 // ===== DELIVERY ORDER CREATION =====
 export const CreateDeliveryOrderSchema = z
 	.object({
-		orderBody: z.object({
-			business_id: UUID,
-			items: z.array(OrderItemWithAddonsSchema),
-			delivery_location: OrderLocationSchema,
-			pickup_location: OrderLocationSchema.optional(),
-			payment: OrderPaymentSchema.extend({
-				type: z.nativeEnum(PAYMENT_METHOD),
-			}),
-			details: OrderPricingSchema.extend({
-				notes: z.string().optional(),
-			}),
-			scheduled: z
-				.object({
-					date: z.string().optional(),
-					time: z.string().optional(),
-				})
-				.optional(),
-			is_daily_meal: z.boolean().optional(),
-			module: z.nativeEnum(MODULE),
+		// business_id: UUID,
+		items: z.array(OrderItemWithAddonsSchema),
+		delivery_location: OrderLocationSchema,
+		pickup_location: OrderLocationSchema.optional(),
+		payment: OrderPaymentSchema.extend({
+			type: z.nativeEnum(PAYMENT_METHOD),
 		}),
+		details: OrderPricingSchema,
+		scheduled_at: Timestamp.nullable().optional(),
+		is_daily_meal: z.boolean().optional(),
+		module_type: z.nativeEnum(MODULE),
+		business_local_location_id: UUID.optional(),
+	})
+	.openapi('CreateDeliveryOrder');
+
+export const CreateDeliveryOrderRequestSchema = z
+	.object({
+		orderBody: CreateDeliveryOrderSchema,
 		return_url: z.string().url().optional(),
 	})
 	.openapi('CreateDeliveryOrderRequest');
@@ -47,18 +44,26 @@ export const DeliveryOrderCreateRequestSchema = z
 		user_id: UUID,
 		module_id: UUID,
 		module_type: z.union([z.literal(MODULE.STORES), z.literal(MODULE.FOOD_DRINKS)]),
-		delivery_address: z.record(z.any()).nullable().optional(),
-		pickup_address: z.record(z.any()).nullable().optional(),
-		pickup_time: Timestamp.nullable().optional(),
-		delivery_time: Timestamp.nullable().optional(),
-		estimated_delivery_time: Timestamp.nullable().optional(),
-		total_amount: z.number().nullable().optional(),
-		delivery_fee: z.number().nullable().optional(),
-		tip_amount: z.number().nullable().optional(),
-		payment_method: z.string().nullable().optional(),
+		delivery_location: OrderLocationSchema,
+		pickup_location: OrderLocationSchema.nullable().optional(),
+		// pickup_time: Timestamp.nullable().optional(),
+		// delivery_time: Timestamp.nullable().optional(),
+		// estimated_delivery_time: Timestamp.nullable().optional(),
+		// total_amount: z.number().nullable().optional(),
+		// delivery_fee: z.number().nullable().optional(),
+		// tip_amount: z.number().nullable().optional(),
+		// payment_method: z.string().nullable().optional(),
+		payment: OrderPaymentSchema.extend({
+			type: z.nativeEnum(PAYMENT_METHOD),
+		}),
+		details: OrderPricingSchema,
+		scheduled_at: Timestamp.nullable().optional(),
 		is_daily_meal: z.boolean().optional(),
-		special_instructions: z.string().nullable().optional(),
-		items: z.array(LineItemBaseSchema).min(1),
+		// special_instructions: z.string().nullable().optional(),
+		// items: z.array(LineItemBaseSchema).min(1),
+		items: z.array(OrderItemWithAddonsSchema),
+		status: z.nativeEnum(DELIVERY_ORDER_STATUS),
+		business_local_location_id: UUID.optional(),
 	})
 	.openapi('DeliveryOrderCreateRequest');
 
@@ -91,7 +96,7 @@ export const RejectDeliveryOrderSchema = z
 export const UpdateOrderStatusSchema = z
 	.object({
 		order_id: UUID,
-		status: z.string().min(1),
+		status: z.nativeEnum(DELIVERY_ORDER_STATUS),
 	})
 	.openapi('UpdateOrderStatusRequest');
 
@@ -190,11 +195,9 @@ export const SetDeliveryImageSchema = z
 	})
 	.openapi('SetDeliveryImageRequest');
 
-// ===== DAILY MEALS =====
-export const StartDailyMealsSchema = z.object({}).openapi('StartDailyMealsRequest');
-
 // ===== TYPE EXPORTS =====
-export type CreateDeliveryOrderInput = z.infer<typeof CreateDeliveryOrderSchema>;
+export type CreateDeliveryOrder = z.infer<typeof CreateDeliveryOrderSchema>;
+export type CreateDeliveryOrderInput = z.infer<typeof CreateDeliveryOrderRequestSchema>;
 export type DeliveryOrderCreateRequest = z.infer<typeof DeliveryOrderCreateRequestSchema>;
 export type CreateDeliveryOrderDaoInput = z.infer<typeof CreateDeliveryOrderDaoInputSchema>;
 export type StartOrderInput = z.infer<typeof StartOrderSchema>;
@@ -209,16 +212,15 @@ export type LocalConfirmMultipleOrdersReadyInput = z.infer<typeof LocalConfirmMu
 export type UpdateOrderPickupTimeInput = z.infer<typeof UpdateOrderPickupTimeSchema>;
 export type UpdateOrderDeliveryTimeInput = z.infer<typeof UpdateOrderDeliveryTimeSchema>;
 export type UpdateDeliveryOrderTimelineInput = z.infer<typeof UpdateDeliveryOrderTimelineSchema>;
-export type addToDeliveryOrderTimelineInput = z.infer<typeof addToDeliveryOrderTimelineSchema>;
+export type AddToDeliveryOrderTimelineInput = z.infer<typeof addToDeliveryOrderTimelineSchema>;
 export type UpdateDeliveryOrderItemsInput = z.infer<typeof UpdateDeliveryOrderItemsSchema>;
 export type DispatcherCancelOrderInput = z.infer<typeof DispatcherCancelOrderSchema>;
 export type DispatcherRevokeOrderInput = z.infer<typeof DispatcherRevokeOrderSchema>;
 export type SetDeliveryImageInput = z.infer<typeof SetDeliveryImageSchema>;
-export type StartDailyMealsInput = z.infer<typeof StartDailyMealsSchema>;
 
 // ===== OPENAPI REGISTRY =====
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('CreateDeliveryOrder', CreateDeliveryOrderSchema);
+	registry.register('CreateDeliveryOrder', CreateDeliveryOrderRequestSchema);
 	registry.register('DeliveryOrderCreateRequest', DeliveryOrderCreateRequestSchema);
 	registry.register('CreateDeliveryOrderDaoInput', CreateDeliveryOrderDaoInputSchema);
 	registry.register('StartOrder', StartOrderSchema);
@@ -238,5 +240,4 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('DispatcherCancelOrder', DispatcherCancelOrderSchema);
 	registry.register('DispatcherRevokeOrder', DispatcherRevokeOrderSchema);
 	registry.register('SetDeliveryImage', SetDeliveryImageSchema);
-	registry.register('StartDailyMeals', StartDailyMealsSchema);
 }

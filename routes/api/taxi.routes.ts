@@ -16,14 +16,13 @@ import {
 	UpdateTimelineSchema,
 	UpdatePaymentSchema,
 	TaxiFileBodySchema,
-	TaxiPaginationSchema,
 } from '../../schemas/dto/Taxi/index.js';
 const router = express.Router();
 router.get('/', TaxiOrderController.getTaxiOrders);
 router.get('/today', TaxiOrderController.getTaxiOrdersToday);
 router.get('/order/:order_id', TaxiOrderController.getOrder);
 router.get('/order/:order_id/available-drivers', TaxiOrderController.getDriversForOrder);
-router.post('/orders/pagination/', validate(TaxiPaginationSchema), TaxiOrderController.getTaxiOrdersWithPagination);
+// router.post('/orders/pagination/', validate(TaxiPaginationSchema), TaxiOrderController.getTaxiOrdersWithPagination);
 router.get('/orders/completed/:driver_id', TaxiOrderController.getCompletedTaxiOrders);
 /**
  *    * @module user
@@ -89,4 +88,5 @@ router.post('/order/append_driver', validate(IdAndDriverSchema), TaxiOrderContro
 router.post('/order/reject', validate(IdAndStatusSchema), TaxiOrderController.rejectOrder);
 router.post('/grouped_order/cancel', validate(IdOnlySchema), TaxiOrderController.cancelGroupedOrderByParentId);
 router.post('/grouped_order/reject', validate(IdAndStatusSchema), TaxiOrderController.rejectGroupedOrderByParentId);
+
 export default router;

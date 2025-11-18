@@ -8,6 +8,7 @@ import {
 	SCORING_POINTS_REASON,
 	CASHBACK_SOURCE,
 	FUNDS_TYPE,
+	VEHICLE_CATEGORY,
 } from '@prisma/client';
 import { Socket } from 'socket.io';
 
@@ -27,7 +28,11 @@ import TaxiHelper, {
 import { VEHICLE_CAPACITY, DRIVE_FEE, CARGO_TRANSFER_FEE, CREDITS, USER_ROLE, SERVICE_TYPE } from '../lib/constants.js';
 import { sendOrderNotifications } from '../lib/notifications.js';
 import { ValidatedRequest, AuthenticatedRequest } from '../types/validatedRequest.js';
-import type { UpdateTaxiOrder, CreateDispatchOrder } from '../schemas/dto/TaxiOrders/taxiOrder.validators.js';
+import type {
+	UpdateTaxiOrder,
+	CreateDispatchOrder,
+	UpdateTaxiOrderStatus,
+} from '../schemas/dto/TaxiOrders/taxiOrder.validators.js';
 import { todaysEarnings } from '../lib/helpersLib.js';
 import prisma from '../prisma/prisma.js';
 import BusinessDao from '../dao/Business.js';
@@ -58,8 +63,8 @@ import {
 	UpdateTaxiOrderRoute,
 	UpdateTaxiOrderTimeline,
 } from '../schemas/dto/Taxi/taxiOrder.validators.js';
-import { TaxiLocation } from '../schemas/dto/Taxi/taxiOrder.dto.js';
-// DOCUMENT_TYPE not needed here; keep constants lean
+import { TaxiLocation } from '../schemas/dto/Taxi/taxiorder.dto.js';
+import { DriverBase } from '../schemas/dto/Driver/driver.dto.js';
 
 const { UserSockets, io, SocketStore } = socket;
 
@@ -472,7 +477,7 @@ async function requestTransferOrderPrice(req: ValidatedRequest<TransferPriceRequ
 		const { route, vehicle_category } = req.body;
 		let priceData = await TaxiHelper.calculateTransferRidePrice(
 			route as TaxiLocation[],
-			vehicle_category as string
+			vehicle_category as VEHICLE_CATEGORY
 		);
 		res.status(200).json(priceData);
 	} catch (e) {
@@ -519,7 +524,7 @@ async function createOrder(req: ValidatedRequest<CreateTaxiOrder>, res: Response
 			telephone: req.body.telephone || user.telephone,
 			is_scheduled: req.body.preferences?.departure_date,
 			status: TAXI_ORDER_STATUS.PENDING,
-		};
+		} as Partial<CreateTaxiOrder>;
 		let coordinates = orderData?.pickup_location?.coordinates || orderData?.route?.[0]?.coordinates;
 		let region = null;
 		if (coordinates) {
@@ -572,7 +577,7 @@ async function createOrder(req: ValidatedRequest<CreateTaxiOrder>, res: Response
 			const { route, preferences } = orderData;
 			let { price } = await TaxiHelper.calculateTransferRidePrice(
 				route as TaxiLocation[],
-				preferences?.vehicle_category as string
+				preferences?.vehicle_category as VEHICLE_CATEGORY
 			);
 			if (price > 25 && price !== orderData?.payment?.price) {
 				console.error(`Price mismatch, got ${orderData?.payment?.price}, calculated ${price}`);
@@ -593,15 +598,15 @@ async function createOrder(req: ValidatedRequest<CreateTaxiOrder>, res: Response
 				) {
 					throw new Error(`Repeating orders not allowed for transfer orders above ${25}€!`);
 				}
-				let user = await UsersDao.getUserById(orderData.user_id);
+				let user = await UsersDao.getUserById(orderData.user_id as string);
 				const customer_acc = user?.stripe_customer_id;
 				const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(
-					orderData.user_id
+					orderData.user_id as string
 				);
 				if (orderData?.payment?.type === 'WALLET') {
 					const TOTAL_PRICE_CENT = Math.round((orderData?.payment?.price || 0) * 100);
 					if (
-						available_wallet_balances[SERVICE_TYPE.TAXI] + available_wallet_balances[null] <
+						(available_wallet_balances[SERVICE_TYPE.TAXI] ?? 0) + (available_wallet_balances['none'] ?? 0) <
 						TOTAL_PRICE_CENT / 100
 					) {
 						throw new Error('Insufficient funds');
@@ -623,7 +628,7 @@ async function createOrder(req: ValidatedRequest<CreateTaxiOrder>, res: Response
 		//TODO: payment management for order
 		let payment_intent =
 			order.status === TAXI_ORDER_STATUS.AWAITING_PAYMENT
-				? await handlePaymentForTransferOrder(order, return_url)
+				? await handlePaymentForTransferOrder(order, return_url as string)
 				: null;
 		console.info('ORDER: ', order);
 		console.info('PAYMENT_INTENT: ', payment_intent);
@@ -702,7 +707,7 @@ async function acceptOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Response
 	try {
 		const user_id = req.user?.user_id;
 		if (!user_id) {
-			res.status(400).json({ error: 'User error.' });
+			res.status(401).json({ error: 'Unauthorized' });
 			return;
 		}
 		let driver = await DriverDao.getDriverByUserId(user_id);
@@ -713,7 +718,11 @@ async function acceptOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Response
 			res.status(400).json({ error: 'Driver is already on order.', errorType: 'ERR_DRIVER_ON_ORDER' });
 			return;
 		}
-		let order = await TaxiOrderDao.getOrder(order_id);
+		let order = await TaxiOrderDao.getOrder(order_id as string);
+		if (!order) {
+			res.status(404).json({ error: 'Order not found.', errorType: 'ERR_ORDER_NOT_FOUND' });
+			return;
+		}
 		if (order.status === TAXI_ORDER_STATUS.CUSTOMER_CANCELED) {
 			res.status(400).json({
 				error: 'Order has been canceled by customer.',
@@ -725,16 +734,16 @@ async function acceptOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Response
 			return;
 		}
 		if (order.is_scheduled) {
-			let isSent = await TaxiOrderDao.isOrderSent(order.order_id, driver);
+			let isSent = await TaxiOrderDao.isOrderSent(order.order_id, driver.driver_id);
 			if (!isSent) {
-				await TaxiOrderDao.createOrderSent(order.order_id, driver);
+				await TaxiOrderDao.createOrderSent(order.order_id, driver as Partial<DriverBase>);
 			}
 		}
-		await TaxiOrderDao.acceptTaxiOrderWithRawLock(order, driver);
+		await TaxiOrderDao.acceptTaxiOrderWithRawLock(order, driver.driver_id, driver.current_vehicle_id as string);
 		// driver.vehicle = driver.current_vehicle;
 		// order.driver = driver;
 		const { result, distance, duration, durationS } = await gApi.distanceBetweenTwoPoints(
-			order.pickup_location.coordinates,
+			order?.pickup_location?.coordinates,
 			driver?.location?.coordinates as { latitude: number; longitude: number },
 			'driving',
 			new Date(),
@@ -801,6 +810,8 @@ async function acceptOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Response
  * @bodyRequired
  * @response 200 - Successful operation. Returns the completed order in the response body.
  * @responseContent {TaxiOrderDetail} 200.application/json
+ * @response 400 - Bad request. Returns error message if user ID is missing or order is not found.
+ * @response 404 - Not found. Returns error message if driver or order is not found.
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  * @prisma_model taxi_orders
  * @prisma_model allowances
@@ -813,19 +824,24 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 			return;
 		}
 		let order = await TaxiOrderDao.getOrder(req.body.order_id);
-		let driver = await DriverDao.getDriverByUserId(user_id);
-		if (!driver) {
-			res.status(400).json({ error: 'Driver not found.' });
+		if (!order) {
+			res.status(404).json({ error: 'Order not found.' });
 			return;
 		}
-		let driver_business = await BusinessDao.getBusinessById(driver.business_id);
+		let driver = await DriverDao.getDriverByUserId(user_id);
+		if (!driver) {
+			res.status(404).json({ error: 'Driver not found.' });
+			return;
+		}
+		let driver_business = await BusinessDao.getBusinessById(driver.business_id as string);
 		//assign penalties for being late
 		const timeline_first_waiting_timestamp = order.timeline.find(
 			(entry) => entry.status === TAXI_ORDER_STATUS.TAXI_WAITING
 		)?.location?.timestamp;
-		const timeline_accept_timestamp = order.timeline.findLast(
-			(entry) => entry.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED
-		)?.location?.timestamp;
+		const timeline_accept_timestamp = order.timeline
+			.slice()
+			.reverse()
+			.find((entry) => entry.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED)?.location?.timestamp;
 		const estimated_pickup_timestamp = order.estimates?.pickup_time;
 		if (estimated_pickup_timestamp && timeline_accept_timestamp && timeline_first_waiting_timestamp) {
 			const expected_travel_seconds_to_pickup = moment(estimated_pickup_timestamp).diff(
@@ -847,7 +863,7 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 			}
 		} else {
 			await ScoringPointsDao.createScoringPoints({
-				driver_id: order.driver_id || null,
+				driver_id: order.driver_id as string,
 				taxi_order_id: order.order_id,
 				points: 0,
 				isPenalty: false,
@@ -856,14 +872,14 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 		}
 		let user = order.user;
 		if (order.type === ORDER_TYPE.VEHICLE_TRANSFER_COMBO) {
-			const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', order.user.language);
-			const l10nTextHeading = getLocalisedTexts('HEADING', order.user.language);
+			const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', user?.language);
+			const l10nTextHeading = getLocalisedTexts('HEADING', user?.language);
 			await sendNotificationToUser(l10nTextHeading?.completed, l10nText?.vehicleTransferCompleted, order.user_id);
 			order = await TaxiOrderDao.completeOrder(req.body.order_id);
-		} else {
+		} else if (user) {
 			const orderingUser = !order.creating_user_id ? user : await UsersDao.getUserById(order.creating_user_id);
 			let TOTAL_COST_CENTS = 0;
-			if (order.type === ORDER_TYPE.TRANSFER_PRIVATE && order.payment.price >= 25) {
+			if (order.type === ORDER_TYPE.TRANSFER_PRIVATE && order.payment?.price >= 25) {
 				//Handle expensive transfer payments
 				const { DRIVER_CREDIT_CUT, PLATFORM_CREDIT_CUT, DRIVER_CUT, PLATFORM_CUT } =
 					await calculateTransferOrderPaymentCuts(order);
@@ -886,7 +902,7 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 						SERVICE_TYPE.TAXI
 					);
 				}
-				if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
+				if (order.payment?.type === 'CARD' || order.payment?.type === 'PLATFORM') {
 					if (order.payment.payment_intent_id) {
 						const paymentIntent = await stripe.client.paymentIntents.retrieve(
 							order.payment.payment_intent_id
@@ -897,7 +913,7 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 							DRIVER_CUT
 						);
 					}
-				} else if (order.payment.type === 'WALLET') {
+				} else if (order.payment?.type === 'WALLET') {
 					if (PLATFORM_CUT > 0) {
 						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							order.user_id,
@@ -916,28 +932,27 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 							SERVICE_TYPE.TAXI
 						);
 					}
-				} else if (order.payment.type === 'FAMILY_WALLET') {
+				} else if (order.payment?.type === 'FAMILY_WALLET') {
 					// handle wallet payment
-					let has_parent_user = user.parent_user;
+					let has_parent_user = user?.parent_user;
 					if (!has_parent_user) {
 						throw new Error('User has no family wallet');
 					}
-					let parent_user = user.parent_user.parent_user;
-					const parent_available_wallet_balances = WalletFundsDao.getAvailableWalletBalanceGroupedByType(
-						parent_user.user_id
-					);
-					let allowance = user.parent_user.allowance?.amount_taxi_wallet;
+					let parent_user = user?.parent_user?.parent_user;
+					const parent_available_wallet_balances =
+						await WalletFundsDao.getAvailableWalletBalanceGroupedByType(parent_user?.user_id as string);
+					let allowance = user?.parent_user?.allowance?.amount_taxi_wallet;
 					if (!allowance) {
-						allowance = user.parent_user.allowance?.amount_any_wallet;
+						allowance = user?.parent_user?.allowance?.amount_any_wallet;
 					}
-					if (allowance < TOTAL_COST_CENTS / 100) {
+					if ((allowance as number) < TOTAL_COST_CENTS / 100) {
 						throw new Error('Insufficient allowance');
 					}
 					//TODO: Should this allow usage of credits from parent?
-					if (parent_available_wallet_balances[null] < TOTAL_COST_CENTS / 100) {
+					if ((parent_available_wallet_balances['none'] ?? 0) < TOTAL_COST_CENTS / 100) {
 						throw new Error('Insufficient funds');
 					}
-					let parent_user_id = user.parent_user.parent_user_id;
+					let parent_user_id = user?.parent_user?.parent_user_id as string;
 					if (PLATFORM_CUT > 0) {
 						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							parent_user_id,
@@ -960,13 +975,13 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 			} else {
 				//handle regular payments
 				//CALCULATE IN CENTS
-				const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100);
+				const PRICE_CENTS = Math.round(parseFloat(order.payment?.price) * 100);
 				const EXTRAS_COST_CENTS = Math.round(
 					parseFloat(
 						[VEHICLE_CLASS.PRIVATE_DRIVER, VEHICLE_CLASS.CARGO_VAN].includes(
 							order.preferences?.vehicle_class
 						)
-							? order.payment.extras?.price ||
+							? order.payment?.extras?.price ||
 									order.cargo_preferences?.additional_workers *
 										CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
 										CARGO_TRANSFER_FEE.CARGO_FEE
@@ -979,7 +994,7 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 				//Handle automatic credits spending ~ use credits to pay platform cut first, to keep the driver cut mostly off stripe
 				const reservedCredits = order.allow_credits_usage
 					? await WalletFundsHelpers.reserveCreditsForOrder(
-							user.user_id,
+							user?.user_id,
 							TOTAL_COST_CENTS,
 							order.order_id,
 							FUNDS_TYPE.CREDITS_TAXI
@@ -992,8 +1007,8 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 					CREDITS_AMOUNT_RESERVED > PLATFORM_CREDIT_CUT_CENTS
 						? CREDITS_AMOUNT_RESERVED - PLATFORM_CREDIT_CUT_CENTS
 						: 0;
-				order.payment.credit_discount = CREDITS_AMOUNT_RESERVED;
-				order.payment.credit_discount_details = {
+				order.payment!.credit_discount = CREDITS_AMOUNT_RESERVED;
+				order.payment!.credit_discount_details = {
 					taxi_driver: DRIVER_CREDIT_CUT_CENTS,
 					platform: PLATFORM_CREDIT_CUT_CENTS,
 				};
@@ -1002,7 +1017,7 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 				const DRIVER_CUT_CENTS = INITIAL_DRIVER_CUT - DRIVER_CREDIT_CUT_CENTS;
 				if (PLATFORM_CREDIT_CUT_CENTS > 0) {
 					await WalletFundsHelpers.transferReservedCreditsForOrder(
-						user.user_id,
+						user?.user_id,
 						'platform',
 						PLATFORM_CREDIT_CUT_CENTS,
 						order.order_id,
@@ -1011,7 +1026,7 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 				}
 				if (DRIVER_CREDIT_CUT_CENTS > 0) {
 					await WalletFundsHelpers.transferReservedCreditsForOrder(
-						user.user_id,
+						user?.user_id,
 						driver_business?.stripe_account_id as string,
 						DRIVER_CREDIT_CUT_CENTS,
 						order.order_id,
@@ -1020,17 +1035,18 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 				}
 				const businessUser =
 					order.payment?.subtype === 'BUSINESS'
-						? await BusinessUsersDao.getBusinessUserByUserId(order.creating_user_id)
+						? await BusinessUsersDao.getBusinessUserByUserId(order.creating_user_id as string)
 						: order.business_users;
 				const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(
-					businessUser ? businessUser.user_id : user.user_id
+					businessUser ? businessUser.user_id : user?.user_id
 				);
 				if (DISCOUNTED_TOTAL_COST > 0) {
 					//TODO: add order.payment.type === 'BUSINESS_WALLET' instead of order.payment.subtype
-					if (order.payment.type === 'WALLET') {
+					if (order.payment?.type === 'WALLET') {
 						// handle wallet payment
 						if (
-							available_wallet_balances['TAXI'] + available_wallet_balances[null] <
+							(available_wallet_balances[SERVICE_TYPE.TAXI] ?? 0) +
+								(available_wallet_balances['none'] ?? 0) <
 							DISCOUNTED_TOTAL_COST / 100
 						) {
 							throw new Error('Insufficient funds');
@@ -1042,13 +1058,13 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 								allowance = businessUser.allowance?.amount_any_wallet;
 								any = true;
 							}
-							if (allowance < DISCOUNTED_TOTAL_COST / 100) {
+							if ((allowance as number) < DISCOUNTED_TOTAL_COST / 100) {
 								throw new Error('Insufficient allowance');
 							}
 						}
 						// await UsersDao.removeWalletBalance(order.user_id, (DISCOUNTED_TOTAL_COST / 100), order.order_id, "taxi");
 						await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
-							businessUser ? businessUser.user_id : user.user_id,
+							businessUser ? businessUser.user_id : user?.user_id,
 							DISCOUNTED_TOTAL_COST,
 							order.order_id
 						);
@@ -1073,45 +1089,44 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 						//Only transfer money to driver since we already have the wallet money?
 						// const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
 						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-							businessUser ? businessUser.user_id : user.user_id,
+							businessUser ? businessUser.user_id : user?.user_id,
 							driver_business?.stripe_account_id as string,
 							DRIVER_CUT_CENTS,
 							order.order_id,
 							SERVICE_TYPE.TAXI
 						);
 						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-							businessUser ? businessUser.user_id : user.user_id,
+							businessUser ? businessUser.user_id : user?.user_id,
 							'platform',
 							PLATFORM_CUT_CENTS,
 							order.order_id,
 							SERVICE_TYPE.TAXI
 						);
-					} else if (order.payment.type === 'FAMILY_WALLET') {
+					} else if (order.payment?.type === 'FAMILY_WALLET') {
 						// handle wallet payment
-						let has_parent_user = user.parent_user;
+						let has_parent_user = user?.parent_user;
 						if (!has_parent_user) {
 							throw new Error('User has no family wallet');
 						}
-						let parent_user = user.parent_user.parent_user;
-						const parent_available_wallet_balances = WalletFundsDao.getAvailableWalletBalanceGroupedByType(
-							parent_user.user_id
-						);
+						let parent_user = user?.parent_user?.parent_user;
+						const parent_available_wallet_balances =
+							await WalletFundsDao.getAvailableWalletBalanceGroupedByType(parent_user?.user_id as string);
 						let any;
-						let allowance = user.parent_user.allowance?.amount_taxi_wallet;
+						let allowance = user?.parent_user?.allowance?.amount_taxi_wallet;
 						if (!allowance) {
-							allowance = user.parent_user.allowance?.amount_any_wallet;
+							allowance = user?.parent_user?.allowance?.amount_any_wallet;
 							any = true;
 						}
-						if (allowance < DISCOUNTED_TOTAL_COST / 100) {
+						if ((allowance as number) < DISCOUNTED_TOTAL_COST / 100) {
 							throw new Error('Insufficient allowance');
 						}
 						//TODO: Should this allow usage of credits from parent?
-						if (parent_available_wallet_balances[null] < DISCOUNTED_TOTAL_COST / 100) {
+						if ((parent_available_wallet_balances['none'] ?? 0) < DISCOUNTED_TOTAL_COST / 100) {
 							throw new Error('Insufficient funds');
 						}
 						// await UsersDao.removeWalletBalance(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id, "taxi");
 						await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
-							parent_user.user_id,
+							parent_user?.user_id as string,
 							DISCOUNTED_TOTAL_COST,
 							order.order_id
 						);
@@ -1127,32 +1142,33 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 						}
 						await prisma.allowances.update({
 							where: {
-								group_user_id: user.parent_user.group_user_id,
+								group_user_id: user?.parent_user?.group_user_id,
 							},
 							data: updateData,
 						});
+						const parent_user_id = user?.parent_user?.parent_user_id as string;
 						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-							parent_user.user_id,
+							parent_user_id,
 							driver_business?.stripe_account_id as string,
 							DRIVER_CUT_CENTS,
 							order.order_id,
 							SERVICE_TYPE.TAXI
 						);
 						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-							parent_user.user_id,
+							parent_user_id,
 							'platform',
 							PLATFORM_CUT_CENTS,
 							order.order_id,
 							SERVICE_TYPE.TAXI
 						);
-					} else if (businessUser && order.payment.type === 'PURCHASE_ORDER') {
+					} else if (businessUser && order.payment?.type === 'PURCHASE_ORDER') {
 						let any;
 						let allowance = businessUser.allowance?.amount_taxi_purchase_order;
 						if (!allowance) {
 							allowance = businessUser.allowance?.amount_any_purchase_order;
 							any = true;
 						}
-						if (allowance < DISCOUNTED_TOTAL_COST / 100) {
+						if ((allowance as number) < DISCOUNTED_TOTAL_COST / 100) {
 							throw new Error('Insufficient allowance');
 						}
 						const updateData: { [key: string]: { decrement: number } } = {};
@@ -1180,7 +1196,7 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 					},
 				});
 			}
-			if (orderingUser.user_role === USER_ROLE.PERSONAL) {
+			if (orderingUser?.user_role === USER_ROLE.PERSONAL) {
 				let cashbackAmount =
 					TOTAL_COST_CENTS >= CREDITS.CASHBACK_THRESHOLD_TAXI ? Math.floor(TOTAL_COST_CENTS / 100) : 1;
 				const cashback = await CashbackDao.createCashback({
@@ -1222,7 +1238,7 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 				}
 			}
 			order = await TaxiOrderDao.completeOrder(req.body.order_id);
-			await handleReferral(orderingUser.user_id);
+			await handleReferral(orderingUser?.user_id as string);
 		}
 		(io as Socket).emit('driver_available', driver);
 		// (io as Socket).to("order_" + order.order_id).emit('order_status_change__taxi', order);
@@ -1252,14 +1268,15 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
  * @prisma_model taxi_orders
  * @prisma_model drivers
  */
-async function updateOrderStatus(req: ValidatedRequest<UpdateTaxiOrder>, res: Response) {
+async function updateOrderStatus(req: ValidatedRequest<UpdateTaxiOrderStatus>, res: Response): Promise<void> {
 	try {
 		let order = await TaxiOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
 		(io as Socket).to('order_' + order.order_id).emit('order_status_change__taxi', order);
 		let user_id = order?.user_id;
-		let driver_id = order?.driver?.driver_id;
+		let driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
-		let driver = await DriverDao.getDriverById(driver_id);
+		let driver;
+		if (driver_id) driver = await DriverDao.getDriverById(driver_id);
 		// if (order.status === TAXI_ORDER_STATUS.TAXI_DRIVING && order.transport_module_id === null) {
 		// 	await prisma.taxi_orders.update({
 		// 		where: {
@@ -1304,8 +1321,8 @@ async function updateOrderStatus(req: ValidatedRequest<UpdateTaxiOrder>, res: Re
 				user.language ?? 'en',
 				driver?.user?.language ?? 'en',
 				user_id,
-				driver_id,
-				req.body.status as string
+				driver_id as string,
+				req.body.status
 			);
 		res.status(200).json(order);
 	} catch (e) {
@@ -1329,13 +1346,17 @@ async function updateOrderStatus(req: ValidatedRequest<UpdateTaxiOrder>, res: Re
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
-async function updateTaxiOrderPreferences(req: ValidatedRequest<UpdateTaxiOrderPreferences>, res: Response) {
+async function updateTaxiOrderPreferences(
+	req: ValidatedRequest<UpdateTaxiOrderPreferences>,
+	res: Response
+): Promise<void> {
 	try {
 		const { order_id, vehicle_category, vehicle_class, ride_requirements } = req.body;
 		// Fetch the current order details
 		let order = await TaxiOrderDao.getOrder(order_id);
 		if (!order) {
-			return res.status(404).json({ message: 'Order not found' });
+			res.status(404).json({ message: 'Order not found' });
+			return;
 		}
 		// Update only the vehicle category and vehicle class in the order's preferences
 		const updatedPreferences = {
@@ -1393,7 +1414,7 @@ async function cancelOrder(req: ValidatedRequest<CancelTaxiOrder>, res: Response
 		let user = await UsersDao.getUserById(user_id);
 		let driver = driver_id ? await DriverDao.getDriverById(driver_id) : null;
 		const skip_cancellation_fee = order.type === 'TAXI' || user_id !== order?.user_id;
-		if (user_id === driver?.user_id) {
+		if (user_id === driver?.user_id && driver_id) {
 			await ScoringPointsDao.createScoringPoints({
 				driver_id: driver_id,
 				taxi_order_id: order.order_id,
@@ -1405,15 +1426,16 @@ async function cancelOrder(req: ValidatedRequest<CancelTaxiOrder>, res: Response
 		console.log('user console.log', user?.user_id);
 		console.log('Driver console.log', driver?.user_id);
 		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO)
-			sendOrderNotifications(user?.language ?? 'en', driver?.user?.language ?? 'en', user_id, driver_id, status);
+			sendOrderNotifications(
+				user?.language ?? 'en',
+				driver?.user?.language ?? 'en',
+				user_id,
+				driver_id as string,
+				status
+			);
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 		// Determine the cancellation reason
-		let reason = '';
-		if (Array.isArray(cancellation_reason) && cancellation_reason.length > 0) {
-			reason = cancellation_reason[0].value;
-		} else if (typeof cancellation_reason === 'string' && cancellation_reason.trim() !== '') {
-			reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
-		}
+		let reason = cancellation_reason;
 		// if(!order.is_scheduled) {
 		// 	if (order.parent_order_id) {
 		// 		let parentOrder = await TaxiOrderDao.getOrder(order.parent_order_id);
@@ -1439,7 +1461,7 @@ async function cancelOrder(req: ValidatedRequest<CancelTaxiOrder>, res: Response
 			let vehicle_transfer_order = await TaxiOrderDao.cancelVehicleTransferOrder(order.user_id, status, reason);
 			if (vehicle_transfer_order) {
 				if (vehicle_transfer_order.driver_id) {
-					let driver = await DriverDao.getDriverById(order.driver_id);
+					let driver = await DriverDao.getDriverById(vehicle_transfer_order.driver_id);
 					await TaxiOrderDao.updateOrder(order_id, {
 						driver: {
 							disconnect: true,
@@ -1507,6 +1529,9 @@ async function cancelOrder(req: ValidatedRequest<CancelTaxiOrder>, res: Response
  * @bodyRequired
  * @response 200 - Successful operation. Returns the rejected order in the response body.
  * @responseContent {TaxiOrderDetail} 200.application/json
+ * @resopnse 400 - User error. Returns error message if the user is unauthorized or if the order has no associated user.
+ * @response 404 - Order not found. Returns error message if the specified order does not exist.
+ * @response 410 - Order already canceled. Returns error message if the order was already canceled by the customer.
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  * @prisma_model taxi_orders
  * @prisma_model taxi_order_sent
@@ -1518,10 +1543,14 @@ async function rejectOrder(req: ValidatedRequest<CancelTaxiOrder>, res: Response
 	try {
 		const user_id = req.user?.user_id;
 		if (!user_id) {
-			res.status(400).json({ error: 'User error.' });
+			res.status(400).json({ error: 'Unauthorized.' });
 			return;
 		}
 		let order = await TaxiOrderDao.getOrder(order_id);
+		if (!order) {
+			res.status(404).json({ error: `Order not found for order_id: ${order_id}` });
+			return;
+		}
 		if (order?.status === TAXI_ORDER_STATUS.CUSTOMER_CANCELED) {
 			res.status(410).json({
 				error: 'Order was already canceled by customer.',
@@ -1530,6 +1559,10 @@ async function rejectOrder(req: ValidatedRequest<CancelTaxiOrder>, res: Response
 			return;
 		}
 		let customer_user_id = order?.user_id;
+		if (!customer_user_id) {
+			res.status(400).json({ error: 'Order has no associated user.' });
+			return;
+		}
 		let order_driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(customer_user_id);
 		let orderDriver = order_driver_id ? await DriverDao.getDriverById(order_driver_id) : null;
@@ -1541,7 +1574,7 @@ async function rejectOrder(req: ValidatedRequest<CancelTaxiOrder>, res: Response
 				user?.language ?? 'en',
 				rejectingDriver?.user?.language ?? 'en',
 				customer_user_id,
-				order_driver_id,
+				order_driver_id as string,
 				status
 			);
 		if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
@@ -1581,12 +1614,7 @@ async function rejectOrder(req: ValidatedRequest<CancelTaxiOrder>, res: Response
 				});
 			}
 		}
-		let reason = '';
-		if (Array.isArray(cancellation_reason) && cancellation_reason.length > 0) {
-			reason = cancellation_reason[0].value;
-		} else if (typeof cancellation_reason === 'string' && cancellation_reason.trim() !== '') {
-			reason = cancellation_reason;
-		}
+		let reason = cancellation_reason;
 		let pending = order.status === TAXI_ORDER_STATUS.PENDING;
 		order = await TaxiOrderDao.cancelOrder(order_id, new_status, reason);
 		if (order.driver_id) {
@@ -1777,7 +1805,7 @@ async function updateTaxiOrderPayment(req: ValidatedRequest<UpdateTaxiOrderPayme
 	const { order_id, payment } = req.body;
 	try {
 		let order = await TaxiOrderDao.getOrder(order_id);
-		if (order.payment.status === 'PAID') {
+		if (order?.payment?.status === 'PAID') {
 			throw new Error('Cant update paid payment.');
 		}
 		order = await TaxiOrderDao.updateTaxiOrderPayment(order_id, payment);
@@ -1837,7 +1865,7 @@ async function confirmWalletPayment(req: ValidatedRequest<TaxiOrderId>, res: Res
 		if (discounted > 0) {
 			let walletUserId = order.user_id;
 			if (order.payment.type === 'FAMILY_WALLET') {
-				const user = order.user || (await UsersDao.getUserById(order.user_id));
+				const user = order.user;
 				if (!user?.parent_user?.parent_user_id) {
 					res.status(400).json({ error: 'User has no family wallet' });
 					return;
@@ -1845,7 +1873,7 @@ async function confirmWalletPayment(req: ValidatedRequest<TaxiOrderId>, res: Res
 				walletUserId = user.parent_user.parent_user_id;
 			}
 			const available = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(walletUserId);
-			if ((available['TAXI'] || 0) + (available[null] || 0) < discounted / 100) {
+			if ((available[SERVICE_TYPE.TAXI] ?? 0) + (available['none'] ?? 0) < discounted / 100) {
 				res.status(400).json({ error: 'Insufficient wallet funds' });
 				return;
 			}
@@ -2110,10 +2138,10 @@ async function getDriversForOrder(req: ValidatedRequest<never, { order_id: strin
 			res.status(404).json({ error: 'Order not found' });
 			return;
 		}
-		const drivers = await DriverDao.getAvailableDrivers(order.type);
+		const drivers = await DriverDao.getAvailableDrivers(order.type as string);
 		let availableDrivers = [];
 		for (let driver of drivers) {
-			let isSent = await TaxiOrderDao.isOrderSent(order_id, driver);
+			let isSent = await TaxiOrderDao.isOrderSent(order_id, driver.driver_id);
 			if (isSent && isSent.rejected) {
 				continue;
 			}
@@ -2205,6 +2233,8 @@ async function getTaxiOrdersToday(req: Request, res: Response): Promise<void> {
  * @bodyRequired
  * @response 200 - Successful operation. Returns a list of all canceled taxi order IDs.
  * @responseContent {TaxiOrderIdsArray} 200.application/json
+ * @response 401 - Unauthorized. Returned when the user is not authenticated.
+ * @response 404 - Not Found. Returns error message if the parent order is not found.
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
@@ -2213,30 +2243,35 @@ async function cancelGroupedOrderByParentId(
 	res: Response
 ): Promise<void> {
 	console.info('TaxiOrderController', 'CANCEL GROUP ORDER', req.body);
-	const user_id = req.user?.user_id;
-	if (!user_id) {
+	const userId = req.user?.user_id;
+	if (!userId) {
 		res.status(401).json({ error: 'Unauthorized' });
 		return;
 	}
 	const { parent_order_id, status, cancellation_reason } = req.body;
-	let reason = '';
-	if (Array.isArray(cancellation_reason) && cancellation_reason.length > 0) {
-		reason = cancellation_reason[0].value;
-	} else if (typeof cancellation_reason === 'string' && cancellation_reason.trim() !== '') {
-		reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
-	}
+	let reason = cancellation_reason;
 	const STATUS = status;
 	try {
 		await TaxiHelper.revokeTaxiOrderFromDrivers(parent_order_id);
 		let parent_order = await TaxiOrderDao.getOrder(parent_order_id);
+		if (!parent_order) {
+			res.status(404).json({ error: 'Parent order not found' });
+			return;
+		}
 		console.info(parent_order.grouped_orders);
-		const skip_cancellation_fee = parent_order.type === 'TAXI' || user_id !== parent_order?.user_id;
+		const skip_cancellation_fee = parent_order.type === 'TAXI' || userId !== parent_order?.user_id;
 		for (let order of parent_order.grouped_orders) {
 			console.info('TaxiOrderController', 'CANCELLING CHILD ORDER', order);
 			const { order_id, user_id, driver_id } = order;
 			const user = await UsersDao.getUserById(user_id);
 			const driver = driver_id ? await DriverDao.getDriverById(driver_id) : null;
-			sendOrderNotifications(user?.language ?? 'en', driver?.user?.language ?? 'en', user_id, driver_id, STATUS);
+			sendOrderNotifications(
+				user?.language ?? 'en',
+				driver?.user?.language ?? 'en',
+				user_id,
+				driver_id as string,
+				STATUS
+			);
 			await TaxiHelper.revokeTaxiOrderFromDrivers(order_id);
 			const canceled_order = await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
 			await TaxiHelper.handlePaymentRefund(
@@ -2264,7 +2299,13 @@ async function cancelGroupedOrderByParentId(
 		const { order_id, user_id, driver_id } = parent_order;
 		const user = await UsersDao.getUserById(user_id);
 		const driver = driver_id ? await DriverDao.getDriverById(driver_id) : null;
-		sendOrderNotifications(user?.language ?? 'en', driver?.user?.language ?? 'en', user_id, driver_id, STATUS);
+		sendOrderNotifications(
+			user?.language ?? 'en',
+			driver?.user?.language ?? 'en',
+			user_id,
+			driver_id as string,
+			STATUS
+		);
 		const canceled_order = await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
 		(io as Socket).to('order_' + order_id).emit('order_status_change__taxi', canceled_order);
 		(io as Socket).to('order_' + order_id).emit('order_cancelled__taxi', canceled_order);
@@ -2295,6 +2336,8 @@ async function cancelGroupedOrderByParentId(
  * @bodyRequired
  * @response 200 - Successful operation. Returns a list of all rejected taxi order IDs.
  * @responseContent {TaxiOrderIdsArray} 200.application/json
+ * @response 401 - Unauthorized. Returned when the user is not authenticated.
+ * @response 404 - Not Found. Returns error message if the parent order is not found.
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  * @prisma_model taxi_orders
  */
@@ -2303,21 +2346,20 @@ async function rejectGroupedOrderByParentId(
 	res: Response
 ): Promise<void> {
 	console.info('TaxiOrderController', 'REJECT GROUP ORDER', req.body);
-	const user_id = req.user?.user_id;
-	if (!user_id) {
+	const userId = req.user?.user_id;
+	if (!userId) {
 		res.status(401).json({ error: 'Unauthorized' });
 		return;
 	}
 	const { parent_order_id, rejection_reason } = req.body;
-	let reason = '';
-	if (Array.isArray(rejection_reason) && rejection_reason.length > 0) {
-		reason = rejection_reason[0].value;
-	} else if (typeof rejection_reason === 'string' && rejection_reason.trim() !== '') {
-		reason = rejection_reason; // Use the raw cancellation reason if it's a non-empty string
-	}
+	let reason = rejection_reason;
 	const STATUS = TAXI_ORDER_STATUS.TAXI_REJECTED;
 	try {
 		let parent_order = await TaxiOrderDao.getOrder(parent_order_id);
+		if (!parent_order) {
+			res.status(404).json({ error: 'Parent order not found' });
+			return;
+		}
 		console.info(parent_order.grouped_orders);
 		let orders = [...parent_order.grouped_orders, parent_order];
 		for (let order of orders) {
@@ -2363,7 +2405,7 @@ async function rejectGroupedOrderByParentId(
 					user?.language ?? 'en',
 					driver?.user?.language ?? 'en',
 					user_id,
-					driver_id,
+					driver_id as string,
 					STATUS
 				);
 				await TaxiOrderDao.updateOrder(order_id, {

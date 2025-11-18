@@ -7,6 +7,12 @@ import { P12Signer } from '@signpdf/signer-p12';
 import signPdfNode from '@signpdf/signpdf';
 import pdfLib from 'pdf-lib';
 import dotenv from 'dotenv';
+import pug from 'pug';
+import wkhtmltopdf from 'wkhtmltopdf';
+import wkhtmltopdfPath from 'wkhtmltopdf-installer/lib/wkhtmltopdf-path.js';
+
+import DeliveryOrderDao from '../dao/DeliveryOrder.js';
+import { getPDFCertificate } from './certificates.js';
 
 const signPdf = signPdfNode.default || signPdfNode; // Handle both default and named export
 const { PDFDocument } = pdfLib;
@@ -88,7 +94,13 @@ async function signPdfBuffer(pdfBuffer) {
  * @returns {Promise<Buffer|undefined>} Resolves with the signed PDF buffer or undefined if no order found.
  */
 async function getOrderAndPDF(order_id) {
-	return;
+	let order = await DeliveryOrderDao.getOrder(order_id);
+	if (!order) {
+		console.log('No orders found.');
+		return;
+	}
+	let pdf = await generatePDFFromPug('pdf/orderConfirmation.pug', { order });
+	return pdf;
 }
 export { generatePDFFromPug };
 export { generatePDF };

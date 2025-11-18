@@ -1,9 +1,8 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { DOCUMENT_TYPE } from '@prisma/client';
 
 import { UUID, Timestamp } from '../../primitives.js';
-import { CreateFileDataSchema } from '../Files/index.js';
+import { MenuCategoryCategorySchema } from './menucategory.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -22,23 +21,6 @@ export const MenuBaseSchema = z
 	.openapi('MenuBase');
 
 export type MenuBase = z.infer<typeof MenuBaseSchema>;
-
-// =======================
-// MenuCategory Ref Schema
-// =======================
-export const MenuCategoryRefSchema = z
-	.object({
-		menu_category_id: UUID,
-		menu_id: UUID.optional(),
-		names: z.record(z.string()).nullable().optional(),
-		food_drinks_id: UUID.nullable().optional(),
-		stores_id: UUID.nullable().optional(),
-		menu_items_ordered: z.array(z.string()).nullable().optional(),
-		menu_categories_categories: z.array(z.any()).nullable().optional(),
-	})
-	.openapi('MenuCategoryRef');
-
-export type MenuCategoryRef = z.infer<typeof MenuCategoryRefSchema>;
 
 // =======================
 // MenuItem Base Schema - scalars only, no relations
@@ -78,6 +60,30 @@ export const MenuItemBaseSchema = z
 	.openapi('MenuItemBase');
 
 export type MenuItemBase = z.infer<typeof MenuItemBaseSchema>;
+
+// =======================
+// MenuCategory Ref Schema
+// =======================
+export const MenuCategoryRefSchema = z
+	.object({
+		menu_category_id: UUID,
+		menu_id: UUID.optional(),
+		names: z.record(z.string()).nullable().optional(),
+		food_drinks_id: UUID.nullable().optional(),
+		stores_id: UUID.nullable().optional(),
+		menu_items_ordered: z.array(z.string()).nullable().optional(),
+		menu_items: z.array(MenuItemBaseSchema),
+		menu_categories_categories: z.array(MenuCategoryCategorySchema).nullable().optional(),
+	})
+	.openapi('MenuCategoryRef');
+
+export type MenuCategoryRef = z.infer<typeof MenuCategoryRefSchema>;
+
+export const MenuDetailSchema = MenuBaseSchema.extend({
+	categories: z.array(MenuCategoryRefSchema),
+}).openapi('MenuDetail');
+
+export type MenuDetail = z.infer<typeof MenuDetailSchema>;
 
 // =======================
 // MenuItem Ref Schema - minimal identity for embedding
@@ -174,6 +180,7 @@ export type DailyMealMenuBase = z.infer<typeof DailyMealMenuBaseSchema>;
 // =======================
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('MenuBase', MenuBaseSchema);
+	registry.register('MenuDetail', MenuDetailSchema);
 	registry.register('MenuCategoryRef', MenuCategoryRefSchema);
 	registry.register('MenuItemBase', MenuItemBaseSchema);
 	registry.register('MenuItemRef', MenuItemRefSchema);

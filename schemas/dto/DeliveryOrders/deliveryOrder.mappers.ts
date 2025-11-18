@@ -9,7 +9,6 @@ type PrismaDeliveryOrder = {
 	user_id: string;
 	module_id: string;
 	module_type: string;
-	delivery_driver_id?: string | null;
 	driver_id?: string | null;
 	order_number?: number;
 	status: string;
@@ -33,7 +32,6 @@ type PrismaDeliveryOrder = {
 	updated_at?: string | Date | null;
 	user?: unknown;
 	business?: unknown;
-	delivery_driver?: unknown;
 	driver?: unknown;
 	items?: Array<Record<string, unknown>>;
 };
@@ -46,7 +44,6 @@ export function toDeliveryOrderDetail(row: unknown): DeliveryOrderDetail {
 		user_id: r.user_id,
 		module_id: r.module_id,
 		module_type: r.module_type as 'STORES' | 'FOOD_DRINKS',
-		delivery_driver_id: r.delivery_driver_id ?? null,
 		driver_id: r.driver_id ?? null,
 		order_number: r.order_number ?? undefined,
 		status: r.status,
@@ -73,7 +70,6 @@ export function toDeliveryOrderDetail(row: unknown): DeliveryOrderDetail {
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
 		user: r.user ? (r.user as Record<string, unknown>) : null,
 		business: r.business ? (r.business as Record<string, unknown>) : null,
-		delivery_driver: r.delivery_driver ? (r.delivery_driver as Record<string, unknown>) : null,
 		driver: r.driver ? (r.driver as Record<string, unknown>) : null,
 	});
 }

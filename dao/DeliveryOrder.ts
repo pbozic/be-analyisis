@@ -105,15 +105,24 @@ export async function getOrder(order_id: UUID, args?: any): Promise<DeliveryOrde
  * Get non-terminal delivery orders for a business (excluding daily meals).
  */
 export async function getActiveDeliveryOrdersForModule(
-	module_id: UUID,
+	business_id: UUID,
 	module_type: MODULE
 ): Promise<DeliveryOrderDetail[]> {
 	try {
+		let module;
 		let module_condition;
 		if (module_type === MODULE.FOOD_DRINKS) {
-			module_condition = { food_drinks_module_id: module_id };
+			module = await prisma.food_drinks_module.findFirst({
+				where: { business_id },
+				select: { food_drinks_id: true },
+			});
+			module_condition = { food_drinks_module_id: module.food_drinks_id };
 		} else if (module_type === MODULE.STORES) {
-			module_condition = { stores_module_id: module_id };
+			module = await prisma.stores_module.findFirst({
+				where: { business_id },
+				select: { stores_id: true },
+			});
+			module_condition = { stores_module_id: module.stores_id };
 		} else {
 			throw new Error('Invalid module type');
 		}
@@ -200,6 +209,14 @@ export async function createOrder(order: CreateDeliveryOrderDaoInput, user_id: U
 				moduleConnectObj = { stores_module: { connect: moduleIdConditionObj } };
 			} else {
 				throw new Error('Invalid module type');
+			}
+			if (orderData.business_local_location_id) {
+				moduleConnectObj = {
+					...moduleConnectObj,
+					business_local_location: {
+						connect: { business_local_location_id: orderData.business_local_location_id },
+					},
+				};
 			}
 
 			const business = await tx.businesses.findUnique({
@@ -533,7 +550,6 @@ export async function updateDeliveryOrderTimeline(
 			where: { order_id },
 			data: { timeline: newTimelineEntries },
 			include: {
-				delivery_driver: true,
 				driver: true,
 				user: true,
 				business: true,
@@ -645,12 +661,14 @@ export async function getActiveOrdersByDeliveryDriverId(deliverer_id: UUID): Pro
 
 /**
  * Get all orders taken by a specific delivery driver.
+ * @param {string} driver_id - The UUID of the delivery driver.
+ * @returns {DeliveryOrderDetail[]} A promise that resolves to an array of DeliveryOrderDetail objects.
  */
-export async function getOrdersByDeliveryDriverId(delivery_driver_id: UUID): Promise<DeliveryOrderDetail[]> {
+export async function getOrdersByDeliveryDriverId(driver_id: UUID): Promise<DeliveryOrderDetail[]> {
 	try {
 		const orders = await prisma.delivery_orders.findMany({
 			where: {
-				delivery_driver_id: delivery_driver_id,
+				driver_id,
 			},
 			include: {
 				user: true,
@@ -870,7 +888,7 @@ export async function updateOrderLastSentAt(order_id: UUID): Promise<DeliveryOrd
  */
 export async function createOrderSent(
 	order_id: UUID,
-	driver: { driver_id: UUID; location: unknown } & Partial<Omit<DriverDetail, 'driver_id' | 'location'>>
+	driver: Partial<DriverDetail>
 ): Promise<Partial<DeliveryOrderSent>> {
 	try {
 		if (!driver.driver_id) {
@@ -926,104 +944,50 @@ export async function acceptOrderDelivery(
 ): Promise<DeliveryOrderDetail> {
 	const { order_id } = order;
 	try {
-		const deliveryDriver = await prisma.delivery_drivers.findUnique({
-			where: { delivery_driver_id: deliverer_id },
+		await prisma.delivery_order_sent.update({
+			where: {
+				delivery_order_sent_driver_unique: {
+					order_id,
+					driver_id: deliverer_id,
+				},
+			},
+			data: { accepted: true },
 		});
 
-		if (deliveryDriver) {
-			await prisma.delivery_order_sent.update({
-				where: {
-					delivery_order_sent_delivery_driver_unique: {
-						order_id,
-						delivery_driver_id: deliverer_id,
-					},
-				},
-				data: { accepted: true },
-			});
+		await prisma.drivers.update({
+			where: { driver_id: deliverer_id },
+			data: { on_order: true },
+		});
 
-			await prisma.delivery_drivers.update({
-				where: { delivery_driver_id: deliverer_id },
-				data: { on_order: true },
-			});
+		const updateData: any = {
+			timeline: addEntryToDeliveryOrderTimeline(
+				order.timeline,
+				DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED as PrismaDeliveryOrderStatus,
+				{
+					driver_id: deliverer_id,
+				}
+			),
+			driver: {
+				connect: { driver_id: deliverer_id },
+			},
+			status: DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,
+		};
 
-			const updateData: any = {
-				timeline: addEntryToDeliveryOrderTimeline(
-					order.timeline,
-					DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED as PrismaDeliveryOrderStatus,
-					{
-						driver_id: deliverer_id,
-					}
-				),
-				delivery_driver: {
-					connect: { delivery_driver_id: deliverer_id },
-				},
-				status: DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,
-			};
-
-			if (vehicle_id) {
-				updateData.vehicle = { connect: { vehicle_id } };
-			}
-
-			const updatedOrder = await prisma.delivery_orders.update({
-				where: { order_id },
-				data: updateData,
-				include: {
-					delivery_driver: true,
-					driver: true,
-					user: true,
-					business: true,
-				},
-			});
-
-			return toDeliveryOrderDetail(updatedOrder);
-		} else {
-			// Handle regular driver case
-			await prisma.delivery_order_sent.update({
-				where: {
-					delivery_order_sent_driver_unique: {
-						order_id,
-						driver_id: deliverer_id,
-					},
-				},
-				data: { accepted: true },
-			});
-
-			await prisma.drivers.update({
-				where: { driver_id: deliverer_id },
-				data: { on_order: true },
-			});
-
-			const updateData: any = {
-				timeline: addEntryToDeliveryOrderTimeline(
-					order.timeline,
-					DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED as PrismaDeliveryOrderStatus,
-					{
-						driver_id: deliverer_id,
-					}
-				),
-				driver: {
-					connect: { driver_id: deliverer_id },
-				},
-				status: DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,
-			};
-
-			if (vehicle_id) {
-				updateData.vehicle = { connect: { vehicle_id } };
-			}
-
-			const updatedOrder = await prisma.delivery_orders.update({
-				where: { order_id },
-				data: updateData,
-				include: {
-					delivery_driver: true,
-					driver: true,
-					user: true,
-					business: true,
-				},
-			});
-
-			return toDeliveryOrderDetail(updatedOrder);
+		if (vehicle_id) {
+			updateData.vehicle = { connect: { vehicle_id } };
 		}
+
+		const updatedOrder = await prisma.delivery_orders.update({
+			where: { order_id },
+			data: updateData,
+			include: {
+				driver: true,
+				user: true,
+				business: true,
+			},
+		});
+
+		return toDeliveryOrderDetail(updatedOrder);
 	} catch (e) {
 		throw new Error(e instanceof Error ? e.message : String(e));
 	}
@@ -1097,11 +1061,6 @@ export async function getSentDeliveryDrivers(order_id: UUID): Promise<any[]> {
 		return await prisma.delivery_order_sent.findMany({
 			where: { order_id },
 			include: {
-				delivery_driver: {
-					include: {
-						user: true,
-					},
-				},
 				driver: {
 					include: {
 						user: true,

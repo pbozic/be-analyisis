@@ -585,10 +585,11 @@ export function todaysEarnings(orders: (TaxiOrderBase | DeliveryOrderBase)[], ty
 			const matched = order.timeline?.find((item) => item.status === type);
 			const timestamp = matched?.location?.timestamp;
 			if (timestamp) {
-				if (type === 'TAXI_COMPLETED') {
-					todays += parseFloat(String(order.payment?.price)) || 0;
-					if (order.preferences?.vehicle_class !== VEHICLE_CLASS.PRIVATE_DRIVER) {
-						todays += parseFloat(String(order.payment?.extras?.price)) || 0;
+				if (type === TAXI_ORDER_STATUS.TAXI_COMPLETED) {
+					const taxiOrder = order as TaxiOrderBase;
+					todays += parseFloat(String(taxiOrder.payment?.price)) || 0;
+					if (taxiOrder.preferences?.vehicle_class !== VEHICLE_CLASS.PRIVATE_DRIVER) {
+						todays += parseFloat(String(taxiOrder.payment?.extras?.price)) || 0;
 					}
 				} else {
 					todays += parseFloat(String(order.details?.delivery_cost)) || 0;

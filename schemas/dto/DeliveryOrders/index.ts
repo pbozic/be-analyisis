@@ -54,7 +54,7 @@ export {
 	type UpdateOrderPickupTimeInput,
 	type UpdateOrderDeliveryTimeInput,
 	type UpdateDeliveryOrderTimelineInput,
-	type addToDeliveryOrderTimelineInput,
+	type AddToDeliveryOrderTimelineInput,
 	type UpdateDeliveryOrderItemsInput,
 	type DispatcherCancelOrderInput,
 	type DispatcherRevokeOrderInput,

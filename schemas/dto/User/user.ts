@@ -7,6 +7,7 @@ import { BusinessUserRefSchema, BusinessUserWithBusinessResponseSchema } from '.
 import { TransactionRefSchema } from './transaction.js';
 import { DriverBaseSchema } from '../Driver';
 import { FileRefSchema } from '../Files/file.dto.js';
+import { GroupUserDetailResponseSchema } from '../Group/groupUser.js';
 
 extendZodWithOpenApi(z);
 
@@ -169,6 +170,11 @@ export const UserDetailResponseSchema = UserResponseSchema.extend({
 export const UserWithTransactionsResponseSchema = UserResponseSchema.extend({
 	transactions: z.array(TransactionRefSchema).nullable(),
 });
+
+export const UserWithParentUserResponseSchema = UserResponseSchema.extend({
+	parent_user: GroupUserDetailResponseSchema.nullable(),
+});
+export type UserWithParentUserResponse = z.infer<typeof UserWithParentUserResponseSchema>;
 
 export const UserWithFavouritesResponseSchema = UserResponseSchema.extend({
 	user_favorite_businesses: z

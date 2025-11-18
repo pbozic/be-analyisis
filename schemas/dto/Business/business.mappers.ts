@@ -1,6 +1,5 @@
 import {
 	BusinessResponseDto,
-	BusinessByIdResponseSchema,
 	BusinessWithIncludesResponseDto,
 	BusinessWithAddressAndUsersResponseDto,
 	BusinessSearchResponseDto,
@@ -184,7 +183,7 @@ export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAll
 		description: asRec.description ?? null,
 	};
 
-	return BusinessByIdResponseSchema.parse({
+	return BusinessWithIncludesResponseDto.parse({
 		// Base business fields
 		business_id: r.business_id,
 		business_details: businessDetails,

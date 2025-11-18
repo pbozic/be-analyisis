@@ -1,20 +1,33 @@
+import { randomUUID } from 'crypto';
+
 import moment from 'moment';
-import joi from 'joi';
 import {
 	FUNDS_TYPE,
 	ORDER_TYPE,
+	Prisma,
 	TAXI_ORDER_STATUS,
 	TRANSACTION_TYPE,
 	VEHICLE_CATEGORY,
 	VEHICLE_CLASS,
 } from '@prisma/client';
+import { Socket } from 'socket.io';
+import Stripe from 'stripe';
 
+import BusinessUsersDao from '../dao/BusinessUsers.js';
+import UsersDao from '../dao/User.js';
 import TaxiOrderDao from '../dao/TaxiOrder.js';
 import DriverDao from '../dao/Driver.js';
 import socket from '../socket.js';
-import { TAXI_STARTING_FEE, COST_PER_KM, DRIVE_FEE, CARGO_TRANSFER_FEE, SERVICE_TYPE } from './constants.js';
+import {
+	TAXI_STARTING_FEE,
+	COST_PER_KM,
+	DRIVE_FEE,
+	CARGO_TRANSFER_FEE,
+	SERVICE_TYPE,
+	VEHICLE_CAPACITY,
+} from './constants.js';
 import prisma from '../prisma/prisma.js';
-import gApi from './gApis.js';
+import gApi, { LatLng } from './gApis.js';
 import { UserSockets as UserSockets$0 } from '../socket.js';
 import { sendNotificationToUser } from './oneSignal.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
@@ -24,13 +37,14 @@ import stripe from './stripe.js';
 import WalletFundsHelpers from './WalletFundsHelpers.js';
 import type { TaxiOrderDetail } from '../schemas/dto/TaxiOrders/taxiOrder.dto.ts';
 import { CandidateDriver } from './deliveryHelpers.ts';
-import { TaxiLocation } from '../schemas/dto/Taxi/taxiOrder.dto.ts';
+import { TaxiLocation } from '../schemas/dto/Taxi/taxiorder.dto.ts';
 import { DriverDetail } from '../schemas/dto/Driver/driver.dto.ts';
+import { CreateTaxiOrder } from '../schemas/dto/TaxiOrders/taxiOrder.validators.ts';
+import { WalletFundsBase } from '../schemas/dto/WalletFunds/walletFunds.dto.ts';
 
 const { io, SocketStore } = socket;
 const NUMBER_OF_DRIVERS_TO_SEND = 3;
 const UserSockets = { UserSockets: UserSockets$0 }.UserSockets;
-const { preferences } = joi;
 const MAX_PENDING_ORDERS = 1;
 /**
  * Send scheduled order notifications 24h and 1h before departure to users and drivers.
@@ -184,7 +198,7 @@ async function findTaxiOrderDrivers(order: TaxiOrderDetail): Promise<void> {
 		if (driver?.on_order) {
 			await revokeTaxiOrderFromDriver(order.order_id, order.driver_id, order);
 		} else if (driver && !expired) {
-			drivers = [driver as unknown as CandidateDriver];
+			drivers = [driver as CandidateDriver];
 		} else if (driver && expired) {
 			drivers = (await selectTaxiOrderDrivers(order)) as CandidateDriver[];
 		}
@@ -193,12 +207,12 @@ async function findTaxiOrderDrivers(order: TaxiOrderDetail): Promise<void> {
 	}
 	console.log(
 		'Drivers found: ',
-		drivers?.map((d: any) => d.driver_id)
+		drivers?.map((d: CandidateDriver) => d.driver_id)
 	);
 	let pushDrivers: Array<Promise<void>> = [];
 	if (Array.isArray(drivers)) {
 		for (let driver of drivers) {
-			pushDrivers.push(sendTaxiOrderToDriver(order as unknown as Record<string, unknown>, driver));
+			pushDrivers.push(sendTaxiOrderToDriver(order, driver as DriverDetail));
 		}
 	}
 	if (pushDrivers.length !== 0) {
@@ -236,13 +250,13 @@ async function getNumberPendingOrders(driver_id: string): Promise<number> {
 /**
  * Select the best drivers for an order based on proximity, availability, and pending count.
  * @param {TaxiOrderDetail} order - Taxi or transfer order.
- * @returns {Promise<object[]|void>} Array of eligible driver objects.
+ * @returns {Promise<CandidateDriver[]|void>} Array of eligible driver objects.
  */
 async function selectTaxiOrderDrivers(order: TaxiOrderDetail): Promise<CandidateDriver[] | void> {
 	try {
-		let drivers: any[] = [];
+		let drivers: CandidateDriver[] = [];
 		let radius = 200;
-		let attempts = order.find_driver_attempts;
+		let attempts = order.find_drivers_attempts ?? 0;
 		let vehicleClass = order.preferences?.vehicle_class || '';
 		let category = order.preferences?.vehicle_category || '';
 		let vehicleFilters = {
@@ -258,12 +272,12 @@ async function selectTaxiOrderDrivers(order: TaxiOrderDetail): Promise<Candidate
 		}
 		while (drivers.length === 0 && radius < 30000) {
 			let fetchedDrivers = await prisma.drivers.inRadius(
-				order.pickup_location.coordinates,
+				order.pickup_location?.coordinates,
 				radius,
-				order.preferences.ride_requirements,
+				order.preferences?.ride_requirements,
 				vehicleFilters,
-				order.estimates.region_id,
-				order.estimates.region_license
+				order.estimates?.region_id,
+				order.estimates?.region_license
 			);
 			console.log('in radius', fetchedDrivers?.length);
 			const onlineDrivers = (
@@ -281,12 +295,12 @@ async function selectTaxiOrderDrivers(order: TaxiOrderDetail): Promise<Candidate
 						return driver;
 					})
 				)
-			).filter(Boolean) as any[];
+			).filter(Boolean) as CandidateDriver[];
 			console.log('onlineDrivers', onlineDrivers?.length);
 			drivers = onlineDrivers;
 			radius += 1000;
 		}
-		let acceptableDrivers: any[] = [];
+		let acceptableDrivers: CandidateDriver[] = [];
 		if (drivers.length > 0) {
 			for (let driver of drivers) {
 				if (order.type === ORDER_TYPE.TAXI && (!driver.handles_taxi_orders || !driver.taxi_orders_toggled)) {
@@ -297,40 +311,40 @@ async function selectTaxiOrderDrivers(order: TaxiOrderDetail): Promise<Candidate
 				) {
 					continue;
 				}
-				let numPendingOrders = await getNumberPendingOrders(driver.driver_id);
-				let { distance, duration } = await gApi.distanceBetweenTwoPoints(
-					order.pickup_location.coordinates,
-					driver.location.coordinates,
+				let numPendingOrders = await getNumberPendingOrders(driver?.driver_id as string);
+				let { distanceM, duration } = await gApi.distanceBetweenTwoPoints(
+					order.pickup_location?.coordinates,
+					driver?.location?.coordinates as LatLng,
 					'driving',
 					new Date(),
 					'best_guess'
 				);
-				driver.distance = distance;
+				driver.distanceM = distanceM;
 				driver.duration = duration;
 				driver.numPendingOrders = numPendingOrders;
 				acceptableDrivers.push(driver);
 			}
 		}
 		acceptableDrivers.sort((a, b) => {
-			if (parseInt(a.duration) !== parseInt(b.duration)) {
-				return parseInt(a.duration) - parseInt(b.duration);
+			if (parseInt(a.duration || '') !== parseInt(b.duration || '')) {
+				return parseInt(a.duration || '') - parseInt(b.duration || '');
 			}
-			return a.numPendingOrders - b.numPendingOrders;
+			return (a.numPendingOrders ?? 0) - (b.numPendingOrders ?? 0);
 		});
 		acceptableDrivers = acceptableDrivers.slice(0, NUMBER_OF_DRIVERS_TO_SEND);
-		const eligibleDrivers: any[] = [];
+		const eligibleDrivers: DriverDetail[] = [];
 		for (let driver of acceptableDrivers) {
-			const detailedDriver = await DriverDao.getDriverById(driver.driver_id);
+			const detailedDriver = await DriverDao.getDriverById(driver?.driver_id as string);
 			if (detailedDriver) {
 				eligibleDrivers.push(detailedDriver);
 			}
 		}
 		await TaxiOrderDao.updateOrder(order.order_id, {
-			find_drivers_attempts: order.find_drivers_attempts + 1,
+			find_drivers_attempts: (order.find_drivers_attempts ?? 0) + 1,
 		});
 		console.log(
 			'Eligible drivers: ',
-			eligibleDrivers.map((d: any) => d.driver_id)
+			eligibleDrivers.map((d: DriverDetail) => d.driver_id)
 		);
 		return eligibleDrivers;
 	} catch (e) {
@@ -363,9 +377,9 @@ async function sendTaxiOrderToDriver(order: TaxiOrderDetail, driver: DriverDetai
 
 	console.log('Sending order: ', order.order_id, ' to driver: ', driver.user_id);
 	if (!order_sent) {
-		await TaxiOrderDao.createOrderSent(order.order_id, driver.driver_id);
-		const l10nText = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver.user.language);
-		const l10nTextHeading = getLocalisedTexts('HEADING', driver.user.language);
+		await TaxiOrderDao.createOrderSent(order.order_id, driver);
+		const l10nText = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver.user?.language);
+		const l10nTextHeading = getLocalisedTexts('HEADING', driver.user?.language);
 		await sendNotificationToUser(l10nTextHeading?.pending, l10nText?.pending, driver.user_id);
 	} else {
 		if (order_sent.taxi_order_sent_id) {
@@ -383,10 +397,10 @@ async function sendTaxiOrderToDriver(order: TaxiOrderDetail, driver: DriverDetai
 }
 /**
  * Resend any pending (not accepted) orders to a driver after reconnect.
- * @param {object} driver - Driver entity.
+ * @param {DriverDetail} driver - Driver entity.
  * @returns {Promise<void>}
  */
-async function resendPendingOrdersToDriver(driver: Record<string, any>) {
+async function resendPendingOrdersToDriver(driver: DriverDetail): Promise<void> {
 	try {
 		const sentOrderIds = await TaxiOrderDao.getAlreadySentOrdersByDriverId(driver.driver_id);
 		for (let sentOrderId of sentOrderIds) {
@@ -406,10 +420,10 @@ async function resendPendingOrdersToDriver(driver: Record<string, any>) {
 }
 /**
  * Send active (accepted) orders to a driver upon reconnect.
- * @param {object} driver - Driver entity.
+ * @param {DriverDetail} driver - Driver entity.
  * @returns {Promise<void>}
  */
-async function sendActiveOrdersToDriver(driver: Record<string, any>) {
+async function sendActiveOrdersToDriver(driver: DriverDetail): Promise<void> {
 	try {
 		const activeOrders = await TaxiOrderDao.getActiveOrdersByDriverId(driver.driver_id);
 		console.info('sendActiveOrdersToDriver', driver.user_id);
@@ -427,18 +441,18 @@ async function sendActiveOrdersToDriver(driver: Record<string, any>) {
  * @param {boolean} [cron=false] - Skip accepted orders when invoked from cron.
  * @returns {Promise<void>}
  */
-async function revokeTaxiOrderFromDrivers(order_id: string, cron = false) {
+async function revokeTaxiOrderFromDrivers(order_id: string, cron = false): Promise<void> {
 	let taxiOrderSent = await TaxiOrderDao.getSentDrivers(order_id);
 	for (let sent of taxiOrderSent) {
 		if (sent.accepted && cron) {
 			continue;
 		}
-		SocketStore.removeUserFromRoom(sent.driver.user_id, `order_${order_id}`);
-		console.log('Revoking order: ', order_id, ' from driver: ', sent.driver.user_id);
-		if (!UserSockets.get(sent.driver.user_id)) {
+		SocketStore.removeUserFromRoom(sent.driver?.user_id, `order_${order_id}`);
+		console.log('Revoking order: ', order_id, ' from driver: ', sent.driver?.user_id);
+		if (!UserSockets.get(sent.driver?.user_id)) {
 			return;
 		}
-		UserSockets.get(sent.driver.user_id).emit('order_revoked__taxi', order_id);
+		UserSockets.get(sent.driver?.user_id).emit('order_revoked__taxi', order_id);
 	}
 }
 /**
@@ -459,8 +473,8 @@ async function revokeTaxiOrderFromDriver(order_id: string, driver_id: string, or
 	UserSockets.get(driver.user_id).emit('order_revoked__taxi', order_id);
 	if (order?.user) {
 		const freshOrder = await TaxiOrderDao.getOrder(order_id);
-		const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', freshOrder?.user.language);
-		const l10nTextHeading = getLocalisedTexts('HEADING', freshOrder?.user.language);
+		const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', freshOrder?.user?.language);
+		const l10nTextHeading = getLocalisedTexts('HEADING', freshOrder?.user?.language);
 		await sendNotificationToUser(l10nTextHeading?.taxi, l10nText?.revoked, freshOrder?.user_id);
 	}
 }
@@ -476,24 +490,24 @@ async function revokeTaxiOrderFromOtherDrivers(order_id: string, driver_id: stri
 		if (sent.accepted) {
 			continue;
 		}
-		if (sent.driver.driver_id === driver_id) {
+		if (sent.driver?.driver_id === driver_id) {
 			continue;
 		}
-		SocketStore.removeUserFromRoom(sent.driver.user_id, `order_${order_id}`);
-		console.log('Revoking order: ', order_id, ' from driver: ', sent.driver.user_id);
+		SocketStore.removeUserFromRoom(sent.driver?.user_id, `order_${order_id}`);
+		console.log('Revoking order: ', order_id, ' from driver: ', sent.driver?.user_id);
 		await TaxiOrderDao.deleteOrderSent(order_id, sent.taxi_order_sent_id);
-		if (!UserSockets.get(sent.driver.user_id)) {
+		if (!UserSockets.get(sent.driver?.user_id)) {
 			return;
 		}
-		UserSockets.get(sent.driver.user_id).emit('order_revoked__taxi', order_id);
+		UserSockets.get(sent.driver?.user_id).emit('order_revoked__taxi', order_id);
 	}
 }
 /**
  * Compute a priority score for an order based on type, category and waiting time.
- * @param {object} order - Order entity.
+ * @param {TaxiOrderDetail} order - Order entity.
  * @returns {number}
  */
-function calculateScoreForOrder(order: Record<string, any>): number {
+function calculateScoreForOrder(order: TaxiOrderDetail): number {
 	const now = new Date();
 	const createdAt = new Date(order.created_at);
 	const waitingMinutes = Math.floor((now.getTime() - createdAt.getTime()) / 60000);
@@ -517,17 +531,18 @@ async function checkIfOrdersNeedSending(): Promise<void> {
 		});
 		console.log('Open taxi orders not scheduled:', orders.length);
 		let scheduledOrders = await TaxiOrderDao.getOrders({
+			//TODO: check time to scheduled departure and only send those within a certain window
 			where: {
 				status: TAXI_ORDER_STATUS.PENDING,
 				is_scheduled: true,
 			},
 		});
 		console.log('Open taxi orders scheduled:', scheduledOrders.length);
-		let all_orders = [...orders, ...scheduledOrders] as any[];
+		let all_orders = [...orders, ...scheduledOrders] as TaxiOrderDetail[];
 		all_orders.sort((a, b) => calculateScoreForOrder(b) - calculateScoreForOrder(a));
 		for (let order of all_orders) {
 			console.log('Order last_sent_at:', order.last_sent_at);
-			await findTaxiOrderDrivers(order as TaxiOrderDetail);
+			await findTaxiOrderDrivers(order);
 		}
 	} catch (error) {
 		console.log(error);
@@ -561,16 +576,25 @@ async function closeScheduledOrders(): Promise<void> {
 }
 /**
  * Calculate transfer ride price and metadata for a route and vehicle category.
- * @param {Array<{coordinates:number[]}>} route - Route points.
- * @param {string} vehicleCategory - One of VEHICLE_CATEGORY.STANDARD|PREMIUM.
+ * @param {TaxiLocation[]} route - Route points.
+ * @param {VEHICLE_CATEGORY} vehicleCategory - One of VEHICLE_CATEGORY.STANDARD|PREMIUM.
  * @returns {Promise<{price:number,reasons:string[]|null,distance:number,durationS:number,duration:number}>}
  */
-async function calculateTransferRidePrice(route: TaxiLocation[], vehicleCategory: string) {
+async function calculateTransferRidePrice(
+	route: TaxiLocation[],
+	vehicleCategory: VEHICLE_CATEGORY
+): Promise<{
+	price: number;
+	reasons: string[] | null;
+	distance: number;
+	durationS: number;
+	duration: number;
+}> {
 	if (vehicleCategory !== VEHICLE_CATEGORY.STANDARD && vehicleCategory !== VEHICLE_CATEGORY.PREMIUM) {
 		throw new Error(`Invalid vehicle category, got ${vehicleCategory}. Only STANDARD and PREMIUM are allowed.`);
 	}
 	const { totalDistanceM, totalDurationS, totalDurationM } = await gApi.getDistanceForRoute(
-		route.map((loc) => loc.coordinates),
+		route.map((loc) => loc.coordinates as LatLng),
 		'driving'
 	);
 	if (!totalDistanceM) {
@@ -580,7 +604,7 @@ async function calculateTransferRidePrice(route: TaxiLocation[], vehicleCategory
 	const pricePerKm = COST_PER_KM[vehicleCategory] * COST_PER_KM.TRANSFER_BONUS;
 	const basePrice = TAXI_STARTING_FEE[vehicleCategory];
 	const totalPrice = basePrice + pricePerKm * distanceInKm;
-	let priceSurge = await getPriceSurgeDataForTransferTrip(route, new Date(), null, null);
+	let priceSurge = await getPriceSurgeDataForTransferTrip(route, new Date());
 	const finalPrice = Math.round(totalPrice * priceSurge.multiplier * 100) / 100;
 	return {
 		price: finalPrice,
@@ -592,16 +616,24 @@ async function calculateTransferRidePrice(route: TaxiLocation[], vehicleCategory
 }
 /**
  * Calculate platform/driver cuts (in cents) for a transfer order considering extras and credits.
- * @param {object} order - Order with payment, preferences and user fields.
+ * @param {TaxiOrderDetail} order - Order with payment, preferences and user fields.
  * @param {string} [orderType='order'] - Reserve type used in wallet funds.
  * @returns {Promise<{DRIVER_CREDIT_CUT:number,PLATFORM_CREDIT_CUT:number,DRIVER_CUT:number,PLATFORM_CUT:number}>}
  */
-async function calculateTransferOrderPaymentCuts(order: any, orderType = 'order') {
-	const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100);
+async function calculateTransferOrderPaymentCuts(
+	order: TaxiOrderDetail,
+	orderType = 'order'
+): Promise<{
+	DRIVER_CREDIT_CUT: number;
+	PLATFORM_CREDIT_CUT: number;
+	DRIVER_CUT: number;
+	PLATFORM_CUT: number;
+}> {
+	const PRICE_CENTS = Math.round(parseFloat(order.payment?.price) * 100);
 	const EXTRAS_COST_CENTS = Math.round(
 		parseFloat(
 			[VEHICLE_CLASS.PRIVATE_DRIVER, VEHICLE_CLASS.CARGO_VAN].includes(order.preferences?.vehicle_class)
-				? order.payment.extras?.price ||
+				? order.payment?.extras?.price ||
 						order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
 							CARGO_TRANSFER_FEE.CARGO_FEE
 				: 0
@@ -613,7 +645,10 @@ async function calculateTransferOrderPaymentCuts(order: any, orderType = 'order'
 			order.order_id,
 			orderType as 'order' | 'daily_meals_subscription_payment'
 		)) || [];
-	const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum: number, wf: any) => sum + (wf.amount || 0), 0);
+	const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce(
+		(sum: number, wf: WalletFundsBase) => sum + (wf.amount || 0),
+		0
+	);
 	const INITIAL_PLATFORM_CUT = Math.round(PRICE_CENTS * DRIVE_FEE) + EXTRAS_COST_CENTS;
 	const TOTAL_COST_CENTS = PRICE_CENTS + EXTRAS_COST_CENTS;
 	const INITIAL_DRIVER_CUT = TOTAL_COST_CENTS - INITIAL_PLATFORM_CUT;
@@ -650,12 +685,12 @@ async function handlePaymentRefund(
 	user_id: string,
 	payment: any,
 	additional_workers: number,
-	vehicle_class: string,
+	vehicle_class: VEHICLE_CLASS,
 	skip_fee = false
 ) {
 	const WF_reserved = await WalletFundsDao.getReservedWalletFunds(user_id, order_id);
 	const { credits_wf_amount_reserved, regular_wf_amount_reserved } = WF_reserved.reduce(
-		(acc: any, wf: any) => {
+		(acc: any, wf: WalletFundsBase) => {
 			if (wf.type !== FUNDS_TYPE.FUNDS) {
 				acc.credits_wf_amount_reserved += wf.amount || 0;
 			} else {
@@ -667,10 +702,11 @@ async function handlePaymentRefund(
 	);
 	const credit_discount_used = payment.credit_discount || 0;
 	const extras_cost = parseFloat(
-		[VEHICLE_CLASS.PRIVATE_DRIVER, VEHICLE_CLASS.CARGO_VAN].includes(vehicle_class)
-			? payment.extras?.price ||
-					additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE + CARGO_TRANSFER_FEE.CARGO_FEE
-			: 0
+		vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER
+			? payment.extras?.price
+			: vehicle_class === VEHICLE_CLASS.CARGO_VAN
+				? additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE + CARGO_TRANSFER_FEE.CARGO_FEE
+				: 0
 	);
 	const total_price_cents = Math.round((payment.price + extras_cost) * 100);
 	const PAYMENT_TYPE = payment.type;
@@ -744,8 +780,8 @@ export async function getActiveOrdersHelper(
 				if (activeOrder && activeOrder.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
 					const driver = activeOrder.driver;
 					const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(
-						activeOrder.pickup_location.coordinates,
-						driver.location.coordinates,
+						activeOrder.pickup_location?.coordinates,
+						driver?.location?.coordinates as LatLng,
 						'driving',
 						new Date(),
 						'best_guess'
@@ -760,30 +796,30 @@ export async function getActiveOrdersHelper(
 						result.rows[0].elements &&
 						result.rows[0].elements[0]
 					) {
-						activeOrder.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
+						activeOrder.estimates!.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
 						const estimatedPickupTime = new Date();
 						estimatedPickupTime.setSeconds(
 							estimatedPickupTime.getSeconds() + result.rows[0].elements[0].duration.value
 						);
-						activeOrder.estimates.pickup_time = estimatedPickupTime;
+						activeOrder.estimates!.pickup_time = estimatedPickupTime;
 					} else {
 						if (duration && distance) {
 							const estimatedPickupTime = new Date();
-							estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + duration);
-							activeOrder.estimates.pickup_time = estimatedPickupTime;
+							estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + parseInt(duration));
+							activeOrder.estimates!.pickup_time = estimatedPickupTime;
 						}
 						console.log('Invalid response structure from distanceBetweenTwoPoints');
-						activeOrder.estimates.pickup_time_in_seconds = -1;
-						activeOrder.estimates.pickup_time = null;
+						activeOrder.estimates!.pickup_time_in_seconds = -1;
+						activeOrder.estimates!.pickup_time = null;
 					}
 					// Update the order with the new estimates
 					await TaxiOrderDao.updateOrder(activeOrder.order_id, {
-						estimates: activeOrder.estimates,
+						estimates: activeOrder.estimates!,
 					});
 					const userSocket = UserSockets.get(activeOrder.user_id);
 					console.log('userSocket: ', !!userSocket);
 					if (userSocket) {
-						io.emit('active_order_updated__taxi', {
+						(io as Socket).emit('active_order_updated__taxi', {
 							...activeOrder,
 						});
 					}
@@ -797,7 +833,7 @@ export async function getActiveOrdersHelper(
 	}
 }
 
-function preprocessOrderData(orderData: any): any[] {
+function preprocessOrderData(orderData: Partial<CreateTaxiOrder>): Partial<CreateTaxiOrder>[] {
 	const cleanedOrderData = {
 		// user_id: orderData.user_id,
 		// driver_id: orderData.driver.driver_id,
@@ -806,10 +842,9 @@ function preprocessOrderData(orderData: any): any[] {
 		allow_credits_usage: orderData.allow_credits_usage,
 		cargo_preferences: orderData.cargo_preferences,
 		creating_user_id: orderData.creating_user_id,
-		customer_note: orderData.customer_note,
+		// customer_note: orderData.customer_note,
 		delivery_location: orderData.delivery_location,
 		estimates: orderData.estimates,
-		flags: orderData.flags,
 		first_name: orderData.first_name,
 		last_name: orderData.last_name,
 		parent_user_type: orderData.parent_user_type,
@@ -821,50 +856,59 @@ function preprocessOrderData(orderData: any): any[] {
 		subtype: orderData.subtype,
 		telephone: orderData.telephone,
 		type: orderData.type,
-	};
+	} as Partial<CreateTaxiOrder>;
 	const prefs = cleanedOrderData.preferences;
-	const is_repeat =
-		prefs.repeat_ride?.length > 0 && !prefs.repeat_ride.some((item) => item.value === 'do_not_repeat');
-	if (prefs.vehicle_class === VEHICLE_CLASS.CARGO_VAN) {
-		cleanedOrderData.payment = {
-			...cleanedOrderData.payment,
-			extras: {
-				price:
-					CARGO_TRANSFER_FEE.CARGO_FEE +
-					cleanedOrderData.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE,
-				type: 'CARGO_TRANSFER_FEE',
-			},
-		};
+	if (prefs) {
+		const is_repeat =
+			prefs.repeat_ride?.length > 0 && !prefs.repeat_ride.some((item) => item.value === 'do_not_repeat');
+		if (prefs.vehicle_class === VEHICLE_CLASS.CARGO_VAN) {
+			cleanedOrderData.payment = {
+				...cleanedOrderData.payment,
+				extras: {
+					price:
+						CARGO_TRANSFER_FEE.CARGO_FEE +
+						cleanedOrderData.cargo_preferences?.additional_workers *
+							CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE,
+					type: 'CARGO_TRANSFER_FEE',
+				},
+			};
+		}
+		cleanedOrderData.is_scheduled = prefs.departure_date != null;
+		cleanedOrderData.route = cleanedOrderData.route?.map((r_i) => ({ ...r_i, id: randomUUID(), locked: false }));
+		cleanedOrderData.route![0] = { ...cleanedOrderData.route![0], locked: true };
+		if (cleanedOrderData.pickup_location) {
+			cleanedOrderData.pickup_location = {
+				address: cleanedOrderData.pickup_location.address,
+				coordinates: cleanedOrderData.pickup_location.coordinates,
+			};
+		}
+		if (cleanedOrderData.delivery_location) {
+			cleanedOrderData.delivery_location = {
+				address: cleanedOrderData.delivery_location.address,
+				coordinates: cleanedOrderData.delivery_location.coordinates,
+			};
+		}
+		let orderDataArray = [];
+		if (is_repeat) {
+			orderDataArray = generateOrdersForRepeatOrder(
+				cleanedOrderData,
+				prefs.repeat_ride,
+				prefs.repeat_duration.length > 0 ? prefs.repeat_duration[0].value : 0
+			);
+		} else {
+			orderDataArray.push(cleanedOrderData);
+		}
+		return orderDataArray;
 	}
-	cleanedOrderData.is_scheduled = prefs.departure_date != null;
-	cleanedOrderData.route = cleanedOrderData.route.map((r_i) => ({ ...r_i, id: randomUUID(), locked: false }));
-	cleanedOrderData.route[0] = { ...cleanedOrderData.route[0], locked: true };
-	if (cleanedOrderData.pickup_location) {
-		cleanedOrderData.pickup_location = {
-			address: cleanedOrderData.pickup_location.address,
-			coordinates: cleanedOrderData.pickup_location.coordinates,
-		};
-	}
-	if (cleanedOrderData.delivery_location) {
-		cleanedOrderData.delivery_location = {
-			address: cleanedOrderData.delivery_location.address,
-			coordinates: cleanedOrderData.delivery_location.coordinates,
-		};
-	}
-	let orderDataArray = [];
-	if (is_repeat) {
-		orderDataArray = generateOrdersForRepeatOrder(
-			cleanedOrderData,
-			prefs.repeat_ride,
-			prefs.repeat_duration.length > 0 ? prefs.repeat_duration[0].value : 0
-		);
-	} else {
-		orderDataArray.push(cleanedOrderData);
-	}
-	return orderDataArray;
+	return [cleanedOrderData];
 }
 
-async function generateVehicleTransferOrder(orderData, userId, businessUserId, businessClientId) {
+async function generateVehicleTransferOrder(
+	orderData: Partial<CreateTaxiOrder>,
+	userId: string,
+	businessUserId?: string,
+	businessClientId?: string
+): Promise<TaxiOrderDetail> {
 	const vehicleTransferOrderData = {
 		...orderData,
 		type: ORDER_TYPE.VEHICLE_TRANSFER_COMBO,
@@ -927,11 +971,11 @@ function subdivideOrder(
 			num_orders = 1;
 		}
 	} else {
-		num_orders = Math.ceil(total_seats / VEHICLE_CAPACITY[vehicle_class]);
+		num_orders = Math.ceil(total_seats / (VEHICLE_CAPACITY[vehicle_class] ?? 4));
 	}
 	console.log('num_orders', num_orders);
 	for (let i = 0; i < num_orders; i++) {
-		let availableSeats = VEHICLE_CAPACITY[vehicle_class];
+		let availableSeats = VEHICLE_CAPACITY[vehicle_class] ?? 4;
 		let adults_seated = 0;
 		let children_seated = 0;
 		for (let i = 0; i < availableSeats; i++) {
@@ -954,7 +998,7 @@ function subdivideOrder(
 }
 
 async function makeOrder(
-	cleanOrderData: Record<string, unknown>,
+	cleanOrderData: Partial<CreateTaxiOrder>,
 	userId: string,
 	parentOrderId: string | null,
 	driverId: string | null,
@@ -968,7 +1012,7 @@ async function makeOrder(
 				user_id: userId,
 			},
 		},
-	};
+	} as Prisma.taxi_ordersCreateInput;
 	if (parentOrderId) {
 		orderPayload.parent_order = {
 			connect: {
@@ -1014,6 +1058,7 @@ async function buildOrder(
 	let firstOrderId = parentOrderId;
 	for (let i = 0; i < splits.length; i++) {
 		const split = splits[i];
+		if (!split) continue;
 		const { adults_seated, children_seated } = split;
 		cleanOrderData.preferences.adults = adults_seated;
 		cleanOrderData.preferences.children_under_140 = children_seated;
@@ -1032,9 +1077,9 @@ async function buildOrder(
 	return firstOrderId;
 }
 
-function getDayIndex(dayName) {
+function getDayIndex(dayName: string): number {
 	// Map day names to their corresponding indices
-	const daysOfWeek = {
+	const daysOfWeek: Record<string, number> = {
 		Sunday: 0,
 		Monday: 1,
 		Tuesday: 2,
@@ -1043,16 +1088,20 @@ function getDayIndex(dayName) {
 		Friday: 5,
 		Saturday: 6,
 	};
-	return daysOfWeek[dayName]; // Return the index of the day
+	return daysOfWeek[dayName] ?? -1; // Return the index of the day
 }
 
-function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
+function generateOrdersForRepeatOrder(
+	orderData: Partial<CreateTaxiOrder>,
+	repeatData: any[],
+	repeatDuration: number
+): Partial<CreateTaxiOrder>[] {
 	try {
 		console.log('rd', repeatDuration);
 		const orders = [];
 		const currentDate = new Date();
 		// Get the hours and minutes from the departure time
-		const departureTime = new Date(orderData.preferences.departure_time);
+		const departureTime = new Date(orderData.preferences?.departure_time as string);
 		const departureHours = departureTime.getHours();
 		const departureMinutes = departureTime.getMinutes();
 		// Get current week's day number
@@ -1093,47 +1142,45 @@ function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
 			}
 		}
 		return orders; // Return generated orders
-	} catch (error) {
+	} catch (error: unknown) {
 		console.log('TaxiOrderController', error);
-		throw new Error(error);
+		throw new Error(error as string);
 	}
 }
 
-export async function cleanedCreateOrderHelper(orderData) {
+export async function cleanedCreateOrderHelper(orderData: Partial<CreateTaxiOrder>): Promise<{
+	order: TaxiOrderDetail | null;
+	vehicle_transfer_order?: TaxiOrderDetail;
+}> {
 	try {
 		const user_id = orderData.user_id;
-		const driver_id = orderData?.driver_id || orderData?.driver?.driver_id;
-		const businessUserId = orderData.business_user?.business_users_id;
-		const businessClientId = orderData.business_client?.business_clients_id;
-		console.log('ORDER DATA DRIVER', orderData.driver);
+		const driver_id = orderData?.driver_id;
+		const businessUserId = orderData?.business_users_id;
+		const businessClientId = orderData?.business_clients_id;
 		const cleanedOrderDataArray = preprocessOrderData(orderData);
 		let firstOrderId = null;
 		for (const cleanOrderData of cleanedOrderDataArray) {
 			firstOrderId = await buildOrder(
 				cleanOrderData,
-				user_id,
+				user_id as string,
 				firstOrderId,
-				driver_id,
-				businessUserId,
-				businessClientId
+				driver_id as string,
+				businessUserId as string,
+				businessClientId as string
 			);
 		}
-		let order;
+		let order: TaxiOrderDetail | null = null;
 		let vehicle_transfer_order;
 		if (firstOrderId) {
-			order = await TaxiOrderDao.getOrder(firstOrderId, {
-				include: {
-					grouped_orders: true,
-				},
-			});
+			order = await TaxiOrderDao.getOrder(firstOrderId);
 			console.log('parentOrderId', firstOrderId);
-			console.log('fetched grouped_orders', order.grouped_orders);
-			if (order && order.preferences.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
+			console.log('fetched grouped_orders', order?.grouped_orders);
+			if (order && order.preferences?.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
 				vehicle_transfer_order = await generateVehicleTransferOrder(
-					cleanedOrderDataArray[0],
-					user_id,
-					businessUserId,
-					businessClientId
+					cleanedOrderDataArray[0] as Partial<CreateTaxiOrder>,
+					user_id as string,
+					businessUserId as string,
+					businessClientId as string
 				);
 			}
 		}
@@ -1144,21 +1191,19 @@ export async function cleanedCreateOrderHelper(orderData) {
 	}
 }
 
-export async function handlePaymentForTransferOrder(order, return_url) {
+export async function handlePaymentForTransferOrder(
+	order: TaxiOrderDetail,
+	return_url: string
+): Promise<Stripe.PaymentIntent | null> {
 	try {
-		let user;
-		if (order.creating_user_id) {
-			user = await UsersDao.getUserById(order.creating_user_id);
-		} else {
-			user = await UsersDao.getUserById(order.user_id);
-		}
+		let user = await UsersDao.getUserById(order.creating_user_id || order.user_id);
 		let payment_intent = null;
 		//CALCULATE IN CENTS
-		const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100);
+		const PRICE_CENTS = Math.round(parseFloat(order.payment?.price ?? '0') * 100);
 		const EXTRAS_COST_CENTS = Math.round(
 			parseFloat(
 				[VEHICLE_CLASS.PRIVATE_DRIVER, VEHICLE_CLASS.CARGO_VAN].includes(order.preferences?.vehicle_class)
-					? order.payment.extras?.price ||
+					? order.payment?.extras?.price ||
 							order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
 								CARGO_TRANSFER_FEE.CARGO_FEE
 					: 0
@@ -1170,7 +1215,7 @@ export async function handlePaymentForTransferOrder(order, return_url) {
 		//Handle automatic credits spending ~ use credits to pay platform cut first, to keep the driver cut mostly off stripe
 		const reservedCredits = order.allow_credits_usage
 			? await WalletFundsHelpers.reserveCreditsForOrder(
-					user.user_id,
+					user?.user_id as string,
 					TOTAL_COST_CENTS,
 					order.order_id,
 					FUNDS_TYPE.CREDITS_TAXI
@@ -1183,8 +1228,8 @@ export async function handlePaymentForTransferOrder(order, return_url) {
 			CREDITS_AMOUNT_RESERVED > PLATFORM_CREDIT_CUT_CENTS
 				? CREDITS_AMOUNT_RESERVED - PLATFORM_CREDIT_CUT_CENTS
 				: 0;
-		order.payment.credit_discount = CREDITS_AMOUNT_RESERVED;
-		order.payment.credit_discount_details = {
+		order.payment!.credit_discount = CREDITS_AMOUNT_RESERVED;
+		order.payment!.credit_discount_details = {
 			taxi_driver: DRIVER_CREDIT_CUT_CENTS,
 			platform: PLATFORM_CREDIT_CUT_CENTS,
 		};
@@ -1198,16 +1243,21 @@ export async function handlePaymentForTransferOrder(order, return_url) {
 		// if(DRIVER_CREDIT_CUT_CENTS>0) {
 		// 	const transferedCreditsDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CREDIT_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
 		// }
-		const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user.user_id);
+		const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(
+			user?.user_id as string
+		);
 		if (DISCOUNTED_TOTAL_COST > 0) {
-			if (order.payment.type === 'WALLET') {
+			if (order.payment?.type === 'WALLET') {
 				// handle wallet payment
-				if (available_wallet_balances['TAXI'] + available_wallet_balances[null] < DISCOUNTED_TOTAL_COST / 100) {
+				if (
+					(available_wallet_balances[SERVICE_TYPE.TAXI] ?? 0) + (available_wallet_balances['none'] ?? 0) <
+					DISCOUNTED_TOTAL_COST / 100
+				) {
 					throw new Error('Insufficient funds');
 				}
 				// await UsersDao.removeWalletBalance(order.user_id, (DISCOUNTED_TOTAL_COST / 100), order.order_id, "taxi");
 				await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
-					user.user_id,
+					user?.user_id as string,
 					DISCOUNTED_TOTAL_COST,
 					order.order_id
 				);
@@ -1219,18 +1269,18 @@ export async function handlePaymentForTransferOrder(order, return_url) {
 				});
 				order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
 			}
-			if (order.payment.type === 'FAMILY_WALLET') {
+			if (order.payment?.type === 'FAMILY_WALLET' && user?.parent_user) {
 				// handle wallet payment
 				let has_parent_user = user.parent_user;
 				if (!has_parent_user) {
 					throw new Error('User has no family wallet');
 				}
 				let parent_user = user.parent_user.parent_user;
-				const parent_available_wallet_balances = WalletFundsDao.getAvailableWalletBalanceGroupedByType(
+				const parent_available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(
 					parent_user.user_id
 				);
 				let is_businessUser = await BusinessUsersDao.getBusinessUserByUserId(parent_user.user_id);
-				let allowance = user.parent_user.allowance?.amount_taxi;
+				let allowance: number = user.parent_user.allowance?.amount_taxi_wallet ?? 0;
 				if (is_businessUser) {
 					allowance = allowance * 2;
 				}
@@ -1239,7 +1289,7 @@ export async function handlePaymentForTransferOrder(order, return_url) {
 					throw new Error('Insufficient allowance');
 				}
 				//TODO: Should this allow usage of credits from parent?
-				if (parent_available_wallet_balances[null] < DISCOUNTED_TOTAL_COST / 100) {
+				if ((parent_available_wallet_balances['none'] ?? 0) < DISCOUNTED_TOTAL_COST / 100) {
 					throw new Error('Insufficient funds');
 				}
 				// await UsersDao.removeWalletBalance(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id, "taxi");
@@ -1248,7 +1298,7 @@ export async function handlePaymentForTransferOrder(order, return_url) {
 					DISCOUNTED_TOTAL_COST,
 					order.order_id
 				);
-				const updateData = {};
+				const updateData: { [key: string]: { decrement: number } } = {};
 				if (order.type === ORDER_TYPE.TAXI) {
 					updateData.amount_taxi = { decrement: DISCOUNTED_TOTAL_COST / 100 };
 				} else {
@@ -1268,13 +1318,13 @@ export async function handlePaymentForTransferOrder(order, return_url) {
 				});
 				order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
 			}
-			if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
+			if (order.payment?.type === 'CARD' || order.payment?.type === 'PLATFORM') {
 				payment_intent = await stripe.createSplittablePayment(
-					user.stripe_customer_id,
+					user?.stripe_customer_id as string,
 					order.order_id,
-					order.payment.payment_method_id,
+					order.payment?.payment_method_id,
 					DISCOUNTED_TOTAL_COST,
-					order.type,
+					order.type as string,
 					{},
 					return_url
 				);
@@ -1294,9 +1344,9 @@ export async function handlePaymentForTransferOrder(order, return_url) {
 			order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
 		}
 		return payment_intent;
-	} catch (e) {
+	} catch (e: unknown) {
 		await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.CUSTOMER_CANCELED);
-		await TaxiHelper.handlePaymentRefund(
+		await handlePaymentRefund(
 			order.order_id,
 			order.user_id,
 			order.payment,
@@ -1304,7 +1354,8 @@ export async function handlePaymentForTransferOrder(order, return_url) {
 			order?.preferences?.vehicle_class,
 			true
 		);
-		throw new Error('Error when handling payment: ', e);
+		console.error('Error when handling payment for transfer order: ', e);
+		throw new Error('Error when handling payment: ');
 	}
 }
 

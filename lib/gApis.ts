@@ -33,7 +33,7 @@ async function distanceBetweenTwoPoints(
 	departureTime?: Date,
 	traffic_model?: 'best_guess' | 'pessimistic' | 'optimistic'
 ): Promise<{
-	result: object;
+	result: googleMapsServicesJs.DistanceMatrixResponseData;
 	distance: string;
 	distanceM: number;
 	durationS: number;
@@ -53,7 +53,7 @@ async function distanceBetweenTwoPoints(
 	const elem = row?.elements?.[0];
 	if (!elem || !elem.distance || !elem.duration) throw new Error('Invalid distance matrix response');
 	return {
-		result: response.data as object,
+		result: response.data,
 		distance: elem.distance.text,
 		distanceM: elem.distance.value,
 		durationS: elem.duration.value,

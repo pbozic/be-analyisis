@@ -4,6 +4,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { UUID, Timestamp } from '../../primitives.js';
 import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.js';
 import { BasicUserDataSchema } from '../User/user.js';
+import { LocationSchema } from '../Taxi/taxiorder.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -109,8 +110,10 @@ export const DriverBaseSchema = z
 		user_id: UUID,
 		online: z.boolean().optional(),
 		on_order: z.boolean().optional(),
+		delivers_daily_meals: z.boolean().optional(),
+		on_daily_meals: z.boolean().optional(),
 		last_ping_at: Timestamp.optional(),
-		location: z.record(z.unknown()).nullable().optional(),
+		location: LocationSchema.nullable().optional(),
 		ride_requirements: z.record(z.unknown()).nullable().optional(),
 		handles_taxi_orders: z.boolean().optional(),
 		handles_transfer_orders: z.boolean().optional(),
@@ -122,10 +125,13 @@ export const DriverBaseSchema = z
 		cargo_orders_toggled: z.boolean().optional(),
 		business_id: UUID.nullable().optional(),
 		transport_module_id: UUID.nullable().optional(),
+		current_vehicle_id: UUID.nullable().optional(),
 		last_used_vehicle_id: UUID.nullable().optional(),
 		created_at: Timestamp.optional(),
 		updated_at: Timestamp.optional(),
 		is_inactive: z.boolean().optional(),
+		delivery_timeline: z.array(LocationSchema).optional(),
+		scheduled_meals_route: z.array(LocationSchema).optional(),
 	})
 	.openapi('DriverBase');
 export type DriverBase = z.infer<typeof DriverBaseSchema>;
@@ -153,6 +159,7 @@ export const DriverDetailSchema = DriverBaseSchema.extend({
 		)
 		.optional()
 		.default([]),
+	business_id: UUID.nullable().optional(),
 }).openapi('DriverDetail');
 export type DriverDetail = z.infer<typeof DriverDetailSchema>;
 

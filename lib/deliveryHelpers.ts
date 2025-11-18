@@ -6,12 +6,14 @@ import {
 	SCORING_POINTS_REASON,
 	FUNDS_TYPE,
 	TRANSACTION_TYPE,
+	Prisma,
 } from '@prisma/client';
+import Stripe from 'stripe';
+import moment from 'moment';
+import { Socket } from 'socket.io';
 
 import type { BusinessWithAllModulesResponseDto } from '../schemas/dto/Business';
 import type { DeliveryOrderDetail } from '../schemas/dto/DeliveryOrders/deliveryOrder.dto.ts';
-import type { BusinessByIdResponse } from '../schemas/dto/Business/business.dto.ts';
-import type { UserBase } from '../schemas/dto/User/index.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import DriverDao from '../dao/Driver.js';
 import BusinessDao from '../dao/Business.js';
@@ -25,7 +27,7 @@ import socket from '../socket.js';
 import UsersDao from '../dao/User.js';
 import { haversineDistance } from './helpersLib.js';
 import BusinessHelpers from './businessHelpers.js';
-import gApi from './gApis.js';
+import gApi, { LatLng } from './gApis.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
 import { sendNotificationToUser } from './oneSignal.js';
 import {
@@ -36,13 +38,23 @@ import {
 	RESTAURANT_FEE,
 	WEIGHTED_ITEM_QTY_INCREASE_LIMIT,
 	MAX_DELIVERY_RADIUS_KM,
+	SERVICE_TYPE,
 } from './constants.js';
 import { sendDeliveryOrderNotifications } from './notifications.js';
 import WalletFundsHelpers from './WalletFundsHelpers.js';
 import stripe from './stripe.js';
-import { handleStockSync } from '../controllers/DeliveryOrderController.js';
 import { LocationWithAddress } from '../schemas/dto/Address/address.ts';
 import { OrderItem } from '../schemas/dto/DeliveryOrders/deliveryOrder.dto.ts';
+import { DriverDetail } from '../schemas/dto/Driver/driver.dto.ts';
+import {
+	CreateDeliveryOrder,
+	CreateDeliveryOrderDaoInput,
+} from '../schemas/dto/DeliveryOrders/deliveryOrder.validators.ts';
+import { getOrderAndPDF } from './orderPdf.js';
+import EmailHelper from './emailSender.js';
+import { LineItemBase, LineItemDetail } from '../schemas/dto/LineItems/lineItems.dto.ts';
+import { MenuDetail, MenuCategoryRef } from '../schemas/dto/Menu/menu.dto.ts';
+import { MenuCategoryCategory } from '../schemas/dto/Menu/menucategory.dto.ts';
 
 const NUMBER_OF_DRIVERS_TO_SEND = 3;
 const MAX_ORDER_FIND_ATTEMPTS = 0;
@@ -50,32 +62,24 @@ const MAX_ORDER_FIND_ATTEMPTS = 0;
 const { io, SocketStore, UserSockets } = socket;
 
 // Narrow types for driver objects used during scoring (subset of DeliveryDriverDetail/DriverDetail)
-export interface CandidateDriver {
-	driver_id?: string;
-	// delivery_driver_id?: string;
-	user_id: string;
-	on_order?: boolean;
-	location: { coordinates: { latitude: number | null; longitude: number | null } };
+export interface CandidateDriver extends Partial<DriverDetail> {
 	travelTime?: number;
 	arrivalTime?: Date;
 	distanceM?: number;
 	distanceKm?: number;
-	duration?: number;
+	duration?: string;
 	timeDifference?: number;
 	score?: number;
-}
-
-interface DeliveryOrderWithAttempts extends DeliveryOrderDetail {
-	find_drivers_attempts?: number;
+	numPendingOrders?: number;
 }
 
 /**
  * Finds eligible delivery drivers for a given order and sends it to them.
  * - Selects drivers, computes scores, sends socket events, and updates last_sent_at.
- * @param {DeliveryOrderWithAttempts} order - The delivery order to dispatch.
+ * @param {DeliveryOrderDetail} order - The delivery order to dispatch.
  * @returns {Promise<void>} Resolves when notifications are sent.
  */
-export async function findDeliveryOrderDrivers(order: DeliveryOrderWithAttempts): Promise<void> {
+export async function findDeliveryOrderDrivers(order: DeliveryOrderDetail): Promise<void> {
 	try {
 		const drivers = await selectDeliveryOrderDrivers(order);
 		await Promise.all(drivers.map((d) => sendDeliveryOrderToDriver(order, d)));
@@ -87,19 +91,19 @@ export async function findDeliveryOrderDrivers(order: DeliveryOrderWithAttempts)
 }
 /**
  * Calculates and attaches delivery earnings estimate to the order based on distance/cost.
- * @param {DeliveryOrderWithAttempts} order - The order object; will have details.delivery_earnings assigned.
- * @returns {Promise<DeliveryOrderWithAttempts>} The updated order with delivery_earnings.
+ * @param {DeliveryOrderDetail} order - The order object; will have details.delivery_earnings assigned.
+ * @returns {Promise<DeliveryOrderDetail>} The updated order with delivery_earnings.
  */
-async function addDeliveryEarningToOrder(order: DeliveryOrderWithAttempts): Promise<DeliveryOrderWithAttempts> {
+async function addDeliveryEarningToOrder(order: DeliveryOrderDetail): Promise<DeliveryOrderDetail> {
 	if (order?.details?.delivery_cost) {
-		(order.details as any).delivery_earnings = order.details.delivery_cost * 1.25;
+		order.details.delivery_earnings = order.details.delivery_cost * 1.25;
 	} else if (order?.details) {
 		const pricePerKm = 0.5;
 		const deliveryEarning = pricePerKm * order.details.distance * 1.25;
-		(order.details as any).delivery_earnings = deliveryEarning;
+		order.details.delivery_earnings = deliveryEarning;
 	}
 	console.log('delivery_earnings', order.details?.delivery_earnings);
-	await DeliveryOrderDao.updateOrder(order.order_id, order as unknown as Record<string, unknown>);
+	await DeliveryOrderDao.updateOrder(order.order_id, order);
 	return order;
 }
 /**
@@ -128,7 +132,7 @@ async function calculateDeliveryDriverScore(
 	const EARLY_SCORE = 1;
 	const MINUTE_SUB = 1;
 	const PENDING_ORDER_SCORE = 10;
-	const numberPendingOrders = await getNumberPendingOrders(driver.driver_id || driver.user_id);
+	const numberPendingOrders = await getNumberPendingOrders(driver.driver_id as string);
 	const timeDifference = arrivalTime.getTime() - readyTime.getTime();
 	const timeDifferenceMinutes = timeDifference / 60000;
 	if (timeDifference > 0) score -= timeDifferenceMinutes * LATE_SCORE * MINUTE_SUB;
@@ -142,7 +146,7 @@ async function calculateDriverScore(
 	driver: CandidateDriver,
 	readyTime: Date,
 	travelTime: number,
-	order: DeliveryOrderWithAttempts
+	order: DeliveryOrderDetail
 ) {
 	let baseScore = 100;
 	const LATE_SCORE = 5;
@@ -181,10 +185,10 @@ async function calculateDriverScore(
  * Selects eligible delivery drivers for a given order based on readiness and scoring.
  *
  * - Computes scores, filters, and sorts drivers to find the best candidates.
- * @param {DeliveryOrderWithAttempts} order - The delivery order to evaluate.
+ * @param {DeliveryOrderDetail} order - The delivery order to evaluate.
  * @returns {Promise<CandidateDriver[]>} List of candidate drivers sorted by score.
  */
-export async function selectDeliveryOrderDrivers(order: DeliveryOrderWithAttempts): Promise<CandidateDriver[]> {
+export async function selectDeliveryOrderDrivers(order: DeliveryOrderDetail): Promise<CandidateDriver[]> {
 	const eligible: CandidateDriver[] = [];
 	const now = new Date();
 	const readyRaw = order.details?.ready_for_pickup_at;
@@ -206,14 +210,14 @@ export async function selectDeliveryOrderDrivers(order: DeliveryOrderWithAttempt
 	console.info('available drivers', onlineDrivers?.length);
 	// TODO: get pending orders for the driver and check if the order is already sent to the driver
 	for (const driver of onlineDrivers) {
-		if (await DeliveryOrderDao.isOrderSent(order.order_id, driver)) continue;
+		if (await DeliveryOrderDao.isOrderSent(order.order_id, driver.driver_id)) continue;
 		if (!UserSockets.get(driver.user_id)) continue;
-		const lat = (driver as any).location?.coordinates?.latitude;
-		const lng = (driver as any).location?.coordinates?.longitude;
+		const lat = driver.location?.coordinates?.latitude;
+		const lng = driver.location?.coordinates?.longitude;
 		if (lat == null || lng == null) continue;
 		const { distanceM, durationS } = await gApi.distanceBetweenTwoPoints(
-			(driver as any).location.coordinates,
-			(order as any).pickup_location.coordinates,
+			driver.location?.coordinates as LatLng,
+			order.pickup_location?.coordinates as LatLng,
 			'driving',
 			new Date(),
 			'best_guess'
@@ -233,7 +237,7 @@ export async function selectDeliveryOrderDrivers(order: DeliveryOrderWithAttempt
 			arrivalTime,
 			distanceM,
 			distanceKm: distanceM / 1000,
-			duration: travelTime,
+			duration: String(travelTime),
 			timeDifference: arrivalTime.getTime() - readyTime.getTime(),
 		};
 		await addDeliveryEarningToOrder(order);
@@ -269,7 +273,7 @@ export async function selectDeliveryOrderDrivers(order: DeliveryOrderWithAttempt
  * @param {MenuItemBase[]} cartItems - Array of menu items with quantities, prices, and optional extras/sides
  * @param {AddressBase} selectedAddress - The delivery address with coordinates
  * @param {string} [paymentType='cash'] - Payment method type
- * @param {any} orderData - Additional order data for delivery cost calculation
+ * @param {Partial<CreateDeliveryOrder>} orderData - Additional order data for delivery cost calculation
  * @returns {DeliveryOrderDetail['details']} Order details object with all calculated values
  */
 export function CalculateOrderLobbyOrderDetails(
@@ -277,7 +281,7 @@ export function CalculateOrderLobbyOrderDetails(
 	cartItems: OrderItem[],
 	selectedAddress: LocationWithAddress,
 	paymentType: string = 'cash',
-	orderData: any
+	orderData: Partial<CreateDeliveryOrder>
 ): DeliveryOrderDetail['details'] {
 	// TODO: Refactor this function!!!!!!!!!
 	// On items there will be options, that means extras and sides are not valid anymore
@@ -367,21 +371,18 @@ export function CalculateOrderLobbyOrderDetails(
 /**
  * Notifies a single driver about a new delivery order via sockets and push notifications.
  * Skips if already sent or driver socket is missing.
- * @param {DeliveryOrderWithAttempts} order - The delivery order payload.
+ * @param {DeliveryOrderDetail} order - The delivery order payload.
  * @param {CandidateDriver} delivery_driver - The driver object to notify.
  * @returns {Promise<void>}
  */
-export async function sendDeliveryOrderToDriver(
-	order: DeliveryOrderWithAttempts,
-	driver: CandidateDriver
-): Promise<void> {
+export async function sendDeliveryOrderToDriver(order: DeliveryOrderDetail, driver: CandidateDriver): Promise<void> {
 	try {
-		if (await DeliveryOrderDao.isOrderSent(order.order_id, driver)) return;
+		if (await DeliveryOrderDao.isOrderSent(order.order_id, driver.driver_id as string)) return;
 		const sock = UserSockets.get(driver.user_id);
 		if (!sock) throw new Error(`UserSocket not found for driver ${driver.user_id}`);
 		await DeliveryOrderDao.createOrderSent(order.order_id, driver);
-		const l10nText = getLocalisedTexts('DELIVERY_DRIVER_NOTIFICATIONS', driver.user.language);
-		const l10nTextHeading = getLocalisedTexts('HEADING', driver.user.language);
+		const l10nText = getLocalisedTexts('DELIVERY_DRIVER_NOTIFICATIONS', driver.user?.language ?? 'en');
+		const l10nTextHeading = getLocalisedTexts('HEADING', driver.user?.language ?? 'en');
 		sendNotificationToUser(l10nTextHeading?.pending_delivery, l10nText?.accepted, driver.user_id);
 		sock.emit('new_order__delivery', order);
 	} catch (e) {
@@ -452,7 +453,7 @@ export async function checkIfRestaurantOrderIsPrepared(): Promise<void> {
 				or.order_id,
 				DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP
 			);
-			if (updated) io.to('order_' + updated.order_id).emit('order_status_change__delivery', updated);
+			if (updated) (io as Socket).to('order_' + updated.order_id).emit('order_status_change__delivery', updated);
 		}
 	}
 }
@@ -463,7 +464,7 @@ export async function checkIfRestaurantOrderIsPrepared(): Promise<void> {
  */
 export async function autoRejectDeliveryOrders(): Promise<void> {
 	console.log('Checking delivery orders auto-reject!');
-	const orders: DeliveryOrderDetail[] = await prisma.delivery_orders.findMany({
+	const orders = await prisma.delivery_orders.findMany({
 		where: { status: { in: [DELIVERY_ORDER_STATUS.PENDING, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING] } },
 	});
 	for (const or of orders) {
@@ -488,8 +489,8 @@ export async function autoRejectDeliveryOrders(): Promise<void> {
 			d = await DriverDao.getDriverById(order.driver_id);
 		}
 		sendDeliveryOrderNotifications(
-			order.user as UserBase,
-			d?.user as UserBase,
+			order.user?.language || 'en',
+			d?.user?.language || 'en',
 			order.user_id,
 			d?.user_id || null,
 			order.status
@@ -498,11 +499,11 @@ export async function autoRejectDeliveryOrders(): Promise<void> {
 		await handleStockSync(order);
 		if (order) {
 			console.log(`Order ${order.order_id} has been automatically rejected.`);
-			io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
-			io.to('orders_' + order.business_id).emit('order_status_change__delivery', order);
+			(io as Socket).to('order_' + order.order_id).emit('order_status_change__delivery', order);
+			(io as Socket).to('orders_' + order.business_id).emit('order_status_change__delivery', order);
 			await ScoringPointsDao.createScoringPoints({
-				stores_id: order.stores_id || null,
-				food_drinks_id: order.food_drinks_id || null,
+				stores_id: order.module_type === MODULE.STORES ? order.module_id : undefined,
+				food_drinks_id: order.module_type === MODULE.FOOD_DRINKS ? order.module_id : undefined,
 				delivery_order_id: order.order_id,
 				points: 1,
 				isPenalty: true,
@@ -551,12 +552,12 @@ export async function resendPendingOrdersToDeliveryDriver(driver: Partial<Candid
 /**
  * Sends active and pending orders to a driver: splits daily meals vs other orders and sorts.
  * Emits a single socket payload with both lists.
- * @param {object} driver - Driver with user_id and scheduled route info.
+ * @param {Partial<DriverDetail>} driver - Driver with user_id and scheduled route info.
  * @returns {Promise<void>}
  */
-export async function sendActiveOrdersToDeliveryDriver(driver) {
+export async function sendActiveOrdersToDeliveryDriver(driver: Partial<DriverDetail>): Promise<void> {
 	try {
-		const deliverer_id = driver.delivery_driver_id || driver.driver_id;
+		const deliverer_id = driver.driver_id as string;
 		const activeOrders = await DeliveryOrderDao.getActiveOrdersByDeliveryDriverId(deliverer_id);
 		console.info('SCHEDULED MEALS ROUTE', driver?.scheduled_meals_route);
 		console.info('sendActiveOrdersToDeliveryDriver', driver.user_id);
@@ -588,9 +589,8 @@ export async function sendActiveOrdersToDeliveryDriver(driver) {
 		const combinedOrders = [...sortedDailyMealOrders, ...sortedOtherOrders];
 		const pendingOrders = combinedOrders.filter(
 			(order) =>
-				[DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(
-					order.status
-				) &&
+				(order.status === DELIVERY_ORDER_STATUS.MERCHANT_PREPARING ||
+					order.status === DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP) &&
 				!order.timeline.some(
 					(entry) =>
 						entry.status === DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED && entry.driver_id === deliverer_id
@@ -643,13 +643,23 @@ export function generateItemsFromPreferences(preferences: any, menuItem: any) {
 
 /**
  * Calculates platform, merchant, and driver cuts in cents considering reserved credits.
- * @param {object} order - Delivery order with details including delivery_cost and sub_total_price.
+ * @param {DeliveryOrderDetail} order - Delivery order with details including delivery_cost and sub_total_price.
  * @param {string} [orderType='order'] - The type used for wallet reservation lookup.
  * @returns {Promise<{DRIVER_CREDIT_CUT:number, MERCHANT_CREDIT_CUT:number, PLATFORM_CREDIT_CUT:number, DRIVER_CUT:number, MERCHANT_CUT:number, PLATFORM_CUT:number}>}
  */
-export async function calculateDeliveryOrderPaymentCuts(order: any, orderType = 'order') {
+export async function calculateDeliveryOrderPaymentCuts(
+	order: DeliveryOrderDetail,
+	orderType = 'order'
+): Promise<{
+	DRIVER_CREDIT_CUT: number;
+	MERCHANT_CREDIT_CUT: number;
+	PLATFORM_CREDIT_CUT: number;
+	DRIVER_CUT: number;
+	MERCHANT_CUT: number;
+	PLATFORM_CUT: number;
+}> {
 	const { details, user_id, order_id } = order;
-	const TOTAL_PRICE_CENTS = Math.round(details.total_price * 100); // already includes delivery cost
+	const TOTAL_PRICE_CENTS = Math.round(details?.total_price * 100); // already includes delivery cost
 
 	const reservedCredits =
 		(await WalletFundsDao.getReservedCredits(
@@ -661,8 +671,8 @@ export async function calculateDeliveryOrderPaymentCuts(order: any, orderType = 
 	// console.log(JSON.stringify(reservedCredits, null, 2));
 	console.log(CREDITS_AMOUNT_RESERVED);
 
-	const INITIAL_DELIVERY_CUT = Math.round(details.delivery_cost * 100 * (1 - DRIVE_FEE));
-	const INITIAL_MERCHANT_CUT = Math.round(Math.round(details.sub_total_price * 100) * (1 - RESTAURANT_FEE));
+	const INITIAL_DELIVERY_CUT = Math.round(details?.delivery_cost * 100 * (1 - DRIVE_FEE));
+	const INITIAL_MERCHANT_CUT = Math.round(Math.round(details?.sub_total_price * 100) * (1 - RESTAURANT_FEE));
 	const INITIAL_PLATFORM_CUT = TOTAL_PRICE_CENTS - INITIAL_DELIVERY_CUT - INITIAL_MERCHANT_CUT;
 
 	const PLATFORM_CREDIT_CUT_CENTS = Math.min(INITIAL_PLATFORM_CUT, CREDITS_AMOUNT_RESERVED);
@@ -692,9 +702,9 @@ export async function calculateDeliveryOrderPaymentCuts(order: any, orderType = 
 }
 /**
  * Handles payment failure by canceling a payment intent if necessary and releasing any reserved wallet funds.
- * @param {Object} order - the order object for which the payment failed.
+ * @param {DeliveryOrderDetail} order - the order object for which the payment failed.
  */
-export async function handlePaymentCleanup(order: any) {
+export async function handlePaymentCleanup(order: DeliveryOrderDetail): Promise<void> {
 	try {
 		if (order?.payment?.type === 'CARD' && order.payment_intent_id) {
 			await stripe.client.paymentIntents.cancel(order.payment_intent_id);
@@ -706,10 +716,10 @@ export async function handlePaymentCleanup(order: any) {
 }
 /**
  * Handles refund logic for an order: releases/resets credits and wallet funds, and cancels/refunds card payments.
- * @param {object} order - The order to refund, including payment info and details.
+ * @param {DeliveryOrderDetail} order - The order to refund, including payment info and details.
  * @returns {Promise<void>}
  */
-export async function handlePaymentRefund(order: any) {
+export async function handlePaymentRefund(order: DeliveryOrderDetail): Promise<void> {
 	const WF_reserved = await WalletFundsDao.getReservedWalletFunds(order.user_id, order.order_id);
 	const { credits_wf_amount_reserved, regular_wf_amount_reserved } = WF_reserved.reduce(
 		(acc, wf) => {
@@ -722,9 +732,9 @@ export async function handlePaymentRefund(order: any) {
 		},
 		{ credits_wf_amount_reserved: 0, regular_wf_amount_reserved: 0 }
 	);
-	const credit_discount_used = order.details.credit_discount || 0;
-	const total_price_cents = Math.round(order.details.total_price * 100);
-	const PAYMENT_TYPE = order.payment.type;
+	const credit_discount_used = order.details?.credit_discount || 0;
+	const total_price_cents = Math.round(order.details?.total_price * 100);
+	const PAYMENT_TYPE = order.payment?.type;
 	// console.log("reserved amounts: ",{ credits_wf_amount_reserved,regular_wf_amount_reserved })
 	// console.log({credit_discount_used,total_price_cents,PAYMENT_TYPE})
 	await WalletFundsHelpers.releaseReservedWalletFundsForOrder(order.user_id, order.order_id);
@@ -770,9 +780,9 @@ export async function handlePaymentRefund(order: any) {
  * @param {object[]} menus - Active menus including categories and menu_items.
  * @returns {object} Lookup object keyed by menu_item_id.
  */
-function buildMenuItemLookupFromMenus(menus: any[]): Record<string, any> {
-	return menus.reduce((lookup, menu) => {
-		menu.categories.forEach((category) => {
+function buildMenuItemLookupFromMenus(menus: MenuDetail[]): Record<string, any> {
+	return menus.reduce((lookup: Record<string, any>, menu) => {
+		menu.categories.forEach((category: MenuCategoryRef) => {
 			category.menu_items.forEach((item) => {
 				if (item.is_enabled) lookup[item.menu_item_id] = item; // Last one wins if duplicates
 			});
@@ -874,7 +884,7 @@ function enrichItem(orderItem: any, menuItemLookup: Record<string, any>): any {
  * @returns {Array<Object>} A list of enriched and validated order items.
  * @throws {Error} If an item is missing from the lookup or includes invalid extras or sides.
  */
-function validateAndEnrichOrderItems(orderItems: any[], menuItemLookup: Record<string, any>): any[] {
+function validateAndEnrichOrderItems(orderItems: LineItemDetail[], menuItemLookup: Record<string, any>): any[] {
 	const result = [];
 
 	for (const orderItem of orderItems) {
@@ -1023,7 +1033,11 @@ function calculateOrderTotals(enrichedOrderItems: any) {
 		orderTotal += line_total;
 		discountTotal += line_discount;
 
-		if (item?.menu_category?.menu_categories_categories?.some((mcc) => mcc.category?.tag === 'student-meals')) {
+		if (
+			item?.menu_category?.menu_categories_categories?.some(
+				(mcc: MenuCategoryCategory) => mcc.category?.tag === 'student-meals'
+			)
+		) {
 			is_student = true;
 		}
 
@@ -1071,15 +1085,12 @@ function calculateOrderTotals(enrichedOrderItems: any) {
  * }>}
  * @throws {Error} If no active menus are found, or validation fails.
  */
-async function calculateAndVerifyPriceForOrderItems(order: DeliveryOrderDetail) {
+export async function calculateAndVerifyPriceForOrderItems(order: DeliveryOrderDetail) {
 	// 2. Create lookup from menu_items
-	const active_menus = await MenuDao.getMenuByBusinessId(order.business_id);
-	if (!active_menus || active_menus.length === 0) {
-		throw new Error('Menu not found');
-	}
-	const menuItemLookup = buildMenuItemLookupFromMenus(active_menus);
+	const active_menu = await MenuDao.getMenuByBusinessId(order.business?.business_id as string);
+	const menuItemLookup = buildMenuItemLookupFromMenus(active_menu);
 	// 3. Validate and enrich order items
-	const enrichedOrderItems = validateAndEnrichOrderItems(order.items, menuItemLookup);
+	const enrichedOrderItems = validateAndEnrichOrderItems(order.items as LineItemDetail[], menuItemLookup);
 	const { items, grand_total, discount_total, is_student } = calculateOrderTotals(enrichedOrderItems);
 
 	const delivery_cost = calculateOrderDeliveryCost(order, is_student);
@@ -1151,26 +1162,33 @@ export async function releaseWFForFailedOrders(): Promise<void> {
 	}
 	await Promise.allSettled(releases);
 }
-
-/**
- * Calculates haversine distance in meters between two lat/lng points.
- * @param {LatLng} start - Starting coordinates.
- * @param {LatLng} end - Ending coordinates.
- * @returns {number} Distance in meters.
- */
-export function calculateDistanceBetweenTwoPoints(
-	start: { lat: number; lng: number },
-	end: { lat: number; lng: number }
-): number {
-	const R = 6371e3; // metres
-	const a1 = (start.lat * Math.PI) / 180;
-	const a2 = (end.lat * Math.PI) / 180;
-	const b1 = ((end.lat - start.lat) * Math.PI) / 180;
-	const b2 = ((end.lng - start.lng) * Math.PI) / 180;
-	const a = Math.sin(b1 / 2) ** 2 + Math.cos(a1) * Math.cos(a2) * Math.sin(b2 / 2) ** 2;
-	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-	return R * c;
-}
+// /**
+//  * Calculates haversine distance in meters between two lat/lng points.
+//  * @param {LatLng} start - Starting coordinates.
+//  * @param {LatLng} end - Ending coordinates.
+//  * @returns {number} Distance in meters.
+//  */
+// export function calculateDistanceBetweenTwoPoints(start: LatLng, end: LatLng): number {
+// 	const R = 6371e3; // metres
+// 	const a1 = (start.lat * Math.PI) / 180;
+// 	const a2 = (end.lat * Math.PI) / 180;
+// 	const b1 = ((end.lat - start.lat) * Math.PI) / 180;
+// 	const b2 = ((end.lng - start.lng) * Math.PI) / 180;
+// 	const a = Math.sin(b1 / 2) ** 2 + Math.cos(a1) * Math.cos(a2) * Math.sin(b2 / 2) ** 2;
+// 	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+// 	return R * c;
+// }
+// const calculateDistanceDelivery = (start, end, base = 0) => {
+// 	let pricePer500 = DELIVERY_COST_CALCULATION.COST_PER_500;
+// 	let distance = calculateDistanceBetweenTwoPoints(start, end);
+// 	return {
+// 		cost: Math.max(
+// 			DELIVERY_COST_CALCULATION.MINIMUM_COST,
+// 			base + Math.round(Math.max(distance, 0) / 500) * pricePer500
+// 		),
+// 		distance: distance,
+// 	};
+// };
 
 /**
  * Computes delivery cost based on haversine distance and student-meal eligibility.
@@ -1194,18 +1212,17 @@ export function calculateOrderDeliveryCost(orderData: any, is_student: boolean):
 /**
  * Verifies that the client-provided order costs match the server-calculated values.
  * Checks delivery cost, minimum order fee, sub-total, discounts, and total price.
- * @param {object} orderData - Order body sent from client including items and details.
+ * @param {CreateDeliveryOrder} orderData - Order body sent from client including items and details.
  * @returns {Promise<boolean>} True if costs are valid and consistent; otherwise false.
  */
-export async function verifyOrderCosts(orderData: any): Promise<boolean> {
+export async function verifyOrderCosts(orderData: CreateDeliveryOrder): Promise<boolean> {
 	const menu_item_ids = Array.isArray(orderData?.items) ? orderData.items.map((i: any) => i.menu_item_id) : [];
-	const merchant_business = (await BusinessDao.getBusinessById(
-		orderData.details.business_id
-	)) as BusinessByIdResponse | null;
-	const minimumOrderFee =
-		orderData.module === MODULE.STORES
-			? (merchant_business as any)?.stores_module?.minimum_order
-			: (merchant_business as any)?.food_drinks_module?.minimum_order;
+	const merchant_business = await BusinessDao.getBusinessById(orderData.details.business_id);
+	const minimumOrderFee = (
+		orderData.module_type === MODULE.STORES
+			? merchant_business?.stores_module?.minimum_order
+			: merchant_business?.food_drinks_module?.minimum_order
+	) as number;
 	const db_items = await MenuItemDao.getMenuItemsByIds(menu_item_ids);
 	const order_items = await Promise.all(
 		orderData.items.map(async (item: any) => {
@@ -1253,14 +1270,14 @@ export async function verifyOrderCosts(orderData: any): Promise<boolean> {
 	const rounded = (n: number) => Math.round(n * 100) / 100;
 	orderTotal = rounded(orderTotal);
 	const expectedFee = minimumOrderFee - orderTotal;
-	const actualFee = orderData.details.minimum_order_fee;
+	const actualFee = orderData.details.minimum_order_fee as number;
 	const checkMinimumFee = orderTotal < minimumOrderFee;
 	if (checkMinimumFee && actualFee.toFixed(2) !== expectedFee.toFixed(2)) return false;
 	discountTotal = checkMinimumFee ? discountTotal - expectedFee : discountTotal;
 	discountTotal = discountTotal > 0 ? discountTotal : 0;
 	if (
 		orderTotal.toFixed(2) !== orderData.details.sub_total_price.toFixed(2) ||
-		orderData.details.discount_savings.toFixed(2) !== discountTotal.toFixed(2)
+		orderData.details.discount_savings?.toFixed(2) !== discountTotal.toFixed(2)
 	)
 		return false;
 	const expected_total_sum = delivery_cost + orderTotal + (checkMinimumFee ? expectedFee : 0);
@@ -1271,16 +1288,16 @@ export async function verifyOrderCosts(orderData: any): Promise<boolean> {
 /**
  * Creates a delivery order and initializes payment flow (card/wallet/cash), stock sync, and notifications.
  * Includes validation of provided costs, distance checks, credit reservations, and split payments.
- * @param {object} orderBody - Order payload from client.
+ * @param {CreateDeliveryOrder} orderBody - Order payload from client.
  * @param {string} user_id - The id of the ordering user.
  * @param {string} [return_url] - Optional return URL for payment redirection flows.
  * @returns {Promise<{order: object, payment_intent?: object}>} The created order and optional payment intent.
  */
 export async function generateOrder(
-	orderBody: any,
+	orderBody: CreateDeliveryOrder,
 	user_id: string,
 	return_url?: string
-): Promise<{ order: object; payment_intent?: object }> {
+): Promise<{ order: DeliveryOrderDetail; payment_intent?: Stripe.PaymentIntent }> {
 	console.info('CREATE DELIVERY ORDER: ', orderBody);
 	let order;
 	try {
@@ -1288,71 +1305,73 @@ export async function generateOrder(
 		if (!isValidOrder) throw new Error('Invalid order data!');
 		let orderData = {
 			...orderBody,
+			user_id: user_id,
 			status: DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,
-		};
-		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
+		} as Partial<CreateDeliveryOrderDaoInput>;
+		let business = await BusinessDao.getBusinessById(orderData.details?.business_id as string);
 		if (!business) {
 			throw new Error('Business not found!');
 		} else if (
-			(!business.stores_module?.online && orderData.module === MODULE.STORES) ||
-			(!business.food_drinks_module?.online && orderData.module === MODULE.FOOD_DRINKS)
+			(!business.stores_module?.online && orderData.module_type === MODULE.STORES) ||
+			(!business.food_drinks_module?.online && orderData.module_type === MODULE.FOOD_DRINKS)
 		) {
 			throw new Error('Business is currently offline!');
 		}
-		if (orderData.details.type === 'delivery') {
+		orderData.module_id =
+			orderData.module_type === MODULE.STORES
+				? business.stores_module?.stores_id
+				: business.food_drinks_module?.food_drinks_id;
+		if (orderData.details?.type === 'delivery') {
 			const pickup = orderBody.business_local_location_id
 				? orderBody.pickup_location?.coordinates
 				: {
 						latitude: business.delivery_address?.latitude,
 						longitude: business.delivery_address?.longitude,
 					};
-			const distance = haversineDistance(orderData.delivery_location.coordinates, pickup);
+			const distance = haversineDistance(orderData.delivery_location?.coordinates as LatLng, pickup as LatLng);
 			if (distance && distance > MAX_DELIVERY_RADIUS_KM) {
 				throw new Error('Distance out of delivery range!');
 			}
 		}
 
 		let user = await UsersDao.getUserById(user_id);
+		if (!user) {
+			throw new Error('User not found!');
+		}
 		const customer_acc = user.stripe_customer_id;
 		const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user_id);
-		if (orderData.payment.type === 'WALLET') {
-			const TOTAL_PRICE_CENT = Math.round(orderData.details.total_price * 100);
-			if (available_wallet_balances['DELIVERY'] + available_wallet_balances[null] < TOTAL_PRICE_CENT / 100) {
+		if (orderData.payment?.type === 'WALLET') {
+			const TOTAL_PRICE_CENT = Math.round((orderData.details?.total_price as number) * 100);
+			if (
+				(available_wallet_balances[SERVICE_TYPE.DELIVERY] ?? 0) + (available_wallet_balances['none'] ?? 0) <
+				TOTAL_PRICE_CENT / 100
+			) {
 				throw new Error('Insufficient funds');
 			}
 		}
-		if (orderData.payment.type === 'CARD') {
+		if (orderData.payment?.type === 'CARD') {
 			if (!customer_acc) {
 				throw new Error('Missing stripe_customer_id');
 			}
 		}
-		if (orderData.business_local_location_id) {
-			const id = orderData.business_local_location_id;
-			delete orderData.business_local_location_id;
-			orderData.business_local_location = {
-				connect: {
-					business_local_location_id: id,
-				},
-			};
-		}
-		order = await DeliveryOrderDao.createOrder(orderData, user_id);
+		order = await DeliveryOrderDao.createOrder(orderData as CreateDeliveryOrderDaoInput, user_id);
 		// let delivery_business = await BusinessDao.getBusinessById(orderData?.delivery_driver?.business_id);
-		orderData.telephone = user.telephone;
+		// orderData.telephone = user.telephone;
 		let payment_intent;
-		if (order.details.type === 'delivery') {
+		if (order.details?.type === 'delivery') {
 			let { result } = await gApi.distanceBetweenTwoPoints(
-				order.delivery_location.coordinates,
-				order.pickup_location.coordinates,
+				order.delivery_location?.coordinates as LatLng,
+				order.pickup_location?.coordinates as LatLng,
 				'driving',
 				new Date(),
 				'best_guess'
 			);
-			let distanceM = result.rows[0].elements[0].distance.value;
+			let distanceM = result.rows?.[0]?.elements?.[0]?.distance.value as number;
 			let distanceKm = distanceM / 1000;
 			order.details.distance = distanceKm;
-			order.details.duration = result.rows[0].elements[0].duration.value;
-			if (order.scheduled?.time && order.scheduled?.date) {
-				const scheduledTime = new Date(order.scheduled.time);
+			order.details.duration = result.rows?.[0]?.elements?.[0]?.duration.value as number;
+			if (order.scheduled_at) {
+				const scheduledTime = new Date(order.scheduled_at);
 				const durationMs = order.details.duration * 1000;
 				const timezoneOffsetMs = scheduledTime.getTimezoneOffset() * 60 * 1000;
 				order.details.ready_for_pickup_at = order.business_local_location_id
@@ -1375,10 +1394,10 @@ export async function generateOrder(
 		}
 		console.log('stripeCustomer', user.stripe_customer_id);
 		const restaurant_acc = business.stripe_account_id;
-		const pm_id = orderData.payment.payment_method_id;
+		const pm_id = order.payment?.payment_method_id;
 		// Handle credits spending
-		const TOTAL_PRICE_CENTS = Math.round(orderData.details.total_price * 100); //already includes delivery cost
-		const CREDITS_AMOUNT_RESERVED = orderData?.allow_credits_usage
+		const TOTAL_PRICE_CENTS = Math.round(order.details?.total_price * 100); //already includes delivery cost
+		const CREDITS_AMOUNT_RESERVED = order?.allow_credits_usage
 			? (
 					await WalletFundsHelpers.reserveCreditsForOrder(
 						user.user_id,
@@ -1389,31 +1408,31 @@ export async function generateOrder(
 				).reduce((sum, wf) => sum + wf.amount, 0)
 			: 0;
 		const DISCOUNTED_COMBINED_COST_CENTS = TOTAL_PRICE_CENTS - CREDITS_AMOUNT_RESERVED;
-		order.details.credit_discount = CREDITS_AMOUNT_RESERVED;
+		order.details!.credit_discount = CREDITS_AMOUNT_RESERVED;
 		order = await DeliveryOrderDao.updateOrder(order.order_id, order);
 		console.info(order.details);
 		const results = await calculateDeliveryOrderPaymentCuts(order);
 		console.info('calculateDeliveryOrderPaymentCuts results: ', JSON.stringify(results, null, 2));
 		const { MERCHANT_CUT } = results;
 		if (DISCOUNTED_COMBINED_COST_CENTS > 0) {
-			if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
+			if (order.payment?.type === 'CARD' || order.payment?.type === 'PLATFORM') {
 				payment_intent = await stripe.createSplitPayment(
-					customer_acc,
-					restaurant_acc,
+					customer_acc as string,
+					restaurant_acc as string,
 					order.order_id,
 					pm_id,
 					DISCOUNTED_COMBINED_COST_CENTS,
 					MERCHANT_CUT,
 					return_url
 				);
-				orderData.payment_intent_id = payment_intent.id;
+				// orderData.payment_intent_id = payment_intent?.id;
 				order = await DeliveryOrderDao.updateOrder(order.order_id, {
-					payment_intent_id: payment_intent.id,
+					payment_intent_id: payment_intent?.id,
 				});
-			} else if (order.payment.type === 'WALLET') {
+			} else if (order.payment?.type === 'WALLET') {
 				// handle wallet payment
 				try {
-					if (available_wallet_balances[null] < DISCOUNTED_COMBINED_COST_CENTS / 100) {
+					if ((available_wallet_balances['none'] ?? 0) < DISCOUNTED_COMBINED_COST_CENTS / 100) {
 						throw new Error('Insufficient funds');
 					}
 					// await UsersDao.removeWalletBalance(user_id, DISCOUNTED_COMBINED_COST_CENTS/100, order.order_id);
@@ -1434,12 +1453,15 @@ export async function generateOrder(
 						order.order_id,
 						DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED
 					);
-					io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
-					order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.FAIL);
-					io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
+					(io as Socket).to('order_' + order.order_id).emit('order_status_change__delivery', order);
+					order = await DeliveryOrderDao.updateOrderStatus(
+						order.order_id,
+						DELIVERY_ORDER_STATUS.ORDER_FINISHED_FAIL
+					);
+					(io as Socket).to('order_' + order.order_id).emit('order_status_change__delivery', order);
 					throw err;
 				}
-			} else if (order.payment.type === 'CASH') {
+			} else if (order.payment?.type === 'CASH') {
 				order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.PENDING);
 			} else {
 				throw new Error('Unsuported payment type.');
@@ -1450,23 +1472,290 @@ export async function generateOrder(
 		} else {
 			throw new Error('Invalid costs calculated!!');
 		}
-		//TODO: handle business logo
-		if (order.stores_id) {
+		//TODO: handle business logo (in mapper!)
+		if (order.module_type === MODULE.STORES) {
 			await handleStockSync(order);
 		}
 		console.info('order created:', order);
 		SocketStore.addUserToRoom(user_id, `order_${order.order_id}`);
-		BusinessHelpers.joinAllBusinessUsersToRoom(order.business_id, `order_${order.order_id}`);
+		BusinessHelpers.joinAllBusinessUsersToRoom(order.business_id as string, `order_${order.order_id}`);
 		if (order.status === DELIVERY_ORDER_STATUS.PENDING) {
-			io.to('orders_' + order.business_id).emit('new_order', order);
+			(io as Socket).to('orders_' + order.business_id).emit('new_order', order);
 		}
 		return { order, payment_intent };
 	} catch (e) {
-		console.error('Error generating order:', e);
+		console.error('Error generating order:', (e as Error).message);
 		if (order && order?.order_id && order?.user_id) {
 			await handlePaymentCleanup(order);
 		}
-		throw new Error('Error generating order:', e.message);
+		throw new Error('Error generating order:');
+	}
+}
+
+export async function sendPdfDeliveryOrder(order: DeliveryOrderDetail): Promise<void> {
+	let template = 'orderConfirmation';
+	let pdf = await getOrderAndPDF(order.order_id);
+	let templateData = {
+		userName: order.user?.first_name,
+		restaurant: order.business?.business_details?.name,
+		orderDate: moment(order.created_at).format('DD/MM/YYYY HH:mm'),
+		orderId: order.order_id,
+		subtotal: order.details?.sub_total_price,
+		total: order.details?.total_price,
+		discount: order.details?.discount_savings,
+		delivery_cost: order.details?.delivery_cost,
+		paymentMethod: order.payment?.type,
+	};
+	if (pdf) {
+		EmailHelper.sendEmailTemplate(
+			'Order confirmation ' + order.order_id,
+			template,
+			order.user?.email as string,
+			templateData,
+			{
+				filename: 'Order_confirmation_' + order.order_id + '.pdf',
+				content: Buffer.isBuffer(pdf) ? pdf : Buffer.from(pdf, 'binary'),
+				contentType: 'application/pdf',
+			}
+		);
+	}
+}
+
+/**
+ * Helper function to process order ready for pickup
+ * @param {string} order_id - The order ID to process
+ * @returns {Promise<DeliveryOrderDetail>} The processed order
+ */
+export async function processOrderReady(order_id: string): Promise<DeliveryOrderDetail> {
+	let order = await DeliveryOrderDao.getOrder(order_id, { include: { business: true } });
+	if (!order) {
+		throw new Error(`Order ${order_id} not found.`);
+	}
+	if (order.status !== DELIVERY_ORDER_STATUS.MERCHANT_PREPARING) {
+		throw new Error(`Order ${order_id} is not in MERCHANT_PREPARING state.`);
+	}
+	const user = order?.user;
+	console.info('got into processOrderReady', JSON.stringify(order.payment_intent_id));
+
+	if (order.module_type === MODULE.STORES) {
+		const { items, grand_total, discount_total, delivery_cost, total_price, is_student } =
+			await calculateAndVerifyPriceForOrderItems(order);
+		order = await DeliveryOrderDao.updateOrder(order.order_id, {
+			details: {
+				...order.details,
+				delivery_cost: delivery_cost,
+				total_price: total_price,
+				sub_total_price: grand_total,
+				discount_savings: discount_total,
+			},
+		});
+		console.log(
+			// 	JSON.stringify(order.items, null, 2),
+			// JSON.stringify(items, null, 2),
+			{
+				delivery_cost: delivery_cost,
+				total_price: total_price,
+				sub_total_price: grand_total,
+				discount_savings: discount_total,
+			}
+		);
+		order = await DeliveryOrderDao.getOrder(order.order_id, { include: { business: true } });
+		if (!order) {
+			throw new Error(`Order ${order_id} not found after update.`);
+		}
+		const restaurant_stripe = order.business?.stripe_account_id;
+		const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT, DRIVER_CUT } =
+			await calculateDeliveryOrderPaymentCuts(order);
+
+		if (order.payment?.type === 'CARD' || order.payment?.type === 'PLATFORM') {
+			if (Math.round(order.details?.total_price * 100) === order.details?.credit_discount) {
+				await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+					order.user_id,
+					restaurant_stripe as string,
+					MERCHANT_CREDIT_CUT,
+					order.order_id,
+					SERVICE_TYPE.DELIVERY
+				);
+				await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+					order.user_id,
+					'platform',
+					PLATFORM_CREDIT_CUT,
+					order.order_id,
+					SERVICE_TYPE.DELIVERY
+				);
+			} else {
+				order = await DeliveryOrderDao.updateOrder(order.order_id, {
+					payment: {
+						...order.payment,
+						status: 'IN_PAYMENT_PROCESSING',
+					},
+				});
+				const pi = await stripe.client.paymentIntents.retrieve(order.payment_intent_id as string);
+				await stripe.client.paymentIntents.update(order.payment_intent_id as string, {
+					metadata: {
+						...pi.metadata,
+						merchant_cut: MERCHANT_CUT,
+					},
+				});
+
+				console.log('capturing PI', order.payment_intent_id, {
+					amount_to_capture: PLATFORM_CUT + MERCHANT_CUT + DRIVER_CUT,
+				});
+				await stripe.client.paymentIntents.capture(order.payment_intent_id as string, {
+					amount_to_capture: PLATFORM_CUT + MERCHANT_CUT + DRIVER_CUT,
+				});
+				// Status update happens elsewhere for CARD payments - return early for single order processing
+				return order;
+			}
+		} else if (order.payment?.type === 'WALLET') {
+			await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+				order.user_id,
+				restaurant_stripe as string,
+				MERCHANT_CUT + MERCHANT_CREDIT_CUT,
+				order.order_id,
+				SERVICE_TYPE.DELIVERY
+			);
+			await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+				order.user_id,
+				'platform',
+				PLATFORM_CUT + PLATFORM_CREDIT_CUT,
+				order.order_id,
+				SERVICE_TYPE.DELIVERY
+			);
+		} else if (order.payment?.type === 'CASH') {
+			if (MERCHANT_CREDIT_CUT > 0) {
+				await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+					order.user_id,
+					restaurant_stripe as string,
+					MERCHANT_CREDIT_CUT,
+					order.order_id,
+					SERVICE_TYPE.DELIVERY
+				);
+			}
+			if (PLATFORM_CREDIT_CUT > 0) {
+				await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+					order.user_id,
+					'platform',
+					PLATFORM_CREDIT_CUT,
+					order.order_id,
+					SERVICE_TYPE.DELIVERY
+				);
+			}
+		} else {
+			// TODO: reject
+			throw new Error('Payment type not supported');
+		}
+		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL);
+	}
+
+	order = await DeliveryOrderDao.updateOrderPickupTime(order_id, new Date().toISOString());
+	(io as Socket).to('order_' + order.order_id).emit('order_pickup_time', order);
+	order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP);
+	sendDeliveryOrderNotifications(user?.language ?? 'en', '', order.user_id, null, order.status);
+	(io as Socket).to('order_' + order.order_id).emit('order_status_change__delivery', order);
+
+	return order;
+}
+
+/**
+ * Helper function to handle order processing failure
+ * @param {DeliveryOrderDetail} order - The order that failed
+ * @returns {Promise<DeliveryOrderDetail>} The failed order
+ */
+export async function handleOrderProcessingFailure(failedOrder: DeliveryOrderDetail): Promise<DeliveryOrderDetail> {
+	await handlePaymentCleanup(failedOrder);
+	let order = await DeliveryOrderDao.updateOrderStatus(
+		failedOrder.order_id,
+		DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED
+	);
+	(io as Socket).to('order_' + order.order_id).emit('order_status_change__delivery', order);
+	order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.ORDER_FINISHED_FAIL);
+	(io as Socket).to('order_' + order.order_id).emit('order_status_change__delivery', order);
+	await handleStockSync(order);
+	SocketStore.closeRoom(`order_${order.order_id}`);
+	return order;
+}
+
+/**
+ * Calculates the stock change for a menu item based on the order and business context.
+ * And returns the object for stock change creation.
+ *
+ * @param {LineItemBase} item - The menu item object.
+ * @param {DeliveryOrderDetail} order - The order object.
+ */
+function getMenuItemStockChange(
+	item: LineItemBase,
+	order: DeliveryOrderDetail
+): Prisma.Menu_Item_Stock_ChangeCreateArgs['data'] {
+	//TODO: fix this to handle our menu_item -> line_item change
+	let quantity;
+	if (item.is_weighted) {
+		const roundedKilos = item.quantity / 1000;
+		quantity = -roundedKilos;
+	} else {
+		quantity = -item.quantity;
+	}
+	return {
+		quantity,
+		reason: 'ORDER',
+		order: {
+			connect: {
+				order_id: order.order_id,
+			},
+		},
+		menu_item: {
+			connect: {
+				menu_item_id: item.menu_item_id,
+			},
+		},
+	};
+}
+
+/**
+ * Synchronizes stock movements for a given order by:
+ * 1. Deleting all existing stock movement records linked to the order.
+ * 2. Creating new stock movement records based on the current order items.
+ *
+ * @param {DeliveryOrderDetail} order - The order object containing order details and menu items.
+ * @returns {Promise<boolean>} Returns true if synchronization succeeds, false otherwise.
+ */
+export async function handleStockSync(order: DeliveryOrderDetail): Promise<boolean> {
+	try {
+		// 1. Delete all existing stock movements linked to the order
+		console.info('Removing stock changes for order:', order.order_id);
+		await removeOrderStockChange(order);
+		if (order.status !== DELIVERY_ORDER_STATUS.ORDER_FINISHED_FAIL) {
+			const stockUpdates = order.items
+				?.filter((i) => !i.removed)
+				.map((item) => getMenuItemStockChange(item, order));
+			console.info('Creating stock changes for order:', order.order_id, 'with updates:', stockUpdates);
+			// 2. Create new stock movements based on the current order items
+			if (!stockUpdates) return false;
+			for (const update of stockUpdates) {
+				await prisma.menu_item_stock_change.create({ data: update });
+			}
+		}
+		return true;
+	} catch (error) {
+		console.error('Error in handleStockRemove:', error);
+		return false;
+	}
+}
+/**
+ * Removes all stock change records associated with a specific order.
+ *
+ * @param {DeliveryOrderDetail} order - The order object containing the order ID.
+ * @returns {Promise<void>} A promise that resolves when the operation is complete.
+ */
+async function removeOrderStockChange(order: DeliveryOrderDetail): Promise<void> {
+	try {
+		await prisma.menu_item_stock_change.deleteMany({
+			where: {
+				order_id: order.order_id,
+			},
+		});
+	} catch (error) {
+		console.error('Error in removeOrderStockChange:', error);
 	}
 }
 
@@ -1487,4 +1776,7 @@ export default {
 	generateOrder,
 	calculateOrderDeliveryCost,
 	calculateAndVerifyPriceForOrderItems,
+	sendPdfDeliveryOrder,
+	processOrderReady,
+	handleOrderProcessingFailure,
 };
