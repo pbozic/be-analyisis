@@ -25,6 +25,8 @@ export {
 // These are kept here for backward compatibility but should ideally be moved to their respective folders
 export * from './invoice.mappers.js';
 
+import { registerSchemas as registerInvoiceSchemas } from './invoice.dto.js';
+import { registerSchemas as registerInvoiceValidatorSchemas } from './invoice.validators.js';
 // === Schema Registration ===
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registerInvoiceSchemas(registry);

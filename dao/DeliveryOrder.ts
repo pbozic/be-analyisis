@@ -546,7 +546,7 @@ export async function updateDeliveryOrderTimeline(
 	newTimelineEntries: Array<Record<string, unknown>>
 ): Promise<DeliveryOrderDetail> {
 	try {
-		const updatedOrder1 = await prisma.delivery_orders.update({
+		await prisma.delivery_orders.update({
 			where: { order_id },
 			data: { timeline: newTimelineEntries },
 			include: {
@@ -929,7 +929,7 @@ export async function isOrderSent(order_id: UUID, driver_id: UUID): Promise<bool
 		});
 		return !!sentRecord;
 	} catch (e) {
-		return false;
+		throw new Error(e instanceof Error ? e.message : String(e));
 	}
 }
 

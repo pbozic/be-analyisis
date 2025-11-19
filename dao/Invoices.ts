@@ -5,7 +5,7 @@ import { PREMISE_TYPE } from '@prisma/client';
 import type { BusinessPremiseResponse } from '../schemas/dto/BusinessPremise/index.js';
 import type { ElectronicDeviceResponse } from '../schemas/dto/ElectronicDevice/index.js';
 import type { DeviceAssignmentResponse } from '../schemas/dto/DeviceAssignment/index.js';
-import type { VehicleResponse } from '../types/vehicles/Vehicle.js';
+import type { VehicleEntityBaseInput } from '../schemas/dto/Vehicles';
 import prisma from '../prisma/prisma.js';
 import businessPremiseDefaultInclude from '../prisma/includes/businessPremise.js';
 import electronicDeviceDefaultInclude from '../prisma/includes/electronicDevice.js';
@@ -118,13 +118,16 @@ export async function assignDeviceToDriver(
  * @param {string} business_premise_id
  * @returns {Promise<VehicleResponse>}
  */
-export async function linkPremiseToVehicle(vehicle_id: string, business_premise_id: string): Promise<VehicleResponse> {
+export async function linkPremiseToVehicle(
+	vehicle_id: string,
+	business_premise_id: string
+): Promise<VehicleEntityBaseInput> {
 	const updated = await prisma.vehicles.update({
 		where: { vehicle_id },
 		data: { business_premise_id },
 		include: vehiclesDefaultInclude,
 	});
-	return toVehicleDetail(updated as unknown as VehicleWithIncludesPrisma) as unknown as VehicleResponse;
+	return toVehicleDetail(updated as unknown as VehicleWithIncludesPrisma) as unknown as VehicleEntityBaseInput;
 }
 /**
  * Disable an electronic device.

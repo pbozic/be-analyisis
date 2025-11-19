@@ -3,18 +3,17 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import type { User } from './User.js';
-import type { Driver } from '../drivers/Driver.js';
-import { UserResponseSchema } from './User';
-import { DriverResponseSchema } from '../drivers/Driver';
+import { UUID } from '../../primitives.js';
+import { UserResponse, UserResponseSchema } from '../User/index.js';
+import { DriverBaseSchema, DriverBase } from '../Driver/driver.dto.js';
 
 extendZodWithOpenApi(z);
 
 export const CreateUserFavoriteDriverSchema = z
 	.object({
-		user_favorite_drivers_id: z.string().uuid(),
-		user_id: z.string().uuid(),
-		driver_id: z.string().uuid(),
+		user_favorite_drivers_id: UUID,
+		user_id: UUID,
+		driver_id: UUID,
 	})
 	.openapi('CreateUserFavoriteDriver');
 
@@ -26,13 +25,13 @@ export type UpdateUserFavoriteDriverInput = z.infer<typeof UpdateUserFavoriteDri
 
 export const UserFavoriteDriverResponseSchema = z
 	.object({
-		user_favorite_drivers_id: z.string(),
-		user_id: z.string(),
-		driver_id: z.string(),
+		user_favorite_drivers_id: UUID,
+		user_id: UUID,
+		driver_id: UUID,
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 		users: UserResponseSchema,
-		drivers: DriverResponseSchema,
+		driver: DriverBaseSchema,
 	})
 	.openapi('UserFavoriteDriverResponse');
 
@@ -50,6 +49,6 @@ export type UserFavoriteDriver = {
 	driver_id: string;
 	created_at: Date;
 	updated_at: Date;
-	users?: User;
-	drivers?: Driver;
+	users?: UserResponse;
+	driver?: DriverBase;
 };

@@ -8,30 +8,7 @@ import { registerSchemas as registerVehicleValidatorSchemas } from './vehicle.va
 export * from './vehicle.dto.js';
 
 // === Vehicles Validators (Request Body, Query, Params) ===
-export {
-	VehicleEntityBaseSchema,
-	VehicleCreateInputSchema,
-	VehicleUpdateInputSchema,
-	FileUploadCreateSchema,
-	FileUploadUpdateSchema,
-	DocumentDataSchema,
-	VehicleDocumentCreateSchema,
-	VehicleDocumentUpdateSchema,
-	CreateVehicleRequestSchema,
-	UpdateVehicleRequestSchema,
-	VehicleDriverAssignmentSchema,
-	type VehicleEntityBaseInput,
-	type VehicleCreateInput,
-	type VehicleUpdateInput,
-	type FileUploadCreate,
-	type FileUploadUpdate,
-	type DocumentDataInput,
-	type VehicleDocumentCreate,
-	type VehicleDocumentUpdate,
-	type CreateVehicleRequest,
-	type UpdateVehicleRequest,
-	type VehicleDriverAssignment,
-} from './vehicle.validators.js';
+export * from './vehicle.validators.js';
 
 // === Vehicles Mappers ===
 export { toDriverRefOut, toDocumentRef, toVehicleRef, toVehicleDetail } from './vehicle.mappers.js';

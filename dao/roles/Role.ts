@@ -20,7 +20,7 @@ export async function getRoles(businessId: string | null): Promise<RoleBase[]> {
 			},
 		});
 	} catch (error) {
-		throw new Error('Error retrieving roles');
+		throw new Error(`Error retrieving roles: ${error}`);
 	}
 }
 
@@ -38,7 +38,7 @@ export async function createRole(data: RoleBase): Promise<RoleBase> {
 			},
 		});
 	} catch (error) {
-		throw new Error('Error creating role');
+		throw new Error(`Error creating role: ${error}`);
 	}
 }
 /** Updates an existing role by its ID.
@@ -54,7 +54,7 @@ export async function updateRole(roleId: string, data: RoleBase): Promise<RoleBa
 			data,
 		});
 	} catch (error) {
-		throw new Error('Error updating role');
+		throw new Error(`Error updating role: ${error}`);
 	}
 }
 /**
@@ -69,7 +69,7 @@ export async function deleteRole(roleId: string): Promise<void> {
 			where: { role_id: roleId },
 		});
 	} catch (error) {
-		throw new Error('Error deleting role');
+		throw new Error(`Error deleting role: ${error}`);
 	}
 }
 

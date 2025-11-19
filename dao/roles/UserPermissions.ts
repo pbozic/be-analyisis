@@ -20,7 +20,7 @@ export async function getUserPermissions(reservationModuleId: string | null): Pr
 			},
 		});
 	} catch (error) {
-		throw new Error('Error retrieving user permissions');
+		throw new Error(`Error retrieving user permissions: ${error instanceof Error ? error.message : String(error)}`);
 	}
 }
 
@@ -79,7 +79,7 @@ export async function updateUserPermission(
 			},
 		});
 	} catch (error) {
-		throw new Error('Error updating user permission');
+		throw new Error(`Error updating user permission: ${error instanceof Error ? error.message : String(error)}`);
 	}
 }
 
@@ -96,7 +96,7 @@ export async function deleteUserPermission(userPermissionId: string): Promise<vo
 			},
 		});
 	} catch (error) {
-		throw new Error('Error deleting user permission');
+		throw new Error(`Error deleting user permission: ${error instanceof Error ? error.message : String(error)}`);
 	}
 }
 
@@ -112,7 +112,7 @@ export async function getAllPermissions(): Promise<Permission[]> {
 			},
 		});
 	} catch (error) {
-		throw new Error('Error retrieving permissions');
+		throw new Error(`Error retrieving permissions: ${error instanceof Error ? error.message : String(error)}`);
 	}
 }
 

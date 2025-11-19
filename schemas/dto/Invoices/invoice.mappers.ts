@@ -1,6 +1,6 @@
 import { BusinessPremiseResponseSchema } from '../BusinessPremise/businessPremise.dto.js';
 import { ElectronicDeviceResponseSchema } from '../ElectronicDevice/electronicDevice.dto.js';
-import { DeviceAssignmentResponseSchema } from '../Invoices';
+import { DeviceAssignmentResponseSchema } from '../DeviceAssignment';
 import type { BusinessPremiseResponse } from '../BusinessPremise/index.js';
 import type { ElectronicDeviceResponse } from '../ElectronicDevice/index.js';
 import type { DeviceAssignmentResponse } from '../DeviceAssignment/index.js';

@@ -25,7 +25,7 @@ export const FavoriteDriverBaseSchema = z
 export type FavoriteDriverBase = z.infer<typeof FavoriteDriverBaseSchema>;
 
 export const FavoriteDriverDetailSchema = FavoriteDriverBaseSchema.extend({
-	driver: DriverRefSchema.optional(),
+	driver: DriverRefSchema,
 }).openapi('FavoriteDriverDetail');
 export type FavoriteDriverDetail = z.infer<typeof FavoriteDriverDetailSchema>;
 
