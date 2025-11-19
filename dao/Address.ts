@@ -4,7 +4,7 @@ import { toAddressResponse } from '../schemas/dto/Address/address.mappers.js';
 import { toUserAddressResponse } from '../schemas/dto/UserAddress/userAddress.mappers.js';
 import type { AddressDefaultPrisma } from '../prisma/includes/address.js';
 import type { UserAddressDefaultPrisma } from '../prisma/includes/userAddress.js';
-import type { UserAddressResponse } from '../types/users/UserAddress.js';
+import type { UserAddressResponse } from '../schemas/dto/UserAddress';
 import { AddAddressDaoInput, BusinessAddress, AddressResponse } from '../schemas/dto/Address';
 import { UpdateUserAddress } from '../schemas/dto/UserAddress/userAddress.validators.js';
 import { EditAddressRequest } from '../schemas/dto/User/user.validators.js';

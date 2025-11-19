@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 
 import UserPermissionDao from '../../dao/roles/UserPermissions';
 import { AuthenticatedRequest, ValidatedRequest } from '../../types/validatedRequest';
-import { CreateUserPermissionInput, UpdateUserPermissionInput } from '../../types/userRoles/UserPermission';
+import { CreateUserPermissionInput, UpdateUserPermissionInput } from '../../schemas/dto/UserRoles';
 
 /**
  * GET /roles/user-permissions

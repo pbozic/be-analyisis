@@ -4,7 +4,7 @@ export {
 	UpdateUserFavoriteDriverSchema,
 	type CreateUserFavoriteDriverInput,
 	type UpdateUserFavoriteDriverInput,
-} from '../../../types/users/UserFavoriteDriver.js';
+} from './userFavoriteDriver.dto.ts';
 
 // Note: registerSchemas is in types/users/UserFavoriteDriver.ts
 // We'll call it from index.ts

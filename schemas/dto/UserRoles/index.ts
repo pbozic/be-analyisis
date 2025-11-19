@@ -13,86 +13,34 @@ import { registerSchemas as registerUserRoleSchemas } from './userrole.dto.js';
 import { registerSchemas as registerUserRoleValidatorSchemas } from './userrole.validators.js';
 
 // === Role DTOs (Response) ===
-export { RoleResponseBaseSchema, RoleResponseSchema, type RoleBase, type RoleResponse, type Role } from './role.dto.js';
+export * from './role.dto.js';
 
 // === Role Validators (Request Body, Query, Params) ===
-export { CreateRoleSchema, UpdateRoleSchema, type CreateRoleInput, type UpdateRoleInput } from './role.validators.js';
+export * from './role.validators.js';
 
 // === Permission DTOs (Response) ===
-export {
-	PermissionResponseBaseSchema,
-	PermissionResponseSchema,
-	type PermissionBase,
-	type PermissionResponse,
-	type Permission,
-} from './permission.dto.js';
+export * from './permission.dto.js';
 
 // === Permission Validators (Request Body, Query, Params) ===
-export {
-	CreatePermissionSchema,
-	UpdatePermissionSchema,
-	type CreatePermissionInput,
-	type UpdatePermissionInput,
-} from './permission.validators.js';
+export * from './permission.validators.js';
 
 // === RolePermission DTOs (Response) ===
-export {
-	RolePermissionResponseBaseSchema,
-	RolePermissionResponseSchema,
-	type RolePermissionBase,
-	type RolePermissionResponse,
-	type RolePermission,
-} from './rolepermission.dto.js';
+export * from './rolepermission.dto.js';
 
 // === RolePermission Validators (Request Body, Query, Params) ===
-export {
-	GetRolePermissionsParamsSchema,
-	CreateRolePermissionSchema,
-	UpsertRolePermissionParamsSchema,
-	DeleteRolePermissionParamsSchema,
-	RolePermissionsMatrixBodySchema,
-	type GetRolePermissionsParams,
-	type CreateRolePermissionInput,
-	type UpsertRolePermissionParams,
-	type DeleteRolePermissionParams,
-	type RolePermissionsMatrixBody,
-} from './rolepermission.validators.js';
+export * from './rolepermission.validators.js';
 
 // === UserPermission DTOs (Response) ===
-export {
-	UserPermissionResponseBaseSchema,
-	UserPermissionResponseSchema,
-	type UserPermissionBase,
-	type UserPermissionResponse,
-	type UserPermission,
-} from './userpermission.dto.js';
+export * from './userpermission.dto.js';
 
 // === UserPermission Validators (Request Body, Query, Params) ===
-export {
-	CreateUserPermissionSchema,
-	UpdateUserPermissionSchema,
-	type CreateUserPermissionInput,
-	type UpdateUserPermissionInput,
-} from './userpermission.validators.js';
+export * from './userpermission.validators.js';
 
 // === UserRole DTOs (Response) ===
-export {
-	UserRoleResponseBaseSchema,
-	UserRoleResponseSchema,
-	type UserRoleBase,
-	type UserRoleResponse,
-	type UserRole,
-} from './userrole.dto.js';
+export * from './userrole.dto.js';
 
 // === UserRole Validators (Request Body, Query, Params) ===
-export {
-	CreateUserRoleSchema,
-	UpdateUserRoleSchema,
-	AssignUserRoleSchema,
-	type CreateUserRoleInput,
-	type UpdateUserRoleInput,
-	type AssignUserRoleInput,
-} from './userrole.validators.js';
+export * from './userrole.validators.js';
 
 // === Schema Registration ===
 export function registerSchemas(registry: OpenAPIRegistry) {

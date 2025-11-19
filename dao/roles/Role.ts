@@ -1,5 +1,5 @@
 import prisma from '../../prisma/prisma';
-import type { CreateRoleInput, UpdateRoleInput, Role } from '../../types/userRoles/Role.ts';
+import { RoleBase } from '../../schemas/dto/UserRoles';
 
 /**
  * Retrieves all roles for a given business ID.
@@ -8,7 +8,7 @@ import type { CreateRoleInput, UpdateRoleInput, Role } from '../../types/userRol
  * @returns {Promise<Role[]>} A promise that resolves to an array of roles.
  * @throws {Error} If there is an error retrieving the roles.
  */
-export async function getRoles(businessId: string | null): Promise<Role[]> {
+export async function getRoles(businessId: string | null): Promise<RoleBase[]> {
 	try {
 		return await prisma.role.findMany({
 			where: {
@@ -30,7 +30,7 @@ export async function getRoles(businessId: string | null): Promise<Role[]> {
  * @throws {Error} If there is an error creating the role.
  */
 
-export async function createRole(data: CreateRoleInput): Promise<Role> {
+export async function createRole(data: RoleBase): Promise<RoleBase> {
 	try {
 		return await prisma.role.create({
 			data: {
@@ -43,11 +43,11 @@ export async function createRole(data: CreateRoleInput): Promise<Role> {
 }
 /** Updates an existing role by its ID.
  * @param {string} roleId - The ID of the role to update.
- * @param {UpdateRoleInput} data - The data to update the role with.
+ * @param {RoleBase} data - The data to update the role with.
  * @returns {Promise<Role>} A promise that resolves to the updated role.
  * @throws {Error} If there is an error updating the role.
  */
-export async function updateRole(roleId: string, data: UpdateRoleInput): Promise<Role> {
+export async function updateRole(roleId: string, data: RoleBase): Promise<RoleBase> {
 	try {
 		return await prisma.role.update({
 			where: { role_id: roleId },

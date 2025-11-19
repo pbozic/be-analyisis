@@ -1,4 +1,4 @@
-import { UserFavoriteDriverResponseSchema } from '../../../types/users/UserFavoriteDriver.js';
+import { UserFavoriteDriverResponseSchema } from '../UserFavoriteDriver';
 import { FavoriteDriverDetail } from '../FavoriteDrivers/favorite-drivers.dto.js';
 
 export function toUserFavoriteDriverResponse(row: FavoriteDriverDetail): FavoriteDriverDetail {

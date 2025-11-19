@@ -69,16 +69,7 @@ export {
 	UpdateServiceCategoryRequestSchema,
 	ServiceCategoryResponseSchema,
 } from './service-category/service-category.dto';
-export {
-	ReservationModuleBaseSchema,
-	ReservationModuleRefSchema,
-	ReservationModuleWithBusinessSchema,
-	CreateReservationModuleRequestSchema,
-	UpdateReservationModuleRequestSchema,
-	UpdateReservationSettingsRequestSchema,
-	GetBookingDataRequestSchema,
-	ReservationModuleResponseSchema,
-} from './reservation-module/reservation-module.dto';
+export * from './reservation-module/reservation-module.dto';
 
 export {
 	ScheduleBaseSchema,

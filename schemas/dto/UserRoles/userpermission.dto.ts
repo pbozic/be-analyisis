@@ -2,9 +2,9 @@ import { z } from 'zod';
 import { MODULE_TYPE, PERMISSION_SCOPE } from '@prisma/client';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { User } from '../../../types/users/User';
-import { Action } from '../../../types/subscriptions/Action';
-import { ReservationModule } from '../../../types/reservations/ReservationModule';
+import { UserBase } from '../User';
+import { ActionBase } from '../Subscription';
+import { ReservationModuleBase } from '../reservations';
 import { UserBaseSchema } from '../User';
 import { ActionBaseSchema } from '../Action';
 import { ReservationModuleBaseSchema } from '../reservations';
@@ -53,7 +53,7 @@ export type UserPermission = {
 	limit?: number | null;
 	scope: PERMISSION_SCOPE;
 	is_blocked: boolean;
-	user?: User;
-	action?: Action | null;
-	reservation_module?: ReservationModule | null;
+	user?: UserBase;
+	action?: ActionBase | null;
+	reservation_module?: ReservationModuleBase | null;
 };

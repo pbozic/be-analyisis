@@ -1,5 +1,5 @@
 import prisma from '../../prisma/prisma';
-import type { RolePermission } from '../../types/userRoles/RolePermission.ts';
+import type { RolePermission } from '../../schemas/dto/UserRoles';
 /**
  * Get all permissions for a given role
  *

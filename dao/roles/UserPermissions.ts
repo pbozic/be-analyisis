@@ -1,10 +1,6 @@
 import prisma from '../../prisma/prisma';
-import type {
-	CreateUserPermissionInput,
-	UpdateUserPermissionInput,
-	UserPermission,
-} from '../../types/userRoles/UserPermission.ts';
-import type { Permission } from '../../types/userRoles/Permission.ts';
+import type { CreateUserPermissionInput, UpdateUserPermissionInput, UserPermission } from '../../schemas/dto/UserRoles';
+import type { Permission } from '../../schemas/dto/UserRoles';
 
 /**
  * Retrieves all user-specific permissions for a given reservation module.

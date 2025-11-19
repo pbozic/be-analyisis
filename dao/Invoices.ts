@@ -15,12 +15,12 @@ import {
 	toBusinessPremiseResponse,
 	toElectronicDeviceResponse,
 	toDeviceAssignmentResponse,
-	toVehicleResponse,
 } from '../schemas/dto/Invoices/invoice.mappers.js';
 import type { BusinessPremiseWithIncludesPrisma } from '../prisma/includes/businessPremise.js';
 import type { ElectronicDeviceWithIncludesPrisma } from '../prisma/includes/electronicDevice.js';
 import type { DeviceAssignmentWithIncludesPrisma } from '../prisma/includes/deviceAssignment.js';
 import type { VehicleWithIncludesPrisma } from '../prisma/includes/vehicles.js';
+import { toVehicleDetail } from '../schemas/dto/Vehicles/vehicle.mappers.js';
 
 /**
  * Create a business premise.
@@ -124,7 +124,7 @@ export async function linkPremiseToVehicle(vehicle_id: string, business_premise_
 		data: { business_premise_id },
 		include: vehiclesDefaultInclude,
 	});
-	return toVehicleResponse(updated as unknown as VehicleWithIncludesPrisma) as unknown as VehicleResponse;
+	return toVehicleDetail(updated as unknown as VehicleWithIncludesPrisma) as unknown as VehicleResponse;
 }
 /**
  * Disable an electronic device.

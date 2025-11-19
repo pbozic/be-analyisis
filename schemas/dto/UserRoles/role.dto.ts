@@ -6,7 +6,7 @@ import type { RolePermission } from './rolepermission.dto.js';
 import type { UserRole } from './userrole.dto.js';
 import { RolePermissionResponseBaseSchema } from './rolepermission.dto.js';
 import { UserRoleResponseBaseSchema } from './userrole.dto.js';
-import { Business } from '../../../types/business/Business.js';
+import { BusinessBase } from '../Business';
 import { BusinessBaseSchema } from '../Business/business.js';
 
 extendZodWithOpenApi(z);
@@ -45,5 +45,5 @@ export type Role = {
 	permissions?: RolePermission[];
 	users?: UserRole[];
 	is_admin: boolean;
-	business?: Business | null;
+	business?: BusinessBase | null;
 };

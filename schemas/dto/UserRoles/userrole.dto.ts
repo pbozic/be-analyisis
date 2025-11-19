@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UserBase } from '../../../types/users/User';
-import { Role } from '../../../types/userRoles/Role';
-import { ReservationModule } from '../../../types/reservations/ReservationModule';
+import { UserBase } from '../User';
+import { RoleBase } from '../UserRoles';
+import { ReservationModuleBase } from '../reservations';
 import { UserBaseSchema } from '../User';
 import { RoleResponseBaseSchema } from './role.dto';
 import { ReservationModuleBaseSchema } from '../reservations';
@@ -39,6 +39,6 @@ export type UserRole = {
 	role_id: string;
 	reservation_module_id?: string | null;
 	user?: UserBase;
-	role?: Role;
-	reservation_module?: ReservationModule | null;
+	role?: RoleBase;
+	reservation_module?: ReservationModuleBase | null;
 };

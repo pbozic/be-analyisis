@@ -1,5 +1,4 @@
-import { AddressResponseSchema } from '../../../types/addresses/Address.js';
-import type { AddressResponse } from '../../../types/addresses/Address.js';
+import { AddressResponseSchema, AddressResponse } from './address.ts';
 import type { AddressDefaultPrisma } from '../../../prisma/includes/address.js';
 
 export function toAddressResponse(row: AddressDefaultPrisma): AddressResponse {

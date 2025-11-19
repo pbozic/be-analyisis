@@ -3,10 +3,10 @@ import { ACCOUNT_ACTIONS_REASON, MODULE } from '@prisma/client';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { Email, PhoneNumber, PositiveInt, Timestamp, UUID } from '../../primitives';
-import { CreateAddressSchema } from '../../../types/addresses/Address';
-import { UpdateBusinessSchema as UpdateBusinessSchemaType } from '../../../types/business/Business';
 import { VehicleEntityBaseSchema } from '../Vehicles/vehicle.validators.js';
 import { DocumentWithFilesSchema } from '../Document/document.dto.js';
+import { AddAddressDaoSchema } from '../Address/address.validators.js';
+import { BusinessBaseSchema } from './business.js';
 
 extendZodWithOpenApi(z);
 
@@ -167,7 +167,7 @@ export const DeactivateBusinessSchema = z.object({
 });
 export type DeactivateBusinessInput = z.infer<typeof DeactivateBusinessSchema>;
 export const AddAddressSchema = z.object({
-	addressData: CreateAddressSchema,
+	addressData: AddAddressDaoSchema,
 });
 export type AddAddressInput = z.infer<typeof AddAddressSchema>;
 
@@ -226,7 +226,7 @@ export const GetBusinessTotalEarningsParamsSchema = z
 	.openapi('GetBusinessTotalEarningsParams');
 export type GetBusinessTotalEarningsParamsInput = z.infer<typeof GetBusinessTotalEarningsParamsSchema>;
 
-export const UpdateBusinessSchema = UpdateBusinessSchemaType.omit({ tax_id: true, registration_id: true });
+export const UpdateBusinessSchema = BusinessBaseSchema.omit({ tax_id: true, registration_id: true });
 export type UpdateBusinessInput = z.infer<typeof UpdateBusinessSchema>;
 
 export const UpdateBusinessTypeSchema = z

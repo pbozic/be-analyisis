@@ -13,7 +13,7 @@ import { Timestamp, UUID } from '../schemas/primitives.js';
 import { delivery_order_sent } from '../prisma/schemas/interfaces.js';
 import { UserBase } from '../schemas/dto/User/index.js';
 import type { DriverDetail } from '../schemas/dto/Driver/index.js';
-import { DeliveryOrderSent } from '../types/deliveryOrders/DeliveryOrderSent.js';
+import { DeliveryOrderSentBase } from '../schemas/dto/DeliveryOrders';
 import { LineItemCreateInputData } from '../schemas/dto/LineItems/index.js';
 /**
  * Add an entry to delivery order timeline
@@ -889,7 +889,7 @@ export async function updateOrderLastSentAt(order_id: UUID): Promise<DeliveryOrd
 export async function createOrderSent(
 	order_id: UUID,
 	driver: Partial<DriverDetail>
-): Promise<Partial<DeliveryOrderSent>> {
+): Promise<Partial<DeliveryOrderSentBase>> {
 	try {
 		if (!driver.driver_id) {
 			throw new Error('Driver ID required');

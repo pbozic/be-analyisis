@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID } from '../../primitives.js';
-import { CreateAddressSchema, UpdateAddressSchema } from '../../../types/addresses/Address.js';
+import { AddAddressDaoSchema, UpdateAddressByAddressIdDaoSchema } from '../Address';
 
 extendZodWithOpenApi(z);
 
@@ -13,7 +13,7 @@ extendZodWithOpenApi(z);
 export const CreateUserAddressSchema = z
 	.object({
 		user_id: UUID,
-		address: CreateAddressSchema, // Nested address creation
+		address: AddAddressDaoSchema, // Nested address creation
 		details: z.object({}).passthrough().optional(), // JSON field for additional details
 		type: z.enum(['HOME', 'WORK', 'OTHER']).default('HOME'),
 	})
@@ -24,7 +24,7 @@ export type CreateUserAddress = z.infer<typeof CreateUserAddressSchema>;
 // Update Schema - For updating an existing user_address
 export const UpdateUserAddressSchema = z
 	.object({
-		address: UpdateAddressSchema.optional(), // Optional nested address update
+		address: UpdateAddressByAddressIdDaoSchema.optional(), // Optional nested address update
 		details: z.object({}).passthrough().optional(), // JSON field for additional details
 		type: z.enum(['HOME', 'WORK', 'OTHER']).optional(),
 	})

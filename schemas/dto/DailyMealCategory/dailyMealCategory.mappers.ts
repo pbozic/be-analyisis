@@ -2,8 +2,7 @@ import { z } from 'zod';
 
 import { DailyMealCategoryPriceBaseSchema, DailyMealCategoryDetailSchema } from './dailyMealCategory.js';
 import type { DailyMealCategoryPriceBase, DailyMealCategoryDetail } from './dailyMealCategory.js';
-import { DailyMealCategoryResponseSchema } from '../../../types/dailyMeals/DailyMealCategory';
-import type { DailyMealCategoryResponse } from '../../../types/dailyMeals/DailyMealCategory';
+import { DailyMealCategoryBaseSchema, DailyMealCategoryBase } from '../DailyMealCategory';
 import type { DailyMealCategoryWithPricesPrisma } from '../../../prisma/includes/dailyMealCategory.js';
 import { CategoryRefSchema } from '../Category/category.dto.js';
 // =======================
@@ -71,10 +70,10 @@ function toIso(d: unknown) {
 	return d ? new Date(d as any).toISOString() : undefined;
 }
 
-export function toDailyMealCategoryResponse(row: DailyMealCategoryWithPricesPrisma | any): DailyMealCategoryResponse {
+export function toDailyMealCategoryResponse(row: DailyMealCategoryWithPricesPrisma | any): DailyMealCategoryBase {
 	const r = row as any;
 
-	return DailyMealCategoryResponseSchema.parse({
+	return DailyMealCategoryBaseSchema.parse({
 		daily_meal_category_id: r.daily_meal_category_id,
 		daily_meals_id: r.daily_meals_id,
 		category_id: r.category_id,
@@ -95,9 +94,7 @@ export function toDailyMealCategoryResponse(row: DailyMealCategoryWithPricesPris
 	});
 }
 
-export function toDailyMealCategoryList(
-	rows: (DailyMealCategoryWithPricesPrisma | any)[]
-): DailyMealCategoryResponse[] {
+export function toDailyMealCategoryList(rows: (DailyMealCategoryWithPricesPrisma | any)[]): DailyMealCategoryBase[] {
 	return (rows || []).map((r) => toDailyMealCategoryResponse(r));
 }
 

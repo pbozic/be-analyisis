@@ -2,7 +2,7 @@ import { Response } from 'express';
 
 import UserRoleDao from '../../dao/roles/UserRoles.ts';
 import { ValidatedRequest } from '../../types/validatedRequest';
-import { AssignUserRoleInput } from '../../types/userRoles/UserRole';
+import { AssignUserRoleInput } from '../../schemas/dto/UserRoles';
 
 /**
  * GET /roles/user-roles

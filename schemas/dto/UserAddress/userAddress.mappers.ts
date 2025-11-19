@@ -1,5 +1,5 @@
-import { UserAddressResponseSchema } from '../../../types/users/UserAddress.js';
-import type { UserAddressResponse } from '../../../types/users/UserAddress.js';
+import { UserAddressResponseSchema } from '../UserAddress';
+import type { UserAddressResponse } from '../UserAddress';
 import type { UserAddressDefaultPrisma } from '../../../prisma/includes/userAddress.js';
 
 export function toUserAddressResponse(row: UserAddressDefaultPrisma): UserAddressResponse {

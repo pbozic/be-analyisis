@@ -1,9 +1,9 @@
 import prisma from '../prisma/prisma.js';
 import { UpdateUserAddress } from '../schemas/dto/UserAddress/userAddress.validators.js';
 import { UUID } from '../schemas/primitives.js';
-import { CreateAddressInput } from '../types/addresses/Address.js';
 import { toUserAddressResponse } from '../schemas/dto/UserAddress/userAddress.mappers.js';
 import type { UserAddressDefaultPrisma } from '../prisma/includes/userAddress.js';
+import { AddAddressDaoInput } from '../schemas/dto/Address/Address.dao.dto.js';
 
 /**
  * Add a user address link. Checks if the address exists first, and creates it if it doesn't.
@@ -14,7 +14,7 @@ import type { UserAddressDefaultPrisma } from '../prisma/includes/userAddress.js
  * @param {string} type - The type of the address (e.g., 'HOME', 'WORK') (optional).
  * @returns {Promise<object>} The created user_address record.
  */
-async function addUserAddress(userId: UUID, addressData: CreateAddressInput, details?: object, type: string = 'HOME') {
+async function addUserAddress(userId: UUID, addressData: AddAddressDaoInput, details?: object, type: string = 'HOME') {
 	try {
 		// Check if the address already exists
 		const existingAddress = await prisma.addresses.findUnique({
@@ -108,9 +108,9 @@ async function editUserAddress(userId: UUID, addressId: UUID, updateData: Update
 
 			if (
 				currentAddress &&
-				currentAddress.address === updateData.address.address &&
-				currentAddress.latitude === updateData.address.latitude &&
-				currentAddress.longitude === updateData.address.longitude
+				currentAddress.address === updateData.address &&
+				currentAddress.latitude === updateData.address?.updateData?.latitude &&
+				currentAddress.longitude === updateData.address?.updateData?.longitude
 			) {
 				// If the address matches, only update the user_address fields
 				const updated = await prisma.user_address.update({
@@ -132,9 +132,9 @@ async function editUserAddress(userId: UUID, addressId: UUID, updateData: Update
 				const existingAddress = await prisma.addresses.findUnique({
 					where: {
 						uniqueAddressIdentifier: {
-							address: updateData.address.address,
-							latitude: updateData.address.latitude,
-							longitude: updateData.address.longitude,
+							address: updateData.address.updateData?.address,
+							latitude: updateData.address.updateData?.latitude,
+							longitude: updateData.address.updateData?.longitude,
 						},
 					},
 				});

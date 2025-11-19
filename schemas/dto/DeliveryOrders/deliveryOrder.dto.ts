@@ -174,7 +174,21 @@ export const DeliveryTimeUpdateSchema = z
 		description: 'Delivery time update',
 	});
 
+export const DeliveryOrderSentBaseSchema = z
+	.object({
+		delivery_order_sent_id: UUID,
+		order_id: UUID,
+		accepted: z.boolean(),
+		location: z.record(z.any()),
+		timeline: z.array(z.record(z.any())),
+		driver_id: UUID.nullable().optional(),
+		created_at: Timestamp.optional(),
+		updated_at: Timestamp.optional(),
+	})
+	.openapi('DeliveryOrderSent');
+
 // === Type exports ===
+export type DeliveryOrderSentBase = z.infer<typeof DeliveryOrderSentBaseSchema>;
 export type OrderItem = z.infer<typeof OrderItemSchema>;
 export type OrderItemWithAddons = z.infer<typeof OrderItemWithAddonsSchema>;
 export type OrderItemUpdate = z.infer<typeof OrderItemUpdateSchema>;

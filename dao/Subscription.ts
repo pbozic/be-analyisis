@@ -1,5 +1,5 @@
 import prisma from '../prisma/prisma.js';
-import type { CreateSubscriptionSchema, UpdateSubscriptionSchema } from '../types/subscriptions/Subscription.js';
+import type { CreateSubscription, UpdateSubscription } from '../schemas/dto/Subscription';
 import subscriptionInclude, { SubscriptionWithIncludesPrisma } from '../prisma/includes/subscriptions.js';
 import { toSubscriptionResponse, toSubscriptionsList } from '../schemas/dto/Subscription/subscription.mappers.js';
 import type { SubscriptionResponse } from '../schemas/dto/Subscription/subscription.dto.js';
@@ -7,10 +7,10 @@ import type { SubscriptionResponse } from '../schemas/dto/Subscription/subscript
 /**
  * Create a new subscription
  *
- * @param {CreateSubscriptionSchema} data
+ * @param {CreateSubscription} data
  * @returns {Promise<SubscriptionResponse>}
  */
-export async function createSubscription(data: CreateSubscriptionSchema): Promise<SubscriptionResponse> {
+export async function createSubscription(data: CreateSubscription): Promise<SubscriptionResponse> {
 	try {
 		const created = await prisma.action_bundle.create({
 			data: {
@@ -34,12 +34,12 @@ export async function createSubscription(data: CreateSubscriptionSchema): Promis
  * Update an existing subscription
  *
  * @param {string} subscriptionId
- * @param {UpdateSubscriptionSchema} data
+ * @param {UpdateSubscription} data
  * @returns {Promise<SubscriptionResponse>}
  */
 export async function updateSubscription(
 	subscriptionId: string,
-	data: UpdateSubscriptionSchema
+	data: UpdateSubscription['data']
 ): Promise<SubscriptionResponse> {
 	try {
 		const updated = await prisma.action_bundle.update({

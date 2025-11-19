@@ -5,16 +5,7 @@ import { registerSchemas as registerDeliveryOrderSchemas } from './deliveryOrder
 import { registerSchemas as registerDeliveryOrderValidatorSchemas } from './deliveryOrder.validators.js';
 
 // === DeliveryOrder DTOs (Response) ===
-export {
-	DeliveryOrderBaseSchema,
-	DeliveryOrderRefSchema,
-	DeliveryOrderDetailSchema,
-	type DeliveryOrderBase,
-	type DeliveryOrderRef,
-	type DeliveryOrderDetail,
-	type UpdateDeliveryOrder,
-	registerSchemas as registerDeliveryOrderSchemas,
-} from './deliveryOrder.dto.js';
+export * from './deliveryOrder.dto.js';
 
 // === DeliveryOrder Validators (Request Body, Query, Params) ===
 export {

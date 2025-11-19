@@ -1,7 +1,7 @@
 import { DriverDetailSchema, type DriverDetail } from './driver.dto.js';
 import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.js';
 import { TransportModuleBase } from '../Transport/transport.dto.js';
-import { DailyMealsModule } from '../../../types/dailyMeals/DailyMealsModule.js';
+import { DailyMealsModule } from '../Business';
 
 // ===============
 // Mappers

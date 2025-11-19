@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { MODULE_TYPE } from '@prisma/client';
 
 import { UUID } from '../../primitives.js';
 import { ModuleTypeSchema } from './subscription.dto.js';
@@ -29,6 +28,7 @@ export const UpdateSubscriptionSchema = z
 				name: z.string().min(1).optional(),
 				price_cents: z.number().int().nonnegative().optional(),
 				stripe_price_id: z.string().min(1).optional(),
+				stripe_product_id: z.string().min(1).optional(),
 			})
 			.openapi('UpdateSubscriptionData'),
 	})

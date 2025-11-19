@@ -2,7 +2,7 @@ import { Response } from 'express';
 
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 import RoleDao from '../../dao/roles/Role.ts';
-import { CreateRoleInput, UpdateRoleInput } from '../../types/userRoles/Role.ts';
+import { RoleBase } from '../../schemas/dto/UserRoles';
 
 /**
  * GET /roles/roles
@@ -10,7 +10,7 @@ import { CreateRoleInput, UpdateRoleInput } from '../../types/userRoles/Role.ts'
  * @summary Get all roles for the current business
  * @operationId getBusinessRoles
  * @response 200 - Roles retrieved
- * @responseContent {RoleResponseBase[]} 200.application/json
+ * @responseContent {RoleBase[]} 200.application/json
  * @response 500 - Error retrieving roles
  */
 export async function getRoles(req: ValidatedRequest, res: Response): Promise<void> {
@@ -28,12 +28,12 @@ export async function getRoles(req: ValidatedRequest, res: Response): Promise<vo
  * @tag Reservation
  * @summary Create a new role
  * @operationId createReservationRole
- * @requestBody {CreateRoleInput} requestBody
+ * @requestBody {RoleBase} requestBody
  * @response 201 - Role created
  * @responseContent {RoleResponseBase} 201.application/json
  * @response 500 - Error creating role
  */
-export async function createRole(req: ValidatedRequest<CreateRoleInput>, res: Response): Promise<void> {
+export async function createRole(req: ValidatedRequest<RoleBase>, res: Response): Promise<void> {
 	try {
 		let role = await RoleDao.createRole(req.body);
 		res.status(201).json(role);
@@ -48,15 +48,12 @@ export async function createRole(req: ValidatedRequest<CreateRoleInput>, res: Re
  * @summary Update a role
  * @operationId updateReservationRole
  * @pathParam {string} role_id
- * @requestBody {UpdateRoleInput} requestBody
+ * @requestBody {RoleBase} requestBody
  * @response 200 - Role updated
  * @responseContent {RoleResponseBase} 200.application/json
  * @response 500 - Error updating role
  */
-export async function updateRole(
-	req: ValidatedRequest<UpdateRoleInput, { role_id: string }>,
-	res: Response
-): Promise<void> {
+export async function updateRole(req: ValidatedRequest<RoleBase, { role_id: string }>, res: Response): Promise<void> {
 	try {
 		let role = await RoleDao.updateRole(req.params.role_id, req.body);
 		res.status(200).json(role);

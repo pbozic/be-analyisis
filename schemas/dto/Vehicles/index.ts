@@ -5,20 +5,7 @@ import { registerSchemas as registerVehicleSchemas } from './vehicle.dto.js';
 import { registerSchemas as registerVehicleValidatorSchemas } from './vehicle.validators.js';
 
 // === Vehicles DTOs (Response) ===
-export {
-	VehicleBaseSchema,
-	VehicleRefSchema,
-	VehicleDetailSchema,
-	DriverRefOutSchema,
-	DocumentRefSchema,
-	DriverRefSchema,
-	type VehicleBase,
-	type VehicleRef,
-	type VehicleDetail,
-	type DriverRefOut,
-	type DocumentRef,
-	type DriverRef,
-} from './vehicle.dto.js';
+export * from './vehicle.dto.js';
 
 // === Vehicles Validators (Request Body, Query, Params) ===
 export {
