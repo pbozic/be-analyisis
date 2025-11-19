@@ -1,5 +1,6 @@
 import prisma from '../../prisma/prisma';
-import type { UserRole, CreateUserRoleInput, UpdateUserRoleInput } from '../../types/userRoles/UserRole.ts';
+import type { UserRole } from '../../schemas/dto/UserRoles/userrole.dto.js';
+import type { CreateUserRoleInput, UpdateUserRoleInput } from '../../schemas/dto/UserRoles/userrole.validators.js';
 
 /**
  * Retrieves user roles for a given reservation module.

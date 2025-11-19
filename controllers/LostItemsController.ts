@@ -5,8 +5,8 @@ import LostItemsDao from '../dao/LostItems.js';
 import FileDao from '../dao/File.js';
 import S3Helper from '../lib/s3.js';
 import { ValidatedRequest } from '../types/validatedRequest.ts';
-import type { CreateLostItemInput, UpdateLostItemInput } from '../types/lostItems/LostItem.js';
-import { ReportFoundItemRequest } from '../schemas/dto/LostItems/lostitem.validators.ts';
+import { ReportFoundItemRequest, UpdateLostItemRequest } from '../schemas/dto/LostItems/lostitem.validators.ts';
+import { UpdateLostItem } from '../schemas/dto/LostItems/lostitem.dto.ts';
 config();
 
 /**
@@ -50,7 +50,10 @@ export async function getAllLostItems(req: Request, res: Response): Promise<void
 export async function reportFoundItem(req: ValidatedRequest<ReportFoundItemRequest>, res: Response): Promise<void> {
 	const { description, found, images, user } = req.body;
 	try {
-		const foundItem = await LostItemsDao.reportFoundItem({ description, found } as CreateLostItemInput, user);
+		const foundItem = await LostItemsDao.reportFoundItem(
+			{ description, found } as Partial<ReportFoundItemRequest>,
+			user
+		);
 		if (images && images.files && images.files.length > 0) {
 			for (const file of images.files) {
 				const fileData = await FileDao.createFile(file.file_type, file.mime_type, true);
@@ -103,7 +106,7 @@ export async function deleteFoundItem(
  * @description Updates the details of a lost item in the database.
  * @operationId updateLostItem
  * @pathParam {string} lost_item_id - The ID of the lost item to update
- * @bodyContent {ReportFoundItemRequest} application/json
+ * @bodyContent {UpdateLostItemRequest} application/json
  * @bodyRequired
  * @response 200 - Lost item updated successfully
  * @responseContent {LostItemDTO} 200.application/json
@@ -111,7 +114,7 @@ export async function deleteFoundItem(
  * @prisma_model lost_items
  */
 export async function updateLostItem(
-	req: ValidatedRequest<UpdateLostItemInput, { lost_item_id: string }>,
+	req: ValidatedRequest<UpdateLostItemRequest, { lost_item_id: string }>,
 	res: Response
 ): Promise<void> {
 	const { lost_item_id } = req.params;
@@ -121,10 +124,10 @@ export async function updateLostItem(
 			res.status(400).json({ error: 'No data provided to update' });
 			return;
 		}
-		const updateData: Partial<UpdateLostItemInput> = {};
+		const updateData: Partial<UpdateLostItemRequest> = {};
 		if (description) updateData.description = description;
 		if (status) updateData.status = status;
-		const updatedLostItem = await LostItemsDao.updateLostItem(lost_item_id, updateData as UpdateLostItemInput);
+		const updatedLostItem = await LostItemsDao.updateLostItem(lost_item_id, updateData as UpdateLostItem);
 		if (!updatedLostItem) {
 			res.status(404).json({ error: 'Lost item not found' });
 			return;

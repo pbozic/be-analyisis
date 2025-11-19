@@ -1,7 +1,7 @@
 import prisma from '../prisma/prisma.js';
+import { VehicleDrivers } from '../schemas/dto/Driver/driver.dto.js';
 import { VehicleDetail } from '../schemas/dto/Vehicles/vehicle.dto.js';
 import { VehicleCreateInput, VehicleUpdateInput } from '../schemas/dto/Vehicles/vehicle.validators.js';
-import { VehicleDriver } from '../types/drivers/VehicleDriver.js';
 
 /**
  * Get all vehicles with optional Prisma args and includes.
@@ -365,7 +365,7 @@ export const deleteVehicle = async (vehicle_id: string): Promise<VehicleDetail> 
  * @param {string} vehicle_id - Vehicle ID.
  * @returns {Promise<VehicleDriver[]>} Array of driver_id objects.
  */
-const getVehicleDriversByVehicleId = async (vehicle_id: string): Promise<VehicleDriver[]> => {
+const getVehicleDriversByVehicleId = async (vehicle_id: string): Promise<VehicleDrivers[]> => {
 	try {
 		return await prisma.vehicle_drivers.findMany({
 			where: {

@@ -74,9 +74,18 @@ export const TaxiOrderRefSchema = z
 export type TaxiOrderRef = z.infer<typeof TaxiOrderRefSchema>;
 
 export const TaxiOrderDetailSchema = TaxiOrderBaseSchema.extend({
-	user: UserBaseSchema.nullable().optional(),
-	driver: DriverBaseSchema.nullable().optional(),
-	vehicle: VehicleBaseSchema.nullable().optional(),
+	user: z
+		.lazy(() => UserBaseSchema)
+		.nullable()
+		.optional(),
+	driver: z
+		.lazy(() => DriverBaseSchema)
+		.nullable()
+		.optional(),
+	vehicle: z
+		.lazy(() => VehicleBaseSchema)
+		.nullable()
+		.optional(),
 	grouped_orders: z.array(TaxiOrderRefSchema).optional(),
 }).openapi('TaxiOrderDetail');
 export type TaxiOrderDetail = z.infer<typeof TaxiOrderDetailSchema>;

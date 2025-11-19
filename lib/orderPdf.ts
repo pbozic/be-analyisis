@@ -37,6 +37,7 @@ async function generatePDFFromPug(templateName: string, locals: Record<string, a
 	//fs.writeFileSync(path.join(process.cwd(), 'signed.pdf'), signedBuffer);
 	return signedBuffer;
 }
+
 /**
  * Convert HTML content to a PDF Buffer using wkhtmltopdf.
  * @param {string} htmlContent - Full HTML markup to render.
@@ -69,6 +70,7 @@ function generatePDF(htmlContent: string): Promise<Buffer> {
 		);
 	});
 }
+
 /**
  * Apply a digital signature to a PDF buffer using a P12 certificate.
  * @param {Buffer} pdfBuffer - Unsigned PDF buffer.
@@ -92,6 +94,7 @@ async function signPdfBuffer(pdfBuffer: Buffer): Promise<Buffer> {
 	});
 	return await signPdf.sign(pdfWithPlaceholder, signer);
 }
+
 /**
  * Fetch a delivery order and generate a signed PDF confirmation for it.
  * @param {string} order_id - The order ID to fetch and render.
@@ -106,10 +109,12 @@ async function getOrderAndPDF(order_id: string): Promise<Buffer | undefined> {
 	let pdf = await generatePDFFromPug('pdf/orderConfirmation.pug', { order });
 	return pdf;
 }
+
 export { generatePDFFromPug };
 export { generatePDF };
 export { signPdfBuffer };
 export { getOrderAndPDF };
+
 export default {
 	generatePDFFromPug,
 	generatePDF,

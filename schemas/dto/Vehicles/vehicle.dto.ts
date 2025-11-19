@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { VEHICLE_CATEGORY, VEHICLE_CLASS, DOCUMENT_TYPE, FILE_TYPE } from '@prisma/client';
+import { VEHICLE_CATEGORY, VEHICLE_CLASS } from '@prisma/client';
 
 import { UUID, Timestamp } from '../../primitives';
 import { BasicUserDataSchema } from '../User/user.js';
@@ -13,7 +13,7 @@ extendZodWithOpenApi(z);
 export const DriverRefOutSchema = z
 	.object({
 		driver_id: UUID,
-		user: BasicUserDataSchema,
+		user: z.lazy(() => BasicUserDataSchema),
 	})
 	.openapi('DriverRefOut');
 export type DriverRefOut = z.infer<typeof DriverRefOutSchema>;

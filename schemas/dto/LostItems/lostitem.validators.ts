@@ -43,8 +43,18 @@ export const ReportFoundItemRequestSchema = z
 
 export type ReportFoundItemRequest = z.infer<typeof ReportFoundItemRequestSchema>;
 
+export const UpdateLostItemRequestSchema = z
+	.object({
+		description: z.string().min(1).optional(),
+		status: z.string().min(1).optional(),
+	})
+	.openapi('UpdateLostItem');
+
+export type UpdateLostItemRequest = z.infer<typeof UpdateLostItemRequestSchema>;
+
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('DocumentCreate', DocumentCreateSchema);
 	registry.register('ReportFoundItemImages', ReportFoundItemImagesSchema);
 	registry.register('ReportFoundItemRequest', ReportFoundItemRequestSchema);
+	registry.register('UpdateLostItemRequest', UpdateLostItemRequestSchema);
 }

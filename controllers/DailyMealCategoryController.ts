@@ -2,14 +2,12 @@ import { Response } from 'express';
 
 import { ValidatedRequest } from '../types/validatedRequest.ts';
 import DmcDao from '../dao/DailyMealCategory.ts';
-import type {
-	CreateDailyMealCategoryWithPriceInput,
-	AddPriceToDailyMealCategoryInput,
-	DailyMealCategory,
-	DailyMealCategoryPriceBase,
-} from '../types/dailyMeals/DailyMealCategory.ts';
 import MenuCategory from '../dao/MenuCategory.js';
 import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
+import {
+	AddPriceToDailyMealCategoryInput,
+	CreateDailyMealCategoryWithPriceInput,
+} from '../schemas/dto/DailyMealCategory/dailyMealCategory.validators.ts';
 
 /**
  * POST /business/:business_id/daily-meal-categories
@@ -18,11 +16,7 @@ import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
  * @description Creates a new daily meal category for a business and sets its initial price.
  * @operationId createDailyMealCategoryWithPrice
  * @bodyDescription The daily meal category details to create.
- * @bodyContent {
- *   "category_id": "uuid",
- *   "price": 1000,
- *   "start_date": "2024-07-01T00:00:00.000Z"
- * } application/json
+ * @bodyContent {CreateDailyMealCategoryWithPriceInput} application/json
  * @bodyRequired
  * @response 201 - Daily meal category created successfully
  * @responseContent {object} 201.application/json
@@ -33,8 +27,8 @@ import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
  */
 export async function createDailyMealCategoryWithPrice(
 	req: ValidatedRequest<CreateDailyMealCategoryWithPriceInput, { business_id: string }>,
-	res: Response<DailyMealCategory | { message: string; error?: string }>
-) {
+	res: Response
+): Promise<void> {
 	try {
 		const { business_id } = req.params;
 		const { category_id, price, start_date } = req.body;
@@ -68,38 +62,13 @@ export async function createDailyMealCategoryWithPrice(
  * @operationId getDailyMealCategoriesForBusiness
  * @response 200 - List of active daily meal categories
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json [
- *   {
- *     "daily_meal_category_id": "uuid",
- *     "business_id": "uuid",
- *     "category_id": "uuid",
- *     "created_at": "2024-07-01T00:00:00.000Z",
- *     "start_date": "2024-07-01T00:00:00.000Z",
- * 	   "active": true,
- *     "category": {
- *       "categories_id": "uuid",
- *       "name": "string",
- *       "description": "string",
- *       "type": "string"
- *     },
- *     "daily_meal_category_prices": [
- *       {
- *         "daily_meal_category_prices_id": "uuid",
- *         "daily_meal_category_id": "uuid",
- *         "price": 1000,
- *         "valid_from": "2024-07-01T00:00:00.000Z",
- *         "created_at": "2024-07-01T00:00:00.000Z"
- *       }
- *     ]
- *   }
- * ]
  * @response 500 - Error fetching daily meal categories
  * @prisma_model daily_meal_categories
  */
 export async function getDailyMealCategoriesForBusiness(
 	req: ValidatedRequest<unknown, { business_id: string }, { detailed?: string }>,
-	res: Response<DailyMealCategory[] | { message: string; error?: string }>
-) {
+	res: Response
+): Promise<void> {
 	try {
 		const { business_id } = req.params;
 		const detailed = req.query?.detailed === 'true';
@@ -130,8 +99,8 @@ export async function getDailyMealCategoriesForBusiness(
  */
 export async function addPriceToDailyMealCategory(
 	req: ValidatedRequest<AddPriceToDailyMealCategoryInput, { dmc_id: string }>,
-	res: Response<DailyMealCategoryPriceBase | { message: string; error?: string }>
-) {
+	res: Response
+): Promise<void> {
 	try {
 		const { dmc_id } = req.params;
 		const { price, valid_from } = req.body;
@@ -170,8 +139,8 @@ export async function addPriceToDailyMealCategory(
  */
 export async function deactivateDailyMealCategory(
 	req: ValidatedRequest<unknown, { dmc_id: string }>,
-	res: Response<DailyMealCategory | { message: string; error?: string }>
-) {
+	res: Response
+): Promise<void> {
 	try {
 		const { dmc_id } = req.params;
 		const deactivated = await DmcDao.deactivateDailyMealCategory(dmc_id);
@@ -195,8 +164,8 @@ export async function deactivateDailyMealCategory(
  */
 export async function activateDailyMealCategory(
 	req: ValidatedRequest<unknown, { dmc_id: string }>,
-	res: Response<DailyMealCategory | { message: string; error?: string }>
-) {
+	res: Response
+): Promise<void> {
 	try {
 		const { dmc_id } = req.params;
 		const activated = await DmcDao.activateDailyMealCategory(dmc_id);

@@ -18,11 +18,7 @@ import UsersDao from '../dao/User.js';
 import BusinessDao from '../dao/Business.js';
 import PaymentHelpers from '../lib/paymentHelpers.js';
 import { ValidatedRequest } from '../types/validatedRequest.js';
-import {
-	DailyMealsSubscriptionQuery,
-	DailyMealsSubscriptionRequest,
-} from '../types/dailymeal/DailyMealSubscription.ts';
-import DailyMealDao from '../dao/DailyMealDao.ts';
+import DailyMealDao, { DailyMealsSubscriptionQuery, DailyMealsSubscriptionRequest } from '../dao/DailyMealDao.ts';
 import AddressDao from '../dao/Address.js';
 import { DAILY_MEAL_DELIVERY_COST_CENTS, RESTAURANT_SHARE_PERC } from '../lib/constants.js';
 import dailyMealHelpers, { mapDateToEarlierWeekday } from '../lib/dailyMealHelpers.ts';

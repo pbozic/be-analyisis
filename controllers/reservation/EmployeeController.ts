@@ -12,7 +12,7 @@ import type {
 } from '../../schemas/dto/reservations/employee/employee.dto';
 import type { EmployeeByIdWithSchedulesDAOResponse } from '../../schemas/dto/reservations/employee/employee.dto';
 import type { CreateBusinessUserWithPassword } from '../../schemas/dto/BusinessUser/businessUser';
-import { ListBookingsParams, BookingsAnalyticsParams } from '../../types/reservations/Booking.ts';
+import { ListBookingsParams, BookingsAnalyticsParams } from '../../schemas/dto/reservations/booking/booking.dto';
 import type { GetSchedulesWithSlots } from '../../schemas/dto/reservations/schedule/schedule.dto';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 import { calcBookings } from './BookingController.ts';

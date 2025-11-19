@@ -36,7 +36,7 @@ export const UserAddressResponseBaseSchema = z
 	.openapi('UserAddressResponseBase');
 
 export const UserAddressResponseSchema = UserAddressResponseBaseSchema.extend({
-	address: AddressResponseBaseSchema,
+	address: z.lazy(() => AddressResponseBaseSchema),
 }).openapi('UserAddressResponse');
 
 export type UserAddressBase = z.infer<typeof UserAddressResponseBaseSchema>;

@@ -6,7 +6,7 @@ import { Timestamp, UUID } from '../../primitives.js';
 import { LineItemDetailSchema } from '../LineItems/index.js';
 import { UserBaseSchema } from '../User/index.js';
 import { DriverBaseSchema } from '../Driver/driver.dto.js';
-import { BusinessResponseDto } from '../Business/business.dto.js';
+import { BusinessResponseSchema } from '../Business/business.js';
 
 extendZodWithOpenApi(z);
 
@@ -250,7 +250,10 @@ export type DeliveryOrderRef = z.infer<typeof DeliveryOrderRefSchema>;
 // ===============
 export const DeliveryOrderDetailSchema = DeliveryOrderBaseSchema.extend({
 	user: UserBaseSchema.nullable().optional(),
-	business: BusinessResponseDto.nullable().optional(),
+	business: z
+		.lazy(() => BusinessResponseSchema)
+		.nullable()
+		.optional(),
 	driver: DriverBaseSchema.nullable().optional(),
 	items: z.array(LineItemDetailSchema).optional(),
 }).openapi('DeliveryOrderDetail');

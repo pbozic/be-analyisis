@@ -161,7 +161,7 @@ export const DailyMealsDriversSchema = z
 	.openapi('DailyMealsDrivers');
 
 export const DriverDetailSchema = DriverBaseSchema.extend({
-	user: BasicUserDataSchema.optional(),
+	user: z.lazy(() => BasicUserDataSchema).optional(),
 	current_vehicle: VehicleBaseSchema.nullable().optional(),
 	vehicles: z
 		.array(

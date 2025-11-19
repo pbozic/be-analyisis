@@ -143,7 +143,10 @@ export type UserRef = z.infer<typeof UserRefSchema>;
 // User Response Schema - Base with embedded refs (no password)
 export const UserResponseSchema = UserBaseSchema.omit({ password: true })
 	.extend({
-		business_users: z.array(BusinessUserWithBusinessResponseSchema).nullable().optional(),
+		business_users: z
+			.array(z.lazy(() => BusinessUserWithBusinessResponseSchema))
+			.nullable()
+			.optional(),
 		addresses: z.array(UserAddressRefSchema).nullable().optional(),
 		driver: DriverBaseSchema.nullable().optional(),
 		profile_picture: FileRefSchema.nullable().optional(),
@@ -153,7 +156,7 @@ export const UserPasswordSchema = UserBaseSchema.pick({ password: true, user_id:
 
 // User with Business Users - for getUserById with business_users include
 export const UserWithBusinessUsersResponseSchema = UserResponseSchema.extend({
-	business_users: z.array(BusinessUserWithBusinessResponseSchema).nullable(),
+	business_users: z.array(z.lazy(() => BusinessUserWithBusinessResponseSchema)).nullable(),
 });
 
 export const UserWithReferralsResponseSchema = UserResponseSchema.extend({
@@ -167,7 +170,7 @@ export const UserWithAddressesResponseSchema = UserResponseSchema.extend({
 
 // User with both Business Users and Addresses - for complex includes
 export const UserDetailResponseSchema = UserResponseSchema.extend({
-	business_users: z.array(BusinessUserRefSchema).nullable(),
+	business_users: z.array(z.lazy(() => BusinessUserRefSchema)).nullable(),
 	addresses: z.array(UserAddressRefSchema).nullable(),
 });
 

@@ -50,7 +50,7 @@ import {
 	CreateDeliveryOrder,
 	CreateDeliveryOrderDaoInput,
 } from '../schemas/dto/DeliveryOrders/deliveryOrder.validators.ts';
-import { getOrderAndPDF } from './orderPdf.js';
+// import { getOrderAndPDF } from './orderPdf.js';
 import EmailHelper from './emailSender.js';
 import { LineItemBase, LineItemDetail } from '../schemas/dto/LineItems/lineItems.dto.ts';
 import { MenuDetail, MenuCategoryRef } from '../schemas/dto/Menu/menu.dto.ts';
@@ -106,6 +106,7 @@ async function addDeliveryEarningToOrder(order: DeliveryOrderDetail): Promise<De
 	await DeliveryOrderDao.updateOrder(order.order_id, order);
 	return order;
 }
+
 /**
  * Returns the number of orders already sent to a delivery driver and not yet accepted.
  * @param {string} driver_id - The delivery_driver_id or driver_id.
@@ -115,6 +116,7 @@ async function getNumberPendingOrders(driver_id: string): Promise<number> {
 	const sent = await DeliveryOrderDao.getAlreadySentOrdersByDeliveryDriverId(driver_id);
 	return sent?.length || 0;
 }
+
 /**
  * Heuristic score to prioritize drivers for a delivery order based on timing and availability.
  * @param {CandidateDriver} driver - Driver object including on_order flag.
@@ -181,6 +183,7 @@ async function calculateDriverScore(
 	// Add any other factors and corresponding score calculations here
 	return baseScore;
 }
+
 /**
  * Selects eligible delivery drivers for a given order based on readiness and scoring.
  *
@@ -389,6 +392,7 @@ export async function sendDeliveryOrderToDriver(order: DeliveryOrderDetail, driv
 		console.error(e);
 	}
 }
+
 /**
  * Revokes a delivery order from all drivers it was sent to but not accepted.
  * Emits socket event and removes rooms.
@@ -405,6 +409,7 @@ export async function revokeDeliveryOrderFromDrivers(order_id: string): Promise<
 		sock?.emit('order_revoked__delivery', order_id);
 	}
 }
+
 /**
  * Periodic worker: finds pending delivery orders that should be re-sent to drivers.
  * Uses status checks, last_sent_at window, and details.type filter.
@@ -432,6 +437,7 @@ export async function checkIfDeliveryOrdersNeedSending(): Promise<void> {
 	console.log('open delivery orders: ', orders.length);
 	for (const order of orders as DeliveryOrderDetail[]) findDeliveryOrderDrivers(order);
 }
+
 /**
  * Periodic worker: transitions restaurant orders to READY_FOR_PICKUP when ready_time reached.
  * Emits order status change events upon transition.
@@ -457,6 +463,7 @@ export async function checkIfRestaurantOrderIsPrepared(): Promise<void> {
 		}
 	}
 }
+
 /**
  * Periodic worker: auto-rejects stale or overdue orders based on business type thresholds.
  * Handles payment cleanup, scoring, stock sync, and emits status events.
@@ -512,6 +519,7 @@ export async function autoRejectDeliveryOrders(): Promise<void> {
 		}
 	}
 }
+
 /**
  * Re-sends pending (not accepted) orders to a specific driver if still eligible.
  * @param {object} driver - Driver object containing user_id and delivery/driver id.
@@ -617,6 +625,7 @@ export async function sendActiveOrdersToDeliveryDriver(driver: Partial<DriverDet
 		console.error('Error sending active orders to driver:', error);
 	}
 }
+
 /**
  * Generates order items based on daily meal preferences for a given menu item.
  * @param {object} preferences - Preferences containing normal and substitution amounts.
@@ -714,6 +723,7 @@ export async function handlePaymentCleanup(order: DeliveryOrderDetail): Promise<
 		console.error('Failed to handle payment cleanup:', e);
 	}
 }
+
 /**
  * Handles refund logic for an order: releases/resets credits and wallet funds, and cancels/refunds card payments.
  * @param {DeliveryOrderDetail} order - The order to refund, including payment info and details.
@@ -1492,9 +1502,15 @@ export async function generateOrder(
 	}
 }
 
+/**
+ * Sends an order confirmation email with PDF attachment to the user.
+ * @param {DeliveryOrderDetail} order - The delivery order details.
+ * @returns {Promise<void>}
+ */
 export async function sendPdfDeliveryOrder(order: DeliveryOrderDetail): Promise<void> {
 	let template = 'orderConfirmation';
-	let pdf = await getOrderAndPDF(order.order_id);
+	//TODO: uncomment this
+	let pdf; // = await getOrderAndPDF(order.order_id);
 	let templateData = {
 		userName: order.user?.first_name,
 		restaurant: order.business?.business_details?.name,

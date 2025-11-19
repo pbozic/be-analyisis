@@ -226,7 +226,7 @@ export const BusinessWithIncludesResponseDto = BusinessResponseDto.extend({
 	// includes from getBusinessesInclude
 	address: AddressRefSchema.nullable().optional(),
 	delivery_address: AddressRefSchema.nullable().optional(),
-	business_users: z.array(BusinessUserDetailSchema).optional(),
+	business_users: z.array(z.lazy(() => BusinessUserDetailSchema)).optional(),
 	parent_business: BusinessRefSchema.nullable().optional(),
 	child_businesses: z.array(BusinessRefSchema).optional(),
 }).openapi('BusinessWithIncludesResponse');

@@ -4,7 +4,7 @@ import prisma from '../prisma/prisma.js';
 import BusinessUserDao from '../dao/BusinessUsers.js';
 import { SocketStore } from '../socket.js';
 import ScoringPointsDao from '../dao/ScoringPoints.js';
-import { Business } from '../types/business/Business.js';
+import { BusinessBase } from '../schemas/dto/Business/business.js';
 
 /**
  * Marks businesses as no longer new if they were first activated more than 14 days ago.
@@ -24,7 +24,7 @@ async function setNewBusinesses(): Promise<void> {
 		await prisma.businesses.updateMany({
 			where: {
 				business_id: {
-					in: businesses.map((business: Business) => business.business_id),
+					in: businesses.map((business: BusinessBase) => business.business_id),
 				},
 			},
 			data: {

@@ -3,24 +3,17 @@ import { Prisma, BOOKING_STATUS } from '@prisma/client';
 import { z } from 'zod';
 
 import prisma from '../prisma/prisma';
-import type { Location } from '../types/reservation/Location';
-import type { Employee } from '../types/reservation/Employee';
-import { Service } from '../types/reservation/Service';
+import { ServiceBase } from '../schemas/dto/reservations/service/service.dto';
+import { EmployeeBase } from '../schemas/dto/reservations/employee/employee.dto';
+import { BookingSlotBase } from '../schemas/dto/reservations/booking-slot/booking-slot.dto';
+import { ScheduleSlotExceptionBase } from '../schemas/dto/reservations/schedule-slot-exception/schedule-slot-exception.dto';
 import {
-	BookingSlot,
-	ScheduleSlotException,
-	BookingSlotWithoutId,
-	BookingSlotWithId,
-	ExceptionWithoutId,
-	ExceptionWithId,
-} from '../types/reservation/Schedule';
-import {
-	Booking,
-	CreateBookingInput,
-	CreateMultipleBookingsInput,
-	UpdateBookingInput,
-	CreateCourseParticipantInput,
-} from '../types/reservation/Booking';
+	BookingBase,
+	CreateBookingRequest,
+	CreateMultipleBookingsRequest,
+	UpdateBookingRequest,
+} from '../schemas/dto/reservations/booking/booking.dto';
+import { CreateBookingCourseParticipantRequest } from '../schemas/dto/reservations/booking-course-participant/booking-course-participant.dto';
 
 const SLOT_INTERVAL_MINUTES = 30;
 const CAN_END_OUT_OF_BOOKING_SLOT = true;
@@ -74,14 +67,14 @@ export async function findSlots({
 		if (!ok) throw new Error('Location does not belong to this reservation module');
 	}
 
-	const totalDurationMinutes = services.reduce((sum: number, s: Service) => sum + s.duration_minutes, 0);
+	const totalDurationMinutes = services.reduce((sum: number, s: ServiceBase) => sum + s.duration_minutes, 0);
 
 	type SlotResult = {
 		start: Date;
 		end: Date;
 		schedule_slot_id: string;
 		location: Location;
-		employee: Employee;
+		employee: EmployeeBase;
 	};
 
 	// --- Process a single day; if returnFirstDay=true, stop on first valid slot for that day
@@ -129,7 +122,7 @@ export async function findSlots({
 			const slotEnd = moment(slot.end_time);
 
 			// Build booking ranges, clamped to schedule slot just in case
-			const ranges = (slot.booking_slots as BookingSlot[])
+			const ranges = (slot.booking_slots as BookingSlotBase[])
 				.map((bs) => {
 					const bsStart = moment.max(moment(bs.start_time), slotStart);
 					const bsEnd = moment.min(moment(bs.end_time), slotEnd);
@@ -162,18 +155,20 @@ export async function findSlots({
 					}
 
 					// Exceptions: no overlap
-					const blockedByException = (slot.schedule_slot_exceptions as ScheduleSlotException[]).some((ex) => {
-						const exStart = moment(ex.start_time);
-						const exEnd = moment(ex.end_time);
-						return current.isBefore(exEnd) && end.isAfter(exStart);
-					});
+					const blockedByException = (slot.schedule_slot_exceptions as ScheduleSlotExceptionBase[]).some(
+						(ex) => {
+							const exStart = moment(ex.start_time);
+							const exEnd = moment(ex.end_time);
+							return current.isBefore(exEnd) && end.isAfter(exStart);
+						}
+					);
 					if (blockedByException) {
 						current.add(SLOT_INTERVAL_MINUTES, 'minute');
 						continue;
 					}
 
 					// Existing bookings: no overlap
-					const blockedByBooking = (bookings as Booking[]).some((b) => {
+					const blockedByBooking = (bookings as BookingBase[]).some((b) => {
 						const bStart = moment(b.start_time);
 						const bEnd = moment(b.end_time);
 						return current.isBefore(bEnd) && end.isAfter(bStart);
@@ -188,7 +183,7 @@ export async function findSlots({
 						end: end.toDate(),
 						schedule_slot_id: slot.schedule_slot_id,
 						location: slot.schedule.location as Location,
-						employee: slot.employee as Employee,
+						employee: slot.employee as EmployeeBase,
 					};
 
 					if (returnFirstDay) return slotData; // first for this day
@@ -220,7 +215,7 @@ export async function findSlots({
 
 /**
  * Splits booking slots into two arrays: those with a booking ID and those without.
- * @param {BookingSlotWithoutId[]} slots - The array of booking slots to split.
+ * @param {BookingSlotBase[]} slots - The array of booking slots to split.
  * @returns {{ withBookingId: BookingSlotWithId[], withoutBookingId: BookingSlotWithoutId[] }}
  * @description This function iterates through the provided booking slots and separates them into two categories:
  * - `withBookingId`: Contains booking slots that have a `booking_slot_id`.
@@ -228,14 +223,14 @@ export async function findSlots({
  * @returns {Object} An object containing two arrays:
  * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
  */
-export function splitByBookingId(slots: BookingSlotWithoutId[]) {
+export function splitByBookingId(slots: BookingSlotBase[]) {
 	try {
-		const withBookingId: BookingSlotWithId[] = [];
-		const withoutBookingId: BookingSlotWithoutId[] = [];
+		const withBookingId = [];
+		const withoutBookingId = [];
 
 		for (const slot of slots) {
 			if (slot?.booking_slot_id) {
-				withBookingId.push(slot as BookingSlotWithId);
+				withBookingId.push(slot);
 			} else {
 				withoutBookingId.push(slot);
 			}
@@ -251,7 +246,7 @@ export function splitByBookingId(slots: BookingSlotWithoutId[]) {
 
 /**
  * Splits exceptions into two arrays: those with a exception ID and those without.
- * @param {ExceptionWithoutId[]} slots - The array of exceptions to split.
+ * @param {ScheduleSlotExceptionBase[]} slots - The array of exceptions to split.
  * @returns {{ withExceptionId: ExceptionWithId[], withoutExceptionId: ExceptionWithoutId[] }}
  * @description This function takes an array of exceptions and splits it into two arrays:
  * - `withExceptionId`: Contains exceptions that have a `schedule_slot_exception_id`.
@@ -259,14 +254,14 @@ export function splitByBookingId(slots: BookingSlotWithoutId[]) {
  * @returns {Object} An object containing two arrays:
  * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
  */
-export function splitByExceptionsId(slots: ExceptionWithoutId[]) {
+export function splitByExceptionsId(slots: ScheduleSlotExceptionBase[]) {
 	try {
-		const withExceptionId: ExceptionWithId[] = [];
-		const withoutExceptionId: ExceptionWithoutId[] = [];
+		const withExceptionId = [];
+		const withoutExceptionId = [];
 
 		for (const slot of slots) {
 			if (slot?.schedule_slot_exception_id) {
-				withExceptionId.push(slot as ExceptionWithId);
+				withExceptionId.push(slot);
 			} else {
 				withoutExceptionId.push(slot);
 			}
@@ -432,7 +427,11 @@ export async function isEmployeeScheduledForWindow(
  * @param {z.RefinementCtx} ctx
  */
 export async function addValideBookingSchema(
-	data: CreateBookingInput | CreateMultipleBookingsInput | UpdateBookingInput | CreateCourseParticipantInput,
+	data:
+		| CreateBookingRequest
+		| CreateMultipleBookingsRequest
+		| UpdateBookingRequest
+		| CreateBookingCourseParticipantRequest,
 	ctx: z.RefinementCtx
 ) {
 	if (!data?.customer_id) {

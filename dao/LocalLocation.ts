@@ -4,13 +4,13 @@ import {
 	LocalLocationDetail,
 } from '../schemas/dto/Stores/localLocation.dto.js';
 import { toLocalLocationDetail, toBusinessLocalLocationDetail } from '../schemas/dto/Stores/localLocation.mappers.js';
-import { Address } from '../types/addresses/Address.js';
 import prisma from '../prisma/prisma.js';
 import localLocationsDefaultInclude, {
 	businessLocalLocationsDefaultInclude,
 	LocalLocationsWithIncludesPrisma,
 	BusinessLocalLocationsWithIncludesPrisma,
 } from '../prisma/includes/localLocations.js';
+import { AddressBase } from '../schemas/dto/Address/address.js';
 /**
  * Fetch all local locations.
  *
@@ -34,7 +34,7 @@ const getAllLocalLocations = async (): Promise<LocalLocationDetail[]> => {
  * @param {Address} address
  * @returns {Promise<LocalLocationDetail>} - The created local location.
  */
-const createLocation = async (address: Address): Promise<LocalLocationDetail> => {
+const createLocation = async (address: AddressBase): Promise<LocalLocationDetail> => {
 	try {
 		const localLocation = await prisma.local_locations.create({
 			data: { address: { connect: { address_id: address.address_id } } },

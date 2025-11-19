@@ -1,16 +1,16 @@
 import { Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-import type { BlogPost, SearchBlogPostsInput } from '../types/blog/BlogPost.js';
-import type { BlogCategory } from '../types/blog/BlogCategory.js';
-import type { BlogTag } from '../types/blog/BlogTag.js';
-import type { CreateBlogPostInput, UpdateBlogPostInput } from '../types/blog/BlogPost.js';
+import type { BlogPostBase } from '../schemas/dto/Blog/blog.dto.js';
+import type { BlogCategory } from '../schemas/dto/Blog/blogcategory.dto.js';
+import type { BlogTag } from '../schemas/dto/Blog/blogtag.dto.js';
+import type { CreateBlogPost, UpdateBlogPost, SearchBlogPosts } from '../schemas/dto/Blog/blog.validators.js';
 /**
  * Get all blog posts.
  *
- * @returns {Promise<BlogPost[]>}
+ * @returns {Promise<BlogPostBase[]>}
  */
-export async function getBlogPosts(): Promise<BlogPost[]> {
+export async function getBlogPosts(): Promise<BlogPostBase[]> {
 	try {
 		return await prisma.blog_posts.findMany({
 			include: {
@@ -42,9 +42,9 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
  * Get blog post by ID.
  *
  * @param {string} blog_posts_id
- * @returns {Promise<BlogPost | null>}
+ * @returns {Promise<BlogPostBase | null>}
  */
-export async function getBlogPostById(blog_posts_id: string): Promise<BlogPost | null> {
+export async function getBlogPostById(blog_posts_id: string): Promise<BlogPostBase | null> {
 	try {
 		return await prisma.blog_posts.findUnique({
 			where: { blog_posts_id },
@@ -74,9 +74,9 @@ export async function getBlogPostById(blog_posts_id: string): Promise<BlogPost |
  * Get blog post by slug.
  *
  * @param {string} slug
- * @returns {Promise<BlogPost | null>}
+ * @returns {Promise<BlogPostBase | null>}
  */
-export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+export async function getBlogPostBySlug(slug: string): Promise<BlogPostBase | null> {
 	try {
 		return await prisma.blog_posts.findUnique({
 			where: { slug },
@@ -105,11 +105,11 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 /**
  * Create a new blog post.
  *
- * @param {CreateBlogPostInput} data
+ * @param {CreateBlogPost} data
  * @param {string} author_id
- * @returns {Promise<BlogPost>}
+ * @returns {Promise<BlogPostBase>}
  */
-export async function createBlogPost(data: CreateBlogPostInput, author_id: string): Promise<BlogPost> {
+export async function createBlogPost(data: CreateBlogPost, author_id: string): Promise<BlogPostBase> {
 	try {
 		let slug = data.title
 			.toLowerCase()
@@ -175,10 +175,10 @@ export async function createBlogPost(data: CreateBlogPostInput, author_id: strin
  * Update a blog post.
  *
  * @param {string} blog_posts_id
- * @param {UpdateBlogPostInput} data
- * @returns {Promise<BlogPost>}
+ * @param {UpdateBlogPost} data
+ * @returns {Promise<BlogPostBase>}
  */
-export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPostInput): Promise<BlogPost> {
+export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPost): Promise<BlogPostBase> {
 	try {
 		let existingPost1 = await prisma.blog_posts.findUnique({
 			where: { blog_posts_id },
@@ -262,9 +262,9 @@ export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPost
  * Delete a blog post.
  *
  * @param {string} blog_posts_id
- * @returns {Promise<BlogPost>}
+ * @returns {Promise<BlogPostBase>}
  */
-export async function deleteBlogPost(blog_posts_id: string): Promise<BlogPost> {
+export async function deleteBlogPost(blog_posts_id: string): Promise<BlogPostBase> {
 	try {
 		return await prisma.blog_posts.delete({
 			where: { blog_posts_id },
@@ -293,10 +293,10 @@ export async function deleteBlogPost(blog_posts_id: string): Promise<BlogPost> {
 /**
  * Search blog posts.
  *
- * @param {SearchBlogPostsInput} query
- * @returns {Promise<BlogPost[]>}
+ * @param {SearchBlogPosts} query
+ * @returns {Promise<BlogPostBase[]>}
  */
-export async function searchBlogPosts(query: SearchBlogPostsInput): Promise<BlogPost[]> {
+export async function searchBlogPosts(query: SearchBlogPosts): Promise<BlogPostBase[]> {
 	try {
 		return await prisma.blog_posts.findMany({
 			where: {

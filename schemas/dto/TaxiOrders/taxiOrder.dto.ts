@@ -93,11 +93,17 @@ export type TaxiOrderRef = z.infer<typeof TaxiOrderRefSchema>;
 // Detail Schema (extends Base with relations)
 // ===============
 export const TaxiOrderDetailSchema = TaxiOrderBaseSchema.extend({
-	user: UserWithParentUserResponseSchema.nullable().optional(),
+	user: z
+		.lazy(() => UserWithParentUserResponseSchema)
+		.nullable()
+		.optional(),
 	driver: DriverBaseSchema.nullable().optional(),
 	vehicle: VehicleBaseSchema.nullable().optional(),
 	business: BusinessBaseSchema.nullable().optional(),
-	business_users: BusinessUserResponseSchema.nullable().optional(),
+	business_users: z
+		.lazy(() => BusinessUserResponseSchema)
+		.nullable()
+		.optional(),
 	grouped_orders: z.array(TaxiOrderBaseSchema).optional().default([]),
 }).openapi('TaxiOrderDetail');
 

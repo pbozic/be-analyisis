@@ -4,8 +4,8 @@ import pug from 'pug';
 import { TEMPLATE_VERSION_STATUS, NOTIFICATION_CHANNEL } from '@prisma/client';
 
 import { addresses, business } from '../prisma/schemas/interfaces.js';
-import { Booking } from '../types/reservation/Booking.ts';
-import { Customer } from '../types/reservation/Customer.js';
+import { BookingBase } from '../schemas/dto/reservations/booking/booking.dto.js';
+import { CustomerBase } from '../schemas/dto/reservations/customer/customer.dto.js';
 
 // ————————————————————————————————————
 // Config
@@ -193,7 +193,7 @@ function pickMultilangString(v: Prisma.JsonValue | null | undefined): string | u
 type Loaded = {
 	business: Partial<business> | null; // { name }
 	booking:
-		| (Omit<Partial<Booking>, 'start_time' | 'reschedule_url' | 'location' | 'service' | 'employee'> & {
+		| (Omit<Partial<BookingBase>, 'start_time' | 'reschedule_url' | 'location' | 'service' | 'employee'> & {
 				start_time?: Date | null;
 				reschedule_url?: string | null;
 				location?: { name?: string | null } | null;
@@ -205,7 +205,7 @@ type Loaded = {
 		  })
 		| null;
 	location: { name?: string | null; address?: addresses | null; phone?: string | null } | null;
-	customer: (Partial<Customer> & { first_name?: string | null; last_name?: string | null }) | null;
+	customer: (Partial<CustomerBase> & { first_name?: string | null; last_name?: string | null }) | null;
 };
 /**
  * Load necessary data for booking notifications.

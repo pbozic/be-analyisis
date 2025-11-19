@@ -3,12 +3,18 @@ import axios from 'axios';
 import { FILE_TYPE } from '@prisma/client';
 
 import { ValidatedRequest } from '../types/validatedRequest.ts';
-import type { CreateBlogPostInput, UpdateBlogPostInput, SearchBlogPostsInput } from '../types/blog/BlogPost.ts';
-import { CreateBlogCategoryInput, UpdateBlogCategoryInput } from '../types/blog/BlogCategory.ts';
-import { CreateBlogTagInput, UpdateBlogTagInput } from '../types/blog/BlogTag.ts';
 import BlogDao from '../dao/Blog.ts';
 import FileDao from '../dao/File.js';
 import { createFileHelper } from '../lib/s3.js';
+import {
+	CreateBlogCategory,
+	CreateBlogPost,
+	CreateBlogTag,
+	SearchBlogPosts,
+	UpdateBlogCategory,
+	UpdateBlogPost,
+	UpdateBlogTag,
+} from '../schemas/dto/Blog/blog.validators.ts';
 /**
  * POST /blog/search
  * @tag Blog
@@ -23,7 +29,7 @@ import { createFileHelper } from '../lib/s3.js';
  * @response 500 - Error retrieving blog posts
  * @prisma_model blog_posts
  */
-export async function searchBlogPosts(req: ValidatedRequest<SearchBlogPostsInput>, res: Response): Promise<void> {
+export async function searchBlogPosts(req: ValidatedRequest<SearchBlogPosts>, res: Response): Promise<void> {
 	try {
 		const { page = 1, limit = 10, query, tag_ids, category_ids, year, month } = req.body;
 		const blogPosts = await BlogDao.searchBlogPosts({
@@ -119,7 +125,7 @@ export async function getBlogPostBySlug(req: ValidatedRequest<never, { slug: str
  * @response 500 - Error creating blog post
  * @prisma_model blog_posts
  */
-export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>, res: Response): Promise<void> {
+export async function createBlogPost(req: ValidatedRequest<CreateBlogPost>, res: Response): Promise<void> {
 	try {
 		const { title, short_content, content, category_id, image_file_id, publish_at, tag_ids, status } = req.body;
 		const newBlogPost = await BlogDao.createBlogPost(
@@ -159,7 +165,7 @@ export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>,
  * @prisma_model blog_posts
  */
 export async function updateBlogPost(
-	req: ValidatedRequest<UpdateBlogPostInput, { id: string }>,
+	req: ValidatedRequest<UpdateBlogPost, { id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -272,7 +278,7 @@ export async function getBlogCategories(req: Request, res: Response): Promise<vo
  * @response 500 - Error creating blog category
  * @prisma_model blog_categories
  */
-export async function createBlogCategory(req: ValidatedRequest<CreateBlogCategoryInput>, res: Response): Promise<void> {
+export async function createBlogCategory(req: ValidatedRequest<CreateBlogCategory>, res: Response): Promise<void> {
 	try {
 		const { name, description } = req.body;
 		const newBlogCategory = await BlogDao.createBlogCategory({ name, description });
@@ -330,7 +336,7 @@ export async function deleteBlogCategory(req: ValidatedRequest<object, { id: str
  * @prisma_model blog_categories
  */
 export async function updateBlogCategory(
-	req: ValidatedRequest<UpdateBlogCategoryInput, { id: string }>,
+	req: ValidatedRequest<UpdateBlogCategory, { id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -388,7 +394,7 @@ export async function getBlogTags(req: Request, res: Response): Promise<void> {
  * @response 500 - Error creating blog tag
  * @prisma_model blog_tags
  */
-export async function createBlogTag(req: ValidatedRequest<CreateBlogTagInput>, res: Response): Promise<void> {
+export async function createBlogTag(req: ValidatedRequest<CreateBlogTag>, res: Response): Promise<void> {
 	try {
 		const { name, description } = req.body;
 		const newBlogTag = await BlogDao.createBlogTag({ name, description });
@@ -452,7 +458,7 @@ export async function deleteBlogTag(req: ValidatedRequest<never, { id: string }>
  * @prisma_model blog_tags
  */
 export async function updateBlogTag(
-	req: ValidatedRequest<UpdateBlogTagInput, { id: string }>,
+	req: ValidatedRequest<UpdateBlogTag, { id: string }>,
 	res: Response
 ): Promise<void> {
 	try {

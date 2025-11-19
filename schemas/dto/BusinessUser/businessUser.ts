@@ -3,7 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID } from '../../primitives.js';
 import { AddressRefSchema } from '../Address/address.js';
-import { UserResponseSchema, AllowanceResponseSchema } from '../User/index.js';
+import { UserResponseSchema, AllowanceResponseSchema, UserRefSchema } from '../User/index.js';
 import { PaymentMethodSchema } from '../Payments/payment.dto.js';
 
 extendZodWithOpenApi(z);
@@ -73,14 +73,14 @@ export type BusinessUserLight = z.infer<typeof BusinessUserLightSchema>;
 
 // BusinessUser Detail Schema - for use in other entities (like Employee) with full user details
 export const BusinessUserDetailSchema = BusinessUserBaseSchema.extend({
-	users: UserResponseSchema.optional(),
+	users: z.lazy(() => UserResponseSchema).optional(),
 });
 
 export type BusinessUserDetail = z.infer<typeof BusinessUserDetailSchema>;
 
 // First declare the base response schema
 export const BusinessUserResponseSchemaBase = BusinessUserBaseSchema.extend({
-	users: UserResponseSchema.optional(),
+	users: z.lazy(() => UserResponseSchema).optional(),
 	allowance: AllowanceResponseSchema.nullable().optional(),
 	operating_address: AddressRefSchema.nullable().optional(),
 });
@@ -120,7 +120,7 @@ export type BusinessUserListResponse = z.infer<typeof BusinessUserListResponseSc
 
 // BusinessUser Creation Response Schema - for createBusinessUser
 export const BusinessUserCreationResponseSchema = z.object({
-	user: UserResponseSchema,
+	user: z.lazy(() => UserRefSchema),
 	businessUser: BusinessUserResponseSchema,
 });
 

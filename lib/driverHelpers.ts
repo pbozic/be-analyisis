@@ -46,16 +46,16 @@ export async function checkPingStatus(): Promise<void> {
 					// @ts-expect-error io is a Proxy-typed object; runtime has .emit
 					io.emit('driver_unavailable', driver.driver_id);
 				}
-				const l10nText = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver.user.language);
-				const l10nTextHeading = getLocalisedTexts('HEADING', driver.user.language);
+				const l10nText = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver.user?.language);
+				const l10nTextHeading = getLocalisedTexts('HEADING', driver.user?.language);
 				await OneSignal.sendNotificationToUser(l10nTextHeading?.driver, l10nText?.offline, driver.user_id);
 				continue;
 			}
 			// Inactive transition
 			if (lastPingAt < twentyMinutesAgo) {
 				console.log('Driver inactive', driver.user_id, lastPingAt);
-				const l10nText = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver.user.language);
-				const l10nTextHeading = getLocalisedTexts('HEADING', driver.user.language);
+				const l10nText = getLocalisedTexts('DRIVER_NOTIFICATIONS', driver.user?.language);
+				const l10nTextHeading = getLocalisedTexts('HEADING', driver.user?.language);
 				await OneSignal.sendNotificationToUser(l10nTextHeading?.driver, l10nText?.inactive, driver.user_id);
 			}
 		}

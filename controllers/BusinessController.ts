@@ -47,7 +47,6 @@ import {
 	ToggleTransportModuleInput,
 	SetBusinessTypesInput,
 } from '../schemas/dto/Business/business.validators.js';
-import { UpdateAddressInput } from '../types/addresses/Address.js';
 
 // Types for elasticsearch results
 interface ElasticsearchResult {

@@ -6,7 +6,7 @@ import * as DailyMealCategoryController from '../../controllers/DailyMealCategor
 import {
 	CreateDailyMealCategoryWithPriceSchema,
 	AddPriceToDailyMealCategorySchema,
-} from '../../types/dailyMeals/DailyMealCategory.ts';
+} from '../../schemas/dto/DailyMealCategory/dailyMealCategory.validators.ts';
 import DailyMealController from '../../controllers/DailyMealController.js';
 import {
 	ActivateBusinessSchema,

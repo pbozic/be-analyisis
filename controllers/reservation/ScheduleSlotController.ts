@@ -11,8 +11,8 @@ import type {
 	UpdateScheduleSlotWithDataInput,
 } from '../../schemas/dto/reservations/schedule-slot/schedule-slot.dto';
 import { createScheduleSlotWithData, updateScheduleSlotWithData } from './ScheduleSlotExceptionController.ts';
-import { ScheduleSlotException } from '../../types/reservations/ScheduleSlotException.ts';
-import { BookingSlot } from '../../types/reservations/BookingSlot.ts';
+import { ScheduleSlotExceptionBase } from '../../schemas/dto/reservations/schedule-slot-exception/schedule-slot-exception.dto.ts';
+import { BookingSlotBase } from '../../schemas/dto/reservations/booking-slot/booking-slot.dto.ts';
 
 // Import DTO types for API documentation
 //import type { ScheduleSlotDAOResponse, ScheduleSlotWithScheduleDAOResponse } from '../../schemas/dto/reservations/schedule-slot/schedule-slot.dto.js';
@@ -355,10 +355,10 @@ export async function updateMultipleSchedules(
 			const updatedSchedule = await ScheduleSlotDao.getScheduleSlotById(req.params.id);
 			if (updatedSchedule) {
 				const updatedScheduleData = updatedSchedule;
-				const updatedScheduleDataExceptions: ScheduleSlotException[] =
-					(updatedSchedule?.schedule_slot_exceptions as ScheduleSlotException[]) ?? [];
-				const updatedScheduleDataBookingSlots: BookingSlot[] =
-					(updatedSchedule?.booking_slots as BookingSlot[]) ?? [];
+				const updatedScheduleDataExceptions: ScheduleSlotExceptionBase[] =
+					(updatedSchedule?.schedule_slot_exceptions as ScheduleSlotExceptionBase[]) ?? [];
+				const updatedScheduleDataBookingSlots: BookingSlotBase[] =
+					(updatedSchedule?.booking_slots as BookingSlotBase[]) ?? [];
 				const schedules = await Promise.all(
 					datesToCreate.map(async (el) => {
 						const updateSchedule = {
@@ -373,15 +373,15 @@ export async function updateMultipleSchedules(
 						const updatedExceptions = updatedScheduleDataExceptions.map((exception) => ({
 							...exception,
 							date: el,
-							start_time: updateUtcDateRetainTime(exception.start_time.toISOString(), el),
-							end_time: updateUtcDateRetainTime(exception.end_time.toISOString(), el),
+							start_time: updateUtcDateRetainTime(exception.start_time, el),
+							end_time: updateUtcDateRetainTime(exception.end_time, el),
 							reason: exception.reason === null ? undefined : exception.reason,
 						}));
 						const updatedBookingSlots = updatedScheduleDataBookingSlots.map((slot) => ({
 							...slot,
 							date: el,
-							start_time: updateUtcDateRetainTime(slot.start_time.toISOString(), el),
-							end_time: updateUtcDateRetainTime(slot.end_time.toISOString(), el),
+							start_time: updateUtcDateRetainTime(slot.start_time, el),
+							end_time: updateUtcDateRetainTime(slot.end_time, el),
 						}));
 
 						let data = await createScheduleSlotWithData({

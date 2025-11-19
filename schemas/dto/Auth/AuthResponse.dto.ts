@@ -53,7 +53,7 @@ export const UserLoginResponseSchema = UserResponseSchema.extend({
 	referrals_made: z.array(ReferralBaseSchema).nullable(),
 	referral: ReferralDetailSchema.nullable(),
 	user_roles: UserRoleSchema,
-	business_users: BusinessUserWithBusinessResponseSchema.omit({ users: true, allowance: true }).nullable(),
+	business_users: BusinessUserWithBusinessResponseSchema.omit({ allowance: true }).nullable(),
 	user_favorite_businesses: z.array(FavoriteBusinessDetailSchema).nullable(),
 	user_favorite_drivers: z.array(FavoriteBusinessDetailSchema).nullable(),
 	profile_picture: FileBaseSchema.nullable().optional(),

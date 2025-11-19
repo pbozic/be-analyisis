@@ -6,7 +6,7 @@ import {
 	UpsertRolePermissionParams,
 	DeleteRolePermissionParams,
 	RolePermissionsMatrixBody,
-} from '../../types/userRoles/RolePermission';
+} from '../../schemas/dto/UserRoles/rolepermission.validators.ts';
 
 /**
  * GET /roles/:role_id/permissions

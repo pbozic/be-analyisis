@@ -1,6 +1,7 @@
 // src/routes/notifications.ts
 import express from 'express';
 import { z } from 'zod';
+import { MESSAGE_STATUS } from '@prisma/client';
 
 import AuthoringController from '../../../controllers/reservationNotifications/NotificationAuthoringController';
 import RuntimeController from '../../../controllers/reservationNotifications/NotificationRuntimeController';
@@ -33,7 +34,6 @@ import {
 	CreateNotificationProviderCredentialRequestSchema,
 	UpdateNotificationProviderCredentialRequestSchema,
 } from '../../../schemas/dto/reservations/notification-provider-credential/notification-provider-credential.dto.js';
-import { MessageStatusEnum } from '../../../types/reservationNotifications/enums';
 
 // ---- Local, route-only schemas ----
 const ActiveMappingSchema = z.object({
@@ -43,7 +43,7 @@ const ActiveMappingSchema = z.object({
 
 const ListMessagesSchema = z.object({
 	notification_event_id: z.string().uuid().optional(),
-	status: MessageStatusEnum.optional(),
+	status: z.nativeEnum(MESSAGE_STATUS).optional(),
 	take: z.number().int().min(1).max(200).optional(),
 	skip: z.number().int().min(0).optional(),
 });
