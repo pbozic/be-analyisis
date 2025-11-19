@@ -9,15 +9,16 @@ import pdfLib from 'pdf-lib';
 import dotenv from 'dotenv';
 import pug from 'pug';
 import wkhtmltopdf from 'wkhtmltopdf';
-import wkhtmltopdfPath from 'wkhtmltopdf-installer/lib/wkhtmltopdf-path.js';
+import * as wkhtmltopdfInstaller from 'wkhtmltopdf-installer';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
-import { getPDFCertificate } from './certificates.js';
+import { getPDFCertificate } from './certificate.js';
 
-const signPdf = signPdfNode.default || signPdfNode; // Handle both default and named export
+const signPdf = signPdfNode;
 const { PDFDocument } = pdfLib;
 dotenv.config();
-wkhtmltopdf.command = wkhtmltopdfPath; // your path setup
+wkhtmltopdf.command = wkhtmltopdfInstaller.path(); // Get the executable path
+
 /**
  * Render a Pug template into a signed PDF Buffer.
  * @param {string} templateName - Relative path under `views/` to the Pug template (e.g., "pdf/orderConfirmation.pug").
@@ -57,8 +58,9 @@ function generatePDF(htmlContent: string): Promise<Buffer> {
 				marginLeft: '10mm',
 				marginRight: '10mm',
 			},
-			(err: Error | null, stream: NodeJS.ReadableStream) => {
+			(err: Error | null, stream?: NodeJS.ReadWriteStream) => {
 				if (err) return reject(err);
+				if (!stream) return reject(new Error('wkhtmltopdf returned no stream'));
 				const chunks: Buffer[] = [];
 				stream.on('data', (chunk) => chunks.push(chunk));
 				stream.on('end', () => resolve(Buffer.concat(chunks)));

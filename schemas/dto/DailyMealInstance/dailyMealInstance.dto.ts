@@ -3,7 +3,6 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, Timestamp } from '../../primitives.js';
 import { DailyMealSubscriptionRefSchema } from '../DailyMeal/dailymeal.dto.js';
-import { DailyMealSubscriptionCustomerRefSchema } from '../DailyMealSubscriptionCustomer/dailyMealSubscriptionCustomer.dto.js';
 import { MenuCategoryRefSchema } from '../Menu/menu.dto.js';
 import { DailyMealCategoryPriceRefSchema } from '../DailyMealCategory/dailyMealCategory.js';
 
@@ -36,6 +35,17 @@ export const DailyMealInstanceRefSchema = z
 	.openapi('DailyMealInstanceRef');
 
 export type DailyMealInstanceRef = z.infer<typeof DailyMealInstanceRefSchema>;
+
+export const DailyMealSubscriptionCustomerRefSchema = z
+	.object({
+		id: UUID,
+		first_name: z.string(),
+		last_name: z.string(),
+		email: z.string().email(),
+	})
+	.openapi('DailyMealSubscriptionCustomerRef');
+
+export type DailyMealSubscriptionCustomerRef = z.infer<typeof DailyMealSubscriptionCustomerRefSchema>;
 
 // Response: extends base and embeds other models' Ref schemas
 export const DailyMealInstanceResponseSchema = DailyMealInstanceBaseSchema.extend({

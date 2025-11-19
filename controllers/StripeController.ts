@@ -12,17 +12,17 @@ import PromoDao from '../dao/Promo.js';
 import UserDao from '../dao/User.js';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
 import { SERVICE_TYPE } from '../lib/constants.js';
-import { calculateDeliveryOrderPaymentCuts } from '../lib/deliveryHelpers.js';
+import { calculateDeliveryOrderPaymentCuts, handleStockSync } from '../lib/deliveryHelpers.js';
 import WalletFundsDao from '../dao/WalletFunds.js';
 import TaxiOrderDao from '../dao/TaxiOrder.js';
 import PaymentHelpers from '../lib/paymentHelpers.ts';
 import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
-import { handleStockSync } from './DeliveryOrderController.js';
 import prisma from '../prisma/prisma.js';
 import DailyMealDao from '../dao/DailyMealDao.ts';
 import PaymentDao from '../dao/Payment.ts';
 import elasticsearch from '../elasticsearch/index.js';
 import { AuthenticatedRequest } from '../types/validatedRequest.ts';
+import { DeliveryOrderDetail } from '../schemas/dto/DeliveryOrders/deliveryOrder.dto.ts';
 
 dotenv.config();
 
@@ -63,7 +63,9 @@ async function handlePaymentIntentSuccess(paymentIntent: Stripe.PaymentIntent): 
 
 				const business = await BusinessDao.getBusinessById(order?.business?.business_id as string);
 				const restaurant_stripe = business?.stripe_account_id as string;
-				const { PLATFORM_CREDIT_CUT, MERCHANT_CREDIT_CUT } = await calculateDeliveryOrderPaymentCuts(order);
+				const { PLATFORM_CREDIT_CUT, MERCHANT_CREDIT_CUT } = await calculateDeliveryOrderPaymentCuts(
+					order as DeliveryOrderDetail
+				);
 
 				const merchantCutRaw = (paymentIntent.metadata as Stripe.Metadata)?.merchant_cut;
 				if (merchantCutRaw && parseFloat(merchantCutRaw) > 0) {

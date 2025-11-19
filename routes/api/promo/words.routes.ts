@@ -2,7 +2,7 @@ import express from 'express';
 
 import WordsController from '../../../controllers/WordController.js';
 import { validate } from '../../../middleware/zod.ts';
-import { CreateWordRequestSchema, UpdateWordRequestSchema } from '../../../schemas/dto/Word/word.dto.ts';
+import { CreateWordRequestSchema, UpdateWordRequestSchema } from '../../../schemas/dto/Word/word.validators.ts';
 
 const router = express.Router();
 

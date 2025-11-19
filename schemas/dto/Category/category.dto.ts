@@ -1,9 +1,8 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { CATEGORY_TYPE } from '@prisma/client';
+import { CATEGORY_TYPE, FILE_TYPE } from '@prisma/client';
 
 import { UUID, LanguageCode, Timestamp } from '../../primitives.js';
-import { TranslationItemSchema } from '../Word/word.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -64,7 +63,7 @@ export const CategoryResponseSchema = CategoryBaseSchema.extend({
 	icon: z
 		.object({
 			file_id: UUID,
-			file_type: z.string(),
+			file_type: z.nativeEnum(FILE_TYPE),
 			mime_type: z.string(),
 			url: z.string().url().nullable(),
 			public: z.boolean(),

@@ -11,7 +11,7 @@ import {
 	deleteReviewsForSubject,
 } from '../../controllers/ReviewsController.js';
 import { validate } from '../../middleware/zod.ts';
-import { ReviewBodySchema } from '../../schemas/dto/Reviews/review.dto.ts';
+import { ReviewBodySchema } from '../../schemas/dto/Reviews/review.validators.ts';
 
 const router = Router();
 

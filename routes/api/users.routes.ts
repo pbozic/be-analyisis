@@ -31,7 +31,6 @@ import {
 	UpdateTransferPreferencesSchema,
 	UpdateRadioPreferencesSchema,
 	UpdateAllergiesPreferencesSchema,
-	UpdateProfilePictureSchema,
 	RedeemReferralCodeSchema,
 	ClaimRewardSchema,
 	UpdateMarketingNotificationsSchema,
@@ -42,7 +41,7 @@ import {
 	UpdateWalletBalanceSchema,
 	UpdateFavoriteServicesBodySchema,
 } from '../../schemas/dto/User/user.validators.js';
-import { SetTutorialStatusBodySchema } from '../../schemas/dto/Tutorials/tutorials.dto.ts';
+import { SetTutorialStatusBodySchema } from '../../schemas/dto/Tutorials/tutorials.validators.ts';
 
 config();
 const router = express.Router();
@@ -67,7 +66,7 @@ router.patch('/:user_id/wallet', validate(UpdateWalletBalanceSchema), UserContro
 router.patch('/me', validate(UpdateMeSchema), UserController.updateMe);
 router.patch('/me/password', validate(UpdatePasswordSchema), UserController.updatePassword);
 router.patch('/me/email', validate(UpdateEmailSchema), UserController.updateEmail);
-router.patch('/me/profile_picture', validate(UpdateProfilePictureSchema), UserController.updateProfilePicture);
+// router.patch('/me/profile_picture', validate(UpdateProfilePictureSchema), UserController.updateProfilePicture);
 router.patch('/me/taxi-preferences', validate(UpdateTaxiPreferencesSchema), UserController.updateUserTaxiPreferences);
 router.patch(
 	'/me/notification-preferences',

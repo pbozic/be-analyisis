@@ -4,10 +4,9 @@ import WordController from '../../../controllers/WordController.js';
 import { validate } from '../../../middleware/zod.ts';
 import {
 	CreateWordBuyRequestSchema,
-	UpdateWordBuysRequestSchema,
 	UpdateSingleWordBuyRequestSchema,
-} from '../../../schemas/dto/Word/word.dto.ts';
-
+	UpdateWordBuysRequestSchema,
+} from '../../../schemas/dto/Word/word.validators.ts';
 const router = express.Router();
 
 router.get('/', WordController.getAllWordBuys);

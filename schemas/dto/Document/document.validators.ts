@@ -2,9 +2,9 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { DOCUMENT_TYPE } from '@prisma/client';
 
-import { CreateFileDataSchema } from '../Files/file.dto.js';
-import { DocumentCreateSchema as LostItemDocumentCreateSchema } from '../LostItems/lostitem.dto.js';
+import { DocumentCreateSchema as LostItemDocumentCreateSchema } from '../LostItems/lostitem.validators.js';
 import { UUID } from '../../primitives.js';
+import { CreateFileDataSchema } from '../Files/file.validators.js';
 
 extendZodWithOpenApi(z);
 

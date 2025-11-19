@@ -1,9 +1,9 @@
 import { Response } from 'express';
 
 import CategoriesDao from '../dao/Categories.js';
-import { upsertFileOnS3Helper } from './FilesController.js';
 import { AuthenticatedRequest, ValidatedRequest } from '../types/validatedRequest.js';
 import { CreateCategoryRequest, UpdateCategoryRequest } from '../schemas/dto/Category/category.validators.js';
+import { upsertFileOnS3Helper } from '../lib/s3.js';
 
 /**
  * GET /categories
@@ -70,6 +70,11 @@ async function getCategoriesByType(
 async function createCategory(req: ValidatedRequest<CreateCategoryRequest>, res: Response): Promise<void> {
 	try {
 		const { categoryData, translations, subcategories, words, parent_categories_id, iconFileData } = req.body;
+		const userId = req.user?.user_id;
+		if (!userId) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
 
 		let tag = categoryData.name.replace(/\s/g, '-').toLowerCase();
 		if (!translations) {
@@ -95,7 +100,7 @@ async function createCategory(req: ValidatedRequest<CreateCategoryRequest>, res:
 
 		if (iconFileData?.base64) {
 			const { file_type, mime_type, base64 } = iconFileData;
-			await upsertFileOnS3Helper(null, category.icon, file_type, mime_type, base64);
+			await upsertFileOnS3Helper(userId, category.icon!, file_type, mime_type, base64);
 		}
 
 		res.status(201).json(category);
@@ -127,8 +132,12 @@ async function updateCategory(
 	res: Response
 ): Promise<void> {
 	try {
-		const user_id = req.user!.user_id;
 		const { categoryData, translations, subcategories, parent_categories_id, iconFileData } = req.body;
+		const user_id = req.user?.user_id;
+		if (!user_id) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
 
 		const category = await CategoriesDao.updateCategory(
 			req.params.id,
@@ -141,7 +150,7 @@ async function updateCategory(
 
 		if (iconFileData?.base64) {
 			const { file_type, mime_type, base64 } = iconFileData;
-			await upsertFileOnS3Helper(user_id, category.icon, file_type, mime_type, base64);
+			await upsertFileOnS3Helper(user_id, category.icon!, file_type, mime_type, base64);
 		}
 
 		res.status(200).json(category);

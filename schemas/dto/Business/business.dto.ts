@@ -163,7 +163,7 @@ export const BusinessWithDailyMealsResponseDto = BusinessResponseDto.extend({
 }).openapi('BusinessWithDailyMealsResponse');
 
 // Business with Food & Drinks Module
-const BusinessWithFoodDrinksResponseDto = BusinessResponseDto.extend({
+export const BusinessWithFoodDrinksResponseDto = BusinessResponseDto.extend({
 	food_drinks_module: FoodDrinksModuleRefSchema.nullable().optional(),
 	menus: z.array(MenuRefSchema).optional(),
 	menu_items: z.array(MenuItemRefSchema).optional(),
