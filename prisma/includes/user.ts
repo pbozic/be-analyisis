@@ -135,6 +135,23 @@ export const tokenWithUserInclude = Prisma.validator<Prisma.tokensInclude>()({
 	users: true,
 } as const);
 
+export const userAddressAndRolesInclude = Prisma.validator<Prisma.usersInclude>()({
+	addresses: {
+		include: {
+			address: true,
+		},
+	},
+	user_roles: true,
+} as const);
+
+export type TokenWithUserPrisma = Prisma.tokensGetPayload<{
+	include: typeof tokenWithUserInclude;
+}>;
+
+export type UserAddressAndRolesPrisma = Prisma.usersGetPayload<{
+	include: typeof userAddressAndRolesInclude;
+}>;
+
 export type UserFamilyPrisma = Prisma.usersGetPayload<{
 	include: typeof userFamilyInclude;
 }>;

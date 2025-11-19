@@ -27,6 +27,7 @@ import {
 	UserAddressesPrisma,
 	UserAddressesAndConnectionsCreationPrisma,
 	UserLoginPrisma,
+	userAddressAndRolesInclude,
 } from '../prisma/includes/user.js';
 import {
 	toUserWithAddressesResponse,
@@ -119,6 +120,26 @@ const getUserById = async (user_id: string): Promise<UserResponse | null> => {
 		return toUserResponse(user);
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID');
+	}
+};
+
+/**
+ * Retrieve a user by their unique user ID, including associated addresses and roles.
+ * @param {string} user_id - User ID.
+ * @returns {Promise<UserLoginResponse>} user
+ */
+
+const getUserAdressAndRolesById = async (user_id: string): Promise<UserLoginResponse | null> => {
+	try {
+		const user = await prisma.users.findUnique({
+			where: {
+				user_id,
+			},
+			include: userAddressAndRolesInclude,
+		});
+		return toUserLoginResponse(user);
+	} catch (error) {
+		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID with addresses and roles');
 	}
 };
 
@@ -1187,6 +1208,7 @@ export { linkRolesToUser };
 export { updateFavoriteServices };
 export { getPersonalUsers };
 export { getAllUsersWithAddressesAndConnections };
+export { getUserAdressAndRolesById };
 export default {
 	getPersonalUsers,
 	getUserByReferralCode,
@@ -1232,4 +1254,5 @@ export default {
 	updateFavoriteServices,
 	getAllUsersWithAddressesAndConnections,
 	getPasswordByUserId,
+	getUserAdressAndRolesById,
 };
