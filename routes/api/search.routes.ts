@@ -7,7 +7,7 @@ import {
 	SearchBusinessesBodySchema,
 	SearchBusinessQuerySchema,
 	SearchByNameQuerySchema,
-} from '../../schemas/dto/Search/search.dto';
+} from '../../schemas/dto/Search/index.ts';
 
 const router = express.Router();
 

@@ -1,6 +1,6 @@
 import express from 'express';
 
-import BusinessClientController from '../../controllers/BusinessClient.js';
+import BusinessClientController from '../../controllers/BusinessClientController.js';
 import {
 	CreateBusinessClientSchema,
 	UpdateBusinessClientSchema,

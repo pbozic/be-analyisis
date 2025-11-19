@@ -6,7 +6,7 @@ import {
 	CreateReservationSchema,
 	AddTableNumberSchema,
 	UpdateReservationStatusSchema,
-} from '../../../schemas/dto/TableReservation/TableReservationRequest.dto.ts';
+} from '../../../schemas/dto/TableReservation/index.ts';
 
 const router = express.Router();
 
