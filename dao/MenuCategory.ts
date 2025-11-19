@@ -31,7 +31,7 @@ export interface MenuCategoryDetail extends MenuCategoryRef {
 	created_at?: Date | null;
 	updated_at?: Date | null;
 	menu_categories_categories?: MenuCategoryCategory[];
-	menu_items?: MenuItemDetail[];
+	menu_items: MenuItemDetail[];
 	daily_meal_category_price?: {
 		daily_meal_category_price_id: string;
 		price?: number | null;
