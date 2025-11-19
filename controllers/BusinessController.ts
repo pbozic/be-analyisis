@@ -3,13 +3,11 @@ import { Response } from 'express';
 import { PROMO_TYPE, ANALYTICS_TYPE, MODULE } from '@prisma/client';
 
 import BusinessDao from '../dao/Business.js';
-import Constants, { DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
 import stripe from '../lib/stripe.js';
 import UserDao from '../dao/User.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import { DELIVERY_ORDER_STATUS, SCORING_POINTS_REASON, ACCOUNT_ACTIONS_REASON } from '../lib/constants.js';
 import { calculateBusinessEarnings, calculateTotalEarnings } from '../lib/helpersLib.js';
-import prisma from '../prisma/prisma.js';
 import EmailHelper from '../lib/emailSender.js';
 import elasticsearch from '../elasticsearch/index.js';
 import UserFavoriteBusinessDao from '../dao/UserFavoriteBusiness.js';
@@ -32,7 +30,6 @@ import {
 	GetBusinessForSearchInput,
 	CreateBusinessInput,
 	SearchBusinessesByNameInput,
-	CreatePaymentIntentInput,
 	ManualSortScheduledUsersInput,
 	AddScheduledUserSortingTypeInput,
 	GetBusinessEarningsQueryInput,
@@ -47,6 +44,11 @@ import {
 	ToggleTransportModuleInput,
 	SetBusinessTypesInput,
 } from '../schemas/dto/Business/business.validators.js';
+import { ListPromoSectionsInput } from '../schemas/validation/PromoSection/PromoSection.validation.ts';
+import { PromoSectionDetail } from '../schemas/dto/Promo/promo-section.dto.ts';
+import Review from '../dao/Review.ts';
+import Driver from '../dao/Driver.ts';
+import { DeliveryOrderDetail } from '../schemas/dto/DeliveryOrders/deliveryOrder.dto.ts';
 
 // Types for elasticsearch results
 interface ElasticsearchResult {
@@ -66,6 +68,17 @@ interface ElasticsearchResponse {
 
 config();
 const { businessIndex, fullSearch } = elasticsearch;
+
+function getPeriodsFromBody(body: any) {
+	const { type = 0, start_date = new Date(), end_date = null } = body || {};
+	const start = new Date(start_date);
+	if (isNaN(start.getTime())) {
+		throw new Error('Invalid start_date');
+	}
+	const { periodStart, periodEnd } = getPeriodStartAndEnd(start, type, end_date);
+	const { prevStart, prevEnd } = getPreviousPeriod(periodStart, periodEnd, type);
+	return { type, periodStart, periodEnd, prevStart, prevEnd };
+}
 /**
  * POST /business/activate
  * @tag Business
@@ -206,7 +219,7 @@ export async function searchBusinesses(req: AuthenticatedRequest, res: Response)
 			(req.body as { page?: number }).page,
 			(req.body as { pageSize?: number }).pageSize || 10,
 			[],
-			(req.body as { type?: string | null }).type || null
+			(req.body as { type?: string | null }).type || ''
 		)) as ElasticsearchResponse;
 		console.log('esResults', esResults);
 		if (esResults.results) {
@@ -294,29 +307,26 @@ export async function listMerchantBusinesses(req: AuthenticatedRequest, res: Res
  * @prisma_model promo_sections
  * @prisma_model businesses
  */
-export async function listPromoSectionsWithMerchants(req: AuthenticatedRequest, res: Response): Promise<void> {
+export async function listPromoSectionsWithMerchants(
+	req: AuthenticatedRequest<ListPromoSectionsInput>,
+	res: Response
+): Promise<void> {
 	try {
-		const promoSections = await prisma.promo_sections.findMany({
-			where: {},
-			include: {
-				translatable: {
-					include: { translations: true },
-				},
-			},
-		});
+		const promoSections = await PromoDao.getAllPromoSections({});
+		if (!promoSections || promoSections.length === 0) {
+			res.status(200).json([]);
+			return;
+		}
 		const userId = req.user?.user_id;
 		const finalPromoSections = [...promoSections];
 		let favoriteBusinessIds = [] as string[];
 		if (userId) {
-			const user = await UserDao.getUserById(userId, {
-				include: {
-					user_favorite_businesses: true,
-				},
-			});
-			if (user) {
-				favoriteBusinessIds = user.user_favorite_businesses?.map((b) => b.business_id) || [];
+			const businesses = await UserDao.getFavoriteBusinessesByUserIdAndModule(userId, req.body.module);
+			if (businesses) {
+				favoriteBusinessIds = businesses?.map((b) => b.business_id) || [];
 				if (favoriteBusinessIds?.length > 0) {
-					finalPromoSections.unshift({
+					const favPromoSection: PromoSectionDetail = {
+						name: 'Favorites',
 						tag: 'favorite',
 						translations: {
 							en: 'Favorites',
@@ -331,7 +341,8 @@ export async function listPromoSectionsWithMerchants(req: AuthenticatedRequest, 
 							sl: 'Priljubljeni',
 							ua: 'Улюблені',
 						},
-					});
+					};
+					finalPromoSections.unshift(favPromoSection);
 				}
 			}
 		}
@@ -340,39 +351,40 @@ export async function listPromoSectionsWithMerchants(req: AuthenticatedRequest, 
 			let favorite = promoSection.tag === 'favorite';
 			let local = promoSection.tag === 'local';
 			let merchants = promoSection.tag === 'merchants';
-			let translations = {};
-			if (!favorite) {
-				for (let translation of promoSection.translatable.translations) {
-					translations[translation.language] = translation.translation;
-				}
-			} else {
-				translations = promoSection.translations;
-			}
-			let esResults = await fullSearch(
+			// let translations = promoSection.translations;
+			// if (!favorite) {
+			// 	for (let translation of promoSection.translations) {
+			// 		translations[translation] = translation.translation;
+			// 	}
+			// } else {
+			// 	translations = promoSection.translations;
+			// }
+			// promoSection.translations = translations;
+			let esResults = (await fullSearch(
 				'',
 				req.body.location.lat,
 				req.body.location.long,
 				[],
-				req.body.radius,
+				req.body.radius || undefined,
 				req.body.filterOperator || 'OR',
 				req.body.isDailyMealSearch || false,
 				undefined, //favorite ? null : promoSection.promo_sections_id,
 				1,
 				10,
 				favorite ? favoriteBusinessIds : [],
-				local ? Constants.BUSINESS_TYPE.LOCAL : merchants ? Constants.BUSINESS_TYPE.MERCHANT : null
-			);
+				local ? 'LOCAL' : merchants ? 'MERCHANT' : ''
+			)) as any; // TODO: Fix any when elastic search is converted to TS
 			console.log('esResults for promoSection', promoSection.tag, esResults);
-			promoSection.translations = translations;
+
 			if (!esResults || !esResults.results || esResults.results.length === 0) {
 				esResults.results = [];
 			}
-			let providerIds = esResults.results.map((r) => r.business_id);
+			let providerIds = esResults.results.map((r: any) => r.business_id); // TODO: Fix any when elastic search is converted to TS
 			let providers = await BusinessDao.getBusinessesForSearchById(providerIds);
 			//TODO: determine type of module and return data for that specific module
 			let result = [];
 			for (let provider of providers) {
-				let esResult = esResults.results.find((r) => r.business_id === provider.business_id);
+				let esResult = esResults.results.find((r: any) => r.business_id === provider.business_id);
 				if (promoSection.promo_sections_id) {
 					logPromoAnalytics({
 						business_id: provider.business_id,
@@ -390,8 +402,8 @@ export async function listPromoSectionsWithMerchants(req: AuthenticatedRequest, 
 				});
 			}
 			result.sort((a, b) => b.score - a.score);
-			promoSection.providers = result;
-			delete promoSection.translatable;
+			promoSection.businesses = result;
+			// delete promoSection.translatable;
 		}
 		res.status(200).json(finalPromoSections);
 	} catch (error) {
@@ -591,14 +603,6 @@ export async function getBusinessForSearchById(
 			return;
 		}
 
-		const returnBusiness = {
-			...business,
-			logo: selectedModule.logo,
-			banner: selectedModule.banner,
-			menu: selectedModule.menus?.find((m) => m.isDailyMeal === false),
-			dailyMenu: selectedModule.menus?.find((m) => m.isDailyMeal === true),
-		};
-
 		if (ANALYTICS_PARAM_PROMO_AD || ANALYTICS_PARAM_PROMO_SECTION || ANALYTICS_PARAM_PROMO_WORDS) {
 			logPromoAnalytics({
 				business_id: business.business_id,
@@ -704,9 +708,6 @@ export async function createNewBusiness(req: ValidatedRequest<CreateBusinessInpu
 	try {
 		const newBusiness = await BusinessDao.createNewBusiness({
 			...req.body,
-			reviewable: {
-				create: {},
-			},
 		});
 		res.status(201).json(newBusiness);
 	} catch (error) {
@@ -831,33 +832,7 @@ async function removeParentBusinessId(
 		});
 	}
 }
-/**
- * POST /business/paymentIntent
- * @tag Business
- * @summary Create a payment intent
- * @description This endpoint is used to create a payment intent.
- * @operationId createPaymentIntent
- * @bodyDescription The amount, currency, and user_id of the payment.
- * @bodyContent {object} application/json
- * @bodyRequired
- * @response 200 - Payment Intent created successfully.
- * @response 400 - Error creating payment intent.
- * @prisma_model users
- */
-async function createPaymentIntent(req: ValidatedRequest<CreatePaymentIntentInput>, res: Response): Promise<void> {
-	try {
-		const { amount, payment_method, user_id } = req.body;
-		const user = await UserDao.getUserById(user_id);
-		const paymentIntent = await stripe.createPaymentIntent(amount, payment_method, user.stripe_customer_id);
-		res.status(200).json(paymentIntent);
-	} catch (error) {
-		console.error('Error creating payment intent:', error);
-		res.status(400).json({
-			error: 'Error creating payment intent',
-			detail: error instanceof Error ? error.message : 'Unknown error',
-		});
-	}
-}
+
 /**
  * POST /business/scheduled_users/sorting
  * @tag Business
@@ -947,16 +922,16 @@ async function getBusinessEarnings(
 	}
 	try {
 		const business = await BusinessDao.getBusinessById(business_id);
-		const businessDeliveryOrders = await DeliveryOrderDao.getOrders({
-			where: {
-				business_id: business.business_id,
-				status: DELIVERY_ORDER_STATUS.SUCCESS,
-				created_at: {
-					gte: new Date(start_date).toISOString(),
-					lte: new Date(end_date).toISOString(),
-				},
-			},
-		});
+		if (!business) {
+			res.status(404).json({ error: 'Business not found or no earnings data available' });
+			return;
+		}
+
+		const businessDeliveryOrders = await DeliveryOrderDao.getSuccessfullOrdersForBusinessId(
+			business.business_id,
+			start_date,
+			end_date
+		);
 		const earningsData = calculateBusinessEarnings(businessDeliveryOrders, business);
 		if (earningsData) {
 			res.status(200).json({ business_id, ...earningsData });
@@ -1113,95 +1088,15 @@ async function getBusinessReviewsById(
 		res.status(400).json({ message: 'Missing required parameter: business_id' });
 		return;
 	}
-	try {
-		// TODO: fix reviews first, then change this to traverse all modules
-		const business = await BusinessDao.getBusinessById(business_id);
-		if (!business?.reviewable_id) {
-			res.status(200).json([]);
-			return;
-		} else {
-			// Fetch reviews for the business
-			let reviews = await prisma.reviews.findMany({
-				where: {
-					reviewable_id: business.reviewable_id,
-				},
-				include: {
-					author: {
-						select: {
-							first_name: true,
-							last_name: true,
-							user_id: true,
-							user_role: true,
-							documents: {
-								where: {
-									document_type: 'PROFILE_PICTURE',
-								},
-								select: {
-									files: true,
-									document_type: true,
-								},
-							},
-						},
-					},
-					reviewable: {
-						include: {
-							business: {
-								select: {
-									name: true,
-									business_id: true,
-									documents: {
-										where: {
-											document_type: 'PROFILE_PICTURE',
-										},
-										select: {
-											files: true,
-											document_type: true,
-										},
-									},
-								},
-							},
-							user: {
-								select: {
-									first_name: true,
-									last_name: true,
-									user_id: true,
-									user_role: true,
-									documents: {
-										where: {
-											document_type: 'PROFILE_PICTURE',
-										},
-										select: {
-											files: true,
-											document_type: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				orderBy: {
-					created_at: 'desc',
-				},
-			});
-			for (let review of reviews) {
-				if (review.reviewable.user.length > 0) {
-					review.target = review.reviewable.user[0];
-				}
-				if (review.reviewable.business.length > 0) {
-					review.target = review.reviewable.business[0];
-				}
-				review.reviewable = undefined;
-			}
-			res.status(200).json(reviews);
-		}
-	} catch (error) {
-		console.error('BusinessController', error);
+
+	const results = await Review.getReviewsForSubject(business_id, 'BUSINESS');
+	if (!results) {
 		res.status(500).json({
 			error: 'Internal server error',
-			detail: error instanceof Error ? error.message : 'Unknown error',
 		});
+		return;
 	}
+	res.status(200).json(results);
 }
 /**
  * PATCH /business/edit
@@ -1318,6 +1213,10 @@ async function generateBusinessStripeByBusinessId(
 	try {
 		const business_id = req.params.business_id;
 		const business = await BusinessDao.getBusinessById(business_id);
+		if (!business) {
+			res.status(404).json({ error: 'Business not found' });
+			return;
+		}
 		let stripe_account;
 		if (business?.stripe_account_id) {
 			stripe_account = await stripe.client.accounts.retrieve(business.stripe_account_id);
@@ -1369,9 +1268,7 @@ async function onboardingEnd(req: ValidatedRequest<never, { business_id: string 
 		const eventual_reqs = stripe_account?.requirements?.eventually_due || [];
 		const isComplete = stripe_account.details_submitted && current_reqs.length === 0 && eventual_reqs.length === 0;
 		if (isComplete) {
-			res.render('stripeOnboardingSuccess', {
-				businessName: business.name,
-			});
+			res.render('stripeOnboardingSuccess');
 			return;
 		} else {
 			res.render('stripeOnboardingIncomplete', {
@@ -1400,7 +1297,10 @@ async function onboardingEnd(req: ValidatedRequest<never, { business_id: string 
  * @response 500 - Internal Server Error
  * @prisma_model delivery_orders
  */
-async function getBusynessFactorsBusinessIdList(req: AuthenticatedRequest, res: Response): Promise<void> {
+async function getBusynessFactorsBusinessIdList(
+	req: AuthenticatedRequest<never, never, { business_ids: string[] }>,
+	res: Response
+): Promise<void> {
 	const { business_ids } = req.query;
 	if (!business_ids) {
 		res.status(400).json({ error: 'business_ids parameter is required' });
@@ -1409,8 +1309,7 @@ async function getBusynessFactorsBusinessIdList(req: AuthenticatedRequest, res: 
 	try {
 		// Assuming we have a function to get orders by business IDs
 		const busynessFactors: Record<string, number> = {};
-		const businessIdsArray = Array.isArray(business_ids) ? business_ids : [business_ids];
-		for (const businessId of businessIdsArray) {
+		for (const businessId of business_ids) {
 			const orderCount = await DeliveryOrderDao.getInProgressDeliveryOrdersCountForBusinessId(
 				businessId as string
 			);
@@ -1499,21 +1398,19 @@ async function removeBusinessFromFavorites(
 	res: Response
 ): Promise<void> {
 	try {
-		const { user_favorite_businesses_id } = req.body;
+		const { business_id, module } = req.body;
 		if (!req.user?.user_id) {
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
 		}
 		const { user_id } = req.user;
-		const user_favorites = await UserFavoriteBusinessDao.getFavoriteBusinesses(user_id);
-		const favorited_entry = user_favorites.find(
-			(fav) => fav.user_favorite_businesses_id === user_favorite_businesses_id
-		);
+		const user_favorites = await UserFavoriteBusinessDao.getFavoriteBusinesses(user_id, module);
+		const favorited_entry = user_favorites.find((fav) => fav.user_favorite_businesses_id === business_id);
 		if (!favorited_entry) {
 			res.status(400).json({ message: 'Business not favorited for given type.' });
 			return;
 		}
-		const removed_entry = await UserFavoriteBusinessDao.removeFavoriteBusiness(user_favorite_businesses_id);
+		const removed_entry = await UserFavoriteBusinessDao.removeFavoriteBusiness(business_id);
 		res.status(200).json(removed_entry);
 	} catch (error) {
 		console.error('Error removing business from favorites:', error);
@@ -1536,14 +1433,17 @@ async function removeBusinessFromFavorites(
  * @prisma_model user_favorite_businesses
  * @prisma_model business
  */
-async function getFavoriteBusinesses(req: AuthenticatedRequest, res: Response): Promise<void> {
+async function getFavoriteBusinesses(
+	req: AuthenticatedRequest<never, { business_type: MODULE }>,
+	res: Response
+): Promise<void> {
 	try {
 		if (!req.user?.user_id) {
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
 		}
 		const { user_id } = req.user;
-		const business_type = (req.params as { type?: string })?.type || null;
+		const business_type = req.params.business_type;
 		const favorited_businesses = await UserFavoriteBusinessDao.getFavoriteBusinesses(user_id, business_type);
 		res.status(200).json(favorited_businesses);
 	} catch (error) {
@@ -1588,28 +1488,26 @@ async function createScoringPointsHandler(
 			res.status(401).json({ error: 'User not authenticated' });
 			return;
 		}
-		const user_with_drivers = await UserDao.getUserById(user_id, {
-			include: { driver: true, delivery_driver: true },
-		});
-		const business_id =
-			user_with_drivers?.driver?.business_id || user_with_drivers?.delivery_driver?.business_id || null;
+		const user_driver = await Driver.getDriverByUserId(user_id);
+		const business_id = user_driver?.business_id;
 		if (!business_id) {
 			res.status(400).json({ error: 'Business ID is required' });
 			return;
 		}
-		const scoringPoint = await ScoringPointsDao.createScoringPoints(
-			business_id,
+		const scoringPoint = await ScoringPointsDao.createScoringPoints({
+			isPenalty: true,
 			user_id,
 			delivery_order_id,
 			taxi_order_id,
 			points,
-			true,
-			reason
-		);
-		return res.status(201).json(scoringPoint);
+			reason,
+		});
+		res.status(201).json(scoringPoint);
+		return;
 	} catch (error) {
 		console.error('Error in createScoringPointsHandler:', error);
-		return res.status(500).json({ error: 'Internal server error' });
+		res.status(500).json({ error: 'Internal server error' });
+		return;
 	}
 }
 /**
@@ -1679,14 +1577,22 @@ async function removeBusinessPaymentMethod(
 			return;
 		}
 		const user = await UserDao.getUserById(req.user.user_id);
-		console.log(user, 'usrTest');
+		if (!user || !user.business_users || user.business_users.length === 0) {
+			res.status(400).json({ error: 'User is not associated with any business' });
+			return;
+		}
+
 		const businessId = user?.business_users[0]?.business_id;
 		if (!businessId) {
 			res.status(400).json({ error: 'User does not belong to any business' });
 			return;
 		}
 		// Check if the business has a Stripe customer ID
-		const business = await BusinessDao.getBusinessById(user?.business_users[0]?.business_id);
+		if (!user.business_users[0]?.business_id) {
+			res.status(400).json({ error: 'User does not belong to any business' });
+			return;
+		}
+		const business = await BusinessDao.getBusinessById(user.business_users[0]?.business_id);
 		if (!business?.stripe_customer_id) {
 			res.status(400).json({ error: 'Business does not have a Stripe customer ID' });
 			return;
@@ -1772,13 +1678,18 @@ async function createBusinessLocalLocation(
 			res.status(400).json({ error: 'Missing location' });
 			return;
 		}
-		const store_id = await stores.getStoresIdByBusinessId(business_id);
+		const stores_id = await stores.getStoresIdByBusinessId(business_id);
+		if (!stores_id) {
+			res.status(400).json({ error: 'Business does not have an associated store' });
+			return;
+		}
 		const newLocation = await LocalLocationDao.createBusinessLocalLocation(
-			store_id,
+			stores_id,
 			location.local_location_id,
 			location.time
 		);
-		if (newLocation?.store_id) {
+
+		if (newLocation.stores_id) {
 			businessIndex(business_id);
 		}
 		res.status(201).json(newLocation);
@@ -1855,44 +1766,33 @@ async function getBusinessOverallAnalytics(
 	res: Response
 ): Promise<void> {
 	try {
-		const user_id = req.user?.user_id;
+		if (!req.user?.user_id) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
+		const user_id = req.user.user_id;
 		const bUser = await BusinessUsersDao.getBusinessUserByUserId(user_id);
 		const business_id = bUser?.business_id;
 		if (!bUser || !business_id) {
-			return res.status(401).json({ error: 'Unauthorized' });
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
 		}
 		const { type, periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
 
 		// Fetch orders for current & previous periods
-		const allOrdersCurrent = await prisma.delivery_orders.findMany({
-			where: {
-				business_id,
-				status: { in: DELIVERY_ORDER_END_STATES },
-				created_at: { gte: periodStart, lte: periodEnd },
-			},
-		});
+		const allOrdersCurrent = await DeliveryOrderDao.getAllCurrentOrdersByBusinessId(
+			business_id,
+			periodStart,
+			periodEnd
+		);
+		let allOrdersPrevious: DeliveryOrderDetail[] = JSON.parse(JSON.stringify(allOrdersCurrent)); // creates deep copy
 		const ordersCurrent = allOrdersCurrent.filter((o) => o.status === DELIVERY_ORDER_STATUS.SUCCESS);
-		let allOrdersPrevious = [];
-		if (prevStart && prevEnd) {
-			allOrdersPrevious = await prisma.delivery_orders.findMany({
-				where: {
-					business_id,
-					status: { in: DELIVERY_ORDER_END_STATES },
-					created_at: { gte: prevStart, lte: prevEnd },
-				},
-			});
-		}
 		const ordersPrevious = allOrdersPrevious.filter((o) => o.status === DELIVERY_ORDER_STATUS.SUCCESS);
 		// Prior orders for new customer calculation
-		let priorCustomerOrders = await prisma.delivery_orders.findMany({
-			where: {
-				business_id,
-				status: DELIVERY_ORDER_STATUS.SUCCESS,
-				created_at: { lt: periodStart },
-			},
-		});
+		let priorCustomerOrders = await DeliveryOrderDao.getAllPriorOrdersByBusinessId(business_id, periodStart);
+
 		let usersWithPriorOrders = new Set(priorCustomerOrders.map((o) => o.user_id).filter(Boolean));
-		const currentUserOrdersMap = new Set();
+		const currentUserOrdersMap = new Set<string>();
 		for (const o of ordersCurrent) {
 			if (!o.user_id) continue;
 			const existing = currentUserOrdersMap.has(o.user_id);
@@ -1910,15 +1810,9 @@ async function getBusinessOverallAnalytics(
 		let prevNewCustomers = 0;
 		let prevReturningCustomers = 0;
 		if (type !== 4) {
-			priorCustomerOrders = await prisma.delivery_orders.findMany({
-				where: {
-					business_id,
-					status: DELIVERY_ORDER_STATUS.SUCCESS,
-					created_at: { lt: prevStart },
-				},
-			});
+			priorCustomerOrders = await DeliveryOrderDao.getAllPriorOrdersByBusinessId(business_id, periodStart);
 			usersWithPriorOrders = new Set(priorCustomerOrders.map((o) => o.user_id).filter(Boolean));
-			const previousUserOrdersMap = new Set();
+			const previousUserOrdersMap = new Set<string>();
 			for (const o of ordersPrevious) {
 				if (!o.user_id) continue;
 				const existing = previousUserOrdersMap.has(o.user_id);
@@ -2026,21 +1920,6 @@ async function getBusinessOverallAnalytics(
 		});
 	}
 }
-
-// Helper: compute period bounds
-function getPeriodsFromBody(body) {
-	const { type = 0, start_date = new Date(), end_date = null } = body || {};
-	const start = new Date(start_date);
-	if (isNaN(start.getTime())) {
-		const err = new Error('Invalid start_date');
-		err.status = 400;
-		throw err;
-	}
-	const { periodStart, periodEnd } = getPeriodStartAndEnd(start, type, end_date);
-	const { prevStart, prevEnd } = getPreviousPeriod(periodStart, periodEnd, type);
-	return { type, periodStart, periodEnd, prevStart, prevEnd };
-}
-
 // Helper: build promo buckets by id for a list of analytics rows
 function buildPromoBuckets(
 	analyticsRows,

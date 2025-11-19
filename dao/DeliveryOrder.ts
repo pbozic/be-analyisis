@@ -59,6 +59,39 @@ export async function getOrders(args?: any): Promise<DeliveryOrderDetail[]> {
 	}
 }
 
+export async function getSuccessfullOrdersForBusinessId(
+	business_id: string,
+	start_date: string,
+	end_date: string
+): Promise<DeliveryOrderDetail[]> {
+	try {
+		const business = await prisma.businesses.findMany({
+			where: {
+				business_id: business_id,
+				status: DELIVERY_ORDER_STATUS.SUCCESS,
+				created_at: {
+					gte: new Date(start_date).toISOString(),
+					lte: new Date(end_date).toISOString(),
+				},
+			},
+			include: {
+				driver: {
+					include: {
+						user: true,
+						current_vehicle: true,
+					},
+				},
+				user: true,
+				food_drinks_module: true,
+				stores_module: true,
+			},
+		});
+		return business.map(toDeliveryOrderDetail);
+	} catch (e) {
+		throw new Error(e instanceof Error ? e.message : String(e));
+	}
+}
+
 /**
  * Get all non-terminal delivery orders.
  */
@@ -627,6 +660,42 @@ export async function addTimelineEntry(
 	}
 }
 
+export async function getAllCurrentOrdersByBusinessId(
+	business_id: string,
+	periodStart: Date,
+	periodEnd: Date
+): Promise<DeliveryOrderDetail[]> {
+	try {
+		const orders = await prisma.delivery_orders.findMany({
+			where: {
+				business_id,
+				status: { in: DELIVERY_ORDER_END_STATES },
+				created_at: { gte: periodStart, lte: periodEnd },
+			},
+		});
+		return orders.map(toDeliveryOrderDetail);
+	} catch (e) {
+		throw new Error(e instanceof Error ? e.message : String(e));
+	}
+}
+
+export async function getAllPriorOrdersByBusinessId(
+	business_id: string,
+	periodStart: Date
+): Promise<DeliveryOrderDetail[]> {
+	try {
+		const orders = await prisma.delivery_orders.findMany({
+			where: {
+				business_id,
+				status: { in: DELIVERY_ORDER_STATUS.SUCCESS },
+				created_at: { lt: periodStart },
+			},
+		});
+		return orders.map(toDeliveryOrderDetail);
+	} catch (e) {
+		throw new Error(e instanceof Error ? e.message : String(e));
+	}
+}
 /**
  * Get active orders by delivery driver ID.
  */
@@ -1140,6 +1209,8 @@ export async function getOrdersByBusinessLocalLocation(
 }
 
 export default {
+	getAllPriorOrdersByBusinessId,
+	getAllCurrentOrdersByBusinessId,
 	acceptOrderDelivery,
 	acceptOrderDeliveryWithRawLock,
 	acceptOrderSent,
@@ -1173,4 +1244,5 @@ export default {
 	updateOrderLastSentAt,
 	updateOrderPickupTime,
 	updateOrderStatus,
+	getSuccessfullOrdersForBusinessId,
 };

@@ -3,6 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, LanguageCode } from '../../primitives';
 import { SERVICE_TYPE } from '../../../lib/constants';
+import { BusinessRefSchema } from '../Business/business';
 
 extendZodWithOpenApi(z);
 
@@ -109,9 +110,12 @@ export const PromoSectionBaseSchema = z
 	.openapi('PromoSectionBase');
 export type PromoSectionBase = z.infer<typeof PromoSectionBaseSchema>;
 
-export const PromoSectionDetailSchema = PromoSectionBaseSchema.extend({
-	translations: TranslationsSchema.optional(),
-}).openapi('PromoSectionDetail');
+export const PromoSectionDetailSchema = PromoSectionBaseSchema.partial()
+	.extend({
+		businesses: z.array(BusinessRefSchema).optional(),
+		translations: TranslationsSchema.optional(),
+	})
+	.openapi('PromoSectionDetail');
 export type PromoSectionDetail = z.infer<typeof PromoSectionDetailSchema>;
 
 // ======================

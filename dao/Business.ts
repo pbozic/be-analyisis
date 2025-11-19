@@ -138,41 +138,41 @@ const getBusinessAdminDataById = async (business_id: string): Promise<BusinessAd
 /**
  * Get a business by ID for search purposes with minimal data.
  *
- * @param {string} business_id - The ID of the business to retrieve.
+ * @param {string} business_ids[] - The ID of the business to retrieve.
  * @returns {Promise<BusinessSearchResponse[] | []>} A promise resolving to the search business record or null if not found.
  */
-const getBusinessesForSearchById = async (business_id: string): Promise<BusinessSearchResponse[] | []> => {
+const getBusinessesForSearchById = async (business_ids: string[]): Promise<BusinessSearchResponse[] | []> => {
 	try {
-		const business = await prisma.business.findUnique({
+		const businesses = await prisma.business.findMany({
 			where: {
-				business_id: business_id,
+				business_id: { in: business_ids },
 			},
 			select: businessSearchSelect,
 		});
 
-		if (!business) return [];
+		if (!businesses) return [];
 
 		// Map to legacy BusinessSearchResponse format
-		const searchResult: BusinessSearchResponse = {
-			business_id: business.business_id,
-			name: business.business_details?.name || '',
-			description: business.business_details?.description || null,
-			email: business.email,
-			telephone: business.telephone,
-			website_url: business.website_url,
-			active: business.active,
-			popular: false, // Not available in current schema
-			new: false, // Not available in current schema
-			address: business.address,
-		};
-
-		return [searchResult];
+		const searchResult: BusinessSearchResponse[] = businesses.map(
+			(business: BusinessSearchSelectPrisma): BusinessSearchResponse => ({
+				business_id: business.business_id,
+				name: business.business_details?.name || '',
+				description: business.business_details?.description || null,
+				email: business.email,
+				telephone: business.telephone,
+				website_url: business.website_url,
+				active: business.active,
+				popular: false, // Not available in current schema
+				new: false, // Not available in current schema
+				address: business.address,
+			})
+		);
+		return searchResult;
 	} catch (error) {
 		console.error('Error retrieving business for search:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get business for search');
 	}
 };
-
 /**
  * Find a business by email.
  *

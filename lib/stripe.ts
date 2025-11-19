@@ -5,7 +5,7 @@ import { SERVICE_TYPE } from './constants.js';
 import BusinessDao, { getStripeIdsForAllBusinesses } from '../dao/Business.js';
 import prisma from '../prisma/prisma.js';
 import { UserResponse } from '../schemas/dto/User/index.js';
-
+import { BusinessBase } from '../schemas/dto/Business';
 dotenv.config();
 
 // Instantiate Stripe client with explicit API version for typings
@@ -46,7 +46,7 @@ export async function getBalance(): Promise<Stripe.Balance> {
  * @param {BusinessLike} business - Business entity with basic company details.
  * @returns {Promise<Stripe.Account>} The created connected account.
  */
-export async function createAccount(business: BusinessLike): Promise<Stripe.Account> {
+export async function createAccount(business: Partial<BusinessBase>): Promise<Stripe.Account> {
 	return stripe.accounts.create({
 		email: business.email,
 		business_type: 'company',

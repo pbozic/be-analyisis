@@ -378,7 +378,7 @@ export function isBusinessOpen(working_hours: Record<string, string[][]>): boole
  * @param {BusinessBase} business - Business object for working hours and name.
  * @returns {object} Summary metrics for dashboards.
  */
-export function calculateBusinessEarnings(orders: DeliveryOrderDetail[], business: BusinessBase) {
+export function calculateBusinessEarnings(orders: DeliveryOrderDetail[], business: Partial<BusinessBase>) {
 	if (orders && orders.length > 0) {
 		const totalEarnings = orders.reduce((sum, order) => {
 			const totalItemsPrice = order.items?.reduce((itemSum, item) => {

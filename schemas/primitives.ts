@@ -31,7 +31,7 @@ export const PhoneNumber = z
 	});
 
 // === Enums / codes ===
-export const LanguageCode = z.enum(['en', 'sl', 'de', 'fr', 'it', 'es', 'hr', 'ru']).openapi({
+export const LanguageCode = z.enum(['en', 'sl', 'de', 'fr', 'it', 'es', 'hr', 'ru', 'bs', 'sr', 'ua']).openapi({
 	title: 'LanguageCode',
 	example: 'en',
 });

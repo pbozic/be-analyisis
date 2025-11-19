@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
-import { ACCOUNT_ACTIONS, ACCOUNT_ACTIONS_REASON, SERVICES, Prisma } from '@prisma/client';
+import { ACCOUNT_ACTIONS, ACCOUNT_ACTIONS_REASON, Prisma } from '@prisma/client';
 
+import { SERVICES } from '../prisma/schemas/interfaces.js';
 import prisma from '../prisma/prisma.js';
 import { createDocument, linkDocumentToTransaction } from './Document.js';
 import { addFileToDocument } from './File.js';
@@ -37,6 +38,7 @@ import {
 	toUserResponse,
 } from '../schemas/dto/User/user.mappers.js';
 import { WalletFundsBase } from '../schemas/dto/WalletFunds';
+import { FavoriteBusinessBase } from '../schemas/dto/FavoriteBusinesses/favorite-businesses.dto.js';
 
 declare const process: {
 	env: {
@@ -120,6 +122,31 @@ const getUserById = async (user_id: string): Promise<UserResponse | null> => {
 		return toUserResponse(user);
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID');
+	}
+};
+
+/**
+ * Retrieve favorite businesses for a user by user ID and module.
+ * @param {string} user_id - User ID.
+ * @param {SERVICES} module - Service module.
+ * @returns {Promise<UserWithFavouritesResponse[] | null>} User with favorite businesses or null.
+ */
+export const getFavoriteBusinessesByUserIdAndModule = async (
+	user_id: string,
+	module: SERVICES
+): Promise<FavoriteBusinessBase[] | null> => {
+	try {
+		const result = await prisma.user_favorite_businesses.findMany({
+			where: {
+				user_id,
+				module,
+			},
+		});
+		return result;
+	} catch (error) {
+		throw new Error(
+			error instanceof Error ? error.message : 'Failed to get favorite businesses by user ID and module'
+		);
 	}
 };
 
@@ -1211,6 +1238,7 @@ export { getAllUsersWithAddressesAndConnections };
 export { getUserAdressAndRolesById };
 export default {
 	getPersonalUsers,
+	getFavoriteBusinessesByUserIdAndModule,
 	getUserByReferralCode,
 	getUserById,
 	getUserByIdForLogin,
