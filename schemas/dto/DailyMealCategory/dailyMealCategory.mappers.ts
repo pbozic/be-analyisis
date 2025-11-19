@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 import { DailyMealCategoryPriceBaseSchema, DailyMealCategoryDetailSchema } from './dailyMealCategory.js';
 import type { DailyMealCategoryPriceBase, DailyMealCategoryDetail } from './dailyMealCategory.js';
-import { DailyMealCategoryBaseSchema, DailyMealCategoryBase } from '../DailyMealCategory';
 import type { DailyMealCategoryWithPricesPrisma } from '../../../prisma/includes/dailyMealCategory.js';
 import { CategoryRefSchema } from '../Category/category.dto.js';
 // =======================
@@ -70,10 +69,10 @@ function toIso(d: unknown) {
 	return d ? new Date(d as any).toISOString() : undefined;
 }
 
-export function toDailyMealCategoryResponse(row: DailyMealCategoryWithPricesPrisma | any): DailyMealCategoryBase {
+export function toDailyMealCategoryResponse(row: DailyMealCategoryWithPricesPrisma | any): DailyMealCategoryDetail {
 	const r = row as any;
 
-	return DailyMealCategoryBaseSchema.parse({
+	return DailyMealCategoryDetailSchema.parse({
 		daily_meal_category_id: r.daily_meal_category_id,
 		daily_meals_id: r.daily_meals_id,
 		category_id: r.category_id,
@@ -84,6 +83,7 @@ export function toDailyMealCategoryResponse(row: DailyMealCategoryWithPricesPris
 		daily_meals_module: r.daily_meals_module ?? null,
 		menu_categories: r.menu_categories ?? [],
 		daily_meal_subscription_customers: r.daily_meal_subscription_customers ?? [],
+		daily_meal_category_prices_id: r.daily_meal_category_prices_id ?? null,
 		daily_meal_category_prices: (r.daily_meal_category_prices || []).map((p: any) => ({
 			daily_meal_category_price_id: p.daily_meal_category_price_id,
 			daily_meal_category_id: p.daily_meal_category_id,
@@ -94,7 +94,7 @@ export function toDailyMealCategoryResponse(row: DailyMealCategoryWithPricesPris
 	});
 }
 
-export function toDailyMealCategoryList(rows: (DailyMealCategoryWithPricesPrisma | any)[]): DailyMealCategoryBase[] {
+export function toDailyMealCategoryList(rows: (DailyMealCategoryWithPricesPrisma | any)[]): DailyMealCategoryDetail[] {
 	return (rows || []).map((r) => toDailyMealCategoryResponse(r));
 }
 

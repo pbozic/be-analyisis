@@ -24,7 +24,10 @@ function getErrorMessage(err: unknown): string {
  * @param {string|Date|null} date - Optional date for the menu.
  * @returns {Promise<MenuBase>} The created daily meal menu.
  */
-const createDailyMealsMenu = async (dailyMealsModuleId: string, date?: string | Date | null): Promise<MenuBase> => {
+const createDailyMealsMenu = async (
+	dailyMealsModuleId: string,
+	date?: string | Date | null
+): Promise<DailyMealMenuBase> => {
 	try {
 		const created = await prisma.daily_meal_menus.create({
 			data: {
@@ -33,7 +36,7 @@ const createDailyMealsMenu = async (dailyMealsModuleId: string, date?: string | 
 			},
 			include: dailyMealMenuDefaultInclude,
 		});
-		return toMenuResponse(created as MenuWithIncludesPrisma);
+		return toDailyMealMenuResponse(created);
 	} catch (error: unknown) {
 		console.error('Error creating daily meals menu:', error);
 		throw new Error(getErrorMessage(error) || 'Error creating daily meals menu');

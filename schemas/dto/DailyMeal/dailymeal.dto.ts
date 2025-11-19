@@ -51,6 +51,7 @@ export const DailyMealSubscriptionDetailSchema = DailyMealSubscriptionBaseSchema
 	days: z.array(z.any()).optional().default([]),
 	weekdays: z.array(z.any()).optional().default([]),
 	daily_meal_instances: z.array(z.any()).optional().default([]),
+	payment: z.any().nullable().optional(),
 }).openapi('DailyMealSubscriptionDetail');
 
 export type DailyMealSubscriptionDetail = z.infer<typeof DailyMealSubscriptionDetailSchema>;

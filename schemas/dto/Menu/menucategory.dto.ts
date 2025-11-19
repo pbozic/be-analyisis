@@ -1,34 +1,39 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
+import { Timestamp, UUID } from '../../primitives';
+
 extendZodWithOpenApi(z);
 
 export const MenuCategoryDataSchema = z
 	.object({
-		name_translatable_id: z.string().uuid().optional(),
+		name_translatable_id: UUID.optional(),
 		names: z
 			.record(z.string())
 			.optional()
 			.openapi({ example: { en: 'Starters', sl: 'Predjedi' } }),
-		description_translatable_id: z.string().uuid().optional(),
+		description_translatable_id: UUID.optional(),
 		description: z.record(z.string()).optional(),
-		category_ids: z.array(z.string().uuid()),
+		category_ids: z.array(UUID),
 		categories: z
 			.array(z.string())
 			.optional()
 			.openapi({ example: ['salads', 'vegan'] }),
-		food_drinks_id: z.string().uuid().optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
-		stores_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
-		menu_id: z.string().uuid(),
+		food_drinks_id: UUID.optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
+		stores_id: UUID.optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: UUID,
 		order: z.number().int().optional(),
+		daily_meal_category_id: UUID.optional(),
+		daily_meal_category_price_id: UUID.optional(),
 		price: z.number().optional(),
 	})
 	.passthrough()
 	.openapi('MenuCategoryData');
+export type MenuCategoryData = z.infer<typeof MenuCategoryDataSchema>;
 
 export const CreateMenuCategorySchema = z
 	.object({
-		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: UUID,
 		data: MenuCategoryDataSchema,
 	})
 	.openapi('CreateMenuCategory');
@@ -40,7 +45,7 @@ export type MenuCategory = z.infer<typeof MenuCategoryDataSchema>;
 
 export const CreateMenuCategoryInputSchema = z
 	.object({
-		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: UUID,
 		categoryData: MenuCategoryDataSchema,
 	})
 	.openapi('CreateMenuCategoryInput');
@@ -49,7 +54,7 @@ export type CreateMenuCategoryInput = z.infer<typeof CreateMenuCategoryInputSche
 // Extended CreateMenuCategoryInput with category_ids for linking categories
 export const CreateMenuCategoryWithCategoriesInputSchema = MenuCategoryDataSchema.extend({
 	category_ids: z
-		.array(z.string().uuid())
+		.array(UUID)
 		.optional()
 		.openapi({ example: ['ee0e8400-e29b-41d4-a716-446655440000'] }),
 }).openapi('CreateMenuCategoryWithCategoriesInput');
@@ -57,53 +62,53 @@ export type CreateMenuCategoryWithCategoriesInput = z.infer<typeof CreateMenuCat
 
 export const CreateDailyMealMenuCategoryInputSchema = z
 	.object({
-		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
-		daily_meal_category_price_id: z.string().uuid().openapi({ example: 'ff0e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: UUID,
+		daily_meal_category_price_id: UUID,
 	})
 	.openapi('CreateDailyMealMenuCategoryInput');
 export type CreateDailyMealMenuCategoryInput = z.infer<typeof CreateDailyMealMenuCategoryInputSchema>;
 
 export const AddMenuCategoryIdToOrderInputSchema = z
 	.object({
-		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
-		menuCategoryIdToAdd: z.string().uuid().openapi({ example: 'aa0e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: UUID,
+		menuCategoryIdToAdd: UUID,
 	})
 	.openapi('AddMenuCategoryIdToOrderInput');
 export type AddMenuCategoryIdToOrderInput = z.infer<typeof AddMenuCategoryIdToOrderInputSchema>;
 
 export const RemoveMenuCategoryIdFromOrderInputSchema = z
 	.object({
-		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
-		menuCategoryIdToRemove: z.string().uuid().openapi({ example: 'aa0e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: UUID,
+		menuCategoryIdToRemove: UUID,
 	})
 	.openapi('RemoveMenuCategoryIdFromOrderInput');
 export type RemoveMenuCategoryIdFromOrderInput = z.infer<typeof RemoveMenuCategoryIdFromOrderInputSchema>;
 
 export const GetMenuCategoriesByMenuIdParamsSchema = z
 	.object({
-		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: UUID,
 	})
 	.openapi('GetMenuCategoriesByMenuIdParams');
 export type GetMenuCategoriesByMenuIdParams = z.infer<typeof GetMenuCategoriesByMenuIdParamsSchema>;
 
 export const GetMenuCategoriesByBusinessIdParamsSchema = z
 	.object({
-		food_drinks_id: z.string().uuid().optional().openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
-		stores_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		food_drinks_id: UUID.optional(),
+		stores_id: UUID.optional(),
 	})
 	.openapi('GetMenuCategoriesByBusinessIdParams');
 export type GetMenuCategoriesByBusinessIdParams = z.infer<typeof GetMenuCategoriesByBusinessIdParamsSchema>;
 
 export const DeleteMenuCategoryInputSchema = z
 	.object({
-		menu_category_id: z.string().uuid().openapi({ example: 'bb0e8400-e29b-41d4-a716-446655440000' }),
+		menu_category_id: UUID,
 	})
 	.openapi('DeleteMenuCategoryInput');
 export type DeleteMenuCategoryInput = z.infer<typeof DeleteMenuCategoryInputSchema>;
 
 export const UpdateMenuCategoryInputSchema = z
 	.object({
-		menu_category_id: z.string().uuid().openapi({ example: 'bb0e8400-e29b-41d4-a716-446655440000' }),
+		menu_category_id: UUID,
 		data: MenuCategoryDataSchema.partial(),
 	})
 	.openapi('UpdateMenuCategoryInput');
@@ -111,48 +116,46 @@ export type UpdateMenuCategoryInput = z.infer<typeof UpdateMenuCategoryInputSche
 
 export const UpdateMenuItemsOrderInputSchema = z
 	.object({
-		menu_category_id: z.string().uuid().openapi({ example: 'bb0e8400-e29b-41d4-a716-446655440000' }),
-		ordered_menu_items_ids: z
-			.array(z.string().uuid())
-			.openapi({ example: ['cc0e8400-e29b-41d4-a716-446655440000'] }),
+		menu_category_id: UUID,
+		ordered_menu_items_ids: z.array(UUID),
 	})
 	.openapi('UpdateMenuItemsOrderInput');
 export type UpdateMenuItemsOrderInput = z.infer<typeof UpdateMenuItemsOrderInputSchema>;
 
 export const AddCategoryToMenuInputSchema = z
 	.object({
-		menu_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
-		menu_category_id: z.string().uuid().openapi({ example: 'bb0e8400-e29b-41d4-a716-446655440000' }),
+		menu_id: UUID,
+		menu_category_id: UUID,
 	})
 	.openapi('AddCategoryToMenuInput');
 export type AddCategoryToMenuInput = z.infer<typeof AddCategoryToMenuInputSchema>;
 
 export const RemoveCategoryFromMenuInputSchema = z
 	.object({
-		menu_category_id: z.string().uuid().openapi({ example: 'bb0e8400-e29b-41d4-a716-446655440000' }),
+		menu_category_id: UUID,
 	})
 	.openapi('RemoveCategoryFromMenuInput');
 export type RemoveCategoryFromMenuInput = z.infer<typeof RemoveCategoryFromMenuInputSchema>;
 
 export const AddCategoryToMenuCategoryInputSchema = z
 	.object({
-		menu_category_id: z.string().uuid().openapi({ example: 'bb0e8400-e29b-41d4-a716-446655440000' }),
-		category_id: z.string().uuid().openapi({ example: 'ee0e8400-e29b-41d4-a716-446655440000' }),
+		menu_category_id: UUID,
+		category_id: UUID,
 	})
 	.openapi('AddCategoryToMenuCategoryInput');
 export type AddCategoryToMenuCategoryInput = z.infer<typeof AddCategoryToMenuCategoryInputSchema>;
 
 export const RemoveCategoryFromMenuCategoryInputSchema = z
 	.object({
-		menu_category_id: z.string().uuid().openapi({ example: 'bb0e8400-e29b-41d4-a716-446655440000' }),
-		category_id: z.string().uuid().openapi({ example: 'ee0e8400-e29b-41d4-a716-446655440000' }),
+		menu_category_id: UUID,
+		category_id: UUID,
 	})
 	.openapi('RemoveCategoryFromMenuCategoryInput');
 export type RemoveCategoryFromMenuCategoryInput = z.infer<typeof RemoveCategoryFromMenuCategoryInputSchema>;
 
 export const UpdateDailyMealMenuPriceInputSchema = z
 	.object({
-		menu_category_id: z.string().uuid().openapi({ example: 'bb0e8400-e29b-41d4-a716-446655440000' }),
+		menu_category_id: UUID,
 		price: z.number().openapi({ example: 5.5 }),
 	})
 	.openapi('UpdateDailyMealMenuPriceInput');
@@ -160,16 +163,16 @@ export type UpdateDailyMealMenuPriceInput = z.infer<typeof UpdateDailyMealMenuPr
 
 export const GetMenuCategoryByIdParamsSchema = z
 	.object({
-		menu_category_id: z.string().uuid().openapi({ example: 'bb0e8400-e29b-41d4-a716-446655440000' }),
+		menu_category_id: UUID,
 	})
 	.openapi('GetMenuCategoryByIdParams');
 export type GetMenuCategoryByIdParams = z.infer<typeof GetMenuCategoryByIdParamsSchema>;
 
 export const UpdateMenuCategoriesWithNewPriceInputSchema = z
 	.object({
-		dailyMealCategoryId: z.string().uuid().openapi({ example: 'zz0e8400-e29b-41d4-a716-446655440000' }),
-		priceId: z.string().uuid().openapi({ example: 'pp0e8400-e29b-41d4-a716-446655440000' }),
-		validFrom: z.string().datetime().openapi({ example: '2025-01-01T00:00:00Z' }),
+		dailyMealCategoryId: UUID,
+		priceId: UUID,
+		validFrom: Timestamp,
 	})
 	.openapi('UpdateMenuCategoriesWithNewPriceInput');
 export type UpdateMenuCategoriesWithNewPriceInput = z.infer<typeof UpdateMenuCategoriesWithNewPriceInputSchema>;
@@ -178,17 +181,17 @@ export type UpdateMenuCategoriesWithNewPriceInput = z.infer<typeof UpdateMenuCat
 // =======================
 export const CategoryBaseSchema = z
 	.object({
-		categories_id: z.string().uuid(),
+		categories_id: UUID,
 		name: z.string(),
 		description: z.string().nullable().optional(),
 		tag: z.string(),
-		icon_file_id: z.string().uuid().nullable().optional(),
+		icon_file_id: UUID.nullable().optional(),
 		icon: z.any().nullable().optional(),
 		category_type: z.string(),
-		parent_categories_id: z.string().uuid().nullable().optional(),
+		parent_categories_id: UUID.nullable().optional(),
 		parent_category: z.any().nullable().optional(),
 		sub_categories: z.array(z.any()).nullable().optional(),
-		translatable_id: z.string().uuid(),
+		translatable_id: UUID,
 		translatable: z.any().nullable().optional(),
 		words: z.array(z.any()).nullable().optional(),
 		created_at: z.string().datetime(),
@@ -205,8 +208,8 @@ export type CategoryBase = z.infer<typeof CategoryBaseSchema>;
 // =======================
 export const MenuCategoryCategorySchema = z
 	.object({
-		menu_categories_id: z.string().uuid(),
-		categories_id: z.string().uuid(),
+		menu_categories_id: UUID,
+		categories_id: UUID,
 		category: CategoryBaseSchema.nullable().optional(),
 	})
 	.openapi('MenuCategoryCategory');
