@@ -271,13 +271,8 @@ async function refreshToken(req: ValidatedRequest<RefreshTokenRequest>, res: Res
 				const refresh_token = generateRefreshToken({
 					user_id: decoded.user.user_id,
 				});
-				let userDb = await UserDao.getUserById(decoded.user.user_id, {
-					include: {
-						addresses: true,
-						user_roles: true,
-					},
-				});
-				delete (userDb as any)['password'];
+				let userDb = await UserDao.getUserAdressAndRolesById(decoded.user.user_id);
+
 				let user = {
 					...userDb,
 					access_token,
@@ -772,7 +767,7 @@ async function registerMerchantService(req: ValidatedRequest<RegisterMerchantSer
 								await tx.business_details.update({
 									where: { business_id: business.business_id },
 									data: {
-										logo: { connect: { logo_id: fileData.file_id } },
+										logo: { connect: { file_id: fileData.file_id } },
 									},
 								});
 								const key = S3Helper.getFileKey(fileData.file_id, (file as any).mime_type);
@@ -800,7 +795,7 @@ async function registerMerchantService(req: ValidatedRequest<RegisterMerchantSer
 								await tx.business_details.update({
 									where: { business_id: business.business_id },
 									data: {
-										banner: { connect: { banner_id: fileData.file_id } },
+										banner: { connect: { file_id: fileData.file_id } },
 									},
 								});
 								const key = S3Helper.getFileKey(fileData.file_id, (file as any).mime_type);
