@@ -727,6 +727,80 @@ const deleteDocument = async (documentId: string): Promise<DocumentResponse> => 
 		throw new Error(error instanceof Error ? error.message : 'Failed to delete document');
 	}
 };
+
+/**
+ * Delete all documents and files linked via a specific field and id.
+ *
+ * @param {string} field - Field name on documents (e.g., 'user_id').
+ * @param {string} id - The identifier value to match.
+ * @returns {Promise<DocumentResponse>} Resolves when deletion completes.
+ */
+const deleteDocumentsAndFiles = async (field: string, id: string): Promise<DocumentResponse> => {
+	try {
+		type DocWithFiles = { document_id: string; files?: { file_id: string }[] };
+
+		const documents: DocWithFiles[] = await prisma.documents.findMany({
+			where: { [field]: id },
+			select: {
+				document_id: true,
+				files: {
+					select: { file_id: true },
+				},
+			},
+		});
+		const documentIds = documents.map((d) => d.document_id);
+		await prisma.files.deleteMany({
+			where: {
+				document_id: { in: documentIds }, // array of ids
+			},
+		});
+
+		const row = await prisma.documents.deleteMany({
+			where: {
+				[field]: id,
+			},
+		});
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map deleted document to DTO: ' + (e?.message ?? String(e)));
+		}
+	} catch (error: unknown) {
+		console.error(`Error deleting documents and files for ${field}:`, id, error);
+		throw new Error(error instanceof Error ? error.message : 'Failed to delete document');
+	}
+};
+
+/**
+ * Get the most recently created document of a given type for a business.
+ *
+ * @param {string} type - Document type.
+ * @param {string} business_id - Business ID.
+ * @returns {Promise<DocumentResponse|null>} Latest matching document or null.
+ */
+async function getLastDocumentByTypeAndBusinessId(type: string, business_id: string): Promise<DocumentResponse> {
+	try {
+		const row = await prisma.documents.findFirst({
+			where: {
+				document_type: type,
+				business_id: business_id,
+			},
+			orderBy: {
+				created_at: 'desc',
+			},
+			include: documentsDefaultInclude,
+		});
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map document to DTO: ' + (e?.message ?? String(e)));
+		}
+	} catch (error) {
+		console.error('Error getting last document by type and business ID:', error);
+		throw new Error(error instanceof Error ? error.message : 'Failed to get last document by type and business ID');
+	}
+}
+
 /**
  * Find a document by associated file ID.
  *
@@ -771,6 +845,63 @@ export async function updateDocumentByDocumentId(
 		throw new Error(error instanceof Error ? error.message : 'Failed to update document by document ID');
 	}
 }
+
+/**
+ * Delete all documents and files by exact document_id and document_type.
+ *
+ * @param {string} documentType - Document type.
+ * @param {string} documentId - Document ID.
+ * @returns {Promise<DocumentResponse>} Resolves when deletion completes.
+ */
+const deleteDocumentsAndFilesByDocumentId = async (
+	documentType: string,
+	documentId: string
+): Promise<DocumentResponse> => {
+	try {
+		type DocWithFiles = { document_id: string; files?: { file_id: string }[] };
+
+		const documents: DocWithFiles[] = await prisma.documents.findMany({
+			where: {
+				document_id: documentId,
+				document_type: documentType,
+			},
+			select: {
+				document_id: true,
+				files: {
+					select: { file_id: true },
+				},
+			},
+		});
+
+		const documentIds = documents.map((d) => d.document_id);
+		if (documentIds.length > 0) {
+			await prisma.files.deleteMany({
+				where: {
+					document_id: { in: documentIds },
+				},
+			});
+		}
+
+		const row = await prisma.documents.deleteMany({
+			where: {
+				document_id: documentId,
+				document_type: documentType,
+			},
+		});
+		try {
+			return toDocumentResponse(row as DocumentWithIncludesPrisma);
+		} catch (e: any) {
+			throw new Error('Failed to map deleted document to DTO: ' + (e?.message ?? String(e)));
+		}
+	} catch (error: unknown) {
+		console.error(
+			`Error deleting documents and files for documentType: ${documentType} and documentId: ${documentId}`,
+			error
+		);
+		throw new Error(error instanceof Error ? error.message : 'Failed to delete document');
+	}
+};
+
 export { getDocuments };
 export { getDocumentById };
 export { getDocumentsForBusiness };
@@ -784,6 +915,7 @@ export { getDocumentsForUserByDocumentType };
 export { getDocumentsForDriverByDocumentType };
 export { getDocumentsForDeliveryPersonByDocumentType };
 export { getDocumentsForVehicleByDocumentType };
+export { getLastDocumentByTypeAndBusinessId };
 export { findDocumentByTypeAndDriverId };
 export { createDocument };
 export { createUserDocument };
@@ -799,6 +931,8 @@ export { linkDocumentToVehicle };
 export { linkDocumentToDriver };
 export { linkDocumentToBusiness };
 export { deleteDocument };
+export { deleteDocumentsAndFiles };
+export { deleteDocumentsAndFilesByDocumentId };
 
 export default {
 	getDocuments,
@@ -814,6 +948,7 @@ export default {
 	getDocumentsForDriverByDocumentType,
 	getDocumentsForDeliveryPersonByDocumentType,
 	getDocumentsForVehicleByDocumentType,
+	getLastDocumentByTypeAndBusinessId,
 	findDocumentByTypeAndDriverId,
 	createDocument,
 	createUserDocument,
@@ -829,4 +964,6 @@ export default {
 	linkDocumentToDriver,
 	linkDocumentToBusiness,
 	deleteDocument,
+	deleteDocumentsAndFiles,
+	deleteDocumentsAndFilesByDocumentId,
 };

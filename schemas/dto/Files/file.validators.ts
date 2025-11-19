@@ -2,8 +2,6 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { FILE_TYPE } from '@prisma/client';
 
-import { UUID } from '../../primitives.js';
-
 extendZodWithOpenApi(z);
 
 // =======================

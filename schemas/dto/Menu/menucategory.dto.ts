@@ -12,6 +12,7 @@ export const MenuCategoryDataSchema = z
 			.openapi({ example: { en: 'Starters', sl: 'Predjedi' } }),
 		description_translatable_id: z.string().uuid().optional(),
 		description: z.record(z.string()).optional(),
+		category_ids: z.array(z.string().uuid()),
 		categories: z
 			.array(z.string())
 			.optional()
