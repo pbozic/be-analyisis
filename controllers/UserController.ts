@@ -19,7 +19,14 @@ import CashbackDao from '../dao/Cashback.ts';
 import TableReservationDao from '../dao/TableReservation.ts';
 import SMS from '../lib/SMS.js';
 import stripe from '../lib/stripe.js';
-import { DELIVERY_ORDER_STATUS, CREDITS, CASHBACK_TYPE, ORDER_TYPE, MAX_WALLET_FUNDS } from '../lib/constants.js';
+import {
+	VERIFICATION_TOKEN_EXPIRATION_MINUTES,
+	DELIVERY_ORDER_STATUS,
+	CREDITS,
+	CASHBACK_TYPE,
+	ORDER_TYPE,
+	MAX_WALLET_FUNDS,
+} from '../lib/constants.js';
 import {
 	AcceptFamilyInvitationRequest,
 	AddAddressRequest,
@@ -584,8 +591,19 @@ async function verifyMe(req: ValidatedRequest<VerifyPhoneRequest>, res: Response
 			return;
 		}
 		const token = await TokenDao.getActiveSMSToken(user);
+
 		console.info(token);
-		if (token && token.token_id && token.token === req.body.token && token.user_id === req.user.user_id) {
+		if (
+			token &&
+			token.created_at &&
+			token.token_id &&
+			token.token === req.body.token &&
+			token.user_id === req.user.user_id
+		) {
+			if (Date.now() > new Date(token.created_at).getTime() + 3600000 * VERIFICATION_TOKEN_EXPIRATION_MINUTES) {
+				res.status(400).json({ error: 'Token has expired' });
+				return;
+			}
 			await TokenDao.updateToken(token.token_id, { active: false });
 			await UserDao.updateUser(req.user.user_id, { phone_verified: true });
 			res.status(200).json({ message: 'Phone verified successfully.' });
