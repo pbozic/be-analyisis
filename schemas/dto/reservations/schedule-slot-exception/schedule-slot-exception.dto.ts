@@ -3,6 +3,7 @@ import { SCHEDULE_SLOT_EXCEPTION_TYPE } from '@prisma/client';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID, Timestamp } from '../../../primitives';
+import { CreateBookingSlotRequestSchema } from '../booking-slot/booking-slot.dto.js';
 import { ScheduleSlotRefSchema } from '../schedule-slot/schedule-slot.dto.js';
 
 extendZodWithOpenApi(z);
@@ -47,7 +48,7 @@ export const CreateScheduleSlotExceptionRequestSchema = z
 		date: Timestamp.openapi({ example: '2025-11-05' }),
 		start_time: Timestamp.openapi({ example: '2025-11-05T09:00:00Z' }),
 		end_time: Timestamp.openapi({ example: '2025-11-05T12:00:00Z' }),
-		reason: z.string().optional().openapi({ example: 'Sick leave' }),
+		reason: z.string().nullable().optional().openapi({ example: 'Sick leave' }),
 		type: z.nativeEnum(SCHEDULE_SLOT_EXCEPTION_TYPE).openapi({
 			example: 'vacation',
 			description: 'Exception type: vacation, location_closed, other, health, break',
@@ -63,6 +64,37 @@ export const UpdateScheduleSlotExceptionRequestSchema = CreateScheduleSlotExcept
 	description: 'Request schema for updating an existing schedule slot exception',
 });
 
+// ===== EXCEPTION WITH OPTIONAL ID (for split operations) =====
+export const ScheduleSlotExceptionWithOptionalIdSchema = z
+	.object({
+		schedule_slot_exception_id: UUID.optional(),
+		schedule_slot_id: UUID,
+		date: Timestamp,
+		start_time: Timestamp,
+		end_time: Timestamp,
+		reason: z.string().nullable().optional(),
+		type: z.nativeEnum(SCHEDULE_SLOT_EXCEPTION_TYPE),
+	})
+	.openapi({
+		title: 'ScheduleSlotExceptionWithOptionalId',
+		description: 'Exception schema with optional exception ID for create/update operations',
+	});
+
+export const ScheduleSlotExceptionWithRequiredIdSchema = z
+	.object({
+		schedule_slot_exception_id: UUID,
+		schedule_slot_id: UUID,
+		date: Timestamp,
+		start_time: Timestamp,
+		end_time: Timestamp,
+		reason: z.string().nullable().optional(),
+		type: z.nativeEnum(SCHEDULE_SLOT_EXCEPTION_TYPE),
+	})
+	.openapi({
+		title: 'ScheduleSlotExceptionWithRequiredId',
+		description: 'Exception schema with required exception ID for update operations',
+	});
+
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const ScheduleSlotExceptionResponseSchema = ScheduleSlotExceptionBaseSchema.extend({
@@ -73,8 +105,6 @@ export const ScheduleSlotExceptionResponseSchema = ScheduleSlotExceptionBaseSche
 });
 
 // ===== COMPLEX OPERATION SCHEMAS (imported from booking-slot for complex operations) =====
-import { CreateBookingSlotRequestSchema } from '../booking-slot/booking-slot.dto.js';
-
 // Extended schemas for complex operations that allow optional IDs
 export const ScheduleSlotExceptionWithOptionalIdsSchema = CreateScheduleSlotExceptionRequestSchema.extend({
 	schedule_slot_id: UUID.optional(),
@@ -96,7 +126,7 @@ export const BookingSlotWithOptionalIdsSchema = CreateBookingSlotRequestSchema.e
 export const CreateOrUpdateExceptionsRequestSchema = z
 	.object({
 		exceptions: z.object({
-			changes: z.array(ScheduleSlotExceptionWithOptionalIdsSchema),
+			changes: z.array(ScheduleSlotExceptionWithOptionalIdSchema),
 			removed: z.array(
 				z.object({
 					schedule_slot_exception_id: UUID,
@@ -112,7 +142,7 @@ export const CreateOrUpdateExceptionsRequestSchema = z
 export const CreateOrUpdateExceptionsAndBookingsRequestSchema = z
 	.object({
 		exceptions: z.object({
-			changes: z.array(ScheduleSlotExceptionWithOptionalIdsSchema),
+			changes: z.array(ScheduleSlotExceptionWithOptionalIdSchema),
 			removed: z.array(
 				z.object({
 					schedule_slot_exception_id: UUID,
@@ -120,7 +150,14 @@ export const CreateOrUpdateExceptionsAndBookingsRequestSchema = z
 			),
 		}),
 		bookingSlots: z.object({
-			newOrChanged: z.array(BookingSlotWithOptionalIdsSchema),
+			newOrChanged: z.array(
+				z.object({
+					schedule_slot_id: UUID,
+					start_time: Timestamp,
+					end_time: Timestamp,
+					booking_slot_id: UUID.optional(),
+				})
+			),
 			removed: z.array(
 				z.object({
 					booking_slot_id: UUID,
@@ -145,6 +182,8 @@ export type CreateOrUpdateExceptionsRequest = z.infer<typeof CreateOrUpdateExcep
 export type CreateOrUpdateExceptionsAndBookingsRequest = z.infer<
 	typeof CreateOrUpdateExceptionsAndBookingsRequestSchema
 >;
+export type ScheduleSlotExceptionWithOptionalId = z.infer<typeof ScheduleSlotExceptionWithOptionalIdSchema>;
+export type ScheduleSlotExceptionWithRequiredId = z.infer<typeof ScheduleSlotExceptionWithRequiredIdSchema>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
@@ -157,4 +196,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('BookingSlotWithOptionalIds', BookingSlotWithOptionalIdsSchema);
 	registry.register('CreateOrUpdateExceptionsRequest', CreateOrUpdateExceptionsRequestSchema);
 	registry.register('CreateOrUpdateExceptionsAndBookingsRequest', CreateOrUpdateExceptionsAndBookingsRequestSchema);
+	registry.register('ScheduleSlotExceptionWithOptionalId', ScheduleSlotExceptionWithOptionalIdSchema);
+	registry.register('ScheduleSlotExceptionWithRequiredId', ScheduleSlotExceptionWithRequiredIdSchema);
 }

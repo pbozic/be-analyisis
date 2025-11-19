@@ -48,6 +48,31 @@ export const UpdateBookingSlotRequestSchema = CreateBookingSlotRequestSchema.par
 	description: 'Request schema for updating an existing booking slot',
 });
 
+// ===== BOOKING SLOT WITH OPTIONAL ID (for split operations) =====
+export const BookingSlotWithOptionalIdSchema = z
+	.object({
+		booking_slot_id: UUID.optional(),
+		schedule_slot_id: UUID,
+		start_time: Timestamp,
+		end_time: Timestamp,
+	})
+	.openapi({
+		title: 'BookingSlotWithOptionalId',
+		description: 'Booking slot schema with optional ID for create/update operations',
+	});
+
+export const BookingSlotWithRequiredIdSchema = z
+	.object({
+		booking_slot_id: UUID,
+		schedule_slot_id: UUID,
+		start_time: Timestamp,
+		end_time: Timestamp,
+	})
+	.openapi({
+		title: 'BookingSlotWithRequiredId',
+		description: 'Booking slot schema with required ID for update operations',
+	});
+
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const BookingSlotResponseSchema = BookingSlotBaseSchema.extend({
@@ -63,6 +88,8 @@ export type BookingSlotRef = z.infer<typeof BookingSlotRefSchema>;
 export type CreateBookingSlotRequest = z.infer<typeof CreateBookingSlotRequestSchema>;
 export type UpdateBookingSlotRequest = z.infer<typeof UpdateBookingSlotRequestSchema>;
 export type BookingSlotResponse = z.infer<typeof BookingSlotResponseSchema>;
+export type BookingSlotWithOptionalId = z.infer<typeof BookingSlotWithOptionalIdSchema>;
+export type BookingSlotWithRequiredId = z.infer<typeof BookingSlotWithRequiredIdSchema>;
 
 // ===== REGISTER SCHEMAS =====
 export function registerSchemas(registry: OpenAPIRegistry) {
@@ -71,4 +98,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateBookingSlotRequest', CreateBookingSlotRequestSchema);
 	registry.register('UpdateBookingSlotRequest', UpdateBookingSlotRequestSchema);
 	registry.register('BookingSlotResponse', BookingSlotResponseSchema);
+	registry.register('BookingSlotWithOptionalId', BookingSlotWithOptionalIdSchema);
+	registry.register('BookingSlotWithRequiredId', BookingSlotWithRequiredIdSchema);
 }

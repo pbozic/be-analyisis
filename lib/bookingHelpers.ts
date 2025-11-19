@@ -5,8 +5,16 @@ import { z } from 'zod';
 import prisma from '../prisma/prisma';
 import { ServiceBase } from '../schemas/dto/reservations/service/service.dto';
 import { EmployeeBase } from '../schemas/dto/reservations/employee/employee.dto';
-import { BookingSlotBase } from '../schemas/dto/reservations/booking-slot/booking-slot.dto';
-import { ScheduleSlotExceptionBase } from '../schemas/dto/reservations/schedule-slot-exception/schedule-slot-exception.dto';
+import {
+	BookingSlotBase,
+	BookingSlotWithOptionalId,
+	BookingSlotWithRequiredId,
+} from '../schemas/dto/reservations/booking-slot/booking-slot.dto';
+import {
+	ScheduleSlotExceptionBase,
+	ScheduleSlotExceptionWithOptionalId,
+	ScheduleSlotExceptionWithRequiredId,
+} from '../schemas/dto/reservations/schedule-slot-exception/schedule-slot-exception.dto';
 import {
 	BookingBase,
 	CreateBookingRequest,
@@ -215,22 +223,22 @@ export async function findSlots({
 
 /**
  * Splits booking slots into two arrays: those with a booking ID and those without.
- * @param {BookingSlotBase[]} slots - The array of booking slots to split.
- * @returns {{ withBookingId: BookingSlotWithId[], withoutBookingId: BookingSlotWithoutId[] }}
+ * @param {BookingSlotWithOptionalId[]} slots - The array of booking slots to split (with optional booking_slot_id).
+ * @returns {{ withBookingId: BookingSlotWithRequiredId[], withoutBookingId: BookingSlotWithOptionalId[] }}
  * @description This function iterates through the provided booking slots and separates them into two categories:
  * - `withBookingId`: Contains booking slots that have a `booking_slot_id`.
  * - `withoutBookingId`: Contains booking slots that do not have a `booking_slot_id
  * @returns {Object} An object containing two arrays:
  * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
  */
-export function splitByBookingId(slots: BookingSlotBase[]) {
+export function splitByBookingId(slots: BookingSlotWithOptionalId[]) {
 	try {
-		const withBookingId = [];
-		const withoutBookingId = [];
+		const withBookingId: BookingSlotWithRequiredId[] = [];
+		const withoutBookingId: BookingSlotWithOptionalId[] = [];
 
 		for (const slot of slots) {
 			if (slot?.booking_slot_id) {
-				withBookingId.push(slot);
+				withBookingId.push(slot as BookingSlotWithRequiredId);
 			} else {
 				withoutBookingId.push(slot);
 			}
@@ -246,22 +254,22 @@ export function splitByBookingId(slots: BookingSlotBase[]) {
 
 /**
  * Splits exceptions into two arrays: those with a exception ID and those without.
- * @param {ScheduleSlotExceptionBase[]} slots - The array of exceptions to split.
- * @returns {{ withExceptionId: ExceptionWithId[], withoutExceptionId: ExceptionWithoutId[] }}
+ * @param {ScheduleSlotExceptionWithOptionalId[]} slots - The array of exceptions to split (with optional exception_id).
+ * @returns {{ withExceptionId: ScheduleSlotExceptionWithRequiredId[], withoutExceptionId: ScheduleSlotExceptionWithOptionalId[] }}
  * @description This function takes an array of exceptions and splits it into two arrays:
  * - `withExceptionId`: Contains exceptions that have a `schedule_slot_exception_id`.
  * - `withoutExceptionId`: Contains exceptions that do not have a `schedule_slot_exception_id
  * @returns {Object} An object containing two arrays:
  * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
  */
-export function splitByExceptionsId(slots: ScheduleSlotExceptionBase[]) {
+export function splitByExceptionsId(slots: ScheduleSlotExceptionWithOptionalId[]) {
 	try {
-		const withExceptionId = [];
-		const withoutExceptionId = [];
+		const withExceptionId: ScheduleSlotExceptionWithRequiredId[] = [];
+		const withoutExceptionId: ScheduleSlotExceptionWithOptionalId[] = [];
 
 		for (const slot of slots) {
 			if (slot?.schedule_slot_exception_id) {
-				withExceptionId.push(slot);
+				withExceptionId.push(slot as ScheduleSlotExceptionWithRequiredId);
 			} else {
 				withoutExceptionId.push(slot);
 			}
@@ -354,7 +362,7 @@ export async function isEmployeeScheduledForWindow(
 		end_time?: string | Date | null;
 	}
 ): Promise<boolean> {
-	const { reservation_module_id, employee_id, location_id, start_time, end_time } = args;
+	const { reservation_module_id, employee_id, start_time, end_time } = args;
 	if (!employee_id || !start_time || !end_time) return true;
 
 	const st = moment.utc(start_time);
