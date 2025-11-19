@@ -1,5 +1,7 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
+import { registerSchemas as registerPromoAnalyticsSchemas } from './promo-analytics.dto.js';
+
 // === PromoAnalytics DTOs (Response) ===
 export {
 	PromoAnalyticsBaseSchema,

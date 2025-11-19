@@ -1,10 +1,10 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 // === Address DTOs ===
-export * from './address.js';
+export * from './address.ts';
 
 // === UserAddress DTOs ===
-export * from './userAddress.js';
+export * from './userAddress.ts';
 
 export * from './Address.dao.dto.ts';
 export * from './userAddress.ts';

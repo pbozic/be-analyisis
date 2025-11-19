@@ -16,7 +16,7 @@ export function toMenuCategoryDetail(payload: MenuCategoryWithIncludesPrisma): M
 		menu_categories_categories: payload.menu_categories_categories as unknown as MenuCategoryCategory[] | undefined,
 		menu_items: Array.isArray(payload.menu_items)
 			? payload.menu_items.map((mi) => toMenuItemResponse(mi as Parameters<typeof toMenuItemResponse>[0]))
-			: undefined,
+			: [],
 	};
 }
 

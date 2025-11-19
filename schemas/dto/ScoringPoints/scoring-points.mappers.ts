@@ -17,11 +17,16 @@ function toIso(d: unknown): string | undefined | null {
 export function toScoringPointsDetail(
 	payload: ScoringPointsWithIncludesPrisma | null | undefined
 ): ScoringPointsDetail {
+	if (!payload) {
+		throw new Error('Scoring points payload is missing');
+	}
 	const p = payload;
 	return ScoringPointsDetailSchema.parse({
 		scoring_points_id: p.scoring_points_id,
-		business_id: p.business_id,
 		user_id: p.user_id ?? null,
+		stores_module_id: p.stores_id ?? null,
+		food_drinks_module_id: p.food_drinks_id ?? null,
+		driver_id: p.driver_id ?? null,
 		delivery_order_id: p.delivery_order_id ?? null,
 		taxi_order_id: p.taxi_order_id ?? null,
 		points: p.points,
@@ -39,7 +44,6 @@ export function toScoringPointsDetail(
 					date_of_birth: p.user.date_of_birth ? new Date(p.user.date_of_birth).toISOString() : undefined,
 				}
 			: undefined,
-		business: p.business_id ? undefined : undefined,
 		delivery_order: p.delivery_order ? { order_id: p.delivery_order.order_id } : null,
 		taxi_order: p.taxi_order ? { order_id: p.taxi_order.order_id } : null,
 		late_events: Array.isArray(p.late_events)

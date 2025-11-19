@@ -3,8 +3,8 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { ADDRESS_TYPE } from '@prisma/client';
 
-import { UUID } from '../../primitives.js';
-import { AddressRefSchema } from './address.js';
+import { UUID } from '../../primitives.ts';
+import { AddressRefSchema } from './address.ts';
 extendZodWithOpenApi(z);
 
 // === UserAddress Base Schema (scalars only, no relations) ===
