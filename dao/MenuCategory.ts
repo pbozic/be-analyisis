@@ -3,9 +3,9 @@ import type {
 	CreateMenuCategoryWithCategoriesInput,
 	MenuCategoryCategory,
 	MenuCategory,
+	UpdateMenuCategoryInput,
 } from '../schemas/dto/Menu/menucategory.dto.js';
 import type { MenuCategoryRef, MenuItemDetail, MenuBase } from '../schemas/dto/Menu/menu.dto.js';
-import type { DailyMealCategoryPriceBase } from '../schemas/dto/DailyMealCategory/dailyMealCategory.js';
 import menuCategoriesDefaultInclude, { MenuCategoryWithIncludesPrisma } from '../prisma/includes/menuCategories.js';
 import { toMenuCategoryDetail, toMenuCategoryList } from '../schemas/dto/Menu/menuCategory.mappers.js';
 
@@ -31,7 +31,7 @@ export interface MenuCategoryDetail extends MenuCategoryRef {
 	created_at?: Date | null;
 	updated_at?: Date | null;
 	menu_categories_categories?: MenuCategoryCategory[];
-	menu_items?: MenuItemDetail[];
+	menu_items: MenuItemDetail[];
 	daily_meal_category_price?: {
 		daily_meal_category_price_id: string;
 		price?: number | null;
@@ -233,12 +233,27 @@ export const getMenuCategoriesByMenuId = async (menu_id: string): Promise<MenuCa
  * @param stores_id - Stores module ID.
  * @returns Array of menu categories.
  */
-export const getMenuCategoriesByBusinessId = async (data: {
-	food_drinks_id: string;
-	stores_id: string;
-}): Promise<MenuCategoryDetail[]> => {
-	const { food_drinks_id, stores_id } = data;
+export const getMenuCategoriesByBusinessId = async (business_id: string): Promise<MenuCategoryDetail[]> => {
 	try {
+		const ids = await prisma.business.findFirst({
+			where: {
+				business_id: business_id,
+			},
+			select: {
+				food_drinks_module: {
+					select: {
+						food_drinks_id: true,
+					},
+				},
+				stores_module: {
+					select: {
+						stores_id: true,
+					},
+				},
+			},
+		});
+		const stores_id = ids?.stores_module?.stores_id;
+		const food_drinks_id = ids?.food_drinks_module?.food_drinks_id;
 		const rows = await prisma.menu_categories.findMany({
 			where: { ...(stores_id ? { stores_id } : {}), ...(food_drinks_id ? { food_drinks_id } : {}) },
 			orderBy: { menu_order_index: 'asc' },
@@ -283,7 +298,10 @@ export const deleteMenuCategory = async (menu_category_id: string): Promise<Menu
  * @param data - Data to update.
  * @returns Updated menu category.
  */
-export const updateMenuCategory = async (menu_category_id: string, data: MenuCategory): Promise<MenuCategoryDetail> => {
+export const updateMenuCategory = async ({
+	menu_category_id,
+	data,
+}: UpdateMenuCategoryInput): Promise<MenuCategoryDetail> => {
 	try {
 		const updated = await prisma.menu_categories.update({
 			where: { menu_category_id },
@@ -354,7 +372,7 @@ export const addCategoryToMenu = async (menu_id: string, menu_category_id: strin
  * @param menu_category_id - Menu category ID to remove.
  * @returns Deleted menu category.
  */
-export const removeCategoryFromMenu = async (menu_id: string, category_id: string): Promise<MenuCategoryDetail> => {
+export const removeCategoryFromMenu = async (category_id: string): Promise<MenuCategoryDetail> => {
 	try {
 		return await deleteMenuCategory(category_id);
 	} catch (error: unknown) {
@@ -400,39 +418,17 @@ export const addCategoryToMenuCategory = async (
  */
 export const removeCategoryFromMenuCategory = async (
 	menu_category_id: string,
-	category_id: string
+	category_id: string[]
 ): Promise<MenuCategoryCategory> => {
 	try {
 		return await prisma.menu_categories_categories.deleteMany({
 			where: {
 				menu_category_id,
-				categories_id: category_id,
+				categories_id: { in: category_id },
 			},
 		});
 	} catch (error) {
 		console.error('Error removing category from menu category:', error);
-		throw error;
-	}
-};
-
-/**
- * Update daily meal menu price.
- *
- * @param menu_category_id - Menu category ID.
- * @param price - New price.
- * @returns Updated daily meal category price.
- */
-export const updateDailyMealMenuPrice = async (
-	menu_category_id: string,
-	price: number
-): Promise<DailyMealCategoryPriceBase[]> => {
-	try {
-		return await prisma.daily_meal_category_prices.updateMany({
-			where: { menu_category_id },
-			data: { price },
-		});
-	} catch (error) {
-		console.error('Error updating daily meal menu price:', error);
 		throw error;
 	}
 };
@@ -486,6 +482,26 @@ export const updateMenuCategoriesWithNewPrice = async (
 	} catch (error) {
 		console.error('Error updating menu categories with new price:', error);
 		throw error;
+	}
+};
+
+/**
+ * Update the price on a menu category (daily meal context).
+ *
+ * @param {string} menu_category_id - Menu category ID.
+ * @param {number} price - New price value.
+ * @returns {Promise<MenuCategory>} The updated menu category record.
+ * @prisma_model menu_categories
+ */
+export const updateDailyMealMenuPrice = async (menu_category_id: string, price: number): Promise<MenuCategory> => {
+	try {
+		return await prisma.menu_categories.update({
+			where: { menu_category_id },
+			data: { price },
+		});
+	} catch (error: unknown) {
+		console.error('Error updating daily meal menu price:', error);
+		throw new Error(getErrorMessage(error));
 	}
 };
 

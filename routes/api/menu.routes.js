@@ -2,6 +2,7 @@ import express from 'express';
 
 import MenuController from '../../controllers/MenuController.ts';
 import { validate } from '../../middleware/zod.js';
+import { CreateDailyMealsMenuSchema } from '../../schemas/dto/Menu/menu.validators.js';
 import {
 	CreateMenuSchema,
 	CreateDailyMealMenuSchema,
@@ -84,7 +85,7 @@ router.patch('/menu-categories/remove', validate(RemoveCategoryFromMenuInputSche
  *
  */
 router.get('/daily-meals-menu/:business_id', MenuController.getLastUploadedDailyMealsMenu);
-router.post('/daily-meals-menu/create', MenuController.createDailyMealsMenu);
+router.post('/daily-meals-menu/create', validate(CreateDailyMealsMenuSchema), MenuController.createDailyMealsMenu);
 // Menu Item routes
 router.post('/menu-items/create', validate(CreateMenuItemSchema), MenuController.createMenuItem);
 router.patch('/menu-items/add-order', validate(AddMenuItemIdToOrderInputSchema), MenuController.addMenuItemIdToOrder);

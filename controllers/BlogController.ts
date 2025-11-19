@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
+import { FILE_TYPE } from '@prisma/client';
 
 import { ValidatedRequest } from '../types/validatedRequest.ts';
 import type { CreateBlogPostInput, UpdateBlogPostInput, SearchBlogPostsInput } from '../types/blog/BlogPost.ts';
 import { CreateBlogCategoryInput, UpdateBlogCategoryInput } from '../types/blog/BlogCategory.ts';
 import { CreateBlogTagInput, UpdateBlogTagInput } from '../types/blog/BlogTag.ts';
-import { createFileHelper } from './FilesController.js';
 import BlogDao from '../dao/Blog.ts';
 import FileDao from '../dao/File.js';
-
+import { createFileHelper } from '../lib/s3.js';
 /**
  * POST /blog/search
  * @tag Blog
@@ -498,9 +498,13 @@ export async function updateBlogTag(
 export async function createBlogImageByUrl(req: ValidatedRequest<{ url: string }>, res: Response): Promise<void> {
 	try {
 		const { url } = req.body;
-
 		if (!url) {
 			res.status(400).json({ message: 'Image URL is required' });
+			return;
+		}
+		const userId = req.user?.user_id;
+		if (!userId) {
+			res.status(401).json({ message: 'Unauthorized' });
 			return;
 		}
 
@@ -518,8 +522,8 @@ export async function createBlogImageByUrl(req: ValidatedRequest<{ url: string }
 
 		const base64 = Buffer.from(response.data).toString('base64');
 
-		const newImage = await createFileHelper(req.user?.user_id || 'system', {
-			file_type: 'image',
+		const newImage = await createFileHelper(userId, {
+			file_type: FILE_TYPE.IMAGE,
 			mime_type,
 			base64,
 			public: true,
@@ -549,6 +553,11 @@ export async function createBlogImageByUrl(req: ValidatedRequest<{ url: string }
  */
 export async function createBlogImageByFile(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
+		const userId = req.user?.user_id;
+		if (!userId) {
+			res.status(401).json({ message: 'Unauthorized' });
+			return;
+		}
 		console.log('Received file upload request:', req.file);
 		const { file } = req;
 		if (!file) {
@@ -558,8 +567,8 @@ export async function createBlogImageByFile(req: ValidatedRequest, res: Response
 		const base64 = file.buffer.toString('base64');
 		const mime_type = file.mimetype;
 		console.log('File MIME type:', mime_type);
-		const newImage = await createFileHelper(req.user?.user_id, {
-			file_type: 'IMAGE',
+		const newImage = await createFileHelper(userId, {
+			file_type: FILE_TYPE.IMAGE,
 			mime_type,
 			base64,
 			public: true,

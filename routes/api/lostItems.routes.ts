@@ -2,7 +2,7 @@ import express from 'express';
 
 import { validate } from '../../middleware/zod.js';
 import LostItemsController from '../../controllers/LostItemsController.js';
-import { ReportFoundItemRequestSchema } from '../../schemas/dto/LostItems/lostitem.dto.ts';
+import { ReportFoundItemRequestSchema } from '../../schemas/dto/LostItems/lostitem.validators.js';
 
 const router = express.Router();
 router.get('/', LostItemsController.getAllLostItems);

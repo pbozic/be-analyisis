@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { DOCUMENT_TYPE } from '@prisma/client';
 
-import { CreateFileDataSchema } from '../Files/file.dto.js';
+import { CreateFileDataSchema } from '../Files';
 
 extendZodWithOpenApi(z);
 

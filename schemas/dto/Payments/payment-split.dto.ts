@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { PaymentRefSchema } from './payment.dto.ts';
 import { UUID, Timestamp } from '../../primitives.js';
 
 extendZodWithOpenApi(z);
@@ -35,27 +34,15 @@ export type PaymentSplitRef = z.infer<typeof PaymentSplitRefSchema>;
 // =======================
 
 export const PaymentSplitDetailSchema = PaymentSplitBaseSchema.extend({
-	payment: PaymentRefSchema.optional(),
+	payment: z
+		.object({
+			payment_id: UUID,
+			payment_method: z.string(),
+		})
+		.optional(),
 }).openapi('PaymentSplitDetail');
 export type PaymentSplitDetail = z.infer<typeof PaymentSplitDetailSchema>;
 
-// =======================
-// Mappers
-// =======================
-
-type PrismaPayment = { payment_id: string };
-
-type PrismaPaymentSplit = z.input<typeof PaymentSplitBaseSchema> & {
-	payment?: PrismaPayment | null;
-};
-
-export function toPaymentSplitDetail(row: unknown): PaymentSplitDetail {
-	const r = row as PrismaPaymentSplit;
-	return PaymentSplitDetailSchema.parse({
-		...PaymentSplitBaseSchema.parse(r),
-		payment: r.payment ? PaymentRefSchema.parse(r.payment) : undefined,
-	});
-}
 // === OpenAPI Registry ===
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('PaymentSplitBase', PaymentSplitBaseSchema);

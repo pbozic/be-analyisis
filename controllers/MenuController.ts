@@ -1,6 +1,5 @@
 import { MODULE } from '@prisma/client';
 import { Response } from 'express';
-import { z } from 'zod';
 
 import MenuDao from '../dao/Menu.js';
 import MenuCategoryDao from '../dao/MenuCategory.js';
@@ -11,10 +10,17 @@ import TaxDao from '../dao/Tax.js';
 import S3Helper from '../lib/s3.js';
 import { linkDocumentToBusiness } from '../dao/Document.js';
 import elasticsearch from '../elasticsearch/index.js';
-import Business from '../dao/Business.js';
 import { getModuleIdByBusinessId } from '../dao/Business.js';
 import { ValidatedRequest } from '../types/validatedRequest.ts';
-import { CreateDailyMealMenu } from '../schemas/dto/Menu/menu.validators.ts';
+import {
+	CreateDailyMealMenu,
+	CreateMenuItemSchemaInput,
+	CreateDailyMealsMenu,
+	UpdateMenuItemEnabled,
+	UpdateMenuItemPrice,
+	GetMenuItemsByIdsRequest,
+	CreateMenuItemVersion,
+} from '../schemas/dto/Menu/menu.validators.ts';
 import {
 	SetActiveMenuInput,
 	UpdateMenuOrderInput,
@@ -29,14 +35,10 @@ import {
 	AddMenuItemToCategoryInput,
 	RemoveMenuItemFromCategoryInput,
 	UpdateMenuItemsOrderInput,
-	CreateMenuItemSchema,
-	GetMenuItemsByIdsRequestSchema,
-	UpdateMenuItemEnabledSchema,
-	UpdateMenuItemPriceSchema,
-	CreateMenuItemVersionSchema,
 	CreateMenuCategoryInput,
 } from '../schemas/dto/Menu/index.js';
-
+import { AddMenuItemIdToOrderInput, RemoveMenuItemIdFromOrderInput } from '../schemas/dto/Menu/menuitem.dto.ts';
+import { MenuCategoryCategory } from '../schemas/dto/Menu/menucategory.dto.ts';
 const { businessIndex } = elasticsearch;
 
 /**
@@ -180,15 +182,15 @@ export async function setActiveMenu(req: ValidatedRequest<SetActiveMenuInput>, r
  * @bodyContent {CreateMenuCategory} application/json
  * @bodyRequired
  * @response 201 - Menu category created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {MenuCategoryDetail} 201.application/json
  * @response 400 - Error creating new menu category
  * @prisma_model menu_categories
  */
 export async function createMenuCategory(req: ValidatedRequest<CreateMenuCategoryInput>, res: Response): Promise<void> {
 	try {
-		const { menu_id, data } = req.body;
-		const menuCategory = await MenuCategoryDao.createMenuCategory(menu_id, data);
-		businessIndex(menuCategory.business_id);
+		const { menu_id, categoryData } = req.body;
+		const menuCategory = await MenuCategoryDao.createMenuCategory(menu_id, categoryData);
+		businessIndex(menuCategory.food_drinks_id);
 		res.status(201).json(menuCategory);
 	} catch (error: any) {
 		console.error('Error creating menu category:', error);
@@ -203,20 +205,20 @@ export async function createMenuCategory(req: ValidatedRequest<CreateMenuCategor
  * @description Adds a menu item ID to the ordered list of a menu category.
  * @operationId addMenuItemIdToOrder
  * @bodyDescription The menu category ID and menu item ID to add
- * @bodyContent {object} application/json
+ * @bodyContent {AddMenuItemIdToOrderInput} application/json
  * @bodyRequired
  * @response 200 - Menu item ID added to order successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuCategory} 200.application/json
  * @response 400 - Error adding menu item ID to order
  * @prisma_model menu_categories
  */
 export async function addMenuItemIdToOrder(
-	req: ValidatedRequest<{ menu_category_id: string; menuItemIdToAdd: string }>,
+	req: ValidatedRequest<AddMenuItemIdToOrderInput>,
 	res: Response
 ): Promise<void> {
 	try {
-		const { menu_category_id, menuItemIdToAdd } = req.body;
-		const response = await MenuItemDao.addMenuItemIdToOrder(menu_category_id, menuItemIdToAdd);
+		const { menu_category_id, menu_item_id } = req.body;
+		const response = await MenuItemDao.addMenuItemIdToOrder(menu_category_id, menu_item_id);
 		res.status(200).json(response);
 	} catch (error: any) {
 		console.error('Error adding menu item ID to order:', error);
@@ -231,20 +233,20 @@ export async function addMenuItemIdToOrder(
  * @description Removes a menu item ID from the ordered list of a menu category.
  * @operationId removeMenuItemIdFromOrder
  * @bodyDescription The menu category ID and menu item ID to remove
- * @bodyContent {object} application/json
+ * @bodyContent {RemoveMenuItemIdFromOrderInput} application/json
  * @bodyRequired
  * @response 200 - Menu item ID removed from order successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuCategory} 200.application/json
  * @response 400 - Error removing menu item ID from order
  * @prisma_model menu_categories
  */
 export async function removeMenuItemIdFromOrder(
-	req: ValidatedRequest<{ menu_category_id: string; menuItemIdToRemove: string }>,
+	req: ValidatedRequest<RemoveMenuItemIdFromOrderInput>,
 	res: Response
 ): Promise<void> {
 	try {
-		const { menu_category_id, menuItemIdToRemove } = req.body;
-		const response = await MenuItemDao.removeMenuItemIdFromOrder(menu_category_id, menuItemIdToRemove);
+		const { menu_category_id, menu_item_id } = req.body;
+		const response = await MenuItemDao.removeMenuItemIdFromOrder(menu_category_id, menu_item_id);
 		res.status(200).json(response);
 	} catch (error: any) {
 		console.error('Error removing menu item ID from order:', error);
@@ -262,10 +264,10 @@ export async function removeMenuItemIdFromOrder(
  * @description Adds a menu category ID to the ordered list of categories in a menu.
  * @operationId addMenuCategoryIdToOrder
  * @bodyDescription The menu ID and the menu category ID to add
- * @bodyContent {object} application/json
+ * @bodyContent {AddMenuCategoryIdToOrderInput} application/json
  * @bodyRequired
  * @response 200 - Menu category ID added to order successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuBase} 200.application/json
  * @response 400 - Error adding menu category ID to order
  * @prisma_model menus
  */
@@ -293,10 +295,10 @@ export async function addMenuCategoryIdToOrder(
  * @description Removes a menu category ID from the ordered list of categories in a menu.
  * @operationId removeMenuCategoryIdFromOrder
  * @bodyDescription The menu ID and the menu category ID to remove
- * @bodyContent {object} application/json
+ * @bodyContent {RemoveMenuCategoryIdFromOrderInput} application/json
  * @bodyRequired
  * @response 200 - Menu category ID removed from order successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuBase} 200.application/json
  * @response 400 - Error removing menu category ID from order
  * @prisma_model menus
  */
@@ -325,7 +327,7 @@ export async function removeMenuCategoryIdFromOrder(
  * @operationId getMenuItemsByCategoryId
  * @pathParam {string} menu_category_id - The ID of the menu category
  * @response 200 - Successful operation, returns a list of menu items
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuItemDetail[]} 200.application/json
  * @response 400 - Error occurred while obtaining the menu items
  * @prisma_model menu_items
  */
@@ -350,7 +352,7 @@ export async function getMenuItemsByCategoryId(
  * @operationId getMenuCategoriesByMenuId
  * @pathParam {string} menu_id - The ID of the menu
  * @response 200 - Successful operation, returns a list of menu categories
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuCategoryDetail[]} 200.application/json
  * @response 400 - Error occurred while obtaining the menu categories
  * @prisma_model menu_categories
  */
@@ -378,23 +380,16 @@ export async function getMenuCategoriesByMenuId(
  * @operationId getMenuCategoriesByBusinessId
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - Successful operation, returns a list of menu categories
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuCategoryDetail[]} 200.application/json
  * @response 400 - Error occurred while obtaining the menu categories
  * @prisma_model menu_categories
  */
 export async function getMenuCategoriesByBusinessId(
-	req: ValidatedRequest<never, { business_id: string; type: string }>,
+	req: ValidatedRequest<never, { business_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
-		const type = req.params.type;
-		const business = await Business.getBusinessStoreAndFoodDrinksModulesById(req.params.business_id);
-		const data = {
-			food_drinks_id: MODULE.FOOD_AND_DRINKS === type ? business.food_drinks_module?.food_drinks_id : null,
-			stores_id: MODULE.STORES === type ? business.stores_module?.stores_id : null,
-		};
-
-		const categories = await MenuCategoryDao.getMenuCategoriesByBusinessId(data);
+		const categories = await MenuCategoryDao.getMenuCategoriesByBusinessId(req.params.business_id);
 		res.status(200).json(categories);
 	} catch (error: any) {
 		console.error('Error obtaining menu categories:', error);
@@ -413,7 +408,7 @@ export async function getMenuCategoriesByBusinessId(
  * @operationId getMenuItemsByBusinessId
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - Successful operation, returns a list of menu items
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuItemDetail[]} 200.application/json
  * @response 400 - Error occurred while obtaining the menu items
  * @prisma_model menu_items
  */
@@ -422,13 +417,7 @@ export async function getMenuItemsByBusinessId(
 	res: Response
 ): Promise<void> {
 	try {
-		const type = req.params.type;
-		const business = await Business.getBusinessStoreAndFoodDrinksModulesById(req.params.business_id);
-		const data = {
-			food_drinks_id: MODULE.FOOD_AND_DRINKS === type ? business.food_drinks_module?.food_drinks_id : null,
-			stores_id: MODULE.STORES === type ? business.stores_module?.stores_id : null,
-		};
-		const items = await MenuItemDao.getMenuItemsByBusinessId(data, {
+		const items = await MenuItemDao.getMenuItemsByBusinessId(req.params.business_id, {
 			is_copy: false,
 		});
 		res.status(200).json(items);
@@ -446,6 +435,7 @@ export async function getMenuItemsByBusinessId(
  * @operationId deleteMenuCategory
  * @pathParam {string} menu_category_id - The ID of the menu category to delete
  * @response 204 - Menu category deleted successfully
+ * @responseContent {MenuCategoryDetail} 200.application/json
  * @response 400 - Error deleting menu category
  * @prisma_model menu_categories
  */
@@ -470,31 +460,33 @@ export async function deleteMenuCategory(
  * @description Updates a menu category by its ID.
  * @operationId updateMenuCategory
  * @bodyDescription The menu category details to update
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateMenuCategoryInput} application/json
  * @bodyRequired
  * @response 200 - Menu category updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuCategoryDetail} 200.application/json
  * @response 400 - Error updating menu category
  * @prisma_model menu_categories
  */
 export async function updateMenuCategory(req: ValidatedRequest<UpdateMenuCategoryInput>, res: Response): Promise<void> {
 	try {
 		const { menu_category_id, data } = req.body;
-		const category_ids = data?.category_ids;
+		const category_ids: string[] = Array.isArray(data?.category_ids) ? (data!.category_ids as string[]) : [];
 		delete data?.category_ids;
-		const menuCategory = await MenuCategoryDao.updateMenuCategory(menu_category_id, data);
+
+		const menuCategory = await MenuCategoryDao.updateMenuCategory({ menu_category_id, data });
 		const categories_to_add = category_ids.filter(
-			(id: string) => !menuCategory.menu_categories_categories?.map((c: any) => c.categories_id).includes(id)
+			(id: string) =>
+				!menuCategory.menu_categories_categories?.map((c: MenuCategoryCategory) => c.categories_id).includes(id)
 		);
 		const categories_to_remove = menuCategory.menu_categories_categories
-			?.map((c: any) => c.categories_id)
-			.filter((id: string) => !category_ids.includes(id));
+			? menuCategory.menu_categories_categories
+					.map((c: MenuCategoryCategory) => c.categories_id)
+					.filter((id: string) => !category_ids.includes(id))
+			: [];
 		for (const c_id of categories_to_add) {
 			await MenuCategoryDao.addCategoryToMenuCategory(menu_category_id, c_id);
 		}
-		for (const c_id of categories_to_remove) {
-			await MenuCategoryDao.removeCategoryFromMenuCategory(menu_category_id, c_id);
-		}
+		await MenuCategoryDao.removeCategoryFromMenuCategory(menu_category_id, categories_to_remove);
 		businessIndex(menuCategory.business_id);
 		res.status(200).json(menuCategory);
 	} catch (error: any) {
@@ -510,10 +502,10 @@ export async function updateMenuCategory(req: ValidatedRequest<UpdateMenuCategor
  * @description Updates a menu order by the menu category IDs.
  * @operationId updateMenuOrder
  * @bodyDescription The request body must include the new order of menu category IDs. This order is used to update the sequence of categories in the specified menu.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateMenuOrderInput} application/json
  * @bodyRequired
  * @response 200 - Menu category updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuBase} 200.application/json
  * @response 400 - Error updating menu order
  * @prisma_model menus
  */
@@ -535,10 +527,10 @@ export async function updateMenuOrder(req: ValidatedRequest<UpdateMenuOrderInput
  * @description Updates a menu items order by the menu items IDs.
  * @operationId updateMenuItemsOrder
  * @bodyDescription The request body must include the new order of menu category IDs. This order is used to update the sequence of menu items in the specified menu category.
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateMenuItemsOrderInput} application/json
  * @bodyRequired
  * @response 200 - Menu items order updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuCategoryDetail} 200.application/json
  * @response 400 - Error updating menu order
  * @prisma_model menu_items
  */
@@ -566,31 +558,26 @@ export async function updateMenuItemsOrder(
  * @description Creates a new menu item for a menu category.
  * @operationId createMenuItem
  * @bodyDescription The menu item details to create
- * @bodyContent {object} application/json
+ * @bodyContent {CreateMenuItem} application/json
  * @bodyRequired
  * @response 201 - Menu item created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {MenuItemDetail} 201.application/json
  * @response 400 - Error creating new menu item
  * @prisma_model menu_items
  * @prisma_model documents
  * @prisma_model files
  */
-export async function createMenuItem(
-	req: ValidatedRequest<z.infer<typeof CreateMenuItemSchema>>,
-	res: Response
-): Promise<void> {
+export async function createMenuItem(req: ValidatedRequest<CreateMenuItemSchemaInput>, res: Response): Promise<void> {
 	try {
 		const { category_id, tax_rate_id, data, image, is_copy } = req.body;
-		let document = null;
 		if (image?.documentData) {
 			if (image?.files?.length) {
 				for (const file of image.files) {
-					let base64 = file.base64;
-					delete file.base64;
-					let fileData = await FileDao.createFile(file.file_type, file.mime_type, true);
+					let { base64, ...fileRest } = file;
+					let fileData = await FileDao.createFile(fileRest.file_type, fileRest.mime_type, true);
 					if (!image?.document_id) {
-						let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-						await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, document.public);
+						let key = S3Helper.getFileKey(fileData.file_id, fileRest.mime_type);
+						await S3Helper.SaveObject(key, base64, fileRest.mime_type, {}, fileData, fileData.public);
 					}
 					data.image_file = {
 						connect: {
@@ -600,8 +587,8 @@ export async function createMenuItem(
 				}
 			}
 		}
-
-		const menuItem = await MenuItemDao.createMenuItem(category_id, tax_rate_id, data, is_copy);
+		const safeTaxRateId: string | null = tax_rate_id ?? null;
+		const menuItem = await MenuItemDao.createMenuItem(category_id, safeTaxRateId, data, is_copy);
 		businessIndex(menuItem.business_id);
 		res.status(201).json(menuItem);
 	} catch (error: any) {
@@ -617,18 +604,15 @@ export async function createMenuItem(
  * @description Creates a new daily meals menu for a business
  * @operationId createDailyMealsMenu
  * @bodyDescription The menu details to create
- * @bodyContent {object} application/json
+ * @bodyContent {CreateDailyMealsMenuSchema} application/json
  * @bodyRequired
  * @response 201 - Menu created successfully
- * @responseContent {object} 201.application/json
+ * @responseContent {DocumentResponse} 201.application/json
  * @response 400 - Error creating new menu
  * @prisma_model documents
  * @prisma_model files
  */
-export async function createDailyMealsMenu(
-	req: ValidatedRequest<{ business_id: string; data: { documentData: any; files: any[] } }>,
-	res: Response
-): Promise<void> {
+export async function createDailyMealsMenu(req: ValidatedRequest<CreateDailyMealsMenu>, res: Response): Promise<void> {
 	try {
 		const { business_id, data } = req.body;
 		const document = await DocumentDao.createDocument({
@@ -636,11 +620,12 @@ export async function createDailyMealsMenu(
 			...data.documentData,
 		});
 		for (const file of data.files) {
-			let base64 = file.base64;
-			delete file.base64;
-			let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
-			let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-			await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, document.public);
+			let oldBase64 = file.base64;
+			let { base64, ...fileRest } = file;
+
+			let fileData = await FileDao.addFileToDocument(document.document_id, fileRest, fileRest.public);
+			let key = S3Helper.getFileKey(fileData.file_id, fileRest.mime_type);
+			await S3Helper.SaveObject(key, oldBase64, fileRest.mime_type, {}, fileData, fileData.public);
 		}
 		await linkDocumentToBusiness(document.document_id, business_id);
 		businessIndex(business_id);
@@ -662,11 +647,8 @@ export async function createDailyMealsMenu(
  * @operationId getLastDailyMealsMenu
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - Last daily meals menu retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentResponse} 200.application/json
  * @response 404 - No daily meals menu found
- * @responseContent {object} 404.application/json
- * @response 500 - Error retrieving the last daily meals menu
- * @responseContent {object} 500.application/json
  * @prisma_model documents
  * @prisma_model files
  */
@@ -677,14 +659,12 @@ export async function getLastUploadedDailyMealsMenu(
 	try {
 		const { business_id } = req.params;
 		const lastDocument = await DocumentDao.getLastDocumentByTypeAndBusinessId('DAILY_MEALS_MENU', business_id);
-		if (!lastDocument) {
-			return res.status(404).json({ error: 'No daily meals menu found for the given business ID' });
-		}
 		const files = await FileDao.getFilesByDocumentId(lastDocument.document_id);
-		if (!files || files.length === 0) {
-			return res.status(404).json({ error: 'No files found for the document' });
-		}
 		const file = files[0];
+		if (!file) {
+			res.status(404).json({ error: 'No files found for the last daily meals menu' });
+			return;
+		}
 		res.status(200).json({
 			document_id: lastDocument.document_id,
 			name: 'Menu',
@@ -707,7 +687,8 @@ export async function getLastUploadedDailyMealsMenu(
  * @description Deletes a menu item by its ID.
  * @operationId deleteMenuItem
  * @pathParam {string} menu_item_id - The ID of the menu item to delete
- * @response 204 - Menu item deleted successfully
+ * @response 200 - Menu item deleted successfully
+ * @responseContent {DocumentResponse} 200.application/json
  * @response 400 - Error deleting menu item
  * @prisma_model menu_items
  * @prisma_model documents
@@ -735,10 +716,10 @@ export async function deleteMenuItem(
  * @description Updates a menu item by its ID.
  * @operationId updateMenuItem
  * @bodyDescription The menu item details to update
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateMenuItemInput} application/json
  * @bodyRequired
  * @response 200 - Menu item updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuItemDetail} 200.application/json
  * @response 400 - Error updating menu item
  * @prisma_model menu_items
  * @prisma_model documents
@@ -749,11 +730,11 @@ export async function updateMenuItem(req: ValidatedRequest<UpdateMenuItemInput>,
 		const { menuItemId, data, image } = req.body;
 		if (image?.files?.[0]?.file_type === 'IMAGE') {
 			for (const file of image.files) {
-				let base64 = file.base64;
-				delete file.base64;
-				let fileData = await FileDao.createFile(file.file_type, file.mime_type, true);
-				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-				await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, true);
+				let oldBase64 = file.base64;
+				let { base64, ...fileRest } = file;
+				let fileData = await FileDao.createFile(fileRest.file_type, fileRest.mime_type, true);
+				let key = S3Helper.getFileKey(fileData.file_id, fileRest.mime_type);
+				await S3Helper.SaveObject(key, oldBase64, fileRest.mime_type, {}, fileData, true);
 				data.image_file = {
 					connect: {
 						image_file_id: fileData.file_id,
@@ -777,20 +758,20 @@ export async function updateMenuItem(req: ValidatedRequest<UpdateMenuItemInput>,
  * @description Updates a menu item by its ID.
  * @operationId updateMenuItem
  * @bodyDescription The new menu item enabled field value
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateMenuItemEnabled} application/json
  * @bodyRequired
  * @response 200 - Menu item updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuItemDetail} 200.application/json
  * @response 400 - Error updating menu item
  * @prisma_model menu_items
  */
 export async function updateMenuItemEnabled(
-	req: ValidatedRequest<z.infer<typeof UpdateMenuItemEnabledSchema>>,
+	req: ValidatedRequest<UpdateMenuItemEnabled>,
 	res: Response
 ): Promise<void> {
 	try {
 		const { menu_item_id, is_enabled } = req.body;
-		const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, { is_enabled: is_enabled });
+		const menuItem = await MenuItemDao.updateMenuItemEnabled(menu_item_id, is_enabled);
 		businessIndex(menuItem.business_id);
 		res.status(200).json(menuItem);
 	} catch (error: any) {
@@ -807,15 +788,15 @@ export async function updateMenuItemEnabled(
  * @operationId updateMenuItemPrice
  * @pathParam {string} menu_item_id - The ID of the menu item to update
  * @bodyDescription The new price to set
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateMenuItemPrice} application/json
  * @bodyRequired
  * @response 200 - Menu item price updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuItemDetail} 200.application/json
  * @response 400 - Error updating menu item price
  * @prisma_model menu_items
  */
 export async function updateMenuItemPrice(
-	req: ValidatedRequest<z.infer<typeof UpdateMenuItemPriceSchema>, { menu_item_id: string }>,
+	req: ValidatedRequest<UpdateMenuItemPrice, { menu_item_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -837,10 +818,10 @@ export async function updateMenuItemPrice(
  * @description Add menu item to a category.
  * @operationId addMenuItemToCategory
  * @bodyDescription The new category ID to set
- * @bodyContent {object} application/json
+ * @bodyContent {AddMenuItemToCategoryInput} application/json
  * @bodyRequired
  * @response 200 - Menu item category updated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuItemDetail} 200.application/json
  * @response 400 - Error updating menu item category
  * @prisma_model menu_items
  * @prisma_model menu_categories
@@ -866,8 +847,9 @@ export async function addMenuItemMenuCategory(
  * @summary Remove menu item from category
  * @description Removes a menu item from its category.
  * @operationId removeMenuItemFromCategory
+ * @bodyContent {RemoveMenuItemFromCategoryInput} application/json
  * @response 200 - Menu item removed from category successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuItemDetail} 200.application/json
  * @response 400 - Error removing menu item from category
  * @prisma_model menu_items
  * @prisma_model menu_categories
@@ -897,10 +879,10 @@ export async function removeMenuItemFromCategory(
  * @description Adds a menu category to a menu.
  * @operationId addMenuCategory
  * @bodyDescription The menu ID and category ID to add
- * @bodyContent {object} application/json
+ * @bodyContent {AddCategoryToMenuInput} application/json
  * @bodyRequired
  * @response 200 - Menu category added successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuBase} 200.application/json
  * @response 400 - Error adding menu category
  * @prisma_model menus
  * @prisma_model menu_categories
@@ -924,10 +906,10 @@ export async function addMenuCategory(req: ValidatedRequest<AddCategoryToMenuInp
  * @description Removes a menu category from a menu.
  * @operationId removeMenuCategory
  * @bodyDescription The category ID to remove
- * @bodyContent {object} application/json
+ * @bodyContent {RemoveCategoryFromMenuInput} application/json
  * @bodyRequired
  * @response 200 - Menu category removed successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuCategoryDetail} 200.application/json
  * @response 400 - Error removing menu category
  * @prisma_model menus
  * @prisma_model menu_categories
@@ -956,7 +938,7 @@ export async function removeMenuCategory(
  * @pathParam {string} field - The field to filter by
  * @pathParam {string} id - The id value to match
  * @response 200 - Documents and files deleted successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DocumentResponse} 200.application/json
  * @response 500 - Failed to delete documents and files
  * @prisma_model documents
  * @prisma_model files
@@ -971,7 +953,7 @@ export async function deleteDocumentsAndFilesByDocumentId(
 		res.status(200).json({ message: `Documents and files deleted successfully for ${field}: ${id}` });
 	} catch (error: any) {
 		res.status(500).json({
-			error: `Failed to delete documents and files for ${field}: ${id}`,
+			error: `Failed to delete documents and files for the provided ${req.params.field} ${req.params.id}.`,
 			detail: error?.message ?? String(error),
 		});
 	}
@@ -986,26 +968,21 @@ export async function deleteDocumentsAndFilesByDocumentId(
  * @pathParam {string} business_id - The ID of the business
  * @pathParam {string} date - The date to filter by (ISO string)
  * @response 200 - Menu items retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuItemDetail[]} 200.application/json
  * @response 400 - Error obtaining menu items
  * @prisma_model menu_items
  */
 export async function getMenuItemsByDate(
-	req: ValidatedRequest<never, { business_id: string; date: string; type: string }>,
+	req: ValidatedRequest<never, { business_id: string; date: string }>,
 	res: Response
 ): Promise<void> {
 	try {
-		const { business_id, date, type } = req.params;
+		const { business_id, date } = req.params;
 		const startOfDay = new Date(date);
 		startOfDay.setHours(0, 0, 0, 0);
 		const endOfDay = new Date(date);
 		endOfDay.setHours(23, 59, 59, 999);
-		const business = await Business.getBusinessStoreAndFoodDrinksModulesById(business_id);
-		const data = {
-			food_drinks_id: MODULE.FOOD_AND_DRINKS === type ? business.food_drinks_module?.food_drinks_id : null,
-			stores_id: MODULE.STORES === type ? business.stores_module?.stores_id : null,
-		};
-		const items = await MenuItemDao.getMenuItemsByBusinessId(data, {
+		const items = await MenuItemDao.getMenuItemsByBusinessId(business_id, {
 			daily_date: {
 				gte: startOfDay.toISOString(),
 				lte: endOfDay.toISOString(),
@@ -1027,7 +1004,7 @@ export async function getMenuItemsByDate(
  * @pathParam {string} business_id - The ID of the business
  * @pathParam {string} date - The date to filter by (ISO string)
  * @response 200 - Menu retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DailyMealMenuBase} 200.application/json
  * @response 400 - Error obtaining menu
  * @prisma_model menus
  */
@@ -1052,10 +1029,10 @@ export async function getMenuByDate(
  * @description Updates the price for a daily meal menu category.
  * @operationId updateDailyMealMenuPrice
  * @bodyDescription The menu category id and new price
- * @bodyContent {object} application/json
+ * @bodyContent {UpdateDailyMealMenuPriceInput} application/json
  * @bodyRequired
  * @response 200 - Price updated and menu returned
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuCategory} 200.application/json
  * @response 400 - Error updating menu price
  * @prisma_model menu_categories
  * @prisma_model menus
@@ -1088,15 +1065,15 @@ export async function updateDailyMealMenuPrice(
  * @operationId getMenuItemsByIds
  * @pathParam {string} business_id - The business id
  * @bodyDescription The list of menu item IDs
- * @bodyContent {object} application/json
+ * @bodyContent {GetMenuItemsByIdsRequest} application/json
  * @bodyRequired
  * @response 200 - Menu items retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {MenuItemDetail[]} 200.application/json
  * @response 400 - Error fetching menu items
  * @prisma_model menu_items
  */
 export async function getMenuItemsByIds(
-	req: ValidatedRequest<z.infer<typeof GetMenuItemsByIdsRequestSchema>, { business_id: string }>,
+	req: ValidatedRequest<GetMenuItemsByIdsRequest, { business_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -1123,7 +1100,7 @@ export async function getMenuItemsByIds(
  * @description Retrieves all active tax rates.
  * @operationId getActiveTaxRates
  * @response 200 - Active tax rates retrieved successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {TaxRateDetail[]} 200.application/json
  * @response 500 - Error fetching tax rates
  * @prisma_model tax_rates
  */
@@ -1148,16 +1125,15 @@ export async function getActiveTaxRates(req: ValidatedRequest, res: Response): P
  * @description Creates a menu_item_versions snapshot for a menu item.
  * @operationId createMenuItemVersion
  * @bodyDescription Version payload
- * @bodyContent {
- *   "version": 2,
- *   "snapshot": { "price": 999, "names": { "en": "Burger" } }
- * } application/json
+ * @bodyContent {CreateMenuItemVersion} application/json
  * @bodyRequired
  * @response 200 - Version created
+ * @responseContent {MenuItemVersionResponse} 200.application/json
+ * @response 400 - Error creating menu item version
  * @prisma_model menu_item_versions
  */
 export async function createMenuItemVersion(
-	req: ValidatedRequest<z.infer<typeof CreateMenuItemVersionSchema>, { menu_item_id: string }>,
+	req: ValidatedRequest<CreateMenuItemVersion, { menu_item_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {

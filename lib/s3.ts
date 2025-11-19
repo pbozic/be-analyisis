@@ -18,6 +18,7 @@ import mime from 'mime-types';
 import s3RequestPresigner from '@aws-sdk/s3-request-presigner';
 import { FILE_TYPE } from '@prisma/client';
 
+import FileDao from '../dao/File.js';
 import prisma from '../prisma/prisma.js';
 
 config();
@@ -230,6 +231,74 @@ const DeleteObject = async (key: string): Promise<DeleteObjectCommandOutput> => 
 	}
 };
 
+/**
+ * Create a new file record and upload the corresponding object to S3.
+ *
+ * @param {string} owner_id - User id of the file owner.
+ * @param {object} fileData - File data including type, mime type, base64 payload, and optional public flag.
+ * @returns {Promise<object>} Created file record.
+ */
+export async function createFileHelper(
+	owner_id: string,
+	fileData: { file_type: FILE_TYPE; mime_type: string; base64: string; public?: boolean }
+) {
+	console.log('Creating file with data:', fileData);
+	const { file_type, mime_type } = fileData;
+	const isPublic = fileData.public || false;
+	const new_file = await FileDao.createFile(file_type, mime_type, isPublic);
+	let key = getFileKey(new_file.file_id, new_file.mime_type);
+	await SaveObject(key, fileData.base64, new_file.mime_type, { users: [owner_id] }, new_file, new_file.public);
+	return new_file;
+}
+
+/**
+ * Update an existing file record and upload the new object to S3.
+ *
+ * @param {string} updater_id - User id performing the update.
+ * @param {string} file_id - File id to update.
+ * @param {object} fileData - New file data including type, mime type, base64 payload, and optional public flag.
+ * @returns {Promise<object>} Updated file record.
+ */
+export async function updateFileByIdHelper(
+	updater_id: string,
+	file_id: string,
+	fileData: { file_type: FILE_TYPE; mime_type: string; base64: string; public?: boolean }
+) {
+	const { file_type, mime_type } = fileData;
+	const updated_file = await FileDao.updateFileById(file_id, file_type, mime_type);
+	let key = getFileKey(updated_file.file_id, updated_file.mime_type);
+	await SaveObject(
+		key,
+		fileData.base64,
+		updated_file.mime_type,
+		{ users: [updater_id] },
+		updated_file,
+		updated_file.public
+	);
+	return updated_file;
+}
+
+/**
+ * Upsert a file on S3: create or update the object and file record as needed.
+ *
+ * @param {string} user_id - User id performing the upsert.
+ * @param {object} file - Existing file record with id, type, mime type, and optional public flag.
+ * @param {FILE_TYPE} new_file_type - New file type for the upsert.
+ * @param {string} new_mime_type - New MIME type for the upsert.
+ * @param {string} new_base64 - New base64-encoded data payload.
+ * @returns {Promise<void>}
+ */
+export async function upsertFileOnS3Helper(
+	user_id: string,
+	file: { file_id: string; file_type: FILE_TYPE; mime_type: string; base64?: string; public?: boolean },
+	new_file_type: FILE_TYPE,
+	new_mime_type: string,
+	new_base64: string
+) {
+	let key = getFileKey(file.file_id, new_mime_type);
+	await SaveObject(key, new_base64, new_mime_type, { users: [user_id] }, file, file.public);
+}
+
 export { getSignedUrl };
 export { GetObject };
 export { SaveObject };
@@ -245,4 +314,7 @@ export default {
 	getFileKey,
 	updateS3ACLForPublicFiles,
 	DeleteObject,
+	createFileHelper,
+	updateFileByIdHelper,
+	upsertFileOnS3Helper,
 };

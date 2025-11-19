@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { JsonValue } from '@prisma/client/runtime/library';
 
-import { CreateMenuItemSchema, GetMenuItemsByIdsRequestSchema } from './menu.dto.ts';
 import { UUID, Timestamp } from '../../primitives.ts';
+import { CreateMenuItemSchema, GetMenuItemsByIdsRequestSchema } from './menu.validators.ts';
 
 extendZodWithOpenApi(z);
 

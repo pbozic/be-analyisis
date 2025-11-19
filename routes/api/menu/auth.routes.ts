@@ -3,7 +3,7 @@ import express from 'express';
 import MenuController from '../../../controllers/MenuController';
 import { MenuItemsIdsBodySchema } from '../../../schemas/dto/Menu/menuitem.dto';
 import { validate } from '../../../middleware/zod';
-import { DailyMenuByBusinessIdBodySchema } from '../../../schemas/dto/Menu/menu.dto';
+import { DailyMenuByBusinessIdBodySchema } from '../../../schemas/dto/Menu';
 
 const router = express.Router();
 

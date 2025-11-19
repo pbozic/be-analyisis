@@ -4,9 +4,8 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { UUID, Timestamp } from '../../primitives.js';
 import { UserRefSchema } from '../User/user.js';
 import { BusinessRefSchema } from '../Business/business.js';
-import { LocationWithAddressSchema } from '../common/Location.dto.js';
-import { PaymentRefSchema } from '../Payments/payment.dto.js';
 import { OrderLobbyItemRefSchema } from './orderLobbyItem.dto.js';
+import { LocationWithAddressSchema } from '../Address/address.js';
 extendZodWithOpenApi(z);
 
 // ===== BASE SCHEMAS =====
@@ -104,8 +103,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 
 	// Register ref schemas
 	registry.register('OrderLobbyRef', OrderLobbyRefSchema);
-
-	// Request schemas registered in orderLobby.validators.ts
 
 	// Register main response
 	registry.register('OrderLobbyResponse', OrderLobbyResponseSchema);

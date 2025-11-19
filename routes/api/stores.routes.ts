@@ -2,7 +2,7 @@ import express from 'express';
 
 import StoresController from '../../controllers/StoresController.ts';
 import { validate } from '../../middleware/zod.ts';
-import { StoreOnlineBodySchema, StoreOverwhelmedBodySchema } from '../../schemas/dto/Stores/store.dto.ts';
+import { StoreOnlineBodySchema, StoreOverwhelmedBodySchema } from '../../schemas/dto/Stores/store.validators.ts';
 
 const router = express.Router();
 

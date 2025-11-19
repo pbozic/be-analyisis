@@ -7,7 +7,7 @@ import type { RolePermission } from './RolePermission.js';
 import type { UserRole } from './UserRole.js';
 import { RolePermissionResponseBaseSchema } from './RolePermission';
 import { UserRoleResponseBaseSchema } from './UserRole';
-import { BusinessResponseBaseSchema } from '../business/Business';
+import { BusinessBaseSchema } from '../../schemas/dto/Business/index.js';
 
 extendZodWithOpenApi(z);
 
@@ -39,7 +39,7 @@ export const RoleResponseBaseSchema = z
 export const RoleResponseSchema = RoleResponseBaseSchema.extend({
 	permissions: z.array(RolePermissionResponseBaseSchema),
 	users: z.array(UserRoleResponseBaseSchema),
-	business: BusinessResponseBaseSchema.nullable().optional(),
+	business: BusinessBaseSchema.nullable().optional(),
 }).openapi('RoleResponse');
 
 export type RoleBase = z.infer<typeof RoleResponseBaseSchema>;

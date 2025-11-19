@@ -38,7 +38,6 @@ export {
 	DispatcherCancelOrderSchema,
 	DispatcherRevokeOrderSchema,
 	SetDeliveryImageSchema,
-	StartDailyMealsSchema,
 	type CreateDeliveryOrderInput,
 	type DeliveryOrderCreateRequest,
 	type CreateDeliveryOrderDaoInput,
@@ -59,7 +58,6 @@ export {
 	type DispatcherCancelOrderInput,
 	type DispatcherRevokeOrderInput,
 	type SetDeliveryImageInput,
-	type StartDailyMealsInput,
 	registerSchemas as registerDeliveryOrderValidatorSchemas,
 } from './deliveryOrder.validators.js';
 

@@ -7,10 +7,10 @@ import { Email, PhoneNumber, UUID } from '../../primitives.js';
 import {
 	BusinessRegistrationDataSchema,
 	UserRegistrationDataSchema,
-	DocumentWithFilesSchema,
 	VehicleRegistrationSchema,
 } from '../Business/business.validators.js';
 import { BusinessAddressSchema } from '../Address/address.js';
+import { DocumentWithFilesSchema } from '../Document/document.dto.js';
 
 extendZodWithOpenApi(z);
 

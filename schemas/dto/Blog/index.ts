@@ -16,7 +16,6 @@ export {
 	BlogCategoryRefSchema,
 	BlogTagBaseSchema,
 	BlogTagRefSchema,
-	BlogPostResponseSchema,
 	type BlogPostBase,
 	type BlogPostRef,
 	type BlogPostDetail,
@@ -24,7 +23,6 @@ export {
 	type BlogCategoryRef,
 	type BlogTagBase,
 	type BlogTagRef,
-	type BlogPostResponse,
 } from './blog.dto.js';
 
 // === Blog Validators (Request Body, Query, Params) ===

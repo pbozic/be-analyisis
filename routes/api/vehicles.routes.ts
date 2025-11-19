@@ -6,7 +6,7 @@ import {
 	CreateVehicleRequestSchema,
 	UpdateVehicleRequestSchema,
 	VehicleDriverAssignmentSchema,
-} from '../../schemas/dto/Vehicles/vehicle.dto';
+} from '../../schemas/dto/Vehicles/vehicle.validators.ts';
 
 const router = express.Router();
 

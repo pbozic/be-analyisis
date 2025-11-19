@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { FILE_TYPE } from '@prisma/client';
 
 import { UUID } from '../../primitives.js';
 
@@ -10,7 +11,7 @@ extendZodWithOpenApi(z);
 // =======================
 export const CategoryIconFileDataSchema = z
 	.object({
-		file_type: z.string().openapi({ example: 'image' }),
+		file_type: z.nativeEnum(FILE_TYPE).openapi({ example: FILE_TYPE.IMAGE }),
 		mime_type: z.string().openapi({ example: 'image/png' }),
 		base64: z.string().openapi({ example: 'iVBORw0KGgoAAAANSUhEUgAA...' }),
 	})
