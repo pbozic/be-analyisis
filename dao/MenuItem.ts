@@ -161,14 +161,26 @@ const getMenuItemsByIds = async (menu_item_ids: string[]): Promise<MenuItemDetai
  * @param {object} args - Additional where filters or options.
  * @returns {Promise<MenuItemDetail[]>} Array of menu items with documents and files.
  */
-const getMenuItemsByBusinessId = async (
-	data: {
-		food_drinks_id: string;
-		stores_id: string;
-	},
-	args: object
-): Promise<MenuItemDetail[]> => {
-	const { food_drinks_id, stores_id } = data;
+const getMenuItemsByBusinessId = async (business_id: string, args: object): Promise<MenuItemDetail[]> => {
+	const ids = await prisma.business.findFirst({
+		where: {
+			business_id: business_id,
+		},
+		select: {
+			food_drinks_module: {
+				select: {
+					food_drinks_id: true,
+				},
+			},
+			stores_module: {
+				select: {
+					stores_id: true,
+				},
+			},
+		},
+	});
+	const stores_id = ids?.stores_module?.stores_id;
+	const food_drinks_id = ids?.food_drinks_module?.food_drinks_id;
 	const rows = await prisma.menu_items.findMany({
 		where: { ...(stores_id ? { stores_id } : {}), ...(food_drinks_id ? { food_drinks_id } : {}), ...args },
 		include: menuItemsDefaultInclude,
@@ -177,19 +189,6 @@ const getMenuItemsByBusinessId = async (
 };
 /**
  * Get menu items by their menu category.
- *
- * @param {string} categoryId - Menu category ID.
- * @returns {Promise<MenuItem[]>} Array of menu items.
- */
-const getMenuItemsByCategoryId = async (categoryId: string): Promise<MenuItemDetail[]> => {
-	const rows = await prisma.menu_items.findMany({
-		where: { menu_category_id: categoryId },
-		include: menuItemsDefaultInclude,
-	});
-	return toMenuItemList(rows as MenuItemWithIncludesPrisma[]);
-};
-/**
- * Delete a menu item by ID.
  *
  * @param {string} menuItemId - Menu item ID.
  * @returns {Promise<MenuItem>} The deleted menu item.
@@ -208,6 +207,34 @@ const deleteMenuItem = async (menuItemId: string): Promise<MenuItemDetail> => {
 		throw new Error(getErrorMessage(error));
 	}
 };
+
+/**
+ * Update the enabled flag for a menu item and return the updated item with includes.
+ *
+ * @param {string} menu_item_id - Menu item ID to update.
+ * @param {boolean} is_enabled - New enabled state.
+ * @returns {Promise<MenuItemDetail>} The updated menu item.
+ * @prisma_model menu_items
+ */
+const updateMenuItemEnabled = async (menu_item_id: string, is_enabled: boolean): Promise<MenuItemDetail> => {
+	try {
+		const updated = await prisma.menu_items.update({
+			where: { menu_item_id },
+			data: {
+				is_enabled,
+			},
+		});
+		const row = await prisma.menu_items.findUnique({
+			where: { menu_item_id: updated.menu_item_id },
+			include: menuItemsDefaultInclude as any,
+		});
+		return toMenuItemResponse(row as MenuItemWithIncludesPrisma);
+	} catch (error: unknown) {
+		console.error('Error updating menu item enabled status:', error);
+		throw new Error(getErrorMessage(error));
+	}
+};
+
 /**
  * Update a menu item; logs stock changes separately when stock is provided.
  *
@@ -294,6 +321,7 @@ const addMenuItemToCategory = async (menu_item_id: string, menu_category_id: str
  * @param {string} menu_item_id - Menu item ID.
  * @returns {Promise<MenuItem>} The updated menu item.
  */
+
 const removeMenuItemFromCategory = async (menu_item_id: string): Promise<MenuItemDetail> => {
 	try {
 		const updated = await prisma.menu_items.update({ where: { menu_item_id }, data: { menu_category_id: null } });
@@ -306,6 +334,21 @@ const removeMenuItemFromCategory = async (menu_item_id: string): Promise<MenuIte
 		throw new Error(getErrorMessage(error));
 	}
 };
+
+/**
+ * Get menu items by their menu category.
+ *
+ * @param {string} categoryId - Menu category ID.
+ * @returns {Promise<MenuItemDetail[]>} Array of menu items.
+ */
+const getMenuItemsByCategoryId = async (categoryId: string): Promise<MenuItemDetail[]> => {
+	return await prisma.menu_items.findMany({
+		where: {
+			menu_category_id: categoryId,
+		},
+	});
+};
+
 export { createMenuItem };
 export { addMenuItemIdToOrder };
 export { removeMenuItemIdFromOrder };
@@ -318,12 +361,14 @@ export { updateMenuItemPrice };
 export { addMenuItemToCategory };
 export { removeMenuItemFromCategory };
 export { createMenuItemVersion };
+export { updateMenuItemEnabled };
 export default {
 	createMenuItem,
 	addMenuItemIdToOrder,
 	removeMenuItemIdFromOrder,
 	getMenuItemsByIds,
 	getMenuItemsByCategoryId,
+	updateMenuItemEnabled,
 	getMenuItemsByBusinessId,
 	deleteMenuItem,
 	updateMenuItem,

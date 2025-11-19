@@ -225,9 +225,9 @@ const getDailyMealsModuleIdByBusinessId = async (business_id: string): Promise<s
  *
  * @param {string} business_id - Business ID.
  * @param {Date|string} date - Target date.
- * @returns {Promise<DailyMealMenuBase|null>} The menu record or null if not found.
+ * @returns {Promise<DailyMealMenuBase>} The menu record or null if not found.
  */
-const getMenuByDate = async (business_id: string, date: Date | string): Promise<DailyMealMenuBase | null> => {
+const getMenuByDate = async (business_id: string, date: Date | string): Promise<DailyMealMenuBase> => {
 	try {
 		const dailyMealsModuleId = await getDailyMealsModuleIdByBusinessId(business_id);
 		if (!dailyMealsModuleId) throw new Error(`Business with id: ${business_id} doesn't have daily meals module!`);
@@ -242,7 +242,7 @@ const getMenuByDate = async (business_id: string, date: Date | string): Promise<
 			},
 			include: dailyMealMenuDefaultInclude,
 		});
-		return dm ? toDailyMealMenuResponse(dm) : null;
+		return toDailyMealMenuResponse(dm);
 	} catch (error: unknown) {
 		console.error('Error getting menu by date:', error);
 		throw new Error(getErrorMessage(error) || 'Error getting menu by date');
@@ -253,12 +253,12 @@ const getMenuByDate = async (business_id: string, date: Date | string): Promise<
  * Get a menu by its ID with categories and items.
  *
  * @param {string} menu_id - Menu ID.
- * @returns {Promise<MenuBase|null>} The menu record or null if not found.
+ * @returns {Promise<MenuBase>} The menu record or null if not found.
  */
-const getMenuById = async (menu_id: string): Promise<MenuBase | null> => {
+const getMenuById = async (menu_id: string): Promise<MenuBase> => {
 	try {
 		const menu = await prisma.menus.findUnique({ where: { menu_id }, include: menusDefaultInclude });
-		return menu ? toMenuResponse(menu) : null;
+		return toMenuResponse(menu);
 	} catch (error: unknown) {
 		console.error('Error getting menu by id:', error);
 		throw new Error(getErrorMessage(error) || 'Error getting menu by id');

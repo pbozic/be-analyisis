@@ -69,6 +69,7 @@ export const MenuCategoryDataSchema = z
 			.openapi({ example: { en: 'Starters', sl: 'Predjedi' } }),
 		description_translatable_id: UUID.optional(),
 		description: z.record(z.string()).optional(),
+		category_ids: z.array(z.string()),
 		categories: z
 			.array(z.string())
 			.optional()
@@ -98,7 +99,7 @@ export const UpdateMenuCategoryInputSchema = z
 
 export type UpdateMenuCategoryInput = z.infer<typeof UpdateMenuCategoryInputSchema>;
 
-export const AddMenuCategoryIdToOrderInputSchema = z
+const AddMenuCategoryIdToOrderInputSchema = z
 	.object({
 		menu_id: UUID,
 		menuCategoryIdToAdd: UUID,
@@ -107,7 +108,7 @@ export const AddMenuCategoryIdToOrderInputSchema = z
 
 export type AddMenuCategoryIdToOrderInput = z.infer<typeof AddMenuCategoryIdToOrderInputSchema>;
 
-export const RemoveMenuCategoryIdFromOrderInputSchema = z
+const RemoveMenuCategoryIdFromOrderInputSchema = z
 	.object({
 		menu_id: UUID,
 		menuCategoryIdToRemove: UUID,
@@ -192,14 +193,28 @@ export const CreateMenuItemSchema = z
 				document_id: UUID.optional(),
 			})
 			.optional(),
-		is_copy: z.boolean().optional(),
+		is_copy: z.boolean(),
 	})
 	.openapi('CreateMenuItem');
+
+export type CreateMenuItemSchemaInput = z.infer<typeof CreateMenuItemSchema>;
 
 export const UpdateMenuItemInputSchema = z
 	.object({
 		menuItemId: UUID,
 		data: z.any().openapi({ example: { price: 12.5 } }),
+		image: z
+			.object({
+				documentData: z
+					.object({
+						document_type: z.nativeEnum(DOCUMENT_TYPE).optional(),
+						public: z.boolean().optional(),
+					})
+					.optional(),
+				files: z.array(CreateFileDataSchema).optional(),
+				document_id: UUID.optional(),
+			})
+			.optional(),
 	})
 	.openapi('UpdateMenuItemInput');
 
@@ -210,6 +225,7 @@ export const GetMenuItemsByIdsRequestSchema = z
 		ids: z.array(UUID).openapi({ example: ['bb0e8400-e29b-41d4-a716-446655440000'] }),
 	})
 	.openapi('GetMenuItemsByIdsRequest');
+export type GetMenuItemsByIdsRequest = z.infer<typeof GetMenuItemsByIdsRequestSchema>;
 
 export const UpdateMenuItemEnabledSchema = z
 	.object({
@@ -217,12 +233,14 @@ export const UpdateMenuItemEnabledSchema = z
 		is_enabled: z.boolean(),
 	})
 	.openapi('UpdateMenuItemEnabled');
+export type UpdateMenuItemEnabled = z.infer<typeof UpdateMenuItemEnabledSchema>;
 
 export const UpdateMenuItemPriceSchema = z
 	.object({
 		price: z.number(),
 	})
 	.openapi('UpdateMenuItemPrice');
+export type UpdateMenuItemPrice = z.infer<typeof UpdateMenuItemPriceSchema>;
 
 export const CreateMenuItemVersionSchema = z
 	.object({
@@ -230,6 +248,7 @@ export const CreateMenuItemVersionSchema = z
 		snapshot: z.any().openapi({ example: { price: 999, names: { en: 'Burger' } } }),
 	})
 	.openapi('CreateMenuItemVersion');
+export type CreateMenuItemVersion = z.infer<typeof CreateMenuItemVersionSchema>;
 
 export const AddMenuItemToCategoryInputSchema = z
 	.object({
@@ -259,6 +278,22 @@ export type UpdateMenuItemsOrderInput = z.infer<typeof UpdateMenuItemsOrderInput
 
 export const MenuItemsIdsBodySchema = z.object({ ids: z.array(UUID).min(1) }).openapi('MenuItemsIdsBody');
 
+export const CreateDailyMealsMenuSchema = z
+	.object({
+		business_id: UUID.openapi({ example: '770e8400-e29b-41d4-a716-446655440000' }),
+		data: z.object({
+			documentData: z
+				.object({
+					document_type: z.nativeEnum(DOCUMENT_TYPE).optional(),
+					public: z.boolean().optional(),
+				})
+				.optional(),
+			files: z.array(CreateFileDataSchema),
+		}),
+	})
+	.openapi('CreateDailyMealsMenu');
+
+export type CreateDailyMealsMenu = z.infer<typeof CreateDailyMealsMenuSchema>;
 // =======================
 // DAO-level Input Schemas (from menucategory.dto.ts and menuitem.dto.ts)
 // =======================
@@ -314,6 +349,7 @@ export {
 // =======================
 export function registerSchemas(registry: OpenAPIRegistry) {
 	// Menu schemas
+	registry.register('CreateDailyMealsMenu', CreateDailyMealsMenuSchema);
 	registry.register('CreateMenu', CreateMenuSchema);
 	registry.register('CreateDailyMealMenu', CreateDailyMealMenuSchema);
 	registry.register('SetActiveMenuInput', SetActiveMenuInputSchema);

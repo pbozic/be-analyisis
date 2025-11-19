@@ -4,7 +4,7 @@ import { Prisma, TokenType } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import { TokenBase, TokenDetail } from '../schemas/dto/Tokens/token.dto.js';
-
+import { VERIFICATION_TOKEN_EXPIRATION_MINUTES } from '../lib/constants.js';
 /**
  * Find an active password reset token by token string.
  *
@@ -164,18 +164,17 @@ export const savePasswordResetToken = async (token: {
 /**
  * Generate and persist a new SMS verification token for a user.
  *
- * @param {object} user - User object with user_id.
+ * @param {string} user_id - User ID.
  * @returns {Promise<any>} Created token.
  */
 export async function generateSMSVerificationToken(user_id: string): Promise<any> {
 	let tokenObj = {
-		user_id: user.user_id,
+		user_id: user_id,
 		token: (Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000).toString(),
 		type: 'PHONE_VERIFICATION',
-		expires_at: new Date(Date.now() + 3600000 * 2),
+		expires_at: new Date(Date.now() + 3600000 * VERIFICATION_TOKEN_EXPIRATION_MINUTES),
 	};
 	let token = await saveSMSToken(tokenObj);
-	// TODO: send SMS
 	return token;
 }
 
