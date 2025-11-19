@@ -135,7 +135,7 @@ export const DailyMealsModuleSchema = z
 		id: UUID,
 		delivery_address_id: UUID.nullable().optional(),
 		daily_meals_days: z.array(z.any()).optional().default([]),
-		daily_meals_delivery_mapping: z.array(z.any()).optional().default([]),
+		daily_meals_delivery_mapping: z.record(z.number()).optional(),
 		maximum_daily_meals_subscribers: z.number().nullable().optional(),
 		daily_users_sorted: z.array(UUID).optional().default([]),
 		daily_users_sorting_type: z.nativeEnum(SORTING_TYPE).optional().default(SORTING_TYPE.AUTOMATIC),
@@ -159,7 +159,7 @@ export const BusinessWithDailyMealsResponseDto = BusinessResponseDto.extend({
 	})
 		.nullable()
 		.optional(),
-	daily_meal_drivers: z.array(DriverBaseSchema).optional(),
+	daily_meal_drivers: z.lazy(() => z.array(DriverBaseSchema)).optional(),
 }).openapi('BusinessWithDailyMealsResponse');
 
 // Business with Food & Drinks Module
@@ -213,7 +213,7 @@ export const BusinessWithAddressAndUsersResponseDto = BusinessResponseDto.extend
 	business_users: z
 		.array(
 			z.object({
-				users: UserRefSchema.optional(),
+				users: z.lazy(() => UserRefSchema).optional(),
 			})
 		)
 		.optional(),
@@ -318,7 +318,7 @@ export const BusinessByIdResponseSchema = BusinessResponseDto.extend({
 	business_users: z
 		.array(
 			z.object({
-				user: UserRefSchema.optional(),
+				user: z.lazy(() => UserRefSchema).optional(),
 			})
 		)
 		.optional(),

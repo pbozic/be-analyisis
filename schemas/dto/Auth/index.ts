@@ -1,8 +1,8 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 // Import registerSchemas functions with aliases
-import { registerSchemas as registerAuthResponseSchemas } from './AuthResponse.dto.js';
-import { registerSchemas as registerAuthRequestSchemas } from './AuthRequest.dto.js';
+import { registerSchemas as registerAuthResponseSchemas } from './AuthResponse.dto.ts';
+import { registerSchemas as registerAuthRequestSchemas } from './AuthRequest.dto.ts';
 
 // === Auth DTOs (Response) ===
 export {

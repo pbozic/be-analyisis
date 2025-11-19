@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID, Timestamp } from '../../primitives.js';
+import { PaymentIntentSchema } from '../Payments/payment.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -42,8 +43,22 @@ export const DailyMealSubscriptionRefSchema = z
 
 export type DailyMealSubscriptionRef = z.infer<typeof DailyMealSubscriptionRefSchema>;
 
+// -----------------------
+// Responses
+// -----------------------
+export const DailyMealSubscriptionResponseSchema = z
+	.object({
+		status: z.string(),
+		id: UUID,
+		payment_intent: PaymentIntentSchema.optional(),
+	})
+	.openapi('DailyMealSubscriptionResponse');
+export type DailyMealSubscriptionResponse = z.infer<typeof DailyMealSubscriptionResponseSchema>;
+
 // ===== OpenAPI Registration =====
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('DailyMealSubscriptionBase', DailyMealSubscriptionBaseSchema);
 	registry.register('DailyMealSubscriptionRef', DailyMealSubscriptionRefSchema);
+
+	registry.register('DailyMealSubscriptionResponse', DailyMealSubscriptionResponseSchema);
 }

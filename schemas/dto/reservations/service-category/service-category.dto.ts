@@ -54,7 +54,7 @@ export const UpdateServiceCategoryRequestSchema = CreateServiceCategoryRequestSc
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const ServiceCategoryResponseSchema = ServiceCategoryBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 	parent_category: z
 		.lazy(() => ServiceCategoryRefSchema)
 		.nullable()
@@ -67,9 +67,12 @@ export const ServiceCategoryResponseSchema = ServiceCategoryBaseSchema.extend({
 // ===== DAO RESPONSE SCHEMAS =====
 // DAO response for getServiceCategoryById
 export const ServiceCategoryDAOResponseSchema = ServiceCategoryBaseSchema.extend({
-	services: z.array(ServiceRefSchema).optional(),
-	parent: ServiceCategoryRefSchema.nullable().optional(),
-	children: z.array(ServiceCategoryRefSchema).optional(),
+	services: z.lazy(() => z.array(ServiceRefSchema).optional()),
+	parent: z
+		.lazy(() => ServiceCategoryRefSchema)
+		.nullable()
+		.optional(),
+	children: z.lazy(() => z.array(ServiceCategoryRefSchema).optional()),
 }).openapi({
 	title: 'ServiceCategoryDAOResponse',
 	description: 'Service category response from DAO with services, parent, and children categories',

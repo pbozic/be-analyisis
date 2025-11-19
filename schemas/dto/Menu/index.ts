@@ -1,8 +1,9 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-// Import registerSchemas functions with aliases
 import { registerSchemas as registerMenuSchemas } from './menu.dto.js';
 import { registerSchemas as registerMenuValidatorSchemas } from './menu.validators.js';
+import { registerMenuCategoryDaoSchemas } from './menucategory.dto.js';
+import { registerMenuItemDaoSchemas } from './menuitem.dto.js';
 
 // === Menu DTOs (Response) ===
 export {
@@ -39,8 +40,6 @@ export {
 	MenuCategoryDataSchema,
 	CreateMenuCategorySchema,
 	UpdateMenuCategoryInputSchema,
-	AddMenuCategoryIdToOrderInputSchema,
-	RemoveMenuCategoryIdFromOrderInputSchema,
 	AddCategoryToMenuInputSchema,
 	RemoveCategoryFromMenuInputSchema,
 	UpdateDailyMealMenuPriceInputSchema,
@@ -113,10 +112,6 @@ export {
 // === Menu Mappers ===
 export * from './menu.mappers.js';
 export * from './menuCategory.mappers.js';
-
-// === Schema Registration ===
-import { registerMenuCategoryDaoSchemas } from './menucategory.dto.js';
-import { registerMenuItemDaoSchemas } from './menuitem.dto.js';
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registerMenuSchemas(registry);

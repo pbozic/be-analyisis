@@ -64,8 +64,8 @@ export const UpdateBookingCourseTimeRequestSchema = z
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const BookingCourseTimeResponseSchema = BookingCourseTimeBaseSchema.extend({
-	booking: BookingRefSchema.optional(),
-	reservation_module: ReservationModuleRefSchema.optional(),
+	booking: z.lazy(() => BookingRefSchema).optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 }).openapi({
 	title: 'BookingCourseTimeResponse',
 	description: 'Complete booking course time response with related entities',

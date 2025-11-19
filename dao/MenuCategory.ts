@@ -33,7 +33,7 @@ export interface MenuCategoryDetail extends MenuCategoryRef {
 	menu_categories_categories?: MenuCategoryCategory[];
 	menu_items: MenuItemDetail[];
 	daily_meal_category_price?: {
-		daily_meal_category_price_id: string;
+		daily_meal_category_id: string;
 		price?: number | null;
 	} | null;
 }

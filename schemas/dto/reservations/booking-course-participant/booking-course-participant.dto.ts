@@ -70,8 +70,8 @@ export const UpdateBookingCourseParticipantRequestSchema = z
 
 export const BookingCourseParticipantResponseSchema = BookingCourseParticipantBaseSchema.extend({
 	customer: CustomerRefSchema.optional(),
-	booking: BookingRefSchema.optional(),
-	reservation_module: ReservationModuleRefSchema.optional(),
+	booking: z.lazy(() => BookingRefSchema).optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 }).openapi({
 	title: 'BookingCourseParticipantResponse',
 	description: 'Complete booking course participant response with related entities',

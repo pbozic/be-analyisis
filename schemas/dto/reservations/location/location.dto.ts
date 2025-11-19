@@ -54,7 +54,10 @@ export const LocationWithAddressSchema = LocationRefSchema.extend({
 
 // ===== DETAIL SCHEMA (full location with full relations as returned by DAO) =====
 export const LocationDetailSchema = LocationBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.nullable().optional(),
+	reservation_module: z
+		.lazy(() => ReservationModuleRefSchema)
+		.nullable()
+		.optional(),
 	address: AddressRefSchema.nullable().optional(),
 }).openapi({
 	title: 'LocationDetail',
@@ -103,7 +106,7 @@ export const DeleteLocationRequestSchema = z
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const LocationResponseSchema = LocationBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 }).openapi({
 	title: 'LocationResponse',
 	description: 'Complete location response with related entities',
@@ -118,7 +121,7 @@ export const LocationDAOResponseSchema = LocationDetailSchema.openapi({
 
 // DAO response for getLocationsByReservationModuleIdWithSchedules
 export const LocationWithSchedulesDAOResponseSchema = LocationBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 	schedules: z
 		.array(
 			z.object({
@@ -136,7 +139,7 @@ export const LocationWithSchedulesDAOResponseSchema = LocationBaseSchema.extend(
 export const LocationsAndEmployeesResponseSchema = z
 	.object({
 		locations: z.array(LocationDetailSchema),
-		employees: z.array(EmployeeRefSchema),
+		employees: z.lazy(() => z.array(EmployeeRefSchema)),
 	})
 	.openapi({
 		title: 'LocationsAndEmployeesResponse',

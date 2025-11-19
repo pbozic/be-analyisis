@@ -93,7 +93,7 @@ export const CreateMenuItemVersionInputSchema = z
 	.openapi('CreateMenuItemVersionInput');
 export type CreateMenuItemVersionInput = z.infer<typeof CreateMenuItemVersionInputSchema>;
 
-export const CreateMenuItemInputSchema = CreateMenuItemSchema.openapi('CreateMenuItemInput');
+export const CreateMenuItemInputSchema = z.lazy(() => CreateMenuItemSchema).openapi('CreateMenuItemInput');
 export type CreateMenuItemInput = z.infer<typeof CreateMenuItemInputSchema>;
 
 export const AddMenuItemIdToOrderInputSchema = z
@@ -112,7 +112,9 @@ export const RemoveMenuItemIdFromOrderInputSchema = z
 	.openapi('RemoveMenuItemIdFromOrderInput');
 export type RemoveMenuItemIdFromOrderInput = z.infer<typeof RemoveMenuItemIdFromOrderInputSchema>;
 
-export const GetMenuItemsByIdsDaoInputSchema = GetMenuItemsByIdsRequestSchema.openapi('GetMenuItemsByIdsDaoInput');
+export const GetMenuItemsByIdsDaoInputSchema = z
+	.lazy(() => GetMenuItemsByIdsRequestSchema)
+	.openapi('GetMenuItemsByIdsDaoInput');
 export type GetMenuItemsByIdsDaoInput = z.infer<typeof GetMenuItemsByIdsDaoInputSchema>;
 
 export const GetMenuItemsByBusinessIdDaoParamsSchema = z

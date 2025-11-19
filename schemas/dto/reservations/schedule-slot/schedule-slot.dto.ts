@@ -62,8 +62,8 @@ export const UpdateScheduleSlotRequestSchema = CreateScheduleSlotRequestSchema.p
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const ScheduleSlotResponseSchema = ScheduleSlotBaseSchema.extend({
-	schedule: ScheduleRefSchema.optional(),
-	employee: EmployeeRefSchema.optional(),
+	schedule: z.lazy(() => ScheduleRefSchema).optional(),
+	employee: z.lazy(() => EmployeeRefSchema).optional(),
 }).openapi({
 	title: 'ScheduleSlotResponse',
 	description: 'Complete schedule slot response with related entities',
@@ -81,9 +81,13 @@ export const ScheduleSlotDAOResponseSchema = ScheduleSlotBaseSchema.extend({
 
 // DAO response for getScheduleSlotsByEmployeeIdAndDates
 export const ScheduleSlotWithScheduleDAOResponseSchema = ScheduleSlotBaseSchema.extend({
-	schedule: ScheduleRefSchema.extend({
-		location: LocationRefSchema.optional(),
-	}).optional(),
+	schedule: z
+		.lazy(() =>
+			ScheduleRefSchema.extend({
+				location: LocationRefSchema.optional(),
+			})
+		)
+		.optional(),
 }).openapi({
 	title: 'ScheduleSlotWithScheduleDAOResponse',
 	description: 'Schedule slot response from DAO with schedule and location details',
@@ -94,6 +98,7 @@ export const ScheduleSlotWithScheduleDAOResponseSchema = ScheduleSlotBaseSchema.
 export const ScheduleSlotExceptionInputSchema = CreateScheduleSlotExceptionRequestSchema.extend({
 	schedule_slot_id: UUID.optional(),
 	schedule_slot_exception_id: UUID.optional(),
+	reason: z.string().nullable().optional(),
 }).openapi({
 	title: 'ScheduleSlotExceptionInput',
 	description: 'Extended schedule slot exception schema for multi-schedule operations with optional fields',
@@ -161,6 +166,7 @@ export const UpdateScheduleSlotWithDataInputSchema = z.object({
 			ScheduleSlotExceptionInputSchema.extend({
 				type: z.enum(['vacation', 'location_closed', 'other', 'health', 'break', 'lunch']),
 				schedule_slot_id: UUID,
+				reason: z.string().nullable().optional(),
 			})
 		),
 		removed: z.array(
@@ -171,7 +177,11 @@ export const UpdateScheduleSlotWithDataInputSchema = z.object({
 		),
 	}),
 	bookingSlots: z.object({
-		newOrChanged: z.array(BookingSlotInputSchema),
+		newOrChanged: z.array(
+			BookingSlotInputSchema.extend({
+				schedule_slot_id: UUID,
+			})
+		),
 		removed: z.array(
 			BookingSlotInputSchema.extend({
 				booking_slot_id: UUID,

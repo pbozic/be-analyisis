@@ -123,7 +123,7 @@ export const DeleteEmployeeRequestSchema = z
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const EmployeeResponseSchema = EmployeeBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 }).openapi({
 	title: 'EmployeeResponse',
 	description: 'Complete employee response with related entities',
@@ -132,8 +132,11 @@ export const EmployeeResponseSchema = EmployeeBaseSchema.extend({
 // ===== DAO RESPONSE SCHEMAS =====
 // DAO response for getEmployeesByReservationModuleId
 export const EmployeeDAOResponseSchema = EmployeeBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
-	business_user: BusinessUserDetailSchema.nullable().optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
+	business_user: z
+		.lazy(() => BusinessUserDetailSchema)
+		.nullable()
+		.optional(),
 }).openapi({
 	title: 'EmployeeDAOResponse',
 	description: 'Employee response from DAO with reservation module and business user',
@@ -141,8 +144,11 @@ export const EmployeeDAOResponseSchema = EmployeeBaseSchema.extend({
 
 // DAO response for getEmployeeById
 export const EmployeeByIdDAOResponseSchema = EmployeeBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
-	business_user: BusinessUserDetailSchema.nullable().optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
+	business_user: z
+		.lazy(() => BusinessUserDetailSchema)
+		.nullable()
+		.optional(),
 }).openapi({
 	title: 'EmployeeByIdDAOResponse',
 	description: 'Employee response from getEmployeeById with user information',
@@ -165,15 +171,17 @@ export const EmployeeByIdWithSchedulesDAOResponseSchema = EmployeeByIdDAORespons
 
 // DAO response for getEmployeesByReservationModuleIdWithSlots
 export const EmployeeWithSlotsDAOResponseSchema = EmployeeBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 	schedule_slots: z
-		.array(
-			ScheduleSlotRefSchema.extend({
-				schedule_employee: ScheduleEmployeeRefSchema.optional(),
-				schedule_slot_exceptions: z.array(z.object({ start_time: Timestamp })).optional(),
-				booking_slots: z.array(z.object({ start_time: Timestamp })).optional(),
-				schedule: ScheduleDetailSchema.optional(),
-			})
+		.lazy(() =>
+			z.array(
+				ScheduleSlotRefSchema.extend({
+					schedule_employee: ScheduleEmployeeRefSchema.optional(),
+					schedule_slot_exceptions: z.array(z.object({ start_time: Timestamp })).optional(),
+					booking_slots: z.array(z.object({ start_time: Timestamp })).optional(),
+					schedule: ScheduleDetailSchema.optional(),
+				})
+			)
 		)
 		.optional(),
 }).openapi({

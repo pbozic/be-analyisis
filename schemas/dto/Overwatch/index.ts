@@ -4,7 +4,7 @@ import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { registerSchemas as registerOverwatchSchemas } from './overwatch.dto.js';
 
 // === Overwatch DTOs (Response) ===
-export { DriverActivitySettingsResponseSchema, type DriverActivitySettingsResponse } from './overwatch.dto.js';
+export { DriverActivitySettingsResponseSchema } from './overwatch.dto.js';
 
 // === Overwatch Validators (Request Body, Query, Params) ===
 export {

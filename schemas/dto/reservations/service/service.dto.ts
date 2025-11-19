@@ -196,8 +196,11 @@ export const UpdateServiceWithLocationsSchema = z
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const ServiceResponseSchema = ServiceBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
-	service_category: ServiceCategoryRefSchema.nullable().optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
+	service_category: z
+		.lazy(() => ServiceCategoryRefSchema)
+		.nullable()
+		.optional(),
 }).openapi({
 	title: 'ServiceResponse',
 	description: 'Complete service response with related entities',

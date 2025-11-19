@@ -15,6 +15,7 @@ export const SearchBusinessQuerySchema = z
 	})
 	.strict()
 	.openapi('SearchBusinessQuery');
+export type SearchBusinessQuery = z.infer<typeof SearchBusinessQuerySchema>;
 
 // POST /business/search/sections/merchant body
 export const ListPromoSectionsMerchantBodySchema = z
@@ -25,6 +26,7 @@ export const ListPromoSectionsMerchantBodySchema = z
 		isDailyMealSearch: z.boolean().optional().default(false),
 	})
 	.openapi('ListPromoSectionsMerchantBody');
+export type ListPromoSectionsMerchantBody = z.infer<typeof ListPromoSectionsMerchantBodySchema>;
 
 // POST /business/search body (full-text search)
 export const SearchBusinessesBodySchema = z
@@ -40,10 +42,10 @@ export const SearchBusinessesBodySchema = z
 		type: z.string().nullable().optional(),
 	})
 	.openapi('SearchBusinessesBody');
-
+export type SearchBusinessesBody = z.infer<typeof SearchBusinessesBodySchema>;
 // GET /business/search?search=...
 export const SearchByNameQuerySchema = z.object({ search: z.string().min(1) }).openapi('SearchByNameQuery');
-
+export type SearchByNameQuery = z.infer<typeof SearchByNameQuerySchema>;
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('SearchBusinessQuery', SearchBusinessQuerySchema);
 	registry.register('ListPromoSectionsMerchantBody', ListPromoSectionsMerchantBodySchema);

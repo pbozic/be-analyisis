@@ -2,7 +2,7 @@ import type { action_bundle, MODULE_TYPE, Prisma as TPrisma } from '@prisma/clie
 import Stripe from 'stripe';
 
 import prisma from '../prisma/prisma.js';
-import type { BusinessAddon, AddonAction } from '../types/subscriptions/Subscription.ts';
+import type { BusinessAddon, AddonAction } from '../schemas/dto/Subscription/subscription.dto.ts';
 import stripe from './stripe.js';
 import ReservationModuleDao from '../dao/reservation/ReservationModule.ts';
 

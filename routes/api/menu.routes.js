@@ -4,7 +4,6 @@ import MenuController from '../../controllers/MenuController.ts';
 import { validate } from '../../middleware/zod.js';
 import { CreateDailyMealsMenuSchema } from '../../schemas/dto/Menu/menu.validators.js';
 import {
-	CreateMenuSchema,
 	CreateDailyMealMenuSchema,
 	CreateMenuCategorySchema,
 	UpdateMenuOrderInputSchema,
@@ -43,7 +42,7 @@ router.get('/business/:business_id', MenuController.getMenuByBusinessId);
  *
  */
 router.get('/menu/:business_id/:date', MenuController.getMenuByDate);
-router.post('/', validate(CreateMenuSchema), MenuController.createMenu);
+// router.post('/', validate(CreateMenuSchema), MenuController.createMenu);
 router.post('/daily-meal', validate(CreateDailyMealMenuSchema), MenuController.createDailyMealMenu);
 router.delete('/:menu_id', MenuController.deleteMenu);
 router.patch('/active', validate(SetActiveMenuInputSchema), MenuController.setActiveMenu);

@@ -1,4 +1,4 @@
-import type { daily_meal_categories, daily_meal_category_prices, Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import { UUID } from '../schemas/primitives.js';
@@ -6,28 +6,35 @@ import type { DailyMealCategoryWithPricesPrisma } from '../prisma/includes/daily
 import {
 	toDailyMealCategoryResponse,
 	toDailyMealCategoryList,
+	toDailyMealCategoryPriceBase,
+	toDailyMealCategoryDetail,
 } from '../schemas/dto/DailyMealCategory/dailyMealCategory.mappers.js';
+import {
+	DailyMealCategoryBase,
+	DailyMealCategoryDetail,
+	DailyMealCategoryPriceBase,
+} from '../schemas/dto/DailyMealCategory/dailyMealCategory.js';
 /**
  * Get daily meal category by id.
  *
  * @param {UUID} daily_meal_category_id
  * @param {Prisma.daily_meal_categoriesInclude} [includeObj]
- * @returns {Promise<Prisma.daily_meal_categoriesGetPayload<{ include: Prisma.daily_meal_categoriesInclude }>>}
+ * @returns {Promise<DailyMealCategoryDetail>}
  */
 export async function getDailyMealCategoryById(
 	daily_meal_category_id: UUID,
 	includeObj?: Prisma.daily_meal_categoriesInclude
-): Promise<Prisma.daily_meal_categoriesGetPayload<{ include: Prisma.daily_meal_categoriesInclude }>> {
-	const row = await prisma.daily_meal_categories.findUnique({
-		where: { daily_meal_category_id },
-		include: includeObj,
-	});
-	if (!row) return row as any;
+): Promise<DailyMealCategoryDetail> {
 	try {
-		return toDailyMealCategoryResponse(row as DailyMealCategoryWithPricesPrisma) as any;
+		const row = await prisma.daily_meal_categories.findUnique({
+			where: { daily_meal_category_id },
+			include: includeObj,
+		});
+		if (!row) throw new Error('Daily meal category not found');
+		return toDailyMealCategoryDetail(row as DailyMealCategoryWithPricesPrisma);
 	} catch (e) {
 		// If parsing fails, return raw row to avoid changing runtime behaviour
-		return row as any;
+		throw new Error('Error fetching daily meal category by id');
 	}
 }
 /**
@@ -37,19 +44,14 @@ export async function getDailyMealCategoryById(
  * @param {UUID} category_id
  * @param {number} price
  * @param {Date} start_date
- * @returns {Promise<Prisma.daily_meal_categoriesGetPayload>}
+ * @returns {Promise<DailyMealCategoryBase>}
  */
-export async function createDailyMealCategoryWithPrice({
-	daily_meals_module_id,
-	category_id,
-	price,
-	start_date,
-}: {
-	daily_meals_module_id: UUID;
-	category_id: UUID;
-	price: number;
-	start_date: Date;
-}) {
+export async function createDailyMealCategoryWithPrice(
+	daily_meals_module_id: string,
+	category_id: string,
+	price: number,
+	start_date: Date
+): Promise<DailyMealCategoryBase> {
 	const dmc = await prisma.daily_meal_categories.create({
 		data: {
 			daily_meals_module_id,
@@ -69,9 +71,9 @@ export async function createDailyMealCategoryWithPrice({
 	});
 
 	try {
-		return toDailyMealCategoryResponse(dmc as DailyMealCategoryWithPricesPrisma) as any;
+		return toDailyMealCategoryResponse(dmc as DailyMealCategoryWithPricesPrisma);
 	} catch (e) {
-		return dmc as any;
+		throw new Error('Error parsing created daily meal category');
 	}
 }
 /**
@@ -79,9 +81,12 @@ export async function createDailyMealCategoryWithPrice({
  *
  * @param {UUID} daily_meals_module_id
  * @param {boolean} detailed
- * @returns {Promise<Prisma.daily_meal_categoriesGetPayload[]>}
+ * @returns {Promise<DailyMealCategoryDetail[]>}
  */
-export async function getDailyMealCategoriesByModuleId(daily_meals_module_id: UUID, detailed: boolean = false) {
+export async function getDailyMealCategoriesByModuleId(
+	daily_meals_module_id: UUID,
+	detailed: boolean = false
+): Promise<DailyMealCategoryDetail[]> {
 	const rows = await prisma.daily_meal_categories.findMany({
 		where: { daily_meals_module_id },
 		include: {
@@ -96,16 +101,18 @@ export async function getDailyMealCategoriesByModuleId(daily_meals_module_id: UU
 	try {
 		return toDailyMealCategoryList(rows as DailyMealCategoryWithPricesPrisma[]);
 	} catch (e) {
-		return rows as any;
+		throw new Error('Error parsing daily meal categories list');
 	}
 }
 /**
  * Get active daily meal categories for a daily_meals_module.
  *
  * @param {UUID} daily_meals_module_id
- * @returns {Promise<Prisma.daily_meal_categoriesGetPayload[]>}
+ * @returns {Promise<DailyMealCategoryBase[]>}
  */
-export async function getActiveDailyMealCategoriesByModuleId(daily_meals_module_id: UUID) {
+export async function getActiveDailyMealCategoriesByModuleId(
+	daily_meals_module_id: UUID
+): Promise<DailyMealCategoryBase[]> {
 	const rows = await prisma.daily_meal_categories.findMany({
 		where: { daily_meals_module_id, active: true },
 		include: {
@@ -120,7 +127,7 @@ export async function getActiveDailyMealCategoriesByModuleId(daily_meals_module_
 	try {
 		return toDailyMealCategoryList(rows as DailyMealCategoryWithPricesPrisma[]);
 	} catch (e) {
-		return rows as any;
+		throw new Error('Error parsing active daily meal categories list');
 	}
 }
 /**
@@ -128,17 +135,13 @@ export async function getActiveDailyMealCategoriesByModuleId(daily_meals_module_
  * @param {UUID} daily_meal_category_id
  * @param {number} price
  * @param {Date} valid_from
- * @returns {Promise<Prisma.daily_meal_category_pricesGetPayload>}
+ * @returns {Promise<DailyMealCategoryPriceBase>}
  */
-export async function addPriceToDailyMealCategory({
-	daily_meal_category_id,
-	price,
-	valid_from,
-}: {
-	daily_meal_category_id: UUID;
-	price: number;
-	valid_from: Date;
-}) {
+export async function addPriceToDailyMealCategory(
+	daily_meal_category_id: UUID,
+	price: number,
+	valid_from: Date
+): Promise<DailyMealCategoryPriceBase> {
 	return prisma.daily_meal_category_prices.create({
 		data: {
 			daily_meal_category_id,
@@ -151,36 +154,36 @@ export async function addPriceToDailyMealCategory({
  * Deactivate daily meal category.
  *
  * @param {UUID} daily_meal_category_id
- * @returns {Promise<Prisma.daily_meal_categoriesGetPayload>}
+ * @returns {Promise<DailyMealCategoryBase>}
  */
-export async function deactivateDailyMealCategory(daily_meal_category_id: UUID) {
+export async function deactivateDailyMealCategory(daily_meal_category_id: UUID): Promise<DailyMealCategoryBase> {
 	const row = await prisma.daily_meal_categories.update({
 		where: { daily_meal_category_id },
 		data: { active: false },
 	});
 
 	try {
-		return toDailyMealCategoryResponse(row as DailyMealCategoryWithPricesPrisma) as any;
+		return toDailyMealCategoryResponse(row as DailyMealCategoryWithPricesPrisma);
 	} catch (e) {
-		return row as any;
+		throw new Error('Error parsing deactivated daily meal category');
 	}
 }
 /**
  * Activate daily meal category.
  *
  * @param {UUID} daily_meal_category_id
- * @returns {Promise<Prisma.daily_meal_categoriesGetPayload>}
+ * @returns {Promise<DailyMealCategoryBase>}
  */
-export async function activateDailyMealCategory(daily_meal_category_id: UUID) {
+export async function activateDailyMealCategory(daily_meal_category_id: UUID): Promise<DailyMealCategoryBase> {
 	const row = await prisma.daily_meal_categories.update({
 		where: { daily_meal_category_id },
 		data: { active: true },
 	});
 
 	try {
-		return toDailyMealCategoryResponse(row as DailyMealCategoryWithPricesPrisma) as any;
+		return toDailyMealCategoryResponse(row as DailyMealCategoryWithPricesPrisma);
 	} catch (e) {
-		return row as any;
+		throw new Error('Error parsing activated daily meal category');
 	}
 }
 
@@ -189,19 +192,19 @@ export async function activateDailyMealCategory(daily_meal_category_id: UUID) {
  * The price is the one with the latest valid_from that is less than or equal to the given date.
  * Returns null if no valid price is found.
  *
- * @param {daily_meal_categories} dailyMealCategory - The daily_meal_category object (must include daily_meal_category_prices: { price: number, valid_from: Date }[])
+ * @param {DailyMealCategoryDetail} dailyMealCategory - The daily_meal_category object (must include daily_meal_category_prices: { price: number, valid_from: Date }[])
  * @param {Date} date - The date to check the price for
- * @returns {number | null}
+ * @returns {DailyMealCategoryPriceBase | null}
  */
 export function getDailyMealCategoryPriceForDate(
-	dailyMealCategory: daily_meal_categories & { daily_meal_category_prices: daily_meal_category_prices[] },
+	dailyMealCategory: DailyMealCategoryDetail,
 	date: Date
-): daily_meal_category_prices | null {
+): DailyMealCategoryPriceBase | null {
 	if (!dailyMealCategory?.daily_meal_category_prices?.length) return null;
 	const validPrices = dailyMealCategory.daily_meal_category_prices
 		.filter((p) => new Date(p.valid_from) <= date)
 		.sort((a, b) => new Date(b.valid_from).getTime() - new Date(a.valid_from).getTime());
-	return validPrices.length > 0 ? validPrices[0]! : null;
+	return validPrices.length > 0 ? toDailyMealCategoryPriceBase(validPrices[0]) : null;
 }
 
 export default {

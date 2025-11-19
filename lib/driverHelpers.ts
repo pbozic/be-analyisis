@@ -6,8 +6,7 @@ import sockets from '../socket.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
 import prisma from '../prisma/prisma.js';
 import type { DriverDetail } from '../schemas/dto/Driver/index.js';
-import { DriverActivityLog } from '../types/drivers/DriverActivityLog.js';
-import { DriverActivitySetting } from '../types/drivers/DriverActivitySetting.js';
+import { DriverActivityLog, DriverActivitySettings } from '../schemas/dto/Driver/driver.dto.js';
 
 const { UserSockets, io } = sockets;
 /**
@@ -77,7 +76,7 @@ export async function handleDriverStatusChange(
 	driver_id: string,
 	online: boolean,
 	latestLog: DriverActivityLog | null = null,
-	settings: DriverActivitySetting | null = null
+	settings: DriverActivitySettings | null = null
 ): Promise<void> {
 	let activity_settings = settings;
 	if (!activity_settings) {

@@ -19,7 +19,7 @@ export const RolePermissionResponseBaseSchema = z
 	.openapi('RolePermissionResponseBase');
 
 export const RolePermissionResponseSchema = RolePermissionResponseBaseSchema.extend({
-	role: RoleResponseBaseSchema,
+	role: z.lazy(() => RoleResponseBaseSchema),
 	permission: PermissionResponseBaseSchema,
 }).openapi('RolePermissionResponse');
 

@@ -19,9 +19,7 @@ import {
  * @bodyContent {CreateDailyMealCategoryWithPriceInput} application/json
  * @bodyRequired
  * @response 201 - Daily meal category created successfully
- * @responseContent {object} 201.application/json
- *   ]
- * }
+ * @responseContent {DailyMealCategoryBase} 201.application/json
  * @response 500 - Error creating daily meal category
  * @prisma_model daily_meal_categories
  */
@@ -32,12 +30,12 @@ export async function createDailyMealCategoryWithPrice(
 	try {
 		const { business_id } = req.params;
 		const { category_id, price, start_date } = req.body;
-		const dmc = await DmcDao.createDailyMealCategoryWithPrice({
+		const dmc = await DmcDao.createDailyMealCategoryWithPrice(
 			business_id,
 			category_id,
 			price,
-			start_date: new Date(start_date),
-		});
+			new Date(start_date)
+		);
 
 		const futureDate = new Date();
 		futureDate.setUTCHours(0, 0, 0, 0);
@@ -61,7 +59,7 @@ export async function createDailyMealCategoryWithPrice(
  * @description Lists all currently active daily meal categories for a business, including their latest price.
  * @operationId getDailyMealCategoriesForBusiness
  * @response 200 - List of active daily meal categories
- * @responseContent {object} 200.application/json
+ * @responseContent {DailyMealCategoryBase[]} 200.application/json
  * @response 500 - Error fetching daily meal categories
  * @prisma_model daily_meal_categories
  */
@@ -87,13 +85,10 @@ export async function getDailyMealCategoriesForBusiness(
  * @description Adds a new price entry for a daily meal category, effective from a given date. Also updates all menu_category entries for the relevant daily meal category where the menu date is above the new price's valid_from, to connect with the new daily_meal_category_price_id.
  * @operationId addPriceToDailyMealCategory
  * @bodyDescription The new price and its valid_from date.
- * @bodyContent {
- *   "price": 1200,
- *   "valid_from": "2024-08-01T00:00:00.000Z"
- * } application/json
+ * @bodyContent {AddPriceToDailyMealCategoryInput} application/json
  * @bodyRequired
  * @response 201 - Price entry added successfully and menu categories updated
- * @responseContent {object} 201.application/json
+ * @responseContent {DailyMealCategoryPriceBase} 201.application/json
  * @response 500 - Error adding price entry
  * @prisma_model daily_meal_category_prices
  */
@@ -107,16 +102,12 @@ export async function addPriceToDailyMealCategory(
 		const validFromDate = new Date(valid_from);
 
 		// Create the new price entry
-		const priceEntry = await DmcDao.addPriceToDailyMealCategory({
-			daily_meal_category_id: dmc_id,
-			price,
-			valid_from: validFromDate,
-		});
+		const priceEntry = await DmcDao.addPriceToDailyMealCategory(dmc_id, price, validFromDate);
 
 		await MenuCategory.updateMenuCategoriesWithNewPrice(
 			dmc_id,
-			priceEntry.daily_meal_category_prices_id,
-			priceEntry.valid_from
+			priceEntry.daily_meal_category_prices_id as string,
+			new Date(priceEntry.valid_from)
 		);
 
 		res.status(201).json(priceEntry);
@@ -133,7 +124,7 @@ export async function addPriceToDailyMealCategory(
  * @description Deactivates a daily meal category from a business.
  * @operationId deactivateDailyMealCategory
  * @response 200 - Daily meal category deleted successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DailyMealCategoryBase} 200.application/json
  * @response 500 - Error deleting daily meal category
  * @prisma_model daily_meal_categories
  */
@@ -158,7 +149,7 @@ export async function deactivateDailyMealCategory(
  * @description Activates a daily meal category of a business.
  * @operationId activateDailyMealCategory
  * @response 200 - Daily meal category activated successfully
- * @responseContent {object} 200.application/json
+ * @responseContent {DailyMealCategoryBase} 200.application/json
  * @response 500 - Error deleting daily meal category
  * @prisma_model daily_meal_categories
  */
@@ -182,3 +173,11 @@ export async function activateDailyMealCategory(
 		res.status(500).json({ message: 'Error activating daily meal category', error: message });
 	}
 }
+
+export default {
+	createDailyMealCategoryWithPrice,
+	getDailyMealCategoriesForBusiness,
+	addPriceToDailyMealCategory,
+	deactivateDailyMealCategory,
+	activateDailyMealCategory,
+};

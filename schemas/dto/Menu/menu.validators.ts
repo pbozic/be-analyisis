@@ -99,7 +99,7 @@ export const UpdateMenuCategoryInputSchema = z
 
 export type UpdateMenuCategoryInput = z.infer<typeof UpdateMenuCategoryInputSchema>;
 
-const AddMenuCategoryIdToOrderInputSchema = z
+export const AddMenuCategoryIdToOrderInputSchema = z
 	.object({
 		menu_id: UUID,
 		menuCategoryIdToAdd: UUID,
@@ -108,7 +108,7 @@ const AddMenuCategoryIdToOrderInputSchema = z
 
 export type AddMenuCategoryIdToOrderInput = z.infer<typeof AddMenuCategoryIdToOrderInputSchema>;
 
-const RemoveMenuCategoryIdFromOrderInputSchema = z
+export const RemoveMenuCategoryIdFromOrderInputSchema = z
 	.object({
 		menu_id: UUID,
 		menuCategoryIdToRemove: UUID,

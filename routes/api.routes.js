@@ -1,6 +1,7 @@
 import fs from 'fs';
 
 import express from 'express';
+import { z } from 'zod';
 
 import prisma from '../prisma/prisma.js';
 import authMiddleware from '../middleware/auth.js';
@@ -19,9 +20,7 @@ import dailyMealsRoutes from './api/delivery/dailyMeals.routes.js';
 import authBusinessRoutes from './api/business/auth.routes.js';
 import businessRoutes from './api/business.routes.js';
 import driverRoutes from './api/drivers.routes.js';
-// import deliveryDriverRoutes from './api/deliveryDrivers.routes.js';
 import vehicleRoutes from './api/vehicles.routes.ts';
-// import financesRoutes from './api/finances.routes.js';
 import documentsRoutes from './api/documents.routes.js';
 import menusRoutes from './api/menu.routes.js';
 import authMenusRoutes from './api/menu/auth.routes.js';
@@ -30,7 +29,6 @@ import businessTeamRoutes from './api/businessTeams.routes.js';
 import businessClientRoutes from './api/businessClients.routes.js';
 import stripeRoutes from './api/stripe.routes.js';
 import lostItemsRoutes from './api/lostItems.routes.js';
-// import flagRoutes from './api/flags.routes.js';
 import categoriesRoutes from './api/categories.routes.js';
 import promoRoutes from './api/promo.routes.ts';
 import googleMaps from './api/googleMaps.routes.js';
@@ -46,6 +44,7 @@ import reviewsRoutes from './api/reviews.routes.js';
 import { sendNotificationToUser } from '../lib/oneSignal.js';
 import withUserMiddleware from '../middleware/user.js';
 import sessionRoutes from './api/session.routes.js';
+import { validate } from '../middleware/zod.ts';
 const router = express.Router();
 /**
  *    * @module stripe
@@ -139,11 +138,6 @@ router.use('/drivers', [authMiddleware], driverRoutes);
  */
 router.use('/vehicles', [authMiddleware], vehicleRoutes);
 /**
- *    * @module finances
- *
- */
-router.use('/finances', [authMiddleware], financesRoutes);
-/**
  *    * @module documents
  *
  */
@@ -179,11 +173,6 @@ router.use('/order_lobby', [authMiddleware], orderLobbyRoutes);
  *
  */
 router.use('/lost_items', lostItemsRoutes);
-/**
- *    * @module flags
- *
- */
-router.use('/flags', [authMiddleware], flagRoutes);
 /**
  *    * @module google_maps
  *

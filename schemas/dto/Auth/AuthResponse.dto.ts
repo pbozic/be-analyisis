@@ -3,13 +3,13 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 // Reuse existing DTOs
-import { UserResponseSchema } from '../User/user.js';
-import { BusinessResponseSchema } from '../Business/business.js';
-import { BusinessUserWithBusinessResponseSchema } from '../BusinessUser/businessUser.js';
-import { DriverDetailSchema } from '../Driver/index.js';
-import { PaymentMethodSchema } from '../Payments/payment.dto.js';
-import { Timestamp, UUID } from '../../primitives.js';
-import { UserAddressRefSchema } from '../Address/index.js';
+import { UserResponseSchema } from '../User/user.ts';
+import { BusinessResponseSchema } from '../Business/business.ts';
+import { BusinessUserWithBusinessResponseSchema } from '../BusinessUser/businessUser.ts';
+import { DriverDetailSchema } from '../Driver/index.ts';
+import { PaymentMethodSchema } from '../Payments/payment.dto.ts';
+import { Timestamp, UUID } from '../../primitives.ts';
+import { UserAddressRefSchema } from '../Address/index.ts';
 import { ReferralBaseSchema, ReferralDetailSchema } from '../Referral/referral.dto.ts';
 import { UserRoleSchema } from '../BusinessUser/BusinessUserRequest.dto.ts';
 import { FavoriteBusinessDetailSchema } from '../FavoriteBusinesses/favorite-businesses.dto.ts';

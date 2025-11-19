@@ -3,14 +3,14 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { MODULE } from '@prisma/client';
 
-import { Email, PhoneNumber, UUID } from '../../primitives.js';
+import { Email, PhoneNumber, UUID } from '../../primitives.ts';
 import {
 	BusinessRegistrationDataSchema,
 	UserRegistrationDataSchema,
 	VehicleRegistrationSchema,
-} from '../Business/business.validators.js';
-import { BusinessAddressSchema } from '../Address/address.js';
-import { DocumentWithFilesSchema } from '../Document/document.dto.js';
+} from '../Business/business.validators.ts';
+import { BusinessAddressSchema } from '../Address/address.ts';
+import { DocumentWithFilesSchema } from '../Document/document.dto.ts';
 
 extendZodWithOpenApi(z);
 

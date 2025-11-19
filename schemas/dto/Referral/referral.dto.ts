@@ -2,7 +2,6 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID, Timestamp } from '../../primitives.js';
-import { BasicUserDataSchema } from '../User/user.js';
 import { UserRefSchema } from '../User/index.ts';
 
 extendZodWithOpenApi(z);
@@ -34,8 +33,14 @@ export const ReferralRefSchema = z
 export type ReferralRef = z.infer<typeof ReferralRefSchema>;
 
 export const ReferralDetailSchema = ReferralBaseSchema.extend({
-	referrer: UserRefSchema.nullable().optional(),
-	referred: UserRefSchema.nullable().optional(),
+	referrer: z
+		.lazy(() => UserRefSchema)
+		.nullable()
+		.optional(),
+	referred: z
+		.lazy(() => UserRefSchema)
+		.nullable()
+		.optional(),
 }).openapi('ReferralDetail');
 export type ReferralDetail = z.infer<typeof ReferralDetailSchema>;
 

@@ -1,11 +1,11 @@
-import { AddonResponseSchema, AddonWithActionsResponseSchema } from './addon.js';
-import type { AddonResponse, AddonWithActionsResponse } from './addon.js';
+import { AddonResponseSchema } from './addon.dto.ts';
+import type { AddonResponse } from './addon.dto.ts';
 import type {
 	AddonDefaultPrisma,
 	AddonWithActionsPrisma,
 	AddonWithActionsAndUsagesPrisma,
 	BusinessAddonWithAddonPrisma,
-} from '../../../prisma/includes/addon.js';
+} from '../../../prisma/includes/addon.ts';
 
 /**
  * Map a minimal Prisma addon row (scalars only) into the public AddonResponse DTO.
@@ -31,9 +31,9 @@ export function toAddonsList(rows: AddonDefaultPrisma[]): AddonResponse[] {
 }
 
 /**
- * Map an addon row that includes actions and nested business_addons -> AddonWithActionsResponse
+ * Map an addon row that includes actions and nested business_addons -> AddonResponse
  */
-export function toAddonWithActionsResponse(row: AddonWithActionsPrisma): AddonWithActionsResponse {
+export function toAddonWithActionsResponse(row: AddonWithActionsPrisma): AddonResponse {
 	const dto = {
 		addon_id: row.addon_id,
 		module: row.module,
@@ -50,17 +50,17 @@ export function toAddonWithActionsResponse(row: AddonWithActionsPrisma): AddonWi
 			.filter(Boolean),
 	};
 
-	return AddonWithActionsResponseSchema.parse(dto);
+	return AddonResponseSchema.parse(dto);
 }
 
-export function toAddonsWithActionsList(rows: AddonWithActionsPrisma[]): AddonWithActionsResponse[] {
+export function toAddonsWithActionsList(rows: AddonWithActionsPrisma[]): AddonResponse[] {
 	return rows.map((r) => toAddonWithActionsResponse(r));
 }
 
 /**
  * Map an addon row that includes actions and usages/reservation_module into the same AddonWithActionsResponse shape.
  */
-export function toAddonWithActionsAndUsagesResponse(row: AddonWithActionsAndUsagesPrisma): AddonWithActionsResponse {
+export function toAddonWithActionsAndUsagesResponse(row: AddonWithActionsAndUsagesPrisma): AddonResponse {
 	// Reuse the actions mapping; we ignore usages at the addon-level DTO (they live on business_addons)
 	return toAddonWithActionsResponse(row as AddonWithActionsPrisma);
 }
@@ -68,7 +68,7 @@ export function toAddonWithActionsAndUsagesResponse(row: AddonWithActionsAndUsag
 /**
  * Map a business_addon row that includes the nested addon (with actions) into an AddonWithActionsResponse
  */
-export function toAddonFromBusinessAddon(row: BusinessAddonWithAddonPrisma): AddonWithActionsResponse {
+export function toAddonFromBusinessAddon(row: BusinessAddonWithAddonPrisma): AddonResponse {
 	return toAddonWithActionsResponse(row.addon as AddonWithActionsPrisma);
 }
 

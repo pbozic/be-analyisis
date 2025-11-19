@@ -1,7 +1,7 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 // Import registerSchemas functions with aliases
-import { registerSchemas as registerOrderLobbySchemas } from './orderLobby.dto.js';
+import { registerSchemas as registerOrderLobbySchemas } from './orderLobby.dto.ts';
 import { registerSchemas as registerOrderLobbyValidatorSchemas } from './orderLobby.validators.js';
 import { registerSchemas as registerOrderLobbyItemSchemas } from './orderLobbyItem.dto.js';
 import { registerSchemas as registerOrderLobbyUserSchemas } from './orderLobbyUser.dto.js';

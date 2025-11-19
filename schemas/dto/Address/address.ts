@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, Timestamp } from '../../primitives.js';
+import { UUID, Timestamp } from '../../primitives.ts';
 
 extendZodWithOpenApi(z);
 

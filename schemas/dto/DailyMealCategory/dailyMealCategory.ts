@@ -3,6 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, Timestamp } from '../../primitives.js';
 import { CategoryRefSchema } from '../Category/category.dto.js';
+import { DailyMealsModuleSchema } from '../Business/index.js';
 
 extendZodWithOpenApi(z);
 
@@ -12,7 +13,7 @@ extendZodWithOpenApi(z);
 
 export const DailyMealCategoryPriceBaseSchema = z
 	.object({
-		daily_meal_category_price_id: UUID.optional(),
+		daily_meal_category_prices_id: UUID.optional(),
 		daily_meal_category_id: UUID,
 		price: z.number(),
 		valid_from: Timestamp,
@@ -47,6 +48,7 @@ export type DailyMealCategoryBase = z.infer<typeof DailyMealCategoryBaseSchema>;
 
 export const DailyMealCategoryDetailSchema = DailyMealCategoryBaseSchema.extend({
 	category: CategoryRefSchema.optional(),
+	daily_meals_module: DailyMealsModuleSchema.optional(),
 	daily_meal_category_prices: z.array(DailyMealCategoryPriceBaseSchema).optional().default([]),
 }).openapi('DailyMealCategoryDetail');
 export type DailyMealCategoryDetail = z.infer<typeof DailyMealCategoryDetailSchema>;

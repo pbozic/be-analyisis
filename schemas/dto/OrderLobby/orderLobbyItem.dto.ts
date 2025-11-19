@@ -75,7 +75,7 @@ export type MenuItemRef = z.infer<typeof MenuItemRefSchema>;
 export const OrderLobbyItemResponseSchema = OrderLobbyItemBaseSchema.extend({
 	user: UserRefSchema.optional(),
 	menu_item: MenuItemRefSchema.optional(),
-	order_lobby: OrderLobbyRefSchema.optional(),
+	order_lobby: z.lazy(() => OrderLobbyRefSchema).optional(),
 }).openapi({
 	title: 'OrderLobbyItemResponse',
 	description: 'Complete order lobby item response with related entities',

@@ -3,9 +3,10 @@ import { PrismaClient, Prisma } from '@prisma/client';
 import pug from 'pug';
 import { TEMPLATE_VERSION_STATUS, NOTIFICATION_CHANNEL } from '@prisma/client';
 
-import { addresses, business } from '../prisma/schemas/interfaces.js';
+import { addresses } from '../prisma/schemas/interfaces.js';
 import { BookingBase } from '../schemas/dto/reservations/booking/booking.dto.js';
 import { CustomerBase } from '../schemas/dto/reservations/customer/customer.dto.js';
+import { BusinessWithAllModulesResponseDto } from '../schemas/dto/Business/index.js';
 
 // ————————————————————————————————————
 // Config
@@ -191,7 +192,7 @@ function pickMultilangString(v: Prisma.JsonValue | null | undefined): string | u
 // Data loader for a booking context (single service)
 // ————————————————————————————————————
 type Loaded = {
-	business: Partial<business> | null; // { name }
+	business: Partial<BusinessWithAllModulesResponseDto> | null; // { name }
 	booking:
 		| (Omit<Partial<BookingBase>, 'start_time' | 'reschedule_url' | 'location' | 'service' | 'employee'> & {
 				start_time?: Date | null;
@@ -214,10 +215,10 @@ type Loaded = {
  * @returns {Promise<Loaded>}
  */
 async function loadForBooking(ctx: Ctx): Promise<Loaded> {
-	const business = await prisma.business.findFirst({
+	const business = (await prisma.business.findFirst({
 		where: { reservation_module: { reservation_module_id: ctx.reservation_module_id } },
-		select: { name: true },
-	});
+		select: { business_details: { select: { name: true } } },
+	})) as Partial<BusinessWithAllModulesResponseDto> | null;
 
 	const booking = await prisma.booking.findUnique({
 		where: { booking_id: ctx.booking_id },
@@ -281,7 +282,7 @@ export async function resolveVariables(ctx: Ctx): Promise<Record<string, string 
 
 	return {
 		// Podjetje
-		businessName: business?.name ?? undefined,
+		businessName: business?.business_details?.name ?? undefined,
 
 		// Stranka
 		'customer.firstName': first,
