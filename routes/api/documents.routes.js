@@ -14,7 +14,7 @@ import {
 const router = express.Router();
 router.get('/', DocumentsController.listDocuments);
 router.get('/:documentId', DocumentsController.getDocumentById);
-router.get('/users/:userId', DocumentsController.getDocumentsForUser);
+// router.get('/users/:userId', DocumentsController.getDocumentsForUser);
 /**
  *    * @module business
  *
@@ -36,14 +36,14 @@ router.get('/type/:documentType', DocumentsController.getDocumentsByDocumentType
  *
  */
 router.get('/business/:business_id/type/:document_type', DocumentsController.getDocumentsForBusinessByDocumentType);
-router.get('/user/type/:document_type', DocumentsController.getDocumentsForUserByDocumentType);
+// router.get('/user/type/:document_type', DocumentsController.getDocumentsForUserByDocumentType);
 router.get('/drivers/:driverId/type/:documentType', DocumentsController.getDocumentsForDriverByDocumentType);
 router.get('/vehicles/:vehicleId/type/:documentType', DocumentsController.getDocumentsForVehicleByDocumentType);
 /**
  *    * @module general
  *
  */
-router.post('/create/user/:user_id', validate(CreateDocumentBodySchema), DocumentsController.createUserDocument);
+// router.post('/create/user/:user_id', validate(CreateDocumentBodySchema), DocumentsController.createUserDocument);
 /**
  *    * @module business
  *

@@ -159,7 +159,7 @@ export const BusinessWithDailyMealsResponseDto = BusinessResponseDto.extend({
 	})
 		.nullable()
 		.optional(),
-	daily_meal_drivers: z.array(DriverBaseSchema).optional(),
+	daily_meal_drivers: z.lazy(() => z.array(DriverBaseSchema)).optional(),
 }).openapi('BusinessWithDailyMealsResponse');
 
 // Business with Food & Drinks Module
@@ -213,7 +213,7 @@ export const BusinessWithAddressAndUsersResponseDto = BusinessResponseDto.extend
 	business_users: z
 		.array(
 			z.object({
-				users: UserRefSchema.optional(),
+				users: z.lazy(() => UserRefSchema).optional(),
 			})
 		)
 		.optional(),
@@ -318,7 +318,7 @@ export const BusinessByIdResponseSchema = BusinessResponseDto.extend({
 	business_users: z
 		.array(
 			z.object({
-				user: UserRefSchema.optional(),
+				user: z.lazy(() => UserRefSchema).optional(),
 			})
 		)
 		.optional(),

@@ -225,6 +225,31 @@ export const DriverDailyEarningsBreakdownSchema = z
 	.openapi('DriverDailyEarningsBreakdown');
 export type DriverDailyEarningsBreakdown = z.infer<typeof DriverDailyEarningsBreakdownSchema>;
 
+export const DriverActivitySettingsSchema = z
+	.object({
+		driver_activity_settings_id: UUID,
+		first_offline_lockout: z.number(),
+		second_offline_lockout: z.number(),
+		online_timeout: z.number(),
+		created_at: Timestamp,
+		updated_at: Timestamp.optional(),
+		active: z.boolean(),
+	})
+	.openapi('DriverActivitySettings');
+export type DriverActivitySettings = z.infer<typeof DriverActivitySettingsSchema>;
+
+export const DriverActivityLogSchema = z
+	.object({
+		driver_activity_log_id: UUID,
+		driver_id: UUID,
+		started_at: Timestamp,
+		ended_at: Timestamp.nullable().optional(),
+		timeout_at: Timestamp.nullable().optional(),
+		lockout_until: Timestamp.nullable().optional(),
+	})
+	.openapi('DriverActivityLog');
+export type DriverActivityLog = z.infer<typeof DriverActivityLogSchema>;
+
 // =======================
 // Register Schemas
 // =======================

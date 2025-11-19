@@ -51,7 +51,7 @@ export const UpdateBookingSlotRequestSchema = CreateBookingSlotRequestSchema.par
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const BookingSlotResponseSchema = BookingSlotBaseSchema.extend({
-	schedule_slot: ScheduleSlotRefSchema.optional(),
+	schedule_slot: z.lazy(() => ScheduleSlotRefSchema).optional(),
 }).openapi({
 	title: 'BookingSlotResponse',
 	description: 'Complete booking slot response with related entities',

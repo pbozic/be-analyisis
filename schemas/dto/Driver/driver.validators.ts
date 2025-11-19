@@ -29,13 +29,15 @@ export type UpdateDriverRequest = z.infer<typeof UpdateDriverSchema>;
 // Used by: editDriver (PATCH /drivers/edit)
 export const EditDriverSchema = z
 	.object({
-		user: BasicUserDataSchema.extend({
-			telephone_code: z.string().optional(),
-		})
-			.partial()
-			.extend({
-				user_id: UUID, // Required field
-			}),
+		user: z.lazy(() =>
+			BasicUserDataSchema.extend({
+				telephone_code: z.string().optional(),
+			})
+				.partial()
+				.extend({
+					user_id: UUID, // Required field
+				})
+		),
 		driver: z.object({
 			driver_id: UUID,
 			transport_module_id: UUID,
@@ -155,10 +157,12 @@ export type UnlinkDriverFromBusinessRequest = z.infer<typeof UnlinkDriverFromBus
 export const CreateDriverSchema = z
 	.object({
 		user: z.object({
-			data: BasicUserDataSchema.extend({
-				telephone_code: z.string(),
-				user_roles: z.array(UserRoleAssignmentSchema).optional(),
-			}),
+			data: z.lazy(() =>
+				BasicUserDataSchema.extend({
+					telephone_code: z.string(),
+					user_roles: z.array(UserRoleAssignmentSchema).optional(),
+				})
+			),
 			documents: z
 				.array(
 					z.object({

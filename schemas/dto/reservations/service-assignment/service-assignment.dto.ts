@@ -43,7 +43,7 @@ export const CreateServiceAssignmentRequestSchema = z
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 export const ServiceAssignmentResponseSchema = ServiceAssignmentBaseSchema.extend({
 	employee: EmployeeRefSchema.optional(),
-	service: ServiceRefSchema.optional(),
+	service: z.lazy(() => ServiceRefSchema).optional(),
 }).openapi({
 	title: 'ServiceAssignmentResponse',
 	description: 'Complete service assignment response with related entities',

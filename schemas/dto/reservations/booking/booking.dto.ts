@@ -88,7 +88,10 @@ export const BookingWithRelationsSchema = BookingRefSchema.extend({
 	customer: CustomerDetailSchema.nullable().optional(),
 	location: LocationRefSchema.nullable().optional(),
 	employee: EmployeeLightSchema.nullable().optional(),
-	service: ServiceRefSchema.nullable().optional(),
+	service: z
+		.lazy(() => ServiceRefSchema)
+		.nullable()
+		.optional(),
 }).openapi({
 	title: 'BookingWithRelations',
 	description: 'Booking reference with related entities from DAO',
@@ -401,8 +404,11 @@ export const BookingResponseSchema = BookingBaseSchema.extend({
 	customer: CustomerRefSchema.nullable().optional(),
 	location: LocationRefSchema.nullable().optional(),
 	employee: EmployeeRefSchema.nullable().optional(),
-	service: ServiceRefSchema.nullable().optional(),
-	reservation_module: ReservationModuleRefSchema.optional(),
+	service: z
+		.lazy(() => ServiceRefSchema)
+		.nullable()
+		.optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 	parent_booking: z
 		.lazy(() => BookingRefSchema)
 		.nullable()
@@ -419,8 +425,11 @@ export const BookingDAOResponseSchema = BookingBaseSchema.extend({
 	customer: CustomerDetailSchema.nullable().optional(),
 	location: LocationRefSchema.nullable().optional(),
 	employee: EmployeeLightSchema.nullable().optional(),
-	service: ServiceRefSchema.nullable().optional(),
-	reservation_module: ReservationModuleRefSchema.optional(),
+	service: z
+		.lazy(() => ServiceRefSchema)
+		.nullable()
+		.optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 	booking_history_log: z.array(BookingHistoryLogRefSchema).optional(),
 	history: z.array(BookingHistoryLogRefSchema).optional(),
 }).openapi({
@@ -434,7 +443,10 @@ export const BookingWithChildrenDAOResponseSchema = BookingDAOResponseSchema.ext
 			BookingBaseSchema.extend({
 				customer: CustomerDetailSchema.nullable().optional(),
 				location: LocationRefSchema.nullable().optional(),
-				service: ServiceRefSchema.nullable().optional(),
+				service: z
+					.lazy(() => ServiceRefSchema)
+					.nullable()
+					.optional(),
 			})
 		)
 		.optional(),
@@ -447,7 +459,10 @@ export const BookingWithChildrenDAOResponseSchema = BookingDAOResponseSchema.ext
 export const BookingWithEmployeeLocationServiceAndCustomerDAOResponseSchema = BookingBaseSchema.extend({
 	employee: EmployeeLightSchema.nullable().optional(),
 	location: LocationRefSchema.nullable().optional(),
-	service: ServiceWithCategorySchema.nullable().optional(),
+	service: z
+		.lazy(() => ServiceWithCategorySchema)
+		.nullable()
+		.optional(),
 	customer: CustomerDetailSchema.nullable().optional(),
 	child_bookings: z.array(BookingRefSchema).optional(),
 }).openapi({
@@ -459,14 +474,20 @@ export const BookingWithEmployeeLocationServiceAndCustomerDAOResponseSchema = Bo
 export const BookingWithDeepChildrenDAOResponseSchema = BookingBaseSchema.extend({
 	customer: CustomerDetailSchema.nullable().optional(),
 	location: LocationRefSchema.nullable().optional(),
-	service: ServiceRefSchema.nullable().optional(),
+	service: z
+		.lazy(() => ServiceRefSchema)
+		.nullable()
+		.optional(),
 	employee: EmployeeLightSchema.nullable().optional(),
 	child_bookings: z
 		.array(
 			BookingBaseSchema.extend({
 				customer: CustomerDetailSchema.nullable().optional(),
 				location: LocationRefSchema.nullable().optional(),
-				service: ServiceRefSchema.nullable().optional(),
+				service: z
+					.lazy(() => ServiceRefSchema)
+					.nullable()
+					.optional(),
 				employee: EmployeeLightSchema.nullable().optional(),
 			})
 		)
@@ -486,7 +507,10 @@ export const BookingCourseDAOResponseSchema = BookingBaseSchema.extend({
 			})
 		)
 		.optional(),
-	service: ServiceRefSchema.nullable().optional(),
+	service: z
+		.lazy(() => ServiceRefSchema)
+		.nullable()
+		.optional(),
 	location: LocationRefSchema.nullable().optional(),
 	employee: EmployeeLightSchema.nullable().optional(),
 }).openapi({
@@ -498,7 +522,10 @@ export const BookingCourseDAOResponseSchema = BookingBaseSchema.extend({
 export const BookingCoursesDAOResponseSchema = BookingBaseSchema.extend({
 	booking_course_time: z.array(BookingCourseTimeRefSchema).optional(),
 	location: LocationRefSchema.nullable().optional(),
-	service: ServiceRefSchema.nullable().optional(),
+	service: z
+		.lazy(() => ServiceRefSchema)
+		.nullable()
+		.optional(),
 	employee: EmployeeLightSchema.nullable().optional(),
 }).openapi({
 	title: 'BookingCoursesDAOResponse',

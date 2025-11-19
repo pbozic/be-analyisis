@@ -37,7 +37,7 @@ export const BusinessClientResponseSchema = BusinessClientBaseSchema;
 
 // BusinessClient with Business - for functions that include business
 export const BusinessClientWithBusinessResponseSchema = BusinessClientResponseSchema.extend({
-	business: BusinessRefSchema,
+	business: z.lazy(() => BusinessRefSchema),
 });
 
 // BusinessClient with Taxi Orders - for functions that include taxi_orders
@@ -55,7 +55,7 @@ export const BusinessClientWithOrdersResponseSchema = BusinessClientResponseSche
 
 // BusinessClient Detail - for functions with full includes (business + taxi_orders)
 export const BusinessClientDetailResponseSchema = BusinessClientResponseSchema.extend({
-	business: BusinessRefSchema,
+	business: z.lazy(() => BusinessRefSchema),
 	taxi_orders: z
 		.array(
 			z.object({

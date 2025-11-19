@@ -65,7 +65,7 @@ export const ReservationModuleRefSchema = z
 
 // ===== WITH RELATIONS SCHEMA (extends RefSchema with selected relations) =====
 export const ReservationModuleWithBusinessSchema = ReservationModuleRefSchema.extend({
-	business: BusinessRefSchema.optional(),
+	business: z.lazy(() => BusinessRefSchema).optional(),
 }).openapi({
 	title: 'ReservationModuleWithBusiness',
 	description: 'Reservation module reference with business information',
@@ -132,7 +132,7 @@ export const GetBookingDataRequestSchema = z
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const ReservationModuleResponseSchema = ReservationModuleBaseSchema.extend({
-	business: BusinessRefSchema.optional(),
+	business: z.lazy(() => BusinessRefSchema).optional(),
 }).openapi({
 	title: 'ReservationModuleResponse',
 	description: 'Complete reservation module response with related entities',
@@ -141,7 +141,7 @@ export const ReservationModuleResponseSchema = ReservationModuleBaseSchema.exten
 // ===== DAO RESPONSE SCHEMAS =====
 // DAO response for getReservationModuleById
 export const ReservationModuleDAOResponseSchema = ReservationModuleBaseSchema.extend({
-	business: BusinessRefSchema.optional(),
+	business: z.lazy(() => BusinessRefSchema).optional(),
 	locations: z.array(LocationRefSchema).optional(),
 	services: z.array(ServiceRefSchema).optional(),
 	employees: z.array(EmployeeRefSchema).optional(),

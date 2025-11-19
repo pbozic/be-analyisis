@@ -25,8 +25,14 @@ export const ScheduleEmployeeRefSchema = z
 		schedule_employee_id: UUID,
 		schedule_id: UUID,
 		employee_id: UUID,
-		schedule: ScheduleRefSchema.nullable().optional(),
-		employee: EmployeeRefSchema.nullable().optional(),
+		schedule: z
+			.lazy(() => ScheduleRefSchema)
+			.nullable()
+			.optional(),
+		employee: z
+			.lazy(() => EmployeeRefSchema)
+			.nullable()
+			.optional(),
 	})
 	.openapi({
 		title: 'ScheduleEmployeeRef',
@@ -54,8 +60,8 @@ export const UpdateScheduleEmployeeRequestSchema = z
 	});
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 export const ScheduleEmployeeResponseSchema = ScheduleEmployeeBaseSchema.extend({
-	schedule: ScheduleRefSchema.optional(),
-	employee: EmployeeRefSchema.optional(),
+	schedule: z.lazy(() => ScheduleRefSchema).optional(),
+	employee: z.lazy(() => EmployeeRefSchema).optional(),
 }).openapi({
 	title: 'ScheduleEmployeeResponse',
 	description: 'Complete schedule employee response with related entities',
@@ -64,7 +70,7 @@ export const ScheduleEmployeeResponseSchema = ScheduleEmployeeBaseSchema.extend(
 // ===== DAO RESPONSE SCHEMAS =====
 // DAO response for getScheduleEmployeesByScheduleId and getEmployeesByScheduleIdWithSlots
 export const ScheduleEmployeeDAOResponseSchema = ScheduleEmployeeBaseSchema.extend({
-	schedule: ScheduleRefSchema.optional(),
+	schedule: z.lazy(() => ScheduleRefSchema).optional(),
 	employee: z
 		.object({
 			employee_id: UUID,

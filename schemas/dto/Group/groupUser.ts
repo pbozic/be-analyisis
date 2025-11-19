@@ -34,12 +34,12 @@ export const GroupUserResponseSchema = GroupUserBaseSchema;
 
 // GroupUser with Parent User - for getGroupUserByChildId function
 export const GroupUserWithParentResponseSchema = GroupUserResponseSchema.extend({
-	parent_user: UserRefSchema,
+	parent_user: z.lazy(() => UserRefSchema),
 });
 
 // GroupUser with Child User - for getGroupUserByParentId function
 export const GroupUserWithChildResponseSchema = GroupUserResponseSchema.extend({
-	child_user: UserRefSchema,
+	child_user: z.lazy(() => UserRefSchema),
 });
 
 // GroupUser with Allowance - for updateGroupUserAllowance function
@@ -49,7 +49,7 @@ export const GroupUserWithAllowanceResponseSchema = GroupUserResponseSchema.exte
 
 // GroupUser with Parent and Allowance - for getGroupUserByChildId with full includes
 export const GroupUserDetailResponseSchema = GroupUserResponseSchema.extend({
-	parent_user: UserRefSchema,
+	parent_user: z.lazy(() => UserRefSchema),
 	allowance: AllowanceRefSchema.nullable(),
 });
 

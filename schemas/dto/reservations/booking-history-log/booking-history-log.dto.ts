@@ -57,7 +57,7 @@ export const CreateBookingHistoryLogRequestSchema = z
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const BookingHistoryLogResponseSchema = BookingHistoryLogBaseSchema.extend({
-	booking: BookingRefSchema.optional(),
+	booking: z.lazy(() => BookingRefSchema.optional()),
 }).openapi({
 	title: 'BookingHistoryLogResponse',
 	description: 'Complete booking history log response with related entities',

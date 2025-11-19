@@ -66,7 +66,7 @@ export const UpdateScheduleSlotExceptionRequestSchema = CreateScheduleSlotExcept
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const ScheduleSlotExceptionResponseSchema = ScheduleSlotExceptionBaseSchema.extend({
-	schedule_slot: ScheduleSlotRefSchema.optional(),
+	schedule_slot: z.lazy(() => ScheduleSlotRefSchema).optional(),
 }).openapi({
 	title: 'ScheduleSlotExceptionResponse',
 	description: 'Complete schedule slot exception response with related entities',

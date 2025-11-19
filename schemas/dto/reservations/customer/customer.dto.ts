@@ -80,7 +80,7 @@ export const DeleteCustomerRequestSchema = z
 
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 export const CustomerResponseSchema = CustomerBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 }).openapi({
 	title: 'CustomerResponse',
 	description: 'Complete customer response with related entities',
@@ -89,8 +89,8 @@ export const CustomerResponseSchema = CustomerBaseSchema.extend({
 // ===== DAO RESPONSE SCHEMAS =====
 // DAO response for getCustomersByReservationModuleId and getCustomerById
 export const CustomerDAOResponseSchema = CustomerBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
-	bookings: z.array(BookingRefSchema).optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
+	bookings: z.lazy(() => z.array(BookingRefSchema).optional()),
 }).openapi({
 	title: 'CustomerDAOResponse',
 	description: 'Customer response from DAO functions with reservation module and bookings',
@@ -98,14 +98,18 @@ export const CustomerDAOResponseSchema = CustomerBaseSchema.extend({
 
 // DAO response for getCustomerByCode (with nested business and filtered bookings)
 export const CustomerByCodeDAOResponseSchema = CustomerBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.extend({
-		business: z
-			.object({
-				business_id: UUID,
-				address: z.object({ address_id: UUID }).nullable().optional(),
+	reservation_module: z
+		.lazy(() =>
+			ReservationModuleRefSchema.extend({
+				business: z
+					.object({
+						business_id: UUID,
+						address: z.object({ address_id: UUID }).nullable().optional(),
+					})
+					.optional(),
 			})
-			.optional(),
-	}).optional(),
+		)
+		.optional(),
 	bookings: z
 		.array(
 			z.object({

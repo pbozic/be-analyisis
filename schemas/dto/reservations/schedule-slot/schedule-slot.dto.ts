@@ -62,8 +62,8 @@ export const UpdateScheduleSlotRequestSchema = CreateScheduleSlotRequestSchema.p
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const ScheduleSlotResponseSchema = ScheduleSlotBaseSchema.extend({
-	schedule: ScheduleRefSchema.optional(),
-	employee: EmployeeRefSchema.optional(),
+	schedule: z.lazy(() => ScheduleRefSchema).optional(),
+	employee: z.lazy(() => EmployeeRefSchema).optional(),
 }).openapi({
 	title: 'ScheduleSlotResponse',
 	description: 'Complete schedule slot response with related entities',
@@ -81,9 +81,13 @@ export const ScheduleSlotDAOResponseSchema = ScheduleSlotBaseSchema.extend({
 
 // DAO response for getScheduleSlotsByEmployeeIdAndDates
 export const ScheduleSlotWithScheduleDAOResponseSchema = ScheduleSlotBaseSchema.extend({
-	schedule: ScheduleRefSchema.extend({
-		location: LocationRefSchema.optional(),
-	}).optional(),
+	schedule: z
+		.lazy(() =>
+			ScheduleRefSchema.extend({
+				location: LocationRefSchema.optional(),
+			})
+		)
+		.optional(),
 }).openapi({
 	title: 'ScheduleSlotWithScheduleDAOResponse',
 	description: 'Schedule slot response from DAO with schedule and location details',

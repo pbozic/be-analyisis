@@ -13,7 +13,8 @@
         "joi",
         "json",
         "models",
-        "public"
+        "public",
+        "schemas"
     ],
     "ext": "js,json,ts",
     "ignore": ["node_modules", "Docker", ".git"],

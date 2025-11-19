@@ -198,7 +198,30 @@ export const AddonRefSchema = z
 
 export type AddonRef = z.infer<typeof AddonRefSchema>;
 
-// Addon request schemas moved to subscription.validators.ts
+export const BusinessAddonSchema = AddonBaseSchema.extend({
+	business_addon_id: UUID,
+	quantity: z.number().int().nonnegative(),
+	reservation_module_id: UUID.nullable().optional(),
+	sms_module_id: UUID.nullable().optional(),
+	ads_module_id: UUID.nullable().optional(),
+}).openapi({
+	title: 'BusinessAddon',
+	description: 'Addon assigned to a business with quantity and module links',
+});
+export type BusinessAddon = z.infer<typeof BusinessAddonSchema>;
+
+export const AddonActionSchema = z
+	.object({
+		addon_action_id: UUID,
+		addon_id: UUID,
+		action_id: UUID,
+		limit: z.number().int().nonnegative().nullable().optional(),
+	})
+	.openapi({
+		title: 'AddonAction',
+		description: 'Action associated with an addon for additional permissions',
+	});
+export type AddonAction = z.infer<typeof AddonActionSchema>;
 
 // ===== BUSINESS USAGE SCHEMAS =====
 
