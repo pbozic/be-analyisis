@@ -7,12 +7,16 @@ async function main() {
 		let businesses = await tx.business.findMany({
 			include: {
 				reservation_module: true,
+				business_details: true,
 			},
 		});
 		for (const business of businesses) {
 			if (!business.business_id) continue;
 			if (!business.reservation_module) continue;
-			await generateRolesForReservationBusiness(tx, business);
+			await generateRolesForReservationBusiness(tx, {
+				business_id: business.business_id,
+				name: business.business_details?.name as string,
+			});
 		}
 	});
 }
