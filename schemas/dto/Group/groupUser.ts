@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID } from '../../primitives.js';
+import { Timestamp, UUID } from '../../primitives.js';
 import { UserRefSchema } from '../User/index.js';
 import { AllowanceRefSchema } from '../User/index.js';
 
@@ -13,8 +13,8 @@ export const GroupUserBaseSchema = z.object({
 	parent_user_id: UUID,
 	child_user_id: UUID,
 	enabled: z.boolean(),
-	created_at: z.string().datetime(),
-	updated_at: z.string().datetime(),
+	created_at: Timestamp,
+	updated_at: Timestamp,
 });
 
 export type GroupUserBase = z.infer<typeof GroupUserBaseSchema>;

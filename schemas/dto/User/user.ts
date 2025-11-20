@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, Email, PhoneNumber, LanguageCode } from '../../primitives.js';
+import { UUID, Email, PhoneNumber, LanguageCode, Timestamp } from '../../primitives.js';
 import { UserAddressRefSchema } from '../Address/index.js';
 import { BusinessUserRefSchema, BusinessUserWithBusinessResponseSchema } from '../BusinessUser/index.js';
 import { TransactionRefSchema } from './transaction.js';
@@ -95,7 +95,7 @@ export const UserBaseSchema = z.object({
 	email: z.string().nullable(),
 	telephone: z.string(),
 	telephone_code: z.string(),
-	date_of_birth: z.string().datetime().nullable(),
+	date_of_birth: Timestamp.nullable(),
 	user_role: z.string(), // USER_ROLES enum as string
 	phone_verified: z.boolean(),
 	notification_preferences: z.record(z.any()).nullable(),
@@ -122,8 +122,8 @@ export const UserBaseSchema = z.object({
 	allow_newsletter: z.boolean().nullable(),
 	active: z.boolean(),
 	disabled: z.boolean(),
-	created_at: z.string().datetime(),
-	updated_at: z.string().datetime(),
+	created_at: Timestamp,
+	updated_at: Timestamp,
 });
 
 export type UserBase = z.infer<typeof UserBaseSchema>;

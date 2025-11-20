@@ -3,6 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { PAYMENT_METHOD, TRANSACTION_TYPE } from '@prisma/client';
 
 import { BusinessResponseSchema } from '../Business/index.js';
+import { Timestamp } from '../../primitives.js';
 
 extendZodWithOpenApi(z);
 
@@ -16,7 +17,7 @@ export const BusinessMoneyFlowResponseSchema = z
 		stripe_fee: z.number(),
 		type: z.nativeEnum(TRANSACTION_TYPE),
 		payment_method: z.nativeEnum(PAYMENT_METHOD).nullable().optional(),
-		created_at: z.string().datetime(),
+		created_at: Timestamp,
 		business: BusinessResponseSchema,
 	})
 	.openapi('BusinessMoneyFlowResponse');

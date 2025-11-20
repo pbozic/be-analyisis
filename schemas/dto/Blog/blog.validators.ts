@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { BLOG_POST_STATUS } from '@prisma/client';
 
-import { UUID } from '../../primitives.js';
+import { Timestamp, UUID } from '../../primitives.js';
 import { EditorJSDataSchema } from './blog.dto.js';
 
 extendZodWithOpenApi(z);
@@ -13,10 +13,10 @@ export const CreateBlogPostSchema = z
 		title: z.string().min(1).openapi({ example: 'My First Blog Post' }),
 		short_content: z.string().optional().nullable().openapi({ example: 'A brief introduction to the blog post' }),
 		content: EditorJSDataSchema,
-		category_id: UUID.openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
-		image_file_id: UUID.optional().openapi({ example: '660e8400-e29b-41d4-a716-446655440000' }),
-		publish_at: z.string().datetime().optional().openapi({ example: '2025-01-15T10:00:00Z' }),
-		tag_ids: z.array(UUID).openapi({ example: ['770e8400-e29b-41d4-a716-446655440000'] }),
+		category_id: UUID,
+		image_file_id: UUID.optional(),
+		publish_at: Timestamp.optional(),
+		tag_ids: z.array(UUID),
 		status: z
 			.nativeEnum(BLOG_POST_STATUS)
 			.default(BLOG_POST_STATUS.DRAFT)
@@ -50,14 +50,8 @@ export const SearchBlogPostsSchema = z
 			.nullable()
 			.openapi({ example: 10, description: 'Number of items per page' }),
 		query: z.string().nullable().openapi({ example: 'nodejs tutorial', description: 'Search query' }),
-		tag_ids: z
-			.array(UUID)
-			.nullable()
-			.openapi({ example: ['770e8400-e29b-41d4-a716-446655440000'] }),
-		category_ids: z
-			.array(UUID)
-			.nullable()
-			.openapi({ example: ['550e8400-e29b-41d4-a716-446655440000'] }),
+		tag_ids: z.array(UUID).nullable(),
+		category_ids: z.array(UUID).nullable(),
 		status: z.nativeEnum(BLOG_POST_STATUS).nullable().openapi({ example: BLOG_POST_STATUS.PUBLISHED }),
 		year: z.number().int().nullable().openapi({ example: 2025 }),
 		month: z.number().int().min(1).max(12).nullable().openapi({ example: 10 }),

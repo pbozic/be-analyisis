@@ -1,16 +1,17 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID } from '../../primitives.js';
+import { Timestamp, UUID } from '../../primitives.js';
 import { BusinessRefSchema } from '../Business/index.js';
+import { TaxiOrderRefSchema } from '../TaxiOrders/taxiOrder.dto.js';
 
 extendZodWithOpenApi(z);
 
 // BusinessClient Base Schema - scalars only, no relations
 export const BusinessClientBaseSchema = z.object({
 	business_clients_id: UUID,
-	created_at: z.string().datetime(),
-	updated_at: z.string().datetime(),
+	created_at: Timestamp,
+	updated_at: Timestamp,
 	crm_module_id: UUID,
 	first_name: z.string().nullable(),
 	last_name: z.string().nullable(),
@@ -42,29 +43,13 @@ export const BusinessClientWithBusinessResponseSchema = BusinessClientResponseSc
 
 // BusinessClient with Taxi Orders - for functions that include taxi_orders
 export const BusinessClientWithOrdersResponseSchema = BusinessClientResponseSchema.extend({
-	taxi_orders: z
-		.array(
-			z.object({
-				order_id: UUID,
-				status: z.string(),
-				created_at: z.string().datetime(),
-			})
-		)
-		.nullable(),
+	taxi_orders: z.array(TaxiOrderRefSchema).nullable(),
 });
 
 // BusinessClient Detail - for functions with full includes (business + taxi_orders)
 export const BusinessClientDetailResponseSchema = BusinessClientResponseSchema.extend({
 	business: z.lazy(() => BusinessRefSchema),
-	taxi_orders: z
-		.array(
-			z.object({
-				order_id: UUID,
-				status: z.string(),
-				created_at: z.string().datetime(),
-			})
-		)
-		.nullable(),
+	taxi_orders: z.array(TaxiOrderRefSchema).nullable(),
 });
 
 // BusinessClient List Response - for paginated/bulk endpoints

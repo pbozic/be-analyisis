@@ -3,7 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { TAXI_ORDER_STATUS, VEHICLE_CATEGORY } from '@prisma/client';
 
 import { LocationSchema, FileUploadSchema } from './taxiorder.dto.js';
-import { UUID } from '../../primitives.js';
+import { Timestamp, UUID } from '../../primitives.js';
 
 extendZodWithOpenApi(z);
 
@@ -36,7 +36,7 @@ export const TaxiPreferencesSchema = z
 		vehicle_category: z.string().optional().openapi({ example: 'STANDARD' }),
 		adults: z.number().int().optional().openapi({ example: 1 }),
 		children_under_140: z.number().int().optional().openapi({ example: 0 }),
-		departure_date: z.string().datetime().optional().nullable(),
+		departure_date: Timestamp.optional().nullable(),
 		departure_time: z.string().optional(),
 		repeat_ride: z.array(z.any()).optional(),
 		repeat_duration: z.array(z.any()).optional(),

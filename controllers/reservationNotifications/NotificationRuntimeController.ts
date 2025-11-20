@@ -5,9 +5,8 @@ import { ValidatedRequest } from '../../types/validatedRequest.ts';
 import * as RuntimeDao from '../../dao/reservationNotifications/NotificationRuntimeDao.ts';
 import type {
 	CreateNotificationMessageRequest,
+	ListMessagesRequest,
 	UpdateNotificationMessageStatusRequest,
-	// Response types for JSDoc
-	// NotificationMessageResponse,
 } from '../../schemas/dto/reservations/notification-message/notification-message.dto';
 import type {
 	CreateNotificationMessageEventRequest,
@@ -54,18 +53,14 @@ export async function getNotificationMessage(
  * @tag Notifications:Runtime
  * @summary List messages for current module with optional filters
  * @operationId listNotificationMessages
- * @bodyContent {object} application/json
- * @property {string} [notification_event_id] - Optional event filter
- * @property {string} [status] - Optional status filter
- * @property {number} [take=50]
- * @property {number} [skip=0]
+ * @bodyContent {ListMessagesRequest} application/json
  * @response 200 - Messages retrieved
  * @responseContent {NotificationMessageResponse[]} 200.application/json
  * @response 500 - Error
  * @prisma_model notification_message
  */
 export async function listNotificationMessages(
-	req: ValidatedRequest<{ notification_event_id?: string; status?: string; take?: number; skip?: number }>,
+	req: ValidatedRequest<ListMessagesRequest>,
 	res: Response
 ): Promise<void> {
 	try {

@@ -13,7 +13,7 @@ import type {
 	CreateNotificationProviderCredentialInput,
 	UpdateNotificationProviderCredentialInput,
 } from '../../types/reservationNotifications/NotificationProviderCredential';
-import type { NotificationChannel } from '../../types/reservationNotifications/enums';
+import type { NotificationChannel } from '../../schemas/dto/reservations/enums';
 
 /**
  * Retrieves a notification message by ID.

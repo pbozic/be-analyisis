@@ -22,11 +22,9 @@ import type {
 	// NotificationTemplateVersionResponse,
 } from '../../schemas/dto/reservations/notification-template-version/notification-template-version.dto';
 import type {
+	ActiveMappingRequest,
 	CreateNotificationMappingRequest,
 	UpdateNotificationMappingRequest,
-	// Response types for JSDoc
-	// NotificationMappingResponse,
-	// NotificationMappingWithTemplateVersionDAOResponse,
 } from '../../schemas/dto/reservations/notification-mapping/notification-mapping.dto';
 import type {
 	UpsertNotificationPreferenceRequest,
@@ -45,7 +43,7 @@ import { VARIABLE_CATALOG } from '../../lib/reservationNotifications.ts';
  * @response 500 - Error
  * @prisma_model notification_event
  */
-export async function listNotificationEvents(_req: ValidatedRequest<null>, res: Response): Promise<void> {
+export async function listNotificationEvents(_req: ValidatedRequest, res: Response): Promise<void> {
 	try {
 		const events = await AuthoringDao.listNotificationEvents();
 		res.status(200).json(events);
@@ -113,7 +111,7 @@ export async function updateNotificationEvent(
  * @prisma_model notification_event
  */
 export async function deleteNotificationEvent(
-	req: ValidatedRequest<null, { notification_event_id: string }>,
+	req: ValidatedRequest<never, { notification_event_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -134,7 +132,7 @@ export async function deleteNotificationEvent(
  * @response 500 - Error
  * @prisma_model notification_template
  */
-export async function listNotificationTemplates(req: ValidatedRequest<null>, res: Response): Promise<void> {
+export async function listNotificationTemplates(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
 		const reservation_module_id = req.user?.reservation_module_id;
 		if (!reservation_module_id) {
@@ -215,7 +213,7 @@ export async function updateNotificationTemplate(
  * @prisma_model notification_template
  */
 export async function deleteNotificationTemplate(
-	req: ValidatedRequest<null, { notification_template_id: string }>,
+	req: ValidatedRequest<never, { notification_template_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -301,7 +299,7 @@ export async function updateNotificationTemplateVersionById(
  * @prisma_model notification_template_version
  */
 export async function deleteNotificationTemplateVersionById(
-	req: ValidatedRequest<null, { notification_template_version_id: string }>,
+	req: ValidatedRequest<never, { notification_template_version_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -322,7 +320,7 @@ export async function deleteNotificationTemplateVersionById(
  * @response 500 - Error
  * @prisma_model notification_mapping
  */
-export async function listNotificationMappings(req: ValidatedRequest<null>, res: Response): Promise<void> {
+export async function listNotificationMappings(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
 		const reservation_module_id = req.user?.reservation_module_id;
 		if (!reservation_module_id) {
@@ -388,16 +386,14 @@ export async function updateNotificationMapping(
  * @tag Notifications:Authoring
  * @summary Set active mapping for module+event → version
  * @operationId upsertActiveNotificationMapping
- * @bodyContent {object} application/json
- * @property {string} notification_event_id.required
- * @property {string} notification_template_version_id.required
+ * @bodyContent {ActiveMappingRequest} application/json
  * @response 200 - Active mapping set
  * @responseContent {NotificationMappingResponse} 200.application/json
  * @response 500 - Error
  * @prisma_model notification_mapping
  */
 export async function upsertActiveNotificationMapping(
-	req: ValidatedRequest<{ notification_event_id: string; notification_template_version_id: string }>,
+	req: ValidatedRequest<ActiveMappingRequest>,
 	res: Response
 ): Promise<void> {
 	try {
@@ -428,7 +424,7 @@ export async function upsertActiveNotificationMapping(
  * @response 500 - Error
  * @prisma_model notification_preference
  */
-export async function listNotificationPreferences(req: ValidatedRequest<null>, res: Response): Promise<void> {
+export async function listNotificationPreferences(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
 		const reservation_module_id = req.user?.reservation_module_id;
 		if (!reservation_module_id) {
@@ -484,7 +480,7 @@ export async function upsertNotificationPreference(
  * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
-export async function listNotificationChannels(_req: ValidatedRequest<null>, res: Response): Promise<void> {
+export async function listNotificationChannels(_req: ValidatedRequest, res: Response): Promise<void> {
 	try {
 		res.status(200).json(Object.values(NOTIFICATION_CHANNEL));
 	} catch (error) {
@@ -501,7 +497,7 @@ export async function listNotificationChannels(_req: ValidatedRequest<null>, res
  * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
-export async function listNotificationVariables(_req: ValidatedRequest<null>, res: Response): Promise<void> {
+export async function listNotificationVariables(_req: ValidatedRequest, res: Response): Promise<void> {
 	try {
 		res.status(200).json(VARIABLE_CATALOG);
 	} catch (error) {
@@ -522,7 +518,7 @@ export async function listNotificationVariables(_req: ValidatedRequest<null>, re
  * @prisma_model notification_mapping
  */
 export async function getLatestTemplateForEvent(
-	req: ValidatedRequest<null, { notification_event_id: string }>,
+	req: ValidatedRequest<never, { notification_event_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {

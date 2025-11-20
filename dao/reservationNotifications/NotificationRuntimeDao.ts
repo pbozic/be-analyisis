@@ -13,7 +13,7 @@ import type {
 	UpdateNotificationProviderCredentialRequest,
 	NotificationProviderCredentialResponse,
 } from '../../schemas/dto/reservations/notification-provider-credential/notification-provider-credential.dto.js';
-import type { NotificationChannel } from '../../types/reservationNotifications/enums';
+import type { NotificationChannel } from '../../schemas/dto/reservations/enums.js';
 import {
 	toNotificationMessageResponse,
 	toNotificationMessageList,

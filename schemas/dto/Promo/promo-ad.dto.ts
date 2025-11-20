@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID } from '../../primitives';
+import { Timestamp, UUID } from '../../primitives';
 import { ServiceTypeSchema } from './promo-section.dto';
 import { PromoBannerRefSchema, toPromoBannerRef } from './promo-banner.dto';
 
@@ -56,9 +56,9 @@ export const PromoAdBaseSchema = z
 		discount: z.number().nullable().optional(),
 		code: z.number().int().nullable().optional(),
 		active: z.boolean().optional(),
-		created_at: z.string().datetime().optional(),
-		active_at: z.string().datetime().nullable().optional(),
-		active_until: z.string().datetime().nullable().optional(),
+		created_at: Timestamp.optional(),
+		active_at: Timestamp.nullable().optional(),
+		active_until: Timestamp.nullable().optional(),
 	})
 	.openapi('PromoAdBase');
 export type PromoAdBase = z.infer<typeof PromoAdBaseSchema>;

@@ -2,14 +2,16 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { PAYMENT_METHOD, TRANSACTION_TYPE } from '@prisma/client';
 
+import { UUID } from '../../primitives';
+
 extendZodWithOpenApi(z);
 
 // Request schemas moved from types/payments/BusinessMoneyFlow.ts
 
 export const CreateBusinessMoneyFlowSchema = z
 	.object({
-		balance_change_id: z.string().uuid(),
-		business_id: z.string().uuid(),
+		balance_change_id: UUID,
+		business_id: UUID,
 		amount: z.number(),
 		stripe_fee: z.number(),
 		type: z.nativeEnum(TRANSACTION_TYPE),

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID } from '../../primitives.js';
+import { Timestamp, UUID } from '../../primitives.js';
 
 extendZodWithOpenApi(z);
 
@@ -18,8 +18,8 @@ export const AllowanceBaseSchema = z.object({
 	amount_transfer_purchase_order: z.number().nullable(),
 	amount_delivery_purchase_order: z.number().nullable(),
 	amount_any_purchase_order: z.number().nullable(),
-	created_at: z.string().datetime(),
-	updated_at: z.string().datetime(),
+	created_at: Timestamp,
+	updated_at: Timestamp,
 });
 
 export type AllowanceBase = z.infer<typeof AllowanceBaseSchema>;

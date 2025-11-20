@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { FILE_TYPE } from '@prisma/client';
 
+import { UUID } from '../../primitives';
+
 extendZodWithOpenApi(z);
 
 // =======================
@@ -15,9 +17,9 @@ export const CreateFileDataSchema = z
 		public: z.boolean().optional().default(false).openapi({ example: false }),
 		url: z.string().url().optional().openapi({ example: 'https://s3.amazonaws.com/.../file.png' }),
 		// Optional relation ids
-		document_id: z.string().uuid().optional().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
-		user_id: z.string().uuid().optional().openapi({ example: '990e8400-e29b-41d4-a716-446655440000' }),
-		driver_id: z.string().uuid().optional().openapi({ example: 'aa0e8400-e29b-41d4-a716-446655440000' }),
+		document_id: UUID.optional(),
+		user_id: UUID.optional(),
+		driver_id: UUID.optional(),
 	})
 	.openapi('CreateFileData');
 
@@ -29,7 +31,7 @@ export const CreateFileBodySchema = z
 
 export const UpdateFileBodySchema = z
 	.object({
-		file_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		file_id: UUID,
 		fileData: CreateFileDataSchema,
 	})
 	.openapi('UpdateFileBody');
@@ -43,7 +45,7 @@ export type UpdateFileBody = z.infer<typeof UpdateFileBodySchema>;
 // =======================
 export const AddFileToDocumentInputSchema = z
 	.object({
-		document_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		document_id: UUID,
 		fileData: CreateFileDataSchema,
 		isPublic: z.boolean().optional().openapi({ example: false }),
 	})
@@ -52,7 +54,7 @@ export type AddFileToDocumentInput = z.infer<typeof AddFileToDocumentInputSchema
 
 export const AddFilesToDocumentInputSchema = z
 	.object({
-		document_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		document_id: UUID,
 		files: z.union([CreateFileDataSchema, z.array(CreateFileDataSchema)]).openapi({ example: [] }),
 	})
 	.openapi('AddFilesToDocumentInput');
@@ -60,7 +62,7 @@ export type AddFilesToDocumentInput = z.infer<typeof AddFilesToDocumentInputSche
 
 export const UpdateFileInDocumentInputSchema = z
 	.object({
-		file_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		file_id: UUID,
 		updateData: CreateFileDataSchema.partial(),
 		isPublic: z.boolean().optional().openapi({ example: false }),
 	})
@@ -69,21 +71,21 @@ export type UpdateFileInDocumentInput = z.infer<typeof UpdateFileInDocumentInput
 
 export const RemoveFileFromDocumentInputSchema = z
 	.object({
-		file_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		file_id: UUID,
 	})
 	.openapi('RemoveFileFromDocumentInput');
 export type RemoveFileFromDocumentInput = z.infer<typeof RemoveFileFromDocumentInputSchema>;
 
 export const RemoveAllFilesFromDocumentInputSchema = z
 	.object({
-		document_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		document_id: UUID,
 	})
 	.openapi('RemoveAllFilesFromDocumentInput');
 export type RemoveAllFilesFromDocumentInput = z.infer<typeof RemoveAllFilesFromDocumentInputSchema>;
 
 export const GetFilesByDocumentIdParamsSchema = z
 	.object({
-		document_id: z.string().uuid().openapi({ example: '550e8400-e29b-41d4-a716-446655440000' }),
+		document_id: UUID,
 	})
 	.openapi('GetFilesByDocumentIdParams');
 export type GetFilesByDocumentIdParams = z.infer<typeof GetFilesByDocumentIdParamsSchema>;
@@ -99,14 +101,14 @@ export type CreateStandaloneFileInput = z.infer<typeof CreateStandaloneFileInput
 
 export const GetFileParamsSchema = z
 	.object({
-		file_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		file_id: UUID,
 	})
 	.openapi('GetFileParams');
 export type GetFileParams = z.infer<typeof GetFileParamsSchema>;
 
 export const UpdateFileByIdInputSchema = z
 	.object({
-		file_id: z.string().uuid().openapi({ example: '880e8400-e29b-41d4-a716-446655440000' }),
+		file_id: UUID,
 		file_type: z.nativeEnum(FILE_TYPE).optional(),
 		mime_type: z.string().optional(),
 		url: z.string().url().optional(),

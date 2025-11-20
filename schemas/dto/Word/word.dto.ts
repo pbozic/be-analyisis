@@ -34,8 +34,8 @@ export const WordBaseSchema = z
 		popularity: z.number().int().nonnegative().default(0),
 		categories_id: UUID.nullable().optional(),
 		translatable_id: UUID.nullable().optional(),
-		created_at: z.string().datetime().optional(),
-		updated_at: z.string().datetime().optional(),
+		created_at: Timestamp.optional(),
+		updated_at: Timestamp.optional(),
 	})
 	.openapi('WordBase');
 export type WordBase = z.infer<typeof WordBaseSchema>;

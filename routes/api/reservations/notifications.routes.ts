@@ -1,13 +1,9 @@
 // src/routes/notifications.ts
 import express from 'express';
-import { z } from 'zod';
-import { MESSAGE_STATUS } from '@prisma/client';
 
 import AuthoringController from '../../../controllers/reservationNotifications/NotificationAuthoringController';
 import RuntimeController from '../../../controllers/reservationNotifications/NotificationRuntimeController';
 import { validate } from '../../../middleware/zod.js';
-
-// ---- Schemas (imported from DTOs) ----
 import {
 	CreateNotificationEventRequestSchema,
 	UpdateNotificationEventRequestSchema,
@@ -21,12 +17,14 @@ import {
 	UpdateNotificationTemplateVersionByCompositeRequestSchema,
 } from '../../../schemas/dto/reservations/notification-template-version/notification-template-version.dto.js';
 import {
+	ActiveMappingSchema,
 	CreateNotificationMappingRequestSchema,
 	UpdateNotificationMappingRequestSchema,
 } from '../../../schemas/dto/reservations/notification-mapping/notification-mapping.dto.js';
 import { UpsertNotificationPreferenceRequestSchema } from '../../../schemas/dto/reservations/notification-preference/notification-preference.dto.js';
 import {
 	CreateNotificationMessageRequestSchema,
+	ListMessagesSchema,
 	UpdateNotificationMessageStatusRequestSchema,
 } from '../../../schemas/dto/reservations/notification-message/notification-message.dto.js';
 import { CreateNotificationMessageEventRequestSchema } from '../../../schemas/dto/reservations/notification-message-event/notification-message-event.dto.js';
@@ -34,19 +32,6 @@ import {
 	CreateNotificationProviderCredentialRequestSchema,
 	UpdateNotificationProviderCredentialRequestSchema,
 } from '../../../schemas/dto/reservations/notification-provider-credential/notification-provider-credential.dto.js';
-
-// ---- Local, route-only schemas ----
-const ActiveMappingSchema = z.object({
-	notification_event_id: z.string().uuid(),
-	notification_template_version_id: z.string().uuid(),
-});
-
-const ListMessagesSchema = z.object({
-	notification_event_id: z.string().uuid().optional(),
-	status: z.nativeEnum(MESSAGE_STATUS).optional(),
-	take: z.number().int().min(1).max(200).optional(),
-	skip: z.number().int().min(0).optional(),
-});
 
 const router = express.Router();
 

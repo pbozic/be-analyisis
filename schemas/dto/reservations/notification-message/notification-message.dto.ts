@@ -91,6 +91,14 @@ export const NotificationMessageResponseSchema = NotificationMessageBaseSchema.e
 	description: 'Complete notification message response with related entities',
 });
 
+export const ListMessagesSchema = z.object({
+	notification_event_id: UUID.optional(),
+	status: z.nativeEnum(MESSAGE_STATUS).optional(),
+	take: z.number().int().min(1).max(200).optional(),
+	skip: z.number().int().min(0).optional(),
+});
+export type ListMessagesRequest = z.infer<typeof ListMessagesSchema>;
+
 // ===== EXPORTED TYPES =====
 export type NotificationMessageBase = z.infer<typeof NotificationMessageBaseSchema>;
 export type NotificationMessageRef = z.infer<typeof NotificationMessageRefSchema>;
@@ -105,4 +113,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('CreateNotificationMessageRequest', CreateNotificationMessageRequestSchema);
 	registry.register('UpdateNotificationMessageStatusRequest', UpdateNotificationMessageStatusRequestSchema);
 	registry.register('NotificationMessageResponse', NotificationMessageResponseSchema);
+
+	registry.register('ListMessages', ListMessagesSchema);
 }

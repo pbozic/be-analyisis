@@ -3,7 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { DOCUMENT_TYPE } from '@prisma/client';
 
 import { DocumentCreateSchema as LostItemDocumentCreateSchema } from '../LostItems/lostitem.validators.js';
-import { UUID } from '../../primitives.js';
+import { Timestamp, UUID } from '../../primitives.js';
 import { CreateFileDataSchema } from '../Files/file.validators.js';
 
 extendZodWithOpenApi(z);
@@ -72,14 +72,14 @@ export const CreateDocumentBodySchema = z
 export const UpdateDocumentExpirationSchema = z
 	.object({
 		document_id: UUID,
-		expirationDate: z.string().datetime().openapi({ example: '2026-01-01T00:00:00Z' }),
+		expirationDate: Timestamp,
 	})
 	.openapi('UpdateDocumentExpiration');
 
 export const UpdateDocumentIssueSchema = z
 	.object({
 		document_id: UUID,
-		issueDate: z.string().datetime().openapi({ example: '2024-01-01T00:00:00Z' }),
+		issueDate: Timestamp,
 	})
 	.openapi('UpdateDocumentIssue');
 
@@ -179,7 +179,7 @@ export type CreateDocumentInput = z.infer<typeof CreateDocumentInputSchema>;
 export const UpdateDocumentExpirationInputSchema = z
 	.object({
 		document_id: UUID,
-		expirationDate: z.string().datetime().openapi({ example: '2026-01-01T00:00:00Z' }),
+		expirationDate: Timestamp,
 	})
 	.openapi('UpdateDocumentExpirationInput');
 export type UpdateDocumentExpirationInput = z.infer<typeof UpdateDocumentExpirationInputSchema>;
@@ -187,7 +187,7 @@ export type UpdateDocumentExpirationInput = z.infer<typeof UpdateDocumentExpirat
 export const UpdateDocumentIssueInputSchema = z
 	.object({
 		document_id: UUID,
-		issueDate: z.string().datetime().openapi({ example: '2024-01-01T00:00:00Z' }),
+		issueDate: Timestamp,
 	})
 	.openapi('UpdateDocumentIssueInput');
 export type UpdateDocumentIssueInput = z.infer<typeof UpdateDocumentIssueInputSchema>;

@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
+import { UUID } from '../../primitives';
+
 extendZodWithOpenApi(z);
 
 // BlogTag types - moved to blog.dto.ts
@@ -19,16 +21,9 @@ export const UpdateBlogTagSchema = CreateBlogTagSchema.partial().openapi('Update
 
 export const DeleteBlogTagSchema = z
 	.object({
-		blog_tag_id: z.string().uuid(),
+		blog_tag_id: UUID,
 	})
 	.openapi('DeleteBlogTagSchema');
-
-export type BlogTag = {
-	blog_tag_id: string;
-	name: string;
-	description?: string | null;
-	blog_posts?: BlogPost[]; // Related posts (optional and recursive)
-};
 
 export type CreateBlogTagInput = z.infer<typeof CreateBlogTagSchema>;
 export type UpdateBlogTagInput = z.infer<typeof UpdateBlogTagSchema>;

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID } from '../../primitives.js';
+import { Timestamp, UUID } from '../../primitives.js';
 import { TranslationItemSchema } from './word.dto.js';
 
 extendZodWithOpenApi(z);
@@ -34,8 +34,8 @@ export const WordBuyItemSchema = z
 		price: z.number().nonnegative(),
 		word_buy_id: UUID.optional(),
 		stripe_subscription_id: z.string().nullable().optional(),
-		created_at: z.string().datetime().optional(),
-		updated_at: z.string().datetime().optional(),
+		created_at: Timestamp.optional(),
+		updated_at: Timestamp.optional(),
 		business_id: UUID.optional(),
 		business: z.any().optional(), // BusinessBaseSchema from Business - avoid circular import
 	})

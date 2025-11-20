@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID } from '../../primitives';
+import { Timestamp, UUID } from '../../primitives';
 
 extendZodWithOpenApi(z);
 
@@ -19,8 +19,8 @@ export const PromoAnalyticsBaseSchema = z
 		daily_meal_subscription_id: UUID.nullable().optional(),
 		business_id: UUID,
 		user_id: UUID.nullable().optional(),
-		created_at: z.string().datetime(),
-		updated_at: z.string().datetime(),
+		created_at: Timestamp,
+		updated_at: Timestamp,
 		promo_type: z.string(),
 		type: z.string(),
 	})
@@ -33,7 +33,7 @@ export const PromoAnalyticsRefSchema = z
 		promo_analytics_id: UUID,
 		promo_type: z.string(),
 		type: z.string(),
-		created_at: z.string().datetime(),
+		created_at: Timestamp,
 	})
 	.openapi('PromoAnalyticsRef');
 export type PromoAnalyticsRef = z.infer<typeof PromoAnalyticsRefSchema>;

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID } from '../../primitives.js';
+import { Timestamp, UUID } from '../../primitives.js';
 import { ModuleTypeSchema } from './subscription.dto.js';
 
 extendZodWithOpenApi(z);
@@ -103,7 +103,7 @@ export const CreateBusinessUsageSchema = z
 	.object({
 		action_id: UUID,
 		used: z.number().int().nonnegative(),
-		reset_date: z.string().datetime().nullable().optional(),
+		reset_date: Timestamp.nullable().optional(),
 		reservation_module_id: UUID.nullable().optional(),
 	})
 	.openapi('CreateBusinessUsage');

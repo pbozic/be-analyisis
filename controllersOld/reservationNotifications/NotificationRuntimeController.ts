@@ -11,7 +11,7 @@ import {
 	CreateNotificationProviderCredentialInput,
 	UpdateNotificationProviderCredentialInput,
 } from '../../types/reservationNotifications/NotificationProviderCredential';
-import { NotificationChannel } from '../../types/reservationNotifications/enums';
+import { NotificationChannel } from '../../schemas/dto/reservations/enums.ts';
 
 /**
  * GET /reservation/notifications/messages/:notification_message_id

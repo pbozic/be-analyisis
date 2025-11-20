@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID } from '../../primitives.js';
+import { Timestamp, UUID } from '../../primitives.js';
 
 extendZodWithOpenApi(z);
 
@@ -17,8 +17,8 @@ export const TransactionBaseSchema = z.object({
 	payment_method: z.string().nullable(),
 	external_reference: z.string().nullable(),
 	metadata: z.record(z.any()).nullable(),
-	created_at: z.string().datetime(),
-	updated_at: z.string().datetime(),
+	created_at: Timestamp,
+	updated_at: Timestamp,
 });
 
 export type TransactionBase = z.infer<typeof TransactionBaseSchema>;
@@ -30,7 +30,7 @@ export const TransactionRefSchema = z.object({
 	amount: z.number(),
 	currency: z.string(),
 	status: z.string(),
-	created_at: z.string().datetime(),
+	created_at: Timestamp,
 });
 
 export type TransactionRef = z.infer<typeof TransactionRefSchema>;

@@ -23,7 +23,7 @@ extendZodWithOpenApi(z);
 
 // Schema used for create/update requests (omit created_at, updated_at)
 export const BusinessCreateDto = z.object({
-	address_id: z.string().uuid().nullable().optional().openapi({ example: null }),
+	address_id: UUID.nullable().optional().openapi({ example: null }),
 	is_business_unit: z.boolean().optional().default(false).openapi({ example: false }),
 	business_group_name: z.string().nullable().optional().openapi({ example: 'Acme Holdings' }),
 	// 'name' and 'description' moved to `business_details` model in Prisma.
@@ -50,7 +50,7 @@ export const BusinessCreateDto = z.object({
 	stripe_customer_id: UUID.nullable().optional(),
 	word_buy_stripe_subscription_id: UUID.nullable().optional(),
 	sales_representative_id: UUID.nullable().optional(),
-	first_activated_at: z.string().datetime().nullable().optional().openapi({ example: null }),
+	first_activated_at: Timestamp.nullable().optional().openapi({ example: null }),
 	active: z.boolean().optional().default(true).openapi({ example: true }),
 });
 
@@ -64,13 +64,13 @@ export const BusinessResponseDto = BusinessCreateDto.extend({
 			name: z.string().optional(),
 			description: z.string().nullable().optional(),
 			// Optional file refs (IDs) — these fields are present on business_details in many setups.
-			logo_id: z.string().uuid().nullable().optional(),
-			banner_id: z.string().uuid().nullable().optional(),
+			logo_id: UUID.nullable().optional(),
+			banner_id: UUID.nullable().optional(),
 		})
 		.nullable()
 		.optional(),
-	created_at: z.string().datetime().openapi({ example: '2025-01-01T12:00:00.000Z' }),
-	updated_at: z.string().datetime().openapi({ example: '2025-01-10T12:00:00.000Z' }),
+	created_at: Timestamp.openapi({ example: '2025-01-01T12:00:00.000Z' }),
+	updated_at: Timestamp.openapi({ example: '2025-01-10T12:00:00.000Z' }),
 	food_drinks_id: UUID.nullable().optional(),
 	transport_module_id: UUID.nullable().optional(),
 	reservation_module_id: UUID.nullable().optional(),
@@ -109,7 +109,7 @@ export const BusinessResponseDto = BusinessCreateDto.extend({
 // CRM Module Ref (simplified from BusinessClient)
 export const CrmModuleRefSchema = z
 	.object({
-		crm_module_id: z.string().uuid(),
+		crm_module_id: UUID,
 		purchase_order_limit_amount: z.number().nullable().optional(),
 		client_count: z.number().int().optional(),
 	})
@@ -122,10 +122,10 @@ export const CrmModuleFullSchema = CrmModuleRefSchema.extend({
 // Menu Ref (simplified)
 export const MenuRefSchema = z
 	.object({
-		menu_id: z.string().uuid(),
+		menu_id: UUID,
 		is_active: z.boolean().optional(),
 		is_daily_meals: z.boolean().optional(),
-		created_at: z.string().datetime().optional(),
+		created_at: Timestamp.optional(),
 	})
 	.openapi('MenuRef');
 
@@ -197,12 +197,12 @@ export const BusinessWithCrmResponseDto = BusinessResponseDto.extend({
 // Business Ref Schema - minimal identity for embedding elsewhere
 export const BusinessRefSchema = z
 	.object({
-		business_id: z.string().uuid().openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
+		business_id: UUID.openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
 		name: z.string().openapi({ example: 'Klikni d.o.o.' }),
 		email: z.string().email().optional().openapi({ example: 'info@klikni-web.eu' }),
 		active: z.boolean().optional().openapi({ example: true }),
-		logo_id: z.string().uuid().nullable().optional(),
-		banner_id: z.string().uuid().nullable().optional(),
+		logo_id: UUID.nullable().optional(),
+		banner_id: UUID.nullable().optional(),
 	})
 	.openapi('BusinessRef');
 
@@ -234,7 +234,7 @@ export const BusinessWithIncludesResponseDto = BusinessResponseDto.extend({
 // Business Search Response (matches DAO select used in search endpoints)
 export const BusinessSearchResponseDto = z
 	.object({
-		business_id: z.string().uuid(),
+		business_id: UUID,
 		name: z.string().optional(),
 		description: z.string().nullable().optional(),
 		email: z.string().email().optional(),
@@ -331,12 +331,12 @@ export const BusinessByIdResponseSchema = BusinessResponseDto.extend({
 	business_local_locations: z
 		.array(
 			z.object({
-				business_local_location_id: z.string().uuid(),
-				business_id: z.string().uuid(),
-				local_location_id: z.string().uuid(),
+				business_local_location_id: UUID,
+				business_id: UUID,
+				local_location_id: UUID,
 				enabled: z.boolean().optional(),
-				created_at: z.string().datetime().optional(),
-				updated_at: z.string().datetime().optional(),
+				created_at: Timestamp.optional(),
+				updated_at: Timestamp.optional(),
 			})
 		)
 		.optional(),
@@ -344,11 +344,11 @@ export const BusinessByIdResponseSchema = BusinessResponseDto.extend({
 	business_clients: z
 		.array(
 			z.object({
-				business_client_id: z.string().uuid(),
-				business_id: z.string().uuid(),
+				business_client_id: UUID,
+				business_id: UUID,
 				enabled: z.boolean().optional(),
-				created_at: z.string().datetime().optional(),
-				updated_at: z.string().datetime().optional(),
+				created_at: Timestamp.optional(),
+				updated_at: Timestamp.optional(),
 			})
 		)
 		.optional(),
@@ -356,11 +356,11 @@ export const BusinessByIdResponseSchema = BusinessResponseDto.extend({
 	reservations: z
 		.array(
 			z.object({
-				reservation_id: z.string().uuid(),
-				business_id: z.string().uuid(),
+				reservation_id: UUID,
+				business_id: UUID,
 				enabled: z.boolean().optional(),
-				created_at: z.string().datetime().optional(),
-				updated_at: z.string().datetime().optional(),
+				created_at: Timestamp.optional(),
+				updated_at: Timestamp.optional(),
 			})
 		)
 		.optional(),
@@ -368,12 +368,12 @@ export const BusinessByIdResponseSchema = BusinessResponseDto.extend({
 	daily_meals_delivery_mapping: z
 		.array(
 			z.object({
-				daily_meal_delivery_mapping_id: z.string().uuid(),
-				business_id: z.string().uuid(),
-				local_location_id: z.string().uuid().optional(),
+				daily_meal_delivery_mapping_id: UUID,
+				business_id: UUID,
+				local_location_id: UUID.optional(),
 				enabled: z.boolean().optional(),
-				created_at: z.string().datetime().optional(),
-				updated_at: z.string().datetime().optional(),
+				created_at: Timestamp.optional(),
+				updated_at: Timestamp.optional(),
 			})
 		)
 		.optional(),

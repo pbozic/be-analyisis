@@ -98,8 +98,8 @@ export const UpdateCategoryDaoInputSchema = z
 		id: UUID,
 		categoryData: z.any().optional(),
 		translations: z.array(CategoryTranslationSchema).optional(),
-		subcategories: z.array(z.string().uuid()).optional(),
-		parent_categories_id: z.string().uuid().optional().nullable(),
+		subcategories: UUID.optional(),
+		parent_categories_id: UUID.optional().nullable(),
 		iconFileData: CategoryIconFileDataSchema.optional(),
 	})
 	.openapi('UpdateCategoryDaoInput');

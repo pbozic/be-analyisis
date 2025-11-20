@@ -46,7 +46,7 @@ export const UserRegistrationDataSchema = z
 		telephone_number: z.string().optional(),
 		password: z.string().min(8),
 		confirm_password: z.string().min(8),
-		date_of_birth: z.string().datetime(),
+		date_of_birth: Timestamp,
 		user_role: z.string(),
 		user_roles: z
 			.array(

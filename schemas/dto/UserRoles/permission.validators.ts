@@ -2,14 +2,16 @@ import { z } from 'zod';
 import { MODULE_TYPE, PERMISSION_SCOPE } from '@prisma/client';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
+import { UUID } from '../../primitives';
+
 extendZodWithOpenApi(z);
 
 // Request schemas moved from permission.dto.ts
 
 export const CreatePermissionSchema = z
 	.object({
-		role_id: z.string().uuid(),
-		action_id: z.string().uuid().optional(), // optional for non-action permissions
+		role_id: UUID,
+		action_id: UUID.optional(), // optional for non-action permissions
 		name: z.string().optional(), // non-action identifier
 		module: z.nativeEnum(MODULE_TYPE),
 		limit: z.number().int().optional(),

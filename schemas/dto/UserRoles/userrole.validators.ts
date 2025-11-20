@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
+import { UUID } from '../../primitives';
+
 extendZodWithOpenApi(z);
 
 // Request schemas moved from userrole.dto.ts
@@ -10,8 +12,8 @@ extendZodWithOpenApi(z);
  */
 export const CreateUserRoleSchema = z
 	.object({
-		user_id: z.string().uuid(),
-		role_id: z.string().uuid(),
+		user_id: UUID,
+		role_id: UUID,
 	})
 	.openapi('CreateUserRole');
 
@@ -20,9 +22,9 @@ export const CreateUserRoleSchema = z
  */
 export const UpdateUserRoleSchema = z
 	.object({
-		user_id: z.string().uuid(),
-		role_id: z.string().uuid(), // current role
-		new_role_id: z.string().uuid().optional(),
+		user_id: UUID,
+		role_id: UUID, // current role
+		new_role_id: UUID.optional(),
 	})
 	.openapi('UpdateUserRole');
 

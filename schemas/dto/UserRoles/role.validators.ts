@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { MODULE_TYPE } from '@prisma/client';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
+import { UUID } from '../../primitives';
+
 extendZodWithOpenApi(z);
 
 // Request schemas moved from role.dto.ts
@@ -10,7 +12,7 @@ export const CreateRoleSchema = z
 	.object({
 		name: z.string(),
 		module: z.nativeEnum(MODULE_TYPE),
-		business_id: z.string().uuid().optional(), // null = global
+		business_id: UUID.optional(), // null = global
 	})
 	.openapi('CreateRole');
 

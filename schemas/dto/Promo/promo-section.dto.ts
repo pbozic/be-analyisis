@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, LanguageCode } from '../../primitives';
+import { UUID, LanguageCode, Timestamp } from '../../primitives';
 import { SERVICE_TYPE } from '../../../lib/constants';
 import { BusinessRefSchema } from '../Business/business';
 
@@ -166,8 +166,8 @@ export const CreatePromoSectionBuyResponseSchema = PromoBuyClientSecretResponseS
 export type CreatePromoSectionBuyResponse = z.infer<typeof CreatePromoSectionBuyResponseSchema>;
 
 export const UpdatePromoSectionBuyRequestSchema = CreatePromoSectionBuyRequestSchema.extend({
-	active_at: z.string().datetime().optional(),
-	expires_at: z.string().datetime().optional(),
+	active_at: Timestamp.optional(),
+	expires_at: Timestamp.optional(),
 	paid: z.boolean().optional(),
 	stripe_subscription_id: z.string().optional(),
 	payment_intent_id: z.string().optional(),
@@ -189,8 +189,8 @@ export const PromoSectionBuyBaseSchema = z
 		business_id: UUID,
 		user_id: UUID.nullable().optional(),
 		paid: z.boolean().optional(),
-		active_at: z.string().datetime().nullable().optional(),
-		expires_at: z.string().datetime().nullable().optional(),
+		active_at: Timestamp.nullable().optional(),
+		expires_at: Timestamp.nullable().optional(),
 		tier: z.number().int(),
 		duration: z.number().int(),
 	})

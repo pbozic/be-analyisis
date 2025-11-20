@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID, PositiveInt } from '../../primitives.js';
+import { UUID, PositiveInt, Timestamp } from '../../primitives.js';
 
 extendZodWithOpenApi(z);
 
@@ -26,8 +26,8 @@ export const BusinessTeamBaseSchema = z.object({
 	team_name: z.string(),
 	crm_module_id: UUID,
 	limit_per_person: z.number(),
-	created_at: z.string().datetime(),
-	updated_at: z.string().datetime(),
+	created_at: Timestamp,
+	updated_at: Timestamp,
 });
 
 export type BusinessTeamBase = z.infer<typeof BusinessTeamBaseSchema>;

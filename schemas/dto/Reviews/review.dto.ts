@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { REVIEW_SUBJECT, REVIEW_TYPE, REVIEWER_ROLE } from '@prisma/client';
 
 import { UserRefSchema } from '../User/index';
-import { UUID } from '../../primitives';
+import { Timestamp, UUID } from '../../primitives';
 
 // ReviewItem (Base / Ref / Response)
 // Scalars only
@@ -14,8 +14,8 @@ export const ReviewItemBaseSchema = z.object({
 	type: z.nativeEnum(REVIEW_TYPE).openapi({ example: 'OVERALL' }), // changed to use Prisma enum
 	rating: z.number().nullable().openapi({ example: 4 }),
 	comment: z.string().nullable().openapi({ example: 'Good packaging and delivery' }),
-	created_at: z.string().datetime().openapi({ example: '2025-11-11T12:00:00.000Z' }),
-	updated_at: z.string().datetime().openapi({ example: '2025-11-11T12:00:00.000Z' }),
+	created_at: Timestamp,
+	updated_at: Timestamp,
 });
 export type ReviewItemBase = z.infer<typeof ReviewItemBaseSchema>;
 
@@ -43,8 +43,8 @@ export const ReviewBaseSchema = z.object({
 	taxi_order_id: UUID.nullable(),
 	delivery_order_id: UUID.nullable(),
 	comment: z.string().nullable().openapi({ example: 'Overall very satisfied' }),
-	created_at: z.string().datetime().openapi({ example: '2025-11-11T12:00:00.000Z' }),
-	updated_at: z.string().datetime().openapi({ example: '2025-11-11T12:00:00.000Z' }),
+	created_at: Timestamp,
+	updated_at: Timestamp,
 });
 export type ReviewBase = z.infer<typeof ReviewBaseSchema>;
 

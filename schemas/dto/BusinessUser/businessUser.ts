@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID } from '../../primitives.js';
+import { Timestamp, UUID } from '../../primitives.js';
 import { AddressRefSchema } from '../Address/address.js';
 import { UserResponseSchema, AllowanceResponseSchema, UserRefSchema } from '../User/index.js';
 import { PaymentMethodSchema } from '../Payments/payment.dto.js';
@@ -15,7 +15,7 @@ export const CreateBusinessUserSchema = z.object({
 	telephone: z.string().min(5),
 	telephone_code: z.string(),
 	company_role: z.string().default('ADMIN'),
-	date_of_birth: z.string().datetime().optional(),
+	date_of_birth: Timestamp.optional(),
 });
 export type CreateBusinessUser = z.infer<typeof CreateBusinessUserSchema>;
 
@@ -33,8 +33,8 @@ export const BusinessUserBaseSchema = z.object({
 	company_role: z.string().nullable(),
 	online: z.boolean(),
 	operating_address_id: UUID.nullable(),
-	created_at: z.string().datetime(),
-	updated_at: z.string().datetime(),
+	created_at: Timestamp,
+	updated_at: Timestamp,
 });
 
 export type BusinessUserBase = z.infer<typeof BusinessUserBaseSchema>;

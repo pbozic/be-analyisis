@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { UUID } from '../../primitives.js';
+import { Timestamp, UUID } from '../../primitives.js';
 import { UserResponse, UserResponseSchema } from '../User/index.js';
 import { DriverBaseSchema, DriverBase } from '../Driver/driver.dto.js';
 
@@ -28,8 +28,8 @@ export const UserFavoriteDriverResponseSchema = z
 		user_favorite_drivers_id: UUID,
 		user_id: UUID,
 		driver_id: UUID,
-		created_at: z.string().datetime(),
-		updated_at: z.string().datetime(),
+		created_at: Timestamp,
+		updated_at: Timestamp,
 		users: UserResponseSchema,
 		driver: DriverBaseSchema,
 	})

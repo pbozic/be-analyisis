@@ -3,7 +3,7 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { SERVICES } from '@prisma/client';
 
-import { Email, PhoneNumber, UUID } from '../../primitives.js';
+import { Email, PhoneNumber, Timestamp, UUID } from '../../primitives.js';
 import { ACCOUNT_ACTIONS_REASON } from '../../../lib/constants.js';
 
 extendZodWithOpenApi(z);
@@ -18,7 +18,7 @@ export const UpdateMeSchema = z
 	.object({
 		first_name: z.string().min(1).optional(),
 		last_name: z.string().min(1).optional(),
-		date_of_birth: z.string().datetime().optional(),
+		date_of_birth: Timestamp.optional(),
 		language: z.string().length(2).optional(),
 		details: z.record(z.any()).optional(),
 	})
@@ -53,7 +53,7 @@ export const UpdateUserByUserIdSchema = z
 			last_name: z.string().min(1).optional(),
 			telephone: PhoneNumber.optional(),
 			email: Email.optional(),
-			date_of_birth: z.string().datetime().optional(),
+			date_of_birth: Timestamp.optional(),
 			language: z.string().length(2).optional(),
 			details: z.record(z.any()).optional(),
 		}),
@@ -446,7 +446,7 @@ export const RegisterChildUserSchema = z
 		telephone_code: z.string(),
 		password: z.string().min(8),
 		confirm_password: z.string().min(8),
-		date_of_birth: z.string().datetime(),
+		date_of_birth: Timestamp,
 		user_role: z.string().default('PERSONAL'),
 		user_roles: z
 			.array(

@@ -3,7 +3,7 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { MODULE } from '@prisma/client';
 
-import { Email, PhoneNumber, UUID } from '../../primitives.ts';
+import { Email, PhoneNumber, Timestamp, UUID } from '../../primitives.ts';
 import {
 	BusinessRegistrationDataSchema,
 	UserRegistrationDataSchema,
@@ -43,7 +43,7 @@ const RegisterUserBaseSchema = z.object({
 	telephone_number: z.string().optional(),
 	password: z.string().min(8),
 	confirm_password: z.string().min(8),
-	date_of_birth: z.string().datetime(),
+	date_of_birth: Timestamp,
 	user_role: z.string().default('PERSONAL'),
 	user_roles: z
 		.array(
@@ -229,7 +229,7 @@ export const RegisterMerchantServiceSchema = z
 							telephone: PhoneNumber,
 							telephone_code: z.string(),
 							password: z.string().min(8),
-							date_of_birth: z.string().datetime(),
+							date_of_birth: Timestamp,
 							user_role: z.string().default('BUSINESS_USER'),
 							user_roles: z
 								.array(
@@ -321,7 +321,7 @@ export const RegisterBusinessSchema = z
 							telephone: PhoneNumber,
 							telephone_code: z.string(),
 							password: z.string().min(8),
-							date_of_birth: z.string().datetime(),
+							date_of_birth: Timestamp,
 							user_role: z.string().default('BUSINESS_USER'),
 							user_roles: z
 								.array(
@@ -369,7 +369,7 @@ export const RegisterReservationBusinessSchema = z
 			email: Email,
 			password: z.string().min(8),
 			registration_token: z.string().optional(),
-			date_of_birth: z.string().datetime().optional(),
+			date_of_birth: Timestamp.optional(),
 			telephone: PhoneNumber,
 			telephone_number: z.string().optional(),
 			telephone_code: z.string(),
@@ -420,7 +420,7 @@ export const CreateScheduledUserSchema = z
 			telephone: PhoneNumber,
 			telephone_code: z.string(),
 			password: z.string().min(8).optional(),
-			date_of_birth: z.string().datetime().optional(),
+			date_of_birth: Timestamp.optional(),
 			user_role: z.string().default('PERSONAL'),
 			details: z.record(z.any()).optional(),
 		}),
@@ -457,7 +457,7 @@ export const UpdateScheduledUserSchema = z
 				telephone: PhoneNumber.optional(),
 				telephone_code: z.string().optional(),
 				password: z.string().min(8).optional(),
-				date_of_birth: z.string().datetime().optional(),
+				date_of_birth: Timestamp.optional(),
 				user_role: z.string().optional(),
 				details: z.record(z.any()).optional(),
 			})

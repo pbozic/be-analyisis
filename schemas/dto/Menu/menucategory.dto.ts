@@ -194,9 +194,9 @@ export const CategoryBaseSchema = z
 		translatable_id: UUID,
 		translatable: z.any().nullable().optional(),
 		words: z.array(z.any()).nullable().optional(),
-		created_at: z.string().datetime(),
-		updated_at: z.string().datetime(),
-		deleted_at: z.string().datetime().nullable().optional(),
+		created_at: Timestamp,
+		updated_at: Timestamp,
+		deleted_at: Timestamp.nullable().optional(),
 		daily_meal_categories: z.array(z.any()).nullable().optional(),
 	})
 	.passthrough()

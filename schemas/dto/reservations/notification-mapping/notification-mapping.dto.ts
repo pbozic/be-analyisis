@@ -81,6 +81,12 @@ export const NotificationMappingWithTemplateVersionDAOResponseSchema = Notificat
 	description: 'Notification mapping response from DAO with latest template version and template',
 });
 
+export const ActiveMappingSchema = z.object({
+	notification_event_id: UUID,
+	notification_template_version_id: UUID,
+});
+export type ActiveMappingRequest = z.infer<typeof ActiveMappingSchema>;
+
 // ===== EXPORTED TYPES =====
 export type NotificationMappingBase = z.infer<typeof NotificationMappingBaseSchema>;
 export type NotificationMappingRef = z.infer<typeof NotificationMappingRefSchema>;
@@ -102,4 +108,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 		'NotificationMappingWithTemplateVersionDAO',
 		NotificationMappingWithTemplateVersionDAOResponseSchema
 	);
+
+	registry.register('ActiveMapping', ActiveMappingSchema);
 }

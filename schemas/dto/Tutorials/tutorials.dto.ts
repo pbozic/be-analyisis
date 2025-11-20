@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { TUTORIAL_STATUS } from '@prisma/client';
 
-import { UUID } from '../../primitives';
+import { Timestamp, UUID } from '../../primitives';
 
 extendZodWithOpenApi(z);
 
@@ -19,8 +19,8 @@ export const TutorialBaseSchema = z
 		title: z.string(),
 		version: z.number().int().default(1),
 		mandatory: z.boolean().default(false),
-		createdAt: z.string().datetime(),
-		retiredAt: z.string().datetime().nullable().optional(),
+		createdAt: Timestamp,
+		retiredAt: Timestamp.nullable().optional(),
 	})
 	.openapi('TutorialBase');
 export type TutorialBase = z.infer<typeof TutorialBaseSchema>;
@@ -28,9 +28,9 @@ export type TutorialBase = z.infer<typeof TutorialBaseSchema>;
 export const TutorialDetailSchema = TutorialBaseSchema.extend({
 	status: z.nativeEnum(TUTORIAL_STATUS).default('NOT_SEEN'),
 	versionSeen: z.number().int().default(0),
-	firstSeenAt: z.string().datetime().nullable().optional(),
-	completedAt: z.string().datetime().nullable().optional(),
-	dismissedAt: z.string().datetime().nullable().optional(),
+	firstSeenAt: Timestamp.nullable().optional(),
+	completedAt: Timestamp.nullable().optional(),
+	dismissedAt: Timestamp.nullable().optional(),
 }).openapi('TutorialDetail');
 export type TutorialDetail = z.infer<typeof TutorialDetailSchema>;
 
@@ -44,9 +44,9 @@ export const UserTutorialBaseSchema = z
 		tutorial_id: UUID,
 		status: z.nativeEnum(TUTORIAL_STATUS).default('NOT_SEEN'),
 		versionSeen: z.number().int().default(0),
-		firstSeenAt: z.string().datetime().nullable().optional(),
-		completedAt: z.string().datetime().nullable().optional(),
-		dismissedAt: z.string().datetime().nullable().optional(),
+		firstSeenAt: Timestamp.nullable().optional(),
+		completedAt: Timestamp.nullable().optional(),
+		dismissedAt: Timestamp.nullable().optional(),
 	})
 	.openapi('UserTutorialBase');
 export type UserTutorialBase = z.infer<typeof UserTutorialBaseSchema>;
@@ -54,10 +54,10 @@ export type UserTutorialBase = z.infer<typeof UserTutorialBaseSchema>;
 // User tutorial state
 export const UserTutorialStateSchema = z
 	.object({
-		id: z.string().uuid(),
+		id: UUID,
 		user_id: UUID,
 		epoch: z.number().int().default(1),
-		updatedAt: z.string().datetime(),
+		updatedAt: Timestamp,
 	})
 	.openapi('UserTutorialState');
 export type UserTutorialState = z.infer<typeof UserTutorialStateSchema>;

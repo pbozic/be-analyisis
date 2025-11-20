@@ -3,6 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { DOCUMENT_TYPE } from '@prisma/client';
 
 import { CreateFileDataSchema } from '../Files';
+import { Timestamp, UUID } from '../../primitives';
 
 extendZodWithOpenApi(z);
 
@@ -15,8 +16,8 @@ export const DocumentCreateSchema = z
 	.object({
 		document_type: z.nativeEnum(DOCUMENT_TYPE).openapi({ example: DOCUMENT_TYPE.LOST_ITEM }),
 		public: z.boolean().optional().default(false),
-		expiration_date: z.string().datetime().optional().nullable(),
-		issue_date: z.string().datetime().optional().nullable(),
+		expiration_date: Timestamp.optional().nullable(),
+		issue_date: Timestamp.optional().nullable(),
 		additional_info: z.any().optional(),
 	})
 	.openapi('DocumentCreate');
@@ -37,7 +38,7 @@ export const ReportFoundItemRequestSchema = z
 		found: z.boolean().optional().openapi({ example: true }),
 		images: ReportFoundItemImagesSchema.optional(),
 		// The controller expects a user object with at least user_id when calling the DAO.
-		user: z.object({ user_id: z.string().uuid().openapi({ example: '990e8400-e29b-41d4-a716-446655440000' }) }),
+		user: z.object({ user_id: UUID }),
 	})
 	.openapi('ReportFoundItemRequest');
 

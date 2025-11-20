@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { FILE_TYPE } from '@prisma/client';
 
+import { Timestamp, UUID } from '../../primitives';
+
 extendZodWithOpenApi(z);
 
 // =======================
@@ -9,13 +11,13 @@ extendZodWithOpenApi(z);
 // =======================
 export const FileBaseSchema = z
 	.object({
-		file_id: z.string().uuid(),
+		file_id: UUID,
 		file_type: z.nativeEnum(FILE_TYPE),
 		mime_type: z.string(),
 		url: z.string().url().nullable(),
 		public: z.boolean(),
-		created_at: z.string().datetime().optional(),
-		updated_at: z.string().datetime().optional(),
+		created_at: Timestamp.optional(),
+		updated_at: Timestamp.optional(),
 	})
 	.openapi('FileBase');
 

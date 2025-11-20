@@ -151,19 +151,6 @@ export {
 	registerSchemas as registerBusinessUserSchemas,
 } from '../BusinessUser/businessUser.js';
 
-// BusinessType DTOs
-export {
-	BusinessTypeBaseSchema,
-	BusinessTypeRefSchema,
-	BusinessTypeResponseSchema,
-	BusinessToTypesSchema,
-	type BusinessTypeBase,
-	type BusinessTypeRef,
-	type BusinessTypeResponse,
-	type BusinessToTypes,
-	registerSchemas as registerBusinessTypeSchemas,
-} from './businessType.js';
-
 // Schema Registration
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
@@ -171,7 +158,6 @@ import { registerSchemas as registerBusinessSchemas } from './business.dto.js';
 import { registerSchemas as registerLegacyBusinessSchemas } from './business.js';
 import { registerSchemas as registerBusinessValidatorSchemas } from './business.validators.js';
 import { registerSchemas as registerBusinessUserSchemas } from '../BusinessUser/businessUser.js';
-import { registerSchemas as registerBusinessTypeSchemas } from './businessType.js';
 
 export function registerSchemas(registry: OpenAPIRegistry) {
 	// Register new business schemas with modules
@@ -185,6 +171,4 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 
 	// Register business user schemas
 	registerBusinessUserSchemas(registry);
-	// Register business type schemas
-	registerBusinessTypeSchemas(registry);
 }

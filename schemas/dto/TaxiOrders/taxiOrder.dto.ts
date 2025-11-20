@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { TAXI_ORDER_STATUS } from '@prisma/client';
 
 import { UUID, Timestamp, PhoneNumber } from '../../primitives.js';
 import { DriverBaseSchema } from '../Driver/index.js';
@@ -22,7 +23,7 @@ export const TaxiOrderBaseSchema = z
 		business_id: UUID.nullable().optional(),
 		business_users_id: UUID.nullable().optional(),
 		business_clients_id: UUID.nullable().optional(),
-		status: z.string(),
+		status: z.nativeEnum(TAXI_ORDER_STATUS),
 		type: z.string().optional(),
 		subtype: z.string().nullable().optional(),
 		pickup_location: z.record(z.any()).nullable().optional(),
@@ -78,7 +79,7 @@ export type TaxiOrderBase = z.infer<typeof TaxiOrderBaseSchema>;
 export const TaxiOrderRefSchema = z
 	.object({
 		order_id: UUID,
-		status: z.string(),
+		status: z.nativeEnum(TAXI_ORDER_STATUS),
 		type: z.string().optional(),
 		price: z.number().nullable().optional(),
 		pickup_location: z.record(z.any()).nullable().optional(),
@@ -97,7 +98,10 @@ export const TaxiOrderDetailSchema = TaxiOrderBaseSchema.extend({
 		.lazy(() => UserWithParentUserResponseSchema)
 		.nullable()
 		.optional(),
-	driver: DriverBaseSchema.nullable().optional(),
+	driver: z
+		.lazy(() => DriverBaseSchema)
+		.nullable()
+		.optional(),
 	vehicle: VehicleBaseSchema.nullable().optional(),
 	business: BusinessBaseSchema.nullable().optional(),
 	business_users: z
