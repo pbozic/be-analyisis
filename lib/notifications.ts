@@ -25,7 +25,7 @@ async function sendOrderNotifications(
 	const l10nTextHeadingUser = getLocalisedTexts('HEADING', userLang);
 	const l10nTextHeadingDriver = getLocalisedTexts('HEADING', driverLang);
 
-	const notifications: Record<string, { user: string | null; driver: string | null }> = {
+	const notifications: Record<string, { user: string | undefined | null; driver: string | undefined | null }> = {
 		PENDING: { user: null, driver: null },
 		TAXI_ACCEPTED: { user: l10nTextUser.accepted, driver: null },
 		TAXI_REJECTED: { user: l10nTextUser.rejected, driver: null },
@@ -39,13 +39,13 @@ async function sendOrderNotifications(
 
 	const spec = notifications[status] || { user: null, driver: null };
 	if (user_id && spec.user !== null) {
-		await sendNotificationToUser(l10nTextHeadingUser?.taxi || '', spec.user || '', user_id);
+		await sendNotificationToUser(l10nTextHeadingUser?.taxi, spec.user, user_id);
 	}
 
 	if (driver_id) {
 		const d = await getDriverById(driver_id);
 		if (d && spec.driver !== null) {
-			await sendNotificationToUser(l10nTextHeadingDriver?.taxi || '', spec.driver || '', d.user_id);
+			await sendNotificationToUser(l10nTextHeadingDriver?.taxi, spec.driver, d.user_id);
 		}
 	}
 }
@@ -71,7 +71,7 @@ async function sendDeliveryOrderNotifications(
 	const l10nTextHeadingUser = getLocalisedTexts('HEADING', userLang);
 	const l10nTextHeadingDriver = getLocalisedTexts('HEADING', driverLang);
 
-	const notifications: Record<string, { user: string | null; driver: string | null }> = {
+	const notifications: Record<string, { user: string | undefined | null; driver: string | undefined | null }> = {
 		MERCHANT_ACCEPTED: { user: l10nTextUser.accepted, driver: null },
 		AUTO_REJECTED: { user: l10nTextUser.rejected, driver: null },
 		MERCHANT_REJECTED: { user: l10nTextUser.rejected, driver: null },
@@ -85,11 +85,11 @@ async function sendDeliveryOrderNotifications(
 
 	const specD = notifications[status] || { user: null, driver: null };
 	if (user_id && specD.user !== null) {
-		await sendNotificationToUser(l10nTextHeadingUser?.delivery || '', specD.user || '', user_id);
+		await sendNotificationToUser(l10nTextHeadingUser?.delivery, specD.user, user_id);
 	}
 
 	if (driver_user_id && specD.driver !== null) {
-		await sendNotificationToUser(l10nTextHeadingDriver?.delivery || '', specD.driver || '', driver_user_id);
+		await sendNotificationToUser(l10nTextHeadingDriver?.delivery, specD.driver, driver_user_id);
 	}
 }
 /**
@@ -100,7 +100,7 @@ async function sendCreditExpirationNotifications(user: UserBase): Promise<void> 
 	const l10nText = getLocalisedTexts('CREDIT_NOTIFICATIONS', user.language);
 	const l10nTextHeading = getLocalisedTexts('HEADING', user.language);
 	if (user && user.user_id) {
-		await sendNotificationToUser(l10nTextHeading?.creditExpiry || '', l10nText?.creditExpiry || '', user.user_id);
+		await sendNotificationToUser(l10nTextHeading?.creditExpiry, l10nText?.creditExpiry, user.user_id);
 	}
 }
 /**
@@ -111,7 +111,7 @@ async function sendReferralNotifications(user: UserBase): Promise<void> {
 	const l10nText = getLocalisedTexts('REFERRAL_NOTIFICATIONS', user.language);
 	const l10nTextHeading = getLocalisedTexts('HEADING', user.language);
 	if (user && user.user_id) {
-		await sendNotificationToUser(l10nTextHeading?.referral || '', l10nText?.referral || '', user.user_id);
+		await sendNotificationToUser(l10nTextHeading?.Referral, l10nText?.referral, user.user_id);
 	}
 }
 

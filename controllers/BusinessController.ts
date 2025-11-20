@@ -2479,7 +2479,6 @@ export default {
 	getBusinessesByNameSearch,
 	removeParentBusinessId,
 	deleteBusiness,
-	createPaymentIntent,
 	manualSortScheduledUsers,
 	addScheduledUserSortingType,
 	listMerchantBusinessesMainInfo,

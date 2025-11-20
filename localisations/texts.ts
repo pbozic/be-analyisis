@@ -10,7 +10,7 @@ import fr from './languages/fr.js';
 import ru from './languages/ru.js';
 import ua from './languages/ua.js';
 
-const languageTexts = {
+const languageTexts: Record<string, any> = {
 	en,
 	sl,
 	it,

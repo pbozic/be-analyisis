@@ -12,17 +12,17 @@ const client = new OneSignal.DefaultApi(configuration);
 /**
  * Send a push notification to all users via OneSignal.
  *
- * @param {object} message
- * @param {object} heading
+ * @param {string} message
+ * @param {string} heading
  * @returns {Promise<void>}
  */
 async function sendNotification(message: string, heading: string): Promise<void> {
 	try {
 		const notification = new OneSignal.Notification();
 		notification.app_id = process.env.ONESIGNAL_APP_ID as string;
-		notification.contents = { en: message } as any;
-		notification.target_channel = 'push' as any;
-		notification.headings = { en: heading } as any;
+		notification.contents = { en: message };
+		notification.target_channel = 'push';
+		notification.headings = { en: heading };
 		const notificationResponse = await client.createNotification(notification);
 		console.log('Notification sent:', notificationResponse);
 	} catch (error: any) {
@@ -32,19 +32,23 @@ async function sendNotification(message: string, heading: string): Promise<void>
 /**
  * Send a push notification to a specific user via OneSignal using their external user ID.
  *
- * @param {object} heading - Notification heading.
- * @param {object} message - Notification message.
+ * @param {string | undefined} heading - Notification heading.
+ * @param {string | undefined} message - Notification message.
  * @param {string | undefined} userId - External user ID of the recipient.
  * @returns {Promise<void>}
  */
-async function sendNotificationToUser(heading: string, message: string, userId: string | undefined): Promise<void> {
+async function sendNotificationToUser(
+	heading: string | undefined,
+	message: string | undefined,
+	userId: string | undefined
+): Promise<void> {
 	try {
 		const notification = new OneSignal.Notification();
 		notification.app_id = process.env.ONESIGNAL_APP_ID as string;
-		notification.contents = { en: message } as any;
-		notification.target_channel = 'push' as any;
-		notification.headings = { en: heading } as any;
-		notification.include_aliases = { external_id: [userId] } as any;
+		notification.contents = { en: message as string };
+		notification.target_channel = 'push';
+		notification.headings = { en: heading as string };
+		notification.include_aliases = { external_id: [userId as string] };
 		const notificationResponse = await client.createNotification(notification);
 		console.log('Notification sent:', notificationResponse);
 	} catch (error: any) {

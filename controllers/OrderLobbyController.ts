@@ -33,8 +33,8 @@ async function lobbySocketOrNotification(user_id: string, event: string, order_l
 		if (user) {
 			const l10nNotification = getLocalisedTexts('USER_NOTIFICATIONS', user.language);
 			const l10nHeading = getLocalisedTexts('HEADING', user.language);
-			let notification_title = '';
-			let notification_content = '';
+			let notification_title: string | undefined;
+			let notification_content: string | undefined;
 			switch (event) {
 				case 'added_to_lobby':
 					notification_title = l10nHeading?.lobby_added;
