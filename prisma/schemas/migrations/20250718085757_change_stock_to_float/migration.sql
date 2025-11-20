@@ -1,6 +1,0 @@
--- AlterTable
-ALTER TABLE "menu_item_stock_change" ALTER COLUMN "quantity" SET DATA TYPE DOUBLE PRECISION;
-
--- AlterTable
-ALTER TABLE "menu_items" ALTER COLUMN "stock" SET DEFAULT 1,
-ALTER COLUMN "stock" SET DATA TYPE DOUBLE PRECISION;

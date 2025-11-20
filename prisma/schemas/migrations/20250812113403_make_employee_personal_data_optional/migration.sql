@@ -1,7 +1,0 @@
--- AlterTable
-ALTER TABLE "employee" ALTER COLUMN "email" DROP NOT NULL,
-ALTER COLUMN "first_name" DROP NOT NULL,
-ALTER COLUMN "last_name" DROP NOT NULL,
-ALTER COLUMN "telephone" DROP NOT NULL,
-ALTER COLUMN "telephone_code" DROP NOT NULL,
-ALTER COLUMN "telephone_number" DROP NOT NULL;

@@ -1,5 +1,0 @@
--- AlterEnum
-ALTER TYPE "PROMO_TYPE" ADD VALUE 'DAILY_MEALS_SEARCH';
-
--- AlterTable
-ALTER TABLE "booking" ADD COLUMN     "deleted_at" TIMESTAMP(3);

@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "menus" ALTER COLUMN "date" SET DATA TYPE TIMESTAMP(0);
