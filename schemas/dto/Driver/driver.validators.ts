@@ -47,7 +47,7 @@ export const EditDriverSchema = z
 			handles_taxi_orders: z.boolean().optional(),
 			handles_transfer_orders: z.boolean().optional(),
 			handles_delivery_orders: z.boolean().optional(),
-			handles_cargo_orders: z.boolean().optional(),
+			handles_courier_orders: z.boolean().optional(),
 		}),
 		address: OptionalFullAddressSchema.extend({
 			address_id: UUID.optional(),
@@ -181,7 +181,7 @@ export const CreateDriverSchema = z
 				handles_taxi_orders: z.boolean().optional(),
 				handles_transfer_orders: z.boolean().optional(),
 				handles_delivery_orders: z.boolean().optional(),
-				handles_cargo_orders: z.boolean().optional(),
+				handles_courier_orders: z.boolean().optional(),
 				online: z.boolean().optional(),
 				available: z.boolean().optional(),
 			}),

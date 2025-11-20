@@ -445,8 +445,8 @@ const getAvailableDrivers = async (type: string): Promise<DriverDetail[]> => {
 			whereClause.handles_transfer_orders = true;
 			whereClause.transfer_orders_toggled = true;
 		} else if (type === SERVICE_TYPE.CARGO) {
-			whereClause.handles_cargo_orders = true;
-			whereClause.cargo_orders_toggled = true;
+			whereClause.handles_courier_orders = true;
+			whereClause.courier_orders_toggled = true;
 		}
 		const drivers = await prisma.drivers.findMany({
 			where: whereClause,
@@ -499,7 +499,7 @@ const setDriverHandle = async (driver_id: string, action: string, type: string):
 				updateData.handles_delivery_orders = isEnableAction;
 				break;
 			case 'cargo':
-				updateData.handles_cargo_orders = isEnableAction;
+				updateData.handles_courier_orders = isEnableAction;
 				break;
 			default:
 				throw new Error('Invalid type for toggling driver handle field');
@@ -534,7 +534,7 @@ const toggleDriverOrders = async (
 				taxi_orders_toggled: !!types?.taxi,
 				transfer_orders_toggled: !!types?.transfer,
 				delivery_orders_toggled: !!types?.delivery,
-				cargo_orders_toggled: !!types?.cargo,
+				courier_orders_toggled: !!types?.cargo,
 			},
 			include: {
 				user: true,

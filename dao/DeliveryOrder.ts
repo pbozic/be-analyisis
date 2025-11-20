@@ -399,7 +399,7 @@ export async function updateOrderStatus(
 					) as JsonArray,
 				},
 				include: {
-					customer: true,
+					user: true,
 					driver: {
 						include: {
 							user: {
@@ -585,7 +585,6 @@ export async function updateDeliveryOrderTimeline(
 			include: {
 				driver: true,
 				user: true,
-				business: true,
 			},
 		});
 
@@ -1052,7 +1051,6 @@ export async function acceptOrderDelivery(
 			include: {
 				driver: true,
 				user: true,
-				business: true,
 			},
 		});
 

@@ -80,8 +80,7 @@ model delivery_orders {
     last_sent_at               DateTime?                  @db.Timestamptz(6)
     created_at                 DateTime                   @default(now()) @db.Timestamptz(6)
     updated_at                 DateTime                   @default(now()) @updatedAt @db.Timestamptz(6)
-    // Customer who placed the order
-    customer                   users?                     @relation(fields: [user_id], references: [user_id])
+    user                       users?                     @relation(fields: [user_id], references: [user_id])
     history                    delivery_order_sent[]
     vehicle_id                 String?                    @db.Uuid
     vehicle                    vehicles?                  @relation(fields: [vehicle_id], references: [vehicle_id])

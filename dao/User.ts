@@ -27,7 +27,6 @@ import {
 	userAddressesAndConnectionsInclude,
 	UserAddressesPrisma,
 	UserAddressesAndConnectionsCreationPrisma,
-	UserLoginPrisma,
 	userAddressAndRolesInclude,
 } from '../prisma/includes/user.js';
 import {
@@ -198,12 +197,12 @@ const getAllUsersWithAddressesAndConnections = async (): Promise<UserListRespons
  */
 const getUserByIdForLogin = async (user_id: string): Promise<UserLoginResponse | null> => {
 	try {
-		const user = (await prisma.users.findUnique({
+		const user = await prisma.users.findUnique({
 			where: {
 				user_id: user_id,
 			},
 			include: userLoginInclude,
-		})) as UserLoginPrisma | null;
+		});
 		return user ? toUserLoginResponse(user) : null;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID');

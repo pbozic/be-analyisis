@@ -62,13 +62,13 @@ export const userLoginInclude = Prisma.validator<Prisma.usersInclude>()({
 		select: {
 			driver_id: true,
 			transport_module_id: true,
-			ride_requirements: true,
 			user_id: true,
+			ride_requirements: true,
 			transfer_requirements: true,
 			taxi_orders_toggled: true,
 			transfer_orders_toggled: true,
 			delivery_orders_toggled: true,
-			cargo_orders_toggled: true,
+			courier_orders_toggled: true,
 			vehicles: {
 				select: {
 					vehicle_drivers_id: true,
@@ -77,7 +77,7 @@ export const userLoginInclude = Prisma.validator<Prisma.usersInclude>()({
 					vehicle: {
 						select: {
 							vehicle_id: true,
-							business_id: true,
+							transport_module_id: true,
 							active: true,
 							class: true,
 							category: true,
@@ -85,7 +85,6 @@ export const userLoginInclude = Prisma.validator<Prisma.usersInclude>()({
 							model: true,
 							color: true,
 							license_plate: true,
-							current_driver: true,
 						},
 					},
 				},
@@ -109,9 +108,14 @@ export const userLoginInclude = Prisma.validator<Prisma.usersInclude>()({
 		include: {
 			business: {
 				include: {
+					business_details: true,
 					address: true,
-					delivery_address: true,
+					transport_module: true,
 					reservation_module: true,
+					food_drinks_module: true,
+					stores_module: true,
+					daily_meals_module: true,
+					table_reservations_module: true,
 				},
 			},
 			operating_address: true,

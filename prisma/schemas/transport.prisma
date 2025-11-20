@@ -39,8 +39,7 @@ model taxi_orders {
     updated_at               DateTime                   @default(now()) @updatedAt @db.Timestamptz(6)
     driver                   drivers?                   @relation(fields: [driver_id], references: [driver_id])
     vehicle                  vehicles?                  @relation(fields: [vehicle_id], references: [vehicle_id])
-    // Customer who placed the order
-    customer                 users?                     @relation(fields: [user_id], references: [user_id])
+    user                     users?                     @relation(fields: [user_id], references: [user_id])
     business_users           business_users?            @relation(fields: [business_users_id], references: [business_users_id])
     business_clients         business_clients?          @relation(fields: [business_clients_id], references: [business_clients_id])
     history                  taxi_order_sent[]

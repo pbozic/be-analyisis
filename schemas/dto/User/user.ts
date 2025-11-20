@@ -104,14 +104,12 @@ export const UserBaseSchema = z.object({
 	transfer_preferences: z.record(z.any()).nullable(),
 	radio_preferences: z.record(z.any()).nullable(),
 	allergies_preferences: z.record(z.any()).nullable(),
-	delivery_push_notifications: z.record(z.any()).nullable(),
-	transfer_push_notifications: z.record(z.any()).nullable(),
-	taxi_push_notifications: z.record(z.any()).nullable(),
+	delivery_push_notification_preferences: z.record(z.any()).nullable(),
+	transfer_push_notification_preferences: z.record(z.any()).nullable(),
+	taxi_push_notification_preferences: z.record(z.any()).nullable(),
 	profile_picture_id: UUID.nullable(),
-	reviewable_id: UUID.nullable(),
-	review_complete: z.boolean(),
 	one_signal_id: UUID.nullable(),
-	stripe_customer_id: UUID.nullable(),
+	stripe_customer_id: z.string().nullable(),
 	wallet_balance: z.number(),
 	subscribed_to_daily_meals: z.boolean(),
 	language: z.string().nullable(),
@@ -180,7 +178,7 @@ export const UserWithTransactionsResponseSchema = UserResponseSchema.extend({
 });
 
 export const UserWithParentUserResponseSchema = UserResponseSchema.extend({
-	parent_user: GroupUserDetailResponseSchema.nullable(),
+	parent_user: GroupUserDetailResponseSchema.nullable().optional(),
 });
 export type UserWithParentUserResponse = z.infer<typeof UserWithParentUserResponseSchema>;
 

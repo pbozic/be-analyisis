@@ -22,7 +22,7 @@ async function getOrders(args?: Prisma.taxi_ordersFindManyArgs): Promise<TaxiOrd
 			take: args?.take,
 			skip: args?.skip,
 			include: {
-				customer: true,
+				user: true,
 				driver: {
 					include: {
 						user: true,
@@ -49,7 +49,7 @@ async function getPendingScheduledOrdersByUserId(user_id: string): Promise<TaxiO
 				status: TAXI_ORDER_STATUS.PENDING,
 			},
 			include: {
-				customer: true,
+				user: true,
 				driver: {
 					include: {
 						user: true,
@@ -77,18 +77,10 @@ async function getOrder(order_id: string): Promise<TaxiOrderDetail | null> {
 		const result = await prisma.taxi_orders.findFirst({
 			where: { order_id },
 			include: {
-				customer: true,
+				user: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
+						user: true,
 						vehicles: true,
 						current_vehicle: true,
 					},
@@ -144,18 +136,10 @@ async function getTaxiOrdersIfNotCompleted(
 						}),
 			},
 			include: {
-				customer: true,
+				user: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
+						user: true,
 						vehicles: true,
 						current_vehicle: true,
 					},
@@ -213,26 +197,10 @@ async function getActiveOrdersByDriverId(driver_id: string): Promise<TaxiOrderDe
 				],
 			},
 			include: {
-				user: {
-					include: {
-						documents: {
-							include: {
-								files: true,
-							},
-						},
-					},
-				},
+				user: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
+						user: true,
 						vehicles: true,
 						current_vehicle: true,
 					},
@@ -270,15 +238,7 @@ async function getDeliveryOrdersByDriverId(
 				user: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
+						user: true,
 						vehicles: true,
 						current_vehicle: true,
 					},
@@ -315,7 +275,7 @@ async function getOrdersByDriverId(
 			take: args?.take,
 			skip: args?.skip,
 			include: {
-				customer: true,
+				user: true,
 				driver: {
 					include: {
 						user: true,
@@ -499,7 +459,7 @@ export async function acceptTaxiOrderWithRawLock(
 				vehicle: { connect: { vehicle_id: vehicle_id } },
 			},
 			include: {
-				customer: true,
+				user: true,
 				driver: {
 					include: {
 						user: true,
@@ -569,15 +529,7 @@ async function acceptOrder(
 				user: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
+						user: true,
 						vehicles: true,
 						current_vehicle: true,
 					},
@@ -610,15 +562,7 @@ async function updateOrderStatus(order_id: string, status: TAXI_ORDER_STATUS): P
 				user: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
+						user: true,
 						vehicles: true,
 						current_vehicle: true,
 					},
@@ -650,15 +594,7 @@ async function completeOrder(order_id: string): Promise<TaxiOrderDetail> {
 				user: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
+						user: true,
 						vehicles: true,
 						current_vehicle: true,
 					},
@@ -701,15 +637,7 @@ async function cancelOrder(order_id: string, status: string, cancellation_reason
 				user: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
+						user: true,
 						vehicles: true,
 						current_vehicle: true,
 					},
@@ -776,15 +704,7 @@ async function cancelVehicleTransferOrder(
 				user: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
+						user: true,
 						vehicles: true,
 						current_vehicle: true,
 					},
@@ -1000,7 +920,7 @@ async function updateCompleteTaxiRoute(order_id: string, route: TaxiLocation[]):
 			data: data,
 			include: {
 				grouped_orders: true,
-				customer: true,
+				user: true,
 				driver: {
 					include: {
 						user: true,
@@ -1052,15 +972,7 @@ async function updateTaxiOrderTimeline(
 				user: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
+						user: true,
 						vehicles: true,
 						current_vehicle: true,
 					},
@@ -1118,26 +1030,10 @@ async function updateOrder(order_id: string, order: Prisma.taxi_ordersUpdateInpu
 			data: order,
 			include: {
 				grouped_orders: true,
-				user: {
-					include: {
-						documents: {
-							include: {
-								files: true,
-							},
-						},
-					},
-				},
+				user: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
+						user: true,
 						vehicles: true,
 						current_vehicle: true,
 					},
@@ -1174,15 +1070,7 @@ async function getAcceptedOrders(): Promise<TaxiOrderDetail[]> {
 				user: true,
 				driver: {
 					include: {
-						user: {
-							include: {
-								documents: {
-									include: {
-										files: true,
-									},
-								},
-							},
-						},
+						user: true,
 						vehicles: true,
 						current_vehicle: true,
 					},

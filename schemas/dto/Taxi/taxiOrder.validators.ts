@@ -37,9 +37,9 @@ export const TaxiPreferencesSchema = z
 		adults: z.number().int().optional().openapi({ example: 1 }),
 		children_under_140: z.number().int().optional().openapi({ example: 0 }),
 		departure_date: Timestamp.optional().nullable(),
-		departure_time: z.string().optional(),
+		departure_time: z.string().optional().nullable(),
 		repeat_ride: z.array(z.any()).optional(),
-		repeat_duration: z.array(z.any()).optional(),
+		repeat_duration: z.array(z.any()).optional().nullable(),
 		ride_requirements: z.any().optional(),
 		// allow other preference fields through
 	})

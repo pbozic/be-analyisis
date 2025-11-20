@@ -28,7 +28,7 @@ export const TaxiOrderBaseSchema = z
 		subtype: z.string().nullable().optional(),
 		pickup_location: z.record(z.any()).nullable().optional(),
 		delivery_location: z.record(z.any()).nullable().optional(),
-		route: z.record(z.any()).nullable().optional(),
+		route: z.array(z.record(z.any())).nullable().optional(),
 		complete_route: z.record(z.any()).nullable().optional(),
 		distance: z.number().nullable().optional(),
 		duration: z.number().nullable().optional(),

@@ -1,3 +1,7 @@
+import { UserPrisma } from '../../../prisma/includes/user.js';
+import { toDriverDetail } from '../Driver/driver.mappers.js';
+import { toUserResponse } from '../User/user.mappers.js';
+import { toVehicleRef } from '../Vehicles/vehicle.mappers.js';
 import { TaxiOrderDetailSchema, TaxiOrderRefSchema } from './taxiOrder.dto.js';
 import type { TaxiOrderDetail, TaxiOrderRef } from './taxiOrder.dto.js';
 
@@ -35,7 +39,7 @@ type PrismaTaxiOrder = {
 	feedback?: string | null;
 	tip_amount?: number | null;
 	timeline?: Array<Record<string, unknown>>;
-	metadata?: Record<string, unknown> | null;
+	// metadata?: Record<string, unknown> | null;
 	last_sent_at?: string | Date | null;
 	parent_order_id?: string | null;
 	is_grouped?: boolean;
@@ -43,7 +47,7 @@ type PrismaTaxiOrder = {
 	preferences?: Record<string, unknown> | null;
 	created_at?: string | Date | null;
 	updated_at?: string | Date | null;
-	user?: unknown;
+	user?: UserPrisma | null;
 	driver?: unknown;
 	vehicle?: unknown;
 	business?: unknown;
@@ -86,7 +90,6 @@ export function toTaxiOrderDetail(row: unknown): TaxiOrderDetail {
 		feedback: r.feedback ?? null,
 		tip_amount: r.tip_amount ?? null,
 		timeline: r.timeline ?? [],
-		metadata: r.metadata ?? null,
 		last_sent_at: r.last_sent_at ? new Date(r.last_sent_at as string | Date).toISOString() : null,
 		parent_order_id: r.parent_order_id ?? null,
 		is_grouped: r.is_grouped ?? undefined,
@@ -94,11 +97,10 @@ export function toTaxiOrderDetail(row: unknown): TaxiOrderDetail {
 		preferences: r.preferences ?? null,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		user: r.user ? (r.user as Record<string, unknown>) : null,
-		driver: r.driver ? (r.driver as Record<string, unknown>) : null,
-		vehicle: r.vehicle ? (r.vehicle as Record<string, unknown>) : null,
-		business: r.business ? (r.business as Record<string, unknown>) : null,
-		grouped_orders: r.grouped_orders ? (r.grouped_orders as Array<Record<string, unknown>>) : [],
+		user: r.user ? toUserResponse(r.user) : null,
+		driver: r.driver ? toDriverDetail(r.driver) : null,
+		vehicle: r.vehicle ? toVehicleRef(r.vehicle) : null,
+		grouped_orders: r.grouped_orders ? r.grouped_orders.map(toTaxiOrderRef) : [],
 		payment: r.payment ?? null,
 		details: r.details ?? null,
 	});

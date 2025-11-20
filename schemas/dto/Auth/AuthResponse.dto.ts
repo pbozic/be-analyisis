@@ -38,7 +38,7 @@ export const UserLoginResponseSchema = UserResponseSchema.extend({
 		taxi_orders_toggled: true,
 		transfer_orders_toggled: true,
 		delivery_orders_toggled: true,
-		cargo_orders_toggled: true,
+		courier_orders_toggled: true,
 		transport_module_id: true,
 		last_used_vehicle_id: true,
 		current_vehicle: true,
@@ -52,8 +52,14 @@ export const UserLoginResponseSchema = UserResponseSchema.extend({
 	parent_user: GroupUserWithParentResponseSchema.nullable(),
 	referrals_made: z.array(ReferralBaseSchema).nullable(),
 	referral: ReferralDetailSchema.nullable(),
-	user_roles: UserRoleSchema,
-	business_users: BusinessUserWithBusinessResponseSchema.omit({ allowance: true }).nullable(),
+	user_roles: z.array(
+		z.object({
+			user_roles_id: UUID,
+			role: UserRoleSchema,
+			primary: z.boolean(),
+		})
+	),
+	business_users: z.array(BusinessUserWithBusinessResponseSchema.omit({ allowance: true })).nullable(),
 	user_favorite_businesses: z.array(FavoriteBusinessDetailSchema).nullable(),
 	user_favorite_drivers: z.array(FavoriteBusinessDetailSchema).nullable(),
 	profile_picture: FileBaseSchema.nullable().optional(),

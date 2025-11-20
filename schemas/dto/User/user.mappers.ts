@@ -70,9 +70,9 @@ export function toUserResponse(row: Prisma.usersGetPayload<object>): UserWithPar
 		transfer_preferences: r.transfer_preferences ?? null,
 		radio_preferences: r.radio_preferences ?? null,
 		allergies_preferences: r.allergies_preferences ?? null,
-		delivery_push_notifications: r.delivery_push_notification_preferences ?? null,
-		transfer_push_notifications: r.transfer_push_notification_preferences ?? null,
-		taxi_push_notifications: r.taxi_push_notification_preferences ?? null,
+		delivery_push_notification_preferences: r.delivery_push_notification_preferences ?? null,
+		transfer_push_notification_preferences: r.transfer_push_notification_preferences ?? null,
+		taxi_push_notification_preferences: r.taxi_push_notification_preferences ?? null,
 		profile_picture_id: r.profile_picture_id ?? null,
 		reviewable_id: r.reviewable_id ?? null,
 		review_complete: r.review_complete ?? false,
@@ -90,7 +90,10 @@ export function toUserResponse(row: Prisma.usersGetPayload<object>): UserWithPar
 		disabled: r.disabled ?? false,
 		driver: r.driver ? toDriverDetail(r.driver) : null,
 		profile_picture: r.profile_picture ? toFileResponse(r.profile_picture) : null,
-		business_users: toBusinessUserWithBusinessResponse(r.business_users ?? []),
+		business_users:
+			r.business_users?.length > 0
+				? r.business_users.map((bu: any) => toBusinessUserWithBusinessResponse(bu))
+				: [],
 		parent_user: r.parent_user ?? null,
 		created_at: toIso(r.created_at) ?? new Date().toISOString(),
 		updated_at: toIso(r.updated_at) ?? new Date().toISOString(),
@@ -203,7 +206,7 @@ export function toUserLoginResponse(row: UserLoginPrisma): UserLoginResponse {
 					taxi_orders_toggled: r.driver.taxi_orders_toggled ?? false,
 					transfer_orders_toggled: r.driver.transfer_orders_toggled ?? false,
 					delivery_orders_toggled: r.driver.delivery_orders_toggled ?? false,
-					cargo_orders_toggled: r.driver.cargo_orders_toggled ?? false,
+					courier_orders_toggled: r.driver.courier_orders_toggled ?? false,
 					transport_module_id: r.driver.transport_module_id ?? null,
 					last_used_vehicle_id: r.driver.last_used_vehicle_id ?? null,
 					current_vehicle: r.driver.current_vehicle ?? null,
@@ -261,7 +264,7 @@ export function toUserLoginResponse(row: UserLoginPrisma): UserLoginResponse {
 				}
 			: null,
 		user_roles: r.user_roles ?? [],
-		business_users: r.business_users
+		business_users: r.business_users?.length
 			? (r.business_users as any[]).map((bu) => ({
 					business_users_id: bu.business_users_id,
 					business_id: bu.business_id,
@@ -275,13 +278,18 @@ export function toUserLoginResponse(row: UserLoginPrisma): UserLoginResponse {
 						? {
 								business_id: bu.business.business_id,
 								address: bu.business.address ?? null,
-								delivery_address: bu.business.delivery_address ?? null,
 								reservation_module: bu.business.reservation_module ?? null,
+								transport_module: bu.business.transport_module ?? null,
+								food_drinks_module: bu.business.food_drinks_module ?? null,
+								stores_module: bu.business.stores_module ?? null,
+								daily_meals_module: bu.business.daily_meals_module ?? null,
+								table_reservations_module: bu.business.table_reservations_module ?? null,
+								business_details: bu.business.business_details ?? null,
 							}
 						: null,
 					operating_address: bu.operating_address ?? null,
 				}))
-			: null,
+			: [],
 		user_favorite_businesses: r.user_favorite_businesses ?? null,
 		user_favorite_drivers: r.user_favorite_drivers ?? null,
 		profile_picture: r.profile_picture ?? null,

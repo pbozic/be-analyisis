@@ -77,7 +77,7 @@ async function getUserWithTokens(userId: string): Promise<AuthUserResponse> {
 		access_token,
 		refresh_token,
 		payment_methods,
-		profile_picture: (user as any).profile_picture?.url,
+		profile_picture: user.profile_picture?.url,
 	};
 }
 
@@ -144,7 +144,7 @@ async function login(req: ValidatedRequest<LoginRequest>, res: Response) {
 				access_token,
 				refresh_token,
 				payment_methods,
-				profile_picture: (user as any).profile_picture.url,
+				profile_picture: user.profile_picture?.url,
 			});
 	} catch (e) {
 		console.log(e);

@@ -538,7 +538,7 @@ async function createOrder(req: ValidatedRequest<CreateTaxiOrder>, res: Response
 			`;
 		}
 		console.log('REGION', region);
-		if (region) {
+		if (region?.length) {
 			orderData.estimates = {
 				...orderData.estimates,
 				region_id: region[0].municipalities_id,

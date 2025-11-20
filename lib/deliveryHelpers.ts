@@ -420,7 +420,7 @@ export async function checkIfDeliveryOrdersNeedSending(): Promise<void> {
 	const orders = await DeliveryOrderDao.getOrders({
 		where: {
 			AND: [
-				{ delivery_driver_id: null, driver_id: null },
+				{ driver_id: null },
 				{
 					OR: [
 						{ status: DELIVERY_ORDER_STATUS.MERCHANT_PREPARING },
@@ -432,7 +432,7 @@ export async function checkIfDeliveryOrdersNeedSending(): Promise<void> {
 				{ is_daily_meal: false },
 			],
 		},
-		include: { user: { select: { user_id: true, first_name: true, last_name: true, telephone: true } } },
+		// include: { user: { select: { user_id: true, first_name: true, last_name: true, telephone: true } } },
 	});
 	console.log('open delivery orders: ', orders.length);
 	for (const order of orders as DeliveryOrderDetail[]) findDeliveryOrderDrivers(order);
@@ -448,10 +448,9 @@ export async function checkIfRestaurantOrderIsPrepared(): Promise<void> {
 	console.log('Checking delivery orders prepared!');
 	const orders = await prisma.delivery_orders.findMany({
 		where: { status: DELIVERY_ORDER_STATUS.MERCHANT_PREPARING },
-		include: { business: { select: { type: true } } },
 	});
 	for (const or of orders) {
-		const readyRaw = (or.details as any)?.ready_for_pickup_at;
+		const readyRaw = or.details?.ready_for_pickup_at;
 		if (!readyRaw) continue;
 		const readyTime = new Date(readyRaw);
 		if (readyTime.getTime() <= now.getTime() && or.food_drinks_module_id) {
