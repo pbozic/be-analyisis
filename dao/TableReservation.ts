@@ -3,7 +3,7 @@ import { integer } from '@elastic/elasticsearch/lib/api/types.js';
 
 import prisma from '../prisma/prisma.js';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
-import { TableReservationDetail, TableReservationBase } from '../schemas/dto/TableReservation/table-reservation.dto.js';
+import { TableReservationDetail, TableReservationBase } from '../schemas/dto/TableReservation/tableReservation.dto.js';
 import { CreateReservationRequest } from '../schemas/dto/TableReservation/tableReservation.validators.js';
 
 /**

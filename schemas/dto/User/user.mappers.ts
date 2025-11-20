@@ -24,9 +24,14 @@ import {
 	UserAddressesAndConnectionsCreationPrisma,
 	UserLoginPrisma,
 } from '../../../prisma/includes/user.ts';
-import { toDriverDetail } from '../Driver/driver.mappers.ts';
-import { toFileResponse } from '../Files/file.mappers.ts';
-import { toBusinessUserWithBusinessResponse } from '../BusinessUser/businessUser.mappers.ts';
+import { toAddressResponse } from '../Address/address.mappers.ts';
+import { toTransportModuleDetail } from '../Transport/transport.mappers.ts';
+import { toFoodDrinksDetail } from '../FoodDrinks/foodDrinks.mappers.ts';
+import { toStoreDetail } from '../Stores/store.mappers.ts';
+import { toDailyMealsModuleResponse } from '../Business/business.mappers.ts';
+import { toReservationModuleResponse } from '../reservations/reservation-module/reservation-module.mappers.ts';
+import { toTableReservationModuleResponse } from '../TableReservation/tableReservationsModule.mappers.ts';
+import { toVehicleRef } from '../Vehicles/vehicle.mappers.ts';
 /**
  * Convert date to ISO string, handling null/undefined.
  */
@@ -88,13 +93,13 @@ export function toUserResponse(row: Prisma.usersGetPayload<object>): UserWithPar
 		allow_newsletter: r.allow_newsletter ?? null,
 		active: r.active ?? false,
 		disabled: r.disabled ?? false,
-		driver: r.driver ? toDriverDetail(r.driver) : null,
-		profile_picture: r.profile_picture ? toFileResponse(r.profile_picture) : null,
-		business_users:
-			r.business_users?.length > 0
-				? r.business_users.map((bu: any) => toBusinessUserWithBusinessResponse(bu))
-				: [],
-		parent_user: r.parent_user ?? null,
+		// driver: r.driver ? toDriverDetail(r.driver) : null,
+		// profile_picture: r.profile_picture ? toFileResponse(r.profile_picture) : null,
+		// business_users:
+		// 	r.business_users?.length > 0
+		// 		? r.business_users.map((bu: any) => toBusinessUserWithBusinessResponse(bu))
+		// 		: [],
+		// parent_user: r.parent_user ?? null,
 		created_at: toIso(r.created_at) ?? new Date().toISOString(),
 		updated_at: toIso(r.updated_at) ?? new Date().toISOString(),
 	});
@@ -209,8 +214,10 @@ export function toUserLoginResponse(row: UserLoginPrisma): UserLoginResponse {
 					courier_orders_toggled: r.driver.courier_orders_toggled ?? false,
 					transport_module_id: r.driver.transport_module_id ?? null,
 					last_used_vehicle_id: r.driver.last_used_vehicle_id ?? null,
-					current_vehicle: r.driver.current_vehicle ?? null,
-					vehicles: r.driver.vehicles ?? [],
+					current_vehicle: r.driver.current_vehicle ? toVehicleRef(r.driver.current_vehicle) : null,
+					vehicles: Array.isArray(r.driver.vehicles)
+						? r.driver.vehicles.map((v: any) => toVehicleRef(v))
+						: [],
 					activity_logs: r.driver.activity_logs ?? [],
 				}
 			: null,
@@ -277,13 +284,25 @@ export function toUserLoginResponse(row: UserLoginPrisma): UserLoginResponse {
 					business: bu.business
 						? {
 								business_id: bu.business.business_id,
-								address: bu.business.address ?? null,
-								reservation_module: bu.business.reservation_module ?? null,
-								transport_module: bu.business.transport_module ?? null,
-								food_drinks_module: bu.business.food_drinks_module ?? null,
-								stores_module: bu.business.stores_module ?? null,
-								daily_meals_module: bu.business.daily_meals_module ?? null,
-								table_reservations_module: bu.business.table_reservations_module ?? null,
+								address: bu.business.address ? toAddressResponse(bu.business.address) : null,
+								reservation_module: bu.business.reservation_module
+									? toReservationModuleResponse(bu.business.reservation_module as any)
+									: null,
+								transport_module: bu.business.transport_module
+									? toTransportModuleDetail(bu.business.transport_module as any)
+									: null,
+								food_drinks_module: bu.business.food_drinks_module
+									? toFoodDrinksDetail(bu.business.food_drinks_module as any)
+									: null,
+								stores_module: bu.business.stores_module
+									? toStoreDetail(bu.business.stores_module as any)
+									: null,
+								daily_meals_module: bu.business.daily_meals_module
+									? toDailyMealsModuleResponse(bu.business.daily_meals_module as any)
+									: null,
+								table_reservations_module: bu.business.table_reservations_module
+									? toTableReservationModuleResponse(bu.business.table_reservations_module as any)
+									: null,
 								business_details: bu.business.business_details ?? null,
 							}
 						: null,

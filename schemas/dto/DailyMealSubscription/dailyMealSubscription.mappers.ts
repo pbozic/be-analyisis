@@ -1,5 +1,9 @@
 import type { DailyMealSubscriptionWithIncludesPrisma } from '../../../prisma/includes/dailyMealSubscriptions.js';
 import { DailyMealSubscriptionDetail, DailyMealSubscriptionDetailSchema } from '../DailyMeal/dailymeal.dto.js';
+import { toUserResponse } from '../User/user.mappers.ts';
+import { toDriverDetail } from '../Driver/driver.mappers.ts';
+import { toAddressResponse } from '../Address/address.mappers.ts';
+import { toPaymentResponse } from '../Payments/payments.mappers.ts';
 
 function toIso(d: unknown) {
 	return d ? new Date(d as any).toISOString() : undefined;
@@ -10,6 +14,11 @@ export function toDailyMealSubscriptionResponse(
 ): DailyMealSubscriptionDetail {
 	const r = row as any;
 
+	const user = r.user ? toUserResponse(r.user) : null;
+	const driver = r.driver ? toDriverDetail(r.driver) : null;
+	const delivery_address = r.delivery_address ? toAddressResponse(r.delivery_address) : null;
+	const payment = r.payment ? toPaymentResponse(r.payment) : null;
+	// For arrays (customers, days, weekdays, instances, promo_analytics) keep raw until dedicated DTOs exist.
 	return DailyMealSubscriptionDetailSchema.parse({
 		id: r.id,
 		user_id: r.user_id,
@@ -23,15 +32,15 @@ export function toDailyMealSubscriptionResponse(
 		courier_comment: r.courier_comment ?? null,
 		created_at: toIso(r.created_at) ?? new Date().toISOString(),
 		updated_at: toIso(r.updated_at) ?? new Date().toISOString(),
-		user: r.user ?? null,
-		driver: r.driver ?? null,
-		delivery_address: r.delivery_address ?? null,
+		user,
+		driver,
+		delivery_address,
 		daily_meals_module: r.daily_meals_module ?? null,
 		customers: r.customers ?? [],
 		days: r.days ?? [],
 		weekdays: r.weekdays ?? [],
 		daily_meal_instances: r.daily_meal_instances ?? [],
-		payment: r.payment ?? null,
+		payment,
 		promo_analytics: r.promo_analytics ?? [],
 	});
 }

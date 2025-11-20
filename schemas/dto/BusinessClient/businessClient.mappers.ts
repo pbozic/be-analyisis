@@ -16,6 +16,7 @@ import type {
 	BusinessClientWithOrdersPrisma,
 	BusinessClientDetailPrisma,
 } from '../../../prisma/includes/businessClient.js';
+import { toBusinessMinimalResponse } from '../Business/business.mappers.ts';
 
 function toIso(date: unknown) {
 	return date ? new Date(date as any).toISOString() : undefined;
@@ -45,7 +46,7 @@ export function toBusinessClientWithBusinessResponse(
 	const asRec = r as Record<string, any>;
 
 	// crm_module.business may hold the business relation; map it to `business` for DTO
-	const business = asRec.crm_module?.business ?? null;
+	const business = asRec.crm_module?.business ? toBusinessMinimalResponse(asRec.crm_module.business) : null;
 
 	return BusinessClientWithBusinessResponseSchema.parse({
 		business_clients_id: r.business_clients_id,
@@ -93,7 +94,7 @@ export function toBusinessClientDetailResponse(row: BusinessClientDetailPrisma):
 	const r = row as BusinessClientDetailPrisma;
 	const asRec = r as Record<string, any>;
 
-	const business = asRec.crm_module?.business ?? null;
+	const business = asRec.crm_module?.business ? toBusinessMinimalResponse(asRec.crm_module.business) : null;
 	const taxi_orders = asRec.taxi_orders
 		? (asRec.taxi_orders as any[]).map((o) => ({
 				order_id: o.order_id,

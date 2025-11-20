@@ -79,10 +79,16 @@ export function toDailyMealCategoryResponse(row: DailyMealCategoryWithPricesPris
 		created_at: toIso(r.created_at) ?? new Date().toISOString(),
 		start_date: toIso(r.start_date) ?? new Date().toISOString(),
 		active: !!r.active,
-		category: r.category ?? null,
+		category: r.category ? CategoryRefSchema.parse(r.category) : null,
 		daily_meals_module: r.daily_meals_module ?? null,
-		menu_categories: r.menu_categories ?? [],
-		daily_meal_subscription_customers: r.daily_meal_subscription_customers ?? [],
+		menu_categories: Array.isArray(r.menu_categories)
+			? r.menu_categories.map((mc: any) => ({ menu_categories_id: mc.menu_categories_id, name: mc.name }))
+			: [],
+		daily_meal_subscription_customers: Array.isArray(r.daily_meal_subscription_customers)
+			? r.daily_meal_subscription_customers.map((c: any) => ({
+					id: c.id ?? c.daily_meal_subscription_customers_id,
+				}))
+			: [],
 		daily_meal_category_prices_id: r.daily_meal_category_prices_id ?? null,
 		daily_meal_category_prices: (r.daily_meal_category_prices || []).map((p: any) => ({
 			daily_meal_category_price_id: p.daily_meal_category_price_id,

@@ -111,7 +111,6 @@ export const CrmModuleRefSchema = z
 	.object({
 		crm_module_id: UUID,
 		purchase_order_limit_amount: z.number().nullable().optional(),
-		client_count: z.number().int().optional(),
 	})
 	.openapi('CrmModuleRef');
 
@@ -139,7 +138,7 @@ export const DailyMealsModuleSchema = z
 		maximum_daily_meals_subscribers: z.number().nullable().optional(),
 		daily_users_sorted: z.array(UUID).optional().default([]),
 		daily_users_sorting_type: z.nativeEnum(SORTING_TYPE).optional().default(SORTING_TYPE.AUTOMATIC),
-		created_at: Timestamp,
+		created_at: Timestamp.optional(),
 		updated_at: Timestamp.optional(),
 	})
 	.openapi('DailyMealsModule');
@@ -291,6 +290,7 @@ export type ReservationModuleRef = z.infer<typeof ReservationModuleRefSchema>;
 export type CrmModuleRef = z.infer<typeof CrmModuleRefSchema>;
 export type MenuRef = z.infer<typeof MenuRefSchema>;
 export type DailyMealsModule = z.infer<typeof DailyMealsModuleSchema>;
+export type CrmModule = z.infer<typeof CrmModuleFullSchema>;
 
 // Re-export existing module types
 export type { MenuItemRef } from '../Menu/menu.dto.js';

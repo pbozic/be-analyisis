@@ -1,43 +1,8 @@
-import { TableReservationDetailSchema } from './table-reservation.dto.js';
-import type { TableReservationDetail } from './table-reservation.dto.js';
-import { BasicUserDataSchema } from '../User/user.js';
-import { BusinessRefSchema } from '../Business/business.ts';
-
-function toBasicUser(user: unknown | null | undefined) {
-	if (!user) return null;
-	const u = user as {
-		first_name?: string | null;
-		last_name?: string | null;
-		email?: string | null;
-		telephone?: string | null;
-		telephone_code?: string | null;
-		date_of_birth?: string | null;
-	};
-	return BasicUserDataSchema.parse({
-		first_name: u.first_name ?? '',
-		last_name: u.last_name ?? '',
-		email: u.email ?? undefined,
-		telephone: u.telephone ?? undefined,
-		telephone_code: u.telephone_code ?? undefined,
-		date_of_birth: u.date_of_birth ?? undefined,
-	});
-}
-
-export function toBusinessRef(b: unknown | null | undefined) {
-	if (!b) return null;
-	const business = b as {
-		business_id: string;
-		name?: string | null;
-		logo?: string | null;
-		banner?: string | null;
-	};
-	return BusinessRefSchema.parse({
-		business_id: business.business_id,
-		name: business.name ?? null,
-		logo: business.logo ?? null,
-		banner: business.banner ?? null,
-	});
-}
+import { TableReservationDetailSchema } from './tableReservation.dto.js';
+import type { TableReservationDetail } from './tableReservation.dto.js';
+import { toBusinessMinimalResponse } from '../Business/business.mappers.ts';
+import { toUserResponse } from '../User/user.mappers.ts';
+import { UserPrisma } from '../../../prisma/includes/user.ts';
 
 export type PrismaReservation = {
 	reservation_id: string;
@@ -51,7 +16,7 @@ export type PrismaReservation = {
 	table_reservation_id: string;
 	created_at?: string | Date | null;
 	updated_at?: string | Date | null;
-	user?: unknown | null;
+	user?: UserPrisma | null;
 	business?: unknown | null;
 };
 
@@ -69,7 +34,7 @@ export function toTableReservationDetail(row: unknown): TableReservationDetail {
 		table_reservation_id: r.table_reservation_id,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		user: toBasicUser(r.user) ?? undefined,
-		business: toBusinessRef(r.business) ?? undefined,
+		user: toUserResponse(r.user as UserPrisma) ?? undefined,
+		business: toBusinessMinimalResponse(r.business) ?? undefined,
 	});
 }

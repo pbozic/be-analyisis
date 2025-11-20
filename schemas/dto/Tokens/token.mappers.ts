@@ -1,6 +1,6 @@
 import { TokenRefSchema, TokenDetailSchema } from './token.dto.js';
 import type { TokenRef, TokenDetail } from './token.dto.js';
-import { BusinessRefSchema } from '../Business/business.ts';
+import { BasicUserDataSchema } from '../User/user.js';
 
 export function toTokenRef(row: unknown): TokenRef {
 	const r = row as { token_id?: string; token?: string };
@@ -23,6 +23,18 @@ type PrismaToken = {
 
 export function toTokenDetail(row: unknown): TokenDetail {
 	const r = row as PrismaToken;
+	const rawUser = (r as { users?: any }).users;
+	const user = rawUser
+		? BasicUserDataSchema.parse({
+				first_name: rawUser.first_name ?? '',
+				last_name: rawUser.last_name ?? '',
+				email: rawUser.email ?? undefined,
+				telephone: rawUser.telephone ?? undefined,
+				telephone_code: rawUser.telephone_code ?? undefined,
+				date_of_birth: rawUser.date_of_birth ?? undefined,
+				language: rawUser.language ?? undefined,
+			})
+		: null;
 	const businesses = Array.isArray(r?.users?.business_users)
 		? (r.users!.business_users as Array<{ business?: BusinessLike | null }>)
 				.map((bu) => bu.business)
@@ -41,7 +53,7 @@ export function toTokenDetail(row: unknown): TokenDetail {
 		expires_at: r.expires_at ? new Date(r.expires_at as string | Date).toISOString() : new Date().toISOString(),
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		user: (r as { users?: unknown }).users ?? null,
+		user,
 		businesses,
 	});
 }

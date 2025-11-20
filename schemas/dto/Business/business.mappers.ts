@@ -5,7 +5,12 @@ import {
 	BusinessSearchResponseDto,
 } from './business.dto.js';
 import { BusinessAdminResponseSchema } from './business.js';
-import type { BusinessWithAllModulesResponseDto, BusinessResponseDto as BusinessResponseType } from './business.dto.js';
+import type {
+	BusinessWithAllModulesResponseDto,
+	BusinessResponseDto as BusinessResponseType,
+	CrmModule,
+	DailyMealsModule,
+} from './business.dto.js';
 import type {
 	GetBusinessesPrisma,
 	BusinessByIdPrisma,
@@ -16,6 +21,16 @@ import type {
 } from '../../../prisma/includes/business.ts';
 import { BusinessWithDailyMealsResponseDto } from './business.dto.js';
 import type { BusinessWithDailyMealsResponseDto as BusinessWithDailyMealsResponseType } from './business.dto.js';
+import { toAddressResponse } from '../Address/address.mappers.ts';
+import { toBusinessUserResponse } from '../BusinessUser/businessUser.mappers.ts';
+import { toTransportModuleDetail } from '../Transport/transport.mappers.ts';
+import { toFoodDrinksDetail } from '../FoodDrinks/foodDrinks.mappers.ts';
+import { toStoreDetail } from '../Stores/store.mappers.ts';
+import { toReservationModuleResponse } from '../reservations/reservation-module/reservation-module.mappers.ts';
+import { toBusinessClientResponse } from '../BusinessClient/businessClient.mappers.ts';
+import { toTableReservationDetail } from '../TableReservation/tableReservation.mappers.ts';
+import { toTableReservationModuleResponse } from '../TableReservation/tableReservationsModule.mappers.ts';
+import { toBusinessLocalLocationDetail } from '../Stores/localLocation.mappers.ts';
 
 // Map a lightweight GetBusinessesPrisma payload to the public BusinessResponseDto
 export function toGetBusinessResponse(row: GetBusinessesPrisma): BusinessResponseType {
@@ -96,12 +111,11 @@ export function toBusinessWithIncludesResponse(row: GetBusinessesPrisma) {
 		transport_module_id: asRec.transport_module_id ?? null,
 		reservation_module_id: asRec.reservation_module_id ?? null,
 		stores_id: asRec.stores_id ?? null,
-		// includes
-		address: asRec.address,
-		delivery_address: asRec.delivery_address,
-		business_users: asRec.business_users,
-		parent_business: asRec.parent_business,
-		child_businesses: asRec.child_businesses,
+		address: asRec.address ? toAddressResponse(asRec.address) : null,
+		delivery_address: asRec.delivery_address ? toAddressResponse(asRec.delivery_address) : null,
+		business_users: asRec.business_users?.length ? asRec.business_users.map(toBusinessUserResponse) : [],
+		parent_business: asRec.parent_business ? toBusinessMinimalResponse(asRec.parent_business) : null,
+		child_businesses: asRec.child_businesses?.length ? asRec.child_businesses.map(toBusinessMinimalResponse) : [],
 	});
 }
 
@@ -139,11 +153,11 @@ export function toBusinessWithAddressAndUsersResponse(row: BusinessWithAddressAn
 		transport_module_id: asRec.transport_module_id ?? null,
 		reservation_module_id: asRec.reservation_module_id ?? null,
 		stores_id: asRec.stores_id ?? null,
-		address: asRec.address,
-		delivery_address: asRec.delivery_address,
-		business_users: asRec.business_users,
-		parent_business: asRec.parent_business,
-		child_businesses: asRec.child_businesses,
+		address: asRec.address ? toAddressResponse(asRec.address) : null,
+		delivery_address: asRec.delivery_address ? toAddressResponse(asRec.delivery_address) : null,
+		business_users: asRec.business_users?.length ? asRec.business_users.map(toBusinessUserResponse) : [],
+		parent_business: asRec.parent_business ? toBusinessMinimalResponse(asRec.parent_business) : null,
+		child_businesses: asRec.child_businesses?.length ? asRec.child_businesses.map(toBusinessMinimalResponse) : [],
 	});
 }
 
@@ -164,7 +178,7 @@ export function toBusinessSearchResponse(row: BusinessSearchSelectPrisma) {
 		active: asRec.active ?? null,
 		popular: asRec.popular ?? null,
 		new: asRec.new ?? null,
-		address: asRec.address ?? null,
+		address: asRec.address ? toAddressResponse(asRec.address) : null,
 	});
 }
 
@@ -208,35 +222,43 @@ export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAll
 		updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
 
 		// Module relationships
-		transport_module: r.transport_module,
+		transport_module: r.transport_module ? toTransportModuleDetail(r.transport_module) : null,
 		transport_module_id: r.transport_module?.transport_module_id,
-		food_drinks_module: r.food_drinks_module,
+		food_drinks_module: r.food_drinks_module ? toFoodDrinksDetail(r.food_drinks_module) : null,
 		food_drinks_module_id:
 			(asRec.food_drinks_module &&
 				(asRec.food_drinks_module.food_drinks_module_id ?? asRec.food_drinks_module.food_drinks_id)) ??
 			asRec.food_drinks_id ??
 			null,
-		stores_module: r.stores_module,
+		stores_module: r.stores_module ? toStoreDetail(r.stores_module) : null,
 		stores_module_id:
 			(asRec.stores_module && (asRec.stores_module.stores_module_id ?? asRec.stores_module.stores_id)) ??
 			asRec.stores_id ??
 			null,
-		reservation_module: r.reservation_module,
+		reservation_module: r.reservation_module ? toReservationModuleResponse(r.reservation_module) : null,
 		reservation_module_id: r.reservation_module?.reservation_module_id,
-		table_reservations_module: r.table_reservations_module,
+		table_reservations_module: r.table_reservations_module
+			? toTableReservationModuleResponse(r.table_reservations_module)
+			: null,
 		table_reservations_module_id: r.table_reservations_module?.id,
-		daily_meals_module: r.daily_meals_module,
+		daily_meals_module: r.daily_meals_module ? toDailyMealsModuleResponse(r.daily_meals_module) : null,
 		daily_meals_module_id: r.daily_meals_module?.id,
-		crm_module: r.crm_module,
+		crm_module: r.crm_module ? toCrmModuleResponse(r.crm_module) : null,
 		crm_module_id: r.crm_module?.crm_module_id,
 
 		// Address and User relationships
-		business_users: r.business_users,
+		business_users: r.business_users?.length ? r.business_users.map((bu) => toBusinessUserResponse(bu)) : [],
 
 		// Computed/flattened fields
-		business_local_locations: r.stores_module?.business_local_locations,
-		business_clients: r.crm_module?.business_clients,
-		reservations: r.table_reservations_module?.reservations,
+		business_local_locations: r.stores_module?.business_local_locations?.length
+			? r.stores_module?.business_local_locations.map(toBusinessLocalLocationDetail)
+			: [],
+		business_clients: r.crm_module?.business_clients?.length
+			? r.crm_module?.business_clients.map(toBusinessClientResponse)
+			: [],
+		reservations: r.table_reservations_module?.reservations?.length
+			? r.table_reservations_module?.reservations.map(toTableReservationDetail)
+			: [],
 		daily_meals_delivery_mapping: r.daily_meals_module?.daily_meals_delivery_mapping,
 
 		// Daily meals specific fields
@@ -345,4 +367,27 @@ export function toBusinessMinimalResponse(row: any): BusinessResponseType {
 		reservation_module_id: asRec.reservation_module_id ?? null,
 		stores_id: asRec.stores_id ?? null,
 	});
+}
+
+export function toDailyMealsModuleResponse(row: any): DailyMealsModule {
+	const r = row as Record<string, any>;
+	return {
+		id: r.id,
+		created_at: r.created_at ? new Date().toISOString() : undefined,
+		updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
+		maximum_daily_meals_subscribers: r.maximum_daily_meals_subscribers,
+		daily_meals_days: r.daily_meals_days,
+		daily_users_sorting_type: r.daily_users_sorting_type,
+		daily_users_sorted: r.daily_users_sorted,
+		daily_meals_delivery_mapping: r.daily_meals_delivery_mapping,
+	};
+}
+
+export function toCrmModuleResponse(row: any): CrmModule {
+	const r = row as Record<string, any>;
+	return {
+		crm_module_id: r.crm_module_id,
+		purchase_order_limit_amount: r.purchase_order_limit_amount,
+		// business_clients: r.business_clients ?? [],
+	};
 }

@@ -2,27 +2,10 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID, Timestamp } from '../../primitives';
+import { AddressResponseSchema } from '../Address';
+import { DeliveryOrderRefSchema } from '../DeliveryOrders';
 
 extendZodWithOpenApi(z);
-
-// Address ref
-export const AddressRefSchema = z
-	.object({
-		address_id: UUID,
-		label: z.string().min(1),
-	})
-	.openapi('AddressRef');
-export type AddressRef = z.infer<typeof AddressRefSchema>;
-
-// Order id ref
-export const OrderRefSchema = z
-	.object({
-		order_id: UUID,
-		details: z.unknown(),
-		scheduled_at: Timestamp,
-	})
-	.openapi('OrderRef');
-export type OrderRef = z.infer<typeof OrderRefSchema>;
 
 // LocalLocation DTOs
 export const LocalLocationBaseSchema = z
@@ -36,7 +19,7 @@ export const LocalLocationBaseSchema = z
 export type LocalLocationBase = z.infer<typeof LocalLocationBaseSchema>;
 
 export const LocalLocationDetailSchema = LocalLocationBaseSchema.extend({
-	address: AddressRefSchema,
+	address: AddressResponseSchema,
 }).openapi('LocalLocationDetail');
 export type LocalLocationDetail = z.infer<typeof LocalLocationDetailSchema>;
 
@@ -55,15 +38,13 @@ export type BusinessLocalLocationBase = z.infer<typeof BusinessLocalLocationBase
 
 export const BusinessLocalLocationDetailSchema = BusinessLocalLocationBaseSchema.extend({
 	local_location: LocalLocationDetailSchema,
-	orders: z.array(OrderRefSchema).default([]),
+	orders: z.array(DeliveryOrderRefSchema).default([]),
 }).openapi('BusinessLocalLocationDetail');
 export type BusinessLocalLocationDetail = z.infer<typeof BusinessLocalLocationDetailSchema>;
 
 // Mappers moved to localLocation.mappers.ts
 
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('AddressRef', AddressRefSchema);
-	registry.register('OrderIdRef', OrderRefSchema);
 	registry.register('LocalLocationBase', LocalLocationBaseSchema);
 	registry.register('LocalLocationDetail', LocalLocationDetailSchema);
 	registry.register('BusinessLocalLocationBase', BusinessLocalLocationBaseSchema);

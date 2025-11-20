@@ -2,6 +2,7 @@ import { DriverDetailSchema, type DriverDetail } from './driver.dto.js';
 import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.js';
 import { TransportModuleBase } from '../Transport/transport.dto.js';
 import { DailyMealsModule } from '../Business';
+import { BasicUserDataSchema } from '../User/user.js';
 
 // ===============
 // Mappers
@@ -71,6 +72,27 @@ export function toDriverDetail(row: unknown, user?: unknown): DriverDetail {
 	const r = row as PrismaDriver;
 	const currentVehicle = r.current_vehicle ? toVehicleBase(r.current_vehicle) : null;
 	const vehicles = Array.isArray(r.vehicles) ? r.vehicles.map((v) => toVehicleBase(v)!).filter(Boolean) : [];
+	const parsedUser = user
+		? BasicUserDataSchema.parse({
+				first_name: (user as any).first_name ?? '',
+				last_name: (user as any).last_name ?? '',
+				email: (user as any).email ?? undefined,
+				telephone: (user as any).telephone ?? undefined,
+				telephone_code: (user as any).telephone_code ?? undefined,
+				date_of_birth: (user as any).date_of_birth ?? undefined,
+				language: (user as any).language ?? undefined,
+			})
+		: r.user
+			? BasicUserDataSchema.parse({
+					first_name: (r.user as any).first_name ?? '',
+					last_name: (r.user as any).last_name ?? '',
+					email: (r.user as any).email ?? undefined,
+					telephone: (r.user as any).telephone ?? undefined,
+					telephone_code: (r.user as any).telephone_code ?? undefined,
+					date_of_birth: (r.user as any).date_of_birth ?? undefined,
+					language: (r.user as any).language ?? undefined,
+				})
+			: undefined;
 	return DriverDetailSchema.parse({
 		driver_id: r.driver_id,
 		user_id: r.user_id,
@@ -92,7 +114,7 @@ export function toDriverDetail(row: unknown, user?: unknown): DriverDetail {
 		last_used_vehicle_id: r.last_used_vehicle_id ?? null,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		user: user || (r as { user?: unknown }).user,
+		user: parsedUser,
 		current_vehicle: currentVehicle,
 		vehicles,
 		daily_meals: r.daily_meals ?? undefined,

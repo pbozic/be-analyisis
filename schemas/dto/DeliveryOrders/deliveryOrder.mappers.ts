@@ -1,5 +1,9 @@
 import { DeliveryOrderDetailSchema, DeliveryOrderRefSchema } from './deliveryOrder.dto.js';
 import type { DeliveryOrderDetail, DeliveryOrderRef } from './deliveryOrder.dto.js';
+import { toUserResponse } from '../User/user.mappers.ts';
+import { toBusinessMinimalResponse } from '../Business/business.mappers.ts';
+import { toDriverDetail } from '../Driver/driver.mappers.ts';
+import { toLineItemDetail } from '../LineItems/lineItems.mappers.ts';
 
 // ===============
 // Mappers
@@ -63,14 +67,14 @@ export function toDeliveryOrderDetail(row: unknown): DeliveryOrderDetail {
 		payment_method: r.payment_method ?? null,
 		is_daily_meal: r.is_daily_meal ?? undefined,
 		special_instructions: r.special_instructions ?? null,
-		items: r.items ?? [],
+		items: Array.isArray(r.items) ? r.items.map((it) => toLineItemDetail(it)) : [],
 		last_sent_at: r.last_sent_at ? new Date(r.last_sent_at as string | Date).toISOString() : null,
 		delivery_image: r.delivery_image ?? null,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		user: r.user ? (r.user as Record<string, unknown>) : null,
-		business: r.business ? (r.business as Record<string, unknown>) : null,
-		driver: r.driver ? (r.driver as Record<string, unknown>) : null,
+		user: r.user ? toUserResponse(r.user as any) : null,
+		business: r.business ? toBusinessMinimalResponse(r.business as any) : null,
+		driver: r.driver ? toDriverDetail(r.driver as any) : null,
 	});
 }
 

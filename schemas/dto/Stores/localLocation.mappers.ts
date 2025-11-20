@@ -1,18 +1,14 @@
-import { AddressRefSchema, LocalLocationDetailSchema, BusinessLocalLocationDetailSchema } from './localLocation.dto.js';
-import type { AddressRef, LocalLocationDetail, BusinessLocalLocationDetail } from './localLocation.dto.js';
-
-export function toAddressRef(address: unknown): AddressRef {
-	const a = address as { address_id: string; address?: string | null; city?: string | null };
-	const label = a.address || a.city || a.address_id;
-	return AddressRefSchema.parse({ address_id: a.address_id, label });
-}
+import { AddressResponse } from '../Address/address.js';
+import { toAddressResponse } from '../Address/address.mappers.js';
+import { LocalLocationDetailSchema, BusinessLocalLocationDetailSchema } from './localLocation.dto.js';
+import type { LocalLocationDetail, BusinessLocalLocationDetail } from './localLocation.dto.js';
 
 type PrismaLocalLocation = {
 	local_location_id: string;
 	address_id: string;
 	created_at?: string | Date | null;
 	updated_at?: string | Date | null;
-	address: { address_id: string; address?: string | null; city?: string | null };
+	address: unknown;
 };
 
 export function toLocalLocationDetail(row: unknown): LocalLocationDetail {
@@ -22,7 +18,7 @@ export function toLocalLocationDetail(row: unknown): LocalLocationDetail {
 		address_id: r.address_id,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		address: toAddressRef(r.address),
+		address: toAddressResponse(r.address as AddressResponse),
 	});
 }
 

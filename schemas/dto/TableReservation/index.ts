@@ -1,7 +1,7 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 // Import registerSchemas functions with aliases
-import { registerSchemas as registerTableReservationSchemas } from './table-reservation.dto.js';
+import { registerSchemas as registerTableReservationSchemas } from './tableReservation.dto.js';
 import { registerSchemas as registerTableReservationValidatorSchemas } from './tableReservation.validators.js';
 
 // === TableReservation DTOs (Response) ===
@@ -10,7 +10,7 @@ export {
 	TableReservationDetailSchema,
 	type TableReservationBase,
 	type TableReservationDetail,
-} from './table-reservation.dto.js';
+} from './tableReservation.dto.js';
 
 // === TableReservation Validators (Request Body, Query, Params) ===
 export {
@@ -25,7 +25,7 @@ export {
 } from './tableReservation.validators.js';
 
 // === TableReservation Mappers ===
-export { toBusinessRef, toTableReservationDetail } from './tableReservation.mappers.js';
+export { toTableReservationDetail } from './tableReservation.mappers.js';
 
 // === Schema Registration ===
 export function registerSchemas(registry: OpenAPIRegistry) {
