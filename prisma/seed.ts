@@ -2,11 +2,11 @@ import { config } from 'dotenv';
 
 import prisma from './prisma.js';
 import allergenSeed from './seeders/alergenSeeder.js';
-import fiscalDevicesSeeder from './seeders/fiscalDevicesSeeder.js';
-import categoriesSeed from './seeders/restaurantsCategoriesSeeder.js';
-import cuisinesSeed from './seeders/dailyMealsCategoriesSeeder.js';
-import localSeed from './seeders/localCategoriesSeeder.js';
-import merchantSeed from './seeders/merchantCategoriesSeeder.js';
+import categoriesSeeder from './seeders/categoriesSeeder.ts';
+// import categoriesSeed from './seeders/restaurantsCategoriesSeeder.js';
+// import cuisinesSeed from './seeders/dailyMealsCategoriesSeeder.js';
+// import localSeed from './seeders/localCategoriesSeeder.js';
+// import merchantSeed from './seeders/merchantCategoriesSeeder.js';
 import promoSectionSeed from './seeders/promoSectionSeeder.js';
 import municipalitiesSeeder from './seeders/municipalitiesSeeder.js';
 import settlementSeeder from './seeders/settlementSeeder.js';
@@ -15,20 +15,20 @@ import taxRatesSeeder, { TAX_RATES } from './seeders/taxRatesSeeder.ts';
 import localLocationsSeeder, { LOCATIONS } from './seeders/localLocationsSeeder.ts';
 import { seedRolesAndPermissions } from './seeders/ReservationRoleAndPermissionSeeder.ts';
 import reservationNotificationsSeeder from './seeders/reservationNotificationsSeeder.js';
-({ config }).config();
+config();
 async function main() {
 	if (process.env.ENVIRONMENT === 'development') {
 		// await userSeed();
 		// await driverSeed();
 	}
 	await allergenSeed();
-	await categoriesSeed();
-	await merchantSeed();
-	await localSeed();
-	await cuisinesSeed();
+	await categoriesSeeder();
+	// await categoriesSeed();
+	// await merchantSeed();
+	// await localSeed();
+	// await cuisinesSeed();
 	await promoSectionSeed();
 	await municipalitiesSeeder();
-	await fiscalDevicesSeeder();
 	await settlementSeeder();
 	await subscriptionSeeder();
 	await taxRatesSeeder(TAX_RATES, false);

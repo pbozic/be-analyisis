@@ -1405,7 +1405,7 @@ async function seedCategory(
 		const translation = languages[lang]?.[lookupKey];
 		if (translation) {
 			translations.push({
-				language: lang,
+				language: lang as 'en' | 'sl' | 'de' | 'fr' | 'it' | 'es' | 'hr' | 'ru' | 'bs' | 'sr' | 'ua',
 				translation: translation,
 			});
 		}
@@ -1457,7 +1457,7 @@ async function seedCategory(
 		let category_id = categoryExists?.categories_id;
 		if (categoryExists) {
 			if (categoryExists.icon) {
-				const key = await getFileKey(categoryExists.icon.file_id, categoryExists.icon.mime_type);
+				const key = getFileKey(categoryExists.icon.file_id, categoryExists.icon.mime_type);
 				await DeleteObject(key);
 			}
 			const cat = await CategoriesDao.updateCategory(
@@ -1517,7 +1517,7 @@ async function seedCategory(
 					},
 				},
 			});
-			console.log(`Word ${wordExists.tag} already exists.`);
+			console.log(`Word ${wordExists.word} already exists.`);
 		} else {
 			const word = await WordDao.createWord(
 				wordObj.wordData.word,

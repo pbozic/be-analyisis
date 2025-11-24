@@ -23,12 +23,12 @@ async function addAddress(address: AddAddressDaoInput): Promise<AddressResponse>
 			where: {
 				uniqueAddressIdentifier: {
 					address: address.address,
-					latitude: address.latitude,
-					longitude: address.longitude,
+					latitude: String(address.latitude),
+					longitude: String(address.longitude),
 				},
 			},
-			update: { ...address },
-			create: { ...address },
+			update: { ...address, latitude: String(address.latitude), longitude: String(address.longitude) },
+			create: { ...address, latitude: String(address.latitude), longitude: String(address.longitude) },
 		});
 
 		return toAddressResponse(row as AddressDefaultPrisma);

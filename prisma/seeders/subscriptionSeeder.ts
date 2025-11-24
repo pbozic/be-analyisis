@@ -167,12 +167,14 @@ export default async function seedActionBundles(): Promise<void> {
 				update: {
 					price_cents: bundle.price_cents,
 					stripe_price_id: stripePriceId,
+					stripe_product_id: productId,
 					module: { set: MODULE },
 				},
 				create: {
 					name: bundle.name,
 					price_cents: bundle.price_cents,
 					stripe_price_id: stripePriceId,
+					stripe_product_id: productId,
 					module: MODULE,
 				},
 			});
@@ -206,12 +208,14 @@ export default async function seedActionBundles(): Promise<void> {
 				update: {
 					price_cents: addon.price_cents,
 					stripe_price_id: stripePriceId,
+					stripe_product_id: productId,
 					module: { set: MODULE },
 				},
 				create: {
 					name: addon.name,
 					price_cents: addon.price_cents,
 					stripe_price_id: stripePriceId,
+					stripe_product_id: productId,
 					module: MODULE,
 				},
 			});

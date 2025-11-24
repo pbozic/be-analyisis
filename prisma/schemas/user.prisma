@@ -50,26 +50,20 @@ model users {
   profile_picture                        files?                     @relation(fields: [profile_picture_id], references: [file_id])
   delivery_orders                        delivery_orders[]
   reviews                                reviews[]                  @relation("review_author")
-  review_complete                        Boolean                    @default(true)
   one_signal_id                          String?
   stripe_customer_id                     String?
   wallet_balance                         Float                      @default(0)
   transactions                           transactions[]
   reservations                           reservations[]
   transfer_preferences                   Json?
-  allergies_preferences                  Json?
+  allergies_preferences                  user_allergens[]
   spicy_preferences                      Json?
   radio_preferences                      Json?
   subscribed_to_daily_meals              Boolean                    @default(false)
-  daily_meal_preferences                 Json?
-  details                                Json?
-  // flag_changes                           flag_history[] TODO: What is this???
   taxi_push_notification_preferences     Json?
   transfer_push_notification_preferences Json?
   delivery_push_notification_preferences Json?
-  spoken_languages                       Json?
   lost_items                             lost_items[]
-  daily_meal_day_preferences             Json?                      @default("[]")
   disabled                               Boolean                    @default(false)
   active                                 Boolean                    @default(true)
   child_users                            group_users[]              @relation("parent_user")
@@ -113,8 +107,6 @@ model users {
   booking_history_log booking_history_log[]
   roles               user_role[]
   user_permissions    user_permission[]
-
-  user_allergens user_allergens[]
 }
 
 /// @summary User role assignments (simple historical list, not RBAC).
