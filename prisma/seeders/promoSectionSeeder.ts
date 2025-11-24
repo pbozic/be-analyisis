@@ -1,4 +1,5 @@
 import PromoDao from '../../dao/Promo.js';
+import { TranslationItem } from '../../schemas/dto/Promo/promo-section.dto.js';
 const placeholder_promo_sections = [
 	{
 		translations: [
@@ -137,35 +138,30 @@ const placeholder_promo_sections = [
 	},
 ];
 async function promoSectionSeed() {
-	const existing_promo_sections = await PromoDao.getAllPromoSections();
-	return new Promise(async (resolve, reject) => {
+	try {
+		const existing_promo_sections = await PromoDao.getAllPromoSections({});
 		console.log('Seeding Promo Sections...');
-		let promisses = [];
 		for (let promo_section of placeholder_promo_sections) {
 			const existing = existing_promo_sections.find((ps) => ps.tag === promo_section.sectionData.tag);
 			if (!existing) {
-				promisses.push(PromoDao.createPromoSection(promo_section.sectionData, promo_section.translations));
+				await PromoDao.createPromoSection(
+					promo_section.sectionData,
+					promo_section.translations as TranslationItem[]
+				);
 			} else {
 				console.log(
-					`Promo section ${promo_section.tag} already exists!, updating ${existing.promo_sections_id}`
+					`Promo section ${promo_section.sectionData.tag} already exists!, updating ${existing.promo_sections_id}`
 				);
-				promisses.push(
-					PromoDao.updatePromoSection(
-						existing.promo_sections_id,
-						promo_section.sectionData,
-						promo_section.translations
-					)
+				await PromoDao.updatePromoSection(
+					existing.promo_sections_id as string,
+					promo_section.sectionData,
+					promo_section.translations as TranslationItem[]
 				);
 			}
 		}
-		try {
-			await Promise.all(promisses).then((values) => {
-				console.log('Promo Sections seeded!');
-				resolve();
-			});
-		} catch (error) {
-			reject(error);
-		}
-	});
+		console.log('Promo Sections seeded!');
+	} catch (error) {
+		console.error('Error seeding Promo Sections:', error);
+	}
 }
 export default promoSectionSeed;

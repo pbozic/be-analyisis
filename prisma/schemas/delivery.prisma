@@ -6,6 +6,7 @@
 /// Holds store configuration, delivery address, menus and order lobbies.
 model stores_module {
     stores_id                String                     @id @default(uuid()) @db.Uuid
+    public_link_hash         String?                    @unique @default(dbgenerated("'SM' || substr(md5((random())::text), 1, 14)")) @db.VarChar(16)
     business_id              String                     @unique @db.Uuid
     enabled                  Boolean                    @default(false)
     created_at               DateTime                   @default(now()) @db.Timestamptz(6)
@@ -34,11 +35,12 @@ model stores_module {
 ///
 /// Controls restaurant state, delivery address and restaurant/table reservations.
 model food_drinks_module {
-    food_drinks_id String   @id @default(uuid()) @db.Uuid
-    business_id    String   @unique @db.Uuid
-    enabled        Boolean  @default(false)
-    created_at     DateTime @default(now()) @db.Timestamptz(6)
-    updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+    food_drinks_id   String   @id @default(uuid()) @db.Uuid
+    public_link_hash String?  @unique @default(dbgenerated("'FD' || substr(md5((random())::text), 1, 14)")) @db.VarChar(16)
+    business_id      String   @unique @db.Uuid
+    enabled          Boolean  @default(false)
+    created_at       DateTime @default(now()) @db.Timestamptz(6)
+    updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
     business            business          @relation(fields: [business_id], references: [business_id])
     delivery_address_id String?           @db.Uuid
@@ -139,6 +141,7 @@ model delivery_order_sent {
 /// Defines daily meal program with categories, drivers and subscriptions.
 model daily_meals_module {
     id                              String        @id @default(uuid()) @db.Uuid
+    public_link_hash                String?       @unique @default(dbgenerated("'DM' || substr(md5((random())::text), 1, 14)")) @db.VarChar(16)
     business_id                     String        @unique @db.Uuid
     business                        business      @relation(fields: [business_id], references: [business_id])
     delivery_address_id             String?       @db.Uuid
@@ -438,6 +441,7 @@ model menu_item_stock_change {
 /// @erd FoodDrinks
 model table_reservations_module {
     id                  String            @id @default(uuid()) @db.Uuid
+    public_link_hash    String?           @unique @default(dbgenerated("'TR' || substr(md5((random())::text), 1, 14)")) @db.VarChar(16)
     business_id         String            @unique @db.Uuid
     seats               Int?
     business            business          @relation(fields: [business_id], references: [business_id])

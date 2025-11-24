@@ -1,13 +1,17 @@
 import fs from 'fs';
 import path from 'path';
 import prisma from '../prisma.js';
-import { upsertFileOnS3Helper } from '../../controllers/FilesController.js';
 import CategoriesDao from '../../dao/Categories.js';
+import WordDao from '../../dao/Word.js';
 import url from 'node:url';
+import { DeleteObject, getFileKey, upsertFileOnS3Helper } from '../../lib/s3.js';
+import { CategoryResponse } from '../../schemas/dto/Category/category.dto.js';
+import { CATEGORY_TYPE, FILE_TYPE } from '@prisma/client';
+import { TranslationItem } from '../../schemas/dto/Word/word.dto.js';
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let languages = {
+let languages: Record<string, Record<string, string>> = {
 	bs: {
 		title: 'Slijedite li neke specifične dijetalne smjernice?',
 		gallbladder: 'Žučna kesa',
@@ -193,7 +197,7 @@ async function seedCategories() {
 		for (let lang in languages) {
 			translations.push({
 				language: lang,
-				translation: languages[lang][doption.key ? doption.key : doption.tag],
+				translation: languages?.[lang]?.[doption.key ? doption.key : doption.tag],
 			});
 		}
 		const imagePath = path.resolve(__dirname, doption.source);
@@ -208,18 +212,18 @@ async function seedCategories() {
 		} catch (error) {
 			console.error(`Error processing ${imagePath}:`, error);
 		}
-		let categoryObj = {
+		const categoryObj = {
 			categoryData: {
 				name: doption.title,
 				description: doption.title,
-				category_type: 'CUISINE',
+				category_type: CATEGORY_TYPE.CUISINE,
 				tag: doption.tag,
 			},
-			translations: translations,
+			translations: translations as TranslationItem[],
 			iconFileData: {
-				file_type: 'IMAGE',
+				file_type: FILE_TYPE.IMAGE,
 				mime_type: 'image/png',
-				base64: base64,
+				base64: base64 || '',
 			},
 			parent_categories_id: null,
 			subcategories: [],
@@ -243,25 +247,24 @@ async function seedCategories() {
 					const key = getFileKey(categoryExists.icon.file_id, categoryExists.icon.mime_type);
 					await DeleteObject(key);
 				}
-				const cat = await CategoriesDao.updateCategory(
-					//TODO: delete old images
+				const cat = (await CategoriesDao.updateCategory(
 					category_id,
-					categoryObj.categoryData,
+					categoryObj.categoryData!,
 					categoryObj.translations,
 					categoryObj.subcategories,
 					categoryObj.parent_categories_id,
 					categoryObj.iconFileData
-				);
+				)) as CategoryResponse;
 				category_id = cat.categories_id;
-				if (categoryObj.iconFileData) {
+				if (categoryObj.iconFileData && cat.icon) {
 					const { file_type, mime_type, base64 } = categoryObj.iconFileData;
-					await upsertFileOnS3Helper(null, cat.icon, file_type, mime_type, base64);
+					await upsertFileOnS3Helper('', cat.icon, file_type, mime_type, base64);
 				}
 				console.log(`Category ${cat.categories_id} updated.`);
 				console.log(`Category ${categoryExists.tag} tag updated.`);
 			} else {
 				const cat = await CategoriesDao.createCategory(
-					categoryObj.categoryData,
+					categoryObj.categoryData!,
 					categoryObj.translations,
 					categoryObj.subcategories,
 					[],
@@ -269,9 +272,9 @@ async function seedCategories() {
 					categoryObj.iconFileData
 				);
 				category_id = cat.categories_id;
-				if (categoryObj.iconFileData) {
+				if (categoryObj.iconFileData && cat.icon) {
 					const { file_type, mime_type, base64 } = categoryObj.iconFileData;
-					await upsertFileOnS3Helper(null, cat.icon, file_type, mime_type, base64);
+					await upsertFileOnS3Helper('', cat.icon, file_type, mime_type, base64);
 				}
 				console.log(`Category ${cat.categories_id} created.`);
 			}
@@ -288,7 +291,7 @@ async function seedCategories() {
 				},
 			});
 			if (wordExists) {
-				let updatedWord = await prisma.words.update({
+				await prisma.words.update({
 					where: {
 						word: wordObj.wordData.word,
 					},
@@ -305,7 +308,7 @@ async function seedCategories() {
 				const word = await WordDao.createWord(
 					wordObj.wordData.word,
 					wordObj.wordData.categories_id,
-					wordObj.translations
+					wordObj.translations as TranslationItem[]
 				);
 				console.log(`Word ${word.word_id} created.`);
 			}

@@ -1,5 +1,5 @@
 import prisma from '../prisma/prisma.js';
-import { FavoriteDriverBase, FavoriteDriverDetail } from '../schemas/dto/FavoriteDrivers/favorite-drivers.dto.js';
+import { FavoriteDriverDetail } from '../schemas/dto/FavoriteDrivers/favorite-drivers.dto.js';
 import {
 	toUserFavoriteDriverResponse,
 	toUserFavoriteDriversList,
@@ -10,9 +10,9 @@ import {
  *
  * @param {string} user_id - The ID of the user.
  * @param {string} driver_id - The ID of the driver.
- * @returns {Promise<FavoriteDriverBase>} The created or updated favorite driver entry.
+ * @returns {Promise<FavoriteDriverDetail>} The created or updated favorite driver entry.
  */
-export async function addFavoriteDriver(user_id: string, driver_id: string): Promise<FavoriteDriverBase> {
+export async function addFavoriteDriver(user_id: string, driver_id: string): Promise<FavoriteDriverDetail> {
 	try {
 		const res = await prisma.user_favorite_drivers.upsert({
 			where: { user_typed_favorite: { user_id, driver_id } },

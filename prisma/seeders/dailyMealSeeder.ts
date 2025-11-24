@@ -1,6 +1,8 @@
 import MenuDao from '../../dao/Menu.js';
 import MenuItemDao from '../../dao/MenuItem.js';
 import DmcDao from '../../dao/DailyMealCategory.js';
+import { MenuItemDetail } from '../../schemas/dto/Menu/menu.dto.js';
+import { MenuCategoryDetail } from '../../dao/MenuCategory.js';
 
 /**
  * Populates existing daily meal menus with menu items based on their existing menu categories.
@@ -33,8 +35,7 @@ async function populateDailyMeals(business_id: string): Promise<void> {
 	const selectedItems = shuffledItems.slice(0, requiredItemsCount);
 
 	// Get existing daily meal menus for this business
-	const existingMenus = await MenuDao.getMenuByBusinessId(business_id, true);
-
+	const existingMenus = await MenuDao.getDailyMenusByBusinessId(business_id);
 	if (!Array.isArray(existingMenus) || existingMenus.length === 0) {
 		console.error('No existing daily meal menus found for this business.');
 		return;
@@ -43,48 +44,46 @@ async function populateDailyMeals(business_id: string): Promise<void> {
 	console.log(`Found ${existingMenus.length} existing daily meal menus to populate.`);
 
 	for (const menu of existingMenus) {
-		console.log(`Processing menu for date: ${menu.date?.toISOString().slice(0, 10) || 'no date'}`);
+		console.log(`Processing menu for date: ${menu.date?.slice(0, 10) || 'no date'}`);
 
-		const categoriesToPopulate = menu.categories.filter(
+		const categoriesToPopulate = menu.categories?.filter(
 			(category: any) => !category.menu_items || category.menu_items.length === 0
 		);
 
-		if (categoriesToPopulate.length === 0) {
-			continue;
-		}
+		if (categoriesToPopulate?.length) {
+			console.log(
+				`Found ${categoriesToPopulate.length} empty categories to populate for ${menu.date?.slice(0, 10)}`
+			);
 
-		console.log(
-			`Found ${categoriesToPopulate.length} empty categories to populate for ${menu.date?.toISOString().slice(0, 10)}`
-		);
+			// For each empty category, add a menu item
+			for (let j = 0; j < categoriesToPopulate.length && j < selectedItems.length; j++) {
+				const category = categoriesToPopulate[j] as MenuCategoryDetail;
+				const item = selectedItems[j % selectedItems.length] as MenuItemDetail;
 
-		// For each empty category, add a menu item
-		for (let j = 0; j < categoriesToPopulate.length && j < selectedItems.length; j++) {
-			const category = categoriesToPopulate[j];
-			const item = selectedItems[j % selectedItems.length];
+				// Double-check that this category really doesn't have items
+				if (category.menu_items && category.menu_items.length > 0) {
+					console.log(`Category ${category.menu_category_id} already has items, skipping...`);
+					continue;
+				}
 
-			// Double-check that this category really doesn't have items
-			if (category.menu_items && category.menu_items.length > 0) {
-				console.log(`Category ${category.menu_category_id} already has items, skipping...`);
-				continue;
-			}
+				const newMenuData = {
+					daily_date: menu.date as string,
+					// names: item.names,
+					// description: item.description,
+					unit_size: item.unit_size,
+					spicy_level: item.spicy_level || 0,
+					sides: item.sides || [],
+					extras: item.extras || [],
+					ingredients: item.ingredients || [],
+					allergens: item.allergens || [],
+					business_id,
+				};
 
-			const newMenuData = {
-				daily_date: menu.date,
-				names: item.names,
-				description: item.description,
-				unit_size: item.unit_size,
-				spicy_level: item.spicy_level || 0,
-				sides: item.sides || [],
-				extras: item.extras || [],
-				ingredients: item.ingredients || [],
-				allergens: item.allergens || [],
-				business_id,
-			};
-
-			try {
-				await MenuItemDao.createMenuItem(category.menu_category_id, item.tax_rates_id, newMenuData, true);
-			} catch (error) {
-				console.error(`Error creating menu item for category ${category.menu_category_id}:`, error);
+				try {
+					await MenuItemDao.createMenuItem(category.menu_category_id, item.tax_rates_id!, newMenuData, true);
+				} catch (error) {
+					console.error(`Error creating menu item for category ${category.menu_category_id}:`, error);
+				}
 			}
 		}
 	}

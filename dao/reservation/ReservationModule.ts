@@ -1,5 +1,3 @@
-import crypto from 'crypto';
-
 import { validate as isUuid } from 'uuid';
 import type { Prisma as TPrisma } from '@prisma/client';
 
@@ -11,32 +9,6 @@ import type {
 	UpdateReservationSettingsRequest,
 } from '../../schemas/dto/reservations/reservation-module/reservation-module.dto.js';
 import { toReservationModuleResponse } from '../../schemas/dto/reservations/reservation-module/reservation-module.mappers.js';
-/**
- * Generates a unique reservation hash.
- *
- * @param {TPrisma.TransactionClient | null} tx
- * @returns {Promise<string>}
- */
-async function generateUniqueReservationHash(tx: TPrisma.TransactionClient | null): Promise<string> {
-	let unique = false;
-	let public_link_hash: string;
-	const prisma_client = tx || prisma;
-
-	while (!unique) {
-		// Generate a 16-char random string (base36: [0-9a-z])
-		public_link_hash = crypto.randomBytes(8).toString('hex').slice(0, 16);
-
-		const existing = await prisma_client.reservation_module.findUnique({
-			where: { public_link_hash },
-		});
-
-		if (!existing) {
-			unique = true;
-		}
-	}
-
-	return public_link_hash!;
-}
 
 /**
  * Retrieves a reservation module by its ID.
@@ -104,7 +76,7 @@ export async function createReservationModule(
 	try {
 		const result = await prisma_client.reservation_module.create({
 			data: {
-				public_link_hash: await generateUniqueReservationHash(tx || null),
+				// public_link_hash: await generateUniqueReservationHash(tx || null),
 				business: { connect: { business_id } },
 			},
 		});

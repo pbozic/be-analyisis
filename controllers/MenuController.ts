@@ -6,6 +6,7 @@ import MenuCategoryDao from '../dao/MenuCategory.js';
 import MenuItemDao from '../dao/MenuItem.js';
 import DocumentDao from '../dao/Document.js';
 import FileDao from '../dao/File.js';
+import BusinessDao from '../dao/Business.js';
 import TaxDao from '../dao/Tax.js';
 import S3Helper from '../lib/s3.js';
 import { linkDocumentToBusiness } from '../dao/Document.js';
@@ -42,7 +43,7 @@ import { MenuCategoryCategory } from '../schemas/dto/Menu/menucategory.dto.ts';
 const { businessIndex } = elasticsearch;
 
 /**
- * GET /menus/business/:business_id
+ * GET /menus/business/:business_id/:module
  * @tag Menu
  * @summary Get menus by business ID
  * @description Retrieves a list of menus for a specific business.
@@ -54,11 +55,22 @@ const { businessIndex } = elasticsearch;
  * @prisma_model menus
  */
 export async function getMenuByBusinessId(
-	req: ValidatedRequest<never, { business_id: string }>,
+	req: ValidatedRequest<never, { business_id: string; module: 'STORES' | 'FOOD_DRINKS' }>,
 	res: Response
 ): Promise<void> {
 	try {
-		const menus = await MenuDao.getMenuByBusinessId(req.params.business_id);
+		const { business_id, module } = req.params;
+		const business = await BusinessDao.getBusinessById(business_id);
+		if (!business) {
+			throw new Error(`Business with id: ${business_id} not found!`);
+		}
+		const moduleId =
+			module === 'STORES' ? business.stores_module?.stores_id : business.food_drinks_module?.food_drinks_id;
+		if (!moduleId) {
+			res.status(400).json({ error: 'Module not found!' });
+			return;
+		}
+		const menus = await MenuDao.getMenuByBusinessId(moduleId, module);
 		res.status(200).json(menus);
 	} catch (error: any) {
 		console.error('Error obtaining menus:', error);
@@ -85,7 +97,7 @@ export async function getDailyMenuByBusinessId(
 	res: Response
 ): Promise<void> {
 	try {
-		const menus = await MenuDao.getMenuByBusinessId(req.params.business_id, true, req.body.start_date);
+		const menus = await MenuDao.getDailyMenusByBusinessId(req.params.business_id, req.body.start_date);
 		res.status(200).json(menus);
 	} catch (error: any) {
 		console.error('Error obtaining menus:', error);
@@ -113,7 +125,7 @@ export async function createDailyMealMenu(req: ValidatedRequest<CreateDailyMealM
 		const { business_id, date, menu_category } = req.body;
 		const dailyMealsModuleId = await getModuleIdByBusinessId(business_id, MODULE.DAILY_MEALS);
 		const menu = await MenuDao.createDailyMealsMenu(dailyMealsModuleId, date);
-		const menuCategory = await MenuCategoryDao.createMenuCategory(menu.menu_id, menu_category, true);
+		const menuCategory = await MenuCategoryDao.createMenuCategory(menu.daily_meal_menu_id, menu_category, true);
 		businessIndex(business_id);
 		res.status(200).json({ menu: menu, menuCategory: menuCategory });
 	} catch (error: any) {
@@ -445,7 +457,8 @@ export async function deleteMenuCategory(
 ): Promise<void> {
 	try {
 		const menuCategory = await MenuCategoryDao.deleteMenuCategory(req.params.menu_category_id);
-		businessIndex(menuCategory.business_id);
+		// TODO: uncomment
+		// businessIndex(menuCategory.business_id);
 		res.status(204).send();
 	} catch (error: any) {
 		console.error('Error deleting menu category:', error);
@@ -487,7 +500,8 @@ export async function updateMenuCategory(req: ValidatedRequest<UpdateMenuCategor
 			await MenuCategoryDao.addCategoryToMenuCategory(menu_category_id, c_id);
 		}
 		await MenuCategoryDao.removeCategoryFromMenuCategory(menu_category_id, categories_to_remove);
-		businessIndex(menuCategory.business_id);
+		// TODO: uncomment
+		// businessIndex(menuCategory.business_id);
 		res.status(200).json(menuCategory);
 	} catch (error: any) {
 		console.error('Error updating menu category:', error);
@@ -589,7 +603,8 @@ export async function createMenuItem(req: ValidatedRequest<CreateMenuItemSchemaI
 		}
 		const safeTaxRateId: string | null = tax_rate_id ?? null;
 		const menuItem = await MenuItemDao.createMenuItem(category_id, safeTaxRateId, data, is_copy);
-		businessIndex(menuItem.business_id);
+		// TODO: uncomment
+		// businessIndex(menuItem.business_id);
 		res.status(201).json(menuItem);
 	} catch (error: any) {
 		console.error('Error creating menu item:', error);
@@ -701,7 +716,8 @@ export async function deleteMenuItem(
 	try {
 		await DocumentDao.deleteDocumentsAndFiles('menu_item_id', req.params.menu_item_id);
 		const mI = await MenuItemDao.deleteMenuItem(req.params.menu_item_id);
-		businessIndex(mI.business_id);
+		// TODO: uncomment
+		// businessIndex(mI.business_id);
 		res.status(204).send();
 	} catch (error: any) {
 		console.error('Error deleting menu item:', error);
@@ -743,7 +759,8 @@ export async function updateMenuItem(req: ValidatedRequest<UpdateMenuItemInput>,
 			}
 		}
 		const menuItem = await MenuItemDao.updateMenuItem(menuItemId, data);
-		businessIndex(menuItem.business_id);
+		// TODO: uncomment
+		// businessIndex(menuItem.business_id);
 		res.status(200).json(menuItem);
 	} catch (error: any) {
 		console.error('Error updating menu item:', error);
@@ -772,7 +789,8 @@ export async function updateMenuItemEnabled(
 	try {
 		const { menu_item_id, is_enabled } = req.body;
 		const menuItem = await MenuItemDao.updateMenuItemEnabled(menu_item_id, is_enabled);
-		businessIndex(menuItem.business_id);
+		// TODO: uncomment
+		// businessIndex(menuItem.business_id);
 		res.status(200).json(menuItem);
 	} catch (error: any) {
 		console.error('Error updating menu item:', error);
@@ -803,7 +821,8 @@ export async function updateMenuItemPrice(
 		const { menu_item_id } = req.params;
 		const { price } = req.body;
 		const menuItem = await MenuItemDao.updateMenuItemPrice(menu_item_id, price);
-		businessIndex(menuItem.business_id);
+		// TODO: uncomment
+		// businessIndex(menuItem.business_id);
 		res.status(200).json(menuItem);
 	} catch (error: any) {
 		console.error('Error updating menu item price:', error);
@@ -833,7 +852,8 @@ export async function addMenuItemMenuCategory(
 	try {
 		const { menu_item_id, menu_category_id } = req.body;
 		const menuItem = await MenuItemDao.addMenuItemToCategory(menu_item_id, menu_category_id);
-		businessIndex(menuItem.business_id);
+		// TODO: uncomment
+		// businessIndex(menuItem.business_id);
 		res.status(200).json(menuItem);
 	} catch (error: any) {
 		console.error('Error updating menu item category:', error);
@@ -861,7 +881,8 @@ export async function removeMenuItemFromCategory(
 	try {
 		const { menu_item_id } = req.body;
 		const menuItem = await MenuItemDao.removeMenuItemFromCategory(menu_item_id);
-		businessIndex(menuItem.business_id);
+		// TODO: uncomment
+		// businessIndex(menuItem.business_id);
 		res.status(200).json(menuItem);
 	} catch (error: any) {
 		console.error('Error removing menu item from category:', error);
@@ -891,7 +912,8 @@ export async function addMenuCategory(req: ValidatedRequest<AddCategoryToMenuInp
 	try {
 		const { menu_id, menu_category_id } = req.body;
 		const menuCategory = await MenuCategoryDao.addCategoryToMenu(menu_id, menu_category_id);
-		businessIndex(menuCategory.business_id);
+		// TODO: uncomment
+		// businessIndex(menuCategory.business_id);
 		res.status(200).json(menuCategory);
 	} catch (error: any) {
 		console.error('Error adding menu category:', error);
@@ -921,7 +943,8 @@ export async function removeMenuCategory(
 	try {
 		const { menu_category_id } = req.body;
 		const menuCategory = await MenuCategoryDao.removeCategoryFromMenu(menu_category_id);
-		businessIndex(menuCategory.business_id);
+		// TODO: uncomment
+		// businessIndex(menuCategory.business_id);
 		res.status(200).json(menuCategory);
 	} catch (error: any) {
 		console.error('Error removing menu category:', error);
@@ -1046,7 +1069,8 @@ export async function updateDailyMealMenuPrice(
 		const menu_category = await MenuCategoryDao.updateDailyMealMenuPrice(menu_category_id, price);
 		if (menu_category) {
 			const menu = await MenuDao.getMenuById(menu_category.menu_id);
-			businessIndex(menu.business_id);
+			// TODO: uncomment
+			// businessIndex(menu.business_id);
 			res.status(200).json(menu);
 		} else {
 			res.status(400).json({ error: 'Error updating menu price' });

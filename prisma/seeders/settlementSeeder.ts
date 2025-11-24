@@ -1,7 +1,7 @@
 import prisma from '../prisma.js';
-import SETTLEMENTS from './settlements.json' with { type: 'json' };
+import SETTLEMENTS from './settlements.json';
 async function settlementSeeder() {
-	for (let setGJ of SETTLEMENTS.features) {
+	for (let setGJ of (SETTLEMENTS as { type: string; features: any[] }).features) {
 		let exists = await prisma.settlements.findFirst({
 			where: {
 				name: setGJ.properties.NAZIV,

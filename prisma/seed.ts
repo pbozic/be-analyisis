@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 
 import prisma from './prisma.js';
-import allergernSeed from './seeders/alergenSeeder.js';
+import allergenSeed from './seeders/alergenSeeder.js';
 import fiscalDevicesSeeder from './seeders/fiscalDevicesSeeder.js';
 import categoriesSeed from './seeders/restaurantsCategoriesSeeder.js';
 import cuisinesSeed from './seeders/dailyMealsCategoriesSeeder.js';
@@ -21,7 +21,7 @@ async function main() {
 		// await userSeed();
 		// await driverSeed();
 	}
-	await allergernSeed();
+	await allergenSeed();
 	await categoriesSeed();
 	await merchantSeed();
 	await localSeed();

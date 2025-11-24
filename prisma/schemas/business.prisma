@@ -14,6 +14,7 @@
 /// Core company profile linked to address, documents, analytics, roles and users.
 model business {
     business_id         String      @id @unique @default(uuid()) @db.Uuid
+    public_link_hash    String?     @unique @default(dbgenerated("'BU' || substr(md5((random())::text), 1, 14)")) @db.VarChar(16)
     address_id          String?     @db.Uuid
     is_business_unit    Boolean     @default(false) // TODO: Remove later
     business_group_name String? // if part of any holding or other business group
@@ -62,12 +63,13 @@ model business {
     crm_module                crm_module?
     daily_meals_module        daily_meals_module?
     table_reservations_module table_reservations_module?
-    business_details_id String?  @db.Uuid @unique
-    business_details    business_details? @relation("business_business_details", fields: [business_details_id], references: [business_details_id])
-    created_order_lobbies order_lobbies[] @relation("business_to_lobby")
+    business_details_id       String?                    @unique @db.Uuid
+    business_details          business_details?          @relation("business_business_details", fields: [business_details_id], references: [business_details_id])
+    created_order_lobbies     order_lobbies[]            @relation("business_to_lobby")
 
     @@index([parent_business_id])
 }
+
 /// @summary Additional business details like name, description, logo, banner.
 /// @namespace Business
 /// Links to files for logo and banner images.
@@ -76,25 +78,26 @@ model business {
 /// @erd FoodDrinks
 /// @erd Reservations
 model business_details {
-    business_details_id String   @id @default(uuid()) @db.Uuid
-    business_id        String   @unique @db.Uuid
-    name            String?
-    description     String?
-    logo_id       String?   @db.Uuid @unique
-    banner_id     String?   @db.Uuid @unique
-    logo          files?    @relation("business_details_logo", fields: [logo_id], references: [file_id])
-    banner        files?    @relation("business_details_banner", fields: [banner_id], references: [file_id])
+    business_details_id String  @id @default(uuid()) @db.Uuid
+    business_id         String  @unique @db.Uuid
+    name                String?
+    description         String?
+    logo_id             String? @unique @db.Uuid
+    banner_id           String? @unique @db.Uuid
+    logo                files?  @relation("business_details_logo", fields: [logo_id], references: [file_id])
+    banner              files?  @relation("business_details_banner", fields: [banner_id], references: [file_id])
 
-    created_at       DateTime @default(now()) @db.Timestamptz(6)
-    updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+    created_at DateTime @default(now()) @db.Timestamptz(6)
+    updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-    business            business? @relation("business_business_details")
-    food_drinks_module  food_drinks_module? @relation("food_drinks_business_details")
-    stores_module       stores_module?    @relation("stores_business_details")
-    daily_meals_module  daily_meals_module? @relation("daily_meals_business_details")
+    business                  business?                  @relation("business_business_details")
+    food_drinks_module        food_drinks_module?        @relation("food_drinks_business_details")
+    stores_module             stores_module?             @relation("stores_business_details")
+    daily_meals_module        daily_meals_module?        @relation("daily_meals_business_details")
     table_reservations_module table_reservations_module? @relation("table_reservations_business_details")
-    reservation_module  reservation_module? @relation("reservation_module_business_details")
+    reservation_module        reservation_module?        @relation("reservation_module_business_details")
 }
+
 /// @summary User membership within a business (employees/managers).
 /// @namespace BusinessUsers
 /// @erd Business
@@ -151,6 +154,7 @@ model business_teams {
 /// Links to client contacts and internal teams.
 model crm_module {
     crm_module_id               String   @id @default(uuid()) @db.Uuid
+    public_link_hash            String?  @unique @default(dbgenerated("'CM' || substr(md5((random())::text), 1, 14)")) @db.VarChar(16)
     business_id                 String   @unique @db.Uuid
     purchase_order_limit_amount Float?
     created_at                  DateTime @default(now()) @db.Timestamptz(6)

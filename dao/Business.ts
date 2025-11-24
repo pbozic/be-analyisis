@@ -895,19 +895,19 @@ const getLocalBusinesses = async (): Promise<BusinessResponseDto[]> => {
 	try {
 		const stores = await prisma.business.findMany({
 			where: {
-				stores_module_id: {
-					not: null,
-				},
+				types: { has: BUSINESS_TYPE.LOCAL },
 			},
 			include: {
 				address: true,
 				business_users: true,
+				stores_module: true,
+				food_drinks_module: true,
+				reservation_module: true,
+				transport_module: true,
 			},
 		});
 
-		return stores
-			.filter((store: any) => store.types?.some((type: string) => type === BUSINESS_TYPE.LOCAL))
-			.map(toBusinessMinimalResponse);
+		return stores.map(toBusinessMinimalResponse);
 	} catch (error) {
 		console.error('Error retrieving local businesses:', error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get local businesses');

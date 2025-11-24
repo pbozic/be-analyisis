@@ -4,8 +4,13 @@ import { PrismaClient } from '@prisma/client';
 import prisma from '../prisma/prisma.js';
 import type { MenuBase, DailyMealMenuBase } from '../schemas/dto/Menu/index.js';
 import menusDefaultInclude, { dailyMealMenuDefaultInclude } from '../prisma/includes/menus.js';
-import type { MenuWithIncludesPrisma } from '../prisma/includes/menus.js';
-import { toMenuList, toMenuResponse, toDailyMealMenuResponse } from '../schemas/dto/Menu/menu.mappers.js';
+import type { DailyMealMenuWithIncludesPrisma, MenuWithIncludesPrisma } from '../prisma/includes/menus.js';
+import {
+	toMenuList,
+	toMenuResponse,
+	toDailyMealMenuResponse,
+	toDailyMealMenuList,
+} from '../schemas/dto/Menu/menu.mappers.js';
 import { MenuDetail } from '../schemas/dto/Menu/menu.dto.js';
 
 function getErrorMessage(err: unknown): string {
@@ -79,52 +84,73 @@ const createFoodDrinksMenu = async (module_id: string, tx: any = prisma): Promis
 };
 
 /**
- * List active menus for a business, optionally filtering daily meal menus by start date or module.
+ * List active menus for a module
  *
- * @param {string} business_id - The business ID.
- * @param {boolean} [isDailyMeal=false] - Whether to fetch daily meal menus.
- * @param {Date|null} [startDate=null] - Start date for filtering daily meal menus.
  * @param {string|undefined} module_id - Module id for which it will fetch menu.
  * @param {'STORES'|'FOOD_DRINKS'|undefined} moduleType - Module type for which it will fetch menu.
  * @returns {Promise<MenuDetail[]>} Array of menu records with categories and items.
  */
 const getMenuByBusinessId = async (
-	business_id: string,
-	isDailyMeal = false,
-	startDate: Date | null = null,
 	module_id?: string,
 	moduleType?: 'STORES' | 'FOOD_DRINKS'
 ): Promise<MenuDetail[]> => {
 	try {
 		let extraWhereArgs: Record<string, unknown> = {};
-		if (isDailyMeal) {
-			if (!startDate) {
-				startDate = new Date();
-			}
-			extraWhereArgs = {
-				date: {
-					gte: moment(startDate).startOf('day').toDate(),
-				},
-			};
-		}
-
 		if (moduleType === 'STORES') {
 			extraWhereArgs = { stores_id: module_id };
 		}
 		if (moduleType === 'FOOD_DRINKS') {
 			extraWhereArgs = { food_drinks_id: module_id };
 		}
-
 		const menus = await prisma.menus.findMany({
 			where: {
-				business_id,
-				isDailyMeal,
-				active: true,
 				...extraWhereArgs,
 			},
 			include: menusDefaultInclude,
 		});
 		return toMenuList(menus as MenuWithIncludesPrisma[]);
+	} catch (error: unknown) {
+		console.error('Error fetching menus by business id:', error);
+		throw new Error(getErrorMessage(error) || 'Error fetching menus by business id');
+	}
+};
+
+/**
+ * List active daily meal menus for a business, optionally filtering by start date.
+ *
+ * @param {string} business_id - The business ID.
+ * @param {Date|null} [startDate=null] - Start date for filtering daily meal menus.
+ * @returns {Promise<DailyMealMenuBase[]>} Array of menu records with categories and items.
+ */
+const getDailyMenusByBusinessId = async (
+	business_id: string,
+	startDate: Date | null = null
+): Promise<DailyMealMenuBase[]> => {
+	try {
+		const business = await prisma.business.findUnique({
+			where: { business_id },
+			include: { daily_meals_module: { select: { id: true } } },
+		});
+		const dailyMealsModuleId = business?.daily_meals_module?.id ?? null;
+		if (!dailyMealsModuleId) throw new Error(`Business with id: ${business_id} doesn't have daily meals module!`);
+		let extraWhereArgs: Record<string, unknown> = {};
+		if (!startDate) {
+			startDate = new Date();
+		}
+		extraWhereArgs = {
+			date: {
+				gte: moment(startDate).startOf('day').toDate(),
+			},
+		};
+
+		const dailyMealMenu = await prisma.daily_meal_menus.findMany({
+			where: {
+				daily_meals_module_id: dailyMealsModuleId,
+				...extraWhereArgs,
+				include: dailyMealMenuDefaultInclude,
+			},
+		});
+		return toDailyMealMenuList(dailyMealMenu as DailyMealMenuWithIncludesPrisma[]);
 	} catch (error: unknown) {
 		console.error('Error fetching menus by business id:', error);
 		throw new Error(getErrorMessage(error) || 'Error fetching menus by business id');
@@ -204,24 +230,6 @@ const updateMenuOrder = async (menu_id: string, orderedMenuCategoryIds: string[]
 		throw new Error(getErrorMessage(error) || 'Error updating menu order');
 	}
 };
-/**
- * Get daily meals module id by business id.
- *
- * @param {string} business_id - Business ID.
- * @returns {Promise<string|null>} daily_meals_module id or null.
- */
-const getDailyMealsModuleIdByBusinessId = async (business_id: string): Promise<string | null> => {
-	try {
-		const business = await prisma.business.findUnique({
-			where: { business_id },
-			include: { daily_meals_module: { select: { id: true } } },
-		});
-		return business?.daily_meals_module?.id ?? null;
-	} catch (error: unknown) {
-		console.error('Error getting daily meals module id:', error);
-		throw new Error(getErrorMessage(error) || 'Error getting daily meals module id');
-	}
-};
 
 /**
  * Get a daily meal menu for a business by date (same day match).
@@ -232,7 +240,11 @@ const getDailyMealsModuleIdByBusinessId = async (business_id: string): Promise<s
  */
 const getMenuByDate = async (business_id: string, date: Date | string): Promise<DailyMealMenuBase> => {
 	try {
-		const dailyMealsModuleId = await getDailyMealsModuleIdByBusinessId(business_id);
+		const business = await prisma.business.findUnique({
+			where: { business_id },
+			include: { daily_meals_module: { select: { id: true } } },
+		});
+		const dailyMealsModuleId = business?.daily_meals_module?.id ?? null;
 		if (!dailyMealsModuleId) throw new Error(`Business with id: ${business_id} doesn't have daily meals module!`);
 		const startOfDay = new Date(date as Date);
 		startOfDay.setHours(0, 0, 0, 0);
@@ -273,6 +285,7 @@ export { createDailyMealsMenu };
 export { createStoreMenu };
 export { createFoodDrinksMenu };
 export { getMenuByBusinessId };
+export { getDailyMenusByBusinessId };
 export { deleteMenu };
 export { setActiveMenu };
 export { updateMenuOrder };
@@ -283,6 +296,7 @@ export default {
 	createStoreMenu,
 	createFoodDrinksMenu,
 	getMenuByBusinessId,
+	getDailyMenusByBusinessId,
 	deleteMenu,
 	setActiveMenu,
 	updateMenuOrder,

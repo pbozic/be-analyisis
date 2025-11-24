@@ -1,18 +1,19 @@
 import AddressDao from '../../dao/Address.js';
 import LocalLocationDao from '../../dao/LocalLocation.js';
 import BusinessDao from '../../dao/Business.js';
+import { AddAddressDaoInput } from '../../schemas/dto/Address/Address.dao.dto.js';
 
 interface Location {
 	address: string;
-	latitude: string;
-	longitude: string;
+	latitude: number;
+	longitude: number;
 }
 
 export default async function seedLocations(locations: Location[], shouldPopulate: boolean): Promise<void> {
 	console.log('🔄 Starting locations seeding...');
 	for (const location of locations) {
 		try {
-			const addr = await AddressDao.addAddress(location);
+			const addr = await AddressDao.addAddress(location as AddAddressDaoInput);
 			if (!addr) {
 				console.error(`❌ Error creating address for location ${location.address}`);
 				continue;
@@ -31,7 +32,7 @@ export default async function seedLocations(locations: Location[], shouldPopulat
 			const businesses = await BusinessDao.getLocalBusinesses();
 			const localLocations = await LocalLocationDao.getAllLocalLocations();
 			for (const business of businesses) {
-				const store_id = business.stores_module_id;
+				const store_id = business.stores_id;
 				if (!store_id) {
 					console.warn(`No stores_module for business ${business.business_id}, skipping`);
 					continue;
@@ -55,33 +56,33 @@ export default async function seedLocations(locations: Location[], shouldPopulat
 export const LOCATIONS: Location[] = [
 	{
 		address: 'Tržnica Koseze, Vodnikova cesta 187, 1000 Ljubljana',
-		latitude: '46.074148443126965',
-		longitude: '14.475325939583001',
+		latitude: 46.074148443126965,
+		longitude: 14.475325939583001,
 	},
 	{
 		address: 'Tržnica BTC City, Italijanska ulica 7, 1000 Ljubljana',
-		latitude: '46.06465810800961',
-		longitude: '14.544126066569467',
+		latitude: 46.06465810800961,
+		longitude: 14.544126066569467,
 	},
 	{
 		address: 'Tržnica Moste, Zaloška cesta 55, 1000 Ljubljana',
-		latitude: '46.05643348612501',
-		longitude: '14.534395968417801',
+		latitude: 46.05643348612501,
+		longitude: 14.534395968417801,
 	},
 	{
 		address: 'Tržnica Šiška Ljubljana, Drenikova ulica 35, 1000 Ljubljana',
-		latitude: '46.06690172399823',
-		longitude: '14.493352168418221',
+		latitude: 46.06690172399823,
+		longitude: 14.493352168418221,
 	},
 	{
 		address: 'Tržnica Bežigrad, Linhartov podhod 39, 1000 Ljubljana',
-		latitude: '46.0649828860328',
-		longitude: '14.50959477047251',
+		latitude: 46.0649828860328,
+		longitude: 14.50959477047251,
 	},
 	{
 		address: 'Tržnica, Pogačarjev trg 2, 1000 Ljubljana',
-		latitude: '46.05120234481381',
-		longitude: '14.50864762608861',
+		latitude: 46.05120234481381,
+		longitude: 14.50864762608861,
 	},
 ];
 // seedLocations(LOCATIONS, false)

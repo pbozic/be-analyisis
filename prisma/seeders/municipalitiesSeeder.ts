@@ -1,5 +1,5 @@
 import prisma from '../prisma.js';
-import MUNICIPALITIES from './municipalities.json' with { type: 'json' };
+import MUNICIPALITIES from './municipalities.json';
 const requiresLicense = [
 	'Ljubljana',
 	'Maribor',
@@ -18,8 +18,7 @@ const requiresLicense = [
 	'Tolmin',
 ];
 async function municipalitiesSeeder() {
-	console.log(MUNICIPALITIES.type);
-	for (let muGJ of MUNICIPALITIES.features) {
+	for (let muGJ of (MUNICIPALITIES as { type: string; features: any[] }).features) {
 		console.log(muGJ);
 		if (!requiresLicense.includes(muGJ.properties.NAZIV)) continue;
 		let exists = await prisma.municipalities.findFirst({

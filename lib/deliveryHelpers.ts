@@ -1096,7 +1096,7 @@ function calculateOrderTotals(enrichedOrderItems: any) {
  */
 export async function calculateAndVerifyPriceForOrderItems(order: DeliveryOrderDetail) {
 	// 2. Create lookup from menu_items
-	const active_menu = await MenuDao.getMenuByBusinessId(order.business?.business_id as string);
+	const active_menu = await MenuDao.getMenuByBusinessId(order.module_id, order.module_type);
 	const menuItemLookup = buildMenuItemLookupFromMenus(active_menu);
 	// 3. Validate and enrich order items
 	const enrichedOrderItems = validateAndEnrichOrderItems(order.items as LineItemDetail[], menuItemLookup);

@@ -1,10 +1,13 @@
 import { faker } from '@faker-js/faker';
 import bcrypt from 'bcrypt';
 import prisma from '../prisma.js';
+import { config } from 'dotenv';
+config();
 const BCRYPT_SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 12;
+
 async function userSeed() {
-	return new Promise(async (resolve, reject) => {
-		return reject('Seeding is disabled for production!');
+	try {
+		if (process.env.NODE_ENV === 'production') return; // Seeding is disabled for production!
 		console.log('Seeding users...');
 		const amountOfUsers = 5;
 		const users = [];
@@ -16,7 +19,7 @@ async function userSeed() {
 			const user = {
 				first_name: firstName,
 				last_name: lastName,
-				date_of_birth: faker.date.past(30).toISOString(),
+				date_of_birth: faker.date.past({ years: 30 }).toISOString(),
 				email: `test${i + 1}@veryfakeemail.com`,
 				password: hash,
 				telephone: faker.phone.number(),
@@ -33,14 +36,8 @@ async function userSeed() {
 				})
 			);
 		}
-		try {
-			await Promise.all(users).then((values) => {
-				console.log('Users seeded!');
-				resolve();
-			});
-		} catch (error) {
-			reject(error);
-		}
-	});
+	} catch (error) {
+		console.error('Error seeding users:', error);
+	}
 }
 export default userSeed;

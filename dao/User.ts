@@ -828,22 +828,21 @@ const createNewUser = async (
 		// Check if password hashing is needed
 		if (hashPassword && user.password) {
 			const hash = await bcrypt.hash(user.password, Number(process.env.BCRYPT_SALT_ROUNDS || '12'));
-			let email = '';
-			if (user.email) {
-				email = user.email.toLowerCase();
-			}
-			const exists = await prisma.users.findFirst({
-				where: {
-					email: email,
-				},
-			});
-			if (exists) {
-				throw new Error('User with that email already exists');
-			}
+			// let email = '';
+			// if (user.email) {
+			// 	email = user.email.toLowerCase();
+			// }
+			// const exists = await prisma.users.findFirst({
+			// 	where: {
+			// 		email: email,
+			// 	},
+			// });
+			// if (exists) {
+			// 	throw new Error('User with that email already exists');
+			// }
 			// Replace the plain text password with the hashed password
 			newUser = {
 				...user,
-				email,
 				password: hash,
 			};
 			delete (newUser as any).confirm_password;

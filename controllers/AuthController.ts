@@ -184,11 +184,11 @@ async function register(req: ValidatedRequest<RegisterUserRequest>, res: Respons
 			res.status(400).json({ error: 'Telephone already in use!' });
 			return;
 		}
-		let UserExistsEmail = await UserDao.getUserByEmail(postData.email as string);
-		if (UserExistsEmail) {
-			res.status(400).json({ error: 'Email already in use!' });
-			return;
-		}
+		// let UserExistsEmail = await UserDao.getUserByEmail(postData.email as string);
+		// if (UserExistsEmail) {
+		// 	res.status(400).json({ error: 'Email already in use!' });
+		// 	return;
+		// }
 		let stripeCustomer = await stripe.createCustomer(
 			postData.email,
 			postData.first_name + ' ' + postData.last_name,
