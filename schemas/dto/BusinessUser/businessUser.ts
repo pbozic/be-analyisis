@@ -81,7 +81,10 @@ export type BusinessUserDetail = z.infer<typeof BusinessUserDetailSchema>;
 // First declare the base response schema
 export const BusinessUserResponseSchemaBase = BusinessUserBaseSchema.extend({
 	users: z.lazy(() => UserResponseSchema).optional(),
-	allowance: AllowanceResponseSchema.nullable().optional(),
+	allowance: z
+		.lazy(() => AllowanceResponseSchema)
+		.nullable()
+		.optional(),
 	operating_address: AddressRefSchema.nullable().optional(),
 });
 
@@ -95,7 +98,10 @@ export type BusinessUserResponse = z.infer<typeof BusinessUserResponseSchema>;
 // This is used when returning business_user with full business details and related users
 export const BusinessUserWithBusinessResponseSchema = BusinessUserBaseSchema.extend({
 	//users: UserResponseSchema.optional(),
-	allowance: AllowanceResponseSchema.nullable().optional(),
+	allowance: z
+		.lazy(() => AllowanceResponseSchema)
+		.nullable()
+		.optional(),
 	operating_address: AddressRefSchema.nullable().optional(),
 	business: z
 		.object({

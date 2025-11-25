@@ -47,7 +47,10 @@ export const EmployeeRefSchema = z
 
 // ===== WITH RELATIONS SCHEMA (extends RefSchema with selected relations) =====
 export const EmployeeWithBusinessUserSchema = EmployeeRefSchema.extend({
-	business_user: BusinessUserDetailSchema.nullable().optional(),
+	business_user: z
+		.lazy(() => BusinessUserDetailSchema)
+		.nullable()
+		.optional(),
 }).openapi({
 	title: 'EmployeeWithBusinessUser',
 	description: 'Employee reference with business user information',
@@ -55,7 +58,10 @@ export const EmployeeWithBusinessUserSchema = EmployeeRefSchema.extend({
 
 // ===== DETAIL SCHEMA (full employee info for DAO returns) =====
 export const EmployeeDetailSchema = EmployeeBaseSchema.extend({
-	business_user: BusinessUserDetailSchema.nullable().optional(),
+	business_user: z
+		.lazy(() => BusinessUserDetailSchema)
+		.nullable()
+		.optional(),
 }).openapi({
 	title: 'EmployeeDetail',
 	description: 'Full employee details returned from DAO functions with business user information',
@@ -63,7 +69,10 @@ export const EmployeeDetailSchema = EmployeeBaseSchema.extend({
 
 // ===== LIGHT SCHEMA (for includes with limited business_user select) =====
 export const EmployeeLightSchema = EmployeeBaseSchema.extend({
-	business_user: BusinessUserLightSchema.nullable().optional(),
+	business_user: z
+		.lazy(() => BusinessUserLightSchema)
+		.nullable()
+		.optional(),
 }).openapi({
 	title: 'EmployeeLight',
 	description: 'Employee with lightweight business_user (limited select fields from Prisma include)',

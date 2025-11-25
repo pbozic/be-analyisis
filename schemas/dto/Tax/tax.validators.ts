@@ -15,6 +15,7 @@ export const TaxRateInputSchema = z
 		country: z.string().nullable().optional(),
 		rate: z.number(),
 		active: z.boolean(),
+		activated_at: Timestamp.nullable().optional(),
 		valid_from: Timestamp,
 	})
 	.openapi('TaxRateInput');

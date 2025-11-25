@@ -156,17 +156,20 @@ export const DailyMealsDriversSchema = z
 		daily_meals_module_id: UUID,
 		created_at: Timestamp,
 		updated_at: Timestamp.optional(),
-		daily_meals_module: DailyMealsModuleSchema.optional(),
+		daily_meals_module: z.lazy(() => DailyMealsModuleSchema).optional(),
 	})
 	.openapi('DailyMealsDrivers');
 
 export const DriverDetailSchema = DriverBaseSchema.extend({
 	user: z.lazy(() => BasicUserDataSchema).optional(),
-	current_vehicle: VehicleBaseSchema.nullable().optional(),
+	current_vehicle: z
+		.lazy(() => VehicleBaseSchema)
+		.nullable()
+		.optional(),
 	vehicles: z
 		.array(
 			VehicleDriversSchema.omit({ driver_id: true, created_at: true, updated_at: true }).extend({
-				vehicle: VehicleBaseSchema,
+				vehicle: z.lazy(() => VehicleBaseSchema),
 			})
 		)
 		.optional()

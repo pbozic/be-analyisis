@@ -29,7 +29,10 @@ export type TableReservationBase = z.infer<typeof TableReservationBaseSchema>;
 
 // Detail with optional embedded refs
 export const TableReservationDetailSchema = TableReservationBaseSchema.extend({
-	user: BasicUserDataSchema.nullable().optional(),
+	user: z
+		.lazy(() => BasicUserDataSchema)
+		.nullable()
+		.optional(),
 	business: BusinessRefSchema.nullable().optional(),
 }).openapi('TableReservationDetail');
 export type TableReservationDetail = z.infer<typeof TableReservationDetailSchema>;

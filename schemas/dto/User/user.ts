@@ -146,7 +146,10 @@ export const UserResponseSchema = UserBaseSchema.omit({ password: true })
 			.nullable()
 			.optional(),
 		addresses: z.array(UserAddressRefSchema).nullable().optional(),
-		driver: DriverBaseSchema.nullable().optional(),
+		driver: z
+			.lazy(() => DriverBaseSchema)
+			.nullable()
+			.optional(),
 		profile_picture: FileRefSchema.nullable().optional(),
 	})
 	.openapi('UserResponse');

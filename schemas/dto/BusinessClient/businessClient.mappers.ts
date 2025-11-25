@@ -1,18 +1,15 @@
 import {
 	BusinessClientResponseSchema,
-	BusinessClientWithBusinessResponseSchema,
 	BusinessClientWithOrdersResponseSchema,
 	BusinessClientDetailResponseSchema,
 } from './businessClient.dto.js';
 import type {
 	BusinessClientResponse,
-	BusinessClientWithBusinessResponse,
 	BusinessClientWithOrdersResponse,
 	BusinessClientDetailResponse,
 } from './businessClient.dto.js';
 import type {
 	BusinessClientDefaultPrisma,
-	BusinessClientWithBusinessPrisma,
 	BusinessClientWithOrdersPrisma,
 	BusinessClientDetailPrisma,
 } from '../../../prisma/includes/businessClient.js';
@@ -36,29 +33,6 @@ export function toBusinessClientResponse(row: BusinessClientDefaultPrisma): Busi
 		email: asRec.email ?? null,
 		telephone: asRec.telephone ?? '',
 		telephone_code: asRec.telephone_code ?? '',
-	});
-}
-
-export function toBusinessClientWithBusinessResponse(
-	row: BusinessClientWithBusinessPrisma
-): BusinessClientWithBusinessResponse {
-	const r = row as BusinessClientWithBusinessPrisma;
-	const asRec = r as Record<string, any>;
-
-	// crm_module.business may hold the business relation; map it to `business` for DTO
-	const business = asRec.crm_module?.business ? toBusinessMinimalResponse(asRec.crm_module.business) : null;
-
-	return BusinessClientWithBusinessResponseSchema.parse({
-		business_clients_id: r.business_clients_id,
-		created_at: toIso(asRec.created_at) ?? new Date().toISOString(),
-		updated_at: toIso(asRec.updated_at) ?? new Date().toISOString(),
-		crm_module_id: r.crm_module_id,
-		first_name: asRec.first_name ?? null,
-		last_name: asRec.last_name ?? null,
-		email: asRec.email ?? null,
-		telephone: asRec.telephone ?? '',
-		telephone_code: asRec.telephone_code ?? '',
-		business,
 	});
 }
 
@@ -118,14 +92,8 @@ export function toBusinessClientDetailResponse(row: BusinessClientDetailPrisma):
 	});
 }
 
-export function toBusinessClientList(rows: BusinessClientDefaultPrisma[]): BusinessClientResponse[] {
-	return rows.map((r) => toBusinessClientResponse(r));
-}
-
 export default {
 	toBusinessClientResponse,
-	toBusinessClientWithBusinessResponse,
 	toBusinessClientWithOrdersResponse,
 	toBusinessClientDetailResponse,
-	toBusinessClientList,
 };

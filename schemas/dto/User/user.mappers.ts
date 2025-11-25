@@ -1,23 +1,7 @@
 import { Prisma } from '@prisma/client';
 
-import {
-	UserWithAddressesResponseSchema,
-	UserWithBusinessUsersResponseSchema,
-	UserDetailResponseSchema,
-	UserListResponseSchema,
-	UserWithFavouritesResponseSchema,
-	UserWithParentUserResponseSchema,
-} from './user.ts';
-import type {
-	UserResponse,
-	UserWithAddressesResponse,
-	UserWithBusinessUsersResponse,
-	UserDetailResponse,
-	UserListResponse,
-	UserWithFavouritesResponse,
-	UserWithParentUserResponse,
-} from './user.ts';
-import { UserLoginResponseSchema } from '../Auth/AuthResponse.dto.ts';
+import { UserWithAddressesResponseSchema, UserListResponseSchema, UserWithParentUserResponseSchema } from './user.ts';
+import type { UserWithAddressesResponse, UserListResponse, UserWithParentUserResponse } from './user.ts';
 import type { UserLoginResponse } from '../Auth/AuthResponse.dto.ts';
 import {
 	UserAddressesPrisma,
@@ -119,75 +103,12 @@ export function toUserWithAddressesResponse(row: UserAddressesPrisma): UserWithA
 			: null,
 	});
 }
-
-/**
- * Map user with business users from Prisma to UserWithBusinessUsersResponse.
- */
-export function toUserWithBusinessUsersResponse(
-	row: Prisma.usersGetPayload<{ include: { business_users: true } }>
-): UserWithBusinessUsersResponse {
-	const base = toUserResponse(row);
-	const r = row as Record<string, any>;
-
-	return UserWithBusinessUsersResponseSchema.parse({
-		...base,
-		business_users: r.business_users
-			? (r.business_users as any[]).map((bu) => ({
-					business_users_id: bu.business_users_id,
-					business_id: bu.business_id,
-					user_id: bu.user_id,
-					company_role: bu.company_role ?? null,
-					online: bu.online ?? false,
-				}))
-			: null,
-	});
-}
-
-/**
- * Map user with both business users and addresses to UserDetailResponse.
- */
-export function toUserDetailResponse(
-	row: Prisma.usersGetPayload<{ include: { business_users: true; addresses: { include: { address: true } } } }>
-): UserDetailResponse {
-	const base = toUserResponse(row);
-	const r = row as Record<string, any>;
-
-	return UserDetailResponseSchema.parse({
-		...base,
-		business_users: r.business_users
-			? (r.business_users as any[]).map((bu) => ({
-					business_users_id: bu.business_users_id,
-					business_id: bu.business_id,
-					user_id: bu.user_id,
-					company_role: bu.company_role ?? null,
-					online: bu.online ?? false,
-				}))
-			: null,
-		addresses: r.addresses
-			? (r.addresses as any[]).map((addr) => mapUserAddressRef(addr)).filter((a) => a !== null)
-			: null,
-	});
-}
-
-/**
- * Map user with favorites from Prisma to UserWithFavouritesResponse.
- */
-export function toUserWithFavouritesResponse(
-	row: Prisma.usersGetPayload<{ include: { user_favorite_businesses: true } }>
-): UserWithFavouritesResponse {
-	const base = toUserResponse(row);
-	const r = row as Record<string, any>;
-
-	return UserWithFavouritesResponseSchema.parse({
-		...base,
-		user_favorite_businesses: r.user_favorite_businesses
-			? (r.user_favorite_businesses as any[]).map((fav) => ({
-					business_id: fav.business_id,
-					name: (fav as any).business?.business_details?.name ?? '',
-					logo_url: (fav as any).business?.business_details?.logo?.url ?? null,
-				}))
-			: null,
-	});
+let _UserLoginResponseSchema: typeof import('../Auth/AuthResponse.dto.ts').UserLoginResponseSchema;
+function getUserLoginResponseSchema() {
+	if (!_UserLoginResponseSchema) {
+		_UserLoginResponseSchema = require('../Auth/AuthResponse.dto.ts').UserLoginResponseSchema;
+	}
+	return _UserLoginResponseSchema;
 }
 
 /**
@@ -197,7 +118,7 @@ export function toUserLoginResponse(row: UserLoginPrisma): UserLoginResponse {
 	const base = toUserResponse(row);
 	const r = row as Record<string, any>;
 
-	return UserLoginResponseSchema.parse({
+	return getUserLoginResponseSchema().parse({
 		...base,
 		addresses: r.addresses
 			? (r.addresses as any[]).map((addr) => mapUserAddressRef(addr)).filter((a) => a !== null)
@@ -369,13 +290,6 @@ export function toUsersListResponse(rows: UserAddressesAndConnectionsCreationPri
 }
 
 /**
- * Map array of users to UserResponse array.
- */
-export function toUserResponseList(rows: Prisma.usersGetPayload<object>[]): UserResponse[] {
-	return rows.map(toUserResponse);
-}
-
-/**
  * Map array of users with addresses to UserWithAddressesResponse array.
  */
 export function toUserWithAddressesResponseList(rows: UserAddressesPrisma[]): UserWithAddressesResponse[] {
@@ -385,11 +299,7 @@ export function toUserWithAddressesResponseList(rows: UserAddressesPrisma[]): Us
 export default {
 	toUserResponse,
 	toUserWithAddressesResponse,
-	toUserWithBusinessUsersResponse,
-	toUserDetailResponse,
-	toUserWithFavouritesResponse,
 	toUserLoginResponse,
 	toUsersListResponse,
-	toUserResponseList,
 	toUserWithAddressesResponseList,
 };

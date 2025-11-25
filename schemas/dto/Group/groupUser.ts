@@ -44,13 +44,13 @@ export const GroupUserWithChildResponseSchema = GroupUserResponseSchema.extend({
 
 // GroupUser with Allowance - for updateGroupUserAllowance function
 export const GroupUserWithAllowanceResponseSchema = GroupUserResponseSchema.extend({
-	allowance: AllowanceRefSchema.nullable(),
+	allowance: z.lazy(() => AllowanceRefSchema).nullable(),
 });
 
 // GroupUser with Parent and Allowance - for getGroupUserByChildId with full includes
 export const GroupUserDetailResponseSchema = GroupUserResponseSchema.extend({
 	parent_user: z.lazy(() => UserRefSchema),
-	allowance: AllowanceRefSchema.nullable(),
+	allowance: z.lazy(() => AllowanceRefSchema).nullable(),
 });
 
 // GroupUser List Response - for paginated/bulk endpoints

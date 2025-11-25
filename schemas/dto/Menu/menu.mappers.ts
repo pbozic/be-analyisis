@@ -116,6 +116,10 @@ export function toDailyMealMenuResponse(payload: DailyMealMenuPayload): DailyMea
 	return DailyMealMenuBaseSchema.parse(converted as unknown);
 }
 
+export function toDailyMealMenuList(payload: DailyMealMenuPayload[]): DailyMealMenuBase[] {
+	return payload.map(toDailyMealMenuResponse);
+}
+
 export function toMenuList(payload: MenuPayload[]) {
 	return payload.map(toMenuResponse);
 }

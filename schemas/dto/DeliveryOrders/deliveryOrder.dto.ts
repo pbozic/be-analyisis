@@ -263,12 +263,18 @@ export type DeliveryOrderRef = z.infer<typeof DeliveryOrderRefSchema>;
 // Detail Schema (extends Base with relations)
 // ===============
 export const DeliveryOrderDetailSchema = DeliveryOrderBaseSchema.extend({
-	user: UserBaseSchema.nullable().optional(),
+	user: z
+		.lazy(() => UserBaseSchema)
+		.nullable()
+		.optional(),
 	business: z
 		.lazy(() => BusinessResponseSchema)
 		.nullable()
 		.optional(),
-	driver: DriverBaseSchema.nullable().optional(),
+	driver: z
+		.lazy(() => DriverBaseSchema)
+		.nullable()
+		.optional(),
 	items: z.array(LineItemDetailSchema).optional(),
 }).openapi('DeliveryOrderDetail');
 

@@ -1,16 +1,49 @@
 /**
- * Unified Jest configuration supporting both JS and TS tests.
- * - Uses ts-jest preset so TypeScript tests run
- * - Keeps setupFiles from previous config
- * - Matches both .test.js and .test.ts files
+ * Jest configuration for integration tests
+ * Tests: DAO → Mapper → Zod validation
  */
 module.exports = {
-  preset: 'ts-jest',
+  preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
+  roots: ['<rootDir>/tests/integration', '<rootDir>/schemas'],
   setupFiles: ['<rootDir>/tests/setupEnv.js'],
-  testMatch: ['**/tests/**/*.test.js', '**/tests/**/*.test.ts', '**/?(*.)+(spec|test).ts?(x)'],
+  globalSetup: '<rootDir>/tests/integration/setup.ts',
+  testMatch: ['**/tests/integration/**/*.test.ts', '**/schemas/dto/**/*.test.ts'],
+  extensionsToTreatAsEsm: ['.ts'],
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest'
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        useESM: true,
+        isolatedModules: true,
+        diagnostics: false, // Disable all TypeScript diagnostics for runtime testing
+        tsconfig: {
+          module: 'ESNext',
+          moduleResolution: 'node',
+          allowImportingTsExtensions: true,
+          noEmit: true,
+        },
+      },
+    ],
+    '^.+\\.m?js$': [
+      'ts-jest',
+      {
+        useESM: true,
+      },
+    ],
   },
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
+  transformIgnorePatterns: [
+    'node_modules/(?!(@prisma)/)',
+  ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  testTimeout: 30000, // 30s for DB operations
+  collectCoverageFrom: [
+    'dao/**/*.ts',
+    'schemas/dto/**/*.mappers.ts',
+    '!**/*.d.ts',
+    '!**/node_modules/**',
+  ],
 };

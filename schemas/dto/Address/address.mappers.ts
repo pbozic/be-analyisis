@@ -17,8 +17,4 @@ export function toAddressResponse(row: AddressDefaultPrisma): AddressResponse {
 	return AddressResponseSchema.parse(dto);
 }
 
-export function toAddressesList(rows: AddressDefaultPrisma[]): AddressResponse[] {
-	return rows.map((r) => toAddressResponse(r));
-}
-
-export default { toAddressResponse, toAddressesList };
+export default { toAddressResponse };

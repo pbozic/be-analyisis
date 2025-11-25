@@ -2,7 +2,6 @@ import {
 	BusinessResponseDto,
 	BusinessWithIncludesResponseDto,
 	BusinessWithAddressAndUsersResponseDto,
-	BusinessSearchResponseDto,
 } from './business.dto.js';
 import { BusinessAdminResponseSchema } from './business.js';
 import type {
@@ -15,7 +14,6 @@ import type {
 	GetBusinessesPrisma,
 	BusinessByIdPrisma,
 	BusinessWithAddressAndUsersPrisma,
-	BusinessSearchSelectPrisma,
 	BusinessAdminPrisma,
 	BusinessWithAddressPrisma,
 } from '../../../prisma/includes/business.ts';
@@ -73,52 +71,6 @@ export function toGetBusinessResponse(row: GetBusinessesPrisma): BusinessRespons
 	});
 }
 
-// Map GetBusinessesPrisma payload to the BusinessWithIncludesResponseDto (keeps included relations)
-export function toBusinessWithIncludesResponse(row: GetBusinessesPrisma) {
-	const r = row as GetBusinessesPrisma;
-	const asRec = r as Record<string, any>;
-
-	const businessDetails = asRec.business_details ?? {
-		name: asRec.name ?? null,
-		description: asRec.description ?? null,
-		logo: asRec.logo?.url ?? null,
-		banner: asRec.banner?.url ?? null,
-	};
-
-	return BusinessWithIncludesResponseDto.parse({
-		business_id: r.business_id,
-		business_details: businessDetails,
-		tax_id: asRec.tax_id ?? null,
-		registration_id: asRec.registration_id ?? null,
-		email: asRec.email ?? null,
-		telephone: asRec.telephone ?? null,
-		telephone_code: asRec.telephone_code ?? null,
-		website_url: asRec.website_url ?? null,
-		working_hours: asRec.working_hours ?? null,
-		is_business_unit: asRec.is_business_unit ?? null,
-		business_group_name: asRec.business_group_name ?? null,
-		parent_business_id: asRec.parent_business_id ?? null,
-		stripe_account_id: asRec.stripe_account_id ?? null,
-		stripe_customer_id: asRec.stripe_customer_id ?? null,
-		word_buy_stripe_subscription_id: asRec.word_buy_stripe_subscription_id ?? null,
-		first_activated_at: asRec.first_activated_at ? new Date(asRec.first_activated_at).toISOString() : undefined,
-		active: asRec.active ?? null,
-		sales_representative_id: asRec.sales_representative_id ?? null,
-		address_id: asRec.address_id ?? null,
-		created_at: asRec.created_at ? new Date(asRec.created_at).toISOString() : undefined,
-		updated_at: asRec.updated_at ? new Date(asRec.updated_at).toISOString() : undefined,
-		food_drinks_id: asRec.food_drinks_id ?? null,
-		transport_module_id: asRec.transport_module_id ?? null,
-		reservation_module_id: asRec.reservation_module_id ?? null,
-		stores_id: asRec.stores_id ?? null,
-		address: asRec.address ? toAddressResponse(asRec.address) : null,
-		delivery_address: asRec.delivery_address ? toAddressResponse(asRec.delivery_address) : null,
-		business_users: asRec.business_users?.length ? asRec.business_users.map(toBusinessUserResponse) : [],
-		parent_business: asRec.parent_business ? toBusinessMinimalResponse(asRec.parent_business) : null,
-		child_businesses: asRec.child_businesses?.length ? asRec.child_businesses.map(toBusinessMinimalResponse) : [],
-	});
-}
-
 // Map a payload that includes address & business_users to the matching DTO
 export function toBusinessWithAddressAndUsersResponse(row: BusinessWithAddressAndUsersPrisma) {
 	const r = row as BusinessWithAddressAndUsersPrisma;
@@ -158,27 +110,6 @@ export function toBusinessWithAddressAndUsersResponse(row: BusinessWithAddressAn
 		business_users: asRec.business_users?.length ? asRec.business_users.map(toBusinessUserResponse) : [],
 		parent_business: asRec.parent_business ? toBusinessMinimalResponse(asRec.parent_business) : null,
 		child_businesses: asRec.child_businesses?.length ? asRec.child_businesses.map(toBusinessMinimalResponse) : [],
-	});
-}
-
-// Map a select-based search payload into BusinessSearchResponseDto
-export function toBusinessSearchResponse(row: BusinessSearchSelectPrisma) {
-	const r = row as BusinessSearchSelectPrisma;
-	const asRec = r as Record<string, any>;
-
-	return BusinessSearchResponseDto.parse({
-		business_id: r.business_id,
-		business_details: asRec.business_details ?? {
-			name: asRec.name ?? null,
-			description: asRec.description ?? null,
-		},
-		email: asRec.email ?? null,
-		telephone: asRec.telephone ?? null,
-		website_url: asRec.website_url ?? null,
-		active: asRec.active ?? null,
-		popular: asRec.popular ?? null,
-		new: asRec.new ?? null,
-		address: asRec.address ? toAddressResponse(asRec.address) : null,
 	});
 }
 
@@ -362,10 +293,11 @@ export function toBusinessMinimalResponse(row: any): BusinessResponseType {
 		address_id: asRec.address_id ?? null,
 		created_at: asRec.created_at ? new Date(asRec.created_at).toISOString() : undefined,
 		updated_at: asRec.updated_at ? new Date(asRec.updated_at).toISOString() : undefined,
-		food_drinks_id: asRec.food_drinks_id ?? null,
-		transport_module_id: asRec.transport_module_id ?? null,
-		reservation_module_id: asRec.reservation_module_id ?? null,
+		food_drinks_id: asRec.food_drinks_module?.food_drinks_id ?? null,
+		transport_module_id: asRec.transport_module?.transport_module_id ?? null,
+		reservation_module_id: asRec.reservation_module?.reservation_module_id ?? null,
 		stores_id: asRec.stores_id ?? null,
+		stores_module_id: asRec.stores_module?.stores_module_id ?? null,
 	});
 }
 

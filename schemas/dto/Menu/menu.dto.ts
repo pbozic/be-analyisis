@@ -104,6 +104,22 @@ export type MenuItemRef = z.infer<typeof MenuItemRefSchema>;
 // =======================
 // MenuItem Detail Schema - extends Base with relations
 // =======================
+const AllergenBaseSchema = z
+	.object({
+		// allergen_id: UUID,
+		name: z.string(),
+		description: z.string().optional(),
+		code: z.number().int(),
+	})
+	.openapi('AllergenBase');
+
+const AllergensToMenuItemSchema = z
+	.object({
+		allergen_id: UUID,
+		allergen: AllergenBaseSchema,
+	})
+	.openapi('AllergensToMenuItem');
+
 export const MenuItemDetailSchema = MenuItemBaseSchema.extend({
 	created_at: Timestamp.optional(),
 	updated_at: Timestamp.nullable().optional(),
@@ -124,6 +140,7 @@ export const MenuItemDetailSchema = MenuItemBaseSchema.extend({
 			})
 		)
 		.optional(),
+	allergens: z.array(AllergensToMenuItemSchema),
 }).openapi('MenuItemDetail');
 
 export type MenuItemDetail = z.infer<typeof MenuItemDetailSchema>;
