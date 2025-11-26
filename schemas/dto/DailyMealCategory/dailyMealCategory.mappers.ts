@@ -7,7 +7,7 @@ import { CategoryBase, CategoryBaseSchema } from '../Category/category.dto.js';
 // Mappers from daily-meal-category.dto.ts
 // =======================
 type PrismaDailyMealCategoryPrice = {
-	daily_meal_category_price_id?: string;
+	id?: string;
 	daily_meal_category_id: string;
 	price: number;
 	valid_from: string | Date;
@@ -17,8 +17,9 @@ type PrismaDailyMealCategoryPrice = {
 
 export function toDailyMealCategoryPriceBase(row: unknown): DailyMealCategoryPriceBase {
 	const r = row as PrismaDailyMealCategoryPrice;
+	console.log('Price in toDailyMealCategoryPriceBase:', r);
 	return DailyMealCategoryPriceBaseSchema.parse({
-		daily_meal_category_price_id: r.daily_meal_category_price_id ?? undefined,
+		id: r.id ?? undefined,
 		daily_meal_category_id: r.daily_meal_category_id,
 		price: r.price,
 		valid_from: r.valid_from ? new Date(r.valid_from as string | Date).toISOString() : new Date().toISOString(),
@@ -86,6 +87,13 @@ function toIso(d: unknown) {
 export function toDailyMealCategoryResponse(row: DailyMealCategoryWithPricesPrisma | any): DailyMealCategoryDetail {
 	const r = row as any;
 
+	const cat = {
+		...r.category,
+		created_at: toIso(r.category.created_at) ?? new Date().toISOString(),
+		updated_at: toIso(r.category.updated_at) ?? new Date().toISOString(),
+		deleted_at: r.category.deleted_at ? toIso(r.category.deleted_at) : null,
+	};
+
 	return DailyMealCategoryDetailSchema.parse({
 		daily_meal_category_id: r.daily_meal_category_id,
 		daily_meals_id: r.daily_meals_id,
@@ -93,7 +101,7 @@ export function toDailyMealCategoryResponse(row: DailyMealCategoryWithPricesPris
 		created_at: toIso(r.created_at) ?? new Date().toISOString(),
 		start_date: toIso(r.start_date) ?? new Date().toISOString(),
 		active: !!r.active,
-		category: r.category ? CategoryBaseSchema.parse(r.category) : undefined,
+		category: cat ? CategoryBaseSchema.parse(cat) : undefined,
 		daily_meals_module: r.daily_meals_module ?? null,
 		menu_categories: Array.isArray(r.menu_categories)
 			? r.menu_categories.map((mc: any) => ({ menu_categories_id: mc.menu_categories_id, name: mc.name }))
@@ -103,9 +111,9 @@ export function toDailyMealCategoryResponse(row: DailyMealCategoryWithPricesPris
 					id: c.id ?? c.daily_meal_subscription_customers_id,
 				}))
 			: [],
-		daily_meal_category_prices_id: r.daily_meal_category_prices_id ?? null,
+		id: r.id ?? null,
 		daily_meal_category_prices: (r.daily_meal_category_prices || []).map((p: any) => ({
-			daily_meal_category_price_id: p.daily_meal_category_price_id,
+			id: p.id,
 			daily_meal_category_id: p.daily_meal_category_id,
 			price: p.price,
 			valid_from: toIso(p.valid_from) ?? new Date().toISOString(),

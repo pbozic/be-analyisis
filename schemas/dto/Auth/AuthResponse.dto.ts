@@ -9,12 +9,12 @@ import { BusinessUserWithBusinessResponseSchema } from '../BusinessUser/business
 import { DriverDetailSchema } from '../Driver/index.ts';
 import { PaymentMethodSchema } from '../Payments/payment.dto.ts';
 import { Timestamp, UUID } from '../../primitives.ts';
-import { UserAddressRefSchema } from '../Address/index.ts';
 import { ReferralBaseSchema, ReferralDetailSchema } from '../Referral/referral.dto.ts';
 import { UserRoleSchema } from '../BusinessUser/BusinessUserRequest.dto.ts';
 import { FavoriteBusinessDetailSchema } from '../FavoriteBusinesses/favorite-businesses.dto.ts';
 import { FileBaseSchema } from '../Files/index.ts';
 import { GroupUserWithChildResponseSchema, GroupUserWithParentResponseSchema } from '../Group/groupUser.ts';
+import { UserAddressResponseSchema } from '../UserAddress/userAddress.dto.ts';
 
 extendZodWithOpenApi(z);
 
@@ -29,7 +29,7 @@ export type AuthTokens = z.infer<typeof AuthTokensSchema>;
 
 // Login / Register / Refresh - flattened onto the user object as returned by controller
 export const UserLoginResponseSchema = UserResponseSchema.extend({
-	addresses: z.array(z.lazy(() => UserAddressRefSchema)).nullable(),
+	addresses: z.array(z.lazy(() => UserAddressResponseSchema)).nullable(),
 	driver: z
 		.lazy(() =>
 			DriverDetailSchema.pick({

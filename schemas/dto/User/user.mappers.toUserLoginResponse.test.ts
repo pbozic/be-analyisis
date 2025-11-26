@@ -15,7 +15,7 @@ import type { UserLoginPrisma } from '../../../prisma/includes/user.js';
 import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 
 describe('User Mapper - toUserLoginResponse', () => {
-	it('should map Prisma data to DTO and validate against schema', () => {
+	it('should map Prisma data to DTO and validate against schema', async () => {
 		// Get mock data
 		const mockData = mockPrismaData.userlogin;
 
@@ -27,7 +27,7 @@ describe('User Mapper - toUserLoginResponse', () => {
 		}
 
 		// Call the actual mapper
-		const result = toUserLoginResponse(mockData as UserLoginPrisma);
+		const result = await toUserLoginResponse(mockData as UserLoginPrisma);
 
 		// Validate the result is defined
 		expect(result).toBeDefined();

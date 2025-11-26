@@ -1,6 +1,6 @@
 import { CategoryResponseSchema } from './category.dto';
 import type { CategoryResponse } from './category.dto';
-import type { CategoryWithIncludesPrisma } from '../../prisma/includes/categories.js';
+import type { CategoryWithIncludesPrisma } from '../../../prisma/includes/categories.js';
 
 function toIso(d: unknown) {
 	return d ? new Date(d as any).toISOString() : undefined;

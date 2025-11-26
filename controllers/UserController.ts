@@ -62,6 +62,7 @@ import {
 	UpdateWalletBalanceRequest,
 	VerifyPhoneRequest,
 } from '../schemas/dto/User/user.validators.ts';
+import { addUserAddress } from '../dao/UserAddress.ts';
 
 config();
 
@@ -1322,12 +1323,14 @@ async function addAddress(req: ValidatedRequest<AddAddressRequest>, res: Respons
 			res.status(401).json({ error: 'Unauthorized' });
 			return;
 		}
-		const address = await AddressDao.addAddress(req.body);
-		const userAddress = await AddressDao.addUserAddress(req.user.user_id, address.address_id);
+		// const address = await AddressDao.addAddress(req.body);
+		// const userAddress = await AddressDao.addUserAddress(req.user.user_id, address.address_id);
+		const { type, primary, details, ...addressData } = req.body;
+		const userAddress = await addUserAddress(req.user.user_id, addressData, details, type, primary);
 		if (userAddress) {
-			res.status(200).json(address);
+			res.status(200).json(userAddress.address);
 		} else {
-			res.status(400).json({ error: 'Error adding address1' });
+			res.status(400).json({ error: 'Error adding address' });
 		}
 	} catch (e) {
 		console.log(e);

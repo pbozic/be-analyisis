@@ -1,7 +1,8 @@
+import { SORTING_TYPE } from '@prisma/client';
+
 import { DriverDetailSchema, type DriverDetail } from './driver.dto.js';
 import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.js';
 import { TransportModuleBase } from '../Transport/transport.dto.js';
-import { DailyMealsModule } from '../Business';
 import { BasicUserDataSchema } from '../User/user.js';
 
 // ===============
@@ -31,7 +32,7 @@ type PrismaDriver = {
 	user?: unknown;
 	vehicles?: Array<unknown>;
 	current_vehicle?: unknown | null;
-	daily_meals?: DailyMealsModule | null;
+	daily_meals?: Record<string, any> | null;
 };
 
 type VehicleLike = {
@@ -71,7 +72,6 @@ function toVehicleBase(row: unknown | null | undefined) {
 export function toDriverDetail(row: unknown, user?: unknown): DriverDetail {
 	const r = row as PrismaDriver;
 	const currentVehicle = r.current_vehicle ? toVehicleBase(r.current_vehicle) : null;
-	const vehicles = Array.isArray(r.vehicles) ? r.vehicles.map((v) => toVehicleBase(v)!).filter(Boolean) : [];
 	const parsedUser = user
 		? BasicUserDataSchema.parse({
 				first_name: (user as any).first_name ?? '',
@@ -116,7 +116,41 @@ export function toDriverDetail(row: unknown, user?: unknown): DriverDetail {
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
 		user: parsedUser,
 		current_vehicle: currentVehicle,
-		vehicles,
-		daily_meals: r.daily_meals ?? undefined,
+		vehicles: r.vehicles
+			? r.vehicles?.map((v: any) => ({
+					...v,
+					created_at: v.created_at ? new Date(v.created_at as string | Date).toISOString() : undefined,
+					updated_at: v.updated_at ? new Date(v.updated_at as string | Date).toISOString() : undefined,
+					vehicle: toVehicleBase(v.vehicle),
+				}))
+			: undefined,
+		daily_meals: r.daily_meals
+			? r.daily_meals?.map((d: any) => ({
+					id: d.id,
+					daily_meals_module_id: d.daily_meals_module_id,
+					created_at: d.created_at ? new Date(d.created_at as string | Date).toISOString() : undefined,
+					updated_at: d.updated_at ? new Date(d.updated_at as string | Date).toISOString() : undefined,
+					daily_meals_module: d.daily_meals_module
+						? {
+								id: d.daily_meals_module.id,
+								public_link_hash: d.daily_meals_module.public_link_hash ?? null,
+								delivery_address_id: d.daily_meals_module.delivery_address_id ?? null,
+								daily_meals_days: d.daily_meals_module.daily_meals_days ?? [],
+								daily_meals_delivery_mapping: d.daily_meals_module.daily_meals_delivery_mapping ?? null,
+								maximum_daily_meals_subscribers:
+									d.daily_meals_module.maximum_daily_meals_subscribers ?? null,
+								daily_users_sorted: d.daily_meals_module.daily_users_sorted ?? [],
+								daily_users_sorting_type:
+									d.daily_meals_module.daily_users_sorting_type ?? SORTING_TYPE.AUTOMATIC,
+								created_at: d.daily_meals_module.created_at
+									? new Date(d.daily_meals_module.created_at as string | Date).toISOString()
+									: undefined,
+								updated_at: d.daily_meals_module.updated_at
+									? new Date(d.daily_meals_module.updated_at as string | Date).toISOString()
+									: undefined,
+							}
+						: undefined,
+				}))
+			: undefined,
 	});
 }

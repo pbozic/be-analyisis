@@ -12,9 +12,16 @@ import { AddAddressDaoInput } from '../schemas/dto/Address/Address.dao.dto.js';
  * @param {CreateAddressInput} addressData - The address data to create or link.
  * @param {object} details - Additional details for the address (optional).
  * @param {string} type - The type of the address (e.g., 'HOME', 'WORK') (optional).
+ * @param {boolean} primary - Whether the address should be the primary address (optional).
  * @returns {Promise<object>} The created user_address record.
  */
-async function addUserAddress(userId: UUID, addressData: AddAddressDaoInput, details?: object, type: string = 'HOME') {
+async function addUserAddress(
+	userId: UUID,
+	addressData: AddAddressDaoInput,
+	details?: object,
+	type: string = 'HOME',
+	primary: boolean = false
+) {
 	try {
 		// Check if the address already exists
 		const existingAddress = await prisma.addresses.findUnique({
@@ -46,7 +53,7 @@ async function addUserAddress(userId: UUID, addressData: AddAddressDaoInput, det
 		});
 
 		// Determine if this should be the primary address
-		const isPrimary = existingUserAddresses.length === 0;
+		const isPrimary = primary || existingUserAddresses.length === 0;
 
 		// Create the user_address link
 		const created = await prisma.user_address.create({
@@ -56,6 +63,9 @@ async function addUserAddress(userId: UUID, addressData: AddAddressDaoInput, det
 				primary: isPrimary,
 				details,
 				type,
+			},
+			include: {
+				address: true,
 			},
 		});
 

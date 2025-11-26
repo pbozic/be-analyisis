@@ -68,7 +68,8 @@ export const MenuCategoryRefSchema = z
 	.object({
 		menu_category_id: UUID,
 		menu_id: UUID.optional(),
-		names: z.record(z.string()).nullable().optional(),
+		name_translatable_id: UUID.optional(),
+		description_translatable_id: UUID.optional(),
 		food_drinks_id: UUID.nullable().optional(),
 		stores_id: UUID.nullable().optional(),
 		menu_items_ordered: z.array(z.string()).nullable().optional(),

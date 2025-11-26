@@ -6,6 +6,7 @@ export const userAddressDefaultSelect = {
 	primary: true,
 	details: true,
 	type: true,
+	address: true,
 } as const;
 
 export type UserAddressDefaultPrisma = Prisma.user_addressGetPayload<{

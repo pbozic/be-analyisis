@@ -2,7 +2,6 @@ import { config } from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import * as turf from '@turf/turf';
 
-import { handleAddressPivotTable, addAddressPivotTable } from './middlewares/address.js';
 import { handleHidePassword } from './middlewares/user.js';
 import { handleS3LinkForFiles } from './middlewares/file.js';
 import { handleS3LinkForDocuments } from './middlewares/documents.js';
@@ -29,13 +28,13 @@ const prisma = basePrisma.$extends({
 		},
 		users: {
 			async $allOperations({ model, operation, args, query }) {
-				args = await addAddressPivotTable(model, operation, args, query);
+				// args = await addAddressPivotTable(model, operation, args, query);
 				//args = await alwaysAddWalletBalance(model, operation, args, query);
 				// Proceed with the operation
 				let result = await query(args);
 				// If the operation is a query on the `users` model
 				result = await handleHidePassword(model, operation, args, query, result);
-				result = await handleAddressPivotTable(model, operation, args, query, result);
+				// result = await handleAddressPivotTable(model, operation, args, query, result);
 				//result = await handleWalletBalance(model, operation, args, query, result);
 				// Return the modified result
 				return result;

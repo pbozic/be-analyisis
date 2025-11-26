@@ -151,10 +151,7 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 								relevant_price.daily_meal_category_id
 							);
 
-							await MenuCategoryDao.createDailyMealMenuCategory(
-								menu.menu_id,
-								relevant_price.daily_meal_category_prices_id
-							);
+							await MenuCategoryDao.createDailyMealMenuCategory(menu.menu_id, relevant_price.id);
 						} catch (error) {
 							console.error('Error creating new menu category', error);
 						}
@@ -198,10 +195,10 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 								relevant_price.daily_meal_category_id
 							);
 
-							if (new_menu.daily_meal_menu_id && relevant_price.daily_meal_category_prices_id) {
+							if (new_menu.daily_meal_menu_id && relevant_price.id) {
 								await MenuCategoryDao.createDailyMealMenuCategory(
 									new_menu.daily_meal_menu_id,
-									relevant_price.daily_meal_category_prices_id
+									relevant_price.id
 								);
 							}
 						} catch (error) {
@@ -269,11 +266,8 @@ export async function generateDailyMealMenuCategoriesUpToDateForCategory(
 			if (!existing_mc) {
 				try {
 					console.log('Generating menu_category for ', menu.date, relevant_price.daily_meal_category_id);
-					if (menu.daily_meal_menu_id && relevant_price.daily_meal_category_prices_id) {
-						await MenuCategoryDao.createDailyMealMenuCategory(
-							menu.daily_meal_menu_id,
-							relevant_price.daily_meal_category_prices_id
-						);
+					if (menu.daily_meal_menu_id && relevant_price.id) {
+						await MenuCategoryDao.createDailyMealMenuCategory(menu.daily_meal_menu_id, relevant_price.id);
 					}
 				} catch (error) {
 					console.error('Error creating new menu category', error);
@@ -310,10 +304,10 @@ export async function generateDailyMealMenuCategoriesUpToDateForCategory(
 				try {
 					console.log('Generating menu_category for ', new_menu.date, relevant_price.daily_meal_category_id);
 
-					if (new_menu.daily_meal_menu_id && relevant_price.daily_meal_category_prices_id) {
+					if (new_menu.daily_meal_menu_id && relevant_price.id) {
 						await MenuCategoryDao.createDailyMealMenuCategory(
 							new_menu.daily_meal_menu_id,
-							relevant_price.daily_meal_category_prices_id
+							relevant_price.id
 						);
 					}
 				} catch (error) {
@@ -829,13 +823,13 @@ export async function createDailyMeals() {
 
 				let connectObj = {};
 				const driver =
-					(subscription as any).delivery_driver ||
-					assignDeliveryDriver((business as any).daily_meal_drivers as any);
-				if (driver?.delivery_driver_id) {
+					subscription.driver ||
+					assignDeliveryDriver(business.daily_meals_module?.daily_meal_drivers?.map((d) => d.driver));
+				if (driver?.driver_id) {
 					connectObj = {
-						delivery_driver: {
+						driver: {
 							connect: {
-								delivery_driver_id: driver.delivery_driver_id,
+								driver_id: driver.driver_id,
 							},
 						},
 					};
@@ -887,8 +881,8 @@ export async function createDailyMeals() {
 				if (!order) {
 					throw new Error(`Failed to create order for subscription ID ${subscription.id}`);
 				}
-				if (!subscription.delivery_driver_id && driver?.delivery_driver_id) {
-					await DailyMealDao.connectSubscriptionWithDriver(subscription.id, driver.delivery_driver_id);
+				if (!subscription.driver_id && driver?.driver_id) {
+					await DailyMealDao.connectSubscriptionWithDriver(subscription.id, driver.driver_id);
 				}
 			}
 			console.log(`Daily meals created for business ${business.business_id}`);

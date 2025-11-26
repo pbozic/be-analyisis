@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { SERVICES } from '@prisma/client';
+import { ADDRESS_TYPE, SERVICES } from '@prisma/client';
 
 import { Email, PhoneNumber, Timestamp, UUID } from '../../primitives.js';
 import { ACCOUNT_ACTIONS_REASON } from '../../../lib/constants.js';
@@ -289,12 +289,23 @@ export const UpdateOneSignalIdSchema = z
 export const AddAddressSchema = z
 	.object({
 		address: z.string().min(1),
-		city: z.string().min(1),
-		postal_code: z.string().min(1),
+		city: z.string().min(1).optional(),
+		postal_code: z.string().min(1).optional(),
 		country: z.string().length(2).default('SI'),
-		latitude: z.number(),
-		longitude: z.number(),
-		details: z.record(z.any()).optional(), // TODO: Define specific structure if available
+		latitude: z.string(),
+		longitude: z.string(),
+		primary: z.boolean().default(false),
+		type: z.nativeEnum(ADDRESS_TYPE).default('HOME'),
+		details: z
+			.object({
+				floor: z.number().optional(),
+				apartment: z.string().optional(),
+				entrance: z.string().optional(),
+				buzzer: z.string().optional(),
+				courier_instructions: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
 	})
 	.openapi({
 		title: 'AddAddressRequest',

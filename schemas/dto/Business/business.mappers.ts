@@ -29,6 +29,8 @@ import { toBusinessClientResponse } from '../BusinessClient/businessClient.mappe
 import { toTableReservationDetail } from '../TableReservation/tableReservation.mappers.ts';
 import { toTableReservationModuleRef } from '../TableReservation/tableReservationsModule.mappers.ts';
 import { toBusinessLocalLocationDetail } from '../Stores/localLocation.mappers.ts';
+import { toDailyMealMenuList } from '../Menu/menu.mappers.ts';
+import { toDriverRefOut } from '../Vehicles/vehicle.mappers.ts';
 
 // Map a lightweight GetBusinessesPrisma payload to the public BusinessResponseDto
 export function toGetBusinessResponse(row: GetBusinessesPrisma): BusinessResponseType {
@@ -212,33 +214,18 @@ export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAll
 // Mapper that validates businesses with daily meals module
 export function parseBusinessWithDailyMeals(business: BusinessByIdPrisma): BusinessWithDailyMealsResponseType {
 	const asRec = business;
+	const businessMain = toGetBusinessResponse(business as GetBusinessesPrisma);
 	const dto = {
-		business_id: asRec.business_id,
-		business_details: asRec.business_details ?? null,
-		tax_id: asRec.tax_id ?? null,
-		registration_id: asRec.registration_id ?? null,
-		email: asRec.email ?? null,
-		telephone: asRec.telephone ?? null,
-		telephone_code: asRec.telephone_code ?? null,
-		website_url: asRec.website_url ?? null,
-		working_hours: asRec.working_hours ?? null,
-		is_business_unit: asRec.is_business_unit ?? null,
-		business_group_name: asRec.business_group_name ?? null,
-		parent_business_id: asRec.parent_business_id ?? null,
-		stripe_account_id: asRec.stripe_account_id ?? null,
-		stripe_customer_id: asRec.stripe_customer_id ?? null,
-		word_buy_stripe_subscription_id: asRec.word_buy_stripe_subscription_id ?? null,
-		first_activated_at: asRec.first_activated_at ? new Date(asRec.first_activated_at).toISOString() : undefined,
-		active: asRec.active ?? null,
-		sales_representative_id: asRec.sales_representative_id ?? null,
-		address_id: asRec.address_id ?? null,
-		created_at: asRec.created_at ? new Date(asRec.created_at).toISOString() : undefined,
-		updated_at: asRec.updated_at ? new Date(asRec.updated_at).toISOString() : undefined,
+		...businessMain,
 		daily_meals_module: {
 			...toDailyMealsModuleResponse(asRec.daily_meals_module),
-			daily_meal_menus: asRec.daily_meals_module?.daily_meal_menus ?? [],
+			daily_meal_menus: asRec.daily_meals_module?.daily_meal_menus
+				? toDailyMealMenuList(asRec.daily_meals_module.daily_meal_menus)
+				: [],
+			daily_meal_drivers: asRec.daily_meals_module?.daily_meal_drivers
+				? asRec.daily_meals_module.daily_meal_drivers.map((d) => toDriverRefOut(d.driver))
+				: [],
 		},
-		daily_meal_drivers: asRec.daily_meals_module?.daily_meal_drivers ?? [],
 	};
 	return BusinessWithDailyMealsResponseDto.parse(dto);
 }

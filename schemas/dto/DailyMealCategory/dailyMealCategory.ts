@@ -12,7 +12,7 @@ extendZodWithOpenApi(z);
 
 export const DailyMealCategoryPriceBaseSchema = z
 	.object({
-		daily_meal_category_prices_id: UUID.optional(),
+		id: UUID.optional(),
 		daily_meal_category_id: UUID,
 		price: z.number(),
 		valid_from: Timestamp,
@@ -24,7 +24,7 @@ export type DailyMealCategoryPriceBase = z.infer<typeof DailyMealCategoryPriceBa
 
 export const DailyMealCategoryPriceRefSchema = z
 	.object({
-		daily_meal_category_price_id: UUID,
+		id: UUID,
 		daily_meal_category_id: UUID,
 		price: z.number(),
 		valid_from: Timestamp,

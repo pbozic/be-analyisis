@@ -104,17 +104,14 @@ export async function dailyMealsSubscriptionPayment(
 			if (!dmc_price) {
 				throw new Error(`No valid price for dmc: ${dmc.daily_meal_category_id}`);
 			}
-			dailyMealCategoryPriceMap.set(
-				dmc.daily_meal_category_id,
-				dmc_price.daily_meal_category_prices_id as string
-			);
+			dailyMealCategoryPriceMap.set(dmc.daily_meal_category_id, dmc_price.id as string);
 		}
 
 		const restaurant_acc = DailyMealsModule.business.stripe_account_id;
 		const delivery_address = await AddressDao.addAddress({
 			address: delivery_location.address,
-			latitude: parseFloat(delivery_location.coordinates.latitude),
-			longitude: parseFloat(delivery_location.coordinates.longitude),
+			latitude: delivery_location.coordinates.latitude,
+			longitude: delivery_location.coordinates.longitude,
 		});
 
 		const new_subscription = await DailyMealDao.createDailyMealSubscription(

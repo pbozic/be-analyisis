@@ -15,7 +15,7 @@ import { DriverDetailSchema, toDriverDetail } from './index.js';
 describe('Driver Mapper - toDriverDetail', () => {
 	it('should map Prisma data to DTO and validate against schema', async () => {
 		// Get mock data
-		const mockData = (mockPrismaData as any).unknown || mockPrismaData.driver || {};
+		const mockData = mockPrismaData.driver;
 
 		if (!mockData || Object.keys(mockData).length === 0) {
 			console.warn('⚠️  Mock data for "unknown" or "driver" not found');

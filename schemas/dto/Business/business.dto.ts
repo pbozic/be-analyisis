@@ -14,9 +14,9 @@ import { MenuItemRefSchema, MenuCategoryRefSchema, DailyMealMenuBaseSchema, Menu
 import { AddressRefSchema } from '../Address/index.js';
 import { UserRefSchema } from '../User/index.js';
 import { Timestamp, UUID } from '../../primitives';
-import { DriverBaseSchema } from '../Driver/index.js';
 import { BusinessUserDetailSchema } from '../BusinessUser/businessUser.js';
 import { TableReservationModuleResponseSchema } from '../TableReservation/tableReservationsModule.dto.js';
+import { DriverRefOutSchema } from '../Vehicles/vehicle.dto.js';
 extendZodWithOpenApi(z);
 
 // TODO: Fix dto after deleting menu from prisma model etc...
@@ -156,10 +156,10 @@ export const BusinessWithTransportResponseDto = BusinessResponseDto.extend({
 export const BusinessWithDailyMealsResponseDto = BusinessResponseDto.extend({
 	daily_meals_module: DailyMealsModuleSchema.extend({
 		daily_meal_menus: z.lazy(() => z.array(DailyMealMenuBaseSchema)).optional(),
+		daily_meal_drivers: z.lazy(() => z.array(DriverRefOutSchema)).optional(),
 	})
 		.nullable()
 		.optional(),
-	daily_meal_drivers: z.lazy(() => z.array(z.lazy(() => DriverBaseSchema))).optional(),
 }).openapi('BusinessWithDailyMealsResponse');
 
 // Business with Food & Drinks Module

@@ -163,7 +163,7 @@ const getUserAdressAndRolesById = async (user_id: string): Promise<UserLoginResp
 			},
 			include: userAddressAndRolesInclude,
 		});
-		return toUserLoginResponse(user);
+		return user ? await toUserLoginResponse(user) : null;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID with addresses and roles');
 	}
@@ -193,7 +193,7 @@ const getAllUsersWithAddressesAndConnections = async (): Promise<UserListRespons
  * Get a user by id for login/registration.
  *
  * @param {string} user_id - User ID.
- * @returns {Promise<UserWithFavouritesResponse | null>} User or null.
+ * @returns {Promise<UserLoginResponse | null>} User or null.
  */
 const getUserByIdForLogin = async (user_id: string): Promise<UserLoginResponse | null> => {
 	try {
@@ -203,7 +203,7 @@ const getUserByIdForLogin = async (user_id: string): Promise<UserLoginResponse |
 			},
 			include: userLoginInclude,
 		});
-		return user ? toUserLoginResponse(user) : null;
+		return user ? await toUserLoginResponse(user) : null;
 	} catch (error) {
 		throw new Error(error instanceof Error ? error.message : 'Failed to get user by ID');
 	}

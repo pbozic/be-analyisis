@@ -106,7 +106,7 @@ export async function addPriceToDailyMealCategory(
 
 		await MenuCategory.updateMenuCategoriesWithNewPrice(
 			dmc_id,
-			priceEntry.daily_meal_category_prices_id as string,
+			priceEntry.id as string,
 			new Date(priceEntry.valid_from)
 		);
 

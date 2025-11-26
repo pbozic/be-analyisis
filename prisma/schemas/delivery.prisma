@@ -320,7 +320,7 @@ model menu_categories {
     daily_meal_category_id       String?                     @db.Uuid
     daily_meal_category_price_id String?                     @db.Uuid
     daily_meal_category          daily_meal_categories?      @relation("daily_meal_categories_to_menu_categories", fields: [daily_meal_category_id], references: [daily_meal_category_id])
-    daily_meal_category_price    daily_meal_category_prices? @relation(fields: [daily_meal_category_price_id], references: [daily_meal_category_prices_id])
+    daily_meal_category_price    daily_meal_category_prices? @relation(fields: [daily_meal_category_price_id], references: [id])
     daily_meal_instances         daily_meal_instances[]
 
     @@unique([menu_category_id])
@@ -517,7 +517,7 @@ model daily_meal_subscription_customers {
     subscription              daily_meal_subscriptions   @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
     daily_meal_instances      daily_meal_instances[]
     daily_meal_categories     daily_meal_categories?     @relation(fields: [daily_meal_category_id], references: [daily_meal_category_id])
-    daily_meal_category_price daily_meal_category_prices @relation(fields: [daily_meal_category_price_id], references: [daily_meal_category_prices_id])
+    daily_meal_category_price daily_meal_category_prices @relation(fields: [daily_meal_category_price_id], references: [id])
 }
 
 /// @summary Concrete delivery days for a subscription (intended vs delivered).
@@ -568,7 +568,7 @@ model daily_meal_instances {
     subscription              daily_meal_subscriptions          @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
     customer                  daily_meal_subscription_customers @relation(fields: [subscription_customer_id], references: [id])
     menu_category             menu_categories                   @relation(fields: [menu_category_id], references: [menu_category_id])
-    daily_meal_category_price daily_meal_category_prices        @relation(fields: [daily_meal_category_price_id], references: [daily_meal_category_prices_id])
+    daily_meal_category_price daily_meal_category_prices        @relation(fields: [daily_meal_category_price_id], references: [id])
 
     @@unique([subscription_customer_id, intended_date])
     @@index([delivery_date])
@@ -598,10 +598,10 @@ model daily_meal_categories {
 /// @summary Price history for a daily meal category.
 /// @namespace DailyMeals
 model daily_meal_category_prices {
-    daily_meal_category_prices_id String   @id @default(uuid()) @db.Uuid
-    daily_meal_category_id        String   @db.Uuid
-    price                         Int
-    valid_from                    DateTime @db.Timestamptz(6)
+    id                     String   @id @default(uuid()) @db.Uuid
+    daily_meal_category_id String   @db.Uuid
+    price                  Int
+    valid_from             DateTime @db.Timestamptz(6)
 
     created_at DateTime @default(now()) @db.Timestamptz(6)
 

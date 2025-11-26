@@ -4,9 +4,9 @@ import { DELIVERY_ORDER_STATUS, MODULE } from '@prisma/client';
 
 import { Timestamp, UUID } from '../../primitives.js';
 import { LineItemDetailSchema } from '../LineItems/index.js';
-import { UserBaseSchema } from '../User/index.js';
 import { DriverBaseSchema } from '../Driver/driver.dto.js';
 import { BusinessResponseSchema } from '../Business/business.js';
+import { UserWithParentUserResponseSchema } from '../User/user.js';
 
 extendZodWithOpenApi(z);
 
@@ -70,7 +70,7 @@ export type DeliveryOrderRef = z.infer<typeof DeliveryOrderRefSchema>;
 // ===============
 export const DeliveryOrderDetailSchema = DeliveryOrderBaseSchema.extend({
 	user: z
-		.lazy(() => UserBaseSchema)
+		.lazy(() => UserWithParentUserResponseSchema)
 		.nullable()
 		.optional(),
 	business: z

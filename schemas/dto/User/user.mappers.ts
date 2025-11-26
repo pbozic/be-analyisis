@@ -22,26 +22,13 @@ import { toDailyMealsModuleResponse } from '../Business/business.mappers.ts';
 import { toReservationModuleResponse } from '../reservations/reservation-module/reservation-module.mappers.ts';
 import { toTableReservationModuleResponse } from '../TableReservation/tableReservationsModule.mappers.ts';
 import { toVehicleRef } from '../Vehicles/vehicle.mappers.ts';
-import { toUserAddressRef } from '../UserAddress/userAddress.mappers.ts';
+import { toUserAddressRef, toUserAddressResponse } from '../UserAddress/userAddress.mappers.ts';
+import { UserAddressDefaultPrisma } from '../../../prisma/includes/userAddress.ts';
 /**
  * Convert date to ISO string, handling null/undefined.
  */
 function toIso(d: unknown): string | undefined {
 	return d ? new Date(d as any).toISOString() : undefined;
-}
-
-/**
- * Map user address from Prisma include to UserAddressRef.
- * UserAddressRefSchema expects: user_id, address_id, primary, type
- */
-function mapUserAddressRef(addressRow: any): any {
-	if (!addressRow) return null;
-	return {
-		user_id: addressRow.user_id,
-		address_id: addressRow.address_id,
-		primary: addressRow.primary ?? false,
-		type: addressRow.type ?? 'HOME',
-	};
 }
 
 /**
@@ -65,7 +52,7 @@ export function toUserResponse(row: Prisma.usersGetPayload<object>): UserWithPar
 		spicy_preferences: r.spicy_preferences ?? null,
 		transfer_preferences: r.transfer_preferences ?? null,
 		radio_preferences: r.radio_preferences ?? null,
-		allergies_preferences: r.allergies_preferences ?? null,
+		// allergies_preferences: r.allergies_preferences ?? null,
 		delivery_push_notification_preferences: r.delivery_push_notification_preferences ?? null,
 		transfer_push_notification_preferences: r.transfer_push_notification_preferences ?? null,
 		taxi_push_notification_preferences: r.taxi_push_notification_preferences ?? null,
@@ -107,10 +94,13 @@ export function toUserWithAddressesResponse(row: UserAddressesPrisma): UserWithA
 		addresses: r.addresses ? r.addresses.map(toUserAddressRef) : null,
 	});
 }
-let _UserLoginResponseSchema: typeof import('../Auth/AuthResponse.dto.ts').UserLoginResponseSchema;
-function getUserLoginResponseSchema() {
+let _UserLoginResponseSchema: typeof import('../Auth/AuthResponse.dto').UserLoginResponseSchema | undefined;
+async function getUserLoginResponseSchema(): Promise<
+	typeof import('../Auth/AuthResponse.dto').UserLoginResponseSchema
+> {
 	if (!_UserLoginResponseSchema) {
-		_UserLoginResponseSchema = require('../Auth/AuthResponse.dto.ts').UserLoginResponseSchema;
+		const mod = await import('../Auth/AuthResponse.dto.js');
+		_UserLoginResponseSchema = mod.UserLoginResponseSchema;
 	}
 	return _UserLoginResponseSchema;
 }
@@ -118,15 +108,13 @@ function getUserLoginResponseSchema() {
 /**
  * Map user for login/registration with complex includes to UserLoginResponse.
  */
-export function toUserLoginResponse(row: UserLoginPrisma): UserLoginResponse {
+export async function toUserLoginResponse(row: UserLoginPrisma): Promise<UserLoginResponse> {
 	const base = toUserResponse(row);
 	const r = row as Record<string, any>;
 
-	return getUserLoginResponseSchema().parse({
+	return (await getUserLoginResponseSchema()).parse({
 		...base,
-		addresses: r.addresses
-			? (r.addresses as any[]).map((addr) => mapUserAddressRef(addr)).filter((a) => a !== null)
-			: null,
+		addresses: r.addresses ? r.addresses.map((addr: UserAddressDefaultPrisma) => toUserAddressResponse(addr)) : [],
 		driver: r.driver
 			? {
 					driver_id: r.driver.driver_id,
@@ -251,7 +239,7 @@ export function toUsersListResponse(rows: UserAddressesAndConnectionsCreationPri
 		return {
 			...base,
 			addresses: r.addresses
-				? (r.addresses as any[]).map((addr) => mapUserAddressRef(addr)).filter((a) => a !== null)
+				? (r.addresses as any[]).map((addr) => toUserAddressRef(addr)).filter((a) => a !== null)
 				: null,
 			child_users: r.child_users
 				? (r.child_users as any[]).map((cu) => ({

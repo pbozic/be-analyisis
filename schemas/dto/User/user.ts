@@ -104,7 +104,7 @@ export const UserBaseSchema = z.object({
 	spicy_preferences: z.record(z.any()).nullable(),
 	transfer_preferences: z.record(z.any()).nullable(),
 	radio_preferences: z.record(z.any()).nullable(),
-	allergies_preferences: z.record(z.any()).nullable(),
+	// allergies_preferences: z.record(z.any()).nullable(),
 	delivery_push_notification_preferences: z.record(z.any()).nullable(),
 	transfer_push_notification_preferences: z.record(z.any()).nullable(),
 	taxi_push_notification_preferences: z.record(z.any()).nullable(),

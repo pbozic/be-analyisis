@@ -6,8 +6,8 @@ import { UUID } from '../../primitives';
 // Add Address DaoSchema
 export const AddAddressDaoSchema = z.object({
 	address: z.string().min(1),
-	latitude: z.number(),
-	longitude: z.number(),
+	latitude: z.string(),
+	longitude: z.string(),
 	city: z.string().optional(),
 	postal_code: z.string().optional(),
 	country: z.string().optional(),
