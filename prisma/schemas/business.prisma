@@ -14,7 +14,7 @@
 /// Core company profile linked to address, documents, analytics, roles and users.
 model business {
     business_id         String      @id @unique @default(uuid()) @db.Uuid
-    public_link_hash    String?     @unique @default(dbgenerated("'BU' || substr(md5((random())::text), 1, 14)")) @db.VarChar(16)
+    public_link_hash    String?     @unique @default(dbgenerated("('BU'::text || substr(md5((random())::text), 1, 14))")) @db.VarChar(16)
     address_id          String?     @db.Uuid
     is_business_unit    Boolean     @default(false) // TODO: Remove later
     business_group_name String? // if part of any holding or other business group
@@ -154,7 +154,7 @@ model business_teams {
 /// Links to client contacts and internal teams.
 model crm_module {
     crm_module_id               String   @id @default(uuid()) @db.Uuid
-    public_link_hash            String?  @unique @default(dbgenerated("'CM' || substr(md5((random())::text), 1, 14)")) @db.VarChar(16)
+    public_link_hash            String?  @unique @default(dbgenerated("('CM'::text || substr(md5((random())::text), 1, 14))")) @db.VarChar(16)
     business_id                 String   @unique @db.Uuid
     purchase_order_limit_amount Float?
     created_at                  DateTime @default(now()) @db.Timestamptz(6)

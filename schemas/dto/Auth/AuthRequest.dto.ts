@@ -15,7 +15,6 @@ import { DocumentWithFilesSchema } from '../Document/document.dto.ts';
 extendZodWithOpenApi(z);
 
 // ===== AUTHENTICATION REQUESTS =====
-
 /**
  * Used by login function - POST /auth/login
  * User login schema with email/telephone and password
@@ -142,11 +141,12 @@ export const PasswordResetSchema = z
  */
 export const RegisterTransportServiceSchema = z
 	.object({
-		business: z.object({
-			...z.lazy(() => BusinessRegistrationDataSchema).shape,
-			type: z.string().default('TAXI'),
-			documents: z.array(z.lazy(() => DocumentWithFilesSchema)).optional(),
-		}),
+		business: z.lazy(() =>
+			BusinessRegistrationDataSchema.extend({
+				type: z.string().default('TAXI'),
+				documents: z.array(z.lazy(() => DocumentWithFilesSchema)).optional(),
+			})
+		),
 		drivers: z
 			.array(
 				z.object({

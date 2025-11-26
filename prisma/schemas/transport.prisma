@@ -4,7 +4,7 @@
 /// Hosts drivers, vehicles and orders (taxi/delivery) for the business.
 model transport_module {
     transport_module_id String   @id @default(uuid()) @db.Uuid
-    public_link_hash    String?  @unique @default(dbgenerated("'TM' || substr(md5((random())::text), 1, 14)")) @db.VarChar(16)
+    public_link_hash    String?  @unique @default(dbgenerated("('TM'::text || substr(md5((random())::text), 1, 14))")) @db.VarChar(16)
     business_id         String   @unique @db.Uuid
     created_at          DateTime @default(now()) @db.Timestamptz(6)
     updated_at          DateTime @default(now()) @updatedAt @db.Timestamptz(6)

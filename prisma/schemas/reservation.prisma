@@ -14,7 +14,7 @@ enum BOOKING_STATUS {
 /// Holds locations, services, employees, customers, bookings and notification settings.
 model reservation_module {
   reservation_module_id           String         @id @default(uuid()) @db.Uuid
-  public_link_hash                String?        @unique @default(dbgenerated("'RM' || substr(md5((random())::text), 1, 14)")) @db.VarChar(16)
+  public_link_hash                String?        @unique @default(dbgenerated("('RM'::text || substr(md5((random())::text), 1, 14))")) @db.VarChar(16)
   business_id                     String         @unique @db.Uuid
   action_bundle_id                String?        @db.Uuid
   subscription_active_until       DateTime? // Optional, if the business has a subscription
