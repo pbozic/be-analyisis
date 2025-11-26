@@ -6,25 +6,14 @@ import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.js';
 import { DriverBaseSchema } from '../Driver/index.js';
 import { UserBaseSchema } from '../User/index.js';
 import { PaymentIntentSchema } from '../Payments/payment.dto.js';
+import { CoordinatesSchema, LocationSchema } from '../_common/location.js';
 
 extendZodWithOpenApi(z);
 
 // -----------------------
 // Small helper schemas (used in both request and response)
 // -----------------------
-export const CoordinatesSchema = z
-	.object({
-		latitude: z.number().openapi({ example: 46.056946 }),
-		longitude: z.number().openapi({ example: 14.505751 }),
-	})
-	.openapi('TaxiCoordinates');
 
-export const LocationSchema = z
-	.object({
-		address: z.string().optional().openapi({ example: 'Prešernova cesta 1, 1000 Ljubljana' }),
-		coordinates: CoordinatesSchema.optional(),
-	})
-	.openapi('TaxiLocation');
 export type TaxiLocation = z.infer<typeof LocationSchema>;
 
 export const FileUploadSchema = z
@@ -96,7 +85,7 @@ export type TaxiOrderDetail = z.infer<typeof TaxiOrderDetailSchema>;
 export const TaxiOrderResponseSchema = z
 	.object({
 		order: TaxiOrderDetailSchema,
-		payment_intent: PaymentIntentSchema.optional(),
+		payment_intent: z.lazy(() => PaymentIntentSchema).optional(),
 		vehicle_transfer_order: TaxiOrderBaseSchema.optional(),
 	})
 	.openapi('CreateTaxiOrderResponse');

@@ -1212,7 +1212,7 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 						orderingUser.user_id,
 						ORDER_TYPE.TAXI
 					);
-					const wheels = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
+					const wheels = pendingCashbacks.reduce((sum, cb) => sum + (cb.amount as number), 0);
 					if (wheels >= CREDITS.CASHBACK_CONVERSION_TAXI) {
 						const remainder = wheels % CREDITS.CASHBACK_CONVERSION_TAXI;
 						if (remainder > 0) {
@@ -1231,7 +1231,7 @@ async function completeOrder(req: ValidatedRequest<UpdateTaxiOrder>, res: Respon
 							await WalletFundsDao.convertCashbacksToCredit({
 								user_id: orderingUser.user_id,
 								amount: Math.floor(wheels / CREDITS.CASHBACK_CONVERSION_TAXI) * 100,
-								pending_cashback_ids: pendingCashbacks.map((cb) => cb.cashback_id),
+								pending_cashback_ids: pendingCashbacks.map((cb) => cb.cashback_id) as string[],
 							});
 						}
 					}

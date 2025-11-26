@@ -84,8 +84,11 @@ export const UpdateNotificationMessageStatusRequestSchema = z
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const NotificationMessageResponseSchema = NotificationMessageBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
-	template: NotificationTemplateRefSchema.nullable().optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
+	template: z
+		.lazy(() => NotificationTemplateRefSchema)
+		.nullable()
+		.optional(),
 }).openapi({
 	title: 'NotificationMessageResponse',
 	description: 'Complete notification message response with related entities',

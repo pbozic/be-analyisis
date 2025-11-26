@@ -16,10 +16,10 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('Payments Mapper - toPaymentResponse', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.paymentwithincludes;
+		const mockData = mockPrismaData.payment;
 
 		if (!mockData) {
-			console.warn('⚠️  Mock data for "paymentwithincludes" not found');
+			console.warn('⚠️  Mock data for "payment" not found');
 			console.warn('   Add mock data to tests/integration/mock-prisma.ts');
 			expect(mockData).toBeDefined();
 			return;

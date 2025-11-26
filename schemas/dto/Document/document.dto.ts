@@ -108,7 +108,7 @@ export type DocumentRef = z.infer<typeof DocumentRefSchema>;
 
 // Response: extends base with files relation (FileRef)
 export const DocumentResponseSchema = DocumentBaseSchema.extend({
-	files: z.array(FileRefSchema).optional(),
+	files: z.array(z.lazy(() => FileRefSchema)).optional(),
 }).openapi('DocumentResponse');
 
 export type DocumentResponse = z.infer<typeof DocumentResponseSchema>;

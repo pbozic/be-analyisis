@@ -16,7 +16,7 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('Transport Mapper - toTransportModuleDetail', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.transportmodulewithincludes;
+		const mockData = mockPrismaData.transportmodule;
 
 		if (!mockData) {
 			console.warn('⚠️  Mock data for "transportmodulewithincludes" not found');

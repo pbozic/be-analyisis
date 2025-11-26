@@ -20,7 +20,14 @@ export function toOrderLobbyItemResponse(payload: unknown): OrderLobbyItemRespon
 		created_at: toIso(p?.created_at),
 		updated_at: toIso(p?.updated_at),
 		user: p?.user
-			? { user_id: p.user.user_id, first_name: p.user.first_name, last_name: p.user.last_name }
+			? {
+					user_id: p.user.user_id,
+					first_name: p.user.first_name ?? null,
+					last_name: p.user.last_name ?? null,
+					email: p.user.email ?? null,
+					telephone: p.user.telephone,
+					user_role: p.user.user_role,
+				}
 			: undefined,
 		menu_item: p?.menu_item
 			? {

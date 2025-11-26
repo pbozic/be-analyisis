@@ -26,7 +26,10 @@ export const RoleResponseBaseSchema = z
 export const RoleResponseSchema = RoleResponseBaseSchema.extend({
 	permissions: z.array(RolePermissionResponseBaseSchema),
 	users: z.array(UserRoleResponseBaseSchema),
-	business: BusinessBaseSchema.nullable().optional(),
+	business: z
+		.lazy(() => BusinessBaseSchema)
+		.nullable()
+		.optional(),
 }).openapi('RoleResponse');
 
 export type RoleBase = z.infer<typeof RoleResponseBaseSchema>;

@@ -16,17 +16,17 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('Taxi Mapper - toTaxiOrderRef', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.unknown || {};
+		const mockData = mockPrismaData.taxiOrderSimple;
 
 		if (!mockData) {
-			console.warn('⚠️  Mock data for "unknown" not found');
+			console.warn('⚠️  Mock data for "taxiOrderSimple" not found');
 			console.warn('   Add mock data to tests/integration/mock-prisma.ts');
 			expect(mockData).toBeDefined();
 			return;
 		}
 
 		// Call the actual mapper
-		const result = toTaxiOrderRef(mockData as unknown);
+		const result = toTaxiOrderRef(mockData);
 
 		// Validate the result is defined
 		expect(result).toBeDefined();

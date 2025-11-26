@@ -38,7 +38,7 @@ export const CreateNotificationMessageEventRequestSchema = z
 	.object({
 		notification_message_id: UUID,
 		type: z.string().min(1),
-		provider_raw: JsonObjectSchema.optional(),
+		provider_raw: z.lazy(() => JsonObjectSchema).optional(),
 		occurred_at: Timestamp.optional(),
 	})
 	.openapi({
@@ -48,7 +48,7 @@ export const CreateNotificationMessageEventRequestSchema = z
 
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 export const NotificationMessageEventResponseSchema = NotificationMessageEventBaseSchema.extend({
-	message: NotificationMessageRefSchema.optional(),
+	message: z.lazy(() => NotificationMessageRefSchema).optional(),
 }).openapi({
 	title: 'NotificationMessageEventResponse',
 	description: 'Complete notification message event response with related entities',

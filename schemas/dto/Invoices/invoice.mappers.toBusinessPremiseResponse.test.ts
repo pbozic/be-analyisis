@@ -16,10 +16,10 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('Invoices Mapper - toBusinessPremiseResponse', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.businesspremisewithincludes;
+		const mockData = mockPrismaData.businesspremise;
 
 		if (!mockData) {
-			console.warn('⚠️  Mock data for "businesspremisewithincludes" not found');
+			console.warn('⚠️  Mock data for "businesspremise" not found');
 			console.warn('   Add mock data to tests/integration/mock-prisma.ts');
 			expect(mockData).toBeDefined();
 			return;

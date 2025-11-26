@@ -64,11 +64,20 @@ export type InvoiceRef = z.infer<typeof InvoiceRefSchema>;
 // Response Schema with Relations
 // =======================
 export const InvoiceResponseSchema = InvoiceBaseSchema.extend({
-	taxi_order: TaxiOrderRefSchema.nullable().optional(),
-	delivery_order: DeliveryOrderRefSchema.nullable().optional(),
+	taxi_order: z
+		.lazy(() => TaxiOrderRefSchema)
+		.nullable()
+		.optional(),
+	delivery_order: z
+		.lazy(() => DeliveryOrderRefSchema)
+		.nullable()
+		.optional(),
 	device: ElectronicDeviceRefSchema,
 	premise: BusinessPremiseRefSchema,
-	vehicle: VehicleRefSchema.nullable().optional(),
+	vehicle: z
+		.lazy(() => VehicleRefSchema)
+		.nullable()
+		.optional(),
 	// Note: items, taxes, submissions would be added here if InvoiceItem, InvoiceTax, SubmissionLog DTOs exist
 	items: z.array(z.record(z.any())).optional(),
 	taxes: z.array(z.record(z.any())).optional(),

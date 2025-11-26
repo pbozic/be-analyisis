@@ -90,7 +90,7 @@ export const CustomerResponseSchema = CustomerBaseSchema.extend({
 // DAO response for getCustomersByReservationModuleId and getCustomerById
 export const CustomerDAOResponseSchema = CustomerBaseSchema.extend({
 	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
-	bookings: z.lazy(() => z.array(BookingRefSchema).optional()),
+	bookings: z.lazy(() => z.array(z.lazy(() => BookingRefSchema)).optional()),
 }).openapi({
 	title: 'CustomerDAOResponse',
 	description: 'Customer response from DAO functions with reservation module and bookings',

@@ -17,7 +17,7 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('User Mapper - toUserWithAddressesResponse', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = (mockPrismaData as any).useraddresses;
+		const mockData = mockPrismaData.useraddresses;
 
 		if (!mockData) {
 			console.warn('⚠️  Mock data for "useraddresses" not found');

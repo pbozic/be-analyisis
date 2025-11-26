@@ -28,25 +28,11 @@ export const CategoryBaseSchema = z
 export type CategoryBase = z.infer<typeof CategoryBaseSchema>;
 
 // =======================
-// Ref Schema - minimal identity for embedding elsewhere
-// =======================
-export const CategoryRefSchema = z
-	.object({
-		categories_id: UUID.openapi({ example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }),
-		name: z.string().min(1).openapi({ example: 'Italian Cuisine' }),
-		tag: z.string().min(1).openapi({ example: 'italian' }),
-		category_type: z.nativeEnum(CATEGORY_TYPE).openapi({ example: CATEGORY_TYPE.MENU }),
-	})
-	.openapi('CategoryRef');
-
-export type CategoryRef = z.infer<typeof CategoryRefSchema>;
-
-// =======================
 // Response Schema - complete with embedded refs
 // =======================
 export const CategoryResponseSchema = CategoryBaseSchema.extend({
-	parent_category: CategoryRefSchema.nullable().optional(),
-	sub_categories: z.array(CategoryRefSchema).openapi({ example: [] }),
+	parent_category: CategoryBaseSchema.nullable().optional(),
+	sub_categories: z.array(CategoryBaseSchema).openapi({ example: [] }),
 	translations: z
 		.array(
 			z.object({
@@ -94,7 +80,6 @@ export type CategoryListResponse = z.infer<typeof CategoryListResponseSchema>;
 export function registerSchemas(registry: OpenAPIRegistry) {
 	// Register base schemas
 	registry.register('CategoryBase', CategoryBaseSchema);
-	registry.register('CategoryRef', CategoryRefSchema);
 
 	// Register response schemas
 	registry.register('Category', CategoryResponseSchema);

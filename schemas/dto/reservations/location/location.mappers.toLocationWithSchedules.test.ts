@@ -16,7 +16,7 @@ import { mockPrismaData } from '../../../../tests/integration/mock-prisma.js';
 describe('location Mapper - toLocationWithSchedules', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.locationwithschedules;
+		const mockData = mockPrismaData.location;
 
 		if (!mockData) {
 			console.warn('⚠️  Mock data for "locationwithschedules" not found');

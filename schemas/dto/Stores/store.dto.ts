@@ -10,6 +10,11 @@ extendZodWithOpenApi(z);
 export const StoreBaseSchema = z
 	.object({
 		stores_id: UUID,
+		public_link_hash: z
+			.string()
+			.nullable()
+			.optional()
+			.openapi({ example: 'SMabc123def45678', description: 'Public link hash' }),
 		enabled: z.boolean().optional(),
 		online: z.boolean().optional(),
 		overwhelmed: z.boolean().optional(),

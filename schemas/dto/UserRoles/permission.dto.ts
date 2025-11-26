@@ -27,7 +27,10 @@ export const PermissionResponseBaseSchema = z
 
 export const PermissionResponseSchema = PermissionResponseBaseSchema.extend({
 	roles: z.lazy(() => z.array(RolePermissionResponseBaseSchema)),
-	action: ActionBaseSchema.nullable().optional(),
+	action: z
+		.lazy(() => ActionBaseSchema)
+		.nullable()
+		.optional(),
 }).openapi('PermissionResponse');
 
 export type PermissionBase = z.infer<typeof PermissionResponseBaseSchema>;

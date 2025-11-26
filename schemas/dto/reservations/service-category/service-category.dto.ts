@@ -67,7 +67,7 @@ export const ServiceCategoryResponseSchema = ServiceCategoryBaseSchema.extend({
 // ===== DAO RESPONSE SCHEMAS =====
 // DAO response for getServiceCategoryById
 export const ServiceCategoryDAOResponseSchema = ServiceCategoryBaseSchema.extend({
-	services: z.lazy(() => z.array(ServiceRefSchema).optional()),
+	services: z.lazy(() => z.array(z.lazy(() => ServiceRefSchema)).optional()),
 	parent: z
 		.lazy(() => ServiceCategoryRefSchema)
 		.nullable()

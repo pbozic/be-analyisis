@@ -11,22 +11,24 @@
 import { describe, it, expect } from '@jest/globals';
 import { toTaxRateRef } from './tax.mappers.js';
 import { TaxRateRefSchema } from './tax.dto.js';
-import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 
 describe('Tax Mapper - toTaxRateRef', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
-		// Get mock data
-		const mockData = mockPrismaData.unknown || {};
+		// Get mock data - using category as tax mock doesn't exist yet
+		const mockData = {
+			tax_rates_id: '550e8400-e29b-41d4-a716-446655440500',
+			name: 'VAT 22%',
+		};
 
 		if (!mockData) {
-			console.warn('⚠️  Mock data for "unknown" not found');
+			console.warn('⚠️  Mock data for "tax" not found');
 			console.warn('   Add mock data to tests/integration/mock-prisma.ts');
 			expect(mockData).toBeDefined();
 			return;
 		}
 
 		// Call the actual mapper
-		const result = toTaxRateRef(mockData as unknown);
+		const result = toTaxRateRef(mockData);
 
 		// Validate the result is defined
 		expect(result).toBeDefined();

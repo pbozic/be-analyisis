@@ -29,9 +29,15 @@ export const UserPermissionResponseBaseSchema = z
 	.openapi('UserPermissionResponseBase');
 
 export const UserPermissionResponseSchema = UserPermissionResponseBaseSchema.extend({
-	user: UserBaseSchema.optional(),
-	action: ActionBaseSchema.nullable().optional(),
-	reservation_module: ReservationModuleBaseSchema.nullable().optional(),
+	user: z.lazy(() => UserBaseSchema).optional(),
+	action: z
+		.lazy(() => ActionBaseSchema)
+		.nullable()
+		.optional(),
+	reservation_module: z
+		.lazy(() => ReservationModuleBaseSchema)
+		.nullable()
+		.optional(),
 }).openapi('UserPermissionResponse');
 
 export type UserPermissionBase = z.infer<typeof UserPermissionResponseBaseSchema>;

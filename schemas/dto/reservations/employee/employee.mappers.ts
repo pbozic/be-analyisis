@@ -5,6 +5,7 @@ import {
 	EmployeeWithSlotsDAOResponseSchema,
 } from './employee.dto';
 import type { EmployeeBasePrisma, EmployeeWithSlotsPrisma } from '../../../../prisma/includes/reservation/employee';
+import { toBusinessUserResponse } from '../../BusinessUser';
 
 function toIso(d: Date | string | null | undefined): string | undefined {
 	if (!d) return undefined;
@@ -52,7 +53,7 @@ export function toEmployeeDAOResponse(row: EmployeeBasePrisma): EmployeeDAORespo
  * Map EmployeeBasePrisma to EmployeeByIdDAOResponse (same as EmployeeDAOResponse for now)
  */
 export function toEmployeeByIdDAOResponse(row: EmployeeBasePrisma): EmployeeByIdDAOResponse {
-	const r = row;
+	const r = row as Record<string, any>;
 
 	const dto = {
 		employee_id: r.employee_id,

@@ -13,9 +13,6 @@ export {
 	type TokenDetail,
 } from './token.dto.js';
 
-// === Token Mappers ===
-export { toTokenRef, toTokenDetail } from './token.mappers.js';
-
 // === Schema Registration ===
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registerTokenSchemas(registry);

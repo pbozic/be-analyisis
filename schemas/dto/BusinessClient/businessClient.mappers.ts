@@ -68,7 +68,6 @@ export function toBusinessClientDetailResponse(row: BusinessClientDetailPrisma):
 	const r = row as BusinessClientDetailPrisma;
 	const asRec = r as Record<string, any>;
 
-	const business = asRec.crm_module?.business ? toBusinessMinimalResponse(asRec.crm_module.business) : null;
 	const taxi_orders = asRec.taxi_orders
 		? (asRec.taxi_orders as any[]).map((o) => ({
 				order_id: o.order_id,
@@ -87,7 +86,7 @@ export function toBusinessClientDetailResponse(row: BusinessClientDetailPrisma):
 		email: asRec.email ?? null,
 		telephone: asRec.telephone ?? '',
 		telephone_code: asRec.telephone_code ?? '',
-		business,
+		business: toBusinessMinimalResponse(asRec.crm_module.business),
 		taxi_orders,
 	});
 }

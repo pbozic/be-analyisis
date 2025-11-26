@@ -17,7 +17,7 @@ export const ReservationModuleBaseSchema = z
 			.string()
 			.nullable()
 			.optional()
-			.openapi({ example: 'abc123def456', description: 'Public booking link hash' }),
+			.openapi({ example: 'RMabc123def45678', description: 'Public link hash' }),
 		business_id: UUID,
 		action_bundle_id: UUID.nullable().optional(),
 		subscription_active_until: Timestamp.nullable().optional(),
@@ -138,13 +138,19 @@ export const ReservationModuleResponseSchema = ReservationModuleBaseSchema.exten
 	description: 'Complete reservation module response with related entities',
 });
 
+export const ReservationModuleRefResponseSchema = ReservationModuleRefSchema.omit({
+	business_id: true,
+}).openapi({
+	title: 'ReservationModuleRefResponse',
+});
+
 // ===== DAO RESPONSE SCHEMAS =====
 // DAO response for getReservationModuleById
 export const ReservationModuleDAOResponseSchema = ReservationModuleBaseSchema.extend({
 	business: z.lazy(() => BusinessRefSchema).optional(),
-	locations: z.array(LocationRefSchema).optional(),
-	services: z.array(ServiceRefSchema).optional(),
-	employees: z.array(EmployeeRefSchema).optional(),
+	locations: z.array(z.lazy(() => LocationRefSchema)).optional(),
+	services: z.array(z.lazy(() => ServiceRefSchema)).optional(),
+	employees: z.array(z.lazy(() => EmployeeRefSchema)).optional(),
 }).openapi({
 	title: 'ReservationModuleDAOResponse',
 	description: 'Reservation module response from DAO with locations, services, and employees',
@@ -183,12 +189,14 @@ export const ReservationModulePublicDAOResponseSchema = ReservationModuleBaseSch
 		.optional(),
 	services: z
 		.array(
-			ServiceRefSchema.extend({
-				assigned_employees: z.array(z.unknown()).optional(),
-			})
+			z.lazy(() =>
+				ServiceRefSchema.extend({
+					assigned_employees: z.array(z.unknown()).optional(),
+				})
+			)
 		)
 		.optional(),
-	locations: z.array(LocationRefSchema).optional(),
+	locations: z.array(z.lazy(() => LocationRefSchema)).optional(),
 }).openapi({
 	title: 'ReservationModulePublicDAOResponse',
 	description: 'Reservation module response from public link with full employee, service, and location details',
@@ -203,6 +211,7 @@ export type UpdateReservationModuleRequest = z.infer<typeof UpdateReservationMod
 export type UpdateReservationSettingsRequest = z.infer<typeof UpdateReservationSettingsRequestSchema>;
 export type GetBookingDataRequest = z.infer<typeof GetBookingDataRequestSchema>;
 export type ReservationModuleResponse = z.infer<typeof ReservationModuleResponseSchema>;
+export type ReservationModuleRefResponse = z.infer<typeof ReservationModuleRefResponseSchema>;
 export type ReservationModuleDAOResponse = z.infer<typeof ReservationModuleDAOResponseSchema>;
 export type ReservationModulePublicDAOResponse = z.infer<typeof ReservationModulePublicDAOResponseSchema>;
 

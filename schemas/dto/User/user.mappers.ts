@@ -1,12 +1,18 @@
 import { Prisma } from '@prisma/client';
 
-import { UserWithAddressesResponseSchema, UserListResponseSchema, UserWithParentUserResponseSchema } from './user.ts';
-import type { UserWithAddressesResponse, UserListResponse, UserWithParentUserResponse } from './user.ts';
+import {
+	UserWithAddressesResponseSchema,
+	UserListResponseSchema,
+	UserWithParentUserResponseSchema,
+	UserRefSchema,
+} from './user.ts';
+import type { UserWithAddressesResponse, UserListResponse, UserWithParentUserResponse, UserRef } from './user.ts';
 import type { UserLoginResponse } from '../Auth/AuthResponse.dto.ts';
 import {
 	UserAddressesPrisma,
 	UserAddressesAndConnectionsCreationPrisma,
 	UserLoginPrisma,
+	UserPrisma,
 } from '../../../prisma/includes/user.ts';
 import { toAddressResponse } from '../Address/address.mappers.ts';
 import { toTransportModuleDetail } from '../Transport/transport.mappers.ts';
@@ -16,6 +22,7 @@ import { toDailyMealsModuleResponse } from '../Business/business.mappers.ts';
 import { toReservationModuleResponse } from '../reservations/reservation-module/reservation-module.mappers.ts';
 import { toTableReservationModuleResponse } from '../TableReservation/tableReservationsModule.mappers.ts';
 import { toVehicleRef } from '../Vehicles/vehicle.mappers.ts';
+import { toUserAddressRef } from '../UserAddress/userAddress.mappers.ts';
 /**
  * Convert date to ISO string, handling null/undefined.
  */
@@ -70,7 +77,6 @@ export function toUserResponse(row: Prisma.usersGetPayload<object>): UserWithPar
 		wallet_balance: r.wallet_balance ?? 0,
 		subscribed_to_daily_meals: r.subscribed_to_daily_meals ?? false,
 		language: r.language ?? null,
-		details: r.details ?? null,
 		referral_code: r.referral_code ?? null,
 		allow_marketing_push_notifications: r.allow_marketing_push_notifications ?? null,
 		allow_ads_personalization: r.allow_ads_personalization ?? null,
@@ -98,9 +104,7 @@ export function toUserWithAddressesResponse(row: UserAddressesPrisma): UserWithA
 
 	return UserWithAddressesResponseSchema.parse({
 		...base,
-		addresses: r.addresses
-			? (r.addresses as any[]).map((addr) => mapUserAddressRef(addr)).filter((a) => a !== null)
-			: null,
+		addresses: r.addresses ? r.addresses.map(toUserAddressRef) : null,
 	});
 }
 let _UserLoginResponseSchema: typeof import('../Auth/AuthResponse.dto.ts').UserLoginResponseSchema;
@@ -286,6 +290,22 @@ export function toUsersListResponse(rows: UserAddressesAndConnectionsCreationPri
 	return UserListResponseSchema.parse({
 		data: users,
 		total: users.length,
+	});
+}
+
+/**
+ * Map user object to userRef
+ */
+export function toUserRef(row: UserPrisma): UserRef {
+	const r = row as Record<string, any>;
+
+	return UserRefSchema.parse({
+		user_id: r.user_id,
+		first_name: r.first_name ?? null,
+		last_name: r.last_name ?? null,
+		email: r.email ?? null,
+		telephone: r.telephone ?? '',
+		user_role: r.user_role ?? '',
 	});
 }
 

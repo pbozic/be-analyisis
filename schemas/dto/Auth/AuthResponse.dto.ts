@@ -29,29 +29,31 @@ export type AuthTokens = z.infer<typeof AuthTokensSchema>;
 
 // Login / Register / Refresh - flattened onto the user object as returned by controller
 export const UserLoginResponseSchema = UserResponseSchema.extend({
-	addresses: z.array(UserAddressRefSchema).nullable(),
-	driver: DriverDetailSchema.pick({
-		driver_id: true,
-		online: true,
-		on_order: true,
-		ride_requirements: true,
-		taxi_orders_toggled: true,
-		transfer_orders_toggled: true,
-		delivery_orders_toggled: true,
-		courier_orders_toggled: true,
-		transport_module_id: true,
-		last_used_vehicle_id: true,
-		current_vehicle: true,
-		vehicles: true,
-	})
-		.extend({
-			activity_logs: z.array(z.unknown()).nullable(),
-		})
+	addresses: z.array(z.lazy(() => UserAddressRefSchema)).nullable(),
+	driver: z
+		.lazy(() =>
+			DriverDetailSchema.pick({
+				driver_id: true,
+				online: true,
+				on_order: true,
+				ride_requirements: true,
+				taxi_orders_toggled: true,
+				transfer_orders_toggled: true,
+				delivery_orders_toggled: true,
+				courier_orders_toggled: true,
+				transport_module_id: true,
+				last_used_vehicle_id: true,
+				current_vehicle: true,
+				vehicles: true,
+			}).extend({
+				activity_logs: z.array(z.unknown()).nullable(),
+			})
+		)
 		.nullable(),
-	child_users: z.array(GroupUserWithChildResponseSchema).nullable(),
-	parent_user: GroupUserWithParentResponseSchema.nullable(),
-	referrals_made: z.array(ReferralBaseSchema).nullable(),
-	referral: ReferralDetailSchema.nullable(),
+	child_users: z.array(z.lazy(() => GroupUserWithChildResponseSchema)).nullable(),
+	parent_user: z.lazy(() => GroupUserWithParentResponseSchema).nullable(),
+	referrals_made: z.array(z.lazy(() => ReferralBaseSchema)).nullable(),
+	referral: z.lazy(() => ReferralDetailSchema).nullable(),
 	user_roles: z.array(
 		z.object({
 			user_roles_id: UUID,
@@ -59,17 +61,23 @@ export const UserLoginResponseSchema = UserResponseSchema.extend({
 			primary: z.boolean(),
 		})
 	),
-	business_users: z.array(BusinessUserWithBusinessResponseSchema.omit({ allowance: true })).nullable(),
-	user_favorite_businesses: z.array(FavoriteBusinessDetailSchema).nullable(),
-	user_favorite_drivers: z.array(FavoriteBusinessDetailSchema).nullable(),
-	profile_picture: FileBaseSchema.nullable().optional(),
+	business_users: z.array(z.lazy(() => BusinessUserWithBusinessResponseSchema.omit({ allowance: true }))).nullable(),
+	user_favorite_businesses: z.array(z.lazy(() => FavoriteBusinessDetailSchema)).nullable(),
+	user_favorite_drivers: z.array(z.lazy(() => FavoriteBusinessDetailSchema)).nullable(),
+	profile_picture: z
+		.lazy(() => FileBaseSchema)
+		.nullable()
+		.optional(),
 });
 export type UserLoginResponse = z.infer<typeof UserLoginResponseSchema>;
 
 export const AuthUserResponseSchema = UserLoginResponseSchema.extend({
 	access_token: z.string(),
 	refresh_token: z.string(),
-	payment_methods: z.array(PaymentMethodSchema).default([]).optional(),
+	payment_methods: z
+		.array(z.lazy(() => PaymentMethodSchema))
+		.default([])
+		.optional(),
 	profile_picture: z.string().nullable().optional(),
 }).openapi({ title: 'AuthUserResponse' });
 export type AuthUserResponse = z.infer<typeof AuthUserResponseSchema>;

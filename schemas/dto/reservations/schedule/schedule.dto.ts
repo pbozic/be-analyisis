@@ -38,7 +38,10 @@ export const ScheduleRefSchema = z
 
 // ===== DETAIL SCHEMA (full schedule with full relations as returned by DAO) =====
 export const ScheduleDetailSchema = ScheduleBaseSchema.extend({
-	location: LocationRefSchema.nullable().optional(),
+	location: z
+		.lazy(() => LocationRefSchema)
+		.nullable()
+		.optional(),
 }).openapi({
 	title: 'ScheduleDetail',
 	description: 'Full schedule details returned from DAO functions with location',
@@ -373,7 +376,7 @@ export const GetSchedulesWithSlotsSchema = z
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const ScheduleResponseSchema = ScheduleBaseSchema.extend({
-	location: LocationRefSchema.optional(),
+	location: z.lazy(() => LocationRefSchema).optional(),
 }).openapi({
 	title: 'ScheduleResponse',
 	description: 'Complete schedule response with related entities',
@@ -382,8 +385,8 @@ export const ScheduleResponseSchema = ScheduleBaseSchema.extend({
 // ===== DAO RESPONSE SCHEMAS =====
 // DAO response for getSchedulesByLocationId and getScheduleById
 export const ScheduleDAOResponseSchema = ScheduleBaseSchema.extend({
-	location: LocationRefSchema.optional(),
-	schedule_employees: z.array(ScheduleEmployeeRefSchema).optional(),
+	location: z.lazy(() => LocationRefSchema).optional(),
+	schedule_employees: z.array(z.lazy(() => ScheduleEmployeeRefSchema)).optional(),
 }).openapi({
 	title: 'ScheduleDAOResponse',
 	description: 'Schedule response from DAO functions with location and employees',

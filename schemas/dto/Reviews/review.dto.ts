@@ -58,7 +58,7 @@ export type ReviewRef = z.infer<typeof ReviewRefSchema>;
 // Response includes author as UserRef and items as array of ReviewItemResponse
 export const ReviewResponseSchema = ReviewBaseSchema.merge(
 	z.object({
-		author: UserRefSchema.optional(),
+		author: z.lazy(() => UserRefSchema).optional(),
 		items: z.array(ReviewItemResponseSchema).optional(),
 	})
 );

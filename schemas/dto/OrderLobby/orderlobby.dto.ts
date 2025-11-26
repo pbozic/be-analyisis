@@ -6,6 +6,7 @@ import { UserRefSchema } from '../User/user.js';
 import { BusinessRefSchema } from '../Business/business.js';
 import { OrderLobbyItemRefSchema } from './orderLobbyItem.dto.js';
 import { LocationWithAddressSchema } from '../Address/address.js';
+import { OrderLobbyUserRefSchema } from './orderLobbyUser.dto.js';
 extendZodWithOpenApi(z);
 
 // ===== BASE SCHEMAS =====
@@ -17,10 +18,13 @@ export const OrderLobbyBaseSchema = z
 		lobby_name: z.string().min(1).describe('Name of the order lobby'),
 		lobby_description: z.string().describe('Description of the order lobby'),
 		active: z.boolean().describe('Whether the lobby is active'),
-		delivery_location: LocationWithAddressSchema.nullable().optional(),
+		delivery_location: z
+			.lazy(() => LocationWithAddressSchema)
+			.nullable()
+			.optional(),
 		courier_note: z.string().nullable().optional().describe('Note for the courier'),
 		restaurant_message: z.string().nullable().optional().describe('Message from restaurant'),
-		stores_id: UUID.describe('ID of the associated store'),
+		stores_id: UUID.nullable().optional().describe('ID of the associated store'),
 		food_drinks_id: UUID.nullable().optional().describe('ID of the food/drinks module'),
 		creator_id: UUID.describe('ID of the user who created the lobby'),
 		creating_business_id: UUID.describe('ID of the business that created the lobby'),
@@ -57,16 +61,10 @@ export type OrderLobbyRef = z.infer<typeof OrderLobbyRefSchema>;
 
 // OrderLobby Response Schema - Base with embedded refs
 export const OrderLobbyResponseSchema = OrderLobbyBaseSchema.extend({
-	creator: UserRefSchema.optional(),
-	business: BusinessRefSchema.optional(),
+	creator: z.lazy(() => UserRefSchema).optional(),
+	business: z.lazy(() => BusinessRefSchema).optional(),
 	order_lobby_items: z.array(OrderLobbyItemRefSchema).describe('Array of order lobby items').optional(),
-	order_lobby_users: z
-		.array(
-			z.object({
-				user: UserRefSchema.partial().describe('User in the order lobby'),
-			})
-		)
-		.describe('Array of users in the order lobby'),
+	order_lobby_users: z.array(OrderLobbyUserRefSchema).describe('Array of users in the order lobby'),
 }).openapi({
 	title: 'OrderLobbyResponse',
 	description: 'Complete order lobby response with related entities',

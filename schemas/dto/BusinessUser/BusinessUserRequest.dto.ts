@@ -4,8 +4,8 @@ import { COMPANY_ROLE, USER_ROLES } from '@prisma/client';
 
 import { UUID, Email, PhoneNumber, Address } from '../../primitives.js';
 import { FullAddressSchema } from '../Address/address.js';
-import { OnlineStatusUpdateSchema } from '../Driver/driver.dto.js';
 import { WalletUpdateSchema } from '../Payments/payment.dto.js';
+import { OnlineStatusUpdateSchema } from '../Driver/driver.validators.js';
 
 extendZodWithOpenApi(z);
 
@@ -56,10 +56,12 @@ export const CreateBusinessUserSchema = z
 	});
 
 // Used by: addOperatingAddress (POST /business-users/{business_users_id}/address/operating)
-export const AddOperatingAddressSchema = FullAddressSchema.openapi({
-	title: 'AddOperatingAddressRequest',
-	description: 'Schema for adding an operating address to a business user',
-});
+export const AddOperatingAddressSchema = z
+	.lazy(() => FullAddressSchema)
+	.openapi({
+		title: 'AddOperatingAddressRequest',
+		description: 'Schema for adding an operating address to a business user',
+	});
 
 // Used by: updateCompanyRole (PATCH /business-users/company-role)
 export const UpdateCompanyRoleSchema = z
@@ -83,7 +85,7 @@ export const UpdateBusinessUserOnlineStatusSchema = OnlineStatusUpdateSchema.ext
 export const SetAllowanceSchema = z
 	.object({
 		business_users_id: UUID,
-		wallet: WalletUpdateSchema.optional(),
+		wallet: z.lazy(() => WalletUpdateSchema).optional(),
 		purchase_order: z
 			.object({
 				amount_taxi_purchase_order: z.number().min(0).optional(),

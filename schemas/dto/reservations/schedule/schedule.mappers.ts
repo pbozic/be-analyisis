@@ -22,7 +22,7 @@ export function toScheduleDAOResponse(row: ScheduleBasePrisma): ScheduleDAORespo
 		color: r.color ?? null,
 		start_date: toIso(r.start_date),
 		end_date: toIso(r.end_date),
-		location: r.location ?? null,
+		location: r.location ?? undefined,
 	};
 
 	return ScheduleDAOResponseSchema.parse(dto);

@@ -462,7 +462,7 @@ export async function updateScheduleSlotWithData(data: UpdateScheduleSlotWithDat
  * @summary Update a new schedule slot with booking slots and exceptions
  * @description Updates schedule slot with associated booking slots and exceptions.
  * @operationId updateScheduleSlotWithBookingSlotsAndExceptions
- * @bodyContent {UpdateScheduleSlotWithDataInputSchema} application/json
+ * @bodyContent {UpdateScheduleSlotWithDataInput} application/json
  * @response 201 - Schedule slot with booking slots and exceptions updated successfully
  * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data

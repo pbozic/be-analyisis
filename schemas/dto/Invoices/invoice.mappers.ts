@@ -8,8 +8,14 @@ import type { BusinessPremiseWithIncludesPrisma } from '../../../prisma/includes
 import type { ElectronicDeviceWithIncludesPrisma } from '../../../prisma/includes/electronicDevice.js';
 import type { DeviceAssignmentWithIncludesPrisma } from '../../../prisma/includes/deviceAssignment.js';
 
-export function toBusinessPremiseResponse(row: BusinessPremiseWithIncludesPrisma | unknown): BusinessPremiseResponse {
-	return BusinessPremiseResponseSchema.parse(row);
+export function toBusinessPremiseResponse(row: BusinessPremiseWithIncludesPrisma): BusinessPremiseResponse {
+	return BusinessPremiseResponseSchema.parse({
+		...row,
+		validity_date: row.validity_date ? row.validity_date.toISOString() : null,
+		registered_at: row.registered_at ? row.registered_at.toISOString() : null,
+		created_at: row.created_at.toISOString(),
+		updated_at: row.updated_at.toISOString(),
+	});
 }
 
 export function toElectronicDeviceResponse(

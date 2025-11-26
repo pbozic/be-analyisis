@@ -16,10 +16,10 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('Document Mapper - toDocumentResponse', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.documentwithincludes;
+		const mockData = mockPrismaData.document;
 
 		if (!mockData) {
-			console.warn('⚠️  Mock data for "documentwithincludes" not found');
+			console.warn('⚠️  Mock data for "document" not found');
 			console.warn('   Add mock data to tests/integration/mock-prisma.ts');
 			expect(mockData).toBeDefined();
 			return;

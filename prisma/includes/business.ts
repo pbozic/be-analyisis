@@ -78,7 +78,14 @@ export const businessByIdInclude = Prisma.validator<Prisma.businessInclude>()({
 			},
 		},
 	},
-	daily_meals_module: true,
+	daily_meals_module: {
+		include: {
+			daily_meal_menus: true,
+			daily_meal_drivers: true,
+			daily_meal_categories: true,
+			daily_meal_subscriptions: true,
+		},
+	},
 	table_reservations_module: {
 		include: {
 			reservations: {

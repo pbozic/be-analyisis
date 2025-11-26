@@ -34,8 +34,11 @@ export const TokenRefSchema = z
 export type TokenRef = z.infer<typeof TokenRefSchema>;
 
 export const TokenDetailSchema = TokenBaseSchema.extend({
-	user: BasicUserDataSchema.nullable().optional(),
-	businesses: z.array(BusinessRefSchema).optional(),
+	user: z
+		.lazy(() => BasicUserDataSchema)
+		.nullable()
+		.optional(),
+	businesses: z.array(z.lazy(() => BusinessRefSchema)).optional(),
 }).openapi('TokenDetail');
 export type TokenDetail = z.infer<typeof TokenDetailSchema>;
 

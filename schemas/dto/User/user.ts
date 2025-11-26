@@ -1,14 +1,15 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { USER_ROLES } from '@prisma/client';
 
 import { UUID, Email, PhoneNumber, LanguageCode, Timestamp } from '../../primitives.js';
-import { UserAddressRefSchema } from '../Address/index.js';
 import { BusinessUserRefSchema, BusinessUserWithBusinessResponseSchema } from '../BusinessUser/index.js';
 import { TransactionRefSchema } from './transaction.js';
 import { DriverBaseSchema } from '../Driver';
 import { FileRefSchema } from '../Files/file.dto.js';
 import { GroupUserDetailResponseSchema } from '../Group/groupUser.js';
 import { ReferralBaseSchema } from '../Referral';
+import { UserAddressResponseSchema } from '../UserAddress/userAddress.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -113,7 +114,6 @@ export const UserBaseSchema = z.object({
 	wallet_balance: z.number(),
 	subscribed_to_daily_meals: z.boolean(),
 	language: z.string().nullable(),
-	details: z.record(z.any()).nullable(),
 	referral_code: z.string().nullable(),
 	allow_marketing_push_notifications: z.boolean().nullable(),
 	allow_ads_personalization: z.boolean().nullable(),
@@ -131,9 +131,9 @@ export const UserRefSchema = z.object({
 	user_id: UUID,
 	first_name: z.string().nullable(),
 	last_name: z.string().nullable(),
-	email: z.string().nullable(),
-	telephone: z.string(),
-	user_role: z.string(),
+	email: z.string().nullable().optional(),
+	telephone: PhoneNumber,
+	user_role: z.nativeEnum(USER_ROLES),
 });
 
 export type UserRef = z.infer<typeof UserRefSchema>;
@@ -145,7 +145,7 @@ export const UserResponseSchema = UserBaseSchema.omit({ password: true })
 			.array(z.lazy(() => BusinessUserWithBusinessResponseSchema))
 			.nullable()
 			.optional(),
-		addresses: z.array(UserAddressRefSchema).nullable().optional(),
+		addresses: z.array(UserAddressResponseSchema).nullable().optional(),
 		driver: z
 			.lazy(() => DriverBaseSchema)
 			.nullable()
@@ -166,13 +166,13 @@ export const UserWithReferralsResponseSchema = UserResponseSchema.extend({
 
 // User with Addresses - for functions that include addresses
 export const UserWithAddressesResponseSchema = UserResponseSchema.extend({
-	addresses: z.array(UserAddressRefSchema).nullable(),
+	addresses: z.lazy(() => z.array(UserAddressResponseSchema)).nullable(),
 });
 
 // User with both Business Users and Addresses - for complex includes
 export const UserDetailResponseSchema = UserResponseSchema.extend({
 	business_users: z.array(z.lazy(() => BusinessUserRefSchema)).nullable(),
-	addresses: z.array(UserAddressRefSchema).nullable(),
+	addresses: z.array(UserAddressResponseSchema).nullable(),
 });
 
 // User with Transactions - for getTransactions function

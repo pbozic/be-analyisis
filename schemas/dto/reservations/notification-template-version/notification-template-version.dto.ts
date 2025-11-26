@@ -48,7 +48,7 @@ export const CreateNotificationTemplateVersionRequestSchema = z
 		subject: z.string().optional().nullable(),
 		body_text: z.string().optional().nullable(),
 		variables_json_schema: JsonObjectSchema,
-		compiled_artifacts: JsonObjectSchema.optional(),
+		compiled_artifacts: z.lazy(() => JsonObjectSchema).optional(),
 		created_by_user_id: UUID.optional(),
 	})
 	.openapi({
@@ -61,8 +61,8 @@ export const UpdateNotificationTemplateVersionRequestSchema = z
 		status: z.nativeEnum(TEMPLATE_VERSION_STATUS).optional(),
 		subject: z.string().optional().nullable(),
 		body_text: z.string().optional().nullable(),
-		variables_json_schema: JsonObjectSchema.optional(),
-		compiled_artifacts: JsonObjectSchema.optional(),
+		variables_json_schema: z.lazy(() => JsonObjectSchema).optional(),
+		compiled_artifacts: z.lazy(() => JsonObjectSchema).optional(),
 	})
 	.openapi({
 		title: 'UpdateNotificationTemplateVersionRequest',
@@ -76,8 +76,8 @@ export const UpdateNotificationTemplateVersionByCompositeRequestSchema = z
 		status: z.nativeEnum(TEMPLATE_VERSION_STATUS).optional(),
 		subject: z.string().optional().nullable(),
 		body_text: z.string().optional().nullable(),
-		variables_json_schema: JsonObjectSchema.optional(),
-		compiled_artifacts: JsonObjectSchema.optional(),
+		variables_json_schema: z.lazy(() => JsonObjectSchema).optional(),
+		compiled_artifacts: z.lazy(() => JsonObjectSchema).optional(),
 	})
 	.openapi({
 		title: 'UpdateNotificationTemplateVersionByCompositeRequest',
@@ -86,7 +86,7 @@ export const UpdateNotificationTemplateVersionByCompositeRequestSchema = z
 
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 export const NotificationTemplateVersionResponseSchema = NotificationTemplateVersionBaseSchema.extend({
-	template: NotificationTemplateRefSchema.optional(),
+	template: z.lazy(() => NotificationTemplateRefSchema).optional(),
 }).openapi({
 	title: 'NotificationTemplateVersionResponse',
 	description: 'Complete notification template version response with related entities',

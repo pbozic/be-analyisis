@@ -16,7 +16,7 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('FoodDrinks Mapper - toFoodDrinksDetail', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.fooddrinkswithincludes;
+		const mockData = mockPrismaData.fooddrinks;
 
 		if (!mockData) {
 			console.warn('⚠️  Mock data for "fooddrinkswithincludes" not found');

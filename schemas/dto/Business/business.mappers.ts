@@ -21,13 +21,13 @@ import { BusinessWithDailyMealsResponseDto } from './business.dto.js';
 import type { BusinessWithDailyMealsResponseDto as BusinessWithDailyMealsResponseType } from './business.dto.js';
 import { toAddressResponse } from '../Address/address.mappers.ts';
 import { toBusinessUserResponse } from '../BusinessUser/businessUser.mappers.ts';
-import { toTransportModuleDetail } from '../Transport/transport.mappers.ts';
-import { toFoodDrinksDetail } from '../FoodDrinks/foodDrinks.mappers.ts';
+import { toTransportModuleRef } from '../Transport/transport.mappers.ts';
+import { toFoodDrinksRef } from '../FoodDrinks/foodDrinks.mappers.ts';
 import { toStoreDetail } from '../Stores/store.mappers.ts';
-import { toReservationModuleResponse } from '../reservations/reservation-module/reservation-module.mappers.ts';
+import { toReservationModuleRef } from '../reservations/reservation-module/reservation-module.mappers.ts';
 import { toBusinessClientResponse } from '../BusinessClient/businessClient.mappers.ts';
 import { toTableReservationDetail } from '../TableReservation/tableReservation.mappers.ts';
-import { toTableReservationModuleResponse } from '../TableReservation/tableReservationsModule.mappers.ts';
+import { toTableReservationModuleRef } from '../TableReservation/tableReservationsModule.mappers.ts';
 import { toBusinessLocalLocationDetail } from '../Stores/localLocation.mappers.ts';
 
 // Map a lightweight GetBusinessesPrisma payload to the public BusinessResponseDto
@@ -153,9 +153,9 @@ export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAll
 		updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
 
 		// Module relationships
-		transport_module: r.transport_module ? toTransportModuleDetail(r.transport_module) : null,
+		transport_module: r.transport_module ? toTransportModuleRef(r.transport_module) : null,
 		transport_module_id: r.transport_module?.transport_module_id,
-		food_drinks_module: r.food_drinks_module ? toFoodDrinksDetail(r.food_drinks_module) : null,
+		food_drinks_module: r.food_drinks_module ? toFoodDrinksRef(r.food_drinks_module) : null,
 		food_drinks_module_id:
 			(asRec.food_drinks_module &&
 				(asRec.food_drinks_module.food_drinks_module_id ?? asRec.food_drinks_module.food_drinks_id)) ??
@@ -166,10 +166,10 @@ export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAll
 			(asRec.stores_module && (asRec.stores_module.stores_module_id ?? asRec.stores_module.stores_id)) ??
 			asRec.stores_id ??
 			null,
-		reservation_module: r.reservation_module ? toReservationModuleResponse(r.reservation_module) : null,
+		reservation_module: r.reservation_module ? toReservationModuleRef(r.reservation_module) : null,
 		reservation_module_id: r.reservation_module?.reservation_module_id,
 		table_reservations_module: r.table_reservations_module
-			? toTableReservationModuleResponse(r.table_reservations_module)
+			? toTableReservationModuleRef(r.table_reservations_module)
 			: null,
 		table_reservations_module_id: r.table_reservations_module?.id,
 		daily_meals_module: r.daily_meals_module ? toDailyMealsModuleResponse(r.daily_meals_module) : null,
@@ -211,10 +211,33 @@ export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAll
 
 // Mapper that validates businesses with daily meals module
 export function parseBusinessWithDailyMeals(business: BusinessByIdPrisma): BusinessWithDailyMealsResponseType {
-	// Build DTO shape expected by the schema
-	const asRec = business as Record<string, any>;
+	const asRec = business;
 	const dto = {
-		...asRec,
+		business_id: asRec.business_id,
+		business_details: asRec.business_details ?? null,
+		tax_id: asRec.tax_id ?? null,
+		registration_id: asRec.registration_id ?? null,
+		email: asRec.email ?? null,
+		telephone: asRec.telephone ?? null,
+		telephone_code: asRec.telephone_code ?? null,
+		website_url: asRec.website_url ?? null,
+		working_hours: asRec.working_hours ?? null,
+		is_business_unit: asRec.is_business_unit ?? null,
+		business_group_name: asRec.business_group_name ?? null,
+		parent_business_id: asRec.parent_business_id ?? null,
+		stripe_account_id: asRec.stripe_account_id ?? null,
+		stripe_customer_id: asRec.stripe_customer_id ?? null,
+		word_buy_stripe_subscription_id: asRec.word_buy_stripe_subscription_id ?? null,
+		first_activated_at: asRec.first_activated_at ? new Date(asRec.first_activated_at).toISOString() : undefined,
+		active: asRec.active ?? null,
+		sales_representative_id: asRec.sales_representative_id ?? null,
+		address_id: asRec.address_id ?? null,
+		created_at: asRec.created_at ? new Date(asRec.created_at).toISOString() : undefined,
+		updated_at: asRec.updated_at ? new Date(asRec.updated_at).toISOString() : undefined,
+		daily_meals_module: {
+			...toDailyMealsModuleResponse(asRec.daily_meals_module),
+			daily_meal_menus: asRec.daily_meals_module?.daily_meal_menus ?? [],
+		},
 		daily_meal_drivers: asRec.daily_meals_module?.daily_meal_drivers ?? [],
 	};
 	return BusinessWithDailyMealsResponseDto.parse(dto);
@@ -266,14 +289,9 @@ export function toBusinessMinimalResponse(row: any): BusinessResponseType {
 	const r = row;
 	const asRec = r as Record<string, any>;
 
-	const businessDetails = asRec.business_details ?? {
-		name: asRec.name ?? null,
-		description: asRec.description ?? null,
-	};
-
 	return BusinessResponseDto.parse({
 		business_id: r.business_id,
-		business_details: businessDetails,
+		business_details: asRec.business_details ?? null,
 		tax_id: asRec.tax_id ?? null,
 		registration_id: asRec.registration_id ?? null,
 		email: asRec.email ?? null,

@@ -69,7 +69,24 @@ export function toAddonWithActionsAndUsagesResponse(row: AddonWithActionsAndUsag
  * Map a business_addon row that includes the nested addon (with actions) into an AddonWithActionsResponse
  */
 export function toAddonFromBusinessAddon(row: BusinessAddonWithAddonPrisma): AddonResponse {
-	return toAddonWithActionsResponse(row.addon as AddonWithActionsPrisma);
+	const addon = row.addon;
+	const dto = {
+		addon_id: row.addon_id,
+		module: addon.module,
+		name: addon.name,
+		price_cents: addon.price_cents,
+		stripe_price_id: addon.stripe_price_id,
+		stripe_product_id: addon.stripe_product_id,
+		// `actions` on addon can be join rows (addon_action). If the join includes the nested `action` relation
+		// we map to ActionRef; otherwise omit those entries (we can't fabricate action.name/module).
+		actions: (addon.actions || [])
+			.map((a: any) =>
+				a && a.action ? { action_id: a.action.action_id, name: a.action.name, module: a.action.module } : null
+			)
+			.filter(Boolean),
+	};
+
+	return AddonResponseSchema.parse(dto);
 }
 
 export default {

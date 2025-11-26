@@ -1,9 +1,8 @@
-import { z } from 'zod';
-
 import { DailyMealCategoryPriceBaseSchema, DailyMealCategoryDetailSchema } from './dailyMealCategory.js';
 import type { DailyMealCategoryPriceBase, DailyMealCategoryDetail } from './dailyMealCategory.js';
 import type { DailyMealCategoryWithPricesPrisma } from '../../../prisma/includes/dailyMealCategory.js';
-import { CategoryRefSchema } from '../Category/category.dto.js';
+import { CategoryBase, CategoryBaseSchema } from '../Category/category.dto.js';
+
 // =======================
 // Mappers from daily-meal-category.dto.ts
 // =======================
@@ -28,16 +27,15 @@ export function toDailyMealCategoryPriceBase(row: unknown): DailyMealCategoryPri
 	});
 }
 
-type CategoryLike = { categories_id: string; name?: string | null; tag?: string; category_type?: string };
 type PrismaDailyMealCategory = {
 	daily_meal_category_id: string;
-	business_id: string;
+	daily_meals_id: string;
 	category_id: string;
 	start_date: string | Date;
 	active?: boolean | null;
 	created_at?: string | Date | null;
 	updated_at?: string | Date | null;
-	category?: CategoryLike | null;
+	category?: CategoryBase | null;
 	daily_meal_category_prices?: PrismaDailyMealCategoryPrice[];
 };
 
@@ -46,12 +44,28 @@ export function toDailyMealCategoryDetail(row: unknown): DailyMealCategoryDetail
 	const prices = Array.isArray(r.daily_meal_category_prices)
 		? r.daily_meal_category_prices.map((p: unknown) => toDailyMealCategoryPriceBase(p))
 		: [];
+	console.log('Category in toDailyMealCategoryDetail:', r.category);
 	const category = r.category
-		? (CategoryRefSchema.parse(r.category) as z.infer<typeof CategoryRefSchema>)
+		? {
+				categories_id: r.category.categories_id,
+				name: r.category.name ?? undefined,
+				dessription: r.category.description ?? undefined,
+				tag: r.category.tag ?? undefined,
+				category_type: r.category.category_type ?? undefined,
+				icon_file_id: r.category.icon_file_id ?? undefined,
+				translatable_id: r.category.translatable_id ?? undefined,
+				parent_categories_id: r.category.parent_categories_id ?? undefined,
+				created_at: r.category.created_at
+					? new Date(r.category.created_at as string | Date).toISOString()
+					: new Date().toISOString(),
+				updated_at: r.category.updated_at
+					? new Date(r.category.updated_at as string | Date).toISOString()
+					: undefined,
+			}
 		: undefined;
 	return DailyMealCategoryDetailSchema.parse({
 		daily_meal_category_id: r.daily_meal_category_id,
-		business_id: r.business_id,
+		daily_meals_id: r.daily_meals_id,
 		category_id: r.category_id,
 		start_date: r.start_date ? new Date(r.start_date as string | Date).toISOString() : new Date().toISOString(),
 		active: r.active ?? undefined,
@@ -79,7 +93,7 @@ export function toDailyMealCategoryResponse(row: DailyMealCategoryWithPricesPris
 		created_at: toIso(r.created_at) ?? new Date().toISOString(),
 		start_date: toIso(r.start_date) ?? new Date().toISOString(),
 		active: !!r.active,
-		category: r.category ? CategoryRefSchema.parse(r.category) : null,
+		category: r.category ? CategoryBaseSchema.parse(r.category) : undefined,
 		daily_meals_module: r.daily_meals_module ?? null,
 		menu_categories: Array.isArray(r.menu_categories)
 			? r.menu_categories.map((mc: any) => ({ menu_categories_id: mc.menu_categories_id, name: mc.name }))

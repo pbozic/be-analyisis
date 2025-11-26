@@ -100,9 +100,9 @@ export type ScoringPointsRef = z.infer<typeof ScoringPointsRefSchema>;
 
 // LateEvents Response Schema - Base with embedded refs
 export const LateEventsResponseSchema = LateEventsBaseSchema.extend({
-	user: UserRefSchema.optional(),
-	stores_module: StoreBaseSchema.optional(),
-	food_drinks_module: FoodDrinksBaseSchema.optional(),
+	user: z.lazy(() => UserRefSchema).optional(),
+	stores_module: z.lazy(() => StoreBaseSchema).optional(),
+	food_drinks_module: z.lazy(() => FoodDrinksBaseSchema).optional(),
 	driver: DriverRefSchema.optional(),
 	delivery_order: OrderRefSchema.optional(),
 	taxi_order: OrderRefSchema.optional(),

@@ -16,10 +16,10 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('PromoAnalytics Mapper - toPromoAnalyticsDetail', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.unknown || {};
+		const mockData = mockPrismaData.promoanalytics;
 
 		if (!mockData) {
-			console.warn('⚠️  Mock data for "unknown" not found');
+			console.warn('⚠️  Mock data for "promoanalytics" not found');
 			console.warn('   Add mock data to tests/integration/mock-prisma.ts');
 			expect(mockData).toBeDefined();
 			return;

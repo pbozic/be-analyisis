@@ -7,11 +7,9 @@ import { registerSchemas as registerCategoryValidatorSchemas } from './category.
 // === Category DTOs (Response) ===
 export {
 	CategoryBaseSchema,
-	CategoryRefSchema,
 	CategoryResponseSchema,
 	CategoryListResponseSchema,
 	type CategoryBase,
-	type CategoryRef,
 	type CategoryResponse,
 	type CategoryListResponse,
 } from './category.dto.js';

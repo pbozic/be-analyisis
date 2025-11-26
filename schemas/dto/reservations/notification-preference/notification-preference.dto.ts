@@ -67,7 +67,7 @@ export const UpdateNotificationPreferenceRequestSchema = CreateNotificationPrefe
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const NotificationPreferenceResponseSchema = NotificationPreferenceBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 }).openapi({
 	title: 'NotificationPreferenceResponse',
 	description: 'Complete notification preference response with related entities',

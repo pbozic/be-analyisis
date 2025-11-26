@@ -112,7 +112,7 @@ export type PromoSectionBase = z.infer<typeof PromoSectionBaseSchema>;
 
 export const PromoSectionDetailSchema = PromoSectionBaseSchema.partial()
 	.extend({
-		businesses: z.array(BusinessRefSchema).optional(),
+		businesses: z.array(z.lazy(() => BusinessRefSchema)).optional(),
 		translations: TranslationsSchema.optional(),
 	})
 	.openapi('PromoSectionDetail');

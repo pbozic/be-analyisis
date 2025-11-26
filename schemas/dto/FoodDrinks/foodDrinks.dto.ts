@@ -13,6 +13,11 @@ extendZodWithOpenApi(z);
 export const FoodDrinksBaseSchema = z
 	.object({
 		food_drinks_id: UUID,
+		public_link_hash: z
+			.string()
+			.nullable()
+			.optional()
+			.openapi({ example: 'FDabc123def45678', description: 'Public link hash' }),
 		business_id: UUID.optional(),
 		enabled: z.boolean().optional(),
 		online: z.boolean().optional(),
@@ -25,12 +30,8 @@ export const FoodDrinksBaseSchema = z
 
 export type FoodDrinksBase = z.infer<typeof FoodDrinksBaseSchema>;
 
-export const FoodDrinksModuleRefSchema = FoodDrinksBaseSchema.pick({
-	food_drinks_id: true,
-	enabled: true,
-	online: true,
-	overwhelmed: true,
-	minimum_order: true,
+export const FoodDrinksModuleRefSchema = FoodDrinksBaseSchema.omit({
+	business_id: true,
 }).openapi('FoodDrinksModuleRef');
 
 export type FoodDrinksModuleRef = z.infer<typeof FoodDrinksModuleRefSchema>;

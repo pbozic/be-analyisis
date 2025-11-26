@@ -46,7 +46,10 @@ export const LocationRefSchema = z
 
 // ===== REF WITH RELATIONS SCHEMA (extends Ref with address) =====
 export const LocationWithAddressSchema = LocationRefSchema.extend({
-	address: AddressRefSchema.nullable().optional(),
+	address: z
+		.lazy(() => AddressRefSchema)
+		.nullable()
+		.optional(),
 }).openapi({
 	title: 'LocationWithAddress',
 	description: 'Location reference with address details for embedding',
@@ -58,7 +61,10 @@ export const LocationDetailSchema = LocationBaseSchema.extend({
 		.lazy(() => ReservationModuleRefSchema)
 		.nullable()
 		.optional(),
-	address: AddressRefSchema.nullable().optional(),
+	address: z
+		.lazy(() => AddressRefSchema)
+		.nullable()
+		.optional(),
 }).openapi({
 	title: 'LocationDetail',
 	description: 'Full location details returned from DAO functions including reservation module and address',
@@ -139,7 +145,7 @@ export const LocationWithSchedulesDAOResponseSchema = LocationBaseSchema.extend(
 export const LocationsAndEmployeesResponseSchema = z
 	.object({
 		locations: z.array(LocationDetailSchema),
-		employees: z.lazy(() => z.array(EmployeeRefSchema)),
+		employees: z.lazy(() => z.array(z.lazy(() => EmployeeRefSchema))),
 	})
 	.openapi({
 		title: 'LocationsAndEmployeesResponse',

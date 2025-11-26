@@ -10,7 +10,7 @@
 
 import { describe, it, expect } from '@jest/globals';
 import { toBusinessTeamWithUsersResponse } from './businessTeam.mappers.js';
-import { MinimumUserSchema } from './businessTeam.dto.js';
+import { BusinessTeamWithUsersResponseSchema } from './businessTeam.dto.js';
 import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 
 describe('BusinessTeam Mapper - toBusinessTeamWithUsersResponse', () => {
@@ -33,7 +33,7 @@ describe('BusinessTeam Mapper - toBusinessTeamWithUsersResponse', () => {
 
 		// Validate against Zod schema - this will catch mismatches
 		// If this throws, there's a mismatch between mapper output and schema
-		const validated = MinimumUserSchema.safeParse(result);
+		const validated = BusinessTeamWithUsersResponseSchema.safeParse(result);
 
 		if (!validated.success) {
 			console.error('Schema validation failed for toBusinessTeamWithUsersResponse:');

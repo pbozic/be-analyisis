@@ -49,10 +49,19 @@ export type DailyMealSubscriptionCustomerRef = z.infer<typeof DailyMealSubscript
 
 // Response: extends base and embeds other models' Ref schemas
 export const DailyMealInstanceResponseSchema = DailyMealInstanceBaseSchema.extend({
-	subscription: DailyMealSubscriptionRefSchema.nullable().optional(),
+	subscription: z
+		.lazy(() => DailyMealSubscriptionRefSchema)
+		.nullable()
+		.optional(),
 	customer: DailyMealSubscriptionCustomerRefSchema.nullable().optional(),
-	menu_category: MenuCategoryRefSchema.nullable().optional(),
-	daily_meal_category_price: DailyMealCategoryPriceRefSchema.nullable().optional(),
+	menu_category: z
+		.lazy(() => MenuCategoryRefSchema)
+		.nullable()
+		.optional(),
+	daily_meal_category_price: z
+		.lazy(() => DailyMealCategoryPriceRefSchema)
+		.nullable()
+		.optional(),
 }).openapi('DailyMealInstanceResponse');
 
 export type DailyMealInstanceResponse = z.infer<typeof DailyMealInstanceResponseSchema>;

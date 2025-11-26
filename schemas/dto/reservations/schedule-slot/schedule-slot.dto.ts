@@ -84,7 +84,7 @@ export const ScheduleSlotWithScheduleDAOResponseSchema = ScheduleSlotBaseSchema.
 	schedule: z
 		.lazy(() =>
 			ScheduleRefSchema.extend({
-				location: LocationRefSchema.optional(),
+				location: z.lazy(() => LocationRefSchema).optional(),
 			})
 		)
 		.optional(),
@@ -95,22 +95,28 @@ export const ScheduleSlotWithScheduleDAOResponseSchema = ScheduleSlotBaseSchema.
 
 // ===== HELPER SCHEMAS FOR COMPLEX OPERATIONS =====
 // Extended schemas for multi-schedule operations that allow optional fields
-export const ScheduleSlotExceptionInputSchema = CreateScheduleSlotExceptionRequestSchema.extend({
-	schedule_slot_id: UUID.optional(),
-	schedule_slot_exception_id: UUID.optional(),
-	reason: z.string().nullable().optional(),
-}).openapi({
-	title: 'ScheduleSlotExceptionInput',
-	description: 'Extended schedule slot exception schema for multi-schedule operations with optional fields',
-});
+export const ScheduleSlotExceptionInputSchema = z
+	.lazy(() =>
+		CreateScheduleSlotExceptionRequestSchema.extend({
+			schedule_slot_exception_id: UUID.optional(),
+		})
+	)
+	.openapi({
+		title: 'ScheduleSlotExceptionInput',
+		description: 'Extended schedule slot exception schema for multi-schedule operations with optional fields',
+	});
 
-export const BookingSlotInputSchema = CreateBookingSlotRequestSchema.extend({
-	schedule_slot_id: UUID.optional(),
-	booking_slot_id: UUID.optional(),
-}).openapi({
-	title: 'BookingSlotInput',
-	description: 'Extended booking slot schema for multi-schedule operations with optional fields',
-});
+export const BookingSlotInputSchema = z
+	.lazy(() =>
+		CreateBookingSlotRequestSchema.extend({
+			schedule_slot_id: UUID.optional(),
+			booking_slot_id: UUID.optional(),
+		})
+	)
+	.openapi({
+		title: 'BookingSlotInput',
+		description: 'Extended booking slot schema for multi-schedule operations with optional fields',
+	});
 
 // ===== COMPLEX MULTI-SCHEDULE OPERATIONS =====
 export const CreateMultipleSchedulesRequestSchema = z
@@ -162,30 +168,23 @@ export const CreateScheduleSlotWithDataInputSchema = z.object({
 export const UpdateScheduleSlotWithDataInputSchema = z.object({
 	schedule: UpdateScheduleSlotRequestSchema,
 	exceptions: z.object({
-		changes: z.array(
-			ScheduleSlotExceptionInputSchema.extend({
-				type: z.enum(['vacation', 'location_closed', 'other', 'health', 'break', 'lunch']),
-				schedule_slot_id: UUID,
-				reason: z.string().nullable().optional(),
-			})
-		),
-		removed: z.array(
-			ScheduleSlotExceptionInputSchema.extend({
-				type: z.enum(['vacation', 'location_closed', 'other', 'health', 'break', 'lunch']),
-				schedule_slot_exception_id: UUID,
-			})
+		changes: z.array(ScheduleSlotExceptionInputSchema),
+		removed: z.lazy(() =>
+			z.array(
+				CreateScheduleSlotExceptionRequestSchema.extend({
+					schedule_slot_exception_id: UUID,
+				})
+			)
 		),
 	}),
 	bookingSlots: z.object({
-		newOrChanged: z.array(
-			BookingSlotInputSchema.extend({
-				schedule_slot_id: UUID,
-			})
-		),
-		removed: z.array(
-			BookingSlotInputSchema.extend({
-				booking_slot_id: UUID,
-			})
+		newOrChanged: z.lazy(() => z.array(CreateBookingSlotRequestSchema)),
+		removed: z.lazy(() =>
+			z.array(
+				CreateBookingSlotRequestSchema.extend({
+					booking_slot_id: UUID,
+				})
+			)
 		),
 	}),
 });

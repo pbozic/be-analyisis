@@ -1,0 +1,392 @@
+{
+  "store": {
+    "mockKey": "store",
+    "fields": {
+      "stores_id": "string",
+      "enabled": "boolean (optional)",
+      "online": "boolean (optional)",
+      "overwhelmed": "boolean (optional)",
+      "minimum_order": "number | null (optional)",
+      "created_at": "string | Date | null (optional)",
+      "updated_at": "string | Date | null (optional)"
+    }
+  },
+  "localLocation": {
+    "mockKey": "localLocation",
+    "fields": {
+      "local_location_id": "string",
+      "address_id": "string",
+      "created_at": "string | Date | null (optional)",
+      "updated_at": "string | Date | null (optional)",
+      "address": "unknown (nested object)"
+    }
+  },
+  "businessLocalLocation": {
+    "mockKey": "businessLocalLocation",
+    "fields": {
+      "business_local_location_id": "string",
+      "stores_id": "string",
+      "local_location_id": "string",
+      "time": "string | Date",
+      "created_at": "string | Date | null (optional)",
+      "updated_at": "string | Date | null (optional)",
+      "local_location": "PrismaLocalLocation (nested)",
+      "orders": "Array<{ order_id: string }> (optional)"
+    }
+  },
+  "taxiOrder": {
+    "mockKey": "taxiOrder",
+    "fields": {
+      "order_id": "string",
+      "user_id": "string",
+      "driver_id": "string | null (optional)",
+      "vehicle_id": "string | null (optional)",
+      "business_id": "string | null (optional)",
+      "status": "string",
+      "type": "string (optional)",
+      "subtype": "string | null (optional)",
+      "pickup_location": "Record<string, unknown> | null (optional)",
+      "delivery_location": "Record<string, unknown> | null (optional)",
+      "route": "Record<string, unknown> | null (optional)",
+      "complete_route": "Record<string, unknown> | null (optional)",
+      "distance": "number | null (optional)",
+      "duration": "number | null (optional)",
+      "price": "number | null (optional)",
+      "currency": "string | null (optional)",
+      "payment_method": "string | null (optional)",
+      "payment_status": "string | null (optional)",
+      "special_instructions": "string | null (optional)",
+      "passenger_count": "number | null (optional)",
+      "luggage_count": "number | null (optional)",
+      "scheduled_time": "string | Date | null (optional)",
+      "pickup_time": "string | Date | null (optional)",
+      "arrival_time": "string | Date | null (optional)",
+      "completion_time": "string | Date | null (optional)",
+      "cancellation_reason": "string | null (optional)",
+      "rating": "number | null (optional)",
+      "feedback": "string | null (optional)",
+      "tip_amount": "number | null (optional)",
+      "timeline": "Array<Record<string, unknown>> (optional)",
+      "last_sent_at": "string | Date | null (optional)",
+      "parent_order_id": "string | null (optional)",
+      "is_grouped": "boolean (optional)",
+      "group_index": "number | null (optional)",
+      "preferences": "Record<string, unknown> | null (optional)",
+      "created_at": "string | Date | null (optional)",
+      "updated_at": "string | Date | null (optional)",
+      "user": "UserPrisma | null (optional)",
+      "driver": "unknown (optional)",
+      "vehicle": "unknown (optional)",
+      "business": "unknown (optional)",
+      "grouped_orders": "Array<unknown> (optional)",
+      "payment": "Record<string, unknown> | null (optional)",
+      "details": "Record<string, unknown> | null (optional)"
+    }
+  },
+  "taxiOrderSimple": {
+    "mockKey": "taxiOrderSimple",
+    "note": "Used in Taxi folder (simpler version)",
+    "fields": {
+      "order_id": "string",
+      "user_id": "string | null (optional)",
+      "driver_id": "string | null (optional)",
+      "vehicle_id": "string | null (optional)",
+      "type": "string | null (optional)",
+      "subtype": "string | null (optional)",
+      "status": "string",
+      "is_scheduled": "boolean (optional)",
+      "order_number": "number (optional)",
+      "route": "unknown | null (optional)",
+      "pickup_location": "unknown | null (optional)",
+      "delivery_location": "unknown | null (optional)",
+      "estimates": "unknown | null (optional)",
+      "payment": "unknown | null (optional)",
+      "timeline": "unknown[] (optional)",
+      "cancellation_reason": "string | null (optional)",
+      "last_sent_at": "string | Date | null (optional)",
+      "created_at": "string | Date | null (optional)",
+      "updated_at": "string | Date | null (optional)",
+      "grouped_orders": "Array<{ order_id: string }> (optional)",
+      "user": "unknown (optional)",
+      "driver": "{ driver_id: string } | null (optional)",
+      "vehicle": "unknown | null (optional)"
+    }
+  },
+  "tableReservation": {
+    "mockKey": "tableReservation",
+    "fields": {
+      "reservation_id": "string",
+      "seats": "number",
+      "date": "string | Date",
+      "time": "string",
+      "datetime": "string | Date",
+      "status": "string",
+      "table": "number | null (optional)",
+      "user_id": "string",
+      "table_reservation_id": "string",
+      "created_at": "string | Date | null (optional)",
+      "updated_at": "string | Date | null (optional)",
+      "user": "UserPrisma | null (optional)",
+      "business": "unknown | null (optional)"
+    }
+  },
+  "tableReservationModule": {
+    "mockKey": "tableReservationModule",
+    "fields": {
+      "id": "string",
+      "business_id": "string",
+      "seats": "number | null | undefined (optional)",
+      "business_details_id": "string | null | undefined (optional)",
+      "business": "unknown (optional)",
+      "business_details": "unknown (optional)",
+      "reservations": "unknown (optional)"
+    }
+  },
+  "referral": {
+    "mockKey": "referral",
+    "fields": {
+      "referral_id": "string",
+      "referral_code": "string",
+      "referrer_user_id": "string",
+      "referred_user_id": "string",
+      "conditions_met": "boolean | null (optional)",
+      "reward_claimed": "boolean | null (optional)",
+      "created_at": "string | Date | null (optional)",
+      "updated_at": "string | Date | null (optional)",
+      "referrer": "{ user_id: string; first_name?: string | null; last_name?: string | null } | null (optional)",
+      "referred": "{ user_id: string; first_name?: string | null; last_name?: string | null } | null (optional)"
+    }
+  },
+  "deliveryOrder": {
+    "mockKey": "deliveryOrder",
+    "fields": {
+      "order_id": "string",
+      "user_id": "string",
+      "module_id": "string",
+      "module_type": "string ('STORES' | 'FOOD_DRINKS')",
+      "driver_id": "string | null (optional)",
+      "order_number": "number (optional)",
+      "status": "string",
+      "details": "Record<string, unknown> | null (optional)",
+      "timeline": "Array<Record<string, unknown>> (optional)",
+      "delivery_address": "Record<string, unknown> | null (optional)",
+      "pickup_address": "Record<string, unknown> | null (optional)",
+      "pickup_time": "string | Date | null (optional)",
+      "delivery_time": "string | Date | null (optional)",
+      "estimated_delivery_time": "string | Date | null (optional)",
+      "total_amount": "number | null (optional)",
+      "delivery_fee": "number | null (optional)",
+      "tip_amount": "number | null (optional)",
+      "payment": "Record<string, unknown> | null (optional)",
+      "payment_method": "string | null (optional)",
+      "is_daily_meal": "boolean (optional)",
+      "special_instructions": "string | null (optional)",
+      "last_sent_at": "string | Date | null (optional)",
+      "delivery_image": "string | null (optional)",
+      "created_at": "string | Date | null (optional)",
+      "updated_at": "string | Date | null (optional)",
+      "user": "unknown (optional)",
+      "business": "unknown (optional)",
+      "driver": "unknown (optional)",
+      "items": "Array<Record<string, unknown>> (optional)"
+    }
+  },
+  "deliveryDriver": {
+    "mockKey": "deliveryDriver",
+    "fields": {
+      "delivery_driver_id": "string",
+      "user_id": "string",
+      "online": "boolean (optional)",
+      "on_order": "boolean (optional)",
+      "delivers_daily_meals": "boolean (optional)",
+      "working_hours": "Record<string, unknown> | null (optional)",
+      "business_id": "string | null (optional)",
+      "location": "Record<string, unknown> | null (optional)",
+      "delivery_timeline": "Record<string, unknown> | null (optional)",
+      "last_ping_at": "string | Date | null (optional)",
+      "on_daily_meals": "boolean (optional)",
+      "is_inactive": "boolean (optional)",
+      "scheduled_meals_route": "Record<string, unknown> | null (optional)",
+      "regions": "Record<string, unknown> | null (optional)",
+      "partner_cash_balance": "number (optional)",
+      "daily_meal_business_id": "string | null (optional)",
+      "created_at": "string | Date | null (optional)",
+      "updated_at": "string | Date | null (optional)",
+      "user": "unknown (optional)",
+      "vehicles": "Array<unknown> (optional)",
+      "business": "unknown | null (optional)",
+      "daily_meal_business": "unknown | null (optional)"
+    }
+  },
+  "lineItem": {
+    "mockKey": "lineItem",
+    "fields": {
+      "line_item_id": "string",
+      "menu_item_version_id": "string",
+      "order_id": "string",
+      "quantity": "number",
+      "comment": "string | null (optional)",
+      "replacement_id": "string | null (optional)",
+      "replaces_id": "string | null (optional)",
+      "parent_side_id": "string | null (optional)",
+      "parent_extra_id": "string | null (optional)",
+      "removed": "boolean (optional)",
+      "sides": "PrismaLineItem[] (optional, recursive)",
+      "extras": "PrismaLineItem[] (optional, recursive)",
+      "replacement": "PrismaLineItem | null (optional, recursive)",
+      "replaces": "PrismaLineItem | null (optional, recursive)",
+      "menu_item_version": "PrismaMenuItemVersion (optional)"
+    }
+  },
+  "lostItem": {
+    "mockKey": "lostItem",
+    "fields": {
+      "lost_item_id": "string",
+      "user_id": "string | null (optional)",
+      "status": "string",
+      "description": "string",
+      "image_id": "string | null (optional)",
+      "found": "boolean | null (optional)",
+      "created_at": "string | Date",
+      "updated_at": "string | Date"
+    }
+  },
+  "orderLobby": {
+    "mockKey": "orderLobby",
+    "fields": {
+      "order_lobbies_id": "string (or similar)",
+      "lobby_name": "string (or similar)",
+      "active": "boolean (or similar)",
+      "creator_id": "string (or similar)",
+      "created_at": "string | Date (optional)",
+      "updated_at": "string | Date (optional)",
+      "order_lobby_items": "Array<unknown> (optional)",
+      "order_lobby_users": "Array<unknown> (optional)"
+    },
+    "note": "Exact schema flexible - mapper uses `as any` casting"
+  },
+  "orderLobbyItem": {
+    "mockKey": "orderLobbyItem",
+    "fields": {
+      "order_lobby_item_id": "string (or similar)",
+      "created_at": "string | Date (optional)",
+      "updated_at": "string | Date (optional)",
+      "user": "{ user_id: string; first_name: string; last_name: string } (optional)",
+      "menu_item": "{ menu_item_id: string; name: string; price_cents: number; description?: string } (optional)",
+      "order_lobby": "{ order_lobbies_id: string; lobby_name: string; active: boolean; creator_id: string; created_at: string | Date } (optional)"
+    },
+    "note": "Mapper uses flexible casting with fallbacks for nested properties"
+  },
+  "orderLobbyUser": {
+    "mockKey": "orderLobbyUser",
+    "fields": {
+      "order_lobby_user_id": "string (or similar)",
+      "created_at": "string | Date (optional)",
+      "updated_at": "string | Date (optional)",
+      "users": "{ user_id: string; first_name: string; last_name: string } (optional)"
+    },
+    "note": "Mapper uses flexible `as any` casting"
+  },
+  "menuItemVersion": {
+    "mockKey": "menuItemVersion",
+    "fields": {
+      "menu_item_version_id": "string",
+      "menu_item_id": "string",
+      "version": "number (or similar)",
+      "snapshot": "unknown",
+      "created_at": "string | Date (optional)"
+    }
+  },
+  "tutorial": {
+    "mockKey": "tutorial",
+    "fields": {
+      "tutorial_id": "string",
+      "key": "string",
+      "title": "string",
+      "version": "number",
+      "mandatory": "boolean (optional)",
+      "createdAt": "string | Date",
+      "retiredAt": "string | Date | null (optional)",
+      "status": "TUTORIAL_STATUS (optional)",
+      "versionSeen": "number | null (optional)",
+      "firstSeenAt": "string | Date | null (optional)",
+      "completedAt": "string | Date | null (optional)",
+      "dismissedAt": "string | Date | null (optional)"
+    }
+  },
+  "userTutorialState": {
+    "mockKey": "userTutorialState",
+    "fields": {
+      "id": "string",
+      "user_id": "string",
+      "epoch": "number (optional)",
+      "updatedAt": "string | Date"
+    }
+  },
+  "userTutorial": {
+    "mockKey": "userTutorial",
+    "fields": {
+      "id": "string",
+      "user_id": "string",
+      "tutorial_id": "string",
+      "status": "TUTORIAL_STATUS (optional)",
+      "versionSeen": "number | null (optional)",
+      "firstSeenAt": "string | Date | null (optional)",
+      "completedAt": "string | Date | null (optional)",
+      "dismissedAt": "string | Date | null (optional)",
+      "epoch": "number (optional)"
+    }
+  },
+  "token": {
+    "mockKey": "token",
+    "fields": {
+      "token_id": "string (optional)",
+      "user_id": "string",
+      "token": "string",
+      "type": "string",
+      "active": "boolean | null (optional)",
+      "expires_at": "string | Date (optional)",
+      "created_at": "string | Date | null (optional)",
+      "updated_at": "string | Date | null (optional)",
+      "users": "UserWithBusinesses | undefined (optional) - { business_users?: Array<{ business?: { business_id: string; name?: string | null } | null }> }"
+    }
+  },
+  "userFavoriteDriver": {
+    "mockKey": "userFavoriteDriver",
+    "fields": {
+      "user_favorite_drivers_id": "string",
+      "user_id": "string",
+      "driver_id": "string",
+      "created_at": "string | Date (optional)",
+      "updated_at": "string | Date (optional)",
+      "users": "Record<string, any> with UserResponse fields (optional)",
+      "driver": "Record<string, any> with DriverBase fields (optional)"
+    },
+    "note": "Large nested schemas - check UserResponseSchema and DriverBaseSchema for exact fields"
+  },
+  "dailyMealCategoryPrice": {
+    "mockKey": "dailyMealCategoryPrice",
+    "fields": {
+      "daily_meal_category_price_id": "string (optional)",
+      "daily_meal_category_id": "string",
+      "price": "number",
+      "valid_from": "string | Date",
+      "created_at": "string | Date | null (optional)",
+      "updated_at": "string | Date | null (optional)"
+    }
+  },
+  "dailyMealCategory": {
+    "mockKey": "dailyMealCategory",
+    "fields": {
+      "daily_meal_category_id": "string",
+      "business_id": "string",
+      "category_id": "string",
+      "start_date": "string | Date",
+      "active": "boolean | null (optional)",
+      "created_at": "string | Date | null (optional)",
+      "updated_at": "string | Date | null (optional)",
+      "category": "CategoryLike | null (optional) - { categories_id: string; name?: string | null; tag?: string; category_type?: string }",
+      "daily_meal_category_prices": "PrismaDailyMealCategoryPrice[] (optional)"
+    }
+  }
+}

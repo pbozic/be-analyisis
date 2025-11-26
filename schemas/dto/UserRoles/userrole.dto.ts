@@ -23,7 +23,10 @@ export const UserRoleResponseBaseSchema = z
 export const UserRoleResponseSchema = UserRoleResponseBaseSchema.extend({
 	user: UserBaseSchema,
 	role: z.lazy(() => RoleResponseBaseSchema),
-	reservation_module: ReservationModuleBaseSchema.nullable().optional(),
+	reservation_module: z
+		.lazy(() => ReservationModuleBaseSchema)
+		.nullable()
+		.optional(),
 }).openapi('UserRoleResponse');
 
 export type UserRoleBase = z.infer<typeof UserRoleResponseBaseSchema>;

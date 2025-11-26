@@ -280,7 +280,7 @@ export async function selectDeliveryOrderDrivers(order: DeliveryOrderDetail): Pr
  * @returns {DeliveryOrderDetail['details']} Order details object with all calculated values
  */
 export function CalculateOrderLobbyOrderDetails(
-	provider: BusinessWithAllModulesResponseDto,
+	provider: BusinessWithAllModulesResponseDto, //TODO: replace this with module
 	cartItems: OrderItem[],
 	selectedAddress: LocationWithAddress,
 	paymentType: string = 'cash',

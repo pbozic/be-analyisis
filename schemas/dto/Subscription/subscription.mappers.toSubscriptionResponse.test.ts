@@ -10,16 +10,16 @@
 
 import { describe, it, expect } from '@jest/globals';
 import { toSubscriptionResponse } from './subscription.mappers.js';
-import { ActionBundleActionResponseSchema } from './subscription.dto.js';
+import { SubscriptionResponseSchema } from './subscription.dto.js';
 import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 
 describe('Subscription Mapper - toSubscriptionResponse', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.subscriptionwithincludes;
+		const mockData = mockPrismaData.subscription;
 
 		if (!mockData) {
-			console.warn('⚠️  Mock data for "subscriptionwithincludes" not found');
+			console.warn('⚠️  Mock data for "subscription" not found');
 			console.warn('   Add mock data to tests/integration/mock-prisma.ts');
 			expect(mockData).toBeDefined();
 			return;
@@ -33,7 +33,7 @@ describe('Subscription Mapper - toSubscriptionResponse', () => {
 
 		// Validate against Zod schema - this will catch mismatches
 		// If this throws, there's a mismatch between mapper output and schema
-		const validated = ActionBundleActionResponseSchema.safeParse(result);
+		const validated = SubscriptionResponseSchema.safeParse(result);
 
 		if (!validated.success) {
 			console.error('Schema validation failed for toSubscriptionResponse:');

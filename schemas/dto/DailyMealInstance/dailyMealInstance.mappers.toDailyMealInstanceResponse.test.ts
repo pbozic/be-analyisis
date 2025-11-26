@@ -16,7 +16,7 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('DailyMealInstance Mapper - toDailyMealInstanceResponse', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.dailymealinstancewithincludes;
+		const mockData = mockPrismaData.dailymealinstance;
 
 		if (!mockData) {
 			console.warn('⚠️  Mock data for "dailymealinstancewithincludes" not found');

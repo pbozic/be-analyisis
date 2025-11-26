@@ -16,7 +16,7 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('Menu Mapper - toMenuCategoryDetail', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.menucategorywithincludes;
+		const mockData = mockPrismaData.menucategory;
 
 		if (!mockData) {
 			console.warn('⚠️  Mock data for "menucategorywithincludes" not found');

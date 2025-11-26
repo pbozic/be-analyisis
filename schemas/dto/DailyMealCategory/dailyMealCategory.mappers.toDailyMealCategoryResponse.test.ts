@@ -16,10 +16,10 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('DailyMealCategory Mapper - toDailyMealCategoryResponse', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.dailymealcategorywithprices;
+		const mockData = mockPrismaData.dailymealcategory;
 
 		if (!mockData) {
-			console.warn('⚠️  Mock data for "dailymealcategorywithprices" not found');
+			console.warn('⚠️  Mock data for "dailymealcategory" not found');
 			console.warn('   Add mock data to tests/integration/mock-prisma.ts');
 			expect(mockData).toBeDefined();
 			return;

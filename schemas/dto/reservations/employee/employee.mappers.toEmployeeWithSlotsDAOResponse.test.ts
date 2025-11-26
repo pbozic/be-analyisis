@@ -16,10 +16,10 @@ import { mockPrismaData } from '../../../../tests/integration/mock-prisma.js';
 describe('employee Mapper - toEmployeeWithSlotsDAOResponse', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.employeewithslots;
+		const mockData = mockPrismaData.employee;
 
 		if (!mockData) {
-			console.warn('⚠️  Mock data for "employeewithslots" not found');
+			console.warn('⚠️  Mock data for "employee" not found');
 			console.warn('   Add mock data to tests/integration/mock-prisma.ts');
 			expect(mockData).toBeDefined();
 			return;

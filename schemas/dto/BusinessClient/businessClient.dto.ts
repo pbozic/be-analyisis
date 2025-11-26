@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { Timestamp, UUID } from '../../primitives.js';
-import { BusinessRefSchema } from '../Business/index.js';
+import { BusinessResponseDto } from '../Business/index.js';
 import { TaxiOrderRefSchema } from '../TaxiOrders/taxiOrder.dto.js';
 
 extendZodWithOpenApi(z);
@@ -38,18 +38,18 @@ export const BusinessClientResponseSchema = BusinessClientBaseSchema;
 
 // BusinessClient with Business - for functions that include business
 export const BusinessClientWithBusinessResponseSchema = BusinessClientResponseSchema.extend({
-	business: z.lazy(() => BusinessRefSchema),
+	business: z.lazy(() => BusinessResponseDto),
 });
 
 // BusinessClient with Taxi Orders - for functions that include taxi_orders
 export const BusinessClientWithOrdersResponseSchema = BusinessClientResponseSchema.extend({
-	taxi_orders: z.array(TaxiOrderRefSchema).nullable(),
+	taxi_orders: z.array(z.lazy(() => TaxiOrderRefSchema)).nullable(),
 });
 
 // BusinessClient Detail - for functions with full includes (business + taxi_orders)
 export const BusinessClientDetailResponseSchema = BusinessClientResponseSchema.extend({
-	business: z.lazy(() => BusinessRefSchema),
-	taxi_orders: z.array(TaxiOrderRefSchema).nullable(),
+	business: z.lazy(() => BusinessResponseDto),
+	taxi_orders: z.array(z.lazy(() => TaxiOrderRefSchema)).nullable(),
 });
 
 // BusinessClient List Response - for paginated/bulk endpoints

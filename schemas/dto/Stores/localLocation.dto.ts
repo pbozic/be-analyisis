@@ -38,7 +38,7 @@ export type BusinessLocalLocationBase = z.infer<typeof BusinessLocalLocationBase
 
 export const BusinessLocalLocationDetailSchema = BusinessLocalLocationBaseSchema.extend({
 	local_location: LocalLocationDetailSchema,
-	orders: z.array(DeliveryOrderRefSchema).default([]),
+	orders: z.array(z.lazy(() => DeliveryOrderRefSchema)).default([]),
 }).openapi('BusinessLocalLocationDetail');
 export type BusinessLocalLocationDetail = z.infer<typeof BusinessLocalLocationDetailSchema>;
 

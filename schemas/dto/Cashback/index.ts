@@ -9,8 +9,6 @@ export {
 	CashbackRefSchema,
 	CashbackDetailSchema,
 	toCashbackDetail,
-	toCashbackRef,
-	toOrderRef,
 	type CashbackBase,
 	type CashbackRef,
 	type CashbackDetail,

@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { TAXI_ORDER_STATUS, VEHICLE_CATEGORY } from '@prisma/client';
+import { ORDER_SUBTYPE, ORDER_TYPE, TAXI_ORDER_STATUS, VEHICLE_CATEGORY } from '@prisma/client';
 
-import { LocationSchema, FileUploadSchema } from './taxiorder.dto.js';
+import { LocationSchema } from '../_common/location.js';
+import { FileUploadSchema } from './taxiorder.dto.js';
 import { Timestamp, UUID } from '../../primitives.js';
 
 extendZodWithOpenApi(z);
@@ -66,8 +67,8 @@ export const CreateTaxiOrderSchema = z
 		last_name: z.string().optional(),
 		telephone: z.string().optional(),
 		return_url: z.string().url().optional(),
-		type: z.string().optional(),
-		subtype: z.string().optional(),
+		type: z.nativeEnum(ORDER_TYPE).optional(),
+		subtype: z.nativeEnum(ORDER_SUBTYPE).optional(),
 		preferences: TaxiPreferencesSchema.optional(),
 		pickup_location: LocationSchema.optional(),
 		delivery_location: LocationSchema.optional(),

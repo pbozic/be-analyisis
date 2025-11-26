@@ -3,6 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, LanguageCode, Timestamp } from '../../primitives';
 import { BusinessBaseSchema } from '../Business';
+import { CategoryBaseSchema } from '../Category';
 
 extendZodWithOpenApi(z);
 
@@ -18,14 +19,6 @@ export const TranslationItemSchema = z
 	})
 	.openapi('TranslationItem');
 export type TranslationItem = z.infer<typeof TranslationItemSchema>;
-
-export const CategoryRefSchema = z
-	.object({
-		categories_id: UUID,
-		label: z.string().min(1),
-	})
-	.openapi('CategoryRef');
-export type CategoryRef = z.infer<typeof CategoryRefSchema>;
 
 export const WordBaseSchema = z
 	.object({
@@ -43,7 +36,7 @@ export type WordBase = z.infer<typeof WordBaseSchema>;
 export const WordDetailSchema = WordBaseSchema.extend({
 	translations: z.array(TranslationItemSchema).default([]),
 	translatable: z.object({ translations: z.array(TranslationItemSchema).default([]) }).optional(),
-	category: CategoryRefSchema.nullable().optional(),
+	category: CategoryBaseSchema.nullable().optional(),
 }).openapi('WordDetail');
 export type WordDetail = z.infer<typeof WordDetailSchema>;
 
@@ -59,7 +52,7 @@ export const WordBuyItemDetailSchema = z
 		created_at: Timestamp.optional(),
 		updated_at: Timestamp.optional(),
 		business_id: UUID.optional(),
-		business: BusinessBaseSchema.optional(),
+		business: z.lazy(() => BusinessBaseSchema).optional(),
 		word: WordDetailSchema,
 	})
 	.openapi('WordBuyItemDetail');
@@ -102,7 +95,6 @@ export const CreateWordBuySubscriptionResponseSchema = z
 export type CreateWordBuySubscriptionResponse = z.infer<typeof CreateWordBuySubscriptionResponseSchema>;
 
 export function registerSchemas(registry: OpenAPIRegistry) {
-	registry.register('CategoryRef', CategoryRefSchema);
 	registry.register('WordBase', WordBaseSchema);
 	registry.register('WordDetail', WordDetailSchema);
 	registry.register('TranslationItem', TranslationItemSchema);

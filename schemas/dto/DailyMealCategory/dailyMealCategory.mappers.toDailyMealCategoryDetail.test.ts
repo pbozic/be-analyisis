@@ -10,30 +10,30 @@
 
 import { describe, it, expect } from '@jest/globals';
 import { toDailyMealCategoryDetail } from './dailyMealCategory.mappers.js';
-import { CategoryRefSchema } from '../Category/category.dto.js';
 import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
+import { DailyMealCategoryDetailSchema } from './dailyMealCategory.js';
 
 describe('DailyMealCategory Mapper - toDailyMealCategoryDetail', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.unknown || {};
+		const mockData = mockPrismaData.dailyMealCategoryDetail;
 
 		if (!mockData) {
-			console.warn('⚠️  Mock data for "unknown" not found');
+			console.warn('⚠️  Mock data for "dailyMealCategoryDetail" not found');
 			console.warn('   Add mock data to tests/integration/mock-prisma.ts');
 			expect(mockData).toBeDefined();
 			return;
 		}
 
 		// Call the actual mapper
-		const result = toDailyMealCategoryDetail(mockData as unknown);
+		const result = toDailyMealCategoryDetail(mockData);
 
 		// Validate the result is defined
 		expect(result).toBeDefined();
 
 		// Validate against Zod schema - this will catch mismatches
 		// If this throws, there's a mismatch between mapper output and schema
-		const validated = CategoryRefSchema.safeParse(result);
+		const validated = DailyMealCategoryDetailSchema.safeParse(result);
 
 		if (!validated.success) {
 			console.error('Schema validation failed for toDailyMealCategoryDetail:');

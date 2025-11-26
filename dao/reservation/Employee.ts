@@ -169,12 +169,7 @@ export async function getEmployeeById(employeeId: string): Promise<EmployeeByIdD
 				employee_id: employeeId,
 			},
 			include: {
-				reservation_module: true,
-				business_user: {
-					include: {
-						users: true,
-					},
-				},
+				...employeeBase,
 			},
 		});
 		return employee ? toEmployeeByIdDAOResponse(employee) : null;
@@ -313,12 +308,7 @@ export async function getEmployeeByIdWithSchedules(employeeId: string): Promise<
 				employee_id: employeeId,
 			},
 			include: {
-				reservation_module: true,
-				business_user: {
-					include: {
-						users: true,
-					},
-				},
+				...employeeBase,
 				schedules: {
 					include: {
 						schedule: {

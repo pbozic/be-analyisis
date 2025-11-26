@@ -39,7 +39,10 @@ export const ServiceBaseSchema = z
 		discount_amount: z.number().int().nullable().optional().openapi({ example: 450 }),
 		duration_minutes: z.number().int().openapi({ example: 60, description: 'Service duration in minutes' }),
 		available_online: z.boolean().openapi({ example: true, description: 'Whether service can be booked online' }),
-		skd_codes: z.string().openapi({ example: 'SKD001,SKD002', description: 'Comma-separated SKD codes' }),
+		skd_codes: z
+			.array(z.string())
+			.default([])
+			.openapi({ example: ['SKD001', 'SKD002'], description: 'Comma-separated SKD codes' }),
 		created_at: Timestamp,
 		tax_rate_id: UUID.nullable().optional(),
 		course: z.boolean().openapi({ example: false, description: 'Whether this is a course service' }),
@@ -76,7 +79,10 @@ export const ServiceRefSchema = z
 
 // ===== REF WITH RELATIONS SCHEMA (extends Ref with service category) =====
 export const ServiceWithCategorySchema = ServiceRefSchema.extend({
-	service_category: ServiceCategoryRefSchema.nullable().optional(),
+	service_category: z
+		.lazy(() => ServiceCategoryRefSchema)
+		.nullable()
+		.optional(),
 }).openapi({
 	title: 'ServiceWithCategory',
 	description: 'Service reference with category for embedding',
@@ -84,9 +90,12 @@ export const ServiceWithCategorySchema = ServiceRefSchema.extend({
 
 // ===== DETAIL SCHEMA (full service with full relations as returned by DAO) =====
 export const ServiceDetailSchema = ServiceBaseSchema.extend({
-	service_category: ServiceCategoryRefSchema.nullable().optional(),
-	bookings: z.array(BookingRefSchema).optional(),
-	assigned_employees: z.array(ServiceAssignmentRefSchema).optional(),
+	service_category: z
+		.lazy(() => ServiceCategoryRefSchema)
+		.nullable()
+		.optional(),
+	bookings: z.array(z.lazy(() => BookingRefSchema)).optional(),
+	assigned_employees: z.array(z.lazy(() => ServiceAssignmentRefSchema)).optional(),
 }).openapi({
 	title: 'ServiceDetail',
 	description:
@@ -218,8 +227,8 @@ export const ServiceDAOResponseSchema = ServiceDetailSchema.openapi({
 export const ServicesEmployeesAndCustomersResponseSchema = z
 	.object({
 		services: z.array(ServiceDetailSchema),
-		employees: z.array(EmployeeRefSchema),
-		customers: z.array(CustomerRefSchema),
+		employees: z.array(z.lazy(() => EmployeeRefSchema)),
+		customers: z.array(z.lazy(() => CustomerRefSchema)),
 	})
 	.openapi({
 		title: 'ServicesEmployeesAndCustomersResponse',

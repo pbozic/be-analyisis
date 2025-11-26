@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { TAXI_ORDER_STATUS } from '@prisma/client';
+import { TAXI_ORDER_STATUS, ORDER_TYPE, ORDER_SUBTYPE } from '@prisma/client';
 
-import { UUID, Timestamp, PhoneNumber } from '../../primitives.js';
+import { UUID, Timestamp } from '../../primitives.js';
 import { DriverBaseSchema } from '../Driver/index.js';
 import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.js';
 import { BusinessBaseSchema } from '../Business/business.js';
@@ -20,54 +20,34 @@ export const TaxiOrderBaseSchema = z
 		user_id: UUID,
 		driver_id: UUID.nullable().optional(),
 		vehicle_id: UUID.nullable().optional(),
-		business_id: UUID.nullable().optional(),
 		business_users_id: UUID.nullable().optional(),
 		business_clients_id: UUID.nullable().optional(),
 		status: z.nativeEnum(TAXI_ORDER_STATUS),
-		type: z.string().optional(),
-		subtype: z.string().nullable().optional(),
-		pickup_location: z.record(z.any()).nullable().optional(),
+		type: z.nativeEnum(ORDER_TYPE).default('TAXI'),
+		subtype: z.nativeEnum(ORDER_SUBTYPE).default('CREATED_BY_USER'),
+		pickup_location: z.record(z.any()),
 		delivery_location: z.record(z.any()).nullable().optional(),
-		route: z.array(z.record(z.any())).nullable().optional(),
-		complete_route: z.record(z.any()).nullable().optional(),
-		distance: z.number().nullable().optional(),
-		duration: z.number().nullable().optional(),
-		price: z.number().nullable().optional(),
+		route: z.array(z.any()),
 		payment: z.record(z.any()).nullable().optional(),
-		details: z.record(z.any()).nullable().optional(),
-		currency: z.string().nullable().optional(),
-		payment_method: z.string().nullable().optional(),
-		payment_status: z.string().nullable().optional(),
-		special_instructions: z.string().nullable().optional(),
-		passenger_count: z.number().nullable().optional(),
-		luggage_count: z.number().nullable().optional(),
-		scheduled_time: Timestamp.nullable().optional(),
-		pickup_time: Timestamp.nullable().optional(),
-		arrival_time: Timestamp.nullable().optional(),
-		completion_time: Timestamp.nullable().optional(),
+		estimates: z.record(z.any()).nullable().optional(),
+		preferences: z.record(z.any()).nullable().optional(),
+		timeline: z.array(z.record(z.any())).default([]),
 		cancellation_reason: z.string().nullable().optional(),
-		rating: z.number().nullable().optional(),
-		feedback: z.string().nullable().optional(),
-		tip_amount: z.number().nullable().optional(),
-		timeline: z.array(z.record(z.any())).optional().default([]),
-		metadata: z.record(z.any()).nullable().optional(),
 		last_sent_at: Timestamp.nullable().optional(),
 		parent_order_id: UUID.nullable().optional(),
-		is_grouped: z.boolean().optional(),
-		group_index: z.number().nullable().optional(),
-		preferences: z.record(z.any()).nullable().optional(),
-		estimates: z.record(z.any()).nullable().optional(),
 		created_at: Timestamp,
 		updated_at: Timestamp.optional(),
 		first_name: z.string().nullable().optional(),
 		last_name: z.string().nullable().optional(),
-		telephone: PhoneNumber.nullable().optional(),
+		telephone: z.string().nullable().optional(),
 		creating_user_id: UUID.nullable().optional(),
-		is_scheduled: z.boolean().optional(),
+		is_scheduled: z.boolean().default(false),
 		cargo_preferences: z.record(z.any()).nullable().optional(),
-		allow_credits_usage: z.boolean().optional(),
-		find_drivers_attempts: z.number().optional(),
-		parent_user_type: z.string().nullable().optional(),
+		allow_credits_usage: z.boolean().default(false),
+		find_drivers_attempts: z.number().nullable().default(0),
+		parent_user_type: z.string().nullable().default(''),
+		customer_note: z.string().nullable().optional(),
+		order_number: z.number().default(0),
 	})
 	.openapi('TaxiOrderBase');
 
@@ -80,11 +60,10 @@ export const TaxiOrderRefSchema = z
 	.object({
 		order_id: UUID,
 		status: z.nativeEnum(TAXI_ORDER_STATUS),
-		type: z.string().optional(),
-		price: z.number().nullable().optional(),
-		pickup_location: z.record(z.any()).nullable().optional(),
+		type: z.nativeEnum(ORDER_TYPE),
+		pickup_location: z.record(z.any()),
 		delivery_location: z.record(z.any()).nullable().optional(),
-		created_at: Timestamp.optional(),
+		created_at: Timestamp,
 	})
 	.openapi('TaxiOrderRef');
 
@@ -102,8 +81,14 @@ export const TaxiOrderDetailSchema = TaxiOrderBaseSchema.extend({
 		.lazy(() => DriverBaseSchema)
 		.nullable()
 		.optional(),
-	vehicle: VehicleBaseSchema.nullable().optional(),
-	business: BusinessBaseSchema.nullable().optional(),
+	vehicle: z
+		.lazy(() => VehicleBaseSchema)
+		.nullable()
+		.optional(),
+	business: z
+		.lazy(() => BusinessBaseSchema)
+		.nullable()
+		.optional(),
 	business_users: z
 		.lazy(() => BusinessUserResponseSchema)
 		.nullable()

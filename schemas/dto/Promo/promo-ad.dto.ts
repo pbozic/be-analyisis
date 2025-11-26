@@ -4,6 +4,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { Timestamp, UUID } from '../../primitives';
 import { ServiceTypeSchema } from './promo-section.dto';
 import { PromoBannerRefSchema, toPromoBannerRef } from './promo-banner.dto';
+import { CategoryBaseSchema } from '../Category';
 
 extendZodWithOpenApi(z);
 
@@ -37,15 +38,6 @@ export const UpdatePromoAdRequestSchema = z
 	.openapi('UpdatePromoAdRequest');
 export type UpdatePromoAdRequest = z.infer<typeof UpdatePromoAdRequestSchema>;
 
-// Responses: Ads
-export const CategoryRefSchema = z
-	.object({
-		categories_id: UUID,
-		label: z.string().min(1),
-	})
-	.openapi('PromoCategoryRef');
-export type CategoryRef = z.infer<typeof CategoryRefSchema>;
-
 export const PromoAdBaseSchema = z
 	.object({
 		promo_ads_id: UUID,
@@ -64,7 +56,7 @@ export const PromoAdBaseSchema = z
 export type PromoAdBase = z.infer<typeof PromoAdBaseSchema>;
 
 export const PromoAdDetailSchema = PromoAdBaseSchema.extend({
-	categories: z.array(CategoryRefSchema).optional().default([]),
+	categories: z.array(CategoryBaseSchema).optional().default([]),
 	banners: z.array(PromoBannerRefSchema).optional().default([]),
 }).openapi('PromoAdDetail');
 export type PromoAdDetail = z.infer<typeof PromoAdDetailSchema>;
@@ -108,7 +100,7 @@ export function toPromoAdDetail(row: unknown): PromoAdDetail {
 			.filter((c): c is PrismaCategory => Boolean(c));
 	}
 	const categoryRefs = categoryRecords.map((c) =>
-		CategoryRefSchema.parse({
+		CategoryBaseSchema.parse({
 			categories_id: c.categories_id ?? c.category_id ?? c.id!,
 			label: c.name ?? c.title ?? 'category',
 		})
@@ -136,7 +128,6 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('PromoAdData', PromoAdDataSchema);
 	registry.register('CreatePromoAdRequest', CreatePromoAdRequestSchema);
 	registry.register('UpdatePromoAdRequest', UpdatePromoAdRequestSchema);
-	registry.register('PromoCategoryRef', CategoryRefSchema);
 	registry.register('PromoAdBase', PromoAdBaseSchema);
 	registry.register('PromoAdDetail', PromoAdDetailSchema);
 }

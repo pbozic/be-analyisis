@@ -11,7 +11,6 @@ export {
 	BusinessWithCrmResponseDto,
 	BusinessWithAllModulesResponseDto,
 	CrmModuleRefSchema,
-	MenuRefSchema,
 	DailyMealsModuleSchema,
 	BusinessWithDailyMealsResponseDto,
 	BusinessWithAddressAndUsersResponseDto,
@@ -31,11 +30,7 @@ export {
 	type StoresModuleRef,
 	type ReservationModuleRef,
 	type CrmModuleRef,
-	type MenuRef,
 	type DailyMealsModule,
-	type MenuItemRef,
-	type MenuCategoryRef,
-	type BusinessByIdResponse,
 	registerSchemas as registerBusinessSchemas,
 } from './business.dto.js';
 

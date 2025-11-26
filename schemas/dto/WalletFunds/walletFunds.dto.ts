@@ -68,8 +68,8 @@ export type WalletFundsRef = z.infer<typeof WalletFundsRefSchema>;
 
 // WalletFunds Response Schema - Base with embedded refs
 export const WalletFundsResponseSchema = WalletFundsBaseSchema.extend({
-	user: UserRefSchema.optional(),
-	transactions: z.array(TransactionRefSchema).optional(),
+	user: z.lazy(() => UserRefSchema).optional(),
+	transactions: z.array(z.lazy(() => TransactionRefSchema)).optional(),
 }).openapi({
 	title: 'WalletFundsResponse',
 	description: 'Complete wallet funds response with related entities',

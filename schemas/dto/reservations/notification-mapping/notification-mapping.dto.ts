@@ -42,7 +42,7 @@ export const CreateNotificationMappingRequestSchema = z
 		reservation_module_id: UUID,
 		notification_event_id: UUID,
 		notification_template_version_id: UUID,
-		conditions: JsonObjectSchema.optional(),
+		conditions: z.lazy(() => JsonObjectSchema).optional(),
 		is_active: z.boolean().optional(),
 	})
 	.openapi({
@@ -53,7 +53,7 @@ export const CreateNotificationMappingRequestSchema = z
 export const UpdateNotificationMappingRequestSchema = z
 	.object({
 		notification_template_version_id: UUID.optional(),
-		conditions: JsonObjectSchema.optional(),
+		conditions: z.lazy(() => JsonObjectSchema).optional(),
 		is_active: z.boolean().optional(),
 	})
 	.openapi({
@@ -63,8 +63,8 @@ export const UpdateNotificationMappingRequestSchema = z
 
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 export const NotificationMappingResponseSchema = NotificationMappingBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
-	notification_event: NotificationEventRefSchema.optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
+	notification_event: z.lazy(() => NotificationEventRefSchema).optional(),
 }).openapi({
 	title: 'NotificationMappingResponse',
 	description: 'Complete notification mapping response with related entities',
@@ -74,7 +74,7 @@ export const NotificationMappingResponseSchema = NotificationMappingBaseSchema.e
 // DAO response for getLatestTemplateForEvent
 export const NotificationMappingWithTemplateVersionDAOResponseSchema = NotificationMappingBaseSchema.extend({
 	version: NotificationTemplateVersionRefSchema.extend({
-		template: NotificationTemplateRefSchema.optional(),
+		template: z.lazy(() => NotificationTemplateRefSchema).optional(),
 	}).optional(),
 }).openapi({
 	title: 'NotificationMappingWithTemplateVersionDAOResponse',

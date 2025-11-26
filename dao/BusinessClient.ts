@@ -28,7 +28,7 @@ export async function getAllBusinessClients(): Promise<BusinessClientDetailRespo
 	try {
 		const rows: BusinessClientDetailPrisma[] = await prisma.business_clients.findMany({
 			include: {
-				crm_module: { include: { business: true } },
+				crm_module: { include: { business: { business_details: true } } },
 				taxi_orders: true,
 			},
 		});
@@ -49,7 +49,7 @@ export async function getBusinessClientById(businessClientsId: string): Promise<
 	try {
 		const row = await prisma.business_clients.findUnique({
 			where: { business_clients_id: businessClientsId },
-			include: { crm_module: { include: { business: true } }, taxi_orders: true },
+			include: { crm_module: { include: { business: { business_details: true } } }, taxi_orders: true },
 		});
 
 		return row ? toBusinessClientDetailResponse(row as BusinessClientDetailPrisma) : null;

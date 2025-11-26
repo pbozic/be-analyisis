@@ -3,15 +3,14 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, Timestamp } from '../../primitives.js';
 import { BasicUserDataSchema } from '../User/user.js';
-import { OrderRefSchema } from '../DeliveryOrders/deliveryOrder.dto.js';
+import { TaxiOrderRefSchema } from '../TaxiOrders/taxiOrder.dto.js';
+import { DeliveryOrderRefSchema } from '../DeliveryOrders/deliveryOrder.dto.js';
 
 extendZodWithOpenApi(z);
 
 // =======================
 // Scoring Points DTOs
 // =======================
-
-export type ScoringPointsOrderRef = z.infer<typeof OrderRefSchema>;
 
 export const LateEventRefSchema = z
 	.object({
@@ -51,9 +50,18 @@ export const ScoringPointsBaseSchema = ScoringPointsBaseObjectSchema.refine(
 export type ScoringPointsBase = z.infer<typeof ScoringPointsBaseSchema>;
 
 export const ScoringPointsDetailSchema = ScoringPointsBaseObjectSchema.extend({
-	user: BasicUserDataSchema.nullable().optional(),
-	delivery_order: OrderRefSchema.nullable().optional(),
-	taxi_order: OrderRefSchema.nullable().optional(),
+	user: z
+		.lazy(() => BasicUserDataSchema)
+		.nullable()
+		.optional(),
+	delivery_order: z
+		.lazy(() => DeliveryOrderRefSchema)
+		.nullable()
+		.optional(),
+	taxi_order: z
+		.lazy(() => TaxiOrderRefSchema)
+		.nullable()
+		.optional(),
 	late_events: z.array(LateEventRefSchema).optional().default([]),
 })
 	.refine(

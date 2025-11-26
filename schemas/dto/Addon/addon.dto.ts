@@ -35,7 +35,7 @@ export type AddonRef = z.infer<typeof AddonRefSchema>;
 
 // Response Schema - extends Base and embeds ONLY other models' Ref-variants
 export const AddonResponseSchema = AddonBaseSchema.extend({
-	actions: z.array(ActionRefSchema).optional(),
+	actions: z.array(z.lazy(() => ActionRefSchema)).optional(),
 	// business_addons would be added here if needed
 }).openapi('AddonResponse');
 

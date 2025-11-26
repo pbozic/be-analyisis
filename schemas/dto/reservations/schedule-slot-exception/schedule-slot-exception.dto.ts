@@ -114,13 +114,17 @@ export const ScheduleSlotExceptionWithOptionalIdsSchema = CreateScheduleSlotExce
 	description: 'Schedule slot exception schema with optional IDs for update/create operations',
 });
 
-export const BookingSlotWithOptionalIdsSchema = CreateBookingSlotRequestSchema.extend({
-	schedule_slot_id: UUID.optional(),
-	booking_slot_id: UUID.optional(),
-}).openapi({
-	title: 'BookingSlotWithOptionalIds',
-	description: 'Booking slot schema with optional IDs for update/create operations',
-});
+export const BookingSlotWithOptionalIdsSchema = z
+	.lazy(() =>
+		CreateBookingSlotRequestSchema.extend({
+			schedule_slot_id: UUID.optional(),
+			booking_slot_id: UUID.optional(),
+		})
+	)
+	.openapi({
+		title: 'BookingSlotWithOptionalIds',
+		description: 'Booking slot schema with optional IDs for update/create operations',
+	});
 
 // Schemas for batch exception operations
 export const CreateOrUpdateExceptionsRequestSchema = z

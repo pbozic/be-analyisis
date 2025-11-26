@@ -1,13 +1,11 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 // Import registerSchemas functions with aliases
-import { registerSchemas as registerTaxiOrderSchemas } from './taxiOrder.dto.js';
+import { registerSchemas as registerTaxiOrderSchemas } from './taxiorder.dto.js';
 import { registerSchemas as registerTaxiOrderValidatorSchemas } from './taxiOrder.validators.js';
 
 // === Taxi DTOs (Response) ===
 export {
-	CoordinatesSchema,
-	LocationSchema,
 	FileUploadSchema,
 	DriverRefSchema,
 	TaxiOrderBaseSchema,
@@ -17,7 +15,7 @@ export {
 	type TaxiOrderBase,
 	type TaxiOrderRef,
 	type TaxiOrderDetail,
-} from './taxiOrder.dto.js';
+} from './taxiorder.dto.js';
 
 // === Taxi Validators (Request Body, Query, Params) ===
 export {

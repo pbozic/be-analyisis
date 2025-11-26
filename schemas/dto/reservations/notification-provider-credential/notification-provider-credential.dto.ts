@@ -53,7 +53,7 @@ export const CreateNotificationProviderCredentialRequestSchema = z
 
 export const UpdateNotificationProviderCredentialRequestSchema = z
 	.object({
-		config: JsonObjectSchema.optional(),
+		config: z.lazy(() => JsonObjectSchema).optional(),
 		is_default: z.boolean().optional(),
 	})
 	.openapi({
@@ -63,7 +63,7 @@ export const UpdateNotificationProviderCredentialRequestSchema = z
 
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 export const NotificationProviderCredentialResponseSchema = NotificationProviderCredentialBaseSchema.extend({
-	reservation_module: ReservationModuleRefSchema.optional(),
+	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 }).openapi({
 	title: 'NotificationProviderCredentialResponse',
 	description: 'Complete notification provider credential response with related entities',

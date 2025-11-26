@@ -33,7 +33,10 @@ export const TableReservationDetailSchema = TableReservationBaseSchema.extend({
 		.lazy(() => BasicUserDataSchema)
 		.nullable()
 		.optional(),
-	business: BusinessRefSchema.nullable().optional(),
+	business: z
+		.lazy(() => BusinessRefSchema)
+		.nullable()
+		.optional(),
 }).openapi('TableReservationDetail');
 export type TableReservationDetail = z.infer<typeof TableReservationDetailSchema>;
 

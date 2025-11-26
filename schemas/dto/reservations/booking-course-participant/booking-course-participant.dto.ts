@@ -69,7 +69,7 @@ export const UpdateBookingCourseParticipantRequestSchema = z
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const BookingCourseParticipantResponseSchema = BookingCourseParticipantBaseSchema.extend({
-	customer: CustomerRefSchema.optional(),
+	customer: z.lazy(() => CustomerRefSchema).optional(),
 	booking: z.lazy(() => BookingRefSchema).optional(),
 	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 }).openapi({

@@ -44,8 +44,8 @@ export const CreateServiceLocationRequestSchema = z
 
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 export const ServiceLocationResponseSchema = ServiceLocationBaseSchema.extend({
-	service: ServiceRefSchema.optional(),
-	location: LocationRefSchema.optional(),
+	service: z.lazy(() => ServiceRefSchema).optional(),
+	location: z.lazy(() => LocationRefSchema).optional(),
 }).openapi({
 	title: 'ServiceLocationResponse',
 	description: 'Complete service location response with related entities',

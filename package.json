@@ -27,7 +27,6 @@
         "postinstall": "node ./setup-aliases.js && node ./install-wkhtmltopdf.js",
         "alias:setup": "node ./setup-aliases.js",
         "test": "jest --runInBand",
-        "test:integration": "jest --runInBand",
         "test:watch": "jest --watchAll",
         "test:coverage": "jest --coverage",
         "generate:dao-tests": "npx tsx scripts/generate-dao-mapper-tests.ts",

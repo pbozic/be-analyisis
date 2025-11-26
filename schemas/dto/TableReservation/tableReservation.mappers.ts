@@ -1,7 +1,6 @@
 import { TableReservationDetailSchema } from './tableReservation.dto.js';
 import type { TableReservationDetail } from './tableReservation.dto.js';
-import { toBusinessMinimalResponse } from '../Business/business.mappers.ts';
-import { toUserResponse } from '../User/user.mappers.ts';
+import { toUserRef } from '../User/user.mappers.ts';
 import { UserPrisma } from '../../../prisma/includes/user.ts';
 
 export type PrismaReservation = {
@@ -34,7 +33,6 @@ export function toTableReservationDetail(row: unknown): TableReservationDetail {
 		table_reservation_id: r.table_reservation_id,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		user: toUserResponse(r.user as UserPrisma) ?? undefined,
-		business: toBusinessMinimalResponse(r.business) ?? undefined,
+		user: toUserRef(r.user as UserPrisma) ?? undefined,
 	});
 }

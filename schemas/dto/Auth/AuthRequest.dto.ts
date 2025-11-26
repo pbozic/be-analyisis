@@ -143,16 +143,16 @@ export const PasswordResetSchema = z
 export const RegisterTransportServiceSchema = z
 	.object({
 		business: z.object({
-			...BusinessRegistrationDataSchema.shape,
+			...z.lazy(() => BusinessRegistrationDataSchema).shape,
 			type: z.string().default('TAXI'),
-			documents: z.array(DocumentWithFilesSchema).optional(),
+			documents: z.array(z.lazy(() => DocumentWithFilesSchema)).optional(),
 		}),
 		drivers: z
 			.array(
 				z.object({
 					user: z.object({
 						data: UserRegistrationDataSchema,
-						documents: z.array(DocumentWithFilesSchema).optional(),
+						documents: z.array(z.lazy(() => DocumentWithFilesSchema)).optional(),
 						addresses: z.array(z.record(z.any())).optional(),
 					}),
 					driver: z.object({
@@ -164,15 +164,15 @@ export const RegisterTransportServiceSchema = z
 							regions: z.array(z.string()).optional(),
 						}),
 						regions: z.array(z.string()).optional(),
-						documents: z.array(DocumentWithFilesSchema).optional(),
+						documents: z.array(z.lazy(() => DocumentWithFilesSchema)).optional(),
 					}),
 				})
 			)
 			.optional(),
-		vehicles: z.array(VehicleRegistrationSchema).optional(),
+		vehicles: z.array(z.lazy(() => VehicleRegistrationSchema)).optional(),
 		addresses: z
 			.object({
-				business: BusinessAddressSchema.optional(),
+				business: z.lazy(() => BusinessAddressSchema).optional(),
 			})
 			.optional(),
 	})

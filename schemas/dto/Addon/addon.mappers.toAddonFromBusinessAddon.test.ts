@@ -16,10 +16,10 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('Addon Mapper - toAddonFromBusinessAddon', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.businessaddonwithaddon;
+		const mockData = mockPrismaData.businessaddon;
 
 		if (!mockData) {
-			console.warn('⚠️  Mock data for "businessaddonwithaddon" not found');
+			console.warn('⚠️  Mock data for "businessaddon" not found');
 			console.warn('   Add mock data to tests/integration/mock-prisma.ts');
 			expect(mockData).toBeDefined();
 			return;

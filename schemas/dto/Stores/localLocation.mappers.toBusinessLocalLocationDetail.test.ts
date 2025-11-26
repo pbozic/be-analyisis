@@ -16,17 +16,17 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('Stores Mapper - toBusinessLocalLocationDetail', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.unknown || {};
+		const mockData = mockPrismaData.businessLocalLocation;
 
 		if (!mockData) {
-			console.warn('⚠️  Mock data for "unknown" not found');
+			console.warn('⚠️  Mock data for "businessLocalLocation" not found');
 			console.warn('   Add mock data to tests/integration/mock-prisma.ts');
 			expect(mockData).toBeDefined();
 			return;
 		}
 
 		// Call the actual mapper
-		const result = toBusinessLocalLocationDetail(mockData as unknown);
+		const result = toBusinessLocalLocationDetail(mockData);
 
 		// Validate the result is defined
 		expect(result).toBeDefined();

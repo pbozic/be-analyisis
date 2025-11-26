@@ -1,6 +1,8 @@
 import { ReferralRefSchema, ReferralDetailSchema } from './referral.dto.js';
 import type { ReferralRef, ReferralDetail } from './referral.dto.js';
 import { BasicUserDataSchema } from '../User/user.js';
+import { toUserRef } from '../User/user.mappers.js';
+import { UserPrisma } from '../../../prisma/includes/user.js';
 
 function toBasicUser(user: unknown | null | undefined) {
 	if (!user) return null;
@@ -36,8 +38,8 @@ type PrismaReferral = {
 	reward_claimed?: boolean | null;
 	created_at?: string | Date | null;
 	updated_at?: string | Date | null;
-	referrer?: { user_id: string; first_name?: string | null; last_name?: string | null } | null;
-	referred?: { user_id: string; first_name?: string | null; last_name?: string | null } | null;
+	referrer?: UserPrisma | null;
+	referred?: UserPrisma | null;
 };
 
 export function toReferralDetail(referral: unknown): ReferralDetail {
@@ -51,7 +53,7 @@ export function toReferralDetail(referral: unknown): ReferralDetail {
 		reward_claimed: !!r.reward_claimed,
 		created_at: r.created_at ? new Date(r.created_at as string | Date).toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
-		referrer: toBasicUser(r.referrer),
-		referred: toBasicUser(r.referred),
+		referrer: toUserRef(r.referrer as UserPrisma),
+		referred: toUserRef(r.referred as UserPrisma),
 	});
 }

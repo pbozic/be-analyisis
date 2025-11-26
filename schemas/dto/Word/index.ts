@@ -7,7 +7,6 @@ import { registerSchemas as registerWordValidatorSchemas } from './word.validato
 // === Word DTOs (Response) ===
 export {
 	TranslationItemSchema,
-	CategoryRefSchema,
 	WordBaseSchema,
 	WordDetailSchema,
 	WordBuyItemDetailSchema,
@@ -16,7 +15,6 @@ export {
 	UpdateUserSubscriptionResponseSchema,
 	CreateWordBuySubscriptionResponseSchema,
 	type TranslationItem,
-	type CategoryRef,
 	type WordBase,
 	type WordDetail,
 	type WordBuyItemDetail,

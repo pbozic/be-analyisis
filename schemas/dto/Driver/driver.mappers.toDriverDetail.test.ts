@@ -10,7 +10,7 @@
 
 import { describe, it, expect } from '@jest/globals';
 import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
-import { isCircularDependencyError } from '../../../tests/integration/test-helpers.js';
+import { DriverDetailSchema, toDriverDetail } from './index.js';
 
 describe('Driver Mapper - toDriverDetail', () => {
 	it('should map Prisma data to DTO and validate against schema', async () => {
@@ -24,32 +24,19 @@ describe('Driver Mapper - toDriverDetail', () => {
 			return;
 		}
 
-		// Try to import and run mapper - may fail due to circular dependency
-		try {
-			const { toDriverDetail } = await import('./driver.mappers.js');
-			const result = toDriverDetail(mockData as unknown);
+		const result = toDriverDetail(mockData as unknown);
 
-			expect(result).toBeDefined();
+		expect(result).toBeDefined();
 
-			// Dynamically import schema to avoid circular dependency
-			const { BasicUserDataSchema } = await import('../User/user.js');
-			const validated = BasicUserDataSchema.safeParse(result);
+		const validated = DriverDetailSchema.safeParse(result);
 
-			if (!validated.success) {
-				console.error('Schema validation failed for toDriverDetail:');
-				console.error(JSON.stringify(validated.error.format(), null, 2));
-				expect(validated.success).toBe(true);
-			}
-
-			expect(validated.data).toEqual(result);
-			console.log('✅ toDriverDetail passed schema validation');
-		} catch (error: any) {
-			if (isCircularDependencyError(error)) {
-				console.warn('⚠️  Test skipped due to circular dependency');
-				expect(true).toBe(true);
-				return;
-			}
-			throw error;
+		if (!validated.success) {
+			console.error('Schema validation failed for toDriverDetail:');
+			console.error(JSON.stringify(validated.error.format(), null, 2));
+			expect(validated.success).toBe(true);
 		}
+
+		expect(validated.data).toEqual(result);
+		console.log('✅ toDriverDetail passed schema validation');
 	});
 });

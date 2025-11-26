@@ -17,8 +17,8 @@ export const OrderLobbyItemBaseSchema = z
 		menu_item_id: UUID,
 		menu_item_version_id: UUID,
 		user_id: UUID.nullable().optional(),
-		sides: z.array(UUID).describe('JSON array of side item IDs'),
-		extras: z.array(UUID).describe('JSON array of extra item IDs'),
+		sides: z.array(UUID).default([]).describe('JSON array of side item IDs'),
+		extras: z.array(UUID).default([]).describe('JSON array of extra item IDs'),
 		quantity: z.number().int().positive().describe('Quantity of the item'),
 		customer_note: z.string().nullable().optional().describe('Customer note for the item'),
 		created_at: Timestamp,
@@ -73,9 +73,9 @@ export type MenuItemRef = z.infer<typeof MenuItemRefSchema>;
 
 // OrderLobbyItem Response Schema - Base with embedded refs
 export const OrderLobbyItemResponseSchema = OrderLobbyItemBaseSchema.extend({
-	user: UserRefSchema.optional(),
-	menu_item: MenuItemRefSchema.optional(),
-	order_lobby: z.lazy(() => OrderLobbyRefSchema).optional(),
+	user: z.lazy(() => UserRefSchema).optional(),
+	menu_item: MenuItemRefSchema.omit({ menu_item_id: true }).optional(),
+	order_lobby: z.lazy(() => OrderLobbyRefSchema.omit({ order_lobbies_id: true })).optional(),
 }).openapi({
 	title: 'OrderLobbyItemResponse',
 	description: 'Complete order lobby item response with related entities',

@@ -8,6 +8,11 @@ extendZodWithOpenApi(z);
 export const TransportModuleBaseSchema = z
 	.object({
 		transport_module_id: UUID,
+		public_link_hash: z
+			.string()
+			.nullable()
+			.optional()
+			.openapi({ example: 'TMabc123def45678', description: 'Public link hash' }),
 		business_id: UUID,
 		enabled: z.boolean().optional(),
 		created_at: Timestamp.optional(),
@@ -15,9 +20,8 @@ export const TransportModuleBaseSchema = z
 	})
 	.openapi('TransportModuleBase');
 
-export const TransportModuleRefSchema = TransportModuleBaseSchema.pick({
-	transport_module_id: true,
-	enabled: true,
+export const TransportModuleRefSchema = TransportModuleBaseSchema.omit({
+	business_id: true,
 }).openapi('TransportModuleRef');
 
 export type TransportModuleBase = z.infer<typeof TransportModuleBaseSchema>;

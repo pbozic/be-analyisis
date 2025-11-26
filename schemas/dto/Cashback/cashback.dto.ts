@@ -3,7 +3,8 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { CASHBACK_TYPE, CASHBACK_SOURCE, CASHBACK_STATUS } from '@prisma/client';
 
 import { UUID, Timestamp } from '../../primitives.js';
-import { OrderRefSchema, OrderRef } from '../DeliveryOrders/deliveryOrder.dto.js';
+import { DeliveryOrderRefSchema } from '../DeliveryOrders/deliveryOrder.dto.js';
+import { TaxiOrderRefSchema } from '../TaxiOrders/taxiOrder.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -39,24 +40,16 @@ export type CashbackRef = z.infer<typeof CashbackRefSchema>;
 
 export const CashbackDetailSchema = CashbackBaseSchema.extend({
 	// In DAOs, some queries include orders; embed minimal refs when present
-	taxi_order: OrderRefSchema.nullable().optional(),
-	delivery_order: OrderRefSchema.nullable().optional(),
+	taxi_order: z
+		.lazy(() => TaxiOrderRefSchema)
+		.nullable()
+		.optional(),
+	delivery_order: z
+		.lazy(() => DeliveryOrderRefSchema)
+		.nullable()
+		.optional(),
 }).openapi('CashbackDetail');
 export type CashbackDetail = z.infer<typeof CashbackDetailSchema>;
-
-// =======================
-// Mappers
-// =======================
-export function toOrderRef(order: unknown | null | undefined): OrderRef | null {
-	if (!order) return null;
-	const o = order as { order_id: string };
-	return OrderRefSchema.parse({ order_id: o.order_id });
-}
-
-export function toCashbackRef(cashback: unknown): CashbackRef {
-	const c = cashback as { cashback_id: string };
-	return CashbackRefSchema.parse({ cashback_id: c.cashback_id });
-}
 
 type PrismaCashback = {
 	cashback_id: string;
@@ -90,8 +83,8 @@ export function toCashbackDetail(cashback: PrismaCashback): CashbackDetail {
 		converted_at: c.converted_at ? new Date(c.converted_at as string | Date).toISOString() : null,
 		taxi_order_id: c.taxi_order_id ?? null,
 		delivery_order_id: c.delivery_order_id ?? null,
-		taxi_order: toOrderRef(c.taxi_order),
-		delivery_order: toOrderRef(c.delivery_order),
+		taxi_order: { order_id: c.taxi_order?.order_id ?? null },
+		delivery_order: { order_id: c.delivery_order?.order_id ?? null },
 	});
 }
 

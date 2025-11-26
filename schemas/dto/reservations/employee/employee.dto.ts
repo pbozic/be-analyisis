@@ -155,7 +155,7 @@ export const EmployeeDAOResponseSchema = EmployeeBaseSchema.extend({
 export const EmployeeByIdDAOResponseSchema = EmployeeBaseSchema.extend({
 	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
 	business_user: z
-		.lazy(() => BusinessUserDetailSchema)
+		.lazy(() => BusinessUserLightSchema)
 		.nullable()
 		.optional(),
 }).openapi({
@@ -185,10 +185,10 @@ export const EmployeeWithSlotsDAOResponseSchema = EmployeeBaseSchema.extend({
 		.lazy(() =>
 			z.array(
 				ScheduleSlotRefSchema.extend({
-					schedule_employee: ScheduleEmployeeRefSchema.optional(),
+					schedule_employee: z.lazy(() => ScheduleEmployeeRefSchema).optional(),
 					schedule_slot_exceptions: z.array(z.object({ start_time: Timestamp })).optional(),
 					booking_slots: z.array(z.object({ start_time: Timestamp })).optional(),
-					schedule: ScheduleDetailSchema.optional(),
+					schedule: z.lazy(() => ScheduleDetailSchema).optional(),
 				})
 			)
 		)
@@ -204,8 +204,8 @@ export const EmployeeScheduleSlotsDAOResponseSchema = EmployeeBaseSchema.extend(
 		.array(
 			z.object({
 				schedule_slot_id: UUID,
-				schedule_slot_exceptions: z.array(ScheduleSlotExceptionBaseSchema).optional(),
-				booking_slots: z.array(BookingSlotBaseSchema).optional(),
+				schedule_slot_exceptions: z.array(z.lazy(() => ScheduleSlotExceptionBaseSchema)).optional(),
+				booking_slots: z.array(z.lazy(() => BookingSlotBaseSchema)).optional(),
 			})
 		)
 		.optional(),

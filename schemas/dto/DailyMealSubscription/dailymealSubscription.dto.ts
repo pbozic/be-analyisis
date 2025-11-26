@@ -50,7 +50,7 @@ export const DailyMealSubscriptionResponseSchema = z
 	.object({
 		status: z.string(),
 		id: UUID,
-		payment_intent: PaymentIntentSchema.optional(),
+		payment_intent: z.lazy(() => PaymentIntentSchema).optional(),
 	})
 	.openapi('DailyMealSubscriptionResponse');
 export type DailyMealSubscriptionResponse = z.infer<typeof DailyMealSubscriptionResponseSchema>;

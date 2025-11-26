@@ -16,17 +16,17 @@ import { mockPrismaData } from '../../../tests/integration/mock-prisma.js';
 describe('Menu Mapper - toMenuItemVersionResponse', () => {
 	it('should map Prisma data to DTO and validate against schema', () => {
 		// Get mock data
-		const mockData = mockPrismaData.unknown || {};
+		const mockData = mockPrismaData.menuItemVersion;
 
 		if (!mockData) {
-			console.warn('⚠️  Mock data for "unknown" not found');
+			console.warn('⚠️  Mock data for "menuItemVersion" not found');
 			console.warn('   Add mock data to tests/integration/mock-prisma.ts');
 			expect(mockData).toBeDefined();
 			return;
 		}
 
 		// Call the actual mapper
-		const result = toMenuItemVersionResponse(mockData as unknown);
+		const result = toMenuItemVersionResponse(mockData);
 
 		// Validate the result is defined
 		expect(result).toBeDefined();

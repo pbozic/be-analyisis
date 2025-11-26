@@ -1,5 +1,3 @@
-import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-
 // === LateEvents DTOs (Response) ===
 export {
 	LateEventsBaseSchema,
@@ -38,9 +36,3 @@ export {
 
 // === LateEvents Mappers ===
 export * from './late-events.mappers.js';
-
-// === Schema Registration ===
-export function registerSchemas(registry: OpenAPIRegistry) {
-	registerLateEventsSchemas(registry);
-	registerLateEventsValidatorSchemas(registry);
-}
