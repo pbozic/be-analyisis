@@ -4,6 +4,7 @@ import type { StoreDetail } from './store.dto.js';
 export function toStoreDetail(row: unknown): StoreDetail {
 	const r = row as {
 		stores_id: string;
+		business_id: string;
 		enabled?: boolean;
 		online?: boolean;
 		overwhelmed?: boolean;
@@ -13,6 +14,7 @@ export function toStoreDetail(row: unknown): StoreDetail {
 	};
 	return StoreDetailSchema.parse({
 		stores_id: r.stores_id,
+		business_id: r.business_id,
 		enabled: r.enabled,
 		online: r.online,
 		overwhelmed: r.overwhelmed,
@@ -21,3 +23,5 @@ export function toStoreDetail(row: unknown): StoreDetail {
 		updated_at: r.updated_at ? new Date(r.updated_at as string | Date).toISOString() : undefined,
 	});
 }
+
+export default { toStoreDetail };

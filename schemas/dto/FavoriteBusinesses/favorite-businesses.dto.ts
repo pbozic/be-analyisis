@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { MODULE } from '@prisma/client';
 
 import { UUID, Timestamp } from '../../primitives';
 
@@ -18,7 +19,7 @@ export const FavoriteBusinessBaseSchema = z
 		user_favorite_businesses_id: UUID.optional(),
 		user_id: UUID,
 		business_id: UUID,
-		business_type: z.string(),
+		module: z.nativeEnum(MODULE),
 		created_at: Timestamp.optional(),
 		updated_at: Timestamp.optional(),
 	})

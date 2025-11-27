@@ -76,7 +76,7 @@ export const ScoringPointsDetailSchema = ScoringPointsBaseObjectSchema.extend({
 			const present = keys.filter(
 				(k) => obj[k as keyof typeof obj] !== undefined && obj[k as keyof typeof obj] !== null
 			);
-			return present.length === 1;
+			return present.length >= 1;
 		},
 		{
 			message:

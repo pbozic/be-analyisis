@@ -21,6 +21,7 @@ export function toBookingSlotResponse(row: BookingSlotBasePrisma): BookingSlotRe
 		schedule_slot: r.schedule_slot
 			? {
 					schedule_slot_id: r.schedule_slot.schedule_slot_id,
+					date: toIso(r.schedule_slot.date) ?? '',
 					start_time: toIso(r.schedule_slot.start_time) ?? '',
 					end_time: toIso(r.schedule_slot.end_time) ?? '',
 				}

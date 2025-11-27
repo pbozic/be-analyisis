@@ -33,7 +33,7 @@ export const BasicUserDataSchema = z
 		email: Email.optional(),
 		telephone: PhoneNumber.optional(),
 		telephone_code: z.string().optional(),
-		date_of_birth: z.string().date().optional(),
+		date_of_birth: Timestamp.optional(),
 		language: LanguageCode.optional(),
 	})
 	.openapi({

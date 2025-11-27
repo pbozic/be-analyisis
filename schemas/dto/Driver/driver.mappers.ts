@@ -1,9 +1,9 @@
 import { SORTING_TYPE } from '@prisma/client';
 
 import { DriverDetailSchema, type DriverDetail } from './driver.dto.js';
-import { VehicleBaseSchema } from '../Vehicles/vehicle.dto.js';
 import { TransportModuleBase } from '../Transport/transport.dto.js';
-import { BasicUserDataSchema } from '../User/user.js';
+import { toVehicleBase } from '../Vehicles/vehicle.mappers.js';
+import { toUserRef } from '../User/user.mappers.js';
 
 // ===============
 // Mappers
@@ -35,64 +35,10 @@ type PrismaDriver = {
 	daily_meals?: Record<string, any> | null;
 };
 
-type VehicleLike = {
-	vehicle_id?: string;
-	transport_module_id?: string | null;
-	active?: boolean | null;
-	class?: unknown;
-	category?: unknown;
-	make?: string | null;
-	model?: string | null;
-	color?: string | null;
-	license_plate?: string | null;
-	business_premise_id?: string | null;
-	created_at?: string | Date | null;
-	updated_at?: string | Date | null;
-};
-
-function toVehicleBase(row: unknown | null | undefined) {
-	if (!row) return null;
-	const v = row as VehicleLike;
-	return VehicleBaseSchema.parse({
-		vehicle_id: v.vehicle_id as string,
-		transport_module_id: v.transport_module_id ?? null,
-		active: v.active ?? null,
-		class: v.class as (typeof VehicleBaseSchema)['_type']['class'],
-		category: v.category as (typeof VehicleBaseSchema)['_type']['category'],
-		make: v.make ?? null,
-		model: v.model ?? null,
-		color: v.color ?? null,
-		license_plate: v.license_plate ?? null,
-		business_premise_id: v.business_premise_id ?? null,
-		created_at: v.created_at ? new Date(v.created_at as string | Date).toISOString() : undefined,
-		updated_at: v.updated_at ? new Date(v.updated_at as string | Date).toISOString() : undefined,
-	});
-}
-
 export function toDriverDetail(row: unknown, user?: unknown): DriverDetail {
 	const r = row as PrismaDriver;
-	const currentVehicle = r.current_vehicle ? toVehicleBase(r.current_vehicle) : null;
-	const parsedUser = user
-		? BasicUserDataSchema.parse({
-				first_name: (user as any).first_name ?? '',
-				last_name: (user as any).last_name ?? '',
-				email: (user as any).email ?? undefined,
-				telephone: (user as any).telephone ?? undefined,
-				telephone_code: (user as any).telephone_code ?? undefined,
-				date_of_birth: (user as any).date_of_birth ?? undefined,
-				language: (user as any).language ?? undefined,
-			})
-		: r.user
-			? BasicUserDataSchema.parse({
-					first_name: (r.user as any).first_name ?? '',
-					last_name: (r.user as any).last_name ?? '',
-					email: (r.user as any).email ?? undefined,
-					telephone: (r.user as any).telephone ?? undefined,
-					telephone_code: (r.user as any).telephone_code ?? undefined,
-					date_of_birth: (r.user as any).date_of_birth ?? undefined,
-					language: (r.user as any).language ?? undefined,
-				})
-			: undefined;
+	const currentVehicle = r.current_vehicle ? toVehicleBase(r.current_vehicle as any) : null;
+	const parsedUser = user ? toUserRef(user as any) : r.user ? toUserRef(r.user as any) : undefined;
 	return DriverDetailSchema.parse({
 		driver_id: r.driver_id,
 		user_id: r.user_id,

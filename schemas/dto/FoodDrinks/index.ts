@@ -7,10 +7,8 @@ import { registerSchemas as registerFoodDrinksValidatorSchemas } from './foodDri
 // === FoodDrinks DTOs (Response) ===
 export {
 	FoodDrinksBaseSchema,
-	FoodDrinksModuleRefSchema,
 	FoodDrinksDetailSchema,
 	type FoodDrinksBase,
-	type FoodDrinksModuleRef,
 	type FoodDrinksDetail,
 } from './foodDrinks.dto.js';
 

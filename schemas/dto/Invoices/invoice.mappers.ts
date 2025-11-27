@@ -21,13 +21,26 @@ export function toBusinessPremiseResponse(row: BusinessPremiseWithIncludesPrisma
 export function toElectronicDeviceResponse(
 	row: ElectronicDeviceWithIncludesPrisma | unknown
 ): ElectronicDeviceResponse {
-	return ElectronicDeviceResponseSchema.parse(row);
+	const r = row as ElectronicDeviceWithIncludesPrisma;
+	return ElectronicDeviceResponseSchema.parse({
+		...r,
+		created_at: r.created_at.toISOString(),
+		updated_at: r.updated_at.toISOString(),
+		business_premise: toBusinessPremiseResponse(r.business_premise as BusinessPremiseWithIncludesPrisma),
+		assignments: r.assignments.map((a) => toDeviceAssignmentResponse(a as DeviceAssignmentWithIncludesPrisma)),
+	});
 }
 
 export function toDeviceAssignmentResponse(
 	row: DeviceAssignmentWithIncludesPrisma | unknown
 ): DeviceAssignmentResponse {
-	return DeviceAssignmentResponseSchema.parse(row);
+	const r = row as DeviceAssignmentWithIncludesPrisma;
+	return DeviceAssignmentResponseSchema.parse({
+		...r,
+		valid_from: r.valid_from ? r.valid_from.toISOString() : null,
+		valid_to: r.valid_to ? r.valid_to.toISOString() : null,
+		created_at: r.created_at.toISOString(),
+	});
 }
 
 export default { toBusinessPremiseResponse, toElectronicDeviceResponse, toDeviceAssignmentResponse };

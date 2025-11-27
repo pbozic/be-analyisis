@@ -25,9 +25,6 @@ export {
 	type BusinessWithReservationResponseDto as BusinessWithReservationResponse,
 	type BusinessWithCrmResponseDto as BusinessWithCrmResponse,
 	type BusinessWithAllModulesResponseDto as BusinessWithAllModulesResponse,
-	type TransportModuleRef,
-	type FoodDrinksModuleRef,
-	type StoresModuleRef,
 	type ReservationModuleRef,
 	type CrmModuleRef,
 	type DailyMealsModule,
@@ -115,17 +112,13 @@ export {
 // Legacy exports for backwards compatibility
 export {
 	BusinessBaseSchema,
-	BusinessRefSchema as BusinessRefSchemaLegacy,
 	BusinessResponseSchema,
 	BusinessListResponseSchema,
 	BusinessSearchResponseSchema,
-	BusinessAdminResponseSchema,
 	type BusinessBase,
-	type BusinessRef as BusinessRefLegacy,
 	type BusinessResponse as BusinessResponseLegacy,
 	type BusinessListResponse,
 	type BusinessSearchResponse,
-	type BusinessAdminResponse,
 	registerSchemas as registerLegacyBusinessSchemas,
 } from './business.js';
 

@@ -45,7 +45,7 @@ export async function getAllBusinessUsers(req: Request, res: Response): Promise<
  - @operationId getBusinessUserByUserId
  - @pathParam {string} user_id - The user ID to look up.
  - @response 200 - Business user retrieved successfully
- - @responseContent {BusinessUserWithBusinessResponse} 200.application/json
+ - @responseContent {BusinessUserByIdResponse} 200.application/json
  - @response 404 - Business user not found
  - @response 400 - Error retrieving business user
  - @prisma_model business_users

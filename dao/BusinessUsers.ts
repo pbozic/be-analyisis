@@ -7,6 +7,7 @@ import {
 	toBusinessUserWithBusinessResponse,
 	toBusinessUsersList,
 	toBusinessUserCreationResponse,
+	toBusinessUserByIdResponse,
 } from '../schemas/dto/BusinessUser/businessUser.mappers.js';
 import type {
 	BusinessUserBase,
@@ -15,13 +16,15 @@ import type {
 	BusinessUserListResponse,
 	BusinessUserCreationResponse,
 } from '../schemas/dto/BusinessUser/index.js';
-import type {
-	BusinessUserWithBusinessPrisma,
-	BusinessUserDefaultPrisma,
-	BusinessUserWithAllowancePrisma,
-	BusinessUserWithUsersPrisma,
+import {
+	type BusinessUserWithBusinessPrisma,
+	type BusinessUserDefaultPrisma,
+	type BusinessUserWithAllowancePrisma,
+	type BusinessUserWithUsersPrisma,
+	businessUsersDefaultInclude,
+	businessUsersAllowanceInclude,
 } from '../prisma/includes/businessUsers.js';
-import { CreateBusinessUser } from '../schemas/dto/BusinessUser/businessUser.js';
+import { BusinessUserByIdResponse, CreateBusinessUser } from '../schemas/dto/BusinessUser/businessUser.js';
 
 // Define common query arg types
 interface FindManyArgs {
@@ -47,7 +50,7 @@ type PrismaTransactionClient = any;
 const getAllBusinessUsers = async (): Promise<BusinessUserListResponse> => {
 	try {
 		const rows = await prisma.business_users.findMany({
-			include: { users: true, business: true, allowance: true, operating_address: true },
+			include: businessUsersDefaultInclude,
 		});
 
 		return toBusinessUsersList(rows as BusinessUserWithBusinessPrisma[]);
@@ -61,20 +64,29 @@ const getAllBusinessUsers = async (): Promise<BusinessUserListResponse> => {
  * Get the business_user relation for a given user, with related business context.
  *
  * @param {string} userId - The user ID to search by.
- * @returns {Promise<BusinessUserWithBusinessResponse | null>} A promise resolving to the business_user record or null.
+ * @returns {Promise<BusinessUserByIdResponse | null>} A promise resolving to the business_user record or null.
  */
-const getBusinessUserByUserId = async (userId: string): Promise<BusinessUserWithBusinessResponse | null> => {
+const getBusinessUserByUserId = async (userId: string): Promise<BusinessUserByIdResponse | null> => {
 	try {
 		const row = await prisma.business_users.findFirst({
 			where: { user_id: userId },
 			include: {
+				...businessUsersDefaultInclude,
 				business: {
 					include: {
 						business_users: {
 							where: { user_id: { not: userId } },
 							include: { users: true, allowance: true },
 						},
+					},
+				},
+				crm_module: {
+					include: {
 						business_clients: true,
+					},
+				},
+				stores_module: {
+					include: {
 						business_local_locations: {
 							where: { time: { gte: new Date() } },
 							include: { local_location: { include: { address: true } } },
@@ -82,12 +94,10 @@ const getBusinessUserByUserId = async (userId: string): Promise<BusinessUserWith
 						},
 					},
 				},
-				allowance: true,
-				operating_address: true,
 			},
 		});
 
-		return row ? toBusinessUserWithBusinessResponse(row as BusinessUserWithBusinessPrisma) : null;
+		return row ? toBusinessUserByIdResponse(row as unknown) : null;
 	} catch (error) {
 		console.error(`Error retrieving business users for user ID ${userId}:`, error);
 		throw new Error(error instanceof Error ? error.message : 'Failed to get business user by user ID');
@@ -102,7 +112,10 @@ const getBusinessUserByUserId = async (userId: string): Promise<BusinessUserWith
  */
 const getBusinessUsersByBusinessId = async (business_id: string): Promise<BusinessUserListResponse> => {
 	try {
-		const rows = await prisma.business_users.findMany({ where: { business_id }, include: { users: true } });
+		const rows = await prisma.business_users.findMany({
+			where: { business_id },
+			include: businessUsersDefaultInclude,
+		});
 
 		return toBusinessUsersList(rows as BusinessUserWithUsersPrisma[]);
 	} catch (error) {
@@ -125,7 +138,7 @@ const getAllBusinessUsersForBusinessByCompanyRole = async (
 	try {
 		const rows = await prisma.business_users.findMany({
 			where: { business_id, company_role },
-			include: { users: true },
+			include: businessUsersDefaultInclude,
 		});
 
 		return toBusinessUsersList(rows as BusinessUserWithUsersPrisma[]);
@@ -331,7 +344,7 @@ const updateAllowance = async (
 
 		const business_user = await prisma.business_users.findUnique({
 			where: { business_users_id },
-			include: { allowance: true },
+			include: businessUsersAllowanceInclude,
 		});
 
 		if (!business_user) throw new Error('Business user not found after allowance update');

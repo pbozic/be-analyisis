@@ -4,7 +4,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 import { Timestamp, UUID } from '../../primitives.js';
 import { AddressRefSchema } from '../Address/address.js';
 import { UserResponseSchema, AllowanceResponseSchema, UserRefSchema } from '../User/index.js';
-import { PaymentMethodSchema } from '../Payments/payment.dto.js';
+import { BusinessWithAllModulesResponseDtoWithoutBusinessUsers } from '../Business/business.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -104,20 +104,18 @@ export const BusinessUserWithBusinessResponseSchema = BusinessUserBaseSchema.ext
 		.optional(),
 	operating_address: AddressRefSchema.nullable().optional(),
 	business: z
-		.object({
-			business_id: UUID,
-			name: z.string(),
-			email: z.string().email(),
-			//business_users: z.array(BusinessUserRefSchema).optional(),
-			business_clients: z.array(z.any()).optional(), // TODO: Add proper BusinessClient schema when available
-			business_local_locations: z.array(z.any()).optional(), // TODO: Add proper LocalLocation schema when available
-			stripe_customer_id: z.string().nullable(),
-			payment_methods: PaymentMethodSchema.array().optional(),
-		})
+		.lazy(() => BusinessWithAllModulesResponseDtoWithoutBusinessUsers)
+		.nullable()
 		.optional(),
 });
 
 export type BusinessUserWithBusinessResponse = z.infer<typeof BusinessUserWithBusinessResponseSchema>;
+
+export const BusinessUserByIdResponseSchema = BusinessUserWithBusinessResponseSchema.extend({
+	business_users: z.array(BusinessUserBaseSchema),
+});
+
+export type BusinessUserByIdResponse = z.infer<typeof BusinessUserByIdResponseSchema>;
 
 // BusinessUser List Response Schema for listing endpoints
 export const BusinessUserListResponseSchema = z.array(BusinessUserResponseSchema);
@@ -141,6 +139,7 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('BusinessUserLight', BusinessUserLightSchema);
 	registry.register('UserMinimalRef', UserMinimalRefSchema);
 	registry.register('BusinessUserWithBusiness', BusinessUserWithBusinessResponseSchema);
+	registry.register('BusinessUserById', BusinessUserByIdResponseSchema);
 	registry.register('BusinessUserList', BusinessUserListResponseSchema);
 	registry.register('BusinessUserCreation', BusinessUserCreationResponseSchema);
 

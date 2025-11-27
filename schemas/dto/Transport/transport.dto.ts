@@ -20,12 +20,7 @@ export const TransportModuleBaseSchema = z
 	})
 	.openapi('TransportModuleBase');
 
-export const TransportModuleRefSchema = TransportModuleBaseSchema.omit({
-	business_id: true,
-}).openapi('TransportModuleRef');
-
 export type TransportModuleBase = z.infer<typeof TransportModuleBaseSchema>;
-export type TransportModuleRef = z.infer<typeof TransportModuleRefSchema>;
 export const TransportModuleDetailSchema = TransportModuleBaseSchema.openapi('TransportModuleDetail');
 export type TransportModuleDetail = z.infer<typeof TransportModuleDetailSchema>;
 

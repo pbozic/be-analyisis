@@ -30,6 +30,7 @@ export function toBookingCourseTimeResponse(row: BookingCourseTimeBasePrisma): B
 		reservation_module: r.reservation_module
 			? {
 					reservation_module_id: r.reservation_module.reservation_module_id,
+					publicly_visible: r.reservation_module.publicly_visible ?? false,
 					business_id: r.reservation_module.business_id,
 				}
 			: undefined,

@@ -16,17 +16,4 @@ export function toUserAddressResponse(row: UserAddressDefaultPrisma): UserAddres
 	return UserAddressResponseSchema.parse(dto);
 }
 
-export function toUserAddressRef(row: unknown): UserAddressResponse {
-	const r = row as Record<string, any>;
-	const dto = {
-		address_id: r.address_id,
-		primary: r.primary,
-		details: r.details,
-		type: r.type,
-		address: toAddressResponse(r.address),
-	};
-
-	return UserAddressResponseSchema.parse(dto);
-}
-
-export default { toUserAddressResponse, toUserAddressRef };
+export default { toUserAddressResponse };

@@ -6,10 +6,8 @@ import { registerSchemas as registerTransportSchemas } from './transport.dto.js'
 // === Transport DTOs (Response) ===
 export {
 	TransportModuleBaseSchema,
-	TransportModuleRefSchema,
 	TransportModuleDetailSchema,
 	type TransportModuleBase,
-	type TransportModuleRef,
 	type TransportModuleDetail,
 } from './transport.dto.js';
 

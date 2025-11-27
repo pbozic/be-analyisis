@@ -30,12 +30,6 @@ export const FoodDrinksBaseSchema = z
 
 export type FoodDrinksBase = z.infer<typeof FoodDrinksBaseSchema>;
 
-export const FoodDrinksModuleRefSchema = FoodDrinksBaseSchema.omit({
-	business_id: true,
-}).openapi('FoodDrinksModuleRef');
-
-export type FoodDrinksModuleRef = z.infer<typeof FoodDrinksModuleRefSchema>;
-
 // Detail variant – keep relations minimal (no deep embeds by design)
 export const FoodDrinksDetailSchema = FoodDrinksBaseSchema.openapi('FoodDrinksDetail');
 
@@ -46,6 +40,5 @@ export type FoodDrinksDetail = z.infer<typeof FoodDrinksDetailSchema>;
 // =======================
 export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('FoodDrinksBase', FoodDrinksBaseSchema);
-	registry.register('FoodDrinksModuleRef', FoodDrinksModuleRefSchema);
 	registry.register('FoodDrinksDetail', FoodDrinksDetailSchema);
 }

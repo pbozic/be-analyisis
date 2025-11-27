@@ -138,12 +138,6 @@ export const ReservationModuleResponseSchema = ReservationModuleBaseSchema.exten
 	description: 'Complete reservation module response with related entities',
 });
 
-export const ReservationModuleRefResponseSchema = ReservationModuleRefSchema.omit({
-	business_id: true,
-}).openapi({
-	title: 'ReservationModuleRefResponse',
-});
-
 // ===== DAO RESPONSE SCHEMAS =====
 // DAO response for getReservationModuleById
 export const ReservationModuleDAOResponseSchema = ReservationModuleBaseSchema.extend({
@@ -211,7 +205,6 @@ export type UpdateReservationModuleRequest = z.infer<typeof UpdateReservationMod
 export type UpdateReservationSettingsRequest = z.infer<typeof UpdateReservationSettingsRequestSchema>;
 export type GetBookingDataRequest = z.infer<typeof GetBookingDataRequestSchema>;
 export type ReservationModuleResponse = z.infer<typeof ReservationModuleResponseSchema>;
-export type ReservationModuleRefResponse = z.infer<typeof ReservationModuleRefResponseSchema>;
 export type ReservationModuleDAOResponse = z.infer<typeof ReservationModuleDAOResponseSchema>;
 export type ReservationModulePublicDAOResponse = z.infer<typeof ReservationModulePublicDAOResponseSchema>;
 

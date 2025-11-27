@@ -2,8 +2,8 @@ import {
 	BusinessResponseDto,
 	BusinessWithIncludesResponseDto,
 	BusinessWithAddressAndUsersResponseDto,
+	BusinessAdminResponseSchema,
 } from './business.dto.js';
-import { BusinessAdminResponseSchema } from './business.js';
 import type {
 	BusinessWithAllModulesResponseDto,
 	BusinessResponseDto as BusinessResponseType,
@@ -21,16 +21,16 @@ import { BusinessWithDailyMealsResponseDto } from './business.dto.js';
 import type { BusinessWithDailyMealsResponseDto as BusinessWithDailyMealsResponseType } from './business.dto.js';
 import { toAddressResponse } from '../Address/address.mappers.ts';
 import { toBusinessUserResponse } from '../BusinessUser/businessUser.mappers.ts';
-import { toTransportModuleRef } from '../Transport/transport.mappers.ts';
-import { toFoodDrinksRef } from '../FoodDrinks/foodDrinks.mappers.ts';
+import { toFoodDrinksDetail } from '../FoodDrinks/foodDrinks.mappers.ts';
 import { toStoreDetail } from '../Stores/store.mappers.ts';
-import { toReservationModuleRef } from '../reservations/reservation-module/reservation-module.mappers.ts';
+import { toReservationModuleResponse } from '../reservations/reservation-module/reservation-module.mappers.ts';
 import { toBusinessClientResponse } from '../BusinessClient/businessClient.mappers.ts';
 import { toTableReservationDetail } from '../TableReservation/tableReservation.mappers.ts';
-import { toTableReservationModuleRef } from '../TableReservation/tableReservationsModule.mappers.ts';
+import { toTableReservationModuleResponse } from '../TableReservation/tableReservationsModule.mappers.ts';
 import { toBusinessLocalLocationDetail } from '../Stores/localLocation.mappers.ts';
 import { toDailyMealMenuList } from '../Menu/menu.mappers.ts';
 import { toDriverRefOut } from '../Vehicles/vehicle.mappers.ts';
+import { toTransportModuleDetail } from '../Transport/transport.mappers.ts';
 
 // Map a lightweight GetBusinessesPrisma payload to the public BusinessResponseDto
 export function toGetBusinessResponse(row: GetBusinessesPrisma): BusinessResponseType {
@@ -116,9 +116,39 @@ export function toBusinessWithAddressAndUsersResponse(row: BusinessWithAddressAn
 }
 
 // Map admin-focused payloads to BusinessAdminResponseSchema
-export function toBusinessAdminResponse(row: BusinessAdminPrisma) {
-	// Reuse legacy schema for admin response validation
-	return BusinessAdminResponseSchema.parse(row);
+export function toBusinessAdminResponse(r: BusinessAdminPrisma) {
+	return BusinessAdminResponseSchema.parse({
+		business_id: r.business_id,
+		tax_id: r.tax_id,
+		registration_id: r.registration_id,
+		email: r.email,
+		telephone: r.telephone,
+		telephone_code: r.telephone_code,
+		website_url: r.website_url,
+		working_hours: r.working_hours,
+		is_business_unit: r.is_business_unit,
+		business_group_name: r.business_group_name,
+		parent_business_id: r.parent_business_id,
+		stripe_account_id: r.stripe_account_id,
+		stripe_customer_id: r.stripe_customer_id,
+		word_buy_stripe_subscription_id: r.word_buy_stripe_subscription_id,
+		first_activated_at: r.first_activated_at ? new Date(r.first_activated_at).toISOString() : undefined,
+		active: r.active,
+		sales_representative_id: r.sales_representative_id,
+		address_id: r.address_id,
+		created_at: r.created_at ? new Date(r.created_at).toISOString() : undefined,
+		updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
+		address: r.address ? toAddressResponse(r.address) : null,
+		business_details: r.business_details
+			? {
+					name: r.business_details.name ?? null,
+					description: r.business_details.description ?? null,
+				}
+			: null,
+		business_users: r.business_users?.length ? r.business_users.map((bu) => toBusinessUserResponse(bu)) : [],
+		parent_business: r.parent_business ? toBusinessMinimalResponse(r.parent_business) : null,
+		child_businesses: r.child_businesses?.length ? r.child_businesses.map(toBusinessMinimalResponse) : [],
+	});
 }
 
 // Map a rich BusinessByIdPrisma payload to the BusinessByIdResponse schema
@@ -155,9 +185,9 @@ export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAll
 		updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
 
 		// Module relationships
-		transport_module: r.transport_module ? toTransportModuleRef(r.transport_module) : null,
+		transport_module: r.transport_module ? toTransportModuleDetail(r.transport_module) : null,
 		transport_module_id: r.transport_module?.transport_module_id,
-		food_drinks_module: r.food_drinks_module ? toFoodDrinksRef(r.food_drinks_module) : null,
+		food_drinks_module: r.food_drinks_module ? toFoodDrinksDetail(r.food_drinks_module) : null,
 		food_drinks_module_id:
 			(asRec.food_drinks_module &&
 				(asRec.food_drinks_module.food_drinks_module_id ?? asRec.food_drinks_module.food_drinks_id)) ??
@@ -168,10 +198,10 @@ export function toBusinessByIdResponse(row: BusinessByIdPrisma): BusinessWithAll
 			(asRec.stores_module && (asRec.stores_module.stores_module_id ?? asRec.stores_module.stores_id)) ??
 			asRec.stores_id ??
 			null,
-		reservation_module: r.reservation_module ? toReservationModuleRef(r.reservation_module) : null,
+		reservation_module: r.reservation_module ? toReservationModuleResponse(r.reservation_module) : null,
 		reservation_module_id: r.reservation_module?.reservation_module_id,
 		table_reservations_module: r.table_reservations_module
-			? toTableReservationModuleRef(r.table_reservations_module)
+			? toTableReservationModuleResponse(r.table_reservations_module)
 			: null,
 		table_reservations_module_id: r.table_reservations_module?.id,
 		daily_meals_module: r.daily_meals_module ? toDailyMealsModuleResponse(r.daily_meals_module) : null,
@@ -310,6 +340,7 @@ export function toDailyMealsModuleResponse(row: any): DailyMealsModule {
 	const r = row as Record<string, any>;
 	return {
 		id: r.id,
+		business_id: r.business_id,
 		created_at: r.created_at ? new Date().toISOString() : undefined,
 		updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
 		maximum_daily_meals_subscribers: r.maximum_daily_meals_subscribers,
@@ -324,6 +355,7 @@ export function toCrmModuleResponse(row: any): CrmModule {
 	const r = row as Record<string, any>;
 	return {
 		crm_module_id: r.crm_module_id,
+		business_id: r.business_id,
 		purchase_order_limit_amount: r.purchase_order_limit_amount,
 		// business_clients: r.business_clients ?? [],
 	};

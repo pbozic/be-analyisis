@@ -5,10 +5,10 @@
 module.exports = {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
-  roots: ['<rootDir>/tests/integration', '<rootDir>/schemas'],
+  roots: ['<rootDir>/tests'],
   setupFiles: ['<rootDir>/tests/setupEnv.js'],
   globalSetup: '<rootDir>/tests/integration/setup.ts',
-  testMatch: ['**/tests/integration/**/*.test.ts', '**/schemas/dto/**/*.test.ts'],
+  testMatch: ['**/tests/**/*.test.ts'],
   extensionsToTreatAsEsm: ['.ts'],
   transform: {
     '^.+\\.tsx?$': [

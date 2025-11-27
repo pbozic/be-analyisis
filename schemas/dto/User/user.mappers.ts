@@ -14,15 +14,9 @@ import {
 	UserLoginPrisma,
 	UserPrisma,
 } from '../../../prisma/includes/user.ts';
-import { toAddressResponse } from '../Address/address.mappers.ts';
-import { toTransportModuleDetail } from '../Transport/transport.mappers.ts';
-import { toFoodDrinksDetail } from '../FoodDrinks/foodDrinks.mappers.ts';
-import { toStoreDetail } from '../Stores/store.mappers.ts';
-import { toDailyMealsModuleResponse } from '../Business/business.mappers.ts';
-import { toReservationModuleResponse } from '../reservations/reservation-module/reservation-module.mappers.ts';
-import { toTableReservationModuleResponse } from '../TableReservation/tableReservationsModule.mappers.ts';
-import { toVehicleRef } from '../Vehicles/vehicle.mappers.ts';
-import { toUserAddressRef, toUserAddressResponse } from '../UserAddress/userAddress.mappers.ts';
+import { toBusinessByIdResponse } from '../Business/business.mappers.ts';
+import { toVehicleBase, toVehicleRef } from '../Vehicles/vehicle.mappers.ts';
+import { toUserAddressResponse } from '../UserAddress/userAddress.mappers.ts';
 import { UserAddressDefaultPrisma } from '../../../prisma/includes/userAddress.ts';
 /**
  * Convert date to ISO string, handling null/undefined.
@@ -91,7 +85,7 @@ export function toUserWithAddressesResponse(row: UserAddressesPrisma): UserWithA
 
 	return UserWithAddressesResponseSchema.parse({
 		...base,
-		addresses: r.addresses ? r.addresses.map(toUserAddressRef) : null,
+		addresses: r.addresses ? r.addresses.map(toUserAddressResponse) : null,
 	});
 }
 let _UserLoginResponseSchema: typeof import('../Auth/AuthResponse.dto').UserLoginResponseSchema | undefined;
@@ -128,9 +122,18 @@ export async function toUserLoginResponse(row: UserLoginPrisma): Promise<UserLog
 					transport_module_id: r.driver.transport_module_id ?? null,
 					last_used_vehicle_id: r.driver.last_used_vehicle_id ?? null,
 					current_vehicle: r.driver.current_vehicle ? toVehicleRef(r.driver.current_vehicle) : null,
-					vehicles: Array.isArray(r.driver.vehicles)
-						? r.driver.vehicles.map((v: any) => toVehicleRef(v))
-						: [],
+					vehicles: r.vehicles
+						? r.vehicles?.map((v: any) => ({
+								...v,
+								created_at: v.created_at
+									? new Date(v.created_at as string | Date).toISOString()
+									: undefined,
+								updated_at: v.updated_at
+									? new Date(v.updated_at as string | Date).toISOString()
+									: undefined,
+								vehicle: toVehicleBase(v.vehicle),
+							}))
+						: undefined,
 					activity_logs: r.driver.activity_logs ?? [],
 				}
 			: null,
@@ -167,7 +170,15 @@ export async function toUserLoginResponse(row: UserLoginPrisma): Promise<UserLog
 					allowance: r.parent_user.allowance ?? null,
 				}
 			: null,
-		referrals_made: r.referrals_made ?? null,
+		referrals_made: r.referrals_made
+			? r.referrals_made.map((rm: any) => ({
+					referral_id: rm.referral_id,
+					referrer_user_id: rm.referrer_user_id,
+					referred_user_id: rm.referred_user_id,
+					referral_code: rm.referral_code,
+					reward_claimed: rm.reward_claimed ?? false,
+				}))
+			: null,
 		referral: r.referral
 			? {
 					referral_id: r.referral.referral_id,
@@ -177,15 +188,19 @@ export async function toUserLoginResponse(row: UserLoginPrisma): Promise<UserLog
 					reward_claimed: r.referral.reward_claimed ?? false,
 					referrer: r.referral.referrer
 						? {
+								user_id: r.referral.referrer.user_id,
 								first_name: r.referral.referrer.first_name,
 								last_name: r.referral.referrer.last_name,
+								email: r.referral.referrer.email,
+								telephone: r.referral.referrer.telephone,
+								user_role: r.referral.referrer.user_role,
 							}
 						: null,
 				}
 			: null,
 		user_roles: r.user_roles ?? [],
 		business_users: r.business_users?.length
-			? (r.business_users as any[]).map((bu) => ({
+			? r.business_users.map((bu: any) => ({
 					business_users_id: bu.business_users_id,
 					business_id: bu.business_id,
 					user_id: bu.user_id,
@@ -194,37 +209,31 @@ export async function toUserLoginResponse(row: UserLoginPrisma): Promise<UserLog
 					operating_address_id: bu.operating_address_id ?? null,
 					created_at: toIso(bu.created_at) ?? new Date().toISOString(),
 					updated_at: toIso(bu.updated_at) ?? new Date().toISOString(),
-					business: bu.business
-						? {
-								business_id: bu.business.business_id,
-								address: bu.business.address ? toAddressResponse(bu.business.address) : null,
-								reservation_module: bu.business.reservation_module
-									? toReservationModuleResponse(bu.business.reservation_module as any)
-									: null,
-								transport_module: bu.business.transport_module
-									? toTransportModuleDetail(bu.business.transport_module as any)
-									: null,
-								food_drinks_module: bu.business.food_drinks_module
-									? toFoodDrinksDetail(bu.business.food_drinks_module as any)
-									: null,
-								stores_module: bu.business.stores_module
-									? toStoreDetail(bu.business.stores_module as any)
-									: null,
-								daily_meals_module: bu.business.daily_meals_module
-									? toDailyMealsModuleResponse(bu.business.daily_meals_module as any)
-									: null,
-								table_reservations_module: bu.business.table_reservations_module
-									? toTableReservationModuleResponse(bu.business.table_reservations_module as any)
-									: null,
-								business_details: bu.business.business_details ?? null,
-							}
-						: null,
+					business: bu.business ? toBusinessByIdResponse(bu.business) : null,
 					operating_address: bu.operating_address ?? null,
 				}))
 			: [],
-		user_favorite_businesses: r.user_favorite_businesses ?? null,
-		user_favorite_drivers: r.user_favorite_drivers ?? null,
-		profile_picture: r.profile_picture ?? null,
+		user_favorite_businesses: r.user_favorite_businesses
+			? r.user_favorite_businesses?.map((ufb: any) => ({
+					...ufb,
+					created_at: toIso(ufb.created_at) ?? new Date().toISOString(),
+					updated_at: toIso(ufb.updated_at) ?? new Date().toISOString(),
+				}))
+			: null,
+		user_favorite_drivers: r.user_favorite_drivers
+			? r.user_favorite_drivers?.map((ufd: any) => ({
+					...ufd,
+					created_at: toIso(ufd.created_at) ?? new Date().toISOString(),
+					updated_at: toIso(ufd.updated_at) ?? new Date().toISOString(),
+				}))
+			: null,
+		profile_picture: r.profile_picture
+			? {
+					...r.profile_picture,
+					created_at: toIso(r.profile_picture.created_at) ?? new Date().toISOString(),
+					updated_at: toIso(r.profile_picture.updated_at) ?? new Date().toISOString(),
+				}
+			: null,
 	});
 }
 
@@ -238,9 +247,7 @@ export function toUsersListResponse(rows: UserAddressesAndConnectionsCreationPri
 
 		return {
 			...base,
-			addresses: r.addresses
-				? (r.addresses as any[]).map((addr) => toUserAddressRef(addr)).filter((a) => a !== null)
-				: null,
+			addresses: r.addresses ? r.addresses.map((addr: any) => toUserAddressResponse(addr)) : null,
 			child_users: r.child_users
 				? (r.child_users as any[]).map((cu) => ({
 						group_user_id: cu.group_user_id,

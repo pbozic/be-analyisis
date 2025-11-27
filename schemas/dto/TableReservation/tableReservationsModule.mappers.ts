@@ -1,9 +1,4 @@
-import {
-	TableReservationModuleRef,
-	TableReservationModuleRefSchema,
-	TableReservationModuleResponse,
-	TableReservationModuleResponseSchema,
-} from './tableReservationsModule.dto.ts';
+import { TableReservationModuleResponse, TableReservationModuleResponseSchema } from './tableReservationsModule.dto.ts';
 
 export type PrismaTableReservationModule = {
 	id: string;
@@ -25,11 +20,4 @@ export function toTableReservationModuleResponse(row: unknown): TableReservation
 	});
 }
 
-export function toTableReservationModuleRef(row: unknown): TableReservationModuleRef {
-	const r = row as PrismaTableReservationModule;
-	return TableReservationModuleRefSchema.parse({
-		id: r.id,
-		seats: r.seats,
-		business_details_id: r.business_details_id,
-	});
-}
+export default { toTableReservationModuleResponse };

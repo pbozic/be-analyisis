@@ -11,10 +11,11 @@ import { PaymentMethodSchema } from '../Payments/payment.dto.ts';
 import { Timestamp, UUID } from '../../primitives.ts';
 import { ReferralBaseSchema, ReferralDetailSchema } from '../Referral/referral.dto.ts';
 import { UserRoleSchema } from '../BusinessUser/BusinessUserRequest.dto.ts';
-import { FavoriteBusinessDetailSchema } from '../FavoriteBusinesses/favorite-businesses.dto.ts';
+import { FavoriteBusinessBaseSchema } from '../FavoriteBusinesses/favorite-businesses.dto.ts';
 import { FileBaseSchema } from '../Files/index.ts';
 import { GroupUserWithChildResponseSchema, GroupUserWithParentResponseSchema } from '../Group/groupUser.ts';
 import { UserAddressResponseSchema } from '../UserAddress/userAddress.dto.ts';
+import { FavoriteDriverBaseSchema } from '../FavoriteDrivers/favorite-drivers.dto.ts';
 
 extendZodWithOpenApi(z);
 
@@ -62,8 +63,8 @@ export const UserLoginResponseSchema = UserResponseSchema.extend({
 		})
 	),
 	business_users: z.array(z.lazy(() => BusinessUserWithBusinessResponseSchema.omit({ allowance: true }))).nullable(),
-	user_favorite_businesses: z.array(z.lazy(() => FavoriteBusinessDetailSchema)).nullable(),
-	user_favorite_drivers: z.array(z.lazy(() => FavoriteBusinessDetailSchema)).nullable(),
+	user_favorite_businesses: z.array(z.lazy(() => FavoriteBusinessBaseSchema)).nullable(),
+	user_favorite_drivers: z.array(z.lazy(() => FavoriteDriverBaseSchema)).nullable(),
 	profile_picture: z
 		.lazy(() => FileBaseSchema)
 		.nullable()

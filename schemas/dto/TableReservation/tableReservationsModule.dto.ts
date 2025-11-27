@@ -20,11 +20,6 @@ export const TableReservationModuleResponseSchema = z
 	.openapi('TableReservationModuleResponse');
 export type TableReservationModuleResponse = z.infer<typeof TableReservationModuleResponseSchema>;
 
-export const TableReservationModuleRefSchema = TableReservationModuleResponseSchema.omit({
-	business_id: true,
-}).openapi('TableReservationModuleRef');
-export type TableReservationModuleRef = z.infer<typeof TableReservationModuleRefSchema>;
-
 // =======================
 // OpenAPI Registration
 // =======================

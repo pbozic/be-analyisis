@@ -39,23 +39,12 @@ export const BusinessBaseSchema = z.object({
 
 export type BusinessBase = z.infer<typeof BusinessBaseSchema>;
 
-// Business Ref Schema - minimal identity for embedding elsewhere
-// Updated to match common/Business.dto.ts format (includes logo and banner)
-export const BusinessRefSchema = z.object({
-	business_id: UUID,
-	name: z.string().nullable().optional(),
-	logo: z.string().url().nullable().optional(),
-	banner: z.string().url().nullable().optional(),
-});
-
-export type BusinessRef = z.infer<typeof BusinessRefSchema>;
-
 // Business Response Schema - complete with embedded refs
 export const BusinessResponseSchema = BusinessBaseSchema.extend({
 	address: AddressRefSchema.nullable(),
 	parent_business: BusinessBaseSchema.nullable(),
 	child_businesses: z.array(BusinessBaseSchema).optional(),
-	business_users: z.array(BusinessUserRefSchema).optional(),
+	business_users: z.lazy(() => z.array(BusinessUserRefSchema)).optional(),
 	// Additional computed fields that might be added in controllers
 	paymentMethods: z.array(z.any()).optional(),
 });
@@ -83,30 +72,15 @@ export const BusinessSearchResponseSchema = z.object({
 
 export type BusinessSearchResponse = z.infer<typeof BusinessSearchResponseSchema>;
 
-// Business Admin Response Schema - includes sensitive admin data
-export const BusinessAdminResponseSchema = BusinessResponseSchema.extend({
-	stripe_account_id: z.string().nullable(),
-	stripe_customer_id: z.string().nullable(),
-	word_buy_stripe_subscription_id: z.string().nullable(),
-	sales_representative_id: z.string().nullable(),
-	tax_id: z.string(),
-	registration_id: z.string(),
-});
-
-export type BusinessAdminResponse = z.infer<typeof BusinessAdminResponseSchema>;
-
 export function registerSchemas(registry: OpenAPIRegistry) {
 	// Register response schemas
 	registry.register('Business', BusinessResponseSchema);
-	registry.register('BusinessRef', BusinessRefSchema);
 	registry.register('BusinessBase', BusinessBaseSchema);
 	registry.register('BusinessList', BusinessListResponseSchema);
 	registry.register('BusinessSearch', BusinessSearchResponseSchema);
-	registry.register('BusinessAdmin', BusinessAdminResponseSchema);
 
 	// Responses
 	registry.register('BusinessResponse', BusinessResponseSchema);
 	registry.register('BusinessListResponse', BusinessListResponseSchema);
 	registry.register('BusinessSearchResponse', BusinessSearchResponseSchema);
-	registry.register('BusinessAdminResponse', BusinessAdminResponseSchema);
 }

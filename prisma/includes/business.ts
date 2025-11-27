@@ -129,8 +129,8 @@ export const adminInclude = {
 	address: true,
 	business_details: true,
 	business_users: { include: { users: true } },
-	words: true,
-	promo: true,
+	// words: true,
+	// promo: true,
 	parent_business: true,
 	child_businesses: true,
 } as const;

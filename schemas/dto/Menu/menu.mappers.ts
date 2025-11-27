@@ -2,8 +2,8 @@ import {
 	MenuItemResponseSchema,
 	MenuItemsResponseSchema,
 	DailyMealMenuBaseSchema,
-	MenuBaseSchema,
 	MenuItemVersionResponseSchema,
+	MenuDetailSchema,
 } from './menu.dto.js';
 import type { MenuItemResponse, DailyMealMenuBase, MenuItemVersionResponse, MenuDetail } from './menu.dto.js';
 import type { MenuWithIncludesPrisma, DailyMealMenuWithIncludesPrisma } from '../../../prisma/includes/menus.js';
@@ -92,7 +92,7 @@ export function toMenuResponse(payload: MenuPayload): MenuDetail {
 			: undefined,
 	};
 
-	return MenuBaseSchema.parse(out as unknown) as MenuDetail;
+	return MenuDetailSchema.parse(out);
 }
 
 export function toDailyMealMenuResponse(payload: DailyMealMenuPayload): DailyMealMenuBase {

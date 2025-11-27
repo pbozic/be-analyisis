@@ -41,7 +41,7 @@ export function toScoringPointsDetail(
 					email: p.user.email ?? undefined,
 					telephone: p.user.telephone ?? undefined,
 					telephone_code: p.user.telephone_code ?? undefined,
-					date_of_birth: p.user.date_of_birth ? new Date(p.user.date_of_birth).toISOString() : undefined,
+					date_of_birth: toIso(p.user.date_of_birth) as string,
 				}
 			: undefined,
 		delivery_order: p.delivery_order ? { order_id: p.delivery_order.order_id } : null,

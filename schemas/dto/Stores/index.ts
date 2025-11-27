@@ -6,14 +6,7 @@ import { registerSchemas as registerStoreValidatorSchemas } from './store.valida
 import { registerSchemas as registerLocalLocationSchemas } from './localLocation.dto.js';
 
 // === Stores DTOs (Response) ===
-export {
-	StoreBaseSchema,
-	StoresModuleRefSchema,
-	StoreDetailSchema,
-	type StoreBase,
-	type StoresModuleRef,
-	type StoreDetail,
-} from './store.dto.js';
+export { StoreBaseSchema, StoreDetailSchema, type StoreBase, type StoreDetail } from './store.dto.js';
 
 // === Stores Validators (Request Body, Query, Params) ===
 export {

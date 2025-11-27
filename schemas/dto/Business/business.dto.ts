@@ -2,9 +2,9 @@ import { z } from 'zod';
 import { OpenAPIRegistry, extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { SORTING_TYPE } from '@prisma/client';
 
-import { TransportModuleBaseSchema, TransportModuleRefSchema } from '../Transport/transport.dto.js';
-import { FoodDrinksBaseSchema, FoodDrinksModuleRefSchema } from '../FoodDrinks/index.js';
-import { StoreBaseSchema, StoresModuleRefSchema } from '../Stores/store.dto.js';
+import { TransportModuleBaseSchema } from '../Transport/transport.dto.js';
+import { FoodDrinksBaseSchema } from '../FoodDrinks/index.js';
+import { StoreBaseSchema } from '../Stores/store.dto.js';
 import {
 	ReservationModuleBaseSchema,
 	ReservationModuleRefSchema,
@@ -12,9 +12,8 @@ import {
 import { BusinessClientBaseSchema } from '../BusinessClient/businessClient.dto.js';
 import { MenuItemRefSchema, MenuCategoryRefSchema, DailyMealMenuBaseSchema, MenuBaseSchema } from '../Menu/menu.dto.js';
 import { AddressRefSchema } from '../Address/index.js';
-import { UserRefSchema } from '../User/index.js';
 import { Timestamp, UUID } from '../../primitives';
-import { BusinessUserDetailSchema } from '../BusinessUser/businessUser.js';
+import { BusinessUserDetailSchema, BusinessUserResponseSchema } from '../BusinessUser/businessUser.js';
 import { TableReservationModuleResponseSchema } from '../TableReservation/tableReservationsModule.dto.js';
 import { DriverRefOutSchema } from '../Vehicles/vehicle.dto.js';
 extendZodWithOpenApi(z);
@@ -28,8 +27,8 @@ export const BusinessCreateDto = z.object({
 	business_group_name: z.string().nullable().optional().openapi({ example: 'Acme Holdings' }),
 	// 'name' and 'description' moved to `business_details` model in Prisma.
 	// They are intentionally omitted here from the base create DTO.
-	tax_id: z.string().openapi({ example: 'HR12345678901' }),
-	registration_id: z.string().openapi({ example: '567890' }),
+	tax_id: z.string().openapi({ example: 'SI12345678901' }), // Slovenia tax id
+	registration_id: z.string().openapi({ example: '1234567890' }),
 	email: z.string().email().openapi({ example: 'info@klikni-web.eu' }),
 	telephone: z.string().openapi({ example: '+38520123456' }),
 	telephone_code: z.string().openapi({ example: '+385' }),
@@ -46,10 +45,10 @@ export const BusinessCreateDto = z.object({
 		}),
 	// UI-only flags (e.g. 'popular'/'new') are intentionally omitted from the persisted DTOs.
 	parent_business_id: UUID.nullable().optional(),
-	stripe_account_id: UUID.nullable().optional(),
-	stripe_customer_id: UUID.nullable().optional(),
-	word_buy_stripe_subscription_id: UUID.nullable().optional(),
-	sales_representative_id: UUID.nullable().optional(),
+	stripe_account_id: z.string().nullable().optional(),
+	stripe_customer_id: z.string().nullable().optional(),
+	word_buy_stripe_subscription_id: z.string().nullable().optional(),
+	sales_representative_id: z.string().nullable().optional(),
 	first_activated_at: Timestamp.nullable().optional().openapi({ example: null }),
 	active: z.boolean().optional().default(true).openapi({ example: true }),
 });
@@ -113,6 +112,7 @@ export const BusinessResponseDto = BusinessCreateDto.extend({
 export const CrmModuleRefSchema = z
 	.object({
 		crm_module_id: UUID,
+		business_id: UUID,
 		purchase_order_limit_amount: z.number().nullable().optional(),
 	})
 	.openapi('CrmModuleRef');
@@ -125,6 +125,7 @@ export const CrmModuleFullSchema = CrmModuleRefSchema.extend({
 export const DailyMealsModuleSchema = z
 	.object({
 		id: UUID,
+		business_id: UUID,
 		public_link_hash: z
 			.string()
 			.nullable()
@@ -148,7 +149,7 @@ export const DailyMealsModuleSchema = z
 // Business with Transport Module
 export const BusinessWithTransportResponseDto = BusinessResponseDto.extend({
 	transport_module: z
-		.lazy(() => TransportModuleRefSchema)
+		.lazy(() => TransportModuleBaseSchema)
 		.nullable()
 		.optional(),
 }).openapi('BusinessWithTransportResponse');
@@ -165,7 +166,7 @@ export const BusinessWithDailyMealsResponseDto = BusinessResponseDto.extend({
 // Business with Food & Drinks Module
 export const BusinessWithFoodDrinksResponseDto = BusinessResponseDto.extend({
 	food_drinks_module: z
-		.lazy(() => FoodDrinksModuleRefSchema)
+		.lazy(() => FoodDrinksBaseSchema)
 		.nullable()
 		.optional(),
 	menus: z.lazy(() => z.array(MenuBaseSchema)).optional(),
@@ -176,7 +177,7 @@ export const BusinessWithFoodDrinksResponseDto = BusinessResponseDto.extend({
 // Business with Food & Drinks Module + Daily Meals
 export const BusinessWithFoodDrinksAndDailyMealsResponseDto = BusinessResponseDto.extend({
 	food_drinks_module: z
-		.lazy(() => FoodDrinksModuleRefSchema)
+		.lazy(() => FoodDrinksBaseSchema)
 		.nullable()
 		.optional(),
 	menus: z.lazy(() => z.array(MenuBaseSchema)).optional(),
@@ -188,7 +189,7 @@ export const BusinessWithFoodDrinksAndDailyMealsResponseDto = BusinessResponseDt
 // Business with Stores Module
 export const BusinessWithStoresResponseDto = BusinessResponseDto.extend({
 	stores_module: z
-		.lazy(() => StoresModuleRefSchema)
+		.lazy(() => StoreBaseSchema)
 		.nullable()
 		.optional(),
 }).openapi('BusinessWithStoresResponse');
@@ -228,13 +229,7 @@ export const BusinessWithAddressAndUsersResponseDto = BusinessResponseDto.extend
 		.lazy(() => AddressRefSchema)
 		.nullable()
 		.optional(),
-	business_users: z
-		.array(
-			z.object({
-				users: z.lazy(() => UserRefSchema).optional(),
-			})
-		)
-		.optional(),
+	business_users: z.array(z.lazy(() => BusinessUserDetailSchema)).optional(),
 	parent_business: BusinessRefSchema.nullable().optional(),
 	child_businesses: z.array(BusinessRefSchema).optional(),
 }).openapi('BusinessWithAddressAndUsersResponse');
@@ -304,6 +299,57 @@ export const BusinessWithAllModulesResponseDto = BusinessWithIncludesResponseDto
 		.optional(),
 }).openapi('BusinessWithAllModulesResponse');
 
+// Business with all modules connected without business_users
+export const BusinessWithAllModulesResponseDtoWithoutBusinessUsers = BusinessResponseDto.extend({
+	// includes from getBusinessesInclude
+	address: z
+		.lazy(() => AddressRefSchema)
+		.nullable()
+		.optional(),
+	delivery_address: z
+		.lazy(() => AddressRefSchema)
+		.nullable()
+		.optional(),
+	parent_business: BusinessRefSchema.nullable().optional(),
+	child_businesses: z.array(BusinessRefSchema).optional(),
+	transport_module: z
+		.lazy(() => TransportModuleBaseSchema)
+		.nullable()
+		.optional(),
+	food_drinks_module: z
+		.lazy(() => FoodDrinksBaseSchema)
+		.nullable()
+		.optional(),
+	stores_module: z
+		.lazy(() => StoreBaseSchema)
+		.nullable()
+		.optional(),
+	reservation_module: z
+		.lazy(() => ReservationModuleBaseSchema)
+		.nullable()
+		.optional(),
+	crm_module: CrmModuleFullSchema.nullable().optional(),
+	daily_meals_module: DailyMealsModuleSchema.nullable().optional(),
+	table_reservations_module: z
+		.lazy(() => TableReservationModuleResponseSchema)
+		.nullable()
+		.optional(),
+}).openapi('BusinessWithAllModulesResponseWithoutBusinessUsers');
+
+export const BusinessAdminResponseSchema = BusinessResponseDto.extend({
+	business_details: z.object({
+		name: z.string().nullable(),
+		description: z.string().nullable(),
+	}),
+	business_users: z.array(z.lazy(() => BusinessUserResponseSchema)).optional(),
+	parent_business: z.lazy(() => BusinessRefSchema).nullable(),
+	child_businesses: z
+		.lazy(() => z.array(BusinessRefSchema))
+		.optional()
+		.default([]),
+}).openapi('BusinessAdmin');
+export type BusinessAdminResponse = z.infer<typeof BusinessAdminResponseSchema>;
+
 // exported TS types
 export type BusinessCreateDto = z.infer<typeof BusinessCreateDto>;
 export type BusinessResponseDto = z.infer<typeof BusinessResponseDto>;
@@ -317,16 +363,15 @@ export type BusinessWithStoresResponseDto = z.infer<typeof BusinessWithStoresRes
 export type BusinessWithReservationResponseDto = z.infer<typeof BusinessWithReservationResponseDto>;
 export type BusinessWithCrmResponseDto = z.infer<typeof BusinessWithCrmResponseDto>;
 export type BusinessWithAllModulesResponseDto = z.infer<typeof BusinessWithAllModulesResponseDto>;
-
+export type BusinessWithAllModulesResponseDtoWithoutBusinessUsers = z.infer<
+	typeof BusinessWithAllModulesResponseDtoWithoutBusinessUsers
+>;
 export type BusinessWithAddressAndUsersResponseDto = z.infer<typeof BusinessWithAddressAndUsersResponseDto>;
 export type BusinessWithIncludesResponseDto = z.infer<typeof BusinessWithIncludesResponseDto>;
 export type BusinessSearchResponseDto = z.infer<typeof BusinessSearchResponseDto>;
 
 // Module ref types
 // Re-export module types for convenience
-export type TransportModuleRef = z.infer<typeof TransportModuleRefSchema>;
-export type FoodDrinksModuleRef = z.infer<typeof FoodDrinksModuleRefSchema>;
-export type StoresModuleRef = z.infer<typeof StoresModuleRefSchema>;
 export type ReservationModuleRef = z.infer<typeof ReservationModuleRefSchema>;
 export type CrmModuleRef = z.infer<typeof CrmModuleRefSchema>;
 export type DailyMealsModule = z.infer<typeof DailyMealsModuleSchema>;
@@ -339,13 +384,11 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 	registry.register('BusinessRef', BusinessRefSchema);
 
 	// Register module ref schemas
-	registry.register('TransportModuleRef', TransportModuleRefSchema);
-	registry.register('FoodDrinksModuleRef', FoodDrinksModuleRefSchema);
-	registry.register('StoresModuleRef', StoresModuleRefSchema);
-	registry.register('ReservationModuleRef', ReservationModuleRefSchema);
 	registry.register('CrmModuleRef', CrmModuleRefSchema);
+	registry.register('CrmModule', CrmModuleFullSchema);
 	registry.register('DailyMealsModule', DailyMealsModuleSchema);
 
+	registry.register('BusinessAdmin', BusinessAdminResponseSchema);
 	// Register business with individual modules
 	registry.register('BusinessWithTransportResponse', BusinessWithTransportResponseDto);
 	registry.register('BusinessWithFoodDrinksResponse', BusinessWithFoodDrinksResponseDto);
@@ -360,4 +403,8 @@ export function registerSchemas(registry: OpenAPIRegistry) {
 
 	// Register business with all modules
 	registry.register('BusinessWithAllModulesResponse', BusinessWithAllModulesResponseDto);
+	registry.register(
+		'BusinessWithAllModulesResponseWithoutBusinessUsers',
+		BusinessWithAllModulesResponseDtoWithoutBusinessUsers
+	);
 }

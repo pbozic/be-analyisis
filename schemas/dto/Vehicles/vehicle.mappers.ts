@@ -1,7 +1,13 @@
 import { VEHICLE_CLASS, VEHICLE_CATEGORY } from '@prisma/client';
 
-import { DriverRefOutSchema, DocumentRefSchema, VehicleRefSchema, VehicleDetailSchema } from './vehicle.dto.js';
-import type { DriverRefOut, DocumentRef, VehicleRef, VehicleDetail } from './vehicle.dto.js';
+import {
+	DriverRefOutSchema,
+	DocumentRefSchema,
+	VehicleRefSchema,
+	VehicleDetailSchema,
+	VehicleBaseSchema,
+} from './vehicle.dto.js';
+import type { DriverRefOut, DocumentRef, VehicleRef, VehicleDetail, VehicleBase } from './vehicle.dto.js';
 import { BasicUserDataSchema } from '../User/user.js';
 
 // Mappers from Prisma payloads to DTOs
@@ -72,6 +78,24 @@ type PrismaVehicle = {
 	}>;
 	documents?: Array<{ document_id: string; document_type?: string; documents_type?: string }>;
 };
+
+export function toVehicleBase(row: PrismaVehicle): VehicleBase {
+	const v = row;
+	return VehicleBaseSchema.parse({
+		vehicle_id: v.vehicle_id as string,
+		transport_module_id: v.transport_module_id ?? null,
+		active: v.active ?? null,
+		class: v.class as (typeof VehicleBaseSchema)['_type']['class'],
+		category: v.category as (typeof VehicleBaseSchema)['_type']['category'],
+		make: v.make ?? null,
+		model: v.model ?? null,
+		color: v.color ?? null,
+		license_plate: v.license_plate ?? null,
+		business_premise_id: v.business_premise_id ?? null,
+		created_at: v.created_at ? new Date(v.created_at as string | Date).toISOString() : undefined,
+		updated_at: v.updated_at ? new Date(v.updated_at as string | Date).toISOString() : undefined,
+	});
+}
 
 export function toVehicleDetail(vehicle: unknown): VehicleDetail {
 	const v = vehicle as PrismaVehicle;

@@ -3,9 +3,6 @@ import { BOOKING_STATUS } from '@prisma/client';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID, Timestamp } from '../../../primitives';
-import { CustomerRefSchema } from '../customer/customer.dto.js';
-import { BookingRefSchema } from '../booking/booking.dto.js';
-import { ReservationModuleRefSchema } from '../reservation-module/reservation-module.dto.js';
 
 extendZodWithOpenApi(z);
 
@@ -66,12 +63,48 @@ export const UpdateBookingCourseParticipantRequestSchema = z
 		description: 'Request schema for updating an existing booking course participant',
 	});
 
+// Lazy getters for ref schemas to break circular dependency
+// Using a pattern similar to UserLoginResponseSchema but adapted for synchronous z.lazy()
+let _CustomerRefSchema: z.ZodTypeAny | null = null;
+let _BookingRefSchema: z.ZodTypeAny | null = null;
+let _ReservationModuleRefSchema: z.ZodTypeAny | null = null;
+
+function getCustomerRefSchema(): z.ZodTypeAny {
+	if (!_CustomerRefSchema) {
+		// Dynamic import resolved synchronously via module cache
+
+		const mod = require('../customer/customer.dto.js');
+		_CustomerRefSchema = mod.CustomerRefSchema as z.ZodTypeAny;
+	}
+	return _CustomerRefSchema as z.ZodTypeAny;
+}
+
+function getBookingRefSchema(): z.ZodTypeAny {
+	if (!_BookingRefSchema) {
+		// Dynamic import resolved synchronously via module cache
+
+		const mod = require('../booking/booking.dto.js');
+		_BookingRefSchema = mod.BookingRefSchema as z.ZodTypeAny;
+	}
+	return _BookingRefSchema as z.ZodTypeAny;
+}
+
+function getReservationModuleRefSchema(): z.ZodTypeAny {
+	if (!_ReservationModuleRefSchema) {
+		// Dynamic import resolved synchronously via module cache
+
+		const mod = require('../reservation-module/reservation-module.dto.js');
+		_ReservationModuleRefSchema = mod.ReservationModuleRefSchema as z.ZodTypeAny;
+	}
+	return _ReservationModuleRefSchema as z.ZodTypeAny;
+}
+
 // ===== RESPONSE SCHEMA (with relations using Ref schemas) =====
 
 export const BookingCourseParticipantResponseSchema = BookingCourseParticipantBaseSchema.extend({
-	customer: z.lazy(() => CustomerRefSchema).optional(),
-	booking: z.lazy(() => BookingRefSchema).optional(),
-	reservation_module: z.lazy(() => ReservationModuleRefSchema).optional(),
+	customer: z.lazy(() => getCustomerRefSchema()).optional(),
+	booking: z.lazy(() => getBookingRefSchema()).optional(),
+	reservation_module: z.lazy(() => getReservationModuleRefSchema()).optional(),
 }).openapi({
 	title: 'BookingCourseParticipantResponse',
 	description: 'Complete booking course participant response with related entities',

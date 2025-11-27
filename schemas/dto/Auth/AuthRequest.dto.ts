@@ -143,6 +143,8 @@ export const RegisterTransportServiceSchema = z
 	.object({
 		business: z.lazy(() =>
 			BusinessRegistrationDataSchema.extend({
+				tax_id: z.string(),
+				registration_id: z.string(),
 				type: z.string().default('TAXI'),
 				documents: z.array(z.lazy(() => DocumentWithFilesSchema)).optional(),
 			})

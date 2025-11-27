@@ -2,8 +2,6 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { Timestamp, UUID } from '../../primitives.js';
-import { UserRefSchema } from '../User/index.js';
-import { AllowanceRefSchema } from '../User/index.js';
 
 extendZodWithOpenApi(z);
 
@@ -32,25 +30,50 @@ export type GroupUserRef = z.infer<typeof GroupUserRefSchema>;
 // GroupUser Response Schema - Base with embedded refs
 export const GroupUserResponseSchema = GroupUserBaseSchema;
 
+// Lazy getters for User schemas to break circular dependency
+// Using a pattern similar to UserLoginResponseSchema but adapted for synchronous z.lazy()
+let _UserRefSchema: z.ZodTypeAny | null = null;
+let _AllowanceRefSchema: z.ZodTypeAny | null = null;
+
+function getUserRefSchema(): z.ZodTypeAny {
+	if (!_UserRefSchema) {
+		// Dynamic import resolved synchronously via module cache
+
+		const mod = require('../User/index.js');
+		_UserRefSchema = mod.UserRefSchema;
+	}
+	return _UserRefSchema as z.ZodTypeAny;
+}
+
+function getAllowanceRefSchema(): z.ZodTypeAny {
+	if (!_AllowanceRefSchema) {
+		// Dynamic import resolved synchronously via module cache
+
+		const mod = require('../User/index.js');
+		_AllowanceRefSchema = mod.AllowanceRefSchema;
+	}
+	return _AllowanceRefSchema as z.ZodTypeAny;
+}
+
 // GroupUser with Parent User - for getGroupUserByChildId function
 export const GroupUserWithParentResponseSchema = GroupUserResponseSchema.extend({
-	parent_user: z.lazy(() => UserRefSchema),
+	parent_user: z.lazy(() => getUserRefSchema()),
 });
 
 // GroupUser with Child User - for getGroupUserByParentId function
 export const GroupUserWithChildResponseSchema = GroupUserResponseSchema.extend({
-	child_user: z.lazy(() => UserRefSchema),
+	child_user: z.lazy(() => getUserRefSchema()),
 });
 
 // GroupUser with Allowance - for updateGroupUserAllowance function
 export const GroupUserWithAllowanceResponseSchema = GroupUserResponseSchema.extend({
-	allowance: z.lazy(() => AllowanceRefSchema).nullable(),
+	allowance: z.lazy(() => getAllowanceRefSchema()).nullable(),
 });
 
 // GroupUser with Parent and Allowance - for getGroupUserByChildId with full includes
 export const GroupUserDetailResponseSchema = GroupUserResponseSchema.extend({
-	parent_user: z.lazy(() => UserRefSchema),
-	allowance: z.lazy(() => AllowanceRefSchema).nullable(),
+	parent_user: z.lazy(() => getUserRefSchema()),
+	allowance: z.lazy(() => getAllowanceRefSchema()).nullable(),
 });
 
 // GroupUser List Response - for paginated/bulk endpoints

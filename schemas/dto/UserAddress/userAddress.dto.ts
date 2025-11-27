@@ -52,14 +52,12 @@ export const UserAddressRefSchema = z
 export type UserAddressRef = z.infer<typeof UserAddressRefSchema>;
 
 // === UserAddress Response Schema (extends Base, embeds only Ref variants) ===
-export const UserAddressResponseSchema = UserAddressBaseSchema.omit({ user_id: true })
-	.extend({
-		address: z.lazy(() => AddressBaseSchema),
-	})
-	.openapi({
-		title: 'UserAddressResponse',
-		description: 'Complete user-address response with embedded address reference',
-	});
+export const UserAddressResponseSchema = UserAddressBaseSchema.extend({
+	address: z.lazy(() => AddressBaseSchema),
+}).openapi({
+	title: 'UserAddressResponse',
+	description: 'Complete user-address response with embedded address reference',
+});
 
 export type UserAddressResponse = z.infer<typeof UserAddressResponseSchema>;
 
