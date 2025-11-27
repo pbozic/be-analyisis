@@ -3,7 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, Timestamp } from '../../primitives';
 import { BasicUserDataSchema } from '../User/user.js';
-import { BusinessRefSchema } from '../Business/business.ts';
+import { BusinessRefSchema } from '../Business/business.dto.ts';
 
 extendZodWithOpenApi(z);
 

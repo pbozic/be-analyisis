@@ -1,8 +1,8 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 // Import registerSchemas functions with aliases
-import { registerSchemas as registerAddonSchemas } from './addon.dto.ts';
-import { registerSchemas as registerAddonValidatorSchemas } from './addon.validators.ts';
+import { registerSchemas as registerAddonSchemas } from './addon.dto.js';
+import { registerSchemas as registerAddonValidatorSchemas } from './addon.validators.js';
 
 // === Addon DTOs (Response) ===
 export {

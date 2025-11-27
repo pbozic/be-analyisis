@@ -3,7 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, LanguageCode, Timestamp } from '../../primitives';
 import { SERVICE_TYPE } from '../../../lib/constants';
-import { BusinessRefSchema } from '../Business/business';
+import { BusinessRefSchema } from '../Business/business.dto.ts';
 
 extendZodWithOpenApi(z);
 

@@ -3,7 +3,7 @@ import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-op
 
 import { UUID, Timestamp } from '../../primitives.js';
 import { UserRefSchema } from '../User/user.js';
-import { BusinessRefSchema } from '../Business/business.js';
+import { BusinessRefSchema } from '../Business/business.dto.ts';
 import { OrderLobbyItemRefSchema } from './orderLobbyItem.dto.js';
 import { LocationWithAddressSchema } from '../Address/address.js';
 import { OrderLobbyUserRefSchema } from './orderLobbyUser.dto.js';

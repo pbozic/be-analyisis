@@ -199,31 +199,31 @@ export {
 } from './notification-template-version/notification-template-version.dto';
 
 // Import individual registerSchemas functions
-import { registerSchemas as registerBookingSchemas } from './booking/booking.dto';
-import { registerSchemas as registerCustomerSchemas } from './customer/customer.dto';
-import { registerSchemas as registerEmployeeSchemas } from './employee/employee.dto';
-import { registerSchemas as registerLocationSchemas } from './location/location.dto';
-import { registerSchemas as registerServiceSchemas } from './service/service.dto';
-import { registerSchemas as registerServiceCategorySchemas } from './service-category/service-category.dto';
-import { registerSchemas as registerReservationModuleSchemas } from './reservation-module/reservation-module.dto';
-import { registerSchemas as registerScheduleSchemas } from './schedule/schedule.dto';
-import { registerSchemas as registerScheduleSlotSchemas } from './schedule-slot/schedule-slot.dto';
-import { registerSchemas as registerScheduleEmployeeSchemas } from './schedule-employee/schedule-employee.dto';
-import { registerSchemas as registerScheduleSlotExceptionSchemas } from './schedule-slot-exception/schedule-slot-exception.dto';
-import { registerSchemas as registerBookingHistoryLogSchemas } from './booking-history-log/booking-history-log.dto';
-import { registerSchemas as registerBookingCourseTimeSchemas } from './booking-course-time/booking-course-time.dto';
-import { registerSchemas as registerBookingCourseParticipantSchemas } from './booking-course-participant/booking-course-participant.dto';
-import { registerSchemas as registerBookingSlotSchemas } from './booking-slot/booking-slot.dto';
-import { registerSchemas as registerServiceAssignmentSchemas } from './service-assignment/service-assignment.dto';
-import { registerSchemas as registerServiceLocationSchemas } from './service-location/service-location.dto';
-import { registerSchemas as registerNotificationTemplateSchemas } from './notification-template/notification-template.dto';
-import { registerSchemas as registerNotificationPreferenceSchemas } from './notification-preference/notification-preference.dto';
-import { registerSchemas as registerNotificationMessageSchemas } from './notification-message/notification-message.dto';
-import { registerSchemas as registerNotificationEventSchemas } from './notification-event/notification-event.dto';
-import { registerSchemas as registerNotificationMappingSchemas } from './notification-mapping/notification-mapping.dto';
-import { registerSchemas as registerNotificationMessageEventSchemas } from './notification-message-event/notification-message-event.dto';
-import { registerSchemas as registerNotificationProviderCredentialSchemas } from './notification-provider-credential/notification-provider-credential.dto';
-import { registerSchemas as registerNotificationTemplateVersionSchemas } from './notification-template-version/notification-template-version.dto';
+import { registerSchemas as registerBookingSchemas } from './booking/booking.dto.js';
+import { registerSchemas as registerCustomerSchemas } from './customer/customer.dto.js';
+import { registerSchemas as registerEmployeeSchemas } from './employee/employee.dto.js';
+import { registerSchemas as registerLocationSchemas } from './location/location.dto.js';
+import { registerSchemas as registerServiceSchemas } from './service/service.dto.js';
+import { registerSchemas as registerServiceCategorySchemas } from './service-category/service-category.dto.js';
+import { registerSchemas as registerReservationModuleSchemas } from './reservation-module/reservation-module.dto.js';
+import { registerSchemas as registerScheduleSchemas } from './schedule/schedule.dto.js';
+import { registerSchemas as registerScheduleSlotSchemas } from './schedule-slot/schedule-slot.dto.js';
+import { registerSchemas as registerScheduleEmployeeSchemas } from './schedule-employee/schedule-employee.dto.js';
+import { registerSchemas as registerScheduleSlotExceptionSchemas } from './schedule-slot-exception/schedule-slot-exception.dto.js';
+import { registerSchemas as registerBookingHistoryLogSchemas } from './booking-history-log/booking-history-log.dto.js';
+import { registerSchemas as registerBookingCourseTimeSchemas } from './booking-course-time/booking-course-time.dto.js';
+import { registerSchemas as registerBookingCourseParticipantSchemas } from './booking-course-participant/booking-course-participant.dto.js';
+import { registerSchemas as registerBookingSlotSchemas } from './booking-slot/booking-slot.dto.js';
+import { registerSchemas as registerServiceAssignmentSchemas } from './service-assignment/service-assignment.dto.js';
+import { registerSchemas as registerServiceLocationSchemas } from './service-location/service-location.dto.js';
+import { registerSchemas as registerNotificationTemplateSchemas } from './notification-template/notification-template.dto.js';
+import { registerSchemas as registerNotificationPreferenceSchemas } from './notification-preference/notification-preference.dto.js';
+import { registerSchemas as registerNotificationMessageSchemas } from './notification-message/notification-message.dto.js';
+import { registerSchemas as registerNotificationEventSchemas } from './notification-event/notification-event.dto.js';
+import { registerSchemas as registerNotificationMappingSchemas } from './notification-mapping/notification-mapping.dto.js';
+import { registerSchemas as registerNotificationMessageEventSchemas } from './notification-message-event/notification-message-event.dto.js';
+import { registerSchemas as registerNotificationProviderCredentialSchemas } from './notification-provider-credential/notification-provider-credential.dto.js';
+import { registerSchemas as registerNotificationTemplateVersionSchemas } from './notification-template-version/notification-template-version.dto.js';
 
 /**
  * Register all reservation-related schemas with the OpenAPI registry

@@ -1,6 +1,6 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { registerSchemas as registerUserFavoriteDriverTypesSchemas } from '../UserFavoriteDriver';
+import { registerSchemas as registerUserFavoriteDriverTypesSchemas } from '../UserFavoriteDriver/index.js';
 
 // === UserFavoriteDriver DTOs (Response) ===
 export { UserFavoriteDriverResponseSchema, type UserFavoriteDriverResponse } from './userFavoriteDriver.dto.js';

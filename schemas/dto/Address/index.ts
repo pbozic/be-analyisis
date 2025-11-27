@@ -1,9 +1,9 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 // === Address DTOs ===
-export * from './address.ts';
+export * from './address.js';
 
-export * from './Address.dao.dto.ts';
+export * from './Address.dao.dto.js';
 // Import registerSchemas functions with aliases
 import { registerSchemas as registerAddressSchemas } from './address.js';
 import { registerSchemas as registerAddressValidatorSchemas } from './address.validators.js';

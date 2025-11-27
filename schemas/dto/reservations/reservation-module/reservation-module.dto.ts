@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { UUID, Timestamp } from '../../../primitives';
-import { BusinessRefSchema } from '../../Business/index.js';
+import { BusinessRefSchema } from '../../Business/business.dto.ts';
 import { EmployeeRefSchema } from '../employee/employee.dto.js';
 import { LocationRefSchema } from '../location/location.dto.js';
 import { ServiceRefSchema } from '../service/service.dto.js';
